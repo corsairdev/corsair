@@ -40,8 +40,8 @@ const NutshellStagesListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose(),
 		links: z.object({}).loose(),
@@ -72,9 +72,9 @@ const NutshellAudiencesListInputSchema = z.object({}).strict();
 const NutshellAudiencesListOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
-			name: z.string().optional(),
-			isWebFX: z.boolean().optional(),
+			id: z.string().nullish(),
+			name: z.string().nullish(),
+			isWebFX: z.boolean().nullish(),
 		})
 		.loose(),
 );
@@ -111,12 +111,12 @@ const NutshellLeadsListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
-		links: z.object({}).loose().optional(),
+			.nullish(),
+		links: z.object({}).loose().nullish(),
 		leads: z
 			.array(
 				z.intersection(
@@ -125,74 +125,74 @@ const NutshellLeadsListOutputSchema = z
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										avatarUrl: z.string().optional(),
-										initials: z.string().optional(),
+										avatarUrl: z.string().nullish(),
+										initials: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									id: z.string().optional(),
-									deletedTime: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									deletedTime: z.string().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
-											formatted: z.string().optional(),
-											amount: z.string().optional(),
-											currency: z.string().optional(),
+											formatted: z.string().nullish(),
+											amount: z.string().nullish(),
+											currency: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									number: z.number().int().optional(),
-									description: z.string().optional(),
+										.nullish(),
+									number: z.number().int().nullish(),
+									description: z.string().nullish(),
 									createdTime: z
 										.object({
-											absoluteLocalizedString: z.string().optional(),
-											timestamp: z.number().optional(),
-											value: z.string().optional(),
+											absoluteLocalizedString: z.string().nullish(),
+											timestamp: z.number().nullish(),
+											value: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									closedTime: z.string().optional(),
-									dueTime: z.string().optional(),
-									anticipatedClosedTime: z.string().optional(),
-									ownerType: z.string().optional(),
-									status: z.string().optional(),
+										.nullish(),
+									closedTime: z.string().nullish(),
+									dueTime: z.string().nullish(),
+									anticipatedClosedTime: z.string().nullish(),
+									ownerType: z.string().nullish(),
+									status: z.string().nullish(),
 									lastContactedTime: z
 										.unknown() /* OpenAPI schema has no recognized type */
-										.optional(),
-									pieState: z.string().optional(),
-									isOverdue: z.boolean().optional(),
-									overdueTime: z.string().optional(),
-									href: z.string().optional(),
-									confidence: z.number().int().optional(),
-									priority: z.number().int().optional(),
-									isCurrentUserWatching: z.boolean().optional(),
+										.nullish(),
+									pieState: z.string().nullish(),
+									isOverdue: z.boolean().nullish(),
+									overdueTime: z.string().nullish(),
+									href: z.string().nullish(),
+									confidence: z.number().int().nullish(),
+									priority: z.number().int().nullish(),
+									isCurrentUserWatching: z.boolean().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -333,21 +333,21 @@ const NutshellAccountsCustomFieldAttributesOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
 const NutshellOutcomesListInputSchema = z.object({}).strict();
 const NutshellOutcomesListOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		status: z.string().optional(),
-		type: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		status: z.string().nullish(),
+		type: z.string().nullish(),
 	})
 	.loose();
 
@@ -359,30 +359,30 @@ const NutshellTasksGetInputSchema = z
 const NutshellTasksGetOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 			recurrenceRule: z
 				.intersection(
 					z
 						.object({
-							htmlUrl: z.string().optional(),
-							htmlUrlPath: z.string().optional(),
+							htmlUrl: z.string().nullish(),
+							htmlUrlPath: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							rule: z.string().optional(),
-							mode: z.enum(['dueDate', 'completion']).optional(),
-							id: z.string().optional(),
+							rule: z.string().nullish(),
+							mode: z.enum(['dueDate', 'completion']).nullish(),
+							id: z.string().nullish(),
 						})
 						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -398,69 +398,69 @@ const NutshellLeadsReopenOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -472,11 +472,11 @@ const NutshellMarketsGetInputSchema = z
 	.strict();
 const NutshellMarketsGetOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		currency: z.string().optional(),
-		currencySymbol: z.string().optional(),
-		isDefault: z.boolean().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		currency: z.string().nullish(),
+		currencySymbol: z.string().nullish(),
+		isDefault: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -492,51 +492,51 @@ const NutshellProductsListOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						description: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.string().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.string().nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						productType: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						prices: z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().optional(),
-										currency: z.string().optional(),
-										formatted: z.string().optional(),
-										currencySymbol: z.string().optional(),
+										amount: z.number().nullish(),
+										currency: z.string().nullish(),
+										formatted: z.string().nullish(),
+										currencySymbol: z.string().nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								amount: z.number().optional(),
-								currency: z.string().optional(),
-								formatted: z.string().optional(),
-								currencySymbol: z.string().optional(),
+								amount: z.number().nullish(),
+								currency: z.string().nullish(),
+								formatted: z.string().nullish(),
+								currencySymbol: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -547,27 +547,27 @@ const NutshellLeadsListFieldsOutputSchema = z
 			.object({
 				exampleProperty: z
 					.object({
-						type: z.string().optional(),
-						title: z.string().optional(),
-						description: z.string().optional(),
-						isFilterable: z.boolean().optional(),
-						isDisplayable: z.boolean().optional(),
-						isSortable: z.boolean().optional(),
-						isGoalable: z.boolean().optional(),
-						isAddable: z.boolean().optional(),
-						isBoardable: z.boolean().optional(),
-						isRequireable: z.boolean().optional(),
-						isAndable: z.boolean().optional(),
-						isNullable: z.boolean().optional(),
-						relationships: z.array(z.string()).optional(),
-						enum: z.array(z.string()).optional(),
-						format: z.string().optional(),
+						type: z.string().nullish(),
+						title: z.string().nullish(),
+						description: z.string().nullish(),
+						isFilterable: z.boolean().nullish(),
+						isDisplayable: z.boolean().nullish(),
+						isSortable: z.boolean().nullish(),
+						isGoalable: z.boolean().nullish(),
+						isAddable: z.boolean().nullish(),
+						isBoardable: z.boolean().nullish(),
+						isRequireable: z.boolean().nullish(),
+						isAndable: z.boolean().nullish(),
+						isNullable: z.boolean().nullish(),
+						relationships: z.array(z.string()).nullish(),
+						enum: z.array(z.string()).nullish(),
+						format: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -643,113 +643,113 @@ const NutshellAccountsCreateOutputSchema = z.intersection(
 		z.intersection(
 			z
 				.object({
-					id: z.string().optional(),
-					name: z.string().optional(),
-					description: z.string().optional(),
-					createdTime: z.number().int().optional(),
-					deletedTime: z.number().int().optional(),
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					description: z.string().nullish(),
+					createdTime: z.number().int().nullish(),
+					deletedTime: z.number().int().nullish(),
 					emails: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
-									value: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					addresses: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
 											location: z
 												.object({
-													longitude: z.number().optional(),
-													latitude: z.number().optional(),
+													longitude: z.number().nullish(),
+													latitude: z.number().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose()
-										.optional(),
-									locationAccuracy: z.string().optional(),
-									address_1: z.string().optional(),
-									address_2: z.string().optional(),
-									address_3: z.string().optional(),
-									city: z.string().optional(),
-									state: z.string().optional(),
-									postalCode: z.string().optional(),
-									country: z.string().optional(),
-									timezone: z.string().optional(),
+										.nullish(),
+									locationAccuracy: z.string().nullish(),
+									address_1: z.string().nullish(),
+									address_2: z.string().nullish(),
+									address_3: z.string().nullish(),
+									city: z.string().nullish(),
+									state: z.string().nullish(),
+									postalCode: z.string().nullish(),
+									country: z.string().nullish(),
+									timezone: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					phones: z
 						.array(
 							z
 								.object({
-									isOptedOut: z.boolean().optional(),
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
+									isOptedOut: z.boolean().nullish(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
-											countryCode: z.string().optional(),
-											number: z.string().optional(),
-											extension: z.string().optional(),
-											numberFormatted: z.string().optional(),
-											E164: z.string().optional(),
-											countryCodeAndNumber: z.string().optional(),
+											countryCode: z.string().nullish(),
+											number: z.string().nullish(),
+											extension: z.string().nullish(),
+											numberFormatted: z.string().nullish(),
+											E164: z.string().nullish(),
+											countryCodeAndNumber: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
+										.nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					urls: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
-									value: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 				})
 				.loose(),
 			z
 				.object({
-					avatarUrl: z.string().optional(),
-					initials: z.string().optional(),
+					avatarUrl: z.string().nullish(),
+					initials: z.string().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			href: z.string().optional(),
+			href: z.string().nullish(),
 			revenue: z
 				.object({
-					amount: z.string().optional(),
-					formatted: z.string().optional(),
+					amount: z.string().nullish(),
+					formatted: z.string().nullish(),
 				})
 				.loose()
-				.optional(),
-			employeeCount: z.number().int().optional(),
+				.nullish(),
+			employeeCount: z.number().int().nullish(),
 		})
 		.loose(),
 );
@@ -764,113 +764,113 @@ const NutshellAccountsUndeleteOutputSchema = z.intersection(
 		z.intersection(
 			z
 				.object({
-					id: z.string().optional(),
-					name: z.string().optional(),
-					description: z.string().optional(),
-					createdTime: z.number().int().optional(),
-					deletedTime: z.number().int().optional(),
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					description: z.string().nullish(),
+					createdTime: z.number().int().nullish(),
+					deletedTime: z.number().int().nullish(),
 					emails: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
-									value: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					addresses: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
 											location: z
 												.object({
-													longitude: z.number().optional(),
-													latitude: z.number().optional(),
+													longitude: z.number().nullish(),
+													latitude: z.number().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose()
-										.optional(),
-									locationAccuracy: z.string().optional(),
-									address_1: z.string().optional(),
-									address_2: z.string().optional(),
-									address_3: z.string().optional(),
-									city: z.string().optional(),
-									state: z.string().optional(),
-									postalCode: z.string().optional(),
-									country: z.string().optional(),
-									timezone: z.string().optional(),
+										.nullish(),
+									locationAccuracy: z.string().nullish(),
+									address_1: z.string().nullish(),
+									address_2: z.string().nullish(),
+									address_3: z.string().nullish(),
+									city: z.string().nullish(),
+									state: z.string().nullish(),
+									postalCode: z.string().nullish(),
+									country: z.string().nullish(),
+									timezone: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					phones: z
 						.array(
 							z
 								.object({
-									isOptedOut: z.boolean().optional(),
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
+									isOptedOut: z.boolean().nullish(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
-											countryCode: z.string().optional(),
-											number: z.string().optional(),
-											extension: z.string().optional(),
-											numberFormatted: z.string().optional(),
-											E164: z.string().optional(),
-											countryCodeAndNumber: z.string().optional(),
+											countryCode: z.string().nullish(),
+											number: z.string().nullish(),
+											extension: z.string().nullish(),
+											numberFormatted: z.string().nullish(),
+											E164: z.string().nullish(),
+											countryCodeAndNumber: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
+										.nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 					urls: z
 						.array(
 							z
 								.object({
-									isPrimary: z.boolean().optional(),
-									name: z.string().optional(),
-									value: z.string().optional(),
+									isPrimary: z.boolean().nullish(),
+									name: z.string().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose(),
 						)
-						.optional(),
+						.nullish(),
 				})
 				.loose(),
 			z
 				.object({
-					avatarUrl: z.string().optional(),
-					initials: z.string().optional(),
+					avatarUrl: z.string().nullish(),
+					initials: z.string().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			href: z.string().optional(),
+			href: z.string().nullish(),
 			revenue: z
 				.object({
-					amount: z.string().optional(),
-					formatted: z.string().optional(),
+					amount: z.string().nullish(),
+					formatted: z.string().nullish(),
 				})
 				.loose()
-				.optional(),
-			employeeCount: z.number().int().optional(),
+				.nullish(),
+			employeeCount: z.number().int().nullish(),
 		})
 		.loose(),
 );
@@ -886,51 +886,51 @@ const NutshellProductsDeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						description: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.string().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.string().nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						productType: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						prices: z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().optional(),
-										currency: z.string().optional(),
-										formatted: z.string().optional(),
-										currencySymbol: z.string().optional(),
+										amount: z.number().nullish(),
+										currency: z.string().nullish(),
+										formatted: z.string().nullish(),
+										currencySymbol: z.string().nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								amount: z.number().optional(),
-								currency: z.string().optional(),
-								formatted: z.string().optional(),
-								currencySymbol: z.string().optional(),
+								amount: z.number().nullish(),
+								currency: z.string().nullish(),
+								formatted: z.string().nullish(),
+								currencySymbol: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -971,8 +971,8 @@ const NutshellActivitiesCreateInputSchema = z
 const NutshellActivitiesCreateOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
@@ -984,51 +984,51 @@ const NutshellActivitiesCreateOutputSchema = z.intersection(
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										id: z.string().optional(),
+										id: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 							})
 							.loose(),
 					),
 				)
-				.optional(),
-			id: z.string().optional(),
+				.nullish(),
+			id: z.string().nullish(),
 			agenda: z
 				.unknown() /* OpenAPI schema has no recognized type */
-				.optional(),
-			createdTime: z.number().int().optional(),
-			endTime: z.number().int().optional(),
-			deletedTime: z.number().int().optional(),
-			href: z.string().optional(),
-			isAllDay: z.boolean().optional(),
-			isEditable: z.boolean().optional(),
-			isCancelled: z.boolean().optional(),
-			isFlagged: z.boolean().optional(),
-			isLogged: z.boolean().optional(),
-			isOverdue: z.boolean().optional(),
-			loggedTime: z.number().int().optional(),
-			modifiedTime: z.number().int().optional(),
-			name: z.string().optional(),
-			startTime: z.number().int().optional(),
-			isMediaLogged: z.boolean().optional(),
-			transcription: z.string().optional(),
+				.nullish(),
+			createdTime: z.number().int().nullish(),
+			endTime: z.number().int().nullish(),
+			deletedTime: z.number().int().nullish(),
+			href: z.string().nullish(),
+			isAllDay: z.boolean().nullish(),
+			isEditable: z.boolean().nullish(),
+			isCancelled: z.boolean().nullish(),
+			isFlagged: z.boolean().nullish(),
+			isLogged: z.boolean().nullish(),
+			isOverdue: z.boolean().nullish(),
+			loggedTime: z.number().int().nullish(),
+			modifiedTime: z.number().int().nullish(),
+			name: z.string().nullish(),
+			startTime: z.number().int().nullish(),
+			isMediaLogged: z.boolean().nullish(),
+			transcription: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -1044,69 +1044,69 @@ const NutshellLeadsDeleteOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -1122,24 +1122,24 @@ const NutshellSourcesListOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 						channel: z
 							.object({
-								value: z.number().int().optional(),
-								display: z.string().optional(),
+								value: z.number().int().nullish(),
+								display: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
-						deletedTime: z.number().int().optional(),
+							.nullish(),
+						deletedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1152,10 +1152,10 @@ const NutshellCompetitorsListOutputSchema = z
 	.object({
 		competitors: z
 			.unknown() /* OpenAPI schema has no recognized type */
-			.optional(),
-		id: z.string().optional(),
-		name: z.string().optional(),
-		modifiedTime: z.number().int().optional(),
+			.nullish(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		modifiedTime: z.number().int().nullish(),
 	})
 	.loose();
 
@@ -1168,11 +1168,11 @@ const NutshellAccountsDeleteOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		accounts: z
 			.array(
 				z.intersection(
@@ -1182,240 +1182,240 @@ const NutshellAccountsDeleteOutputSchema = z
 								z.intersection(
 									z
 										.object({
-											id: z.string().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											createdTime: z.number().int().optional(),
-											deletedTime: z.number().int().optional(),
+											id: z.string().nullish(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											createdTime: z.number().int().nullish(),
+											deletedTime: z.number().int().nullish(),
 											emails: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
-															value: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
+															value: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											addresses: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
 															value: z
 																.object({
 																	location: z
 																		.object({
-																			longitude: z.number().optional(),
-																			latitude: z.number().optional(),
+																			longitude: z.number().nullish(),
+																			latitude: z.number().nullish(),
 																		})
 																		.loose()
-																		.optional(),
+																		.nullish(),
 																})
 																.loose()
-																.optional(),
-															locationAccuracy: z.string().optional(),
-															address_1: z.string().optional(),
-															address_2: z.string().optional(),
-															address_3: z.string().optional(),
-															city: z.string().optional(),
-															state: z.string().optional(),
-															postalCode: z.string().optional(),
-															country: z.string().optional(),
-															timezone: z.string().optional(),
+																.nullish(),
+															locationAccuracy: z.string().nullish(),
+															address_1: z.string().nullish(),
+															address_2: z.string().nullish(),
+															address_3: z.string().nullish(),
+															city: z.string().nullish(),
+															state: z.string().nullish(),
+															postalCode: z.string().nullish(),
+															country: z.string().nullish(),
+															timezone: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											phones: z
 												.array(
 													z
 														.object({
-															isOptedOut: z.boolean().optional(),
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
+															isOptedOut: z.boolean().nullish(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
 															value: z
 																.object({
-																	countryCode: z.string().optional(),
-																	number: z.string().optional(),
-																	extension: z.string().optional(),
-																	numberFormatted: z.string().optional(),
-																	E164: z.string().optional(),
-																	countryCodeAndNumber: z.string().optional(),
+																	countryCode: z.string().nullish(),
+																	number: z.string().nullish(),
+																	extension: z.string().nullish(),
+																	numberFormatted: z.string().nullish(),
+																	E164: z.string().nullish(),
+																	countryCodeAndNumber: z.string().nullish(),
 																})
 																.loose()
-																.optional(),
+																.nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											urls: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
-															value: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
+															value: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 									z
 										.object({
-											avatarUrl: z.string().optional(),
-											initials: z.string().optional(),
+											avatarUrl: z.string().nullish(),
+											initials: z.string().nullish(),
 										})
 										.loose(),
 								),
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									href: z.string().optional(),
+									href: z.string().nullish(),
 									revenue: z
 										.object({
-											amount: z.string().optional(),
-											formatted: z.string().optional(),
+											amount: z.string().nullish(),
+											formatted: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									employeeCount: z.number().int().optional(),
+										.nullish(),
+									employeeCount: z.number().int().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		creators: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							name: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							modifiedTime: z.number().int().optional(),
-							isEnabled: z.boolean().optional(),
-							hasSetPassword: z.boolean().optional(),
-							isAdministrator: z.boolean().optional(),
-							isViewingRestricted: z.boolean().optional(),
-							isHiddenFromFilters: z.boolean().optional(),
-							canAccessEmailMarketing: z.boolean().optional(),
+								.nullish(),
+							modifiedTime: z.number().int().nullish(),
+							isEnabled: z.boolean().nullish(),
+							hasSetPassword: z.boolean().nullish(),
+							isAdministrator: z.boolean().nullish(),
+							isViewingRestricted: z.boolean().nullish(),
+							isHiddenFromFilters: z.boolean().nullish(),
+							canAccessEmailMarketing: z.boolean().nullish(),
 							permissions: z
 								.object({
-									canAccessSetup: z.boolean().optional(),
-									canAccessMarketing: z.boolean().optional(),
-									canBulkEdit: z.boolean().optional(),
-									canExport: z.boolean().optional(),
-									canViewSharedEmails: z.boolean().optional(),
-									canImport: z.boolean().optional(),
-									canMergeEntities: z.boolean().optional(),
-									canDeleteEntities: z.boolean().optional(),
-									canAssignEntities: z.boolean().optional(),
-									canAccessBilling: z.boolean().optional(),
-									canManageEmailTemplates: z.boolean().optional(),
-									canAccessCrm: z.boolean().optional(),
-									canAccessFullCampaigns: z.boolean().optional(),
-									canUsePeopleIQ: z.boolean().optional(),
-									canUseInbox: z.boolean().optional(),
+									canAccessSetup: z.boolean().nullish(),
+									canAccessMarketing: z.boolean().nullish(),
+									canBulkEdit: z.boolean().nullish(),
+									canExport: z.boolean().nullish(),
+									canViewSharedEmails: z.boolean().nullish(),
+									canImport: z.boolean().nullish(),
+									canMergeEntities: z.boolean().nullish(),
+									canDeleteEntities: z.boolean().nullish(),
+									canAssignEntities: z.boolean().nullish(),
+									canAccessBilling: z.boolean().nullish(),
+									canManageEmailTemplates: z.boolean().nullish(),
+									canAccessCrm: z.boolean().nullish(),
+									canAccessFullCampaigns: z.boolean().nullish(),
+									canUsePeopleIQ: z.boolean().nullish(),
+									canUseInbox: z.boolean().nullish(),
 								})
 								.loose()
-								.optional(),
-							emails: z.array(z.string()).optional(),
+								.nullish(),
+							emails: z.array(z.string()).nullish(),
 							phonecallerType: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		owners: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							name: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							modifiedTime: z.number().int().optional(),
-							isEnabled: z.boolean().optional(),
-							hasSetPassword: z.boolean().optional(),
-							isAdministrator: z.boolean().optional(),
-							isViewingRestricted: z.boolean().optional(),
-							isHiddenFromFilters: z.boolean().optional(),
-							canAccessEmailMarketing: z.boolean().optional(),
+								.nullish(),
+							modifiedTime: z.number().int().nullish(),
+							isEnabled: z.boolean().nullish(),
+							hasSetPassword: z.boolean().nullish(),
+							isAdministrator: z.boolean().nullish(),
+							isViewingRestricted: z.boolean().nullish(),
+							isHiddenFromFilters: z.boolean().nullish(),
+							canAccessEmailMarketing: z.boolean().nullish(),
 							permissions: z
 								.object({
-									canAccessSetup: z.boolean().optional(),
-									canAccessMarketing: z.boolean().optional(),
-									canBulkEdit: z.boolean().optional(),
-									canExport: z.boolean().optional(),
-									canViewSharedEmails: z.boolean().optional(),
-									canImport: z.boolean().optional(),
-									canMergeEntities: z.boolean().optional(),
-									canDeleteEntities: z.boolean().optional(),
-									canAssignEntities: z.boolean().optional(),
-									canAccessBilling: z.boolean().optional(),
-									canManageEmailTemplates: z.boolean().optional(),
-									canAccessCrm: z.boolean().optional(),
-									canAccessFullCampaigns: z.boolean().optional(),
-									canUsePeopleIQ: z.boolean().optional(),
-									canUseInbox: z.boolean().optional(),
+									canAccessSetup: z.boolean().nullish(),
+									canAccessMarketing: z.boolean().nullish(),
+									canBulkEdit: z.boolean().nullish(),
+									canExport: z.boolean().nullish(),
+									canViewSharedEmails: z.boolean().nullish(),
+									canImport: z.boolean().nullish(),
+									canMergeEntities: z.boolean().nullish(),
+									canDeleteEntities: z.boolean().nullish(),
+									canAssignEntities: z.boolean().nullish(),
+									canAccessBilling: z.boolean().nullish(),
+									canManageEmailTemplates: z.boolean().nullish(),
+									canAccessCrm: z.boolean().nullish(),
+									canAccessFullCampaigns: z.boolean().nullish(),
+									canUsePeopleIQ: z.boolean().nullish(),
+									canUseInbox: z.boolean().nullish(),
 								})
 								.loose()
-								.optional(),
-							emails: z.array(z.string()).optional(),
+								.nullish(),
+							emails: z.array(z.string()).nullish(),
 							phonecallerType: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		origins: z
 			.array(
 				z.intersection(
@@ -1424,43 +1424,43 @@ const NutshellAccountsDeleteOutputSchema = z
 							z.intersection(
 								z
 									.object({
-										avatarUrl: z.string().optional(),
-										initials: z.string().optional(),
+										avatarUrl: z.string().nullish(),
+										initials: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
-									modifiedTime: z.number().int().optional(),
-									lastseenTime: z.number().int().optional(),
-									originType: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+									modifiedTime: z.number().int().nullish(),
+									lastseenTime: z.number().int().nullish(),
+									originType: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -1468,99 +1468,99 @@ const NutshellAccountsDeleteOutputSchema = z
 						z.intersection(
 							z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
-									description: z.string().optional(),
-									createdTime: z.number().int().optional(),
-									deletedTime: z.number().int().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+									description: z.string().nullish(),
+									createdTime: z.number().int().nullish(),
+									deletedTime: z.number().int().nullish(),
 									emails: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									addresses: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
 															location: z
 																.object({
-																	longitude: z.number().optional(),
-																	latitude: z.number().optional(),
+																	longitude: z.number().nullish(),
+																	latitude: z.number().nullish(),
 																})
 																.loose()
-																.optional(),
+																.nullish(),
 														})
 														.loose()
-														.optional(),
-													locationAccuracy: z.string().optional(),
-													address_1: z.string().optional(),
-													address_2: z.string().optional(),
-													address_3: z.string().optional(),
-													city: z.string().optional(),
-													state: z.string().optional(),
-													postalCode: z.string().optional(),
-													country: z.string().optional(),
-													timezone: z.string().optional(),
+														.nullish(),
+													locationAccuracy: z.string().nullish(),
+													address_1: z.string().nullish(),
+													address_2: z.string().nullish(),
+													address_3: z.string().nullish(),
+													city: z.string().nullish(),
+													state: z.string().nullish(),
+													postalCode: z.string().nullish(),
+													country: z.string().nullish(),
+													timezone: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									phones: z
 										.array(
 											z
 												.object({
-													isOptedOut: z.boolean().optional(),
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isOptedOut: z.boolean().nullish(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
-															countryCode: z.string().optional(),
-															number: z.string().optional(),
-															extension: z.string().optional(),
-															numberFormatted: z.string().optional(),
-															E164: z.string().optional(),
-															countryCodeAndNumber: z.string().optional(),
+															countryCode: z.string().nullish(),
+															number: z.string().nullish(),
+															extension: z.string().nullish(),
+															numberFormatted: z.string().nullish(),
+															E164: z.string().nullish(),
+															countryCodeAndNumber: z.string().nullish(),
 														})
 														.loose()
-														.optional(),
+														.nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									urls: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 								})
 								.loose(),
 							z
 								.object({
-									avatarUrl: z.string().optional(),
-									initials: z.string().optional(),
+									avatarUrl: z.string().nullish(),
+									initials: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
@@ -1568,43 +1568,43 @@ const NutshellAccountsDeleteOutputSchema = z
 						.object({
 							jobTitle: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							lastName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							href: z.string().optional(),
+								.nullish(),
+							href: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		accountTypes: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		industries: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1629,18 +1629,18 @@ const NutshellLeadsUpdateInstallmentsOutputSchema = z
 		installments: z.array(
 			z
 				.object({
-					id: z.string().optional(),
-					dueTime: z.string().optional(),
-					description: z.string().optional(),
+					id: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					description: z.string().nullish(),
 					value: z
 						.object({
-							currency: z.string().optional(),
-							amount: z.number().optional(),
+							currency: z.string().nullish(),
+							amount: z.number().nullish(),
 						})
 						.loose()
-						.optional(),
-					failedTime: z.string().optional(),
-					isPaid: z.boolean().optional(),
+						.nullish(),
+					failedTime: z.string().nullish(),
+					isPaid: z.boolean().nullish(),
 				})
 				.loose(),
 		),
@@ -1666,40 +1666,40 @@ const NutshellTasksEnvelopeSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		links: z.object({}).loose(),
 		tasks: z.array(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						recurrenceRule: z
 							.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										rule: z.string().optional(),
-										mode: z.enum(['dueDate', 'completion']).optional(),
-										id: z.string().optional(),
+										rule: z.string().nullish(),
+										mode: z.enum(['dueDate', 'completion']).nullish(),
+										id: z.string().nullish(),
 									})
 									.loose(),
 							)
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			),
@@ -1814,7 +1814,7 @@ const NutshellContactsCreateInputSchema = z
 	.strict();
 const NutshellContactsCreateOutputSchema = z
 	.object({
-		links: z.object({}).loose().optional(),
+		links: z.object({}).loose().nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -1825,99 +1825,99 @@ const NutshellContactsCreateOutputSchema = z
 									z.intersection(
 										z
 											.object({
-												id: z.string().optional(),
-												name: z.string().optional(),
-												description: z.string().optional(),
-												createdTime: z.number().int().optional(),
-												deletedTime: z.number().int().optional(),
+												id: z.string().nullish(),
+												name: z.string().nullish(),
+												description: z.string().nullish(),
+												createdTime: z.number().int().nullish(),
+												deletedTime: z.number().int().nullish(),
 												emails: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												addresses: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
 																		location: z
 																			.object({
-																				longitude: z.number().optional(),
-																				latitude: z.number().optional(),
+																				longitude: z.number().nullish(),
+																				latitude: z.number().nullish(),
 																			})
 																			.loose()
-																			.optional(),
+																			.nullish(),
 																	})
 																	.loose()
-																	.optional(),
-																locationAccuracy: z.string().optional(),
-																address_1: z.string().optional(),
-																address_2: z.string().optional(),
-																address_3: z.string().optional(),
-																city: z.string().optional(),
-																state: z.string().optional(),
-																postalCode: z.string().optional(),
-																country: z.string().optional(),
-																timezone: z.string().optional(),
+																	.nullish(),
+																locationAccuracy: z.string().nullish(),
+																address_1: z.string().nullish(),
+																address_2: z.string().nullish(),
+																address_3: z.string().nullish(),
+																city: z.string().nullish(),
+																state: z.string().nullish(),
+																postalCode: z.string().nullish(),
+																country: z.string().nullish(),
+																timezone: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												phones: z
 													.array(
 														z
 															.object({
-																isOptedOut: z.boolean().optional(),
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isOptedOut: z.boolean().nullish(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
-																		countryCode: z.string().optional(),
-																		number: z.string().optional(),
-																		extension: z.string().optional(),
-																		numberFormatted: z.string().optional(),
-																		E164: z.string().optional(),
-																		countryCodeAndNumber: z.string().optional(),
+																		countryCode: z.string().nullish(),
+																		number: z.string().nullish(),
+																		extension: z.string().nullish(),
+																		numberFormatted: z.string().nullish(),
+																		E164: z.string().nullish(),
+																		countryCodeAndNumber: z.string().nullish(),
 																	})
 																	.loose()
-																	.optional(),
+																	.nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												urls: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 											})
 											.loose(),
 										z
 											.object({
-												avatarUrl: z.string().optional(),
-												initials: z.string().optional(),
+												avatarUrl: z.string().nullish(),
+												initials: z.string().nullish(),
 											})
 											.loose(),
 									),
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 								),
@@ -1925,39 +1925,39 @@ const NutshellContactsCreateOutputSchema = z
 									.object({
 										jobTitle: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										firstName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										lastName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
-										href: z.string().optional(),
+											.nullish(),
+										href: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							links: z.object({}).loose().optional(),
+							links: z.object({}).loose().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1973,18 +1973,18 @@ const NutshellAccountsCustomfieldsOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							value: z.string().optional(),
-							id: z.string().optional(),
+							value: z.string().nullish(),
+							id: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1996,8 +1996,8 @@ const NutshellActivitiesGetInputSchema = z
 const NutshellActivitiesGetOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
@@ -2009,51 +2009,51 @@ const NutshellActivitiesGetOutputSchema = z.intersection(
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										id: z.string().optional(),
+										id: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 							})
 							.loose(),
 					),
 				)
-				.optional(),
-			id: z.string().optional(),
+				.nullish(),
+			id: z.string().nullish(),
 			agenda: z
 				.unknown() /* OpenAPI schema has no recognized type */
-				.optional(),
-			createdTime: z.number().int().optional(),
-			endTime: z.number().int().optional(),
-			deletedTime: z.number().int().optional(),
-			href: z.string().optional(),
-			isAllDay: z.boolean().optional(),
-			isEditable: z.boolean().optional(),
-			isCancelled: z.boolean().optional(),
-			isFlagged: z.boolean().optional(),
-			isLogged: z.boolean().optional(),
-			isOverdue: z.boolean().optional(),
-			loggedTime: z.number().int().optional(),
-			modifiedTime: z.number().int().optional(),
-			name: z.string().optional(),
-			startTime: z.number().int().optional(),
-			isMediaLogged: z.boolean().optional(),
-			transcription: z.string().optional(),
+				.nullish(),
+			createdTime: z.number().int().nullish(),
+			endTime: z.number().int().nullish(),
+			deletedTime: z.number().int().nullish(),
+			href: z.string().nullish(),
+			isAllDay: z.boolean().nullish(),
+			isEditable: z.boolean().nullish(),
+			isCancelled: z.boolean().nullish(),
+			isFlagged: z.boolean().nullish(),
+			isLogged: z.boolean().nullish(),
+			isOverdue: z.boolean().nullish(),
+			loggedTime: z.number().int().nullish(),
+			modifiedTime: z.number().int().nullish(),
+			name: z.string().nullish(),
+			startTime: z.number().int().nullish(),
+			isMediaLogged: z.boolean().nullish(),
+			transcription: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -2069,8 +2069,8 @@ const NutshellLeadsStagesOutputSchema = z
 			.intersection(
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 				z
@@ -2079,58 +2079,58 @@ const NutshellLeadsStagesOutputSchema = z
 							.array(
 								z
 									.object({
-										formatted: z.string().optional(),
-										prefix: z.string().optional(),
-										suffix: z.string().optional(),
-										value: z.number().optional(),
-										unit: z.string().optional(),
+										formatted: z.string().nullish(),
+										prefix: z.string().nullish(),
+										suffix: z.string().nullish(),
+										value: z.number().nullish(),
+										unit: z.string().nullish(),
 									})
 									.loose(),
 							)
-							.optional(),
+							.nullish(),
 						stageset: z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 								name: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
-								default: z.boolean().optional(),
-								canAccess: z.boolean().optional(),
-								status: z.enum(['1', '2', '3']).optional(),
+									.nullish(),
+								default: z.boolean().nullish(),
+								canAccess: z.boolean().nullish(),
+								status: z.enum(['1', '2', '3']).nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		stages: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						description: z.string().optional(),
-						position: z.number().int().optional(),
-						activeAvatarUrl: z.string().optional(),
-						completeAvatarUrl: z.string().optional(),
-						incompleteAvatarUrl: z.string().optional(),
-						overdueAvatarUrl: z.string().optional(),
-						numSteps: z.number().optional(),
-						canAdvanceStage: z.boolean().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						description: z.string().nullish(),
+						position: z.number().int().nullish(),
+						activeAvatarUrl: z.string().nullish(),
+						completeAvatarUrl: z.string().nullish(),
+						incompleteAvatarUrl: z.string().nullish(),
+						overdueAvatarUrl: z.string().nullish(),
+						numSteps: z.number().nullish(),
+						canAdvanceStage: z.boolean().nullish(),
 						links: z
 							.array(
 								z
 									.object({
-										stageset: z.string().optional(),
+										stageset: z.string().nullish(),
 									})
 									.loose(),
 							)
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2167,23 +2167,23 @@ const NutshellLeadsListItemsOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							count: z.number().int().optional(),
+							count: z.number().int().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							total: z.number().int().optional(),
+							total: z.number().int().nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		listItems: z
 			.array(
 				z.intersection(
@@ -2192,52 +2192,52 @@ const NutshellLeadsListItemsOutputSchema = z
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										avatarUrl: z.string().optional(),
-										initials: z.string().optional(),
+										avatarUrl: z.string().nullish(),
+										initials: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									id: z.string().optional(),
-									primaryName: z.string().optional(),
-									primaryInfo: z.string().optional(),
-									relatedName: z.string().optional(),
-									relatedInfo: z.string().optional(),
-									relatedType: z.string().optional(),
-									relatedUrl: z.string().optional(),
-									relatedUrlPath: z.string().optional(),
-									primaryContact: z.string().optional(),
-									primaryAccount: z.string().optional(),
-									latlon: z.string().optional(),
-									mapUrl: z.string().optional(),
-									isDeleted: z.boolean().optional(),
-									fields: z.array(z.object({}).loose()).optional(),
+									id: z.string().nullish(),
+									primaryName: z.string().nullish(),
+									primaryInfo: z.string().nullish(),
+									relatedName: z.string().nullish(),
+									relatedInfo: z.string().nullish(),
+									relatedType: z.string().nullish(),
+									relatedUrl: z.string().nullish(),
+									relatedUrlPath: z.string().nullish(),
+									primaryContact: z.string().nullish(),
+									primaryAccount: z.string().nullish(),
+									latlon: z.string().nullish(),
+									mapUrl: z.string().nullish(),
+									isDeleted: z.boolean().nullish(),
+									fields: z.array(z.object({}).loose()).nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2260,69 +2260,69 @@ const NutshellLeadsUndeleteOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -2465,11 +2465,11 @@ const NutshellIndustriesGetInputSchema = z
 	.strict();
 const NutshellIndustriesGetOutputSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().nullish(),
 		name: z
 			.unknown() /* OpenAPI schema has no recognized type */
-			.optional(),
-		modifiedTime: z.number().int().optional(),
+			.nullish(),
+		modifiedTime: z.number().int().nullish(),
 	})
 	.loose();
 
@@ -2485,18 +2485,18 @@ const NutshellTagsListOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.number().int().optional(),
-						tagType: z.string().optional(),
-						count: z.number().int().optional(),
-						colorType: z.string().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.number().int().nullish(),
+						tagType: z.string().nullish(),
+						count: z.number().int().nullish(),
+						colorType: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2510,7 +2510,7 @@ const NutshellEmailsGetInputSchema = z
 // message fields loose.
 const NutshellEmailsGetOutputSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().nullish(),
 	})
 	.loose();
 
@@ -2544,7 +2544,7 @@ const NutshellDashboardsListFieldsOutputSchema = z
 						size: z.string(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose(),
 	})
@@ -2561,8 +2561,8 @@ const NutshellAccountsUpdateOutputSchema = z.undefined();
 const NutshellEditionsListInputSchema = z.object({}).strict();
 const NutshellEditionsListOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -2571,45 +2571,45 @@ const NutshellProductMapsListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		productMaps: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						relationship: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								formatted: z.string().optional(),
-								amount: z.string().optional(),
-								currency: z.string().optional(),
+								formatted: z.string().nullish(),
+								amount: z.string().nullish(),
+								currency: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						unit: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						quantity: z.number().optional(),
-						productType: z.string().optional(),
+							.nullish(),
+						quantity: z.number().nullish(),
+						productType: z.string().nullish(),
 						links: z
 							.object({
-								product: z.string().optional(),
+								product: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2627,27 +2627,27 @@ const NutshellAccountsListFieldsOutputSchema = z
 			.object({
 				exampleProperty: z
 					.object({
-						type: z.string().optional(),
-						title: z.string().optional(),
-						description: z.string().optional(),
-						isFilterable: z.boolean().optional(),
-						isDisplayable: z.boolean().optional(),
-						isSortable: z.boolean().optional(),
-						isGoalable: z.boolean().optional(),
-						isAddable: z.boolean().optional(),
-						isBoardable: z.boolean().optional(),
-						isRequireable: z.boolean().optional(),
-						isAndable: z.boolean().optional(),
-						isNullable: z.boolean().optional(),
-						relationships: z.array(z.string()).optional(),
-						enum: z.array(z.string()).optional(),
-						format: z.string().optional(),
+						type: z.string().nullish(),
+						title: z.string().nullish(),
+						description: z.string().nullish(),
+						isFilterable: z.boolean().nullish(),
+						isDisplayable: z.boolean().nullish(),
+						isSortable: z.boolean().nullish(),
+						isGoalable: z.boolean().nullish(),
+						isAddable: z.boolean().nullish(),
+						isBoardable: z.boolean().nullish(),
+						isRequireable: z.boolean().nullish(),
+						isAndable: z.boolean().nullish(),
+						isNullable: z.boolean().nullish(),
+						relationships: z.array(z.string()).nullish(),
+						enum: z.array(z.string()).nullish(),
+						format: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2662,24 +2662,24 @@ const NutshellSourcesDeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 						channel: z
 							.object({
-								value: z.number().int().optional(),
-								display: z.string().optional(),
+								value: z.number().int().nullish(),
+								display: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
-						deletedTime: z.number().int().optional(),
+							.nullish(),
+						deletedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2691,21 +2691,21 @@ const NutshellNotesUndeleteInputSchema = z
 const NutshellNotesUndeleteOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
-			createdTime: z.string().optional(),
-			deletedTime: z.string().optional(),
-			href: z.string().optional(),
-			body: z.string().optional(),
-			bodyHtml: z.string().optional(),
-			bodyMarkup: z.string().optional(),
-			isEditable: z.boolean().optional(),
-			parentType: z.string().optional(),
+			id: z.string().nullish(),
+			createdTime: z.string().nullish(),
+			deletedTime: z.string().nullish(),
+			href: z.string().nullish(),
+			body: z.string().nullish(),
+			bodyHtml: z.string().nullish(),
+			bodyMarkup: z.string().nullish(),
+			isEditable: z.boolean().nullish(),
+			parentType: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -2840,7 +2840,7 @@ const NutshellLeadsCustomFieldAttributesInputSchema = z.object({}).strict();
 const NutshellLeadsCustomFieldAttributesOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -2853,7 +2853,7 @@ const NutshellContactsCustomfieldsInputSchema = z
 const NutshellContactsCustomfieldsOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -2932,30 +2932,30 @@ const NutshellTodosListOutputSchema = z
 					type: z.enum(['tasks', 'steps']),
 					title: z.string(),
 					description: z.string().nullable().optional(),
-					href: z.string().optional(),
+					href: z.string().nullish(),
 					dueTime: z.number().int().nullable().optional(),
 					completedTime: z.number().int().nullable().optional(),
-					isCompleted: z.boolean().optional(),
-					isOverdue: z.boolean().optional(),
-					isRecurring: z.boolean().optional(),
-					isSkipped: z.boolean().optional(),
+					isCompleted: z.boolean().nullish(),
+					isOverdue: z.boolean().nullish(),
+					isRecurring: z.boolean().nullish(),
+					isSkipped: z.boolean().nullish(),
 					delays: z
 						.array(
 							z
 								.object({
-									id: z.string().optional(),
+									id: z.string().nullish(),
 									name: z.string().nullable().optional(),
 									displayLength: z.string().nullable().optional(),
 								})
 								.loose(),
 						)
-						.optional(),
-					links: z.object({}).loose().optional(),
+						.nullish(),
+					links: z.object({}).loose().nullish(),
 				})
 				.loose(),
 		),
-		relatedEntities: z.array(z.object({}).loose()).optional(),
-		users: z.array(z.object({}).loose()).optional(),
+		relatedEntities: z.array(z.object({}).loose()).nullish(),
+		users: z.array(z.object({}).loose()).nullish(),
 		meta: z
 			.object({
 				count: z.number().int().nullable(),
@@ -2976,7 +2976,7 @@ const NutshellTodosListOutputSchema = z
 					.loose(),
 			})
 			.loose(),
-		links: z.object({}).loose().optional(),
+		links: z.object({}).loose().nullish(),
 	})
 	.loose();
 
@@ -2991,81 +2991,81 @@ const NutshellUsersGetOutputSchema = z
 			.intersection(
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						next: z.string().optional(),
-						previous: z.string().optional(),
-						total: z.number().int().optional(),
+						next: z.string().nullish(),
+						previous: z.string().nullish(),
+						total: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		users: z
 			.array(
 				z.intersection(
 					z.intersection(
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 								name: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
+									.nullish(),
 								firstName: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
-								modifiedTime: z.number().int().optional(),
-								isEnabled: z.boolean().optional(),
-								hasSetPassword: z.boolean().optional(),
-								isAdministrator: z.boolean().optional(),
-								isViewingRestricted: z.boolean().optional(),
-								isHiddenFromFilters: z.boolean().optional(),
-								canAccessEmailMarketing: z.boolean().optional(),
+									.nullish(),
+								modifiedTime: z.number().int().nullish(),
+								isEnabled: z.boolean().nullish(),
+								hasSetPassword: z.boolean().nullish(),
+								isAdministrator: z.boolean().nullish(),
+								isViewingRestricted: z.boolean().nullish(),
+								isHiddenFromFilters: z.boolean().nullish(),
+								canAccessEmailMarketing: z.boolean().nullish(),
 								permissions: z
 									.object({
-										canAccessSetup: z.boolean().optional(),
-										canAccessMarketing: z.boolean().optional(),
-										canBulkEdit: z.boolean().optional(),
-										canExport: z.boolean().optional(),
-										canViewSharedEmails: z.boolean().optional(),
-										canImport: z.boolean().optional(),
-										canMergeEntities: z.boolean().optional(),
-										canDeleteEntities: z.boolean().optional(),
-										canAssignEntities: z.boolean().optional(),
-										canAccessBilling: z.boolean().optional(),
-										canManageEmailTemplates: z.boolean().optional(),
-										canAccessCrm: z.boolean().optional(),
-										canAccessFullCampaigns: z.boolean().optional(),
-										canUsePeopleIQ: z.boolean().optional(),
-										canUseInbox: z.boolean().optional(),
+										canAccessSetup: z.boolean().nullish(),
+										canAccessMarketing: z.boolean().nullish(),
+										canBulkEdit: z.boolean().nullish(),
+										canExport: z.boolean().nullish(),
+										canViewSharedEmails: z.boolean().nullish(),
+										canImport: z.boolean().nullish(),
+										canMergeEntities: z.boolean().nullish(),
+										canDeleteEntities: z.boolean().nullish(),
+										canAssignEntities: z.boolean().nullish(),
+										canAccessBilling: z.boolean().nullish(),
+										canManageEmailTemplates: z.boolean().nullish(),
+										canAccessCrm: z.boolean().nullish(),
+										canAccessFullCampaigns: z.boolean().nullish(),
+										canUsePeopleIQ: z.boolean().nullish(),
+										canUseInbox: z.boolean().nullish(),
 									})
 									.loose()
-									.optional(),
-								emails: z.array(z.string()).optional(),
+									.nullish(),
+								emails: z.array(z.string()).nullish(),
 								phonecallerType: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
+									.nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3073,7 +3073,7 @@ const NutshellContactsCustomFieldAttributesInputSchema = z.object({}).strict();
 const NutshellContactsCustomFieldAttributesOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -3101,18 +3101,18 @@ const NutshellProductCategoriesCreateOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3123,18 +3123,18 @@ const NutshellProductCategoriesListOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3147,45 +3147,45 @@ const NutshellProductMapsGetOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		productMaps: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						relationship: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								formatted: z.string().optional(),
-								amount: z.string().optional(),
-								currency: z.string().optional(),
+								formatted: z.string().nullish(),
+								amount: z.string().nullish(),
+								currency: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						unit: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						quantity: z.number().optional(),
-						productType: z.string().optional(),
+							.nullish(),
+						quantity: z.number().nullish(),
+						productType: z.string().nullish(),
 						links: z
 							.object({
-								product: z.string().optional(),
+								product: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3241,69 +3241,69 @@ const NutshellLeadsStatusOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -3312,9 +3312,9 @@ const NutshellAccountTypesListInputSchema = z.object({}).strict();
 const NutshellAccountTypesListOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
-			name: z.string().optional(),
-			modifiedTime: z.number().int().optional(),
+			id: z.string().nullish(),
+			name: z.string().nullish(),
+			modifiedTime: z.number().int().nullish(),
 		})
 		.loose(),
 );
@@ -3326,8 +3326,8 @@ const NutshellEditionsGetInputSchema = z
 	.strict();
 const NutshellEditionsGetOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -3342,51 +3342,51 @@ const NutshellProductsUndeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						description: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.string().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.string().nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						productType: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						prices: z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().optional(),
-										currency: z.string().optional(),
-										formatted: z.string().optional(),
-										currencySymbol: z.string().optional(),
+										amount: z.number().nullish(),
+										currency: z.string().nullish(),
+										formatted: z.string().nullish(),
+										currencySymbol: z.string().nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								amount: z.number().optional(),
-								currency: z.string().optional(),
-								formatted: z.string().optional(),
-								currencySymbol: z.string().optional(),
+								amount: z.number().nullish(),
+								currency: z.string().nullish(),
+								formatted: z.string().nullish(),
+								currencySymbol: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3401,18 +3401,18 @@ const NutshellTagsDeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.number().int().optional(),
-						tagType: z.string().optional(),
-						count: z.number().int().optional(),
-						colorType: z.string().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.number().int().nullish(),
+						tagType: z.string().nullish(),
+						count: z.number().int().nullish(),
+						colorType: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3453,23 +3453,23 @@ const NutshellContactsListItemsOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							count: z.number().int().optional(),
+							count: z.number().int().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							total: z.number().int().optional(),
+							total: z.number().int().nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		listItems: z
 			.array(
 				z.intersection(
@@ -3479,58 +3479,58 @@ const NutshellContactsListItemsOutputSchema = z
 								z.intersection(
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 									z
 										.object({
-											avatarUrl: z.string().optional(),
-											initials: z.string().optional(),
+											avatarUrl: z.string().nullish(),
+											initials: z.string().nullish(),
 										})
 										.loose(),
 								),
 								z
 									.object({
-										id: z.string().optional(),
-										primaryName: z.string().optional(),
-										primaryInfo: z.string().optional(),
-										relatedName: z.string().optional(),
-										relatedInfo: z.string().optional(),
-										relatedType: z.string().optional(),
-										relatedUrl: z.string().optional(),
-										relatedUrlPath: z.string().optional(),
-										primaryContact: z.string().optional(),
-										primaryAccount: z.string().optional(),
-										latlon: z.string().optional(),
-										mapUrl: z.string().optional(),
-										isDeleted: z.boolean().optional(),
-										fields: z.array(z.object({}).loose()).optional(),
+										id: z.string().nullish(),
+										primaryName: z.string().nullish(),
+										primaryInfo: z.string().nullish(),
+										relatedName: z.string().nullish(),
+										relatedInfo: z.string().nullish(),
+										relatedType: z.string().nullish(),
+										relatedUrl: z.string().nullish(),
+										relatedUrlPath: z.string().nullish(),
+										primaryContact: z.string().nullish(),
+										primaryAccount: z.string().nullish(),
+										latlon: z.string().nullish(),
+										mapUrl: z.string().nullish(),
+										isDeleted: z.boolean().nullish(),
+										fields: z.array(z.object({}).loose()).nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									description: z.string().optional(),
+									description: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3543,45 +3543,45 @@ const NutshellProductMapsDeleteOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		productMaps: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						relationship: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								formatted: z.string().optional(),
-								amount: z.string().optional(),
-								currency: z.string().optional(),
+								formatted: z.string().nullish(),
+								amount: z.string().nullish(),
+								currency: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						unit: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						quantity: z.number().optional(),
-						productType: z.string().optional(),
+							.nullish(),
+						quantity: z.number().nullish(),
+						productType: z.string().nullish(),
 						links: z
 							.object({
-								product: z.string().optional(),
+								product: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3595,18 +3595,18 @@ const NutshellLeadsInstallmentsOutputSchema = z
 		installments: z.array(
 			z
 				.object({
-					id: z.string().optional(),
-					dueTime: z.string().optional(),
-					description: z.string().optional(),
+					id: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					description: z.string().nullish(),
 					value: z
 						.object({
-							currency: z.string().optional(),
-							amount: z.number().optional(),
+							currency: z.string().nullish(),
+							amount: z.number().nullish(),
 						})
 						.loose()
-						.optional(),
-					failedTime: z.string().optional(),
-					isPaid: z.boolean().optional(),
+						.nullish(),
+					failedTime: z.string().nullish(),
+					isPaid: z.boolean().nullish(),
 				})
 				.loose(),
 		),
@@ -3691,69 +3691,69 @@ const NutshellLeadsCreateOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -3766,21 +3766,21 @@ const NutshellNotesGetInputSchema = z
 const NutshellNotesGetOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
-			createdTime: z.string().optional(),
-			deletedTime: z.string().optional(),
-			href: z.string().optional(),
-			body: z.string().optional(),
-			bodyHtml: z.string().optional(),
-			bodyMarkup: z.string().optional(),
-			isEditable: z.boolean().optional(),
-			parentType: z.string().optional(),
+			id: z.string().nullish(),
+			createdTime: z.string().nullish(),
+			deletedTime: z.string().nullish(),
+			href: z.string().nullish(),
+			body: z.string().nullish(),
+			bodyHtml: z.string().nullish(),
+			bodyMarkup: z.string().nullish(),
+			isEditable: z.boolean().nullish(),
+			parentType: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -3789,11 +3789,11 @@ const NutshellIndustriesListInputSchema = z.object({}).strict();
 const NutshellIndustriesListOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 			name: z
 				.unknown() /* OpenAPI schema has no recognized type */
-				.optional(),
-			modifiedTime: z.number().int().optional(),
+				.nullish(),
+			modifiedTime: z.number().int().nullish(),
 		})
 		.loose(),
 );
@@ -3809,15 +3809,15 @@ const NutshellFormsGetFieldIdOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						label: z.string().optional(),
-						fieldName: z.string().optional(),
-						fieldType: z.string().optional(),
-						entityName: z.string().optional(),
+						id: z.string().nullish(),
+						label: z.string().nullish(),
+						fieldName: z.string().nullish(),
+						fieldType: z.string().nullish(),
+						entityName: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3830,13 +3830,13 @@ const NutshellLeadsCustomfieldsOutputSchema = z.array(
 	z.intersection(
 		z
 			.object({
-				id: z.string().optional(),
+				id: z.string().nullish(),
 			})
 			.loose(),
 		z
 			.object({
-				value: z.string().optional(),
-				id: z.string().optional(),
+				value: z.string().nullish(),
+				id: z.string().nullish(),
 			})
 			.loose(),
 	),
@@ -3857,21 +3857,21 @@ const NutshellNotesDeleteInputSchema = z
 const NutshellNotesDeleteOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
-			createdTime: z.string().optional(),
-			deletedTime: z.string().optional(),
-			href: z.string().optional(),
-			body: z.string().optional(),
-			bodyHtml: z.string().optional(),
-			bodyMarkup: z.string().optional(),
-			isEditable: z.boolean().optional(),
-			parentType: z.string().optional(),
+			id: z.string().nullish(),
+			createdTime: z.string().nullish(),
+			deletedTime: z.string().nullish(),
+			href: z.string().nullish(),
+			body: z.string().nullish(),
+			bodyHtml: z.string().nullish(),
+			bodyMarkup: z.string().nullish(),
+			isEditable: z.boolean().nullish(),
+			parentType: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -3881,8 +3881,8 @@ const NutshellStageSetsListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose(),
 		links: z.object({}).loose(),
@@ -3890,13 +3890,13 @@ const NutshellStageSetsListOutputSchema = z
 			z.intersection(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						default: z.boolean().optional(),
-						canAccess: z.boolean().optional(),
-						status: z.enum(['1', '2', '3']).optional(),
+							.nullish(),
+						default: z.boolean().nullish(),
+						canAccess: z.boolean().nullish(),
+						status: z.enum(['1', '2', '3']).nullish(),
 					})
 					.loose(),
 				z
@@ -3964,18 +3964,18 @@ const NutshellTagsCreateOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.number().int().optional(),
-						tagType: z.string().optional(),
-						count: z.number().int().optional(),
-						colorType: z.string().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.number().int().nullish(),
+						tagType: z.string().nullish(),
+						count: z.number().int().nullish(),
+						colorType: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3986,7 +3986,7 @@ const NutshellContactsGetInputSchema = z
 	.strict();
 const NutshellContactsGetOutputSchema = z
 	.object({
-		links: z.object({}).loose().optional(),
+		links: z.object({}).loose().nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -3997,99 +3997,99 @@ const NutshellContactsGetOutputSchema = z
 									z.intersection(
 										z
 											.object({
-												id: z.string().optional(),
-												name: z.string().optional(),
-												description: z.string().optional(),
-												createdTime: z.number().int().optional(),
-												deletedTime: z.number().int().optional(),
+												id: z.string().nullish(),
+												name: z.string().nullish(),
+												description: z.string().nullish(),
+												createdTime: z.number().int().nullish(),
+												deletedTime: z.number().int().nullish(),
 												emails: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												addresses: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
 																		location: z
 																			.object({
-																				longitude: z.number().optional(),
-																				latitude: z.number().optional(),
+																				longitude: z.number().nullish(),
+																				latitude: z.number().nullish(),
 																			})
 																			.loose()
-																			.optional(),
+																			.nullish(),
 																	})
 																	.loose()
-																	.optional(),
-																locationAccuracy: z.string().optional(),
-																address_1: z.string().optional(),
-																address_2: z.string().optional(),
-																address_3: z.string().optional(),
-																city: z.string().optional(),
-																state: z.string().optional(),
-																postalCode: z.string().optional(),
-																country: z.string().optional(),
-																timezone: z.string().optional(),
+																	.nullish(),
+																locationAccuracy: z.string().nullish(),
+																address_1: z.string().nullish(),
+																address_2: z.string().nullish(),
+																address_3: z.string().nullish(),
+																city: z.string().nullish(),
+																state: z.string().nullish(),
+																postalCode: z.string().nullish(),
+																country: z.string().nullish(),
+																timezone: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												phones: z
 													.array(
 														z
 															.object({
-																isOptedOut: z.boolean().optional(),
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isOptedOut: z.boolean().nullish(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
-																		countryCode: z.string().optional(),
-																		number: z.string().optional(),
-																		extension: z.string().optional(),
-																		numberFormatted: z.string().optional(),
-																		E164: z.string().optional(),
-																		countryCodeAndNumber: z.string().optional(),
+																		countryCode: z.string().nullish(),
+																		number: z.string().nullish(),
+																		extension: z.string().nullish(),
+																		numberFormatted: z.string().nullish(),
+																		E164: z.string().nullish(),
+																		countryCodeAndNumber: z.string().nullish(),
 																	})
 																	.loose()
-																	.optional(),
+																	.nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												urls: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 											})
 											.loose(),
 										z
 											.object({
-												avatarUrl: z.string().optional(),
-												initials: z.string().optional(),
+												avatarUrl: z.string().nullish(),
+												initials: z.string().nullish(),
 											})
 											.loose(),
 									),
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 								),
@@ -4097,39 +4097,39 @@ const NutshellContactsGetOutputSchema = z
 									.object({
 										jobTitle: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										firstName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										lastName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
-										href: z.string().optional(),
+											.nullish(),
+										href: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							links: z.object({}).loose().optional(),
+							links: z.object({}).loose().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4144,24 +4144,24 @@ const NutshellSourcesUndeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 						channel: z
 							.object({
-								value: z.number().int().optional(),
-								display: z.string().optional(),
+								value: z.number().int().nullish(),
+								display: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
-						deletedTime: z.number().int().optional(),
+							.nullish(),
+						deletedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4173,30 +4173,30 @@ const NutshellTasksDeleteInputSchema = z
 const NutshellTasksDeleteOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
+			id: z.string().nullish(),
 			recurrenceRule: z
 				.intersection(
 					z
 						.object({
-							htmlUrl: z.string().optional(),
-							htmlUrlPath: z.string().optional(),
+							htmlUrl: z.string().nullish(),
+							htmlUrlPath: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							rule: z.string().optional(),
-							mode: z.enum(['dueDate', 'completion']).optional(),
-							id: z.string().optional(),
+							rule: z.string().nullish(),
+							mode: z.enum(['dueDate', 'completion']).nullish(),
+							id: z.string().nullish(),
 						})
 						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -4329,8 +4329,8 @@ const NutshellLeadsGetOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose(),
 		links: z.object({}).loose(),
@@ -4342,69 +4342,69 @@ const NutshellLeadsGetOutputSchema = z
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										avatarUrl: z.string().optional(),
-										initials: z.string().optional(),
+										avatarUrl: z.string().nullish(),
+										initials: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									id: z.string().optional(),
-									deletedTime: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									deletedTime: z.string().nullish(),
+									name: z.string().nullish(),
 									value: z
 										.object({
-											formatted: z.string().optional(),
-											amount: z.string().optional(),
-											currency: z.string().optional(),
+											formatted: z.string().nullish(),
+											amount: z.string().nullish(),
+											currency: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									number: z.number().int().optional(),
-									description: z.string().optional(),
+										.nullish(),
+									number: z.number().int().nullish(),
+									description: z.string().nullish(),
 									createdTime: z
 										.object({
-											absoluteLocalizedString: z.string().optional(),
-											timestamp: z.number().optional(),
-											value: z.string().optional(),
+											absoluteLocalizedString: z.string().nullish(),
+											timestamp: z.number().nullish(),
+											value: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									closedTime: z.string().optional(),
-									dueTime: z.string().optional(),
-									anticipatedClosedTime: z.string().optional(),
-									ownerType: z.string().optional(),
-									status: z.string().optional(),
+										.nullish(),
+									closedTime: z.string().nullish(),
+									dueTime: z.string().nullish(),
+									anticipatedClosedTime: z.string().nullish(),
+									ownerType: z.string().nullish(),
+									status: z.string().nullish(),
 									lastContactedTime: z
 										.unknown() /* OpenAPI schema has no recognized type */
-										.optional(),
-									pieState: z.string().optional(),
-									isOverdue: z.boolean().optional(),
-									overdueTime: z.string().optional(),
-									href: z.string().optional(),
-									confidence: z.number().int().optional(),
-									priority: z.number().int().optional(),
-									isCurrentUserWatching: z.boolean().optional(),
+										.nullish(),
+									pieState: z.string().nullish(),
+									isOverdue: z.boolean().nullish(),
+									overdueTime: z.string().nullish(),
+									href: z.string().nullish(),
+									confidence: z.number().int().nullish(),
+									priority: z.number().int().nullish(),
+									isCurrentUserWatching: z.boolean().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
@@ -4453,8 +4453,8 @@ const NutshellLeadsCreateCustomFieldInputSchema = z
 // the created custom field, validated around its known identifier and name.
 const NutshellLeadsCreateCustomFieldOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -4518,78 +4518,78 @@ const NutshellEventsListOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							instanceId: z.string().optional(),
-							siteId: z.string().optional(),
+							instanceId: z.string().nullish(),
+							siteId: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							previous: z.string().optional(),
+							previous: z.string().nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						next: z.string().optional(),
+						next: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		events: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
-							createdTime: z.number().int().optional(),
-							actorType: z.string().optional(),
-							payloadType: z.string().optional(),
-							action: z.string().optional(),
+							id: z.string().nullish(),
+							createdTime: z.number().int().nullish(),
+							actorType: z.string().nullish(),
+							payloadType: z.string().nullish(),
+							action: z.string().nullish(),
 							changes: z
 								.array(
 									z
 										.object({
-											attribute: z.string().optional(),
+											attribute: z.string().nullish(),
 											oldValue: z
 												.object({
-													id: z.string().optional(),
-													type: z.string().optional(),
-													name: z.string().optional(),
-													position: z.number().int().optional(),
+													id: z.string().nullish(),
+													type: z.string().nullish(),
+													name: z.string().nullish(),
+													position: z.number().int().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											newValue: z
 												.object({
-													id: z.string().optional(),
-													type: z.string().optional(),
-													name: z.string().optional(),
-													position: z.number().int().optional(),
+													id: z.string().nullish(),
+													type: z.string().nullish(),
+													name: z.string().nullish(),
+													position: z.number().int().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
-							count: z.string().optional(),
+								.nullish(),
+							count: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
 							links: z
 								.object({
-									actor: z.string().optional(),
-									payloads: z.array(z.string()).optional(),
-									comments: z.array(z.string()).optional(),
+									actor: z.string().nullish(),
+									payloads: z.array(z.string()).nullish(),
+									comments: z.array(z.string()).nullish(),
 								})
 								.loose()
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4725,10 +4725,10 @@ const NutshellOutcomesGetInputSchema = z
 	.strict();
 const NutshellOutcomesGetOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		status: z.string().optional(),
-		type: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		status: z.string().nullish(),
+		type: z.string().nullish(),
 	})
 	.loose();
 
@@ -4754,8 +4754,8 @@ const NutshellFiltersListOutputSchema = z
 		filters: z.array(
 			z
 				.object({
-					id: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					name: z.string().nullish(),
 				})
 				.loose(),
 		),
@@ -4788,8 +4788,8 @@ const NutshellAccountsCreateCustomFieldInputSchema = z
 // the created custom field, validated around its known identifier and name.
 const NutshellAccountsCreateCustomFieldOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -4800,38 +4800,38 @@ const NutshellContactsListFieldsOutputSchema = z
 			.object({
 				exampleProperty: z
 					.object({
-						type: z.string().optional(),
-						title: z.string().optional(),
-						description: z.string().optional(),
-						isFilterable: z.boolean().optional(),
-						isDisplayable: z.boolean().optional(),
-						isSortable: z.boolean().optional(),
-						isGoalable: z.boolean().optional(),
-						isAddable: z.boolean().optional(),
-						isBoardable: z.boolean().optional(),
-						isRequireable: z.boolean().optional(),
-						isAndable: z.boolean().optional(),
-						isNullable: z.boolean().optional(),
-						relationships: z.array(z.string()).optional(),
-						enum: z.array(z.string()).optional(),
-						format: z.string().optional(),
+						type: z.string().nullish(),
+						title: z.string().nullish(),
+						description: z.string().nullish(),
+						isFilterable: z.boolean().nullish(),
+						isDisplayable: z.boolean().nullish(),
+						isSortable: z.boolean().nullish(),
+						isGoalable: z.boolean().nullish(),
+						isAddable: z.boolean().nullish(),
+						isBoardable: z.boolean().nullish(),
+						isRequireable: z.boolean().nullish(),
+						isAndable: z.boolean().nullish(),
+						isNullable: z.boolean().nullish(),
+						relationships: z.array(z.string()).nullish(),
+						enum: z.array(z.string()).nullish(),
+						format: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
 const NutshellMarketsListInputSchema = z.object({}).strict();
 const NutshellMarketsListOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		currency: z.string().optional(),
-		currencySymbol: z.string().optional(),
-		isDefault: z.boolean().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		currency: z.string().nullish(),
+		currencySymbol: z.string().nullish(),
+		isDefault: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -4858,14 +4858,14 @@ const NutshellAudiencesCreateOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						type: z.string().optional(),
-						name: z.string().optional(),
-						isWebFX: z.boolean().optional(),
+						id: z.string().nullish(),
+						type: z.string().nullish(),
+						name: z.string().nullish(),
+						isWebFX: z.boolean().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4886,69 +4886,69 @@ const NutshellLeadsPostStagesetOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -4958,36 +4958,36 @@ const NutshellFormsListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
-		links: z.object({}).loose().optional(),
+			.nullish(),
+		links: z.object({}).loose().nullish(),
 		wfForms: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
-							name: z.string().optional(),
-							href: z.string().optional(),
-							createdTime: z.string().optional(),
+							id: z.string().nullish(),
+							name: z.string().nullish(),
+							href: z.string().nullish(),
+							createdTime: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
 							links: z
 								.object({
-									fields: z.array(z.string()).optional(),
+									fields: z.array(z.string()).nullish(),
 								})
 								.loose()
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5017,8 +5017,8 @@ const NutshellActivitiesListInputSchema = z
 const NutshellActivitiesListOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
@@ -5030,51 +5030,51 @@ const NutshellActivitiesListOutputSchema = z.intersection(
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										id: z.string().optional(),
+										id: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 							})
 							.loose(),
 					),
 				)
-				.optional(),
-			id: z.string().optional(),
+				.nullish(),
+			id: z.string().nullish(),
 			agenda: z
 				.unknown() /* OpenAPI schema has no recognized type */
-				.optional(),
-			createdTime: z.number().int().optional(),
-			endTime: z.number().int().optional(),
-			deletedTime: z.number().int().optional(),
-			href: z.string().optional(),
-			isAllDay: z.boolean().optional(),
-			isEditable: z.boolean().optional(),
-			isCancelled: z.boolean().optional(),
-			isFlagged: z.boolean().optional(),
-			isLogged: z.boolean().optional(),
-			isOverdue: z.boolean().optional(),
-			loggedTime: z.number().int().optional(),
-			modifiedTime: z.number().int().optional(),
-			name: z.string().optional(),
-			startTime: z.number().int().optional(),
-			isMediaLogged: z.boolean().optional(),
-			transcription: z.string().optional(),
+				.nullish(),
+			createdTime: z.number().int().nullish(),
+			endTime: z.number().int().nullish(),
+			deletedTime: z.number().int().nullish(),
+			href: z.string().nullish(),
+			isAllDay: z.boolean().nullish(),
+			isEditable: z.boolean().nullish(),
+			isCancelled: z.boolean().nullish(),
+			isFlagged: z.boolean().nullish(),
+			isLogged: z.boolean().nullish(),
+			isOverdue: z.boolean().nullish(),
+			loggedTime: z.number().int().nullish(),
+			modifiedTime: z.number().int().nullish(),
+			name: z.string().nullish(),
+			startTime: z.number().int().nullish(),
+			isMediaLogged: z.boolean().nullish(),
+			transcription: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -5090,92 +5090,92 @@ const NutshellCompetitorMapsGetOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						relationship: z.string().optional(),
-						name: z.string().optional(),
+						id: z.string().nullish(),
+						relationship: z.string().nullish(),
+						name: z.string().nullish(),
 						status: z
 							.union([z.enum(['potential', 'stole', 'beat']), z.null()])
-							.optional(),
+							.nullish(),
 						links: z
 							.object({
-								lead: z.string().optional(),
-								competitor: z.string().optional(),
+								lead: z.string().nullish(),
+								competitor: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		leads: z
 			.array(
 				z.intersection(
 					z.intersection(
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							id: z.string().optional(),
-							deletedTime: z.string().optional(),
-							name: z.string().optional(),
+							id: z.string().nullish(),
+							deletedTime: z.string().nullish(),
+							name: z.string().nullish(),
 							value: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							number: z.number().int().optional(),
-							description: z.string().optional(),
+								.nullish(),
+							number: z.number().int().nullish(),
+							description: z.string().nullish(),
 							createdTime: z
 								.object({
-									absoluteLocalizedString: z.string().optional(),
-									timestamp: z.number().optional(),
-									value: z.string().optional(),
+									absoluteLocalizedString: z.string().nullish(),
+									timestamp: z.number().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							closedTime: z.string().optional(),
-							dueTime: z.string().optional(),
-							anticipatedClosedTime: z.string().optional(),
-							ownerType: z.string().optional(),
-							status: z.string().optional(),
+								.nullish(),
+							closedTime: z.string().nullish(),
+							dueTime: z.string().nullish(),
+							anticipatedClosedTime: z.string().nullish(),
+							ownerType: z.string().nullish(),
+							status: z.string().nullish(),
 							lastContactedTime: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							pieState: z.string().optional(),
-							isOverdue: z.boolean().optional(),
-							overdueTime: z.string().optional(),
-							href: z.string().optional(),
-							confidence: z.number().int().optional(),
-							priority: z.number().int().optional(),
-							isCurrentUserWatching: z.boolean().optional(),
+								.nullish(),
+							pieState: z.string().nullish(),
+							isOverdue: z.boolean().nullish(),
+							overdueTime: z.string().nullish(),
+							href: z.string().nullish(),
+							confidence: z.number().int().nullish(),
+							priority: z.number().int().nullish(),
+							isCurrentUserWatching: z.boolean().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		competitors: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5315,10 +5315,10 @@ const NutshellCompetitorsGetOutputSchema = z
 	.object({
 		competitors: z
 			.unknown() /* OpenAPI schema has no recognized type */
-			.optional(),
-		id: z.string().optional(),
-		name: z.string().optional(),
-		modifiedTime: z.number().int().optional(),
+			.nullish(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		modifiedTime: z.number().int().nullish(),
 	})
 	.loose();
 
@@ -5368,81 +5368,81 @@ const NutshellLeadsReportJsonObjectSchema = z
 					.object({
 						report: z
 							.object({
-								id: z.string().optional(),
-								key: z.string().optional(),
+								id: z.string().nullish(),
+								key: z.string().nullish(),
 								data: z
 									.array(
 										z
 											.object({
 												bucket: z
 													.object({
-														bucket: z.string().optional(),
+														bucket: z.string().nullish(),
 														count: z
 															.object({
-																formatted: z.string().optional(),
-																prefix: z.string().optional(),
-																suffix: z.string().optional(),
-																value: z.number().optional(),
+																formatted: z.string().nullish(),
+																prefix: z.string().nullish(),
+																suffix: z.string().nullish(),
+																value: z.number().nullish(),
 															})
 															.loose()
-															.optional(),
+															.nullish(),
 														total: z
 															.object({
-																formatted: z.string().optional(),
-																prefix: z.string().optional(),
-																suffix: z.string().optional(),
-																value: z.number().optional(),
+																formatted: z.string().nullish(),
+																prefix: z.string().nullish(),
+																suffix: z.string().nullish(),
+																value: z.number().nullish(),
 															})
 															.loose()
-															.optional(),
-														bucketType: z.string().optional(),
-														bucketSubtype: z.string().optional(),
-														filters: z.array(z.string()).optional(),
-														segments: z.array(z.string()).optional(),
+															.nullish(),
+														bucketType: z.string().nullish(),
+														bucketSubtype: z.string().nullish(),
+														filters: z.array(z.string()).nullish(),
+														segments: z.array(z.string()).nullish(),
 													})
 													.loose()
-													.optional(),
+													.nullish(),
 											})
 											.loose(),
 									)
-									.optional(),
-								name: z.string().optional(),
-								prefix: z.string().optional(),
+									.nullish(),
+								name: z.string().nullish(),
+								prefix: z.string().nullish(),
 								summary: z
 									.object({
-										bucket: z.string().optional(),
+										bucket: z.string().nullish(),
 										count: z
 											.object({
-												formatted: z.string().optional(),
-												prefix: z.string().optional(),
-												suffix: z.string().optional(),
-												value: z.number().optional(),
+												formatted: z.string().nullish(),
+												prefix: z.string().nullish(),
+												suffix: z.string().nullish(),
+												value: z.number().nullish(),
 											})
 											.loose()
-											.optional(),
+											.nullish(),
 										total: z
 											.object({
-												formatted: z.string().optional(),
-												prefix: z.string().optional(),
-												suffix: z.string().optional(),
-												value: z.number().optional(),
+												formatted: z.string().nullish(),
+												prefix: z.string().nullish(),
+												suffix: z.string().nullish(),
+												value: z.number().nullish(),
 											})
 											.loose()
-											.optional(),
-										bucketType: z.string().optional(),
-										bucketSubtype: z.string().optional(),
-										filters: z.array(z.string()).optional(),
-										segments: z.array(z.string()).optional(),
+											.nullish(),
+										bucketType: z.string().nullish(),
+										bucketSubtype: z.string().nullish(),
+										filters: z.array(z.string()).nullish(),
+										segments: z.array(z.string()).nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5460,7 +5460,7 @@ const NutshellContactsUndeleteInputSchema = z
 	.strict();
 const NutshellContactsUndeleteOutputSchema = z
 	.object({
-		links: z.object({}).loose().optional(),
+		links: z.object({}).loose().nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -5471,99 +5471,99 @@ const NutshellContactsUndeleteOutputSchema = z
 									z.intersection(
 										z
 											.object({
-												id: z.string().optional(),
-												name: z.string().optional(),
-												description: z.string().optional(),
-												createdTime: z.number().int().optional(),
-												deletedTime: z.number().int().optional(),
+												id: z.string().nullish(),
+												name: z.string().nullish(),
+												description: z.string().nullish(),
+												createdTime: z.number().int().nullish(),
+												deletedTime: z.number().int().nullish(),
 												emails: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												addresses: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
 																		location: z
 																			.object({
-																				longitude: z.number().optional(),
-																				latitude: z.number().optional(),
+																				longitude: z.number().nullish(),
+																				latitude: z.number().nullish(),
 																			})
 																			.loose()
-																			.optional(),
+																			.nullish(),
 																	})
 																	.loose()
-																	.optional(),
-																locationAccuracy: z.string().optional(),
-																address_1: z.string().optional(),
-																address_2: z.string().optional(),
-																address_3: z.string().optional(),
-																city: z.string().optional(),
-																state: z.string().optional(),
-																postalCode: z.string().optional(),
-																country: z.string().optional(),
-																timezone: z.string().optional(),
+																	.nullish(),
+																locationAccuracy: z.string().nullish(),
+																address_1: z.string().nullish(),
+																address_2: z.string().nullish(),
+																address_3: z.string().nullish(),
+																city: z.string().nullish(),
+																state: z.string().nullish(),
+																postalCode: z.string().nullish(),
+																country: z.string().nullish(),
+																timezone: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												phones: z
 													.array(
 														z
 															.object({
-																isOptedOut: z.boolean().optional(),
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isOptedOut: z.boolean().nullish(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
-																		countryCode: z.string().optional(),
-																		number: z.string().optional(),
-																		extension: z.string().optional(),
-																		numberFormatted: z.string().optional(),
-																		E164: z.string().optional(),
-																		countryCodeAndNumber: z.string().optional(),
+																		countryCode: z.string().nullish(),
+																		number: z.string().nullish(),
+																		extension: z.string().nullish(),
+																		numberFormatted: z.string().nullish(),
+																		E164: z.string().nullish(),
+																		countryCodeAndNumber: z.string().nullish(),
 																	})
 																	.loose()
-																	.optional(),
+																	.nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												urls: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 											})
 											.loose(),
 										z
 											.object({
-												avatarUrl: z.string().optional(),
-												initials: z.string().optional(),
+												avatarUrl: z.string().nullish(),
+												initials: z.string().nullish(),
 											})
 											.loose(),
 									),
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 								),
@@ -5571,39 +5571,39 @@ const NutshellContactsUndeleteOutputSchema = z
 									.object({
 										jobTitle: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										firstName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										lastName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
-										href: z.string().optional(),
+											.nullish(),
+										href: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							links: z.object({}).loose().optional(),
+							links: z.object({}).loose().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5618,69 +5618,69 @@ const NutshellLeadsWatchOutputSchema = z.intersection(
 			z.intersection(
 				z
 					.object({
-						htmlUrl: z.string().optional(),
-						htmlUrlPath: z.string().optional(),
+						htmlUrl: z.string().nullish(),
+						htmlUrlPath: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						avatarUrl: z.string().optional(),
-						initials: z.string().optional(),
+						avatarUrl: z.string().nullish(),
+						initials: z.string().nullish(),
 					})
 					.loose(),
 			),
 			z
 				.object({
-					id: z.string().optional(),
-					deletedTime: z.string().optional(),
-					name: z.string().optional(),
+					id: z.string().nullish(),
+					deletedTime: z.string().nullish(),
+					name: z.string().nullish(),
 					value: z
 						.object({
-							formatted: z.string().optional(),
-							amount: z.string().optional(),
-							currency: z.string().optional(),
+							formatted: z.string().nullish(),
+							amount: z.string().nullish(),
+							currency: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					number: z.number().int().optional(),
-					description: z.string().optional(),
+						.nullish(),
+					number: z.number().int().nullish(),
+					description: z.string().nullish(),
 					createdTime: z
 						.object({
-							absoluteLocalizedString: z.string().optional(),
-							timestamp: z.number().optional(),
-							value: z.string().optional(),
+							absoluteLocalizedString: z.string().nullish(),
+							timestamp: z.number().nullish(),
+							value: z.string().nullish(),
 						})
 						.loose()
-						.optional(),
-					closedTime: z.string().optional(),
-					dueTime: z.string().optional(),
-					anticipatedClosedTime: z.string().optional(),
-					ownerType: z.string().optional(),
-					status: z.string().optional(),
+						.nullish(),
+					closedTime: z.string().nullish(),
+					dueTime: z.string().nullish(),
+					anticipatedClosedTime: z.string().nullish(),
+					ownerType: z.string().nullish(),
+					status: z.string().nullish(),
 					lastContactedTime: z
 						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					pieState: z.string().optional(),
-					isOverdue: z.boolean().optional(),
-					overdueTime: z.string().optional(),
-					href: z.string().optional(),
-					confidence: z.number().int().optional(),
-					priority: z.number().int().optional(),
-					isCurrentUserWatching: z.boolean().optional(),
+						.nullish(),
+					pieState: z.string().nullish(),
+					isOverdue: z.boolean().nullish(),
+					overdueTime: z.string().nullish(),
+					href: z.string().nullish(),
+					confidence: z.number().int().nullish(),
+					priority: z.number().int().nullish(),
+					isCurrentUserWatching: z.boolean().nullish(),
 				})
 				.loose(),
 		),
 		z
 			.object({
-				htmlUrl: z.string().optional(),
-				htmlUrlPath: z.string().optional(),
+				htmlUrl: z.string().nullish(),
+				htmlUrlPath: z.string().nullish(),
 			})
 			.loose(),
 	),
 	z
 		.object({
-			avatarUrl: z.string().optional(),
-			initials: z.string().optional(),
+			avatarUrl: z.string().nullish(),
+			initials: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -5694,21 +5694,21 @@ const NutshellNotesListInputSchema = z
 const NutshellNotesListOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
-			createdTime: z.string().optional(),
-			deletedTime: z.string().optional(),
-			href: z.string().optional(),
-			body: z.string().optional(),
-			bodyHtml: z.string().optional(),
-			bodyMarkup: z.string().optional(),
-			isEditable: z.boolean().optional(),
-			parentType: z.string().optional(),
+			id: z.string().nullish(),
+			createdTime: z.string().nullish(),
+			deletedTime: z.string().nullish(),
+			href: z.string().nullish(),
+			body: z.string().nullish(),
+			bodyHtml: z.string().nullish(),
+			bodyMarkup: z.string().nullish(),
+			isEditable: z.boolean().nullish(),
+			parentType: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -5751,8 +5751,8 @@ const NutshellActivitiesUpdateInputSchema = z
 const NutshellActivitiesUpdateOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
@@ -5764,51 +5764,51 @@ const NutshellActivitiesUpdateOutputSchema = z.intersection(
 							z.intersection(
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										id: z.string().optional(),
+										id: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 							})
 							.loose(),
 					),
 				)
-				.optional(),
-			id: z.string().optional(),
+				.nullish(),
+			id: z.string().nullish(),
 			agenda: z
 				.unknown() /* OpenAPI schema has no recognized type */
-				.optional(),
-			createdTime: z.number().int().optional(),
-			endTime: z.number().int().optional(),
-			deletedTime: z.number().int().optional(),
-			href: z.string().optional(),
-			isAllDay: z.boolean().optional(),
-			isEditable: z.boolean().optional(),
-			isCancelled: z.boolean().optional(),
-			isFlagged: z.boolean().optional(),
-			isLogged: z.boolean().optional(),
-			isOverdue: z.boolean().optional(),
-			loggedTime: z.number().int().optional(),
-			modifiedTime: z.number().int().optional(),
-			name: z.string().optional(),
-			startTime: z.number().int().optional(),
-			isMediaLogged: z.boolean().optional(),
-			transcription: z.string().optional(),
+				.nullish(),
+			createdTime: z.number().int().nullish(),
+			endTime: z.number().int().nullish(),
+			deletedTime: z.number().int().nullish(),
+			href: z.string().nullish(),
+			isAllDay: z.boolean().nullish(),
+			isEditable: z.boolean().nullish(),
+			isCancelled: z.boolean().nullish(),
+			isFlagged: z.boolean().nullish(),
+			isLogged: z.boolean().nullish(),
+			isOverdue: z.boolean().nullish(),
+			loggedTime: z.number().int().nullish(),
+			modifiedTime: z.number().int().nullish(),
+			name: z.string().nullish(),
+			startTime: z.number().int().nullish(),
+			isMediaLogged: z.boolean().nullish(),
+			transcription: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -5857,24 +5857,24 @@ const NutshellSourcesCreateOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 						channel: z
 							.object({
-								value: z.number().int().optional(),
-								display: z.string().optional(),
+								value: z.number().int().nullish(),
+								display: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
-						deletedTime: z.number().int().optional(),
+							.nullish(),
+						deletedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5915,7 +5915,7 @@ const NutshellContactsListInputSchema = z
 	.strict();
 const NutshellContactsListOutputSchema = z
 	.object({
-		links: z.object({}).loose().optional(),
+		links: z.object({}).loose().nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -5926,99 +5926,99 @@ const NutshellContactsListOutputSchema = z
 									z.intersection(
 										z
 											.object({
-												id: z.string().optional(),
-												name: z.string().optional(),
-												description: z.string().optional(),
-												createdTime: z.number().int().optional(),
-												deletedTime: z.number().int().optional(),
+												id: z.string().nullish(),
+												name: z.string().nullish(),
+												description: z.string().nullish(),
+												createdTime: z.number().int().nullish(),
+												deletedTime: z.number().int().nullish(),
 												emails: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												addresses: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
 																		location: z
 																			.object({
-																				longitude: z.number().optional(),
-																				latitude: z.number().optional(),
+																				longitude: z.number().nullish(),
+																				latitude: z.number().nullish(),
 																			})
 																			.loose()
-																			.optional(),
+																			.nullish(),
 																	})
 																	.loose()
-																	.optional(),
-																locationAccuracy: z.string().optional(),
-																address_1: z.string().optional(),
-																address_2: z.string().optional(),
-																address_3: z.string().optional(),
-																city: z.string().optional(),
-																state: z.string().optional(),
-																postalCode: z.string().optional(),
-																country: z.string().optional(),
-																timezone: z.string().optional(),
+																	.nullish(),
+																locationAccuracy: z.string().nullish(),
+																address_1: z.string().nullish(),
+																address_2: z.string().nullish(),
+																address_3: z.string().nullish(),
+																city: z.string().nullish(),
+																state: z.string().nullish(),
+																postalCode: z.string().nullish(),
+																country: z.string().nullish(),
+																timezone: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												phones: z
 													.array(
 														z
 															.object({
-																isOptedOut: z.boolean().optional(),
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
+																isOptedOut: z.boolean().nullish(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
 																value: z
 																	.object({
-																		countryCode: z.string().optional(),
-																		number: z.string().optional(),
-																		extension: z.string().optional(),
-																		numberFormatted: z.string().optional(),
-																		E164: z.string().optional(),
-																		countryCodeAndNumber: z.string().optional(),
+																		countryCode: z.string().nullish(),
+																		number: z.string().nullish(),
+																		extension: z.string().nullish(),
+																		numberFormatted: z.string().nullish(),
+																		E164: z.string().nullish(),
+																		countryCodeAndNumber: z.string().nullish(),
 																	})
 																	.loose()
-																	.optional(),
+																	.nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 												urls: z
 													.array(
 														z
 															.object({
-																isPrimary: z.boolean().optional(),
-																name: z.string().optional(),
-																value: z.string().optional(),
+																isPrimary: z.boolean().nullish(),
+																name: z.string().nullish(),
+																value: z.string().nullish(),
 															})
 															.loose(),
 													)
-													.optional(),
+													.nullish(),
 											})
 											.loose(),
 										z
 											.object({
-												avatarUrl: z.string().optional(),
-												initials: z.string().optional(),
+												avatarUrl: z.string().nullish(),
+												initials: z.string().nullish(),
 											})
 											.loose(),
 									),
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 								),
@@ -6026,39 +6026,39 @@ const NutshellContactsListOutputSchema = z
 									.object({
 										jobTitle: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										firstName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
+											.nullish(),
 										lastName: z
 											.unknown() /* OpenAPI schema has no recognized type */
-											.optional(),
-										href: z.string().optional(),
+											.nullish(),
+										href: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									htmlUrl: z.string().optional(),
-									htmlUrlPath: z.string().optional(),
+									htmlUrl: z.string().nullish(),
+									htmlUrlPath: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							links: z.object({}).loose().optional(),
+							links: z.object({}).loose().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6066,10 +6066,10 @@ const NutshellTerritoriesListInputSchema = z.object({}).strict();
 const NutshellTerritoriesListOutputSchema = z.array(
 	z
 		.object({
-			id: z.string().optional(),
-			name: z.string().optional(),
-			href: z.string().optional(),
-			modifiedTime: z.number().optional(),
+			id: z.string().nullish(),
+			name: z.string().nullish(),
+			href: z.string().nullish(),
+			modifiedTime: z.number().nullish(),
 		})
 		.loose(),
 );
@@ -6210,11 +6210,11 @@ const NutshellAccountsGetOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		accounts: z
 			.array(
 				z.intersection(
@@ -6224,240 +6224,240 @@ const NutshellAccountsGetOutputSchema = z
 								z.intersection(
 									z
 										.object({
-											id: z.string().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											createdTime: z.number().int().optional(),
-											deletedTime: z.number().int().optional(),
+											id: z.string().nullish(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											createdTime: z.number().int().nullish(),
+											deletedTime: z.number().int().nullish(),
 											emails: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
-															value: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
+															value: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											addresses: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
 															value: z
 																.object({
 																	location: z
 																		.object({
-																			longitude: z.number().optional(),
-																			latitude: z.number().optional(),
+																			longitude: z.number().nullish(),
+																			latitude: z.number().nullish(),
 																		})
 																		.loose()
-																		.optional(),
+																		.nullish(),
 																})
 																.loose()
-																.optional(),
-															locationAccuracy: z.string().optional(),
-															address_1: z.string().optional(),
-															address_2: z.string().optional(),
-															address_3: z.string().optional(),
-															city: z.string().optional(),
-															state: z.string().optional(),
-															postalCode: z.string().optional(),
-															country: z.string().optional(),
-															timezone: z.string().optional(),
+																.nullish(),
+															locationAccuracy: z.string().nullish(),
+															address_1: z.string().nullish(),
+															address_2: z.string().nullish(),
+															address_3: z.string().nullish(),
+															city: z.string().nullish(),
+															state: z.string().nullish(),
+															postalCode: z.string().nullish(),
+															country: z.string().nullish(),
+															timezone: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											phones: z
 												.array(
 													z
 														.object({
-															isOptedOut: z.boolean().optional(),
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
+															isOptedOut: z.boolean().nullish(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
 															value: z
 																.object({
-																	countryCode: z.string().optional(),
-																	number: z.string().optional(),
-																	extension: z.string().optional(),
-																	numberFormatted: z.string().optional(),
-																	E164: z.string().optional(),
-																	countryCodeAndNumber: z.string().optional(),
+																	countryCode: z.string().nullish(),
+																	number: z.string().nullish(),
+																	extension: z.string().nullish(),
+																	numberFormatted: z.string().nullish(),
+																	E164: z.string().nullish(),
+																	countryCodeAndNumber: z.string().nullish(),
 																})
 																.loose()
-																.optional(),
+																.nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 											urls: z
 												.array(
 													z
 														.object({
-															isPrimary: z.boolean().optional(),
-															name: z.string().optional(),
-															value: z.string().optional(),
+															isPrimary: z.boolean().nullish(),
+															name: z.string().nullish(),
+															value: z.string().nullish(),
 														})
 														.loose(),
 												)
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 									z
 										.object({
-											avatarUrl: z.string().optional(),
-											initials: z.string().optional(),
+											avatarUrl: z.string().nullish(),
+											initials: z.string().nullish(),
 										})
 										.loose(),
 								),
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									href: z.string().optional(),
+									href: z.string().nullish(),
 									revenue: z
 										.object({
-											amount: z.string().optional(),
-											formatted: z.string().optional(),
+											amount: z.string().nullish(),
+											formatted: z.string().nullish(),
 										})
 										.loose()
-										.optional(),
-									employeeCount: z.number().int().optional(),
+										.nullish(),
+									employeeCount: z.number().int().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		creators: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							name: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							modifiedTime: z.number().int().optional(),
-							isEnabled: z.boolean().optional(),
-							hasSetPassword: z.boolean().optional(),
-							isAdministrator: z.boolean().optional(),
-							isViewingRestricted: z.boolean().optional(),
-							isHiddenFromFilters: z.boolean().optional(),
-							canAccessEmailMarketing: z.boolean().optional(),
+								.nullish(),
+							modifiedTime: z.number().int().nullish(),
+							isEnabled: z.boolean().nullish(),
+							hasSetPassword: z.boolean().nullish(),
+							isAdministrator: z.boolean().nullish(),
+							isViewingRestricted: z.boolean().nullish(),
+							isHiddenFromFilters: z.boolean().nullish(),
+							canAccessEmailMarketing: z.boolean().nullish(),
 							permissions: z
 								.object({
-									canAccessSetup: z.boolean().optional(),
-									canAccessMarketing: z.boolean().optional(),
-									canBulkEdit: z.boolean().optional(),
-									canExport: z.boolean().optional(),
-									canViewSharedEmails: z.boolean().optional(),
-									canImport: z.boolean().optional(),
-									canMergeEntities: z.boolean().optional(),
-									canDeleteEntities: z.boolean().optional(),
-									canAssignEntities: z.boolean().optional(),
-									canAccessBilling: z.boolean().optional(),
-									canManageEmailTemplates: z.boolean().optional(),
-									canAccessCrm: z.boolean().optional(),
-									canAccessFullCampaigns: z.boolean().optional(),
-									canUsePeopleIQ: z.boolean().optional(),
-									canUseInbox: z.boolean().optional(),
+									canAccessSetup: z.boolean().nullish(),
+									canAccessMarketing: z.boolean().nullish(),
+									canBulkEdit: z.boolean().nullish(),
+									canExport: z.boolean().nullish(),
+									canViewSharedEmails: z.boolean().nullish(),
+									canImport: z.boolean().nullish(),
+									canMergeEntities: z.boolean().nullish(),
+									canDeleteEntities: z.boolean().nullish(),
+									canAssignEntities: z.boolean().nullish(),
+									canAccessBilling: z.boolean().nullish(),
+									canManageEmailTemplates: z.boolean().nullish(),
+									canAccessCrm: z.boolean().nullish(),
+									canAccessFullCampaigns: z.boolean().nullish(),
+									canUsePeopleIQ: z.boolean().nullish(),
+									canUseInbox: z.boolean().nullish(),
 								})
 								.loose()
-								.optional(),
-							emails: z.array(z.string()).optional(),
+								.nullish(),
+							emails: z.array(z.string()).nullish(),
 							phonecallerType: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		owners: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							name: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							modifiedTime: z.number().int().optional(),
-							isEnabled: z.boolean().optional(),
-							hasSetPassword: z.boolean().optional(),
-							isAdministrator: z.boolean().optional(),
-							isViewingRestricted: z.boolean().optional(),
-							isHiddenFromFilters: z.boolean().optional(),
-							canAccessEmailMarketing: z.boolean().optional(),
+								.nullish(),
+							modifiedTime: z.number().int().nullish(),
+							isEnabled: z.boolean().nullish(),
+							hasSetPassword: z.boolean().nullish(),
+							isAdministrator: z.boolean().nullish(),
+							isViewingRestricted: z.boolean().nullish(),
+							isHiddenFromFilters: z.boolean().nullish(),
+							canAccessEmailMarketing: z.boolean().nullish(),
 							permissions: z
 								.object({
-									canAccessSetup: z.boolean().optional(),
-									canAccessMarketing: z.boolean().optional(),
-									canBulkEdit: z.boolean().optional(),
-									canExport: z.boolean().optional(),
-									canViewSharedEmails: z.boolean().optional(),
-									canImport: z.boolean().optional(),
-									canMergeEntities: z.boolean().optional(),
-									canDeleteEntities: z.boolean().optional(),
-									canAssignEntities: z.boolean().optional(),
-									canAccessBilling: z.boolean().optional(),
-									canManageEmailTemplates: z.boolean().optional(),
-									canAccessCrm: z.boolean().optional(),
-									canAccessFullCampaigns: z.boolean().optional(),
-									canUsePeopleIQ: z.boolean().optional(),
-									canUseInbox: z.boolean().optional(),
+									canAccessSetup: z.boolean().nullish(),
+									canAccessMarketing: z.boolean().nullish(),
+									canBulkEdit: z.boolean().nullish(),
+									canExport: z.boolean().nullish(),
+									canViewSharedEmails: z.boolean().nullish(),
+									canImport: z.boolean().nullish(),
+									canMergeEntities: z.boolean().nullish(),
+									canDeleteEntities: z.boolean().nullish(),
+									canAssignEntities: z.boolean().nullish(),
+									canAccessBilling: z.boolean().nullish(),
+									canManageEmailTemplates: z.boolean().nullish(),
+									canAccessCrm: z.boolean().nullish(),
+									canAccessFullCampaigns: z.boolean().nullish(),
+									canUsePeopleIQ: z.boolean().nullish(),
+									canUseInbox: z.boolean().nullish(),
 								})
 								.loose()
-								.optional(),
-							emails: z.array(z.string()).optional(),
+								.nullish(),
+							emails: z.array(z.string()).nullish(),
 							phonecallerType: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		origins: z
 			.array(
 				z.intersection(
@@ -6466,43 +6466,43 @@ const NutshellAccountsGetOutputSchema = z
 							z.intersection(
 								z
 									.object({
-										avatarUrl: z.string().optional(),
-										initials: z.string().optional(),
+										avatarUrl: z.string().nullish(),
+										initials: z.string().nullish(),
 									})
 									.loose(),
 								z
 									.object({
-										htmlUrl: z.string().optional(),
-										htmlUrlPath: z.string().optional(),
+										htmlUrl: z.string().nullish(),
+										htmlUrlPath: z.string().nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
-									modifiedTime: z.number().int().optional(),
-									lastseenTime: z.number().int().optional(),
-									originType: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+									modifiedTime: z.number().int().nullish(),
+									lastseenTime: z.number().int().nullish(),
+									originType: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		contacts: z
 			.array(
 				z.intersection(
@@ -6510,99 +6510,99 @@ const NutshellAccountsGetOutputSchema = z
 						z.intersection(
 							z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
-									description: z.string().optional(),
-									createdTime: z.number().int().optional(),
-									deletedTime: z.number().int().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+									description: z.string().nullish(),
+									createdTime: z.number().int().nullish(),
+									deletedTime: z.number().int().nullish(),
 									emails: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									addresses: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
 															location: z
 																.object({
-																	longitude: z.number().optional(),
-																	latitude: z.number().optional(),
+																	longitude: z.number().nullish(),
+																	latitude: z.number().nullish(),
 																})
 																.loose()
-																.optional(),
+																.nullish(),
 														})
 														.loose()
-														.optional(),
-													locationAccuracy: z.string().optional(),
-													address_1: z.string().optional(),
-													address_2: z.string().optional(),
-													address_3: z.string().optional(),
-													city: z.string().optional(),
-													state: z.string().optional(),
-													postalCode: z.string().optional(),
-													country: z.string().optional(),
-													timezone: z.string().optional(),
+														.nullish(),
+													locationAccuracy: z.string().nullish(),
+													address_1: z.string().nullish(),
+													address_2: z.string().nullish(),
+													address_3: z.string().nullish(),
+													city: z.string().nullish(),
+													state: z.string().nullish(),
+													postalCode: z.string().nullish(),
+													country: z.string().nullish(),
+													timezone: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									phones: z
 										.array(
 											z
 												.object({
-													isOptedOut: z.boolean().optional(),
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isOptedOut: z.boolean().nullish(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
-															countryCode: z.string().optional(),
-															number: z.string().optional(),
-															extension: z.string().optional(),
-															numberFormatted: z.string().optional(),
-															E164: z.string().optional(),
-															countryCodeAndNumber: z.string().optional(),
+															countryCode: z.string().nullish(),
+															number: z.string().nullish(),
+															extension: z.string().nullish(),
+															numberFormatted: z.string().nullish(),
+															E164: z.string().nullish(),
+															countryCodeAndNumber: z.string().nullish(),
 														})
 														.loose()
-														.optional(),
+														.nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									urls: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 								})
 								.loose(),
 							z
 								.object({
-									avatarUrl: z.string().optional(),
-									initials: z.string().optional(),
+									avatarUrl: z.string().nullish(),
+									initials: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
@@ -6610,43 +6610,43 @@ const NutshellAccountsGetOutputSchema = z
 						.object({
 							jobTitle: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							firstName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
+								.nullish(),
 							lastName: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							href: z.string().optional(),
+								.nullish(),
+							href: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		accountTypes: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		industries: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6675,21 +6675,21 @@ const NutshellNotesCreateInputSchema = z
 const NutshellNotesCreateOutputSchema = z.intersection(
 	z
 		.object({
-			htmlUrl: z.string().optional(),
-			htmlUrlPath: z.string().optional(),
+			htmlUrl: z.string().nullish(),
+			htmlUrlPath: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			id: z.string().optional(),
-			createdTime: z.string().optional(),
-			deletedTime: z.string().optional(),
-			href: z.string().optional(),
-			body: z.string().optional(),
-			bodyHtml: z.string().optional(),
-			bodyMarkup: z.string().optional(),
-			isEditable: z.boolean().optional(),
-			parentType: z.string().optional(),
+			id: z.string().nullish(),
+			createdTime: z.string().nullish(),
+			deletedTime: z.string().nullish(),
+			href: z.string().nullish(),
+			body: z.string().nullish(),
+			bodyHtml: z.string().nullish(),
+			bodyMarkup: z.string().nullish(),
+			isEditable: z.boolean().nullish(),
+			parentType: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -6699,25 +6699,25 @@ const NutshellActivityTypesListOutputSchema = z
 	.object({
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		activityTypes: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
-						isBenchmarkable: z.boolean().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
+						isBenchmarkable: z.boolean().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6728,81 +6728,81 @@ const NutshellUsersListOutputSchema = z
 			.intersection(
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 				z
 					.object({
-						next: z.string().optional(),
-						previous: z.string().optional(),
-						total: z.number().int().optional(),
+						next: z.string().nullish(),
+						previous: z.string().nullish(),
+						total: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		users: z
 			.array(
 				z.intersection(
 					z.intersection(
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								id: z.string().optional(),
+								id: z.string().nullish(),
 								name: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
+									.nullish(),
 								firstName: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
-								modifiedTime: z.number().int().optional(),
-								isEnabled: z.boolean().optional(),
-								hasSetPassword: z.boolean().optional(),
-								isAdministrator: z.boolean().optional(),
-								isViewingRestricted: z.boolean().optional(),
-								isHiddenFromFilters: z.boolean().optional(),
-								canAccessEmailMarketing: z.boolean().optional(),
+									.nullish(),
+								modifiedTime: z.number().int().nullish(),
+								isEnabled: z.boolean().nullish(),
+								hasSetPassword: z.boolean().nullish(),
+								isAdministrator: z.boolean().nullish(),
+								isViewingRestricted: z.boolean().nullish(),
+								isHiddenFromFilters: z.boolean().nullish(),
+								canAccessEmailMarketing: z.boolean().nullish(),
 								permissions: z
 									.object({
-										canAccessSetup: z.boolean().optional(),
-										canAccessMarketing: z.boolean().optional(),
-										canBulkEdit: z.boolean().optional(),
-										canExport: z.boolean().optional(),
-										canViewSharedEmails: z.boolean().optional(),
-										canImport: z.boolean().optional(),
-										canMergeEntities: z.boolean().optional(),
-										canDeleteEntities: z.boolean().optional(),
-										canAssignEntities: z.boolean().optional(),
-										canAccessBilling: z.boolean().optional(),
-										canManageEmailTemplates: z.boolean().optional(),
-										canAccessCrm: z.boolean().optional(),
-										canAccessFullCampaigns: z.boolean().optional(),
-										canUsePeopleIQ: z.boolean().optional(),
-										canUseInbox: z.boolean().optional(),
+										canAccessSetup: z.boolean().nullish(),
+										canAccessMarketing: z.boolean().nullish(),
+										canBulkEdit: z.boolean().nullish(),
+										canExport: z.boolean().nullish(),
+										canViewSharedEmails: z.boolean().nullish(),
+										canImport: z.boolean().nullish(),
+										canMergeEntities: z.boolean().nullish(),
+										canDeleteEntities: z.boolean().nullish(),
+										canAssignEntities: z.boolean().nullish(),
+										canAccessBilling: z.boolean().nullish(),
+										canManageEmailTemplates: z.boolean().nullish(),
+										canAccessCrm: z.boolean().nullish(),
+										canAccessFullCampaigns: z.boolean().nullish(),
+										canUsePeopleIQ: z.boolean().nullish(),
+										canUseInbox: z.boolean().nullish(),
 									})
 									.loose()
-									.optional(),
-								emails: z.array(z.string()).optional(),
+									.nullish(),
+								emails: z.array(z.string()).nullish(),
 								phonecallerType: z
 									.unknown() /* OpenAPI schema has no recognized type */
-									.optional(),
+									.nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6816,36 +6816,36 @@ const NutshellFormsGetOutputSchema = z.intersection(
 		.object({
 			meta: z
 				.object({
-					instanceId: z.string().optional(),
-					siteId: z.string().optional(),
+					instanceId: z.string().nullish(),
+					siteId: z.string().nullish(),
 				})
 				.loose()
-				.optional(),
-			links: z.object({}).loose().optional(),
+				.nullish(),
+			links: z.object({}).loose().nullish(),
 			wfForms: z
 				.array(
 					z.intersection(
 						z
 							.object({
-								id: z.string().optional(),
-								name: z.string().optional(),
-								href: z.string().optional(),
-								createdTime: z.string().optional(),
+								id: z.string().nullish(),
+								name: z.string().nullish(),
+								href: z.string().nullish(),
+								createdTime: z.string().nullish(),
 							})
 							.loose(),
 						z
 							.object({
 								links: z
 									.object({
-										fields: z.array(z.string()).optional(),
+										fields: z.array(z.string()).nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose(),
 					),
 				)
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 	z
@@ -6854,15 +6854,15 @@ const NutshellFormsGetOutputSchema = z.intersection(
 				.array(
 					z
 						.object({
-							id: z.string().optional(),
-							label: z.string().optional(),
-							fieldName: z.string().optional(),
-							fieldType: z.string().optional(),
-							entityName: z.string().optional(),
+							id: z.string().nullish(),
+							label: z.string().nullish(),
+							fieldName: z.string().nullish(),
+							fieldType: z.string().nullish(),
+							entityName: z.string().nullish(),
 						})
 						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -6893,8 +6893,8 @@ const NutshellContactsCreateCustomFieldInputSchema = z
 // the created custom field, validated around its known identifier and name.
 const NutshellContactsCreateCustomFieldOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -6909,18 +6909,18 @@ const NutshellProductCategoriesGetOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6935,51 +6935,51 @@ const NutshellProductsGetOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 						name: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						href: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						description: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.string().optional(),
+							.nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.string().nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						productType: z
 							.unknown() /* OpenAPI schema has no recognized type */
-							.optional(),
+							.nullish(),
 						prices: z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().optional(),
-										currency: z.string().optional(),
-										formatted: z.string().optional(),
-										currencySymbol: z.string().optional(),
+										amount: z.number().nullish(),
+										currency: z.string().nullish(),
+										formatted: z.string().nullish(),
+										currencySymbol: z.string().nullish(),
 									})
 									.loose()
-									.optional(),
+									.nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						price: z
 							.object({
-								amount: z.number().optional(),
-								currency: z.string().optional(),
-								formatted: z.string().optional(),
-								currencySymbol: z.string().optional(),
+								amount: z.number().nullish(),
+								currency: z.string().nullish(),
+								formatted: z.string().nullish(),
+								currencySymbol: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -7019,78 +7019,78 @@ const NutshellEventsDeletedOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							instanceId: z.string().optional(),
-							siteId: z.string().optional(),
+							instanceId: z.string().nullish(),
+							siteId: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
-							previous: z.string().optional(),
+							previous: z.string().nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						next: z.string().optional(),
+						next: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		events: z
 			.array(
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
-							createdTime: z.number().int().optional(),
-							actorType: z.string().optional(),
-							payloadType: z.string().optional(),
-							action: z.string().optional(),
+							id: z.string().nullish(),
+							createdTime: z.number().int().nullish(),
+							actorType: z.string().nullish(),
+							payloadType: z.string().nullish(),
+							action: z.string().nullish(),
 							changes: z
 								.array(
 									z
 										.object({
-											attribute: z.string().optional(),
+											attribute: z.string().nullish(),
 											oldValue: z
 												.object({
-													id: z.string().optional(),
-													type: z.string().optional(),
-													name: z.string().optional(),
-													position: z.number().int().optional(),
+													id: z.string().nullish(),
+													type: z.string().nullish(),
+													name: z.string().nullish(),
+													position: z.number().int().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											newValue: z
 												.object({
-													id: z.string().optional(),
-													type: z.string().optional(),
-													name: z.string().optional(),
-													position: z.number().int().optional(),
+													id: z.string().nullish(),
+													type: z.string().nullish(),
+													name: z.string().nullish(),
+													position: z.number().int().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
-							count: z.string().optional(),
+								.nullish(),
+							count: z.string().nullish(),
 						})
 						.loose(),
 					z
 						.object({
 							links: z
 								.object({
-									actor: z.string().optional(),
-									payloads: z.array(z.string()).optional(),
-									comments: z.array(z.string()).optional(),
+									actor: z.string().nullish(),
+									payloads: z.array(z.string()).nullish(),
+									comments: z.array(z.string()).nullish(),
 								})
 								.loose()
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -7101,92 +7101,92 @@ const NutshellCompetitorMapsListOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						relationship: z.string().optional(),
-						name: z.string().optional(),
+						id: z.string().nullish(),
+						relationship: z.string().nullish(),
+						name: z.string().nullish(),
 						status: z
 							.union([z.enum(['potential', 'stole', 'beat']), z.null()])
-							.optional(),
+							.nullish(),
 						links: z
 							.object({
-								lead: z.string().optional(),
-								competitor: z.string().optional(),
+								lead: z.string().nullish(),
+								competitor: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		leads: z
 			.array(
 				z.intersection(
 					z.intersection(
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								avatarUrl: z.string().optional(),
-								initials: z.string().optional(),
+								avatarUrl: z.string().nullish(),
+								initials: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							id: z.string().optional(),
-							deletedTime: z.string().optional(),
-							name: z.string().optional(),
+							id: z.string().nullish(),
+							deletedTime: z.string().nullish(),
+							name: z.string().nullish(),
 							value: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							number: z.number().int().optional(),
-							description: z.string().optional(),
+								.nullish(),
+							number: z.number().int().nullish(),
+							description: z.string().nullish(),
 							createdTime: z
 								.object({
-									absoluteLocalizedString: z.string().optional(),
-									timestamp: z.number().optional(),
-									value: z.string().optional(),
+									absoluteLocalizedString: z.string().nullish(),
+									timestamp: z.number().nullish(),
+									value: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							closedTime: z.string().optional(),
-							dueTime: z.string().optional(),
-							anticipatedClosedTime: z.string().optional(),
-							ownerType: z.string().optional(),
-							status: z.string().optional(),
+								.nullish(),
+							closedTime: z.string().nullish(),
+							dueTime: z.string().nullish(),
+							anticipatedClosedTime: z.string().nullish(),
+							ownerType: z.string().nullish(),
+							status: z.string().nullish(),
 							lastContactedTime: z
 								.unknown() /* OpenAPI schema has no recognized type */
-								.optional(),
-							pieState: z.string().optional(),
-							isOverdue: z.boolean().optional(),
-							overdueTime: z.string().optional(),
-							href: z.string().optional(),
-							confidence: z.number().int().optional(),
-							priority: z.number().int().optional(),
-							isCurrentUserWatching: z.boolean().optional(),
+								.nullish(),
+							pieState: z.string().nullish(),
+							isOverdue: z.boolean().nullish(),
+							overdueTime: z.string().nullish(),
+							href: z.string().nullish(),
+							confidence: z.number().int().nullish(),
+							priority: z.number().int().nullish(),
+							isCurrentUserWatching: z.boolean().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		competitors: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
+						id: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -7201,18 +7201,18 @@ const NutshellTagsUndeleteOutputSchema = z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						name: z.string().optional(),
-						href: z.string().optional(),
-						modifiedTime: z.number().int().optional(),
-						deletedTime: z.number().int().optional(),
-						tagType: z.string().optional(),
-						count: z.number().int().optional(),
-						colorType: z.string().optional(),
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+						href: z.string().nullish(),
+						modifiedTime: z.number().int().nullish(),
+						deletedTime: z.number().int().nullish(),
+						tagType: z.string().nullish(),
+						count: z.number().int().nullish(),
+						colorType: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -7267,12 +7267,12 @@ const NutshellAccountsListOutputSchema = z
 					z.intersection(
 						z
 							.object({
-								count: z.number().int().optional(),
+								count: z.number().int().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								total: z.number().int().optional(),
+								total: z.number().int().nullish(),
 							})
 							.loose(),
 					),
@@ -7282,24 +7282,24 @@ const NutshellAccountsListOutputSchema = z
 								.object({
 									AccountType: z
 										.object({
-											'n-accountTypes': z.number().int().optional(),
+											'n-accountTypes': z.number().int().nullish(),
 										})
 										.loose()
-										.optional(),
+										.nullish(),
 								})
 								.loose()
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		accounts: z
 			.array(
 				z.intersection(
@@ -7307,118 +7307,118 @@ const NutshellAccountsListOutputSchema = z
 						z.intersection(
 							z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
-									description: z.string().optional(),
-									createdTime: z.number().int().optional(),
-									deletedTime: z.number().int().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+									description: z.string().nullish(),
+									createdTime: z.number().int().nullish(),
+									deletedTime: z.number().int().nullish(),
 									emails: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									addresses: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
 															location: z
 																.object({
-																	longitude: z.number().optional(),
-																	latitude: z.number().optional(),
+																	longitude: z.number().nullish(),
+																	latitude: z.number().nullish(),
 																})
 																.loose()
-																.optional(),
+																.nullish(),
 														})
 														.loose()
-														.optional(),
-													locationAccuracy: z.string().optional(),
-													address_1: z.string().optional(),
-													address_2: z.string().optional(),
-													address_3: z.string().optional(),
-													city: z.string().optional(),
-													state: z.string().optional(),
-													postalCode: z.string().optional(),
-													country: z.string().optional(),
-													timezone: z.string().optional(),
+														.nullish(),
+													locationAccuracy: z.string().nullish(),
+													address_1: z.string().nullish(),
+													address_2: z.string().nullish(),
+													address_3: z.string().nullish(),
+													city: z.string().nullish(),
+													state: z.string().nullish(),
+													postalCode: z.string().nullish(),
+													country: z.string().nullish(),
+													timezone: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									phones: z
 										.array(
 											z
 												.object({
-													isOptedOut: z.boolean().optional(),
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
+													isOptedOut: z.boolean().nullish(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
 													value: z
 														.object({
-															countryCode: z.string().optional(),
-															number: z.string().optional(),
-															extension: z.string().optional(),
-															numberFormatted: z.string().optional(),
-															E164: z.string().optional(),
-															countryCodeAndNumber: z.string().optional(),
+															countryCode: z.string().nullish(),
+															number: z.string().nullish(),
+															extension: z.string().nullish(),
+															numberFormatted: z.string().nullish(),
+															E164: z.string().nullish(),
+															countryCodeAndNumber: z.string().nullish(),
 														})
 														.loose()
-														.optional(),
+														.nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 									urls: z
 										.array(
 											z
 												.object({
-													isPrimary: z.boolean().optional(),
-													name: z.string().optional(),
-													value: z.string().optional(),
+													isPrimary: z.boolean().nullish(),
+													name: z.string().nullish(),
+													value: z.string().nullish(),
 												})
 												.loose(),
 										)
-										.optional(),
+										.nullish(),
 								})
 								.loose(),
 							z
 								.object({
-									avatarUrl: z.string().optional(),
-									initials: z.string().optional(),
+									avatarUrl: z.string().nullish(),
+									initials: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							href: z.string().optional(),
+							href: z.string().nullish(),
 							revenue: z
 								.object({
-									amount: z.string().optional(),
-									formatted: z.string().optional(),
+									amount: z.string().nullish(),
+									formatted: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							employeeCount: z.number().int().optional(),
+								.nullish(),
+							employeeCount: z.number().int().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -7462,12 +7462,12 @@ const NutshellAccountsListItemsOutputSchema = z
 					z.intersection(
 						z
 							.object({
-								count: z.number().int().optional(),
+								count: z.number().int().nullish(),
 							})
 							.loose(),
 						z
 							.object({
-								total: z.number().int().optional(),
+								total: z.number().int().nullish(),
 							})
 							.loose(),
 					),
@@ -7477,24 +7477,24 @@ const NutshellAccountsListItemsOutputSchema = z
 								.object({
 									AccountType: z
 										.object({
-											'n-accountTypes': z.number().int().optional(),
+											'n-accountTypes': z.number().int().nullish(),
 										})
 										.loose()
-										.optional(),
+										.nullish(),
 								})
 								.loose()
-								.optional(),
+								.nullish(),
 						})
 						.loose(),
 				),
 				z
 					.object({
-						instanceId: z.string().optional(),
-						siteId: z.string().optional(),
+						instanceId: z.string().nullish(),
+						siteId: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		listItems: z
 			.array(
 				z.intersection(
@@ -7504,58 +7504,58 @@ const NutshellAccountsListItemsOutputSchema = z
 								z.intersection(
 									z
 										.object({
-											htmlUrl: z.string().optional(),
-											htmlUrlPath: z.string().optional(),
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
 										})
 										.loose(),
 									z
 										.object({
-											avatarUrl: z.string().optional(),
-											initials: z.string().optional(),
+											avatarUrl: z.string().nullish(),
+											initials: z.string().nullish(),
 										})
 										.loose(),
 								),
 								z
 									.object({
-										id: z.string().optional(),
-										primaryName: z.string().optional(),
-										primaryInfo: z.string().optional(),
-										relatedName: z.string().optional(),
-										relatedInfo: z.string().optional(),
-										relatedType: z.string().optional(),
-										relatedUrl: z.string().optional(),
-										relatedUrlPath: z.string().optional(),
-										primaryContact: z.string().optional(),
-										primaryAccount: z.string().optional(),
-										latlon: z.string().optional(),
-										mapUrl: z.string().optional(),
-										isDeleted: z.boolean().optional(),
-										fields: z.array(z.object({}).loose()).optional(),
+										id: z.string().nullish(),
+										primaryName: z.string().nullish(),
+										primaryInfo: z.string().nullish(),
+										relatedName: z.string().nullish(),
+										relatedInfo: z.string().nullish(),
+										relatedType: z.string().nullish(),
+										relatedUrl: z.string().nullish(),
+										relatedUrlPath: z.string().nullish(),
+										primaryContact: z.string().nullish(),
+										primaryAccount: z.string().nullish(),
+										latlon: z.string().nullish(),
+										mapUrl: z.string().nullish(),
+										isDeleted: z.boolean().nullish(),
+										fields: z.array(z.object({}).loose()).nullish(),
 									})
 									.loose(),
 							),
 							z
 								.object({
-									description: z.string().optional(),
+									description: z.string().nullish(),
 								})
 								.loose(),
 						),
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
+								htmlUrl: z.string().nullish(),
+								htmlUrlPath: z.string().nullish(),
 							})
 							.loose(),
 					),
 					z
 						.object({
-							avatarUrl: z.string().optional(),
-							initials: z.string().optional(),
+							avatarUrl: z.string().nullish(),
+							initials: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 

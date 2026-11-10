@@ -158,4 +158,36 @@ describe('Nutshell responses with unset fields', () => {
 		).resolves.toEqual(body);
 	});
 
+	it('keeps null for unset fields on the older resources', async () => {
+		const tags = {
+			tags: [
+				{
+					id: '15-tags',
+					type: 'tags',
+					name: 'VIP',
+					count: 3,
+					deletedTime: null,
+				},
+			],
+		};
+		reply(tags);
+		await expect(api.tags.list({})).resolves.toEqual(tags);
+
+		const installments = {
+			installments: [
+				{
+					id: '9-installments',
+					dueTime: '2026-01-01T00:00:00+0000',
+					description: null,
+					value: { currency: 'USD', amount: 100 },
+					failedTime: null,
+					isPaid: false,
+				},
+			],
+		};
+		reply(installments);
+		await expect(api.leads.installments({ id: '7-leads' })).resolves.toEqual(
+			installments,
+		);
+	});
 });
