@@ -1598,5 +1598,11 @@
     "version": "0.1.9",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "cloud",
+    "version": "0.1.158",
+    "changes": []
   }
 ]
