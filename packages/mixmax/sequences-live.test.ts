@@ -10,6 +10,10 @@ import { makeMixmaxRequest } from './client';
 
 const request = jest.mocked(makeMixmaxRequest);
 
+// A partial runtime context, cast through `unknown` because MixmaxContext
+// also requires the database, key store and event services that these
+// handlers never touch: they read only `key`, and the request is mocked.
+// Building the full context would mean standing up core's runtime here.
 const ctx = {
 	key: 'mixmax_test_key',
 	$getAccountId: async () => 'account-1',

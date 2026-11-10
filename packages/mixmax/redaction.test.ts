@@ -19,7 +19,13 @@ const request = jest.mocked(makeMixmaxRequest);
 
 // The handlers under test read only `key` from the runtime context and log
 // through logEventFromContext, which needs $getAccountId; every other
-// context service is untouched by these code paths.
+// context service is untouched by these code paths. `as never` stands in
+// for MixmaxContext, whose database, key store and event services would
+// need core's runtime to build, and the request and logger are mocked.
+//
+// Inputs below are also cast `as never` where a test sends only the fields
+// it checks: these tests look at what reaches the event log, so filling in
+// every required field of the provider's schema would add nothing.
 const ctx = {
 	key: 'mixmax_test_key',
 	$getAccountId: async () => 'account-1',
@@ -29,8 +35,13 @@ const ctx = {
 // accessor is defined on every plugin instance.
 const endpoints = mixmax({ key: 'mixmax_test_key' }).endpoints!;
 
+// logEventFromContext types its payload as `unknown`; every Mixmax handler
+// passes a plain object, which this cast states once for all the tests.
+const payloadOf = (call: unknown[]): Record<string, unknown> =>
+	call[2] as Record<string, unknown>;
+
 const loggedPayloads = (): Record<string, unknown>[] =>
-	logEvent.mock.calls.map((call) => call[2] as Record<string, unknown>);
+	logEvent.mock.calls.map(payloadOf);
 
 describe('Mixmax event history redaction', () => {
 	beforeEach(() => {
@@ -194,7 +205,7 @@ describe('Mixmax event history redaction', () => {
 
 		const payloads = logEvent.mock.calls
 			.filter((call) => !String(call[1]).endsWith('.outputMismatch'))
-			.map((call) => call[2] as Record<string, unknown>);
+			.map(payloadOf);
 		for (const payload of payloads) {
 			const serialized = JSON.stringify(payload);
 			expect(serialized).not.toContain('@');
@@ -235,7 +246,7 @@ describe('Mixmax event history redaction', () => {
 
 		const payloads = logEvent.mock.calls
 			.filter((call) => !String(call[1]).endsWith('.outputMismatch'))
-			.map((call) => call[2] as Record<string, unknown>);
+			.map(payloadOf);
 		expect(payloads).toHaveLength(5);
 		for (const payload of payloads) {
 			const serialized = JSON.stringify(payload);
@@ -257,6 +268,8 @@ describe('Mixmax event history redaction', () => {
 		const ignoreOutput = () => undefined;
 		const mark = 'Private';
 		const address = 'ada@example.com';
+		// Each call returns a different output type and only its log is
+		// checked, so the result type is left as `unknown`.
 		const calls: Array<[string, () => Promise<unknown>]> = [
 			[
 				'users.preferences.update',

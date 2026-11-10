@@ -17,6 +17,10 @@ import { makeMixmaxRequest } from './client';
 const logEvent = jest.mocked(logEventFromContext);
 const request = jest.mocked(makeMixmaxRequest);
 
+// A partial runtime context. `as never` stands in for MixmaxContext, whose
+// database, key store and event services these handlers never touch: they
+// read only `key` and call $getAccountId when logging, and both the request
+// and the logger are mocked. A full context would need core's runtime.
 const ctx = {
 	key: 'mixmax_test_key',
 	$getAccountId: async () => 'account-1',
@@ -44,6 +48,8 @@ describe('Mixmax responses that do not match the output schema', () => {
 		expect(request).toHaveBeenCalledTimes(1);
 		const events = logEvent.mock.calls.map((call) => ({
 			type: call[1],
+			// logEventFromContext types its payload as `unknown`; every
+			// handler here passes a plain object, which the cast states.
 			payload: call[2] as Record<string, unknown>,
 			status: call[3],
 		}));
