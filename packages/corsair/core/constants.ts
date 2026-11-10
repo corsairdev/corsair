@@ -357,6 +357,7 @@ export const BaseProviders = [
 	'qdrant',
 	'quaderno',
 	'razorpay',
+	'realphonevalidation',
 	'reamaze',
 	'recallai',
 	'reddit',
@@ -827,6 +828,7 @@ export const ProviderDisplayNames = {
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
 	razorpay: 'Razorpay',
+	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
 	reddit: 'Reddit',
@@ -1301,6 +1303,7 @@ export type AllProviders =
 	| 'qdrant'
 	| 'quaderno'
 	| 'razorpay'
+	| 'realphonevalidation'
 	| 'reamaze'
 	| 'recallai'
 	| 'reddit'

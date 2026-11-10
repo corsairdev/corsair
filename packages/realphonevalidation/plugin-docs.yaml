@@ -1,0 +1,57 @@
+displayName: RealPhoneValidation
+description: Phone connectivity, line type, Do-Not-Call, fraud risk, reassigned-number and email verification lookups from RealPhoneValidation.
+domain: realphonevalidation.com
+recommendedAuth: api_key
+overviewNote: |
+  Your token is on the [RealPhoneValidation account page](https://my.realvalidation.com/rvback/rv_login.php) and is issued by RealValidation, Inc. It travels as the `token` query parameter, because that is the only transport these services support: the plugin cannot keep it out of the URL, so keep request logs off the proxy.
+
+  **All twelve services take a US number as ten digits only.** No `+1`, no punctuation, no extensions. The plugin rejects anything else rather than reformatting it, because silently repairing a number would hide a bad one you should see rejected.
+
+  Things to know before you rely on an answer:
+
+  - **A refusal can arrive inside a `200`.** These services predate HTTP error conventions: an unrecognised token answers `{"status":"unauthorized"}`, a missing one `{"status":"ERROR","error_text":"missing token"}`, and a bad number `{"status":"invalid phone"}`, all with a `200`. The plugin checks the body and throws, so a caller never mistakes a refusal for a disposition. The only real non-2xx failures are the documented `403` for exceeding 10 calls a second and a `5xx`.
+  - **`?` is not "no".** On `dncLookup` and `dncPlus`, `national_dnc`, `state_dnc`, `dma` and `litigator` answer `Y`, `N` or `?`, where `?` means the list timed out or could not be checked. Treat `?` as unknown; reading it as cleared is exactly the mistake that creates a TCPA problem.
+  - **`reassigned: "no_data"` is not `"no"`.** `no_data` means the carriers recorded no change since 27 January 2021, which is not evidence about a particular number. Only `yes` and `no` answer the question you asked.
+  - **`active` and `connected` are different questions.** `active` says the number sits on a provider still in business; it deliberately does not say anyone answers. Use `turboV3`, `turboStandard`, `turbo` or `scrub` for connectivity and `active` only for existence.
+  - **Five services overlap.** `turboV3` gives the most (connection, phone type, caller name, carrier, caller type); `turboStandard` gives connection and phone type; the legacy `turbo` gives connection, `iscell` and carrier; `scrub` and `scrubPlus` are the cheap list-processing options and may answer `unknown` for up to 5% of US numbers. Pick one per workflow rather than chaining them.
+  - **`error_text` is `{}` when there is nothing to report.** It is an empty object rather than an empty string or absent, and the same holds for `RESPONSEMSG` on the `RESPONSECODE` routes. The response models accept either shape.
+  - **`fraudCheck` returns numeric strings.** `score` is a string from 0 to 1000 and `phn_type` is a code explained by `phn_desc`. They are not parsed here, so a caller comparing them should convert them and see a non-numeric value rather than have it silently coerced.
+  - **`reassigned` needs your consent date.** `contact_date` is the date you received permission to contact, in `YYYY-MM-DD`; a reassignment only means anything relative to that date.
+  - **`dncLookup` needs a SAN number** from the national registry before the service will answer.
+  - **Rate limit.** The docs recommend 10 calls a second and refuse a burst with a `403` and an empty body. The plugin retries that three times with exponential backoff.
+examples:
+  read:
+    path: turboV3
+    title: Validate a US phone number
+    args:
+      phone: '7275555555'
+  read_2:
+    path: dncLookup
+    title: Check a number against the Do-Not-Call lists
+    args:
+      phone: '7275555555'
+apiExamples:
+  turboV3:
+    call: "{ phone: '7275555555' }"
+  turboStandard:
+    call: "{ phone: '7275555555' }"
+  turbo:
+    call: "{ phone: '7275555555' }"
+  scrub:
+    call: "{ phone: '7275555555' }"
+  scrubPlus:
+    call: "{ phone: '7275555555' }"
+  active:
+    call: "{ phone: '7275555555' }"
+  wirelessId:
+    call: "{ phone: '7275555555' }"
+  dncLookup:
+    call: "{ phone: '7275555555' }"
+  dncPlus:
+    call: "{ phone: '7275555555' }"
+  fraudCheck:
+    call: "{ phone: '7275555555' }"
+  reassigned:
+    call: "{ phone: '7275555555', contact_date: '2010-01-01' }"
+  emailVerify:
+    call: "{ email: 'johnsmith@test.com' }"
