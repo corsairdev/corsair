@@ -1580,5 +1580,23 @@
         "title": "Let an operation declare the long job it starts"
       }
     ]
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.26",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.9",
+    "isNew": false,
+    "changes": []
   }
 ]
