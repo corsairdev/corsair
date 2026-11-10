@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHmac } from 'node:crypto';
 import { AuthMissingError, asRecord } from 'corsair/core';
 import { clearLeigaTokenCache, resolveLeigaToken } from './client';
 
@@ -50,9 +50,9 @@ export function fingerprintLeigaPair(
 	clientId: string,
 	clientSecret: string,
 ): string {
-	return createHash('sha256')
-		.update(`${clientId}\u0000${clientSecret}`)
-		.digest('hex');
+	// Keyed with the secret rather than hashing it: the secret never enters the
+	// digest as data, and the same pair always gives the same value.
+	return createHmac('sha256', clientSecret).update(clientId).digest('hex');
 }
 
 export function encodeLeigaStoredToken(token: LeigaStoredToken): string {
