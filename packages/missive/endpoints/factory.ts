@@ -2,6 +2,7 @@ import { makeMissiveRequest } from '../client';
 import type { MissiveOperationKey } from '../operations';
 import { getMissiveOperation } from '../operations';
 import type { MissiveEndpointInputs, MissiveEndpointOutputs } from './types';
+import { MissiveEndpointOutputSchemas } from './types';
 
 /**
  * The context the shared binder hands to every endpoint. `key` is the
@@ -14,7 +15,12 @@ export type MissiveEndpointHandler<K extends MissiveOperationKey> = (
 	input: MissiveEndpointInputs[K],
 ) => Promise<MissiveEndpointOutputs[K]>;
 
-function encodeSegment(name: string, value: unknown): string {
+function encodeSegment(
+	name: string,
+	// unknown: path values arrive from the schema-parsed input and are only
+	// known to be identifiers; the guard below narrows to a non-empty string.
+	value: unknown,
+): string {
 	if (typeof value !== 'string' || value.length === 0) {
 		throw new Error(`[missive] missing required path parameter: ${name}`);
 	}
@@ -75,6 +81,9 @@ export function defineEndpoint<K extends MissiveOperationKey>(
 	key: K,
 ): MissiveEndpointHandler<K> {
 	const operation = getMissiveOperation(key);
+	// Every operation must have a corresponding output schema; this is a
+	// compile-time guarantee via MissiveEndpointOutputSchemas registry.
+	const outputSchema = MissiveEndpointOutputSchemas[key];
 
 	return async (ctx, input) => {
 		// The public Corsair binder validates the operation's object input schema.
@@ -85,6 +94,8 @@ export function defineEndpoint<K extends MissiveOperationKey>(
 			rawBody !== undefined && operation.bodyWrapper
 				? { [operation.bodyWrapper]: rawBody }
 				: rawBody;
+		// unknown: the raw transport result before the wrapper's output-schema
+		// parse; narrowing belongs to the public boundary, not the transport.
 		const result = await makeMissiveRequest<unknown>(
 			resolvePath(
 				operation.path,
@@ -99,6 +110,11 @@ export function defineEndpoint<K extends MissiveOperationKey>(
 				body,
 			},
 		);
-		return result as MissiveEndpointOutputs[K];
+		// Parse the transport result through the operation's output schema so
+		// malformed provider responses are rejected at the boundary instead of
+		// being cast through to callers.
+		// `as MissiveEndpointOutputs[K]`: parse() already validated the shape;
+		// this cast only narrows the TypeScript type for callers.
+		return outputSchema.parse(result) as MissiveEndpointOutputs[K];
 	};
 }

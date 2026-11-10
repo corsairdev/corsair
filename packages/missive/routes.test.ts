@@ -519,6 +519,60 @@ describe('Missive REST endpoint contract', () => {
 		).toBe(42);
 	});
 
+	it('uses documented Missive API paths (hardcoded against the provider spec)', () => {
+		// These paths come from https://missiveapp.com/docs/developers/rest-api/endpoints.
+		// They are hardcoded so that a drift in operations.ts is caught by the test
+		// instead of being silently self-validated through operation.path.
+		const expectedPaths: Record<string, string> = {
+			'analytics.createReport': 'POST /analytics/reports',
+			'analytics.getReport': 'GET /analytics/reports/{id}',
+			'contacts.create': 'POST /contacts',
+			'contacts.update': 'PATCH /contacts/{ids}',
+			'contacts.list': 'GET /contacts',
+			'contacts.get': 'GET /contacts/{id}',
+			'contactBooks.list': 'GET /contact_books',
+			'contactGroups.list': 'GET /contact_groups',
+			'conversations.list': 'GET /conversations',
+			'conversations.get': 'GET /conversations/{id}',
+			'conversations.update': 'PATCH /conversations/{ids}',
+			'conversations.listMessages': 'GET /conversations/{id}/messages',
+			'conversations.listComments': 'GET /conversations/{id}/comments',
+			'conversations.listDrafts': 'GET /conversations/{id}/drafts',
+			'conversations.listPosts': 'GET /conversations/{id}/posts',
+			'conversations.merge': 'PATCH /conversations/{id}/merge',
+			'drafts.create': 'POST /drafts',
+			'drafts.delete': 'DELETE /drafts/{id}',
+			'messages.create': 'POST /messages',
+			'messages.get': 'GET /messages/{ids}',
+			'messages.list': 'GET /messages',
+			'organizations.list': 'GET /organizations',
+			'responses.list': 'GET /responses',
+			'responses.get': 'GET /responses/{id}',
+			'responses.create': 'POST /responses',
+			'responses.update': 'PATCH /responses/{ids}',
+			'responses.delete': 'DELETE /responses/{ids}',
+			'posts.create': 'POST /posts',
+			'posts.delete': 'DELETE /posts/{id}',
+			'sharedLabels.create': 'POST /shared_labels',
+			'sharedLabels.update': 'PATCH /shared_labels/{ids}',
+			'sharedLabels.list': 'GET /shared_labels',
+			'teams.list': 'GET /teams',
+			'teams.create': 'POST /teams',
+			'teams.update': 'PATCH /teams/{ids}',
+			'users.list': 'GET /users',
+			'tasks.list': 'GET /tasks',
+			'tasks.get': 'GET /tasks/{id}',
+			'tasks.create': 'POST /tasks',
+			'tasks.update': 'PATCH /tasks/{id}',
+			'hooks.create': 'POST /hooks',
+			'hooks.delete': 'DELETE /hooks/{id}',
+		};
+		for (const operation of MISSIVE_OPERATIONS) {
+			const expected = `${operation.method} ${operation.path}`;
+			expect(expected).toBe(expectedPaths[operation.key]);
+		}
+	});
+
 	it.each(Object.entries(INPUT_FIXTURES))(
 		'%s sends its documented request',
 		async (key) => {
