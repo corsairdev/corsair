@@ -507,7 +507,7 @@ const quadernoEndpointMeta = {
 	'invoices.update': {
 		riskLevel: 'write',
 		description:
-			'Changes an invoice. Quaderno only allows this while the invoice is still editable; a paid or voided one is refused.',
+			'Changes an invoice. Only the fields you send are changed. An issued invoice is legally immutable: Quaderno then accepts only `notes`, `payment_details` and `tag_list`, so correct anything else by voiding it and issuing a new one.',
 	},
 	'invoices.void': {
 		riskLevel: 'destructive',
@@ -574,7 +574,7 @@ const quadernoEndpointMeta = {
 	'credits.update': {
 		riskLevel: 'write',
 		description:
-			'Changes a credit note. Like an invoice, only while it is still editable.',
+			'Changes the administrative fields of a credit note: `notes`, `payment_details` and `tag_list`. Amounts, lines and the customer are immutable once it is issued.',
 	},
 	'credits.void': {
 		riskLevel: 'destructive',
@@ -605,7 +605,7 @@ const quadernoEndpointMeta = {
 	'proformas.update': {
 		riskLevel: 'write',
 		description:
-			'Changes a proforma. It stays a proforma until `proformas.convert` issues a real invoice.',
+			'Changes a proforma. Only the id is required. An accepted or invoiced proforma cannot be changed. It stays a proforma until `proformas.convert` issues a real invoice.',
 	},
 	'proformas.accept': {
 		riskLevel: 'write',

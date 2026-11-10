@@ -502,22 +502,20 @@ describe('receipts, credits and proformas', () => {
 		expect(lastCall().parsed.pathname).toBe('/api/credits/181235112');
 	});
 
-	it('credits.update PUTs without the id in the body', async () => {
+	it('credits.update PUTs an administrative field on its own', async () => {
 		respond(invoiceFixture);
 
+		// A credit note is immutable once issued: only notes, payment details and
+		// tags can change, so none of the document fields may be required.
 		await run(
-			{
-				id: 181235112,
-				contact: { id: 1 },
-				items: [{ description: 'Refund', unit_price: 5 }],
-			},
+			{ id: 181235112, notes: 'Refund agreed by phone' },
 			endpoints.credits.update,
 		);
 
 		const { parsed, init, body } = lastCall();
 		expect(init.method).toBe('PUT');
 		expect(parsed.pathname).toBe('/api/credits/181235112');
-		expect(body).not.toHaveProperty('id');
+		expect(body).toEqual({ notes: 'Refund agreed by phone' });
 	});
 
 	it('credits.void PUTs the void route with a reason', async () => {
@@ -607,7 +605,18 @@ describe('receipts, credits and proformas', () => {
 	it('proformas.deliver GETs the deliver route', async () => {
 		respond(invoiceFixture);
 
-		await run({ id: 9 }, endpoints.proformas.deliver);
+		await run(
+			{ id: 181235300, notes: 'Valid for 30 days' },
+			endpoints.proformas.update,
+		);
+
+		expect(lastCall().body).toEqual({ notes: 'Valid for 30 days' });
+	});
+
+	it('proformas.deliver GETs the deliver route', async () => {
+		respond(undefined);
+
+		const { result } = await run({ id: 9 }, endpoints.proformas.deliver);
 
 		expect(lastCall().init.method).toBe('GET');
 		expect(lastCall().parsed.pathname).toBe('/api/proformas/9/deliver');

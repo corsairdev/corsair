@@ -561,7 +561,7 @@ export const proformasUpdate: QuadernoEndpoints['proformasUpdate'] = (
 		},
 	);
 
-/** The four state actions share one request shape and one response. */
+/** The three state actions share one request shape and one response. */
 function proformaAction(
 	event: string,
 	action: 'accept' | 'decline' | 'revert' | 'convert',

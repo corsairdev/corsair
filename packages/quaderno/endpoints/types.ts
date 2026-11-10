@@ -754,9 +754,15 @@ const CreditGetInputSchema = z.object({ id: IdSchema });
 
 export type CreditGetInput = z.input<typeof CreditGetInputSchema>;
 
+/**
+ * A credit note is immutable once issued. Only its administrative fields can
+ * still change, so those are the only ones offered and none is required.
+ */
 const CreditUpdateInputSchema = z.object({
-	...DocumentWriteShape,
 	id: IdSchema,
+	notes: DocumentWriteShape.notes,
+	payment_details: DocumentWriteShape.payment_details,
+	tag_list: DocumentWriteShape.tag_list,
 });
 
 export type CreditUpdateInput = z.input<typeof CreditUpdateInputSchema>;
@@ -810,9 +816,23 @@ const ProformaGetInputSchema = z.object({ id: IdSchema });
 
 export type ProformaGetInput = z.input<typeof ProformaGetInputSchema>;
 
+/**
+ * Partial, as for invoices: only the id is required. Requiring `items` on every
+ * update would make a caller resend the lines to change a note, and Quaderno
+ * documents an update with `items` as the way to add lines.
+ */
 const ProformaUpdateInputSchema = z.object({
-	...DocumentWriteShape,
 	id: IdSchema,
+	contact: DocumentWriteShape.contact.optional(),
+	items: DocumentWriteShape.items.optional(),
+	currency: DocumentWriteShape.currency,
+	issue_date: DocumentWriteShape.issue_date,
+	due_date: DocumentWriteShape.due_date,
+	notes: DocumentWriteShape.notes,
+	subject: DocumentWriteShape.subject,
+	po_number: DocumentWriteShape.po_number,
+	payment_details: DocumentWriteShape.payment_details,
+	tag_list: DocumentWriteShape.tag_list,
 });
 
 export type ProformaUpdateInput = z.input<typeof ProformaUpdateInputSchema>;
