@@ -91,6 +91,10 @@
   "coinbase": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/coinbase.svg"
   },
+  "coinmarketcap": {
+    "from": "https://media.brand.dev/cb44b12e-f26e-42e9-b863-ad148d7d3353.svg",
+    "note": "found with the context.dev Brand API for coinmarketcap.com"
+  },
   "connecteam": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/connecteam.svg"
   },
@@ -106,6 +110,10 @@
   },
   "deepseek": {
     "from": "https://svgl.app/library/deepseek.svg"
+  },
+  "desktime": {
+    "from": "https://media.brand.dev/70cc7e04-17b5-492c-89f1-524f510b0386.svg",
+    "note": "found with the context.dev Brand API for desktime.com"
   },
   "diffbot": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/diffbot.svg"
@@ -141,6 +149,10 @@
   },
   "facebook": {
     "from": "https://svgl.app/library/facebook-icon.svg"
+  },
+  "fidel": {
+    "from": "https://media.brand.dev/7726e0cb-145b-4940-a8fc-53aaec99ca4a.svg",
+    "note": "found with the context.dev Brand API for fidelapi.com"
   },
   "figma": {
     "from": "https://svgl.app/library/figma.svg"
@@ -230,6 +242,10 @@
   "monday": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"
   },
+  "nanonets": {
+    "from": "https://media.brand.dev/549cc934-c570-47ce-99fb-2ac226c2a33d.svg",
+    "note": "found with the context.dev Brand API for nanonets.com"
+  },
   "neon": {
     "from": "https://svgl.app/library/neon.svg"
   },
@@ -250,6 +266,10 @@
   "onedrive": {
     "from": "https://svgl.app/library/microsoft-onedrive.svg"
   },
+  "opensea": {
+    "from": "https://media.brand.dev/82aa8325-542b-44b6-b392-6f8e52afdf0e.svg",
+    "note": "found with the context.dev Brand API for opensea.io"
+  },
   "outlook": {
     "from": "https://svgl.app/library/microsoft-outlook.svg"
   },
@@ -267,6 +287,10 @@
   },
   "qdrant": {
     "from": "https://svgl.app/library/qdrant-icon-light.svg"
+  },
+  "quaderno": {
+    "from": "https://media.brand.dev/69c6e1c1-7b4e-4c82-b2b5-163cdcfc1f4c.svg",
+    "note": "found with the context.dev Brand API for quadernoapp.com"
   },
   "reddit": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/reddit.svg"
