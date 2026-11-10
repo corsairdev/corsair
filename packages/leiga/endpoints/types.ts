@@ -181,9 +181,14 @@ const IssueSummarySchema = z
 		dueDate: timestamp.nullish(),
 		sprintName: z.string().nullish(),
 		tags: z.array(TagRefSchema).nullish(),
-		// unknown: custom field values are account-defined; `showedCustomFieldCodes`
-		// on the input decides which appear, so the shape is not knowable here.
-		customFieldData: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: custom field values are account-defined, so the shape is not
+		// knowable here.
+		customFieldData: z
+			.record(z.string(), z.unknown())
+			.nullish()
+			.describe(
+				'Custom field values keyed by field code, e.g. customfield_213979997',
+			),
 	})
 	.loose();
 
@@ -251,7 +256,12 @@ const IssueSchema = z
 		tags: z.array(TagRefSchema).nullish(),
 		// unknown: custom field values are account-defined; `issues.fields` lists
 		// the codes for one issue type, so the set is not knowable here.
-		customFieldData: z.record(z.string(), z.unknown()).nullish(),
+		customFieldData: z
+			.record(z.string(), z.unknown())
+			.nullish()
+			.describe(
+				'Custom field values keyed by field code, e.g. customfield_213979997',
+			),
 	})
 	.loose();
 

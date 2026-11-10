@@ -111,7 +111,7 @@ Takes `issueId` as the `id` query parameter and answers one issue. Custom field 
 | `isArchived` | `number \| null` | No | — |
 | `issueNumberOrAlias` | `string \| null` | No | — |
 | `tags` | `object[] \| null` | No | — |
-| `customFieldData` | `Record<string, unknown> \| null` | No | Custom field values keyed by field code, e.g. `customfield_213979997` |
+| `customFieldData` | `Record<string, any> \| null` | No | Custom field values keyed by field code, e.g. customfield_213979997 |
 
 <AccordionGroup>
 <Accordion title="assigneeVO full type">
@@ -220,7 +220,7 @@ Looks an issue up by its human-readable number, such as `LGC-12`.
 | `isArchived` | `number \| null` | No | — |
 | `issueNumberOrAlias` | `string \| null` | No | — |
 | `tags` | `object[] \| null` | No | — |
-| `customFieldData` | `Record<string, unknown> \| null` | No | Custom field values keyed by field code, e.g. `customfield_213979997` |
+| `customFieldData` | `Record<string, any> \| null` | No | Custom field values keyed by field code, e.g. customfield_213979997 |
 
 <AccordionGroup>
 <Accordion title="assigneeVO full type">
@@ -298,7 +298,7 @@ await corsair.leiga.api.issues.list({ projectId: 123456, statusTypes: [2, 3], pa
 | `sort` | `ASC \| DESC` | No | Sort direction |
 | `statusTypes` | `number[]` | No | Status types to include: 2 not started, 3 in progress, 4 done |
 
-A POST with the filters in the body, answering `{ total, list }`. `statusTypes` filters by phase (2 not started, 3 in progress, 4 done); `orderBy` accepts `createTime` or `updateTime` and `sort` accepts `ASC` or `DESC`.
+Returns `{ issues, total }`, where `total` counts every match and `issues` holds one page. `statusTypes` filters by phase (2 not started, 3 in progress, 4 done); `orderBy` accepts `createTime` or `updateTime` and `sort` accepts `ASC` or `DESC`.
 
 
 
@@ -349,7 +349,7 @@ A POST with the filters in the body, answering `{ total, list }`. `statusTypes` 
     id?: number | null,
     tagName?: string | null
   }[] | null,
-  customFieldData?: Record<string, unknown> | null
+  customFieldData?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -569,7 +569,7 @@ await corsair.leiga.api.projects.list({});
 
 **Input:** _empty object_
 
-Answers a bare array of `{ id, pname, pkey, archived }`. `pkey` is the prefix used in issue numbers such as `LGC-12`.
+Returns `{ projects }`, each one `{ id, pname, pkey, archived }`. `pkey` is the prefix used in issue numbers such as `LGC-12`.
 
 
 **Output**
@@ -754,7 +754,7 @@ await corsair.leiga.api.tags.list({ projectId: 123456 });
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | Leiga numeric id |
 
-A POST with `projectId` in the body, answering a bare array of `{ id, tagName }`.
+Returns `{ tags }`, each one `{ id, tagName }`.
 
 
 
