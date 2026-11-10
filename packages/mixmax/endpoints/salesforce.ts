@@ -39,7 +39,9 @@ export const salesforceCreateAccount: MixmaxEndpoints['salesforceCreateAccount']
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.createAccount',
-			{ ...input },
+			// CRM field values (names, addresses, phone numbers) are private;
+			// log how many fields were sent, never their values.
+			{ fields: Object.keys(input).length },
 			'completed',
 		);
 		return result;
@@ -98,7 +100,8 @@ export const salesforceUpdateAccount: MixmaxEndpoints['salesforceUpdateAccount']
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.updateAccount',
-			{ ...input },
+			// Field values are private; log the record id and the field count.
+			{ id: input.id, fields: Object.keys(input).length - 1 },
 			'completed',
 		);
 		return result;
@@ -117,7 +120,9 @@ export const salesforceCreateContact: MixmaxEndpoints['salesforceCreateContact']
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.createContact',
-			{ ...input },
+			// CRM field values (names, addresses, phone numbers) are private;
+			// log how many fields were sent, never their values.
+			{ fields: Object.keys(input).length },
 			'completed',
 		);
 		return result;
@@ -156,7 +161,8 @@ export const salesforceUpdateContact: MixmaxEndpoints['salesforceUpdateContact']
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.updateContact',
-			{ ...input },
+			// Field values are private; log the record id and the field count.
+			{ id: input.id, fields: Object.keys(input).length - 1 },
 			'completed',
 		);
 		return result;
@@ -223,7 +229,9 @@ export const salesforceCreateLead: MixmaxEndpoints['salesforceCreateLead'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.createLead',
-			{ ...input },
+			// CRM field values (names, addresses, phone numbers) are private;
+			// log how many fields were sent, never their values.
+			{ fields: Object.keys(input).length },
 			'completed',
 		);
 		return result;
@@ -264,7 +272,8 @@ export const salesforceUpdateLead: MixmaxEndpoints['salesforceUpdateLead'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.updateLead',
-			{ ...input },
+			// Field values are private; log the record id and the field count.
+			{ id: input.id, fields: Object.keys(input).length - 1 },
 			'completed',
 		);
 		return result;
@@ -309,7 +318,9 @@ export const salesforceCreateOpportunity: MixmaxEndpoints['salesforceCreateOppor
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.createOpportunity',
-			{ ...input },
+			// CRM field values (names, addresses, phone numbers) are private;
+			// log how many fields were sent, never their values.
+			{ fields: Object.keys(input).length },
 			'completed',
 		);
 		return result;
@@ -352,7 +363,8 @@ export const salesforceUpdateOpportunity: MixmaxEndpoints['salesforceUpdateOppor
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.updateOpportunity',
-			{ ...input },
+			// Field values are private; log the record id and the field count.
+			{ id: input.id, fields: Object.keys(input).length - 1 },
 			'completed',
 		);
 		return result;
@@ -437,7 +449,9 @@ export const salesforceCreateTask: MixmaxEndpoints['salesforceCreateTask'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.createTask',
-			{ ...input },
+			// CRM field values (names, addresses, phone numbers) are private;
+			// log how many fields were sent, never their values.
+			{ fields: Object.keys(input).length },
 			'completed',
 		);
 		return result;
@@ -478,7 +492,8 @@ export const salesforceUpdateTask: MixmaxEndpoints['salesforceUpdateTask'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.updateTask',
-			{ ...input },
+			// Field values are private; log the record id and the field count.
+			{ id: input.id, fields: Object.keys(input).length - 1 },
 			'completed',
 		);
 		return result;

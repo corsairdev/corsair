@@ -49,7 +49,12 @@ export const unsubscribesCreate: MixmaxEndpoints['unsubscribesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.unsubscribes.create',
-		{ ...input },
+		{
+			// The addresses and the contact's name are private; log the
+			// number of addresses only.
+			addresses:
+				(input.email !== undefined ? 1 : 0) + (input.emails?.length ?? 0),
+		},
 		'completed',
 	);
 	return result;

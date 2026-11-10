@@ -157,7 +157,11 @@ export const teamsMembersAdd: MixmaxEndpoints['teamsMembersAdd'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.teams.members.add',
-		{ ...input },
+		{
+			// Invitee addresses are private; log the team id and the count.
+			id: input.id,
+			members: input.members.length,
+		},
 		'completed',
 	);
 	return result;

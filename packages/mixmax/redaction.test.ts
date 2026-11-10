@@ -158,4 +158,55 @@ describe('Mixmax event history redaction', () => {
 			scheduled: false,
 		});
 	});
+	it('never logs recipient, invitee, unsubscribe or CRM values on the other writes', async () => {
+		request.mockResolvedValue(undefined);
+		await endpoints.sequences.recipients.add(ctx, {
+			id: 'seq-1',
+			recipients: [
+				{
+					email: 'alice@example.com',
+					variables: { firstName: 'Private variable' },
+				},
+			],
+		} as never);
+		await endpoints.unsubscribes.create(ctx, {
+			email: 'bob@example.com',
+			name: 'Private Name',
+		});
+		await endpoints.unsubscribes.create(ctx, {
+			emails: ['carol@example.com', 'dan@example.com'],
+		});
+		await endpoints.teams.members.add(ctx, {
+			id: 'team-1',
+			members: [{ email: 'erin@example.com' }],
+		} as never);
+		await endpoints.salesforce.createContact(ctx, {
+			Email: 'frank@example.com',
+			LastName: 'Private',
+		});
+		await endpoints.salesforce.updateLead(ctx, {
+			id: '00Q000000000001',
+			Id: '00Q000000000001',
+			Email: 'grace@example.com',
+			Phone: '+1 555 0100',
+		});
+
+		const payloads = logEvent.mock.calls
+			.filter((call) => !String(call[1]).endsWith('.outputMismatch'))
+			.map((call) => call[2] as Record<string, unknown>);
+		for (const payload of payloads) {
+			const serialized = JSON.stringify(payload);
+			expect(serialized).not.toContain('@');
+			expect(serialized).not.toContain('Private');
+			expect(serialized).not.toContain('555');
+		}
+		expect(payloads).toEqual([
+			{ id: 'seq-1', recipients: 1, scheduled: false },
+			{ addresses: 1 },
+			{ addresses: 2 },
+			{ id: 'team-1', members: 1 },
+			{ fields: 2 },
+			{ id: '00Q000000000001', fields: 3 },
+		]);
+	});
 });

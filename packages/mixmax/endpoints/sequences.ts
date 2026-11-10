@@ -158,7 +158,13 @@ export const sequencesRecipientsAdd: MixmaxEndpoints['sequencesRecipientsAdd'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.sequences.recipients.add',
-			{ ...input },
+			{
+				// Recipient addresses and variables are private; the event
+				// history records only the sequence id and the shape.
+				id: input.id,
+				recipients: input.recipients.length,
+				scheduled: input.scheduledAt !== undefined,
+			},
 			'completed',
 		);
 		return result;
