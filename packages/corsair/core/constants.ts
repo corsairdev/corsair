@@ -300,8 +300,10 @@ export const BaseProviders = [
 	'kling',
 	'leexi',
 	'leiga',
+	'lemonsqueezy',
 	'lever',
 	'linear',
+	'linguapop',
 	'linkedin',
 	'litescrape',
 	'loyverse',
@@ -404,9 +406,11 @@ export const BaseProviders = [
 	'surf',
 	'suzanne',
 	'synthflowai',
+	'taggun',
 	'tally',
 	'tavily',
 	'tavilymcp',
+	'teamcamp',
 	'teams',
 	'telegram',
 	'textrazor',
@@ -420,6 +424,7 @@ export const BaseProviders = [
 	'tinypng',
 	'tinyurl',
 	'tisane',
+	'tldv',
 	'todoist',
 	'toggl',
 	'tokenmetrics',
@@ -468,6 +473,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zenrows',
 	'zenserp',
 	'zohobigin',
 	'zohodesk',
@@ -765,8 +771,10 @@ export const ProviderDisplayNames = {
 	kling: 'Kling',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
+	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
+	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
@@ -868,9 +876,11 @@ export const ProviderDisplayNames = {
 	surf: 'Surf',
 	suzanne: 'Suzanne',
 	synthflowai: 'Synthflow AI',
+	taggun: 'Taggun',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
+	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
@@ -884,6 +894,7 @@ export const ProviderDisplayNames = {
 	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
+	tldv: 'tl;dv',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
@@ -932,6 +943,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zenrows: 'ZenRows',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
 	zohodesk: 'Zoho Desk',
@@ -1234,8 +1246,10 @@ export type AllProviders =
 	| 'kling'
 	| 'leexi'
 	| 'leiga'
+	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
+	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
 	| 'loyverse'
@@ -1338,9 +1352,11 @@ export type AllProviders =
 	| 'surf'
 	| 'suzanne'
 	| 'synthflowai'
+	| 'taggun'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
+	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
@@ -1354,6 +1370,7 @@ export type AllProviders =
 	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
+	| 'tldv'
 	| 'todoist'
 	| 'toggl'
 	| 'tokenmetrics'
@@ -1402,6 +1419,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zenrows'
 	| 'zenserp'
 	| 'zohobigin'
 	| 'zohodesk'

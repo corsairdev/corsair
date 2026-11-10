@@ -2531,6 +2531,14 @@
                 ]
               },
               {
+                "group": "Lemon Squeezy",
+                "pages": [
+                  "plugins/lemonsqueezy/overview",
+                  "plugins/lemonsqueezy/api",
+                  "plugins/lemonsqueezy/database"
+                ]
+              },
+              {
                 "group": "Lever",
                 "pages": [
                   "plugins/lever/overview",
@@ -2546,6 +2554,14 @@
                   "plugins/linear/api",
                   "plugins/linear/database",
                   "plugins/linear/webhooks"
+                ]
+              },
+              {
+                "group": "Linguapop",
+                "pages": [
+                  "plugins/linguapop/overview",
+                  "plugins/linguapop/api",
+                  "plugins/linguapop/database"
                 ]
               },
               {
@@ -3385,6 +3401,14 @@
                 ]
               },
               {
+                "group": "Taggun",
+                "pages": [
+                  "plugins/taggun/overview",
+                  "plugins/taggun/api",
+                  "plugins/taggun/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
@@ -3408,6 +3432,14 @@
                   "plugins/tavilymcp/overview",
                   "plugins/tavilymcp/api",
                   "plugins/tavilymcp/database"
+                ]
+              },
+              {
+                "group": "Teamcamp",
+                "pages": [
+                  "plugins/teamcamp/overview",
+                  "plugins/teamcamp/api",
+                  "plugins/teamcamp/database"
                 ]
               },
               {
@@ -3508,6 +3540,15 @@
                   "plugins/tisane/overview",
                   "plugins/tisane/api",
                   "plugins/tisane/database"
+                ]
+              },
+              {
+                "group": "tl;dv",
+                "pages": [
+                  "plugins/tldv/overview",
+                  "plugins/tldv/api",
+                  "plugins/tldv/database",
+                  "plugins/tldv/webhooks"
                 ]
               },
               {
@@ -3912,6 +3953,14 @@
                   "plugins/zendesk/overview",
                   "plugins/zendesk/api",
                   "plugins/zendesk/database"
+                ]
+              },
+              {
+                "group": "ZenRows",
+                "pages": [
+                  "plugins/zenrows/overview",
+                  "plugins/zenrows/api",
+                  "plugins/zenrows/database"
                 ]
               },
               {
