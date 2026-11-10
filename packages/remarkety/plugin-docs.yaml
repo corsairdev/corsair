@@ -1,0 +1,85 @@
+displayName: Remarkety
+description: Manage stores and their sync status, create contacts, build and update email campaigns with their rules and templates, and read products, rules and segments with Remarkety.
+domain: remarkety.com
+recommendedAuth: api_key
+overviewNote: |
+  The token comes from your Remarkety account and goes in the `X-Token` header. The API also accepts `token` as a query parameter, but the plugin never uses it: a key in a URL is logged by every proxy.
+
+  **`Accept: application/json` is load-bearing.** Sent without it, a failed call comes back as an HTML login page instead of the JSON error `{"message":"Missing or invalid API Key","status":"ERROR","guid":"…"}`. The plugin always sends it, and it keeps the `guid` on the error because that is what support asks for.
+
+  **Building a campaign takes three reads first:**
+
+  - **`rules.list`** gives every rule type with its `operators`, `possibleValues` and `defaultValue`. A campaign action's `rules` must use those exact operator strings.
+  - **`campaigns.types`** gives the campaign types the store supports and what each needs.
+  - **`emailTemplates.preview`** gives the data a template merges against — and passing a real `shopper` or `order` ID shows exactly what that customer's mail would contain.
+
+  Things worth knowing before a write:
+
+  - **`stores.create` and `stores.update` carry a *different* secret.** The `apiKey` there is the key Remarkety uses to sync that store; it is not the token this plugin authenticates with.
+  - **`stores.update` is `PUT /stores` with the id in the body**, not `PUT /stores/{id}`. The same is true of `campaigns.update`, which is `PUT /stores/{storeId}/campaigns`.
+  - **`mode` decides whether a campaign sends.** `run` starts it contacting shoppers, `test` sends a sample to `testEmail`, and `stop` halts it. Check the current mode with `campaigns.get` before updating, and remember a `stop` is the safe state to build in.
+  - **An email action needs a subject and a `baseTemplate`; an api action needs a `webhook`.** The plugin rejects either omission rather than creating a campaign Remarkety cannot run. This endpoint version expects exactly one action.
+  - **Stats report revenue twice.** `totalOrdersUSD` is normalised to dollars and `totalOrders` is in the store's own currency, so the numbers differ whenever the store is not priced in USD.
+  - **`stores.status` is the sync health check.** `syncLastError` is populated only when `syncStatus` is `ERROR`, so a nil error on any other status means nothing.
+  - **Deleting a store is destructive and final.** There is no archive state, and a store's campaigns and contacts go with it.
+examples:
+  read:
+    path: campaigns.stats
+    title: Read campaign performance
+    args:
+      storeId: 1
+  write:
+    path: contacts.create
+    title: Create a contact with marketing permission
+    args:
+      storeId: 1
+      email: jane@example.com
+      firstName: Jane
+      allowedMarketing: true
+apiExamples:
+  stores.create:
+    call: "{ name: 'My Store', apiKey: 'store-sync-key', platform: 'MAGENTO', domain: 'https://shop.example.com' }"
+  stores.update:
+    call: "{ id: 1, name: 'Renamed Store', apiKey: 'store-sync-key' }"
+  stores.get:
+    call: "{ storeId: 1 }"
+  stores.delete:
+    call: "{ storeId: 1 }"
+  stores.status:
+    call: "{ storeId: 1 }"
+  contacts.create:
+    call: "{ storeId: 1, email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true }"
+  contacts.unsubscribe:
+    call: "{ storeId: 1, email: 'jane@example.com' }"
+  campaigns.create:
+    call: "{ storeId: 1, type: 'abandoned-cart', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'delay', operator: 'eq', value: '1' }] }] }"
+  campaigns.update:
+    call: "{ storeId: 1, id: 7, mode: 'run' }"
+  campaigns.get:
+    call: "{ storeId: 1, campaignId: 7 }"
+  campaigns.delete:
+    call: "{ storeId: 1, campaignId: 7 }"
+  campaigns.stats:
+    call: "{ storeId: 1, campaignId: 7 }"
+  campaigns.types:
+    call: "{ storeId: 1 }"
+  emailTemplates.get:
+    call: "{ storeId: 1, campaignId: 7, ruleId: 1 }"
+  emailTemplates.update:
+    call: "{ storeId: 1, campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' }"
+  emailTemplates.preview:
+    call: "{ storeId: 1, campaignId: 7, ruleId: 1, type: 'abandoned-cart' }"
+  masterTemplates.list:
+    call: "{ storeId: 1, q: 'promo' }"
+  masterTemplates.switch:
+    call: "{ storeId: 1, masterTemplateId: 3, type: 'html', html: '<html></html>' }"
+  products.list:
+    call: "{ storeId: 1, q: 'T-Shirt', limit: 50, page: 0 }"
+  rules.list:
+    call: "{ storeId: 1 }"
+  rules.get:
+    call: "{ storeId: 1, ruleType: 'delay' }"
+  segments.count:
+    call: "{ storeId: 1 }"
+  segments.list:
+    call: "{ storeId: 1, page: 0, limit: 100 }"
