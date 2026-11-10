@@ -405,11 +405,12 @@ export default function PrivacyPolicyPage() {
 					<p>
 						PostHog receives the pages you view, what you click and the text of
 						that element, how long you stay on a page, your IP address and the
-						approximate location it gives, and your browser and device. It also
-						receives session recordings, which replay how a page looked and
-						changed while you used it, along with browser console messages and
-						the address and timing of network requests. Session recordings are
-						kept for 30 days.
+						approximate location it gives, and your browser and device. On
+						corsair.dev and Hub it also receives session recordings, which
+						replay how a page looked and changed while you used it, along with
+						browser console messages and the address and timing of network
+						requests. Session recordings are kept for 30 days. lug.dev does not
+						record sessions.
 					</p>
 					<p>
 						PostHog uses a cookie and browser storage to recognize a returning
@@ -422,7 +423,7 @@ export default function PrivacyPolicyPage() {
 					<ul className="list-disc space-y-2 pl-6">
 						<li>
 							Text you type into form fields is masked in session recordings on
-							all three sites.
+							corsair.dev and Hub.
 						</li>
 						<li>
 							Session recordings do not include the contents or headers of
