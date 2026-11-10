@@ -288,7 +288,7 @@ describe('Foursquare request shapes', () => {
 	});
 
 	it('rejects a country code that is not two characters', async () => {
-		// Foursquare requires a 2-digit code; `USA` reaches the API and fails.
+		// Foursquare requires a 2-letter code; `USA` reaches the API and fails.
 		const match = FoursquareEndpointInputSchemas.placesMatch;
 		const base = {
 			name: 'Wrigley Field',

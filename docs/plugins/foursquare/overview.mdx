@@ -13,7 +13,7 @@ Things to know before you call:
 - **The host is `places-api.foursquare.com`,** not `api.foursquare.com`. The v3 paths on the old host answer `401 Invalid request token` for every request; `api.foursquare.com/v2` is the separate legacy API and is not wrapped here.
 - **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do, so almost every output field is optional. The identifier a response needs is always added back to your selection, because Foursquare returns exactly what you ask for: `fields: ['name']` alone answers `{"results":[{"name":"..."}]}` with no `fsq_place_id`.
 - **Pagination.** `places.search` returns `nextCursor`, taken from the `link` response header. Pass it back as `cursor` to continue the same search; it is absent on the last page. This is the only operation that pages, because Foursquare paginates by cursor and the other list endpoints take only `limit`.
-- **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-digit country code. Foursquare states that only English-speaking countries are supported, and a code outside that set is not rejected outright: it answers 404 `Match not found` or a 400 asking for a latitude and longitude. It also answers 400, 422 or 500 depending on how the input fails.
+- **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-letter country code. Foursquare states that only English-speaking countries are supported. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found`, a 400 asking for a latitude and longitude, or a 500.
 - **Rate limits** are 50 QPS pay-as-you-go and 100 QPS enterprise, counted across all endpoints. A 429 is retried three times using `Retry-After` when present.
 - **No inbound webhooks.** The Places API does not send any, so this plugin registers none.
 
@@ -75,7 +75,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no key throws `AuthMissingError`; create a Service Key at https://foursquare.com/developers/console and store it with `keys.set_api_key(key)` or pass it as `foursquare({ key })`.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 foursquare()

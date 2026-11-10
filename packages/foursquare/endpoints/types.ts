@@ -398,7 +398,7 @@ const PlacesMatchInputSchema = z.object({
 		.string()
 		.length(2)
 		.describe(
-			'2-digit country code, e.g. US. Foursquare supports English-speaking countries only',
+			'2-letter country code, e.g. US. Foursquare supports English-speaking countries only',
 		),
 	ll: z.string().optional().describe('latitude,longitude'),
 	fields: z.array(z.string()).optional(),

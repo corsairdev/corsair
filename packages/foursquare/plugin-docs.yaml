@@ -11,7 +11,7 @@ overviewNote: |
   - **The host is `places-api.foursquare.com`,** not `api.foursquare.com`. The v3 paths on the old host answer `401 Invalid request token` for every request; `api.foursquare.com/v2` is the separate legacy API and is not wrapped here.
   - **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do, so almost every output field is optional. The identifier a response needs is always added back to your selection, because Foursquare returns exactly what you ask for: `fields: ['name']` alone answers `{"results":[{"name":"..."}]}` with no `fsq_place_id`.
   - **Pagination.** `places.search` returns `nextCursor`, taken from the `link` response header. Pass it back as `cursor` to continue the same search; it is absent on the last page. This is the only operation that pages, because Foursquare paginates by cursor and the other list endpoints take only `limit`.
-  - **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-digit country code. Foursquare states that only English-speaking countries are supported, and a code outside that set is not rejected outright: it answers 404 `Match not found` or a 400 asking for a latitude and longitude. It also answers 400, 422 or 500 depending on how the input fails.
+  - **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-letter country code. Foursquare states that only English-speaking countries are supported. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found`, a 400 asking for a latitude and longitude, or a 500.
   - **Rate limits** are 50 QPS pay-as-you-go and 100 QPS enterprise, counted across all endpoints. A 429 is retried three times using `Retry-After` when present.
   - **No inbound webhooks.** The Places API does not send any, so this plugin registers none.
 examples:
@@ -47,10 +47,10 @@ apiNotes:
   places.get: |
     Answers the place object directly, not wrapped. `fields` narrows it; omitting it returns every Pro field.
   places.autocomplete: |
-    `query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search, geo or address. Results carry a `type` and whichever identifying field matches it, so a place result has `fsq_place_id` while a geo result does not.
+    `query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search or geo. Each result carries a `type` and a `text`. A place result nests the whole place under `place`, so its id is `result.place.fsq_place_id`; a geo or search result has no `place`.
   places.tips: |
-    Answers a bare array of tips with `fsq_tip_id`, `text`, `agree_count` and `disagree_count`. `sort` accepts POPULAR, NEWEST or OLDEST.
+    Returns `{ tips: [...] }`: Foursquare answers a bare array and the plugin wraps it. A tip carries `fsq_tip_id`, `created_at` and `text` by default; ask for `agree_count`, `disagree_count`, `lang` or `url` through `fields`. `sort` accepts POPULAR or NEWEST.
   places.photos: |
-    Answers a bare array of photos. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
+    Returns `{ photos: [...] }`: Foursquare answers a bare array and the plugin wraps it. `sort` accepts POPULAR or NEWEST. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
   places.match: |
-    Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only, and an unsupported code answers 404 `Match not found` rather than a validation error.
+    Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found` or a 400 asking for `ll`.

@@ -30,12 +30,12 @@ await corsair.foursquare.api.places.autocomplete({ query: 'sta', ll: '41.8781,-8
 | `query` | `string` | Yes | At least 3 characters |
 | `ll` | `string` | No | — |
 | `radius` | `number` | No | — |
-| `types` | `(place \| search \| geo \| address)[]` | No | Any combination of result types |
-| `bias` | `place \| search \| geo \| address` | No | Prefer one result type |
+| `types` | `(place \| search \| geo)[]` | No | Any combination of result types |
+| `bias` | `place \| search \| geo` | No | Prefer one result type |
 | `session_token` | `string` | No | Groups a query with the selection it leads to |
 | `limit` | `number` | No | — |
 
-`query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search, geo or address. Results carry a `type` and whichever identifying field matches it, so a place result has `fsq_place_id` while a geo result does not.
+`query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search or geo. Each result carries a `type` and a `text`. A place result nests the whole place under `place`, so its id is `result.place.fsq_place_id`; a geo or search result has no `place`.
 
 
 
@@ -113,14 +113,14 @@ await corsair.foursquare.api.places.autocomplete({ query: 'sta', ll: '41.8781,-8
       total_tips?: number | null
     } | null,
     related_places?: {
-      parent?: Record<string, unknown> | null,
-      children?: Record<string, unknown>[] | null
+      parent?: Record<string, any> | null,
+      children?: Record<string, any>[] | null
     } | null,
     hours?: {
       display?: string | null,
       is_local_holiday?: boolean | null,
       open_now?: boolean | null,
-      regular?: Record<string, unknown>[] | null
+      regular?: Record<string, any>[] | null
     } | null,
     extended_location?: {
       dma?: string | null,
@@ -133,8 +133,8 @@ await corsair.foursquare.api.places.autocomplete({ query: 'sta', ll: '41.8781,-8
     store_id?: string | null,
     tastes?: string[] | null,
     menu?: string | null,
-    attributes?: Record<string, unknown> | null,
-    veracity_rating?: Record<string, unknown> | null,
+    attributes?: Record<string, any> | null,
+    veracity_rating?: Record<string, any> | null,
     unresolved_flags?: string[] | null
   } | null
 }[]
@@ -201,8 +201,8 @@ Answers the place object directly, not wrapped. `fields` narrows it; omitting it
 | `store_id` | `string \| null` | No | — |
 | `tastes` | `string[] \| null` | No | — |
 | `menu` | `string \| null` | No | — |
-| `attributes` | `Record<string, unknown> \| null` | No | — |
-| `veracity_rating` | `Record<string, unknown> \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `veracity_rating` | `Record<string, any> \| null` | No | — |
 | `unresolved_flags` | `string[] \| null` | No | — |
 
 <AccordionGroup>
@@ -278,8 +278,8 @@ Answers the place object directly, not wrapped. `fields` narrows it; omitting it
 
 ```ts
 {
-  parent?: Record<string, unknown> | null,
-  children?: Record<string, unknown>[] | null
+  parent?: Record<string, any> | null,
+  children?: Record<string, any>[] | null
 } | null
 ```
 </Accordion>
@@ -291,7 +291,7 @@ Answers the place object directly, not wrapped. `fields` narrows it; omitting it
   display?: string | null,
   is_local_holiday?: boolean | null,
   open_now?: boolean | null,
-  regular?: Record<string, unknown>[] | null
+  regular?: Record<string, any>[] | null
 } | null
 ```
 </Accordion>
@@ -332,11 +332,11 @@ await corsair.foursquare.api.places.match({ name: 'Wrigley Field', address: '106
 | `city` | `string` | Yes | — |
 | `state` | `string` | No | — |
 | `postal_code` | `string` | No | — |
-| `cc` | `string` | Yes | 2-digit country code, e.g. US. Foursquare supports English-speaking countries only |
+| `cc` | `string` | Yes | 2-letter country code, e.g. US. Foursquare supports English-speaking countries only |
 | `ll` | `string` | No | latitude,longitude |
 | `fields` | `string[]` | No | — |
 
-Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only, and an unsupported code answers 404 `Match not found` rather than a validation error.
+Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found` or a 400 asking for `ll`.
 
 
 
@@ -346,7 +346,7 @@ Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name
 |------|------|----------|-------------|
 | `place` | `object \| null` | No | — |
 | `match_score` | `number \| null` | No | How confident the match is, from 0 to 1 |
-| `context` | `Record<string, unknown> \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="place full type">
@@ -405,14 +405,14 @@ Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name
     total_tips?: number | null
   } | null,
   related_places?: {
-    parent?: Record<string, unknown> | null,
-    children?: Record<string, unknown>[] | null
+    parent?: Record<string, any> | null,
+    children?: Record<string, any>[] | null
   } | null,
   hours?: {
     display?: string | null,
     is_local_holiday?: boolean | null,
     open_now?: boolean | null,
-    regular?: Record<string, unknown>[] | null
+    regular?: Record<string, any>[] | null
   } | null,
   extended_location?: {
     dma?: string | null,
@@ -425,8 +425,8 @@ Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name
   store_id?: string | null,
   tastes?: string[] | null,
   menu?: string | null,
-  attributes?: Record<string, unknown> | null,
-  veracity_rating?: Record<string, unknown> | null,
+  attributes?: Record<string, any> | null,
+  veracity_rating?: Record<string, any> | null,
   unresolved_flags?: string[] | null
 } | null
 ```
@@ -455,10 +455,10 @@ await corsair.foursquare.api.places.photos({ fsq_place_id: '4b28f2aef964a520f9d0
 |------|------|----------|-------------|
 | `fsq_place_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `sort` | `POPULAR \| NEWEST \| OLDEST` | No | — |
+| `sort` | `POPULAR \| NEWEST` | No | Defaults to POPULAR |
 | `classifications` | `string[]` | No | Restrict to these photo classifications |
 
-Answers a bare array of photos. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
+Returns `{ photos: [...] }`: Foursquare answers a bare array and the plugin wraps it. `sort` accepts POPULAR or NEWEST. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
 
 
 
@@ -519,8 +519,8 @@ await corsair.foursquare.api.places.search({ query: 'coffee', near: 'Chicago, IL
 | `max_price` | `number` | No | — |
 | `open_now` | `boolean` | No | — |
 | `open_at` | `string` | No | A local day and time window |
-| `sort` | `RELEVANCE \| DISTANCE \| RATING` | No | Defaults to RELEVANCE |
-| `tel_format` | `string` | No | E164, INTERNATIONAL or NATIONAL |
+| `sort` | `RELEVANCE \| RATING \| DISTANCE \| POPULARITY` | No | Defaults to RELEVANCE |
+| `tel_format` | `NATIONAL \| E164` | No | Format of the returned telephone number |
 | `fields` | `string[]` | No | Response fields; all Pro fields when omitted |
 | `cursor` | `string` | No | Next-page cursor from a previous response. Omit it for the first page |
 | `limit` | `number` | No | Results per page, max 50, default 10 |
@@ -594,14 +594,14 @@ Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw
     total_tips?: number | null
   } | null,
   related_places?: {
-    parent?: Record<string, unknown> | null,
-    children?: Record<string, unknown>[] | null
+    parent?: Record<string, any> | null,
+    children?: Record<string, any>[] | null
   } | null,
   hours?: {
     display?: string | null,
     is_local_holiday?: boolean | null,
     open_now?: boolean | null,
-    regular?: Record<string, unknown>[] | null
+    regular?: Record<string, any>[] | null
   } | null,
   extended_location?: {
     dma?: string | null,
@@ -614,8 +614,8 @@ Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw
   store_id?: string | null,
   tastes?: string[] | null,
   menu?: string | null,
-  attributes?: Record<string, unknown> | null,
-  veracity_rating?: Record<string, unknown> | null,
+  attributes?: Record<string, any> | null,
+  veracity_rating?: Record<string, any> | null,
   unresolved_flags?: string[] | null
 }[]
 ```
@@ -625,7 +625,7 @@ Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw
 
 ```ts
 {
-  geo_bounds?: Record<string, unknown> | null
+  geo_bounds?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -653,10 +653,10 @@ await corsair.foursquare.api.places.tips({ fsq_place_id: '4b28f2aef964a520f9d024
 |------|------|----------|-------------|
 | `fsq_place_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `sort` | `POPULAR \| NEWEST \| OLDEST` | No | Defaults to POPULAR |
+| `sort` | `POPULAR \| NEWEST` | No | Defaults to POPULAR |
 | `fields` | `string[]` | No | — |
 
-Answers a bare array of tips with `fsq_tip_id`, `text`, `agree_count` and `disagree_count`. `sort` accepts POPULAR, NEWEST or OLDEST.
+Returns `{ tips: [...] }`: Foursquare answers a bare array and the plugin wraps it. A tip carries `fsq_tip_id`, `created_at` and `text` by default; ask for `agree_count`, `disagree_count`, `lang` or `url` through `fields`. `sort` accepts POPULAR or NEWEST.
 
 
 
