@@ -65,6 +65,6 @@ apiNotes:
   crawl.start: 'The page limit is the cost cap, because each page opened is one billed Fetch request. `webhookUrl` needs a ZenRows webhook signing key on the account and an `https` host that resolves publicly, and the URL cannot change after the start.'
   crawl.get: 'While the crawl runs `next_cursor` is never null. Poll with the cursor to collect only the URLs you have not read.'
   crawl.stop: 'Pages already in flight finish and are billed. Read the crawl until `next_cursor` is null for its final results.'
-  extract.prepareDomain: 'Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Poll `extract.getDomainStatus` rather than blocking.'
+  extract.prepareDomain: 'Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Send `exampleUrls`: a domain that is not already ready is refused without them. A failed attempt that Zenrows could not fetch does not use a slot. Poll `extract.getDomainStatus` rather than blocking.'
   extract.allowance: 'Costs no credits.'
   account.subscription: 'Costs no credits and does not count against the concurrency limit, so it is safe to call after a failure to see where the credits stand.'
