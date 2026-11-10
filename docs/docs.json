@@ -2663,6 +2663,14 @@
                 ]
               },
               {
+                "group": "Mixmax",
+                "pages": [
+                  "plugins/mixmax/overview",
+                  "plugins/mixmax/api",
+                  "plugins/mixmax/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
