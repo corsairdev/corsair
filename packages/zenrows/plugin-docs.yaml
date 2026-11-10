@@ -14,7 +14,7 @@ overviewNote: |
 examples:
   read:
     path: fetch.page
-    title: Read a page as Markdown
+    title: Fetch a page as HTML
     args:
       url: https://example.com
   write:
