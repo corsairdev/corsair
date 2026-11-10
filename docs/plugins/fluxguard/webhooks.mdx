@@ -27,7 +27,11 @@ export async function POST(request: Request) {
     // body with JSON.stringify, which changes key order and whitespace and
     // fails verification.
     const body = await request.text();
-    const result = await processWebhook(corsair, headers, body);
+    // With `multiTenancy`, register each tenant's webhook URL with
+    // `?tenantId=<id>` so the delivery is checked against that tenant's secret.
+    // Without it processWebhook uses the `default` tenant.
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
     // `result.response` is a plain object, not a Response. No match means no
     // plugin claimed the delivery, so answer 404 rather than 200.
     // `success` is false only when the handler threw, which is how a rejected
@@ -42,7 +46,7 @@ Three details decide whether a bad delivery is visible:
 
 - **A rejected signature must throw.** `processWebhook` ignores a handler's `statusCode` and answers `{ success: true }` for a returned `success: false`, keeping a failure only when the handler throws. The plugin's handler throws on a bad signature and on an unparseable payload for that reason, so `success` is a reliable failure signal here.
 - **A signature needs the exact body.** Verification is HMAC over `<t>.<raw body>`, so mount the route without a JSON parser in front of it.
-- **Fluxguard does not retry.** It stops at the first non-2xx, so answering 500 surfaces the failure instead of discarding a change alert silently.
+- **Fluxguard documents no retries.** Treat a delivery as sent once: answering 500 keeps the failure visible in your own logs instead of acknowledging a change alert you did not process.
 
 ## Events
 

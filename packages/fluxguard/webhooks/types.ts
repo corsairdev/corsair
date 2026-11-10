@@ -20,7 +20,10 @@ import { z } from 'zod';
 /** Header carrying the timestamp and signature. */
 export const FLUXGUARD_SIGNATURE_HEADER = 'fluxguard-signature';
 
-/** Fluxguard does not document a replay window; five minutes matches most. */
+/**
+ * Fluxguard's sample verifier rejects a timestamp more than a minute off. Five
+ * minutes leaves room for a receiving server whose clock has drifted.
+ */
 export const FLUXGUARD_SIGNATURE_TOLERANCE_SECONDS = 60 * 5;
 
 function headerValue(
