@@ -1945,7 +1945,7 @@ await corsair.nutshell.api.competitorMaps.get({});
   id?: string | null,
   relationship?: string | null,
   name?: string | null,
-  status?: potential | stole | beat | null | null,
+  status?: string | null | null,
   links?: {
     lead?: string | null,
     competitor?: string | null
@@ -2043,7 +2043,7 @@ await corsair.nutshell.api.competitorMaps.list({});
   id?: string | null,
   relationship?: string | null,
   name?: string | null,
-  status?: potential | stole | beat | null | null,
+  status?: string | null | null,
   links?: {
     lead?: string | null,
     competitor?: string | null
@@ -3460,7 +3460,7 @@ await corsair.nutshell.api.filters.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filters` | `object[]` | Yes | — |
+| `filters` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="filters full type">
@@ -3469,7 +3469,7 @@ await corsair.nutshell.api.filters.list({});
 {
   id?: string | null,
   name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3782,7 +3782,7 @@ await corsair.nutshell.api.invoices.get({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -3888,7 +3888,7 @@ await corsair.nutshell.api.invoices.list({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -4021,7 +4021,7 @@ await corsair.nutshell.api.invoices.status({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -5110,7 +5110,7 @@ await corsair.nutshell.api.leads.stages({});
     name?: any | null,
     default?: boolean | null,
     canAccess?: boolean | null,
-    status?: 1 | 2 | 3 | null
+    status?: string | null
   } | null
 } | null
 ```
@@ -6576,7 +6576,7 @@ await corsair.nutshell.api.quotes.createInvoice({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -6676,7 +6676,7 @@ await corsair.nutshell.api.quotes.get({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -6781,7 +6781,7 @@ await corsair.nutshell.api.quotes.list({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -6912,7 +6912,7 @@ await corsair.nutshell.api.quotes.status({});
       label?: string | null,
       modifierUnit?: string | null,
       modifierValue?: number | null,
-      operation?: + | - | null,
+      operation?: string | null,
       total?: {
         formatted?: string | null,
         amount?: string | null,
@@ -7308,7 +7308,7 @@ await corsair.nutshell.api.stageSets.list({});
     name?: any | null,
     default?: boolean | null,
     canAccess?: boolean | null,
-    status?: 1 | 2 | 3 | null
+    status?: string | null
   }& {
     type: stagesets,
     links: {
@@ -7589,8 +7589,8 @@ await corsair.nutshell.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `meta` | `object \| null` | No | — |
-| `links` | `object` | Yes | — |
-| `tasks` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -7607,7 +7607,7 @@ await corsair.nutshell.api.tasks.create({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 
@@ -7625,11 +7625,11 @@ await corsair.nutshell.api.tasks.create({});
       htmlUrlPath?: string | null
     }& {
       rule?: string | null,
-      mode?: dueDate | completion | null,
+      mode?: string | null,
       id?: string | null
     } | null
   }
-)[]
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7674,7 +7674,7 @@ await corsair.nutshell.api.tasks.delete({});
     htmlUrlPath?: string | null
   }& {
     rule?: string | null,
-    mode?: dueDate | completion | null,
+    mode?: string | null,
     id?: string | null
   } | null
 }
@@ -7721,7 +7721,7 @@ await corsair.nutshell.api.tasks.get({});
     htmlUrlPath?: string | null
   }& {
     rule?: string | null,
-    mode?: dueDate | completion | null,
+    mode?: string | null,
     id?: string | null
   } | null
 }
@@ -7763,8 +7763,8 @@ await corsair.nutshell.api.tasks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `meta` | `object \| null` | No | — |
-| `links` | `object` | Yes | — |
-| `tasks` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -7781,7 +7781,7 @@ await corsair.nutshell.api.tasks.list({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 
@@ -7799,11 +7799,11 @@ await corsair.nutshell.api.tasks.list({});
       htmlUrlPath?: string | null
     }& {
       rule?: string | null,
-      mode?: dueDate | completion | null,
+      mode?: string | null,
       id?: string | null
     } | null
   }
-)[]
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7939,7 +7939,7 @@ await corsair.nutshell.api.todos.list({});
 ```ts
 {
   id: string,
-  type: tasks | steps,
+  type: string,
   title: string,
   description?: string | null,
   href?: string | null,
