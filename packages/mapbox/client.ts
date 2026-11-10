@@ -71,7 +71,10 @@ export class MapboxAPIError extends Error {
 
 // unknown: the record is an untyped error body; read one field at a time.
 function readString(
-	record: Record<string, unknown> | null | undefined,
+	record:
+		| Record<string, unknown /* unknown: an untyped JSON object */>
+		| null
+		| undefined,
 	key: string,
 ): string | undefined {
 	const value = record?.[key];
@@ -94,7 +97,8 @@ function scrub(text: string, apiKey: string): string {
 // unknown: the error body is JSON, an HTML page or empty.
 export function describeMapboxError(
 	status: number,
-	body: unknown,
+	// unknown: an error body is whatever the API or a proxy sent.
+	body: unknown /* unknown: see above */,
 	apiKey: string,
 ): { message: string; code?: string } {
 	const record = asRecord(body);
@@ -150,17 +154,24 @@ export function formatCoordinates(
 	return points.map(formatCoordinate).join(';');
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema.
-function parseBody(body: unknown, apiKey: string): unknown {
+function parseBody(
+	// unknown: the raw body, before the endpoint's zod output schema sees it.
+	body: unknown /* unknown: see above */,
+	apiKey: string,
+): unknown /* unknown: see above */ {
 	// Geocoding answers `application/vnd.geo+json`, which the shared client does
-	// not recognise as JSON, so the body arrives as text.
+	// not recognise as JSON, so the body arrives as text. The text is scrubbed
+	// before parsing for the same reason the object branch is: a response can
+	// echo the token, and a parsed body then carries it into any caller, log or
+	// error that serialises the result.
 	if (typeof body === 'string') {
 		try {
-			return JSON.parse(body);
+			return JSON.parse(scrub(body, apiKey));
 		} catch {
-			throw new MapboxAPIError('Mapbox returned a body that is not JSON', {
-				method: 'GET',
-			});
+			throw new MapboxAPIError(
+				scrub('Mapbox returned a body that is not JSON', apiKey),
+				{ method: 'GET' },
+			);
 		}
 	}
 	if (body === undefined || body === null) {
@@ -171,8 +182,10 @@ function parseBody(body: unknown, apiKey: string): unknown {
 	return JSON.parse(scrub(JSON.stringify(body), apiKey));
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema.
-function assertEnvelopeOk(body: unknown): void {
+function assertEnvelopeOk(
+	// unknown: a parsed body, which this function narrows itself.
+	body: unknown /* unknown: see above */,
+): void {
 	const record = asRecord(body);
 	const code = readString(record, 'code');
 	if (code !== undefined && code !== 'Ok') {
@@ -189,7 +202,8 @@ function assertEnvelopeOk(body: unknown): void {
 export async function makeMapboxRequest(
 	apiKey: string,
 	{ path, query, envelope }: MapboxRequest,
-): Promise<unknown> {
+	// unknown: callers parse the answer with the operation's output schema.
+): Promise<unknown /* unknown: see above */> {
 	const config: OpenAPIConfig = {
 		BASE: MAPBOX_API_BASE,
 		VERSION: '1.0.0',
@@ -205,12 +219,16 @@ export async function makeMapboxRequest(
 	};
 
 	// unknown: the raw response body, narrowed by parseBody below.
-	let body: unknown;
+	let body: unknown /* unknown: see above */;
 	try {
 		// unknown: the shared client returns whatever JSON or text came back.
-		body = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: MAPBOX_RATE_LIMIT_CONFIG,
-		});
+		body = await request<unknown /* unknown: see above */>(
+			config,
+			requestOptions,
+			{
+				rateLimitConfig: MAPBOX_RATE_LIMIT_CONFIG,
+			},
+		);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const { message, code } = describeMapboxError(

@@ -33,8 +33,10 @@ afterEach(() => {
 	jest.restoreAllMocks();
 });
 
-// unknown: makeMapboxRequest resolves with the raw, unvalidated JSON body.
-async function failure(promise: Promise<unknown>): Promise<MapboxAPIError> {
+async function failure(
+	// unknown: the raw, unvalidated JSON body a rejected call carries.
+	promise: Promise<unknown /* unknown: see above */>,
+): Promise<MapboxAPIError> {
 	const error = await captureError(promise);
 	expect(error).toBeInstanceOf(MapboxAPIError);
 	if (!(error instanceof MapboxAPIError)) throw error;
@@ -105,6 +107,25 @@ describe('makeMapboxRequest', () => {
 
 		expect(error.message).toMatch(/not JSON/);
 		expectTokenAbsent(error);
+	});
+
+	it('scrubs a token echoed in a text body before parsing it', async () => {
+		// The text branch is scrub-then-parse, not parse-only: a response that
+		// echoes the token must not hand it to the caller inside parsed data.
+		respond(
+			fetchMock,
+			{ type: 'FeatureCollection', echo: API_KEY, features: [] },
+			200,
+			{ contentType: GEO_JSON },
+		);
+
+		const result = await makeMapboxRequest(API_KEY, {
+			path: '/search/geocode/v6/forward',
+			query: { q: 'x' },
+		});
+
+		expect(JSON.stringify(result)).not.toContain(API_KEY);
+		expect(result).toMatchObject({ echo: '[REDACTED]' });
 	});
 
 	it('throws on an empty 200 rather than returning undefined', async () => {
