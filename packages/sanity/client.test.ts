@@ -1,6 +1,7 @@
 import { ApiError } from 'corsair/http';
 import {
 	authorizationHeader,
+	isValidDataset,
 	makeSanityRequest,
 	readErrorDetail,
 	SanityAPIError,
@@ -139,6 +140,31 @@ describe('makeSanityRequest', () => {
 		expect(String(fetchMock.mock.calls[0][0])).toContain(
 			'.api.sanity.io/vX/agent/',
 		);
+	});
+});
+
+describe('dataset names', () => {
+	it("follow Sanity's rule", () => {
+		for (const valid of [
+			'production',
+			'a',
+			'blog_staging-2',
+			'~addon',
+			'a'.repeat(64),
+		]) {
+			expect(isValidDataset(valid)).toBe(true);
+		}
+		for (const invalid of [
+			'',
+			'Production',
+			'staging-',
+			'-staging',
+			'blog.staging',
+			'a'.repeat(65),
+			'~',
+		]) {
+			expect(isValidDataset(invalid)).toBe(false);
+		}
 	});
 });
 

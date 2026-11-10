@@ -74,8 +74,12 @@ export class SanityAPIError extends ApiError {
 
 /** Project ids are lowercase letters and digits. */
 const PROJECT_ID_RE = /^[a-z0-9]{1,32}$/;
-/** Dataset names, including `~` add-on datasets, as Sanity validates them. */
-const DATASET_RE = /^~?[a-z0-9][-\w]{0,63}$/;
+/**
+ * Sanity's dataset name rule: 1 to 64 lowercase letters, digits, dashes and
+ * underscores, starting and ending with a letter or digit. A leading `~` marks
+ * an add-on dataset.
+ */
+const DATASET_RE = /^~?[a-z0-9](?:[a-z0-9_-]{0,62}[a-z0-9])?$/;
 
 export function isValidProjectId(value: string): boolean {
 	return PROJECT_ID_RE.test(value);
@@ -105,7 +109,7 @@ export function requireProjectId(value: string | null | undefined): string {
 export function requireDataset(value: string): string {
 	if (!isValidDataset(value)) {
 		throw new SanityError(
-			'The dataset name must start with a lowercase letter or digit and hold only lowercase letters, digits, dashes and underscores (64 at most).',
+			'The dataset name must be 1 to 64 lowercase letters, digits, dashes and underscores, starting and ending with a letter or digit.',
 			'invalid_input',
 		);
 	}

@@ -7,7 +7,7 @@ const DatasetSchema = z
 	.string()
 	.refine(isValidDataset, {
 		message:
-			'Must be a dataset name: lowercase letters, digits, dashes and underscores, starting with a letter or digit.',
+			'Must be a dataset name: 1 to 64 lowercase letters, digits, dashes and underscores, starting and ending with a letter or digit.',
 	})
 	.optional()
 	.describe(
@@ -648,7 +648,7 @@ const DatasetNameSchema = z
 	.string()
 	.refine(isValidDataset, {
 		message:
-			'Must be lowercase letters, digits, dashes and underscores, starting with a letter or digit, 64 at most.',
+			'Must be 1 to 64 lowercase letters, digits, dashes and underscores, starting and ending with a letter or digit.',
 	})
 	.describe('The dataset name.');
 
