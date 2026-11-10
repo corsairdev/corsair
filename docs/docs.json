@@ -2507,6 +2507,14 @@
                 ]
               },
               {
+                "group": "Leiga",
+                "pages": [
+                  "plugins/leiga/overview",
+                  "plugins/leiga/api",
+                  "plugins/leiga/database"
+                ]
+              },
+              {
                 "group": "Lever",
                 "pages": [
                   "plugins/lever/overview",
