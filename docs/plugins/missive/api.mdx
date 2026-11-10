@@ -1,0 +1,3659 @@
+---
+title: API
+description: "API reference for Missive: every `missive.api.*` operation with input and output types."
+---
+
+Every `missive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### createReport
+
+`analytics.createReport`
+
+Queue an analytics report for a period and optional team, user, label, and account filters, and get the report id to poll
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.analytics.createReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  organization: string,
+  start: number,
+  end: number,
+  time_zone?: string,
+  teams?: string[],
+  users?: string[],
+  accounts?: string[],
+  account_types?: (custom | email | instagram | live_chat | messenger | sms | whatsapp)[],
+  shared_labels?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reports` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reports full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReport
+
+`analytics.getReport`
+
+Fetch a queued analytics report by id; an empty 404 means it is still generating or already expired
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.analytics.getReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Contact Books
+
+### list
+
+`contactBooks.list`
+
+List contact books the authenticated user has access to; a book id is required to create contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.contactBooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_books` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact_books full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  user?: string | null,
+  organization?: string | null,
+  share_with_organization?: boolean | null,
+  share_with_team?: string | null,
+  share_with_users?: string[] | null,
+  description?: string | null,
+  importing?: boolean | null,
+  import_error_text?: string | null,
+  import_rows_count?: number | null,
+  import_processed_rows_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Groups
+
+### list
+
+`contactGroups.list`
+
+List the groups or organizations linked to a contact book
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.contactGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_book` | `string` | Yes | — |
+| `kind` | `group \| organization` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact_groups full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create one or more contacts in a contact book
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contact_book: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  infos?: (
+    {
+      kind: email,
+      value: string,
+      label: home | work | personal | other,
+      custom_label?: string
+    } | {
+      kind: phone_number,
+      value: string,
+      label: main | mobile | home | work | home_fax | work_fax | other_fax | pager | other,
+      custom_label?: string
+    } | {
+      kind: twitter,
+      value: string,
+      label: work | personal | other,
+      custom_label?: string
+    } | {
+      kind: facebook,
+      name: string,
+      label: work | personal | other,
+      custom_label?: string
+    } | {
+      kind: physical_address,
+      street?: string,
+      extended_address?: string,
+      city?: string,
+      region?: string,
+      postal_code?: string,
+      po_box?: string,
+      country?: string,
+      label: work | home | other,
+      custom_label?: string
+    } | {
+      kind: url,
+      value: string,
+      label: homepage | profile | blog | work | personal | other,
+      custom_label?: string
+    } | {
+      kind: custom,
+      value: string,
+      label?: other,
+      custom_label?: string
+    }
+  )[],
+  memberships?: {
+    department?: string,
+    title?: string,
+    location?: string,
+    description?: string,
+    group: {
+      kind: group | organization,
+      id?: string,
+      name?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  contact_book?: string | null,
+  deleted?: boolean | null,
+  modified_at?: number | null,
+  infos?: {
+    kind?: string | null,
+    label?: string | null,
+    custom_label?: string | null,
+    value?: string | null,
+    name?: string | null
+  }[] | null,
+  memberships?: {
+    department?: string | null,
+    title?: string | null,
+    location?: string | null,
+    description?: string | null,
+    group?: {
+      kind?: string | null,
+      id?: string | null,
+      name?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Fetch a contact by id; deleted contacts answer 404
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object \| object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  contact_book?: string | null,
+  deleted?: boolean | null,
+  modified_at?: number | null,
+  infos?: {
+    kind?: string | null,
+    label?: string | null,
+    custom_label?: string | null,
+    value?: string | null,
+    name?: string | null
+  }[] | null,
+  memberships?: {
+    department?: string | null,
+    title?: string | null,
+    location?: string | null,
+    description?: string | null,
+    group?: {
+      kind?: string | null,
+      id?: string | null,
+      name?: string | null
+    } | null
+  }[] | null
+} | {
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  contact_book?: string | null,
+  deleted?: boolean | null,
+  modified_at?: number | null,
+  infos?: {
+    kind?: string | null,
+    label?: string | null,
+    custom_label?: string | null,
+    value?: string | null,
+    name?: string | null
+  }[] | null,
+  memberships?: {
+    department?: string | null,
+    title?: string | null,
+    location?: string | null,
+    description?: string | null,
+    group?: {
+      kind?: string | null,
+      id?: string | null,
+      name?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List or search the contacts of a contact book, ordered by last name unless order is last_modified
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_book` | `string` | Yes | — |
+| `order` | `last_name \| last_modified` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `modified_since` | `number` | No | — |
+| `include_deleted` | `boolean` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  contact_book?: string | null,
+  deleted?: boolean | null,
+  modified_at?: number | null,
+  infos?: {
+    kind?: string | null,
+    label?: string | null,
+    custom_label?: string | null,
+    value?: string | null,
+    name?: string | null
+  }[] | null,
+  memberships?: {
+    department?: string | null,
+    title?: string | null,
+    location?: string | null,
+    description?: string | null,
+    group?: {
+      kind?: string | null,
+      id?: string | null,
+      name?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update one or more contacts; infos and memberships replace the current ones when passed
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  contact_book?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  infos?: (
+    {
+      kind: email,
+      value: string,
+      label: home | work | personal | other,
+      custom_label?: string
+    } | {
+      kind: phone_number,
+      value: string,
+      label: main | mobile | home | work | home_fax | work_fax | other_fax | pager | other,
+      custom_label?: string
+    } | {
+      kind: twitter,
+      value: string,
+      label: work | personal | other,
+      custom_label?: string
+    } | {
+      kind: facebook,
+      name: string,
+      label: work | personal | other,
+      custom_label?: string
+    } | {
+      kind: physical_address,
+      street?: string,
+      extended_address?: string,
+      city?: string,
+      region?: string,
+      postal_code?: string,
+      po_box?: string,
+      country?: string,
+      label: work | home | other,
+      custom_label?: string
+    } | {
+      kind: url,
+      value: string,
+      label: homepage | profile | blog | work | personal | other,
+      custom_label?: string
+    } | {
+      kind: custom,
+      value: string,
+      label?: other,
+      custom_label?: string
+    }
+  )[],
+  memberships?: {
+    department?: string,
+    title?: string,
+    location?: string,
+    description?: string,
+    group: {
+      kind: group | organization,
+      id?: string,
+      name?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  middle_name?: string | null,
+  phonetic_first_name?: string | null,
+  phonetic_last_name?: string | null,
+  phonetic_middle_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  nickname?: string | null,
+  file_as?: string | null,
+  notes?: string | null,
+  starred?: boolean | null,
+  gender?: string | null,
+  contact_book?: string | null,
+  deleted?: boolean | null,
+  modified_at?: number | null,
+  infos?: {
+    kind?: string | null,
+    label?: string | null,
+    custom_label?: string | null,
+    value?: string | null,
+    name?: string | null
+  }[] | null,
+  memberships?: {
+    department?: string | null,
+    title?: string | null,
+    location?: string | null,
+    description?: string | null,
+    group?: {
+      kind?: string | null,
+      id?: string | null,
+      name?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### get
+
+`conversations.get`
+
+Fetch a conversation by id; a merged old id answers with the current conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string | null,
+  created_at?: number | null,
+  subject?: string | null,
+  latest_message_subject?: string | null,
+  organization?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  color?: string | null,
+  assignees?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  users?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    unassigned?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    trashed?: boolean | null,
+    junked?: boolean | null,
+    assigned?: boolean | null,
+    flagged?: boolean | null,
+    snoozed?: boolean | null
+  }[] | null,
+  attachments_count?: number | null,
+  messages_count?: number | null,
+  authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  external_authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  drafts_count?: number | null,
+  send_later_messages_count?: number | null,
+  tasks_count?: number | null,
+  completed_tasks_count?: number | null,
+  web_url?: string | null,
+  app_url?: string | null,
+  assignee_names?: string | null,
+  assignee_emails?: string | null,
+  shared_label_names?: string | null,
+  last_activity_at?: number | null,
+  team?: {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: any[] | null
+  } | null,
+  shared_labels?: (string | {
+    id?: string | null,
+    name?: string | null
+  })[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations of one mailbox, shared label, or team, newest activity first
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+| `inbox` | `boolean` | No | — |
+| `all` | `boolean` | No | — |
+| `assigned` | `boolean` | No | — |
+| `closed` | `boolean` | No | — |
+| `snoozed` | `boolean` | No | — |
+| `flagged` | `boolean` | No | — |
+| `trashed` | `boolean` | No | — |
+| `junked` | `boolean` | No | — |
+| `drafts` | `boolean` | No | — |
+| `shared_label` | `string` | No | — |
+| `team_inbox` | `string` | No | — |
+| `team_closed` | `string` | No | — |
+| `team_all` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `email` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `contact_organization` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string | null,
+  created_at?: number | null,
+  subject?: string | null,
+  latest_message_subject?: string | null,
+  organization?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  color?: string | null,
+  assignees?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  users?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    unassigned?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    trashed?: boolean | null,
+    junked?: boolean | null,
+    assigned?: boolean | null,
+    flagged?: boolean | null,
+    snoozed?: boolean | null
+  }[] | null,
+  attachments_count?: number | null,
+  messages_count?: number | null,
+  authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  external_authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  drafts_count?: number | null,
+  send_later_messages_count?: number | null,
+  tasks_count?: number | null,
+  completed_tasks_count?: number | null,
+  web_url?: string | null,
+  app_url?: string | null,
+  assignee_names?: string | null,
+  assignee_emails?: string | null,
+  shared_label_names?: string | null,
+  last_activity_at?: number | null,
+  team?: {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: any[] | null
+  } | null,
+  shared_labels?: (string | {
+    id?: string | null,
+    name?: string | null
+  })[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listComments
+
+`conversations.listComments`
+
+List the internal comments of a conversation, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.listComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id?: string | null,
+  body?: string | null,
+  created_at?: number | null,
+  mentions?: {
+    id?: string | null,
+    index?: number | null,
+    length?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDrafts
+
+`conversations.listDrafts`
+
+List the draft messages of a conversation, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.listDrafts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drafts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="drafts full type">
+
+```ts
+{
+  id?: string | null,
+  subject?: string | null,
+  draft?: boolean | null,
+  preview?: string | null,
+  type?: string | null,
+  delivered_at?: number | null,
+  updated_at?: number | null,
+  created_at?: number | null,
+  email_message_id?: string | null,
+  in_reply_to?: string[] | null,
+  references?: string[] | null,
+  from_field?: {
+    name?: string | null,
+    address?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  reply_to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMessages
+
+`conversations.listMessages`
+
+List the messages of a conversation, newest first; drafts are excluded
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.listMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | null,
+  subject?: string | null,
+  draft?: boolean | null,
+  preview?: string | null,
+  type?: string | null,
+  delivered_at?: number | null,
+  updated_at?: number | null,
+  created_at?: number | null,
+  email_message_id?: string | null,
+  in_reply_to?: string[] | null,
+  references?: string[] | null,
+  from_field?: {
+    name?: string | null,
+    address?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  reply_to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPosts
+
+`conversations.listPosts`
+
+List the posts of a conversation, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.conversations.listPosts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id?: string | null,
+  created_at?: number | null,
+  username?: string | null,
+  username_icon?: string | null,
+  conversation_icon?: string | null,
+  notification?: {
+    title?: string | null,
+    body?: string | null
+  } | null,
+  text?: string | null,
+  markdown?: string | null,
+  attachments?: Record<string, any>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`conversations.merge`
+
+Merge a conversation into a target conversation; the source is marked as replaced
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.missive.api.conversations.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  target: string,
+  subject?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string | null,
+  created_at?: number | null,
+  subject?: string | null,
+  latest_message_subject?: string | null,
+  organization?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  color?: string | null,
+  assignees?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  users?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    unassigned?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    trashed?: boolean | null,
+    junked?: boolean | null,
+    assigned?: boolean | null,
+    flagged?: boolean | null,
+    snoozed?: boolean | null
+  }[] | null,
+  attachments_count?: number | null,
+  messages_count?: number | null,
+  authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  external_authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  drafts_count?: number | null,
+  send_later_messages_count?: number | null,
+  tasks_count?: number | null,
+  completed_tasks_count?: number | null,
+  web_url?: string | null,
+  app_url?: string | null,
+  assignee_names?: string | null,
+  assignee_emails?: string | null,
+  shared_label_names?: string | null,
+  last_activity_at?: number | null,
+  team?: {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: any[] | null
+  } | null,
+  shared_labels?: (string | {
+    id?: string | null,
+    name?: string | null
+  })[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Silently close, reopen, move, assign, label, recolor, or rename one or more conversations without adding a post
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.conversations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  subject?: string,
+  color?: string,
+  conversation_color?: string,
+  organization?: string,
+  team?: string,
+  force_team?: boolean,
+  add_users?: string[],
+  add_assignees?: string[],
+  remove_assignees?: string[],
+  add_shared_labels?: string[],
+  remove_shared_labels?: string[],
+  add_to_inbox?: boolean,
+  add_to_team_inbox?: boolean,
+  close?: boolean,
+  reopen?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string | null,
+  created_at?: number | null,
+  subject?: string | null,
+  latest_message_subject?: string | null,
+  organization?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  color?: string | null,
+  assignees?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  }[] | null,
+  users?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    unassigned?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    trashed?: boolean | null,
+    junked?: boolean | null,
+    assigned?: boolean | null,
+    flagged?: boolean | null,
+    snoozed?: boolean | null
+  }[] | null,
+  attachments_count?: number | null,
+  messages_count?: number | null,
+  authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  external_authors?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  drafts_count?: number | null,
+  send_later_messages_count?: number | null,
+  tasks_count?: number | null,
+  completed_tasks_count?: number | null,
+  web_url?: string | null,
+  app_url?: string | null,
+  assignee_names?: string | null,
+  assignee_emails?: string | null,
+  shared_label_names?: string | null,
+  last_activity_at?: number | null,
+  team?: {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: any[] | null
+  } | null,
+  shared_labels?: (string | {
+    id?: string | null,
+    name?: string | null
+  })[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Drafts
+
+### create
+
+`drafts.create`
+
+Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; send true delivers it to the real recipients at once and send_at schedules it, and a delivered message cannot be recalled
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.drafts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  subject?: string | null,
+  body?: string | null,
+  quote_previous_message?: boolean,
+  add_default_signature?: boolean,
+  from_field?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  account?: string,
+  attachments?: {
+    base64_data: string,
+    filename: string
+  }[],
+  references?: string[],
+  conversation?: string,
+  team?: string,
+  force_team?: boolean,
+  organization?: string,
+  add_users?: string[],
+  add_assignees?: string[],
+  remove_assignees?: string[],
+  conversation_subject?: string,
+  conversation_color?: string,
+  add_shared_labels?: string[],
+  remove_shared_labels?: string[],
+  add_to_inbox?: boolean,
+  add_to_team_inbox?: boolean,
+  close?: boolean,
+  reopen?: boolean,
+  send?: boolean,
+  send_at?: number,
+  auto_followup?: boolean,
+  external_response_id?: string,
+  external_response_variables?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+  drafts: {
+    id?: string | null,
+    subject?: string | null,
+    draft?: boolean | null,
+    preview?: string | null,
+    type?: string | null,
+    delivered_at?: number | null,
+    updated_at?: number | null,
+    created_at?: number | null,
+    email_message_id?: string | null,
+    in_reply_to?: string[] | null,
+    references?: string[] | null,
+    from_field?: {
+      name?: string | null,
+      address?: string | null
+    } | null,
+    to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    cc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    bcc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    reply_to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    attachments?: {
+      id?: string | null,
+      filename?: string | null,
+      extension?: string | null,
+      url?: string | null,
+      media_type?: string | null,
+      sub_type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    }[] | null,
+    author?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      username?: string | null,
+      avatar_url?: string | null
+    } | null
+  } | {
+    id?: string | null,
+    subject?: string | null,
+    draft?: boolean | null,
+    preview?: string | null,
+    type?: string | null,
+    delivered_at?: number | null,
+    updated_at?: number | null,
+    created_at?: number | null,
+    email_message_id?: string | null,
+    in_reply_to?: string[] | null,
+    references?: string[] | null,
+    from_field?: {
+      name?: string | null,
+      address?: string | null
+    } | null,
+    to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    cc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    bcc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    reply_to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    attachments?: {
+      id?: string | null,
+      filename?: string | null,
+      extension?: string | null,
+      url?: string | null,
+      media_type?: string | null,
+      sub_type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    }[] | null,
+    author?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      username?: string | null,
+      avatar_url?: string | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`drafts.delete`
+
+Delete a draft from its conversation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.missive.api.drafts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Hooks
+
+### create
+
+`hooks.create`
+
+Create a webhook subscription for incoming-message or new-comment events, backed by a Missive rule
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.hooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: incoming_email | incoming_sms_message | incoming_facebook_message | incoming_whatsapp_message | incoming_twilio_chat_message | new_comment,
+  url: string,
+  organization?: string,
+  content_contains?: string | null,
+  content_starts_with?: string | null,
+  content_ends_with?: string | null,
+  is_task?: boolean,
+  author?: string | null,
+  mention?: string | null,
+  from_eq?: string | null,
+  subject_contains?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hooks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hooks full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`hooks.delete`
+
+Delete a webhook subscription and its backing rule
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.missive.api.hooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Create an incoming message in a custom channel to ingest an external conversation event
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  account: string,
+  subject?: string | null,
+  body?: string | null,
+  from_field: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  },
+  to_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null,
+    phone_number?: string | null,
+    type?: signalwire | twilio | twilio_whatsapp | whatsapp | null,
+    id?: string | null,
+    username?: string | null
+  }[],
+  delivered_at?: number,
+  attachments?: {
+    base64_data: string,
+    filename: string
+  }[],
+  external_id?: string,
+  references?: string[],
+  conversation?: string,
+  team?: string,
+  force_team?: boolean,
+  organization?: string,
+  add_users?: string[],
+  add_assignees?: string[],
+  remove_assignees?: string[],
+  conversation_subject?: string,
+  conversation_color?: string,
+  add_shared_labels?: string[],
+  remove_shared_labels?: string[],
+  add_to_inbox?: boolean,
+  add_to_team_inbox?: boolean,
+  close?: boolean,
+  reopen?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+  messages: {
+    id?: string | null,
+    subject?: string | null,
+    draft?: boolean | null,
+    preview?: string | null,
+    type?: string | null,
+    delivered_at?: number | null,
+    updated_at?: number | null,
+    created_at?: number | null,
+    email_message_id?: string | null,
+    in_reply_to?: string[] | null,
+    references?: string[] | null,
+    from_field?: {
+      name?: string | null,
+      address?: string | null
+    } | null,
+    to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    cc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    bcc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    reply_to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    attachments?: {
+      id?: string | null,
+      filename?: string | null,
+      extension?: string | null,
+      url?: string | null,
+      media_type?: string | null,
+      sub_type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    }[] | null,
+    author?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      username?: string | null,
+      avatar_url?: string | null
+    } | null
+  } | {
+    id?: string | null,
+    subject?: string | null,
+    draft?: boolean | null,
+    preview?: string | null,
+    type?: string | null,
+    delivered_at?: number | null,
+    updated_at?: number | null,
+    created_at?: number | null,
+    email_message_id?: string | null,
+    in_reply_to?: string[] | null,
+    references?: string[] | null,
+    from_field?: {
+      name?: string | null,
+      address?: string | null
+    } | null,
+    to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    cc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    bcc_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    reply_to_fields?: {
+      name?: string | null,
+      address?: string | null
+    }[] | null,
+    attachments?: {
+      id?: string | null,
+      filename?: string | null,
+      extension?: string | null,
+      url?: string | null,
+      media_type?: string | null,
+      sub_type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    }[] | null,
+    author?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      username?: string | null,
+      avatar_url?: string | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`messages.get`
+
+Fetch one or more messages with headers, body, and attachments by message id
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object \| object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | null,
+  subject?: string | null,
+  draft?: boolean | null,
+  preview?: string | null,
+  type?: string | null,
+  delivered_at?: number | null,
+  updated_at?: number | null,
+  created_at?: number | null,
+  email_message_id?: string | null,
+  in_reply_to?: string[] | null,
+  references?: string[] | null,
+  from_field?: {
+    name?: string | null,
+    address?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  reply_to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+} | {
+  id?: string | null,
+  subject?: string | null,
+  draft?: boolean | null,
+  preview?: string | null,
+  type?: string | null,
+  delivered_at?: number | null,
+  updated_at?: number | null,
+  created_at?: number | null,
+  email_message_id?: string | null,
+  in_reply_to?: string[] | null,
+  references?: string[] | null,
+  from_field?: {
+    name?: string | null,
+    address?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  reply_to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+Fetch the messages matching an email Message-ID header, latest first
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | null,
+  subject?: string | null,
+  draft?: boolean | null,
+  preview?: string | null,
+  type?: string | null,
+  delivered_at?: number | null,
+  updated_at?: number | null,
+  created_at?: number | null,
+  email_message_id?: string | null,
+  in_reply_to?: string[] | null,
+  references?: string[] | null,
+  from_field?: {
+    name?: string | null,
+    address?: string | null
+  } | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  reply_to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  author?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    username?: string | null,
+    avatar_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List organizations the authenticated user is part of
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace; every teammate with access sees the post and gets its notification
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.posts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  conversation?: string,
+  references?: string[],
+  username?: string,
+  username_icon?: string,
+  conversation_icon?: string,
+  text?: string,
+  markdown?: string,
+  notification: {
+    title?: string,
+    body?: string
+  },
+  attachments?: Record<string, any>[],
+  team?: string,
+  force_team?: boolean,
+  organization?: string,
+  add_users?: string[],
+  add_assignees?: string[],
+  remove_assignees?: string[],
+  conversation_subject?: string,
+  conversation_color?: string,
+  add_shared_labels?: string[],
+  remove_shared_labels?: string[],
+  add_to_inbox?: boolean,
+  add_to_team_inbox?: boolean,
+  close?: boolean,
+  reopen?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  conversation?: string,
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post from its conversation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.missive.api.posts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Create one or more saved response templates
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.responses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title?: string,
+  body?: string,
+  subject?: string | null,
+  organization?: string,
+  user?: string,
+  share_with_team?: string | null,
+  shared_labels?: string[],
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  external_id?: string | null,
+  external_source?: string | null,
+  attachments?: {
+    id?: string,
+    filename?: string,
+    base64_data?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  body?: string | null,
+  subject?: string | null,
+  modified_at?: number | null,
+  organization?: string | null,
+  user?: string | null,
+  share_with_team?: string | null,
+  shared_labels?: string[] | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  external_id?: string | null,
+  external_source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`responses.delete`
+
+Delete one or more saved response templates
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.missive.api.responses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`responses.get`
+
+Fetch a saved response by id
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.responses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object \| object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  body?: string | null,
+  subject?: string | null,
+  modified_at?: number | null,
+  organization?: string | null,
+  user?: string | null,
+  share_with_team?: string | null,
+  shared_labels?: string[] | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  external_id?: string | null,
+  external_source?: string | null
+} | {
+  id?: string | null,
+  title?: string | null,
+  body?: string | null,
+  subject?: string | null,
+  modified_at?: number | null,
+  organization?: string | null,
+  user?: string | null,
+  share_with_team?: string | null,
+  shared_labels?: string[] | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  external_id?: string | null,
+  external_source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`responses.list`
+
+List saved responses (canned replies) for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.responses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  body?: string | null,
+  subject?: string | null,
+  modified_at?: number | null,
+  organization?: string | null,
+  user?: string | null,
+  share_with_team?: string | null,
+  shared_labels?: string[] | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  external_id?: string | null,
+  external_source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`responses.update`
+
+Update one or more saved responses; attachments replace the current ones when passed
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.responses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  body?: string,
+  subject?: string | null,
+  organization?: string,
+  user?: string,
+  share_with_team?: string | null,
+  shared_labels?: string[],
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[],
+  external_id?: string | null,
+  external_source?: string | null,
+  attachments?: {
+    id?: string,
+    filename?: string,
+    base64_data?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  body?: string | null,
+  subject?: string | null,
+  modified_at?: number | null,
+  organization?: string | null,
+  user?: string | null,
+  share_with_team?: string | null,
+  shared_labels?: string[] | null,
+  to_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  cc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  bcc_fields?: {
+    name?: string | null,
+    address?: string | null
+  }[] | null,
+  attachments?: {
+    id?: string | null,
+    filename?: string | null,
+    extension?: string | null,
+    url?: string | null,
+    media_type?: string | null,
+    sub_type?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  external_id?: string | null,
+  external_source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shared Labels
+
+### create
+
+`sharedLabels.create`
+
+Create one or more shared labels in an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.sharedLabels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  organization: string,
+  color?: string,
+  parent?: string,
+  share_with_organization?: boolean,
+  share_with_team?: string | null,
+  share_with_users?: string[],
+  visibility?: organization | delegates
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared_labels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shared_labels full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  name_with_parent_names?: string | null,
+  organization?: string | null,
+  color?: string | null,
+  parent?: string | null,
+  share_with_organization?: boolean | null,
+  share_with_team?: string | null,
+  share_with_users?: string[] | null,
+  visibility?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sharedLabels.list`
+
+List shared labels in organizations the authenticated user has access to
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.sharedLabels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared_labels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shared_labels full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  name_with_parent_names?: string | null,
+  organization?: string | null,
+  color?: string | null,
+  parent?: string | null,
+  share_with_organization?: boolean | null,
+  share_with_team?: string | null,
+  share_with_users?: string[] | null,
+  visibility?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sharedLabels.update`
+
+Update one or more shared labels; visibility and sharing are admin-only fields
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.sharedLabels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  organization?: string,
+  color?: string,
+  parent?: string,
+  share_with_organization?: boolean,
+  share_with_team?: string | null,
+  share_with_users?: string[],
+  visibility?: organization | delegates
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared_labels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shared_labels full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  name_with_parent_names?: string | null,
+  organization?: string | null,
+  color?: string | null,
+  parent?: string | null,
+  share_with_organization?: boolean | null,
+  share_with_team?: string | null,
+  share_with_users?: string[] | null,
+  visibility?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a standalone task, tasked conversation, or conversation subtask
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title: string,
+  description?: string,
+  state?: todo | in_progress | closed,
+  organization?: string,
+  team?: string,
+  assignees?: string[],
+  due_at?: number,
+  subtask?: boolean,
+  conversation?: string,
+  references?: string[],
+  conversation_subject?: string,
+  add_users?: string[],
+  add_to_inbox?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  type?: string | null,
+  conversation?: string | null,
+  due_at?: number | null,
+  started_at?: number | null,
+  closed_at?: number | null,
+  assignees?: string[] | {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    me?: boolean | null
+  }[] | null,
+  team?: string | {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: string[] | null,
+    emoji?: string | null,
+    color?: string | null,
+    business_hours?: {
+      tz?: string,
+      t?: {
+        d?: number,
+        s?: number[]
+      }[]
+    } | null,
+    inactivity_period?: number | null,
+    team_mention_behavior?: string | null,
+    user_reply_behavior?: string | null,
+    received_reply_behavior?: string | null,
+    team_sidebar_behavior?: string | null,
+    team_inbox_enabled?: boolean | null,
+    chat_room_enabled?: boolean | null
+  } | null,
+  last_activity_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Fetch a task with full assignee and team details by id
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  type?: string | null,
+  conversation?: string | null,
+  due_at?: number | null,
+  started_at?: number | null,
+  closed_at?: number | null,
+  assignees?: string[] | {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    me?: boolean | null
+  }[] | null,
+  team?: string | {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: string[] | null,
+    emoji?: string | null,
+    color?: string | null,
+    business_hours?: {
+      tz?: string,
+      t?: {
+        d?: number,
+        s?: number[]
+      }[]
+    } | null,
+    inactivity_period?: number | null,
+    team_mention_behavior?: string | null,
+    user_reply_behavior?: string | null,
+    received_reply_behavior?: string | null,
+    team_sidebar_behavior?: string | null,
+    team_inbox_enabled?: boolean | null,
+    chat_room_enabled?: boolean | null
+  } | null,
+  last_activity_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks the token owner has access to, filtered by organization, team, assignee, state, type, or due window
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `team` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `state` | `todo \| in_progress \| closed` | No | — |
+| `type` | `task \| conversation \| all` | No | — |
+| `conversation` | `string` | No | — |
+| `due_at_gteq` | `number` | No | — |
+| `due_at_lteq` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  type?: string | null,
+  conversation?: string | null,
+  due_at?: number | null,
+  started_at?: number | null,
+  closed_at?: number | null,
+  assignees?: string[] | {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    me?: boolean | null
+  }[] | null,
+  team?: string | {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: string[] | null,
+    emoji?: string | null,
+    color?: string | null,
+    business_hours?: {
+      tz?: string,
+      t?: {
+        d?: number,
+        s?: number[]
+      }[]
+    } | null,
+    inactivity_period?: number | null,
+    team_mention_behavior?: string | null,
+    user_reply_behavior?: string | null,
+    received_reply_behavior?: string | null,
+    team_sidebar_behavior?: string | null,
+    team_inbox_enabled?: boolean | null,
+    chat_room_enabled?: boolean | null
+  } | null,
+  last_activity_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task title, description, state, assignees, team, or due date
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  state?: todo | in_progress | closed,
+  assignees?: string[],
+  team?: string,
+  due_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  type?: string | null,
+  conversation?: string | null,
+  due_at?: number | null,
+  started_at?: number | null,
+  closed_at?: number | null,
+  assignees?: string[] | {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    me?: boolean | null
+  }[] | null,
+  team?: string | {
+    id?: string | null,
+    name?: string | null,
+    organization?: string | null,
+    active_members?: string[] | null,
+    observers?: string[] | null,
+    emoji?: string | null,
+    color?: string | null,
+    business_hours?: {
+      tz?: string,
+      t?: {
+        d?: number,
+        s?: number[]
+      }[]
+    } | null,
+    inactivity_period?: number | null,
+    team_mention_behavior?: string | null,
+    user_reply_behavior?: string | null,
+    received_reply_behavior?: string | null,
+    team_sidebar_behavior?: string | null,
+    team_inbox_enabled?: boolean | null,
+    chat_room_enabled?: boolean | null
+  } | null,
+  last_activity_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team in an organization; the token owner must be an admin or owner
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  organization: string,
+  emoji?: string,
+  color?: string,
+  active_members?: string[],
+  observers?: string[],
+  business_hours?: {
+    tz?: string,
+    t?: {
+      d?: number,
+      s?: number[]
+    }[]
+  },
+  inactivity_period?: number,
+  team_mention_behavior?: only_active_members | all_members,
+  user_reply_behavior?: assign_user | leave_in_team_inbox,
+  received_reply_behavior?: show_in_assignee_inbox | show_in_team_inbox,
+  team_sidebar_behavior?: show_team_space | show_team_inbox,
+  team_inbox_enabled?: boolean,
+  chat_room_enabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  organization?: string | null,
+  active_members?: string[] | null,
+  observers?: string[] | null,
+  emoji?: string | null,
+  color?: string | null,
+  business_hours?: {
+    tz?: string,
+    t?: {
+      d?: number,
+      s?: number[]
+    }[]
+  } | null,
+  inactivity_period?: number | null,
+  team_mention_behavior?: string | null,
+  user_reply_behavior?: string | null,
+  received_reply_behavior?: string | null,
+  team_sidebar_behavior?: string | null,
+  team_inbox_enabled?: boolean | null,
+  chat_room_enabled?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams in organizations the authenticated user has access to
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  organization?: string | null,
+  active_members?: string[] | null,
+  observers?: string[] | null,
+  emoji?: string | null,
+  color?: string | null,
+  business_hours?: {
+    tz?: string,
+    t?: {
+      d?: number,
+      s?: number[]
+    }[]
+  } | null,
+  inactivity_period?: number | null,
+  team_mention_behavior?: string | null,
+  user_reply_behavior?: string | null,
+  received_reply_behavior?: string | null,
+  team_sidebar_behavior?: string | null,
+  team_inbox_enabled?: boolean | null,
+  chat_room_enabled?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update one or more teams; the token owner must be an admin or owner
+
+**Risk:** `write`
+
+```ts
+await corsair.missive.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  organization?: string,
+  emoji?: string,
+  color?: string,
+  active_members?: string[],
+  observers?: string[],
+  business_hours?: {
+    tz?: string,
+    t?: {
+      d?: number,
+      s?: number[]
+    }[]
+  },
+  inactivity_period?: number,
+  team_mention_behavior?: only_active_members | all_members,
+  user_reply_behavior?: assign_user | leave_in_team_inbox,
+  received_reply_behavior?: show_in_assignee_inbox | show_in_team_inbox,
+  team_sidebar_behavior?: show_team_space | show_team_inbox,
+  team_inbox_enabled?: boolean,
+  chat_room_enabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  organization?: string | null,
+  active_members?: string[] | null,
+  observers?: string[] | null,
+  emoji?: string | null,
+  color?: string | null,
+  business_hours?: {
+    tz?: string,
+    t?: {
+      d?: number,
+      s?: number[]
+    }[]
+  } | null,
+  inactivity_period?: number | null,
+  team_mention_behavior?: string | null,
+  user_reply_behavior?: string | null,
+  received_reply_behavior?: string | null,
+  team_sidebar_behavior?: string | null,
+  team_inbox_enabled?: boolean | null,
+  chat_room_enabled?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List users in organizations the authenticated user is part of; user status is not exposed by the API
+
+**Risk:** `read`
+
+```ts
+await corsair.missive.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  me?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
