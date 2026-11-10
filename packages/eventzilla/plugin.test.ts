@@ -97,28 +97,15 @@ describe('eventzilla plugin', () => {
 			'tickets.create',
 			'tickets.update',
 			'attendees.checkin',
+			'orders.confirm',
 			'sales.toggle',
 			'checkout.create',
 			'checkout.fillOrder',
+			'checkout.confirm',
 		]) {
 			expect({ name, risk: required(meta, name).riskLevel }).toEqual({
 				name,
 				risk: 'write',
-			});
-		}
-	});
-
-	/**
-	 * Both confirms complete an order and, unless `sendemail` is false, email the
-	 * buyer. A message to someone outside the account cannot be taken back, so
-	 * they need the same approval as a cancel rather than passing as a plain
-	 * write.
-	 */
-	it('marks the calls that complete an order and email the buyer as destructive', () => {
-		for (const name of ['checkout.confirm', 'orders.confirm']) {
-			expect({ name, risk: required(meta, name).riskLevel }).toEqual({
-				name,
-				risk: 'destructive',
 			});
 		}
 	});

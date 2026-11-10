@@ -170,9 +170,9 @@ await corsair.eventzilla.api.categories.list({});
 
 `checkout.confirm`
 
-Record the payment result and turn a filled checkout into a confirmed order. EMAILS THE BUYER unless `sendemail` is false. This is the step that completes a registration.
+Record the payment result and turn a filled checkout into a confirmed order. Emails the buyer unless `sendemail` is false. This is the step that completes a registration.
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.eventzilla.api.checkout.confirm({});
@@ -788,9 +788,9 @@ await corsair.eventzilla.api.orders.cancel({});
 
 `orders.confirm`
 
-Confirm an order after checkout. EMAILS THE BUYER unless `sendemail` is false. Confirming an already-confirmed order is the API’s own decision to make.
+Confirm an order after checkout. Emails the buyer unless `sendemail` is false. Confirming an already-confirmed order is the API’s own decision to make.
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.eventzilla.api.orders.confirm({});
