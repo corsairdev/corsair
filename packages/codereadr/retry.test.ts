@@ -31,7 +31,11 @@ function respondXml(body: string, status = 200) {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A spy with no queued response would fall through to the real fetch and
+	// send a live request, so every call a test did not stub fails instead.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		throw new Error('unmocked fetch: queue a response with respondXml first');
+	});
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
