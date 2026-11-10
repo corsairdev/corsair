@@ -1,0 +1,1249 @@
+---
+title: API
+description: "API reference for Eventzilla: every `eventzilla.api.*` operation with input and output types."
+---
+
+Every `eventzilla.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attendees
+
+### checkin
+
+`attendees.checkin`
+
+Check an attendee in, or revert their check-in, by ticket barcode. Passing `eventcheckin: true` twice is harmless.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.attendees.checkin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `barcode` | `string` | Yes | The `bar_code` from the attendee or ticket record. |
+| `eventcheckin` | `boolean` | Yes | true to check in, false to revert a check-in. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkinstatus` | `object` | Yes | — |
+| `checkedIn` | `boolean \| null` | Yes | True only when `checkinstatus.status` confirms a check-in this call asked for. False when the status reports a failure, an "already" state or a revert; null when the status text does not say. A revert (`eventcheckin: false`) therefore never answers true: read `checkinstatus.status` for its outcome. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code. |
+
+<AccordionGroup>
+<Accordion title="checkinstatus full type">
+
+```ts
+{
+  firstname?: string | null,
+  lastname?: string | null,
+  eventtitle?: string | null,
+  orderref?: string | null,
+  email?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`attendees.get`
+
+One attendee by id, with their event, order reference and check-in state.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.attendees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attendeeid` | `number` | Yes | The attendee to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attendees` | `object[]` | Yes | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attendees full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  ticket_type?: string | null,
+  bar_code?: string | null,
+  is_attended?: string | null,
+  transaction_ref?: string | null,
+  refno?: string | null,
+  questions?: {
+    questionid?: number | null,
+    questions?: string | null,
+    answer?: string | null
+  }[] | null,
+  id?: number | null,
+  transaction_date?: string | null,
+  transaction_amount?: number | string | null,
+  event_date?: string | null,
+  transaction_status?: string | null,
+  user_id?: number | null,
+  event_id?: number | null,
+  title?: string | null,
+  email?: string | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  promo_code?: string | null,
+  payment_type?: string | null,
+  attended: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### list
+
+`categories.list`
+
+Event category names, for the `category` filter on events.list. Answers HTTP 200 with an error body rather than a 401 when the key is refused, which this plugin turns into an auth error.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  category?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Checkout
+
+### confirm
+
+`checkout.confirm`
+
+Record the payment result and turn a filled checkout into a confirmed order. Emails the buyer unless `sendemail` is false. This is the step that completes a registration.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.checkout.confirm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | — |
+| `eventdateid` | `number` | Yes | — |
+| `checkout_id` | `number` | Yes | — |
+| `payment_status` | `string` | Yes | The payment result to record, such as `success`. Eventzilla documents no enum here. |
+| `comments` | `string` | No | Notes recorded on the order. |
+| `sendemail` | `boolean` | No | Whether to email the buyer. The API defaults this to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkout_id` | `number \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `transaction_total` | `number \| null` | No | — |
+| `transaction_tax` | `number \| null` | No | — |
+| `transaction_discount` | `number \| null` | No | — |
+| `eventzilla_fee` | `number \| null` | No | — |
+| `transaction_status` | `string \| null` | No | — |
+| `confirmation_email_sent` | `boolean \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`checkout.create`
+
+Reserve tickets and get one `ticket_price_id` per ticket plus a checkout id. The order stays incomplete until checkout.confirm, so an abandoned reservation holds inventory without charging anyone.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.checkout.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | — |
+| `eventdateid` | `number` | Yes | The event's `dateid`. |
+| `ticket_types` | `object[]` | Yes | Ticket types and how many of each to reserve. |
+| `discount_code` | `string` | No | A discount code, if any. |
+
+<AccordionGroup>
+<Accordion title="ticket_types full type">
+
+```ts
+{
+  ticket_type_id: number,
+  quantity: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkout_id` | `number \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `transaction_total` | `number \| null` | No | — |
+| `transaction_tax` | `number \| null` | No | — |
+| `transaction_discount` | `number \| null` | No | — |
+| `transaction_status` | `string \| null` | No | — |
+| `eventzilla_fee` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `tickets` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  ticket_price_id?: number | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fillOrder
+
+`checkout.fillOrder`
+
+Attach buyer and attendee details to a reserved checkout. Nothing is charged and no email is sent until checkout.confirm.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.checkout.fillOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | — |
+| `eventdateid` | `number` | Yes | — |
+| `checkout_id` | `number` | Yes | The `checkout_id` checkout.create returned. |
+| `buyerdetails` | `object[]` | Yes | — |
+| `tickets` | `object[]` | Yes | One entry per ticket bought, in the order they were reserved. |
+| `payment_id` | `number` | Yes | A `payment_id` from checkout.prepare. |
+
+<AccordionGroup>
+<Accordion title="buyerdetails full type">
+
+```ts
+{
+  buyer_firstname: string,
+  buyer_lastname: string,
+  buyer_email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tickets full type">
+
+```ts
+{
+  ticket_price_id: number,
+  first_name: string,
+  last_name: string,
+  email: string,
+  answers?: {
+    question_id: number,
+    answer_text: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkout_id` | `number \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `transaction_total` | `number \| null` | No | — |
+| `transaction_tax` | `number \| null` | No | — |
+| `transaction_discount` | `number \| null` | No | — |
+| `transaction_status` | `string \| null` | No | — |
+| `eventzilla_fee` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `tickets` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  ticket_price_id?: number | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prepare
+
+`checkout.prepare`
+
+What is on sale for one event date — ticket types, availability, payment options and registration questions — and the `payment_id` the later steps need. Needs the event’s `dateid`, not its `id`.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.checkout.prepare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event being registered for. |
+| `dateid` | `number` | Yes | The event's `dateid`, not its `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment_options` | `object[]` | Yes | — |
+| `tickettypes` | `object[]` | Yes | — |
+| `questions` | `object[]` | Yes | — |
+| `discount_enabled` | `boolean \| null` | No | — |
+| `tax_enabled` | `boolean \| null` | No | — |
+| `tax` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="payment_options full type">
+
+```ts
+{
+  payment_id?: number | null,
+  paymentoption_name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tickettypes full type">
+
+```ts
+{
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null,
+  ticket_type_price?: number | string | null,
+  ticket_type_min_limit?: number | null,
+  ticket_type_max_limit?: number | null,
+  ticket_type_avail_quantity?: number | null,
+  ticket_type_onsale?: boolean | null,
+  ticket_type_description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  question_id?: number | null,
+  question_type?: string | null,
+  question_text?: string | null,
+  question_choices?: string[] | null,
+  question_choice?: string[] | null,
+  question_waiver?: string | null,
+  has_subquestion?: boolean | null,
+  subquestion_rules?: {
+    question_id?: number | null,
+    mapped_choice?: string[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tax full type">
+
+```ts
+{
+  tax_type?: string | null,
+  tax_name?: string | null,
+  tax_value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### attendees
+
+`events.attendees`
+
+Every attendee for one event with their barcode, ticket type, answers and check-in state. The route takes no paging parameters, so the whole list arrives at once.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.events.attendees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event whose attendees to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attendees` | `object[]` | Yes | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attendees full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  ticket_type?: string | null,
+  bar_code?: string | null,
+  is_attended?: string | null,
+  transaction_ref?: string | null,
+  refno?: string | null,
+  questions?: {
+    questionid?: number | null,
+    questions?: string | null,
+    answer?: string | null
+  }[] | null,
+  id?: number | null,
+  transaction_date?: string | null,
+  transaction_amount?: number | string | null,
+  event_date?: string | null,
+  transaction_status?: string | null,
+  user_id?: number | null,
+  event_id?: number | null,
+  title?: string | null,
+  email?: string | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  promo_code?: string | null,
+  payment_type?: string | null,
+  attended: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`events.get`
+
+One event by its `id`. Answers an array even for a single id; an unknown id gives an empty array, not an error.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  start_date?: string | null,
+  start_time?: string | null,
+  end_date?: string | null,
+  end_time?: string | null,
+  dateid?: number | null,
+  time_zone?: string | null,
+  tickets_sold?: number | null,
+  tickets_total?: number | null,
+  status?: string | null,
+  show_remaining?: boolean | null,
+  twitter_hashtag?: string | null,
+  utc_offset?: string | null,
+  invite_code?: string | null,
+  url?: string | null,
+  logo_url?: string | null,
+  bgimage_url?: string | null,
+  venue?: string | null,
+  categories?: string | null,
+  language?: string | null,
+  description_html?: string | null,
+  timezone_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+The account's events, paged with offset. Filter by status (only "live" is accepted) or category, and page with the returned next_offset. An empty account answers HTTP 200 with &#123;"message":"No events found"&#125; rather than an array, which is read here as an empty page.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `live` | No | Only `live` is accepted. Every other value, including the capitalised spellings, is rejected by the API. |
+| `category` | `string` | No | Only this category name. |
+| `offset` | `number` | No | Records to skip. Defaults to 0. |
+| `limit` | `number` | No | Records to return. Defaults to 20. |
+
+Only status: live is accepted; every other value is rejected by the API. Set category to a name from categories.list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object[] \| null` | No | — |
+| `events` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | Yes | Offset of the next page, or null when this is the last one. Pass it back as `offset`. |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  start_date?: string | null,
+  start_time?: string | null,
+  end_date?: string | null,
+  end_time?: string | null,
+  dateid?: number | null,
+  time_zone?: string | null,
+  tickets_sold?: number | null,
+  tickets_total?: number | null,
+  status?: string | null,
+  show_remaining?: boolean | null,
+  twitter_hashtag?: string | null,
+  utc_offset?: string | null,
+  invite_code?: string | null,
+  url?: string | null,
+  logo_url?: string | null,
+  bgimage_url?: string | null,
+  venue?: string | null,
+  categories?: string | null,
+  language?: string | null,
+  description_html?: string | null,
+  timezone_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transactions
+
+`events.transactions`
+
+Paid and pending orders for one event, with buyer, amount and reference. Paged by offset; next_offset comes back on the result.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.events.transactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event whose transactions to list. |
+| `offset` | `number` | No | Records to skip. Defaults to 0. |
+| `limit` | `number` | No | Records to return. Defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object[] \| null` | No | — |
+| `transactions` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | Yes | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="transactions full type">
+
+```ts
+{
+  transaction_ref?: string | null,
+  checkout_id?: number | null,
+  transaction_date?: string | null,
+  transaction_amount?: number | string | null,
+  tickets_in_transaction?: number | null,
+  event_date?: string | null,
+  transaction_status?: string | null,
+  user_id?: number | null,
+  buyer_id?: number | null,
+  event_id?: number | null,
+  title?: string | null,
+  email?: string | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  promo_code?: string | null,
+  payment_type?: string | null,
+  comments?: string | Record<string, any> | null,
+  transaction_tax?: number | string | null,
+  transaction_discount?: number | string | null,
+  eventzilla_fee?: number | string | null,
+  refno?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### cancel
+
+`orders.cancel`
+
+Cancel an order. The order and its tickets stop standing and the buyer is not restored by any other call; issuing a replacement means a new checkout.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventzilla.api.orders.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkout_id` | `number` | Yes | — |
+| `eventid` | `number` | Yes | — |
+| `comments` | `string` | Yes | Why the order was cancelled. Required by the API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ordercancel` | `string \| null` | No | — |
+| `orderconfirm` | `string \| null` | No | — |
+
+
+
+---
+
+### confirm
+
+`orders.confirm`
+
+Confirm an order after checkout. Emails the buyer unless `sendemail` is false. Confirming an already-confirmed order is the API’s own decision to make.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.orders.confirm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkout_id` | `number` | Yes | — |
+| `eventid` | `number` | Yes | — |
+| `comments` | `string` | Yes | Organizer notes on the confirmation. |
+| `sendemail` | `boolean` | No | Whether to email the buyer. The API defaults this to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderconfirm` | `string \| null` | No | — |
+
+
+
+---
+
+## Sales
+
+### toggle
+
+`sales.toggle`
+
+Open or close ticket sales for an event. Closing a sold-out event this way is reversible by toggling back.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.sales.toggle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | — |
+| `status` | `boolean` | Yes | true to open sales, false to close them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventstatus` | `string \| null` | No | — |
+
+
+
+---
+
+## Tickets
+
+### create
+
+`tickets.create`
+
+Add a free ticket type to an event. Paid pricing is not part of this route: the reference documents it as free ticket types only.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.tickets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event to add the ticket type to. |
+| `ticket_type_name` | `string` | Yes | Name shown for this ticket type. |
+| `quantity_total` | `number` | Yes | How many of this ticket type exist. |
+| `ticket_type_description` | `string` | Yes | Description shown to attendees. |
+| `sales_start_date` | `string` | Yes | Date sales open. ISO 8601 (`2026-02-05`) is preferred. |
+| `sales_start_time` | `string` | Yes | Time sales open, such as `09:00`. |
+| `sales_end_date` | `string` | Yes | Date sales close. ISO 8601 (`2026-04-20`) is preferred. |
+| `sales_end_time` | `string` | Yes | Time sales close, such as `23:00`. |
+| `limit_minimum` | `number` | Yes | Fewest tickets one order may take. |
+| `limit_maximum` | `number` | Yes | Most tickets one order may take. |
+| `is_visible` | `boolean` | Yes | Whether the ticket type shows on the registration page. |
+| `boxoffice_only` | `boolean` | Yes | Whether this ticket type is sold only at the box office. |
+| `additional_instructions` | `string` | No | Notes shown to attendees after registering. |
+| `unlock_code` | `string` | No | Code needed to reveal a restricted ticket type. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_type_id` | `number \| null` | No | — |
+| `ticket_type_name` | `string \| null` | No | — |
+| `quantity_total` | `number \| null` | No | — |
+| `ticket_type_description` | `string \| null` | No | — |
+| `sales_start_date` | `string \| null` | No | — |
+| `sales_start_time` | `string \| null` | No | — |
+| `sales_end_date` | `string \| null` | No | — |
+| `sales_end_time` | `string \| null` | No | — |
+| `additional_instructions` | `string \| null` | No | — |
+| `unlock_code` | `string \| null` | No | — |
+| `boxoffice_only` | `boolean \| string \| null` | No | — |
+| `is_visible` | `boolean \| string \| null` | No | — |
+| `limit_minimum` | `number \| null` | No | — |
+| `limit_maximum` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`tickets.list`
+
+The ticket types on sale for one event, with price, quantity and sales window, plus any donation options.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event whose ticket types to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickets` | `object[]` | Yes | — |
+| `donation` | `object[] \| null` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  quantity_total?: number | null,
+  price?: number | string | null,
+  description?: string | null,
+  sales_start_date?: string | null,
+  sales_start_time?: string | null,
+  sales_end_date?: string | null,
+  sales_end_time?: string | null,
+  group_discount?: number | string | null,
+  group_percentage?: number | string | null,
+  group_price?: number | string | null,
+  additional_instructions?: string | null,
+  unlock_code?: string | null,
+  ticket_type?: string | null,
+  tickets?: string | null,
+  is_visible?: boolean | string | null,
+  isvisible?: boolean | string | null,
+  boxoffice_only?: boolean | string | null,
+  allow_partial_payment?: boolean | string | null,
+  limit_minimum?: number | null,
+  limit_maximum?: number | null,
+  partial_payment_installments?: number | null,
+  partial_payment_frequency?: string | null,
+  partial_payment_amount?: number | string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="donation full type">
+
+```ts
+{
+  donationid?: number | null,
+  title?: string | null,
+  description?: string | null,
+  quantity_total?: number | null,
+  donation_minimum?: number | string | null,
+  donation_start_date?: string | null,
+  donation_end_date?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tickets.update`
+
+Change an existing free ticket type. Every field is required, because the API treats this as a full replace rather than a patch.
+
+**Risk:** `write`
+
+```ts
+await corsair.eventzilla.api.tickets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventid` | `number` | Yes | The event the ticket type belongs to. |
+| `ticket_type_id` | `number` | Yes | The ticket type to update. |
+| `ticket_type_name` | `string` | Yes | Name shown for this ticket type. |
+| `quantity_total` | `number` | Yes | How many of this ticket type exist. |
+| `ticket_type_description` | `string` | Yes | Description shown to attendees. |
+| `sales_start_date` | `string` | Yes | Date sales open. ISO 8601 (`2026-02-05`) is preferred. |
+| `sales_start_time` | `string` | Yes | Time sales open, such as `09:00`. |
+| `sales_end_date` | `string` | Yes | Date sales close. ISO 8601 (`2026-04-20`) is preferred. |
+| `sales_end_time` | `string` | Yes | Time sales close, such as `23:00`. |
+| `limit_minimum` | `number` | Yes | Fewest tickets one order may take. |
+| `limit_maximum` | `number` | Yes | Most tickets one order may take. |
+| `is_visible` | `boolean` | Yes | Whether the ticket type shows on the registration page. |
+| `boxoffice_only` | `boolean` | Yes | Whether this ticket type is sold only at the box office. |
+| `additional_instructions` | `string` | No | Notes shown to attendees after registering. |
+| `unlock_code` | `string` | No | Code needed to reveal a restricted ticket type. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_type_id` | `number \| null` | No | — |
+| `ticket_type_name` | `string \| null` | No | — |
+| `quantity_total` | `number \| null` | No | — |
+| `ticket_type_description` | `string \| null` | No | — |
+| `sales_start_date` | `string \| null` | No | — |
+| `sales_start_time` | `string \| null` | No | — |
+| `sales_end_date` | `string \| null` | No | — |
+| `sales_end_time` | `string \| null` | No | — |
+| `additional_instructions` | `string \| null` | No | — |
+| `unlock_code` | `string \| null` | No | — |
+| `boxoffice_only` | `boolean \| string \| null` | No | — |
+| `is_visible` | `boolean \| string \| null` | No | — |
+| `limit_minimum` | `number \| null` | No | — |
+| `limit_maximum` | `number \| null` | No | — |
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+One order by checkout id or reference number. Verified live, this route does not filter: a small integer answers the account's most recent transaction, a real checkout id answers "Unauthorized access", and an unknown reference answers "Invalid reference number" (404). Check the returned refno before trusting it.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.transactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | A checkout id (`2138868785`) or an order reference (`20260520145-178028`). Both go in the same path segment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transaction full type">
+
+```ts
+{
+  transaction_ref?: string | null,
+  checkout_id?: number | null,
+  transaction_date?: string | null,
+  transaction_amount?: number | string | null,
+  tickets_in_transaction?: number | null,
+  event_date?: string | null,
+  transaction_status?: string | null,
+  user_id?: number | null,
+  buyer_id?: number | null,
+  event_id?: number | null,
+  title?: string | null,
+  email?: string | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  promo_code?: string | null,
+  payment_type?: string | null,
+  comments?: string | Record<string, any> | null,
+  transaction_tax?: number | string | null,
+  transaction_discount?: number | string | null,
+  eventzilla_fee?: number | string | null,
+  refno?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+One organizer by id, in the same array envelope as the list.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userid` | `number` | Yes | The organizer to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  address_line1?: string | null,
+  address_line2?: string | null,
+  address_locality?: string | null,
+  address_region?: string | null,
+  address_country?: string | null,
+  zip_code?: string | null,
+  email?: string | null,
+  timezone?: string | null,
+  website?: string | null,
+  phone_primary?: string | null,
+  avatar_url?: string | null,
+  facebook_id?: string | null,
+  twitter_id?: string | null,
+  last_seen?: string | null,
+  user_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+The organizer account and its sub-organizers, paged by offset.
+
+**Risk:** `read`
+
+```ts
+await corsair.eventzilla.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Records to skip. Defaults to 0. |
+| `limit` | `number` | No | Records to return. Defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object[] \| null` | No | — |
+| `users` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | Yes | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  address_line1?: string | null,
+  address_line2?: string | null,
+  address_locality?: string | null,
+  address_region?: string | null,
+  address_country?: string | null,
+  zip_code?: string | null,
+  email?: string | null,
+  timezone?: string | null,
+  website?: string | null,
+  phone_primary?: string | null,
+  avatar_url?: string | null,
+  facebook_id?: string | null,
+  twitter_id?: string | null,
+  last_seen?: string | null,
+  user_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

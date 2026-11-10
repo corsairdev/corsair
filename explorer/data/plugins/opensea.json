@@ -1,0 +1,1349 @@
+{
+  "id": "opensea",
+  "displayName": "OpenSea",
+  "description": "Read collections, NFTs, listings, offers and marketplace events, and search OpenSea's catalogue.",
+  "npmPackageName": "@corsair-dev/opensea",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "opensea.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "One OpenSea profile by wallet address or username, with its display name, bio, follower counts and verification flag. `is_agent` is a self-declaration, not a check by OpenSea.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_or_username",
+            "optional": false,
+            "type": "string",
+            "description": "A wallet address or an OpenSea username."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ens_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "banner_image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follower_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "following_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_agent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "joined_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.accounts.portfolio",
+      "shortPath": "accounts.portfolio",
+      "description": "USD value of one wallet’s NFTs and tokens, with profit and loss over a timeframe. Every figure is a string. `pnl_absolute` and `pnl_percentage` are absent, not zero, when the account has no history.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The wallet address to value."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string",
+            "description": "Window for the P&L figures: `HOUR`, `DAY`, `WEEK` or `MONTH`. The API defaults to `DAY`."
+          },
+          {
+            "key": "chains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only value assets on these chains."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_value_usd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nft_value_usd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "token_value_usd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pnl_absolute",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pnl_percentage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.chains.list",
+      "shortPath": "chains.list",
+      "description": "The chains OpenSea indexes, with each one’s symbol and block explorer. No input; the list is the valid source for every `chain` argument elsewhere.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chains",
+            "optional": false,
+            "type": "{ chain: string, name: string, symbol?: string | null, supports_swaps?: boolean | null, block_explorer?: string | null, block_explorer_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collection.nfts",
+      "shortPath": "collection.nfts",
+      "description": "The NFTs in one collection, paged with `next`. Filter by trait with `traits`, a JSON array of `traitType` and `value` pairs sent as a string.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "traits",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array of trait filters, sent as a string: `[{\"traitType\":\"Background\",\"value\":\"Red\"}]`. Several filters are AND-combined."
+          },
+          {
+            "key": "has_agent_binding",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only NFTs with (or without) an agent binding."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nfts",
+            "optional": false,
+            "type": "{ identifier: string, collection: string, contract: string, token_standard: string, name?: string | null, description?: string | null, image_url?: string | null, display_image_url?: string | null, display_animation_url?: string | null, original_image_url?: string | null, original_animation_url?: string | null, animation_url?: string | null, metadata_url?: string | null, opensea_url?: string | null, creator?: string | null, owners?: { address: string, quantity?: number | null, quantity_string?: string | null }[] | null, traits?: { trait_type: string, display_type?: string | null, max_value?: string | null, value?: string | number | boolean | null }[] | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, is_suspicious?: boolean | null, updated_at?: string | null, decimals?: number | null, estimated_value_usd?: number | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.floorPrices",
+      "shortPath": "collections.floorPrices",
+      "description": "Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe`, and set how many points come back with `resolution`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string",
+            "description": "Window to report, such as `one_hour`, `one_day`, `seven_days`, `thirty_days` or `all_time`. The API defaults to `one_day`."
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "number",
+            "description": "Number of data points to return. The spec gives no default or bounds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "floor_prices",
+            "optional": false,
+            "type": "{ time?: number | null, usd_price?: string | null, token_unit?: number | null, symbol?: string | null, chain?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "One collection by slug, with its contract addresses, links and NFT counts. The answer is a bare object, not an array, and an unknown slug is a 404.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug, such as `boredapeyachtclub`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "banner_image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "safelist_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_disabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_nsfw",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "trait_offers_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "collection_offers_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "opensea_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "wiki_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "discord_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "telegram_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter_username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram_username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contracts",
+            "optional": true,
+            "type": "{ address: string, chain: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.holders",
+      "shortPath": "collections.holders",
+      "description": "Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way. This route pages with `cursor`, not `next`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous response's `next` value. This route calls it `cursor`."
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order by quantity held. Defaults to `desc`."
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "string",
+            "description": "Only report this wallet address."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holders",
+            "optional": false,
+            "type": "{ address: string, quantity?: number | null, percentage?: number | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "Collections, paged with the returned `next` cursor. Filter by chain, creator or hidden status, and sort with `order_by`. OpenSea defaults the page size to 50.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": true,
+            "type": "string",
+            "description": "The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index."
+          },
+          {
+            "key": "creator_username",
+            "optional": true,
+            "type": "string",
+            "description": "Only collections made by this OpenSea account."
+          },
+          {
+            "key": "include_hidden",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include collections hidden from search and browse."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by. The spec types this as a free string and names no values."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many to return. The API defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor from a previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ collection: string, name: string, description?: string | null, image_url?: string | null, banner_image_url?: string | null, owner?: string | null, safelist_status?: string | null, category?: string | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, trait_offers_enabled?: boolean | null, collection_offers_enabled?: boolean | null, opensea_url?: string | null, project_url?: string | null, wiki_url?: string | null, discord_url?: string | null, telegram_url?: string | null, twitter_username?: string | null, instagram_username?: string | null, contracts?: { address: string, chain: string }[] | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Cursor for the next page; null on the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.stats",
+      "shortPath": "collections.stats",
+      "description": "Volume, sales, owner count and floor price for one collection, as an all-time total plus per-interval rows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "{ volume?: number | null, volume_symbol?: string | null, sales?: number | null, num_owners?: number | null, floor_price?: number | null, floor_price_symbol?: string | null }"
+          },
+          {
+            "key": "intervals",
+            "optional": false,
+            "type": "{ interval: string, volume?: number | null, volume_symbol?: string | null, sales?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.top",
+      "shortPath": "collections.top",
+      "description": "Collections ranked by a metric, `one_day_volume` by default. This route pages with `cursor`, which is the previous response’s `next`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string",
+            "description": "Ranking metric. The API defaults to `one_day_volume`."
+          },
+          {
+            "key": "chains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only collections on these chains."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Only this category."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous response's `next` value. This route calls it `cursor`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ collection: string, name: string, description?: string | null, image_url?: string | null, banner_image_url?: string | null, owner?: string | null, safelist_status?: string | null, category?: string | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, trait_offers_enabled?: boolean | null, collection_offers_enabled?: boolean | null, opensea_url?: string | null, project_url?: string | null, wiki_url?: string | null, discord_url?: string | null, telegram_url?: string | null, twitter_username?: string | null, instagram_username?: string | null, contracts?: { address: string, chain: string }[] | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.collections.trending",
+      "shortPath": "collections.trending",
+      "description": "Collections ranked by momentum over a window, `one_day` by default. Same page shape as `collections.top`, and it pages with `cursor` too.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string",
+            "description": "Window to rank by, such as `one_hour`, `one_day`, `seven_days` or `thirty_days`. The API defaults to `one_day`."
+          },
+          {
+            "key": "chains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only collections on these chains."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Only this category."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous response's `next` value. This route calls it `cursor`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ collection: string, name: string, description?: string | null, image_url?: string | null, banner_image_url?: string | null, owner?: string | null, safelist_status?: string | null, category?: string | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, trait_offers_enabled?: boolean | null, collection_offers_enabled?: boolean | null, opensea_url?: string | null, project_url?: string | null, wiki_url?: string | null, discord_url?: string | null, telegram_url?: string | null, twitter_username?: string | null, instagram_username?: string | null, contracts?: { address: string, chain: string }[] | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.contract.nfts",
+      "shortPath": "contract.nfts",
+      "description": "Every NFT a contract has issued, paged with `next`. Use this to walk a contract whose collection slug you do not have; `collection.nfts` is the same rows keyed by slug.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "string",
+            "description": "The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The contract address."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nfts",
+            "optional": false,
+            "type": "{ identifier: string, collection: string, contract: string, token_standard: string, name?: string | null, description?: string | null, image_url?: string | null, display_image_url?: string | null, display_animation_url?: string | null, original_image_url?: string | null, original_animation_url?: string | null, animation_url?: string | null, metadata_url?: string | null, opensea_url?: string | null, creator?: string | null, owners?: { address: string, quantity?: number | null, quantity_string?: string | null }[] | null, traits?: { trait_type: string, display_type?: string | null, max_value?: string | null, value?: string | number | boolean | null }[] | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, is_suspicious?: boolean | null, updated_at?: string | null, decimals?: number | null, estimated_value_usd?: number | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.events.collection",
+      "shortPath": "events.collection",
+      "description": "Marketplace events limited to one collection, paged with `next`. Narrow by event type, trait filter or a time window. The account-wide `events.list` is the same shape without the collection scope.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "(sale | transfer | mint | order | redemption | listing | offer | collection_offer | trait_offer)[]",
+            "description": "Only these event types."
+          },
+          {
+            "key": "traits",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array of trait filters, sent as a string: `[{\"traitType\":\"Background\",\"value\":\"Red\"}]`. Several filters are AND-combined."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only events after this unix timestamp."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only events before this unix timestamp."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_events",
+            "optional": false,
+            "type": "{ event_type?: string | null, transfer_type?: string | null, order_hash?: string | null, chain?: string | null, transaction?: string | null, event_timestamp?: number | null, from_address?: string | null, to_address?: string | null, quantity?: number | null, payment?: Record<string, any> | null, nft?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.events.list",
+      "shortPath": "events.list",
+      "description": "Marketplace events, newest first, paged with `next`. Narrow by event type and by an `after` or `before` unix timestamp.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "(sale | transfer | mint | order | redemption | listing | offer | collection_offer | trait_offer)[]",
+            "description": "Only these event types."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only events after this unix timestamp."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only events before this unix timestamp."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_events",
+            "optional": false,
+            "type": "{ event_type?: string | null, transfer_type?: string | null, order_hash?: string | null, chain?: string | null, transaction?: string | null, event_timestamp?: number | null, from_address?: string | null, to_address?: string | null, quantity?: number | null, payment?: Record<string, any> | null, nft?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.listings.all",
+      "shortPath": "listings.all",
+      "description": "Every active listing in a collection, paged with `next`, including private ones when asked. Filter by `maker` to see one seller’s listings. `listings.best` gives only the cheapest per token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "include_private_listings",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include listings not shown on the public marketplace."
+          },
+          {
+            "key": "maker",
+            "optional": true,
+            "type": "string",
+            "description": "Only listings signed by this wallet address."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": false,
+            "type": "{ order_hash?: string | null, chain: string, protocol?: string | null, protocol_address?: string | null, remaining_quantity?: number | null, order_created_at?: number | null, asset?: { contract: string, identifier?: string | null } | null, protocol_data?: { parameters?: Record<string, any> | null, signature?: string | null } | null, price?: { current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null, price_per_item?: { currency?: string | null, decimals?: number | null, value?: string | null } | null, type?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.listings.best",
+      "shortPath": "listings.best",
+      "description": "The cheapest active listings in one collection, paged with `next`. Each order carries a Seaport `protocol_data` payload and its `order_hash` for a later fulfilment call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "include_private_listings",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include listings not shown on the public marketplace."
+          },
+          {
+            "key": "traits",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array of trait filters, sent as a string: `[{\"traitType\":\"Background\",\"value\":\"Red\"}]`. Several filters are AND-combined."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": false,
+            "type": "{ order_hash?: string | null, chain: string, protocol?: string | null, protocol_address?: string | null, remaining_quantity?: number | null, order_created_at?: number | null, asset?: { contract: string, identifier?: string | null } | null, protocol_data?: { parameters?: Record<string, any> | null, signature?: string | null } | null, price?: { current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null, price_per_item?: { currency?: string | null, decimals?: number | null, value?: string | null } | null, type?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.nfts.get",
+      "shortPath": "nfts.get",
+      "description": "One NFT by chain, contract address and token id, with its owners and traits. The token id goes in as a string, because some collections use ids beyond the safe integer range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "string",
+            "description": "The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The contract address that holds the token."
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The token id within that contract, as a string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nft",
+            "optional": false,
+            "type": "{ identifier: string, collection: string, contract: string, token_standard: string, name?: string | null, description?: string | null, image_url?: string | null, display_image_url?: string | null, display_animation_url?: string | null, original_image_url?: string | null, original_animation_url?: string | null, animation_url?: string | null, metadata_url?: string | null, opensea_url?: string | null, creator?: string | null, owners?: { address: string, quantity?: number | null, quantity_string?: string | null }[] | null, traits?: { trait_type: string, display_type?: string | null, max_value?: string | null, value?: string | number | boolean | null }[] | null, is_disabled?: boolean | null, is_nsfw?: boolean | null, is_suspicious?: boolean | null, updated_at?: string | null, decimals?: number | null, estimated_value_usd?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.nfts.owners",
+      "shortPath": "nfts.owners",
+      "description": "Wallets holding one token, with the quantity each holds. Useful for an ERC-1155 or a fractionalised token, where more than one address holds the same id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "string",
+            "description": "The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The contract address."
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The token id, as a string."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owners",
+            "optional": false,
+            "type": "{ address: string, quantity?: number | null, quantity_string?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.offers.all",
+      "shortPath": "offers.all",
+      "description": "Every active offer on a collection, paged with `next`, including trait and per-token offers. Filter by `maker` for one bidder. `offers.collection` gives only the collection-wide ones.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "maker",
+            "optional": true,
+            "type": "string",
+            "description": "Only offers made from this wallet address."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offers",
+            "optional": false,
+            "type": "{ order_hash?: string | null, chain: string, protocol?: string | null, protocol_address?: string | null, remaining_quantity?: number | null, order_created_at?: number | null, asset?: { contract: string, identifier?: string | null } | null, protocol_data?: { parameters?: Record<string, any> | null, signature?: string | null } | null, price?: { current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null, price_per_item?: { currency?: string | null, decimals?: number | null, value?: string | null } | null, type?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.offers.best",
+      "shortPath": "offers.best",
+      "description": "The highest active offer on one token in a collection, as a single order object. Answers an empty or 404 result when nobody has bid on that token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The token id within the collection, as a string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_hash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "protocol_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remaining_quantity",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "order_created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "asset",
+            "optional": true,
+            "type": "{ contract: string, identifier?: string | null } | null"
+          },
+          {
+            "key": "protocol_data",
+            "optional": true,
+            "type": "{ parameters?: Record<string, any> | null, signature?: string | null } | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "{ current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null"
+          },
+          {
+            "key": "price_per_item",
+            "optional": true,
+            "type": "{ currency?: string | null, decimals?: number | null, value?: string | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.offers.collection",
+      "shortPath": "offers.collection",
+      "description": "Active collection-wide offers, paged with `next`. Same order shape as listings, with `remaining_quantity` for how much of the offer is unfilled.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offers",
+            "optional": false,
+            "type": "{ order_hash?: string | null, chain: string, protocol?: string | null, protocol_address?: string | null, remaining_quantity?: number | null, order_created_at?: number | null, asset?: { contract: string, identifier?: string | null } | null, protocol_data?: { parameters?: Record<string, any> | null, signature?: string | null } | null, price?: { current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null, price_per_item?: { currency?: string | null, decimals?: number | null, value?: string | null } | null, type?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "One order by chain, Seaport contract address and order hash, as a single object rather than an array. Takes the `order_hash` from a listing or offer row; a cancelled or filled order still answers with its final state.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "string",
+            "description": "The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index."
+          },
+          {
+            "key": "protocol_address",
+            "optional": false,
+            "type": "string",
+            "description": "The Seaport contract address, such as OpenSea's 0x0000000000000068f116a894984e2db1123eb395."
+          },
+          {
+            "key": "order_hash",
+            "optional": false,
+            "type": "string",
+            "description": "The `order_hash` from a listing or offer row."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ order_hash?: string | null, chain: string, protocol?: string | null, protocol_address?: string | null, remaining_quantity?: number | null, order_created_at?: number | null, asset?: { contract: string, identifier?: string | null } | null, protocol_data?: { parameters?: Record<string, any> | null, signature?: string | null } | null, price?: { current?: { currency?: string | null, decimals?: number | null, value?: string | null } | null } | null, price_per_item?: { currency?: string | null, decimals?: number | null, value?: string | null } | null, type?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search across collections, NFTs, tokens and accounts. Each result carries a `type` and one payload key, so branch on `type` before reading the rest.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "What to search for."
+          },
+          {
+            "key": "chains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only results on these chains."
+          },
+          {
+            "key": "asset_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these result kinds: `collection`, `nft`, `token`, `account`. The API defaults to collections and tokens."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ type: string, collection?: Record<string, any> | null, nft?: Record<string, any> | null, account?: Record<string, any> | null, token?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "opensea.api.traits.list",
+      "shortPath": "traits.list",
+      "description": "The trait names on one collection, the type of each, and under `counts` every value with how many NFTs carry it (`min` and `max` for a numeric trait). Use `collection.nfts` with a `traits` filter to select NFTs by value.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The collection slug."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

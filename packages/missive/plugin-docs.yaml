@@ -1,0 +1,10 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Missive"
+description: Team inbox integration for conversations, contacts, drafts, messages, tasks, teams, and analytics reports.
+domain: missiveapp.com
+recommendedAuth: api_key
+overviewNote: |
+  Authenticate with a Missive personal API token (`missive_pat-…`) created under Preferences > API; token generation requires an organization on the Productive plan. Requests use HTTPS with a Bearer header against `https://public.missiveapp.com/v1`.
+
+  This plugin implements the documented REST operations. Missive's inbound webhook events are not included; the webhook subscription endpoints ship as regular REST operations.

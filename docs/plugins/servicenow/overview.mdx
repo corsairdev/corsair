@@ -1,0 +1,149 @@
+---
+title: Overview
+description: "IT service management with ServiceNow - query and read records in any table, create and update them, delete them, and list the tables an instance exposes."
+---
+
+Use **ServiceNow** through Corsair: one client, typed API calls.
+
+**Every ServiceNow customer runs their own instance**, so there is no shared API host. Set `servicenow({ host: 'acme.service-now.com' })` or store it with `keys.set_host(host)`. The instance name alone (`acme`) and a pasted `https://acme.service-now.com/` are accepted too. Requests only go to `https://<instance>.service-now.com`, or `https://<instance>.servicenowservices.com` for a government cloud instance, so any other host is rejected. If your instance has a custom URL, use its `service-now.com` name.
+
+Credentials are a **username and password**, sent as HTTP Basic. This plugin uses Basic credentials only; ServiceNow also supports OAuth for the Table API, which this plugin does not implement. Store them as the account's `api_key`, JSON-encoded as `{"username":"...","password":"..."}`, which is how a single-string key carries a pair; `servicenow({ key })` takes the same string.
+
+Things to know before you call:
+
+- **Tables are not typed.** Every instance extends the base tables with its own columns, and `sysparm_fields` decides what comes back, so a record is an open map of fields. Read the base columns for a table before writing to it.
+- **ServiceNow wraps every success in `{ result }`.** A read returns `result` as an object, a list as an array. The plugin unwraps that: `records.get`, `records.create` and `records.update` return the record itself, `records.list` returns `{ records }` and `tables.list` returns `{ tables }`, each holding the array. `records.delete` returns `{ deleted, table, sys_id }` because a 204 carries no body. A failure returns `{ error: { message, detail }, status: "failure" }` with a real HTTP status, so the plugin throws a `ServicenowAPIError` that always has a `message` and an optional string `detail`; a null or empty detail on the wire becomes `undefined`.
+- **A table name that does not exist is a 400, not a 404.** The answer is `{"error":{"message":"Invalid table <name>","detail":null}}`, so the plugin matches it by message as `INVALID_TABLE_ERROR`; a 404 means a record is missing or an ACL hides it.
+- **Reference fields are objects.** A column like `super_class` or `caller_id` arrives as `{ link, value }` by default and as a bare sys_id only with `sysparm_exclude_reference_link=true`, so both shapes are accepted.
+- **Paging is offset-based.** Pass `sysparm_limit` and `sysparm_offset`; there is no cursor. ServiceNow caps a response at 10,000 records by default, so a large table needs several calls. `records.list` returns the records it received, not a total.
+- **`sysparm_query` is its own syntax.** An encoded query joins conditions with `^`, as in `active=true^priority=1^ORDERBYDESCsys_created_on`. Operators include `= != > < >= <= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN`.
+- **Writes run business rules.** A create or update fires the table's business rules, notifications and flows, so a write can change more than the fields you sent.
+- **A delete is final for the record.** ServiceNow keeps no undo. What happens to records that reference it depends on the table's reference cascade rule: with `Delete` or `Cascade` they are deleted, with `Clear` (the default) their reference is emptied, with `Restrict` the delete is refused while references exist, and with `None` the reference is left pointing at an id that no longer exists.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/servicenow better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/servicenow better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/servicenow better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/servicenow better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { servicenow } from '@corsair-dev/servicenow';
+
+export const corsair = createCorsair({
+	plugins: [
+		servicenow(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+servicenow()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'servicenow',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List open incidents**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.servicenow.api.records.list({
+	table: 'incident',
+	sysparm_query: 'active=true^ORDERBYDESCsys_created_on',
+	sysparm_fields: 'number,short_description,state,sys_created_on',
+	sysparm_limit: 20,
+});
+```
+
+
+**Create an incident**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.servicenow.api.records.create({
+	table: 'incident',
+	fields: { short_description: 'Printer on floor 3 is offline', caller_id: '6816f79cc0a8016401c5a33be7409464' },
+});
+```
+
+
+See the full list on the [API](/plugins/servicenow/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/servicenow/api">
+    Every `servicenow.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

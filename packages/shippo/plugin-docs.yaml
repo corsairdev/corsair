@@ -1,0 +1,164 @@
+displayName: Shippo
+description: Multi-carrier shipping with Shippo - quote rates across carriers, buy and refund labels, track parcels, declare customs and manage pickup paperwork.
+domain: goshippo.com
+recommendedAuth: api_key
+overviewNote: |
+  Shippo authenticates with a token in an `Authorization: ShippoToken <token>` header — not `Bearer`. Create one at https://goshippo.com/user/apikeys/; a token starting `shippo_test_` acts in test mode, where labels are free and carriers are simulated. Every request this plugin sends also carries `SHIPPO-API-VERSION: 2018-02-08`, so behaviour cannot drift to whatever "latest" means.
+
+  Things to know before you ship:
+
+  - **Weights and dimensions are strings.** Shippo types `weight`, `length`, `width` and `height` as decimal strings (`"12"`, `"5.5"`), and the plugin keeps them that way. A number is rejected rather than silently coerced.
+  - **Async is the default.** `shipments.create` and `transactions.create` return before the work is done unless you pass `async: false`. A shipment created that way has `status: QUEUED` and no `rates`; read them with `shipments.rates`. A transaction without `label_url` is still being bought.
+  - **A label purchase spends money.** `transactions.create` charges the account's carrier for the chosen rate, and `batches.purchase` charges once per shipment. Neither is retried on a 5xx, since the carrier may already have applied it. `refunds.create` is the way back, and the carrier can refuse.
+  - **`label_url` expires.** Its `Expires` query parameter is a Unix timestamp; re-read the transaction with `transactions.get` rather than reusing an old URL.
+  - **Rate limits are per endpoint and per verb, per minute**, and much tighter in test mode — a list request allows 10 a minute in test, 50 in live. A 429 is retried with a 60-second wait, since every window is a minute.
+  - **Auth is checked before routing.** An unknown path answers 401, not 404, so a 401 always means the token.
+  - **A bad country is silently truncated.** Shippo accepted `country: "USA"` and stored `US`, answering 201, so the two-letter rule is enforced here instead — a typo fails before it reaches an address you then ship to.
+  - **Route webhook deliveries per tenant in the URL.** A Shippo delivery carries no account id, so `processWebhook` falls back to the `default` tenant. Put `?tenantId=` on each subscription URL and pass `{ tenantId }` as the fourth argument; read the query from `request.url`, and read the body with `request.text()` rather than `request.json()`.
+  - **Webhooks carry the whole object.** The body is `{ event, test, data }`, where `data` is the full track, transaction or batch — not a notification pointing at one.
+  - **Webhook security is opt-in, and this plugin verifies HMAC when you configure a secret.** Shippo offers three protections: an inbound IP allowlist, a self-generated `?token=` on the subscription URL, and HMAC. HMAC is arranged with Shippo support (it is not a field on `POST /webhooks`) and they issue a shared secret; set it as `webhookSecret` or store it with `set_webhook_signature`, and the plugin checks `Shippo-Auth-Signature` — SHA-256 over `<timestamp>.<raw body>` — on every delivery, in constant time. With no secret configured, deliveries are accepted unsigned and the handler reports `signatureVerified: false`, so an unchecked delivery is visible rather than implied. Either way the receiving URL must be private, and the raw body must reach `processWebhook` as text for verification to work.
+  - **One webhook per label.** Shippo creates a tracking webhook automatically for every label it sells, so `webhooks.list` grows on its own.
+examples:
+  read:
+    path: shipments.list
+    title: List recent shipments
+    args:
+      results: 10
+  write:
+    path: transactions.create
+    title: Buy a label from a rate, waiting for the result
+    args:
+      rate: ec9f0d3adc9441449c85d315f0997fd5
+      async: false
+apiExamples:
+  addresses.get:
+    call: "{ address_id: 'd799c2679e644279b59fe661ac8fa488' }"
+  addresses.list:
+    call: "{ results: 10 }"
+  batches.addShipments:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: [{ shipment: 'adcfdddf8ec64b84ad22772bce3ea37a', servicelevel_token: 'usps_priority' }] }"
+  batches.get:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0' }"
+  batches.removeShipments:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: ['adcfdddf8ec64b84ad22772bce3ea37a'] }"
+  carrierAccounts.create:
+    call: "{ carrier: 'fedex', account_id: '321123', parameters: { first_name: 'Shwan', last_name: 'Ippotle', phone_number: '5553419393', from_address_st: '215 Clayton St.', from_address_city: 'San Francisco', from_address_state: 'CA', from_address_zip: '94117', from_address_country_iso2: 'US' } }"
+  carrierAccounts.get:
+    call: "{ carrier_account_id: '078870331023437cb917f5187429b093' }"
+  carrierAccounts.register:
+    call: "{ carrier: 'usps', parameters: { account_number: '1234567890' } }"
+  carrierAccounts.registrationStatus:
+    call: "{ carrier: 'usps' }"
+  carrierAccounts.update:
+    call: "{ carrier_account_id: '078870331023437cb917f5187429b093', account_id: '321123', carrier: 'fedex', active: false }"
+  customsDeclarations.get:
+    call: "{ customs_declaration_id: 'b3d1a2c4e5f647089a1b2c3d4e5f6071' }"
+  customsDeclarations.list:
+    call: "{ results: 10 }"
+  customsItems.get:
+    call: "{ customs_item_id: 'd799c2679e644279b59fe661ac8fa488' }"
+  customsItems.list:
+    call: "{ results: 10 }"
+  manifests.create:
+    call: "{ carrier_account: '078870331023437cb917f5187429b093', shipment_date: '2026-07-21T12:00:00Z', transactions: ['915d94940ea54c3a80cbfa328722f5a1'], address_from: 'd799c2679e644279b59fe661ac8fa488' }"
+  manifests.get:
+    call: "{ manifest_id: 'c4e5f60718293a4b5c6d7e8f90a1b2c3' }"
+  manifests.list:
+    call: "{ results: 10 }"
+  orders.get:
+    call: "{ order_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  orders.list:
+    call: "{ results: 10 }"
+  parcelTemplates.create:
+    call: "{ name: 'My 5x5x5 box', length: '5', width: '5', height: '5', distance_unit: 'in', weight: '12', weight_unit: 'lb' }"
+  parcelTemplates.delete:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' }"
+  parcelTemplates.get:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' }"
+  parcelTemplates.getCarrier:
+    call: "{ carrier_parcel_template_token: 'USPS_FlatRateGiftBox' }"
+  parcelTemplates.list:
+    call: "{ }"
+  parcelTemplates.update:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071', name: 'Renamed box' }"
+  parcels.get:
+    call: "{ parcel_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  parcels.list:
+    call: "{ results: 10 }"
+  refunds.get:
+    call: "{ refund_id: 'de1b3f1e1d0a4f0d9a3b2c1d0e9f8a7b' }"
+  refunds.list:
+    call: "{ results: 10 }"
+  shipments.get:
+    call: "{ shipment_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  shipments.list:
+    call: "{ results: 10 }"
+  transactions.list:
+    call: "{ results: 10 }"
+  webhooks.delete:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' }"
+  webhooks.get:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' }"
+  webhooks.list:
+    call: "{ }"
+  webhooks.update:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9', active: false }"
+  addresses.create:
+    call: "{ name: 'Shawn Ippotle', street1: '215 Clayton St.', city: 'San Francisco', state: 'CA', zip: '94117', country: 'US' }"
+  addresses.validate:
+    call: "{ address_id: 'd799c2679e644279b59fe661ac8fa488' }"
+  parcels.create:
+    call: "{ length: '5', width: '5', height: '5', distance_unit: 'in', weight: '12', mass_unit: 'lb' }"
+  shipments.create:
+    call: "{ address_from: 'd799c2679e644279b59fe661ac8fa488', address_to: '7c2b6f1e1d0a4f0d9a3b2c1d0e9f8a7b', parcels: [{ length: '5', width: '5', height: '5', distance_unit: 'in', weight: '12', mass_unit: 'lb' }], async: false }"
+  shipments.rates:
+    call: "{ shipment_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  shipments.ratesInCurrency:
+    call: "{ shipment_id: 'adcfdddf8ec64b84ad22772bce3ea37a', currency_code: 'EUR' }"
+  rates.get:
+    call: "{ rate_id: 'ec9f0d3adc9441449c85d315f0997fd5' }"
+  transactions.create:
+    call: "{ rate: 'ec9f0d3adc9441449c85d315f0997fd5', label_file_type: 'PDF_4x6', async: false }"
+  transactions.get:
+    call: "{ transaction_id: '915d94940ea54c3a80cbfa328722f5a1' }"
+  refunds.create:
+    call: "{ transaction: '915d94940ea54c3a80cbfa328722f5a1', async: false }"
+  tracks.get:
+    call: "{ carrier: 'usps', tracking_number: '9205590164917312751089' }"
+  tracks.register:
+    call: "{ carrier: 'usps', tracking_number: '9205590164917312751089', metadata: 'Order 000123' }"
+  customsItems.create:
+    call: "{ description: 'T-Shirt', quantity: 2, net_weight: '400', mass_unit: 'g', value_amount: '20', value_currency: 'USD', origin_country: 'US' }"
+  customsDeclarations.create:
+    call: "{ contents_type: 'MERCHANDISE', non_delivery_option: 'RETURN', certify: true, certify_signer: 'Shawn Ippotle', items: ['d799c2679e644279b59fe661ac8fa488'] }"
+  batches.create:
+    call: "{ default_carrier_account: '078870331023437cb917f5187429b093', default_servicelevel_token: 'usps_priority', batch_shipments: [{ shipment: 'adcfdddf8ec64b84ad22772bce3ea37a' }] }"
+  batches.purchase:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0' }"
+  orders.create:
+    call: "{ order_number: '#1068', placed_at: '2026-01-01T00:00:00Z', currency: 'USD', to_address: { name: 'Recipient', country: 'US' }, line_items: [{ title: 'T-Shirt', quantity: 2, total_price: '12.50', currency: 'USD' }] }"
+  pickups.create:
+    call: "{ carrier_account: '078870331023437cb917f5187429b093', location: { address: { name: 'Shwan Ippotle', street1: '215 Clayton St.', city: 'San Francisco', state: 'CA', zip: '94117', country: 'US' }, building_location_type: 'Front Door' }, transactions: ['915d94940ea54c3a80cbfa328722f5a1'], requested_start_time: '2026-07-21T12:00:00Z', requested_end_time: '2026-07-21T18:00:00Z' }"
+  carrierAccounts.list:
+    call: "{ results: 25 }"
+  parcelTemplates.listCarrier:
+    call: "{ }"
+  webhooks.create:
+    call: "{ url: 'https://myapp.com/webhooks/shippo', event: 'track_updated' }"
+
+# A valid example for every operation, so no page shows a bare `{}`.
+apiNotes:
+  addresses.create: "Only `country` is required by the API, but buying a label needs `name` and a street line. An address with `is_complete: false` still gets rates."
+  addresses.validate: "Reads `validation_results`: `is_valid` plus the corrections Shippo applied or the parts it could not match."
+  parcels.create: "Weight and dimensions are decimal strings, not numbers. Up to four decimal places."
+  shipments.create: "Shippo defaults `async` to true, returning before rates exist. Pass `async: false` to get `rates` in the response, or read them later with `shipments.rates`."
+  shipments.rates: "Call this after an async create returned `status: QUEUED` with no rates."
+  transactions.create: "Spends money on the account's carrier. Pass `async: false` to wait for `label_url`. `label_file_type` takes any of `PNG`, `PNG_2.3x7.5`, `PDF`, `PDF_2.3x7.5`, `PDF_4x6`, `PDF_4x8`, `PDF_A4`, `PDF_A5`, `PDF_A6` or `ZPLII`; omitting it uses the dashboard default. Never retried on a 5xx, because the carrier may already have applied it."
+  transactions.get: "`label_url` expires; its `Expires` query parameter is a Unix timestamp. Re-read the transaction instead of reusing an old URL."
+  refunds.create: "Asks the carrier to void the label. The carrier can refuse, so the outcome arrives as a `status`, not as a success."
+  refunds.list: "This route is `/refunds/` with a trailing slash; `/refunds` answers 404."
+  batches.create: "Each shipment needs a carrier and a servicelevel, from the entry or the batch defaults. Those two resolve independently."
+  batches.purchase: "Charges once per shipment and answers 202, so the merged label URLs arrive through `batches.get`, one PDF per 100 labels."
+  orders.list: "The status filter is sent as one `order_status[]` query parameter per status. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing."
+  tracks.register: "Registers a tracking number Shippo has not seen, usually from a label bought elsewhere. `track_updated` webhooks fire for it afterwards."
+  webhooks.create: "`url`, `event` and `is_test` are the only fields this route accepts, so an HMAC secret is arranged with Shippo support rather than passed here. One subscription per event, but a label it sells creates its own tracking webhook."

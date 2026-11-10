@@ -1,0 +1,1064 @@
+---
+title: API
+description: "API reference for CodeREADr: every `codereadr.api.*` operation with input and output types."
+---
+
+Every `codereadr.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Databases
+
+### clear
+
+`databases.clear`
+
+Delete every value in a database while keeping the database itself; the values cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.codereadr.api.databases.clear({ database_id: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | Yes | The database to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`databases.create`
+
+Create a database for validating barcode values; case sensitivity is fixed at creation
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.databases.create({ database_name: 'Event tickets', case_sensitivity: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_name` | `string` | Yes | Name for the new database. |
+| `case_sensitivity` | `boolean` | No | Case-sensitive validation. Cannot be changed after creation. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `database_id` | `number` | Yes | The new database. |
+
+
+
+---
+
+### delete
+
+`databases.delete`
+
+Permanently delete a database and every value in it; refused while a service still uses it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.codereadr.api.databases.delete({ database_id: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | Yes | The database to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`databases.list`
+
+List validation databases with their stored value count and linked services, optionally at a lighter info level
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.databases.list({ info_level: 'services' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number[] \| all` | No | Databases to list. `all` by default. |
+| `info_level` | `names \| services` | No | `names` returns names only, `services` adds linked services. Both skip the slower value count. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="databases full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  count?: number | null,
+  service_ids?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### showValues
+
+`databases.showValues`
+
+Search and page through the barcode values stored in a database, with exact and partial match filters and a validity filter
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.databases.showValues({ database_id: 120, valuelike: 'A1', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | Yes | The database to read. |
+| `value` | `string` | No | Exact match on the stored value. |
+| `valuelike` | `string` | No | Partial match on the stored value. |
+| `response` | `string` | No | Exact match on the response text. |
+| `responselike` | `string` | No | Partial match on the response text. |
+| `validity` | `1 \| 0` | No | `1` only valid values, `0` only invalid ones. |
+| `limit` | `number` | No | Page size. |
+| `offset` | `number` | No | Rows to skip. Needs `limit`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Rows in this response. |
+| `values` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | No | Pass as `offset` for the next page while this page came back full. |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  value?: string | null,
+  response?: string | null,
+  validity?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`databases.update`
+
+Rename a validation database; its stored barcode values and linked services are unchanged
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.databases.update({ database_id: 120, database_name: 'Event tickets 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | Yes | The database to rename. |
+| `database_name` | `string` | Yes | New name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `database_id` | `number` | Yes | — |
+
+
+
+---
+
+### upsertValue
+
+`databases.upsertValue`
+
+Insert or update one barcode value with its response text and validity, without checking whether it already exists
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.databases.upsertValue({ database_id: 120, value: 'A1B2C3D', response: 'Admitted to Hall 2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | Yes | The database to write the value to. |
+| `value` | `string` | Yes | The barcode value. Longer than 500 characters is truncated without an error. |
+| `response` | `string` | No | Text shown when the value is scanned. |
+| `validity` | `1 \| 0` | No | `1` valid, `0` invalid. Defaults to 1. |
+| `trim_value` | `boolean` | No | Trim surrounding whitespace. Defaults to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### upsertValues
+
+`databases.upsertValues`
+
+Insert or update up to 100 barcode values in one request, each with its own database, response text, validity and trim setting
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.databases.upsertValues({ database_id: 120, values: [{ value: 'A1', response: 'Hall 2' }, { value: 'B1', response: 'Hall 3' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `number` | No | Database for every value that does not name its own. A value with neither is skipped. |
+| `trim_value` | `boolean` | No | Trim surrounding whitespace for values that do not set their own. |
+| `values` | `object[]` | Yes | Up to 100 values to insert or update in one request. |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  database_id?: number,
+  value: string,
+  response?: string,
+  validity?: 1 | 0,
+  trim_value?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Devices
+
+### list
+
+`devices.list`
+
+List the devices that have activated the app, with their UDID
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.devices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `number[] \| all` | No | Devices to list. `all` by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `devices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="devices full type">
+
+```ts
+{
+  id?: number | null,
+  udid?: string | null,
+  name?: string | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`devices.update`
+
+Rename a device, which changes how the device appears in scan records and the account device list
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.devices.update({ device_id: 73, device_name: 'North gate scanner' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `number` | Yes | The device to rename. |
+| `device_name` | `string` | Yes | New name for the device. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `device_id` | `number` | Yes | — |
+
+
+
+---
+
+## Limits
+
+### retrieve
+
+`limits.retrieve`
+
+Read the account API request limits remaining for the current minute and day
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.limits.retrieve({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `minute` | `object \| null` | No | Per-minute allowance. |
+| `day` | `object \| null` | No | Per-day allowance. |
+
+<AccordionGroup>
+<Accordion title="minute full type">
+
+```ts
+{
+  left?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="day full type">
+
+```ts
+{
+  left?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Questions
+
+### create
+
+`questions.create`
+
+Create a data collection question, shown to the app user before or after a scan; choice types need answer options added separately
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.questions.create({ question_text: 'Which dock?', question_type: 'dropdown' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question_text` | `string` | Yes | The question shown to the app user. |
+| `question_type` | `barcode \| barcodemultiline \| barcodenumeric \| checkbox \| dropboximage \| dropdown \| gps \| manual \| manualmultiline \| manualnumeric \| option \| webcollect` | No | Defaults to `manual`. A value outside this list is rejected here before the request is sent. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterward. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `question_id` | `number` | Yes | The new question. |
+
+
+
+---
+
+### list
+
+`questions.list`
+
+List data collection questions with their type and answer options
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.questions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question_id` | `number[] \| all` | No | Questions to list. `all` by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  id?: number | null,
+  text?: string | null,
+  type?: string | null,
+  answers?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scans
+
+### delete
+
+`scans.delete`
+
+Permanently delete one or more scan records; deleted scans cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.codereadr.api.scans.delete({ scan_id: [13193, 13194] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scan_id` | `number[]` | Yes | The scans to delete. Deletion cannot be undone. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `scan_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### list
+
+`scans.list`
+
+Search and page through scan records with filters on date, service, device, user, status, barcode value and scan properties, returning each scan with its answers
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.scans.list({ service_id: [927], status: ['1'], start_date: '2026-11-08', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | Free-text search across scans. |
+| `service_id` | `number[] \| all` | No | Services to search. `all` by default. |
+| `device_id` | `number[] \| all` | No | Devices that made the scans. `all` by default. |
+| `user_id` | `number[] \| all` | No | Users who made the scans. `all` by default. |
+| `scan_id` | `number[] \| all` | No | Only these scans. |
+| `status` | `(1 \| 0 \| -1 \| 0 \| 1 \| -1)[]` | No | `1` valid, `0` invalid, `-1` could not be validated offline, as numbers or strings. All statuses by default. |
+| `start_date` | `string` | No | YYYY-MM-DD. Scans made on or after this date. |
+| `start_time` | `string` | No | HH:mm:ss, 24-hour. Only valid with `start_date`. |
+| `end_date` | `string` | No | YYYY-MM-DD. Scans made on or before this date. |
+| `end_time` | `string` | No | HH:mm:ss, 24-hour. Only valid with `end_date`. |
+| `upload_id` | `number[] \| all` | No | Only scans from these uploads. |
+| `limit` | `number` | No | Page size. Defaults to 10000. |
+| `offset` | `number` | No | Rows to skip. The API ignores it without `limit`, so the default 10000 is sent when `limit` is omitted. |
+| `show_properties` | `boolean` | No | Include each scan's stored properties. Defaults to false. |
+| `include_property` | `string[]` | No | Only scans carrying these properties. |
+| `exclude_property` | `string[]` | No | Drop scans carrying any of these properties. |
+| `with_property` | `Record<string, string>` | No | Exact-match property filters, such as `{ mode: "auto" }`. |
+| `without_property` | `Record<string, string>` | No | Exact-match property exclusions, such as `{ mode: "auto" }`. |
+| `value` | `string` | No | Exact match on the scanned barcode value. |
+| `valuelike` | `string` | No | Partial match on the scanned barcode value. |
+| `response` | `string` | No | Exact match on the scan response text. |
+| `responselike` | `string` | No | Partial match on the scan response text. |
+| `timestamp_received` | `boolean` | No | Include when CodeREADr received each scan; also filters the dates on that timestamp. |
+| `timestamp_modified` | `boolean` | No | Include when each scan was last edited; also filters the dates on that timestamp. |
+| `modified_diff` | `string` | No | Filter on the gap between creation and last edit, such as `< 2 minute` or `> 1 hour`. |
+| `timezone` | `string` | No | IANA name for the returned timestamps, such as `Europe/London`. Defaults to `America/New_York`, not the account timezone; pass `account` to use the one set on the account. |
+| `order_by` | `string` | No | Sort keys, comma-separated, such as `timestamp_desc`. Append `_desc` for descending. Keys: barcode, device_name, device_id, response, scan_id, service_id, service_name, status, timestamp, timestamp_received, timestamp_modified, user_id, user_name. |
+| `only_recent` | `boolean` | No | Return only the most recent scan per barcode. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Rows in this response. |
+| `scans` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | No | Pass as `offset` for the next page while this page came back full; absent on the last page. |
+
+<AccordionGroup>
+<Accordion title="scans full type">
+
+```ts
+{
+  id?: number | null,
+  barcode_value?: string | null,
+  response?: string | null,
+  status?: string | null,
+  timestamp?: string | null,
+  timestamp_received?: string | null,
+  timestamp_modified?: string | null,
+  device?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  service?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  answers?: {
+    question_id?: number | null,
+    question_text?: string | null,
+    answer?: string | null
+  }[] | null,
+  properties?: Record<string, string> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### create
+
+`services.create`
+
+Create a service: how scans are validated (record, database, postback, webview) plus scan behaviour such as symbologies, auto-sync and scanner configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.services.create({ validation_method: 'record', service_name: 'Warehouse intake' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validation_method` | `record \| ondevicerecord \| database \| ondevicedatabase \| webview \| postback` | Yes | How scans are validated. |
+| `database_id` | `number` | No | Required when `validation_method` is `database` or `ondevicedatabase`. |
+| `postback_url` | `string` | No | Required when `validation_method` is `postback`. |
+| `description` | `string` | No | Web content for `webview` services: HTML, or a URL wrapped as `<curl>https://…</curl>`. |
+| `service_name` | `string` | No | Defaults to `Service N` for the next free number. |
+| `duplicate_value` | `0 \| 1` | No | Status to give a duplicate scan. Defaults to 1 (valid). |
+| `device_duplicate_value` | `0 \| 1` | No | Status to give a duplicate scan found on the device. |
+| `period_start_date` | `string` | No | YYYY-MM-DD or MM/DD/YYYY. Defaults to always active. |
+| `period_start_time` | `string` | No | hh:mm:ss or hh:mma. Defaults to 12:00AM on the start date. |
+| `period_end_date` | `string` | No | YYYY-MM-DD or MM/DD/YYYY. Defaults to always active. |
+| `period_end_time` | `string` | No | hh:mm:ss or hh:mma. Defaults to 11:59:59PM on the end date. |
+| `upload_email` | `string` | No | Email address that receives a CSV of scans after each upload. |
+| `upload_email_format` | `regular \| properties` | No | Whether the emailed CSV carries scan properties. Defaults to `regular`. |
+| `view_other_scans` | `boolean` | No | Let an authorized user see every scan on the service. Defaults to true. |
+| `direct_history_url` | `string` | No | Page opened by the app's History button. Empty disables it. |
+| `direct_lookup_url` | `string` | No | Page opened by the app's Lookup button. Empty disables it. |
+| `enable_direct_scan` | `boolean` | No | Postback services only: send scans straight to your server. Defaults to false. |
+| `postback_receiver_only` | `boolean` | No | Set when the postback URL cannot answer with the expected XML. Defaults to false. |
+| `postback_real_time_scans` | `boolean` | No | Post each online scan to `postback_url` on a non-postback service. |
+| `postback_uploaded_scans` | `boolean` | No | Post each uploaded on-device scan to `postback_url` on a non-postback service. |
+| `regex_response_pattern` | `string` | No | Regex applied to the response text. Needs `regex_response_replacement`. |
+| `regex_response_replacement` | `string` | No | Replacement for `regex_response_pattern`. |
+| `regex_scan_pattern` | `string` | No | Regex applied to the scanned value. Needs `regex_scan_replacement`. |
+| `regex_scan_replacement` | `string` | No | Replacement for `regex_scan_pattern`. |
+| `symbologies` | `number[]` | No | Symbology IDs the app will decode. Omitting this on an update resets the service to the default set. |
+| `auto_next_scan` | `0 \| 1 \| 2 \| 3` | No | 0 off, 1 only when valid, 2 always and save on error, 3 always and discard on error. |
+| `auto_next_scan_delay` | `number` | No | Seconds before Auto-Next Scan fires. Only with `auto_next_scan`. |
+| `enable_gps` | `boolean` | No | Attach the device location to every scan as a property. Defaults to false. |
+| `block_camera_scan` | `boolean` | No | Prevent scanning with the device camera. Defaults to false. |
+| `block_manual_scan` | `boolean` | No | Prevent typing a value by hand. Defaults to false. |
+| `block_db_search` | `boolean` | No | Prevent looking values up in the database. Defaults to false. |
+| `auto_sync` | `boolean` | No | Sync on-device scans up and database updates down. On-device databases are capped at 50,000 values. |
+| `auto_sync_up_url` | `string` | No | Sync scans straight to your own URL instead of CodeREADr. Only with `auto_sync`. |
+| `auto_sync_up_delay` | `number` | No | Seconds between upload attempts. Defaults to 2. Only with `auto_sync`. |
+| `auto_sync_down_url` | `boolean` | No | Whether database updates download automatically. Only with `auto_sync`. |
+| `auto_sync_down_delay` | `number` | No | Seconds between database update checks. Defaults to 120. Only with `auto_sync`. |
+| `decoder_config` | `string` | No | Scanner configuration as a JSON string, produced by the website UI. An empty object `{}` clears it. Setting this locks the scanner settings for the service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `service_id` | `number` | Yes | The new service. |
+
+
+
+---
+
+### delete
+
+`services.delete`
+
+Permanently delete one or more services, or every service with `all`; deleted services cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.codereadr.api.services.delete({ service_id: [927] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `service_id` | `number[] \| all` | Yes | The services to delete. `all` deletes every service on the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`services.list`
+
+List services with their validation method, postback URL, linked database and authorized users and questions
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `service_id` | `number[] \| all` | No | Services to list. `all` by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `services` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="services full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  validation_method?: string | null,
+  postback_url?: string | null,
+  database_id?: number | null,
+  duplicate_scan_value?: number | null,
+  user_ids?: number[] | null,
+  question_ids?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`services.update`
+
+Update a service; omitted variables keep their current value, except symbologies, which reset to the default set when left out
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.services.update({ service_id: 927, service_name: 'Warehouse intake (north)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `service_id` | `number` | Yes | The service to update. |
+| `service_name` | `string` | No | New name for the service. |
+| `description` | `string` | No | New description for the service. |
+| `database_id` | `number` | No | Database to validate against. |
+| `postback_url` | `string` | No | Where scans are forwarded. |
+| `duplicate_value` | `0 \| 1` | No | Status to give a duplicate scan. |
+| `device_duplicate_value` | `0 \| 1` | No | Status to give a duplicate scan found on the device. |
+| `period_start_date` | `string` | No | YYYY-MM-DD or MM/DD/YYYY. Defaults to always active. |
+| `period_start_time` | `string` | No | hh:mm:ss or hh:mma. Defaults to 12:00AM on the start date. |
+| `period_end_date` | `string` | No | YYYY-MM-DD or MM/DD/YYYY. Defaults to always active. |
+| `period_end_time` | `string` | No | hh:mm:ss or hh:mma. Defaults to 11:59:59PM on the end date. |
+| `upload_email` | `string` | No | Email address that receives a CSV of scans after each upload. |
+| `upload_email_format` | `regular \| properties` | No | Whether the emailed CSV carries scan properties. Defaults to `regular`. |
+| `view_other_scans` | `boolean` | No | Let an authorized user see every scan on the service. Defaults to true. |
+| `direct_history_url` | `string` | No | Page opened by the app's History button. Empty disables it. |
+| `direct_lookup_url` | `string` | No | Page opened by the app's Lookup button. Empty disables it. |
+| `enable_direct_scan` | `boolean` | No | Postback services only: send scans straight to your server. Defaults to false. |
+| `postback_receiver_only` | `boolean` | No | Set when the postback URL cannot answer with the expected XML. Defaults to false. |
+| `postback_real_time_scans` | `boolean` | No | Post each online scan to `postback_url` on a non-postback service. |
+| `postback_uploaded_scans` | `boolean` | No | Post each uploaded on-device scan to `postback_url` on a non-postback service. |
+| `regex_response_pattern` | `string` | No | Regex applied to the response text. Needs `regex_response_replacement`. |
+| `regex_response_replacement` | `string` | No | Replacement for `regex_response_pattern`. |
+| `regex_scan_pattern` | `string` | No | Regex applied to the scanned value. Needs `regex_scan_replacement`. |
+| `regex_scan_replacement` | `string` | No | Replacement for `regex_scan_pattern`. |
+| `symbologies` | `number[]` | No | Symbology IDs the app will decode. Omitting this on an update resets the service to the default set. |
+| `auto_next_scan` | `0 \| 1 \| 2 \| 3` | No | 0 off, 1 only when valid, 2 always and save on error, 3 always and discard on error. |
+| `auto_next_scan_delay` | `number` | No | Seconds before Auto-Next Scan fires. Only with `auto_next_scan`. |
+| `enable_gps` | `boolean` | No | Attach the device location to every scan as a property. Defaults to false. |
+| `block_camera_scan` | `boolean` | No | Prevent scanning with the device camera. Defaults to false. |
+| `block_manual_scan` | `boolean` | No | Prevent typing a value by hand. Defaults to false. |
+| `block_db_search` | `boolean` | No | Prevent looking values up in the database. Defaults to false. |
+| `auto_sync` | `boolean` | No | Sync on-device scans up and database updates down. On-device databases are capped at 50,000 values. |
+| `auto_sync_up_url` | `string` | No | Sync scans straight to your own URL instead of CodeREADr. Only with `auto_sync`. |
+| `auto_sync_up_delay` | `number` | No | Seconds between upload attempts. Defaults to 2. Only with `auto_sync`. |
+| `auto_sync_down_url` | `boolean` | No | Whether database updates download automatically. Only with `auto_sync`. |
+| `auto_sync_down_delay` | `number` | No | Seconds between database update checks. Defaults to 120. Only with `auto_sync`. |
+| `decoder_config` | `string` | No | Scanner configuration as a JSON string, produced by the website UI. An empty object `{}` clears it. Setting this locks the scanner settings for the service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `service_id` | `number` | Yes | — |
+
+
+
+---
+
+## Uploads
+
+### list
+
+`uploads.list`
+
+List scan uploads from devices, with the device, service, user, status and scan count for each
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.uploads.list({ service_id: [927], limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `service_id` | `number[] \| all` | No | Services to read uploads from. `all` by default. |
+| `device_id` | `number[] \| all` | No | Devices that made the uploads. `all` by default. |
+| `user_id` | `number[] \| all` | No | Users who made the uploads. `all` by default. |
+| `limit` | `number` | No | Page size. |
+| `offset` | `number` | No | Rows to skip. Needs `limit`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Rows in this response. |
+| `uploads` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | No | Pass as `offset` for the next page while this page came back full. |
+
+<AccordionGroup>
+<Accordion title="uploads full type">
+
+```ts
+{
+  id?: number | null,
+  device_id?: number | null,
+  service_id?: number | null,
+  user_id?: number | null,
+  status?: number | null,
+  count?: number | null,
+  timestamp?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create an app user; an email address sends an invitation and requires the user to accept it before signing in
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.users.create({ username: 'scanner@example.com', device_limit: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Identifying name. An email address sends an invitation and ignores `password`; otherwise `password` is required. |
+| `password` | `string` | No | Required unless `username` is an email address. |
+| `device_limit` | `number` | No | Devices allowed per billing period. `0` unlimited (the default), `-1` blocks sign-in entirely. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `user_id` | `number` | Yes | The new user. |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Permanently delete app users, or every app user with `all`; the account owner cannot be deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.codereadr.api.users.delete({ user_id: [73] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number[] \| all` | Yes | The users to delete. `all` deletes every app user except the account owner. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List app users with their authorized services, device limit and creation date
+
+**Risk:** `read`
+
+```ts
+await corsair.codereadr.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number[] \| all` | No | Users to list. `all` by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  service_ids?: number[] | null,
+  device_limit?: number | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update an app user: rename, change the password, or set the device limit
+
+**Risk:** `write`
+
+```ts
+await corsair.codereadr.api.users.update({ user_id: 73, device_limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | The user to update. |
+| `username` | `string` | No | Rename the user. |
+| `password` | `string` | No | New password. |
+| `device_limit` | `number` | No | Devices allowed per billing period. `0` removes the limit, `-1` blocks sign-in. Works on its own. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `user_id` | `number` | Yes | — |
+
+
+
+---
+
