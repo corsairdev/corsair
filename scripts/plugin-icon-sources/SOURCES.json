@@ -362,6 +362,10 @@
   "tavilymcp": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/tavily_mcp.svg"
   },
+  "teamcamp": {
+    "from": "https://media.brand.dev/1ace11c8-e4c0-4235-9556-9575f6fa74ac.svg",
+    "note": "found with the context.dev Brand API for teamcamp.app"
+  },
   "teams": {
     "from": "https://svgl.app/library/microsoft-teams.svg"
   },
@@ -405,6 +409,10 @@
   },
   "youtube": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/youtube.svg"
+  },
+  "zenrows": {
+    "from": "https://media.brand.dev/aee129ca-82fe-423e-9790-44ccdde595fa.svg",
+    "note": "found with the context.dev Brand API for zenrows.com"
   },
   "zoominfo": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/zoominfo.svg"
