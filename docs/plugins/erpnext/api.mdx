@@ -50,17 +50,7 @@ await corsair.erpnext.api.desk.addComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -178,10 +168,8 @@ await corsair.erpnext.api.doctypes.getMeta({});
 
 ```ts
 {
-  meta: {
-  },
-  docs: {
-  }[]
+  meta: Record<string, any>,
+  docs: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -217,17 +205,7 @@ await corsair.erpnext.api.doctypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -271,17 +249,7 @@ await corsair.erpnext.api.documents.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -304,17 +272,7 @@ await corsair.erpnext.api.documents.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doctype` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -322,17 +280,7 @@ await corsair.erpnext.api.documents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -394,17 +342,7 @@ await corsair.erpnext.api.documents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -435,17 +373,7 @@ await corsair.erpnext.api.documents.getClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -511,17 +439,7 @@ await corsair.erpnext.api.documents.getList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -545,7 +463,7 @@ await corsair.erpnext.api.documents.getValue({});
 |------|------|----------|-------------|
 | `doctype` | `string` | Yes | — |
 | `fieldname` | `string` | Yes | — |
-| `filters` | `string` | No | JSON string filter expression identifying the record, for example {"name":"CUST-00001"}, passed verbatim |
+| `filters` | `string` | No | JSON string filter expression identifying the record, for example &#123;"name":"CUST-00001"&#125;, passed verbatim |
 
 
 
@@ -584,17 +502,7 @@ await corsair.erpnext.api.documents.getWithMeta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `docs` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="docs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `docs` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -623,8 +531,7 @@ await corsair.erpnext.api.documents.insert({});
 
 ```ts
 {
-  doc: {
-  }
+  doc: Record<string, any>
 }
 ```
 </Accordion>
@@ -636,17 +543,7 @@ await corsair.erpnext.api.documents.insert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -675,8 +572,7 @@ await corsair.erpnext.api.documents.insertMany({});
 
 ```ts
 {
-  docs: {
-  }[]
+  docs: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -723,17 +619,7 @@ await corsair.erpnext.api.documents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -806,8 +692,7 @@ await corsair.erpnext.api.documents.saveDocs({});
 
 ```ts
 {
-  doc: {
-  }
+  doc: Record<string, any>
 }
 ```
 </Accordion>
@@ -819,17 +704,7 @@ await corsair.erpnext.api.documents.saveDocs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -858,8 +733,7 @@ await corsair.erpnext.api.documents.saveDocument({});
 
 ```ts
 {
-  doc: {
-  }
+  doc: Record<string, any>
 }
 ```
 </Accordion>
@@ -871,17 +745,7 @@ await corsair.erpnext.api.documents.saveDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -957,8 +821,7 @@ await corsair.erpnext.api.documents.setValue({});
 {
   doctype: string,
   name: string,
-  fieldname: string | {
-  },
+  fieldname: string | Record<string, any>,
   value?: any
 }
 ```
@@ -1000,8 +863,7 @@ await corsair.erpnext.api.documents.submit({});
 
 ```ts
 {
-  doc: {
-  }
+  doc: Record<string, any>
 }
 ```
 </Accordion>
@@ -1013,17 +875,7 @@ await corsair.erpnext.api.documents.submit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1047,17 +899,7 @@ await corsair.erpnext.api.documents.update({});
 |------|------|----------|-------------|
 | `doctype` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1065,17 +907,7 @@ await corsair.erpnext.api.documents.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1131,7 +963,7 @@ await corsair.erpnext.api.erp.getItemDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ctx` | `string` | Yes | JSON string of the item and pricing context, for example {"item_code":"WIDGET","qty":2}, passed verbatim to Frappe |
+| `ctx` | `string` | Yes | JSON string of the item and pricing context, for example &#123;"item_code":"WIDGET","qty":2&#125;, passed verbatim to Frappe |
 | `for_validate` | `boolean` | No | — |
 
 
@@ -1140,17 +972,7 @@ await corsair.erpnext.api.erp.getItemDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1181,17 +1003,7 @@ await corsair.erpnext.api.erp.getPartyDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1222,17 +1034,7 @@ await corsair.erpnext.api.erp.getPaymentEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1306,17 +1108,7 @@ await corsair.erpnext.api.erp.makeDeliveryNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1359,17 +1151,7 @@ await corsair.erpnext.api.erp.makePurchaseOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1413,17 +1195,7 @@ await corsair.erpnext.api.erp.makeSalesInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1445,17 +1217,7 @@ await corsair.erpnext.api.erp.makeStockEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1463,17 +1225,7 @@ await corsair.erpnext.api.erp.makeStockEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1574,17 +1326,7 @@ await corsair.erpnext.api.people.listEmployees({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1617,17 +1359,7 @@ await corsair.erpnext.api.people.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1660,17 +1392,7 @@ await corsair.erpnext.api.system.getAllLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1703,17 +1425,7 @@ await corsair.erpnext.api.system.getAllRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1746,17 +1458,7 @@ await corsair.erpnext.api.system.getFiscalYear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1781,17 +1483,7 @@ await corsair.erpnext.api.system.getFrameworkVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1885,17 +1577,7 @@ await corsair.erpnext.api.system.getUserRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1944,17 +1626,7 @@ await corsair.erpnext.api.timesheets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1962,17 +1634,7 @@ await corsair.erpnext.api.timesheets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2005,17 +1667,7 @@ await corsair.erpnext.api.timesheets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2039,17 +1691,7 @@ await corsair.erpnext.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2057,17 +1699,7 @@ await corsair.erpnext.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2099,17 +1731,7 @@ await corsair.erpnext.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2140,8 +1762,7 @@ await corsair.erpnext.api.workflow.apply({});
 
 ```ts
 {
-  doc: {
-  },
+  doc: Record<string, any>,
   action: string
 }
 ```
@@ -2154,17 +1775,7 @@ await corsair.erpnext.api.workflow.apply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2186,7 +1797,7 @@ await corsair.erpnext.api.workflow.getTransitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `doc` | `string` | Yes | JSON object string identifying the document, for example {"doctype":"Sales Invoice","name":"ACC-SINV-2026-00001"}, passed verbatim to Frappe |
+| `doc` | `string` | Yes | JSON object string identifying the document, for example &#123;"doctype":"Sales Invoice","name":"ACC-SINV-2026-00001"&#125;, passed verbatim to Frappe |
 | `workflow` | `string` | No | Name of the Workflow to consult; defaults to the active workflow on the document type |
 
 
@@ -2195,17 +1806,7 @@ await corsair.erpnext.api.workflow.getTransitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `message` | `Record<string, any>[]` | Yes | — |
 
 
 
