@@ -46,7 +46,10 @@ describe('Fluxguard response parsing', () => {
 	let fetchMock: jest.SpyInstance<Promise<Response>, Parameters<typeof fetch>>;
 
 	beforeEach(() => {
-		fetchMock = jest.spyOn(globalThis, 'fetch');
+		// A call with no queued response must fail here, not reach the network.
+		fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockRejectedValue(new Error('unmocked fetch'));
 	});
 	afterEach(() => {
 		fetchMock.mockRestore();
