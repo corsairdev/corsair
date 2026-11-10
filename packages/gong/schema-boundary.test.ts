@@ -12,7 +12,6 @@ const dateFilter = { filter: { fromDate: '2025-01-01', toDate: '2025-01-02' } };
 const records = {};
 const emptyOk = new Set([
 	'users.list',
-	'coaching.list',
 	'crm.listIntegrations',
 	'outcomes.list',
 	'settings.scorecards',
@@ -74,7 +73,12 @@ const inputFixtures: GongOpaqueRecord = {
 		timePeriod: 'LAST_30DAYS',
 		question: 'What changed?',
 	},
-	'coaching.list': {},
+	'coaching.list': {
+		'workspace-id': '623457276584334',
+		'manager-id': '234599484848423',
+		from: '2025-01-01T00:00:00Z',
+		to: '2025-02-01T00:00:00Z',
+	},
 	'outcomes.list': {},
 	'permissions.getProfile': { profileId: '123' },
 	'permissions.updateProfile': { profileId: '123', body: {} },

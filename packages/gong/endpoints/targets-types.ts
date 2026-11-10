@@ -1,10 +1,15 @@
 import { z } from 'zod';
 
+// Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
+const gongId = z.union([
+	z.string().regex(/^\d{1,20}$/),
+	z.number().int().nonnegative(),
+]);
 export const GongTargetsInputSchemas = {
-	listTargetDefinitions: z.object({ workspaceId: z.number().int() }),
+	listTargetDefinitions: z.object({ workspaceId: gongId }),
 	uploadAssignments: z.object({
 		targetId: z.string().regex(/^\d{1,20}$/),
-		workspaceId: z.number().int(),
+		workspaceId: gongId,
 		validateOnly: z.boolean().optional(),
 		file: z.instanceof(Blob),
 	}),

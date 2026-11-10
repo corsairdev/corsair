@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
 const opaqueObject = z.record(z.string(), z.unknown());
+// Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
+const gongId = z.union([
+	z.string().regex(/^\d{1,20}$/),
+	z.number().int().nonnegative(),
+]);
 const flow = z
 	.object({
 		id: z.string().optional(),
@@ -125,7 +130,7 @@ export const GongEngageFlowsInputSchemas = {
 	listFlowsFolders: z.object({
 		flowFolderOwnerEmail: z.string().email(),
 		cursor: z.string().optional(),
-		parentId: z.number().int().optional(),
+		parentId: gongId.optional(),
 		workspaceId: z.string().optional(),
 	}),
 } as const;

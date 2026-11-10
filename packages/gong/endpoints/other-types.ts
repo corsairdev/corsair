@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
 const objectInput = z.record(z.string(), z.unknown());
+// Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
+const gongId = z.union([
+	z.string().regex(/^\d{1,20}$/),
+	z.number().int().nonnegative(),
+]);
 const envelope = z.object({ requestId: z.string() }).passthrough();
 const entityType = z.enum(['ACCOUNT', 'CONTACT', 'DEAL', 'LEAD']);
 const period = z.enum([
@@ -110,7 +115,7 @@ export const GongOtherInputSchemas = {
 		cursor: z.string().optional(),
 	}),
 	generateBrief: z.object({
-		workspaceId: z.number().int(),
+		workspaceId: gongId,
 		briefName: z.string(),
 		crmEntityType: entityType,
 		crmEntityId: z.string(),
@@ -119,7 +124,7 @@ export const GongOtherInputSchemas = {
 		toDateTime: z.string().datetime({ offset: true }).optional(),
 	}),
 	askEntity: z.object({
-		workspaceId: z.number().int(),
+		workspaceId: gongId,
 		crmEntityType: entityType,
 		crmEntityId: z.string(),
 		timePeriod: period,
@@ -128,10 +133,10 @@ export const GongOtherInputSchemas = {
 		question: z.string().min(1),
 	}),
 	listCoaching: z.object({
-		'workspace-id': z.string().optional(),
-		'manager-id': z.string().optional(),
-		from: z.string().optional(),
-		to: z.string().optional(),
+		'workspace-id': z.string().regex(/^\d{1,20}$/),
+		'manager-id': z.string().regex(/^\d{1,20}$/),
+		from: z.string().min(1),
+		to: z.string().min(1),
 	}),
 	listCallOutcomes: z.object({}),
 } as const;

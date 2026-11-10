@@ -147,7 +147,7 @@ describe('Gong documented responses', () => {
 	it('returns an entity answer through the plugin', async () => {
 		mockedRequest.mockResolvedValue(documented['entities.ask']);
 		const result = await endpoints.entities.ask(ctx, {
-			workspaceId: 623457276584334,
+			workspaceId: '1237998047883638784',
 			crmEntityType: 'ACCOUNT',
 			crmEntityId: '125260001VdfoWBAR',
 			timePeriod: 'LAST_30DAYS',
@@ -156,6 +156,13 @@ describe('Gong documented responses', () => {
 		expect(result.answer[0]?.answerItems).toEqual([
 			'Acme has questions about compliance.',
 		]);
+		// The 19-digit workspace id reaches Gong digit for digit.
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				query: expect.objectContaining({ workspaceId: '1237998047883638784' }),
+			}),
+		);
 	});
 
 	it.each([
@@ -226,5 +233,61 @@ describe('Gong documented responses', () => {
 				status: 'SNOOZED',
 			}).success,
 		).toBe(false);
+	});
+
+	it('takes 64-bit workspace and folder ids as strings', () => {
+		const id = '1237998047883638784';
+		expect(
+			gongEndpointSchemas['entities.generateBrief'].input.safeParse({
+				workspaceId: id,
+				briefName: 'Account brief',
+				crmEntityType: 'ACCOUNT',
+				crmEntityId: 'a1',
+				timePeriod: 'LAST_30DAYS',
+			}).success,
+		).toBe(true);
+		expect(
+			gongEndpointSchemas['targets.listDefinitions'].input.safeParse({
+				workspaceId: id,
+			}).success,
+		).toBe(true);
+		expect(
+			gongEndpointSchemas['targets.uploadAssignments'].input.safeParse({
+				targetId: '7782342274025111111',
+				workspaceId: id,
+				file: new Blob(['csv']),
+			}).success,
+		).toBe(true);
+		expect(
+			gongEndpointSchemas['engageFlows.folders'].input.safeParse({
+				flowFolderOwnerEmail: 'owner@example.com',
+				parentId: id,
+			}).success,
+		).toBe(true);
+		expect(
+			gongEndpointSchemas['targets.listDefinitions'].input.safeParse({
+				workspaceId: 'not-an-id',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires the four coaching filters Gong requires', () => {
+		const schema = gongEndpointSchemas['coaching.list'].input;
+		expect(schema.safeParse({}).success).toBe(false);
+		expect(
+			schema.safeParse({
+				'workspace-id': '623457276584334',
+				'manager-id': '234599484848423',
+				from: '2025-01-01T00:00:00Z',
+			}).success,
+		).toBe(false);
+		expect(
+			schema.safeParse({
+				'workspace-id': '623457276584334',
+				'manager-id': '234599484848423',
+				from: '2025-01-01T00:00:00Z',
+				to: '2025-02-01T00:00:00Z',
+			}).success,
+		).toBe(true);
 	});
 });
