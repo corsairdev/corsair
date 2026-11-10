@@ -31,9 +31,9 @@ const SAMPLE_RECEIPT_URL =
 // The endpoints read only `ctx.key`, so that is all this context carries.
 // unknown: the rest of the runtime context needs a database and a key manager,
 // neither of which a live smoke test builds, so the cast states the subset used.
-const ctx = { key: KEY.data ?? '' } as unknown /* unknown: see above */ as Parameters<
-	typeof Simple.url
->[0];
+const ctx = {
+	key: KEY.data ?? '',
+} as unknown /* unknown: see above */ as Parameters<typeof Simple.url>[0];
 
 /**
  * Campaign Validation is a plan feature. An account without it answers 400 with
