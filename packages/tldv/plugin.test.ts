@@ -60,10 +60,9 @@ describe('tldv plugin definition', () => {
 		// tl;dv does not sign, so the shared secret has nowhere else to live. The
 		// tenant matcher answers `tenant_external_id`, so the account needs that
 		// field too or there is no setter to store the organizer email with.
-		expect([...tldvAuthConfig.api_key.account]).toEqual([
-			'webhook_signature',
-			'tenant_external_id',
-		]);
+		// `webhook_signature` comes from the base api_key fields; listing it here
+		// again made it show twice in the catalog's account fields.
+		expect([...tldvAuthConfig.api_key.account]).toEqual(['tenant_external_id']);
 	});
 
 	it('registers exactly the six operations', () => {
