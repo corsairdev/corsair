@@ -991,14 +991,14 @@ export const mixmaxEndpointMeta = {
 			'Update the fields of a sent Mixmax message; each included field replaces the stored value.',
 	},
 	'messages.send': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Send a saved Mixmax draft. Delivery is asynchronous and cannot be undone.',
+			'Send a saved Mixmax draft: this emails its recipients. Delivery is asynchronous and cannot be undone.',
 	},
 	'messages.schedule': {
 		riskLevel: 'write',
 		description:
-			'Schedule a saved Mixmax draft to send at a Unix-millisecond timestamp.',
+			'Schedule a saved Mixmax draft: Mixmax emails its recipients at the given Unix-millisecond timestamp unless the send is unscheduled first.',
 	},
 	'messages.unschedule': {
 		riskLevel: 'write',
@@ -1010,9 +1010,9 @@ export const mixmaxEndpointMeta = {
 		description: 'Send a Mixmax test email to the calling user’s own account.',
 	},
 	'messages.sendPlain': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Send a plain email from the user’s mailbox immediately, outside Mixmax tracking.',
+			'Send a plain email from the user’s mailbox to its recipients immediately, outside Mixmax tracking. It cannot be undone.',
 	},
 	'snippets.list': {
 		riskLevel: 'read',
@@ -1034,9 +1034,9 @@ export const mixmaxEndpointMeta = {
 			'Move a Mixmax template to the trash, or archive it, removing it from its folders.',
 	},
 	'snippets.send': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Send an email built from a Mixmax template, immediately or at a scheduled time.',
+			'Send an email built from a Mixmax template to its recipients, immediately or at a scheduled time.',
 	},
 	'snippetTags.list': {
 		riskLevel: 'read',
@@ -1120,7 +1120,7 @@ export const mixmaxEndpointMeta = {
 	'sequences.recipients.add': {
 		riskLevel: 'write',
 		description:
-			'Add recipients to a Mixmax sequence, starting their sequence emails unless kept as drafts.',
+			'Add recipients to a Mixmax sequence: this starts emailing them the sequence unless each recipient is kept as a draft with scheduledAt false.',
 	},
 	'sequenceFolders.list': {
 		riskLevel: 'read',
@@ -1449,7 +1449,8 @@ export const mixmaxEndpointMeta = {
 	},
 	'teams.members.add': {
 		riskLevel: 'write',
-		description: 'Invite members to a Mixmax team.',
+		description:
+			'Add people to a Mixmax team; Mixmax emails each of them an invite.',
 	},
 	'teams.members.remove': {
 		riskLevel: 'destructive',

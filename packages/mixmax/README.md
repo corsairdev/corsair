@@ -50,9 +50,9 @@ pnpm add @corsair-dev/mixmax
 | `messages.create` | `mixmax.api.messages.create` | `write` | Create a Mixmax draft message without sending it. |
 | `messages.get` | `mixmax.api.messages.get` | `read` | Retrieve one Mixmax message by id. |
 | `messages.list` | `mixmax.api.messages.list` | `read` | List Mixmax messages (drafts, scheduled, sent, or failed), newest first. |
-| `messages.schedule` | `mixmax.api.messages.schedule` | `write` | Schedule a saved Mixmax draft to send at a Unix-millisecond timestamp. |
-| `messages.send` | `mixmax.api.messages.send` | `destructive` | Send a saved Mixmax draft. Delivery is asynchronous and cannot be undone. |
-| `messages.sendPlain` | `mixmax.api.messages.sendPlain` | `destructive` | Send a plain email from the user’s mailbox immediately, outside Mixmax tracking. |
+| `messages.schedule` | `mixmax.api.messages.schedule` | `write` | Schedule a saved Mixmax draft: Mixmax emails its recipients at the given Unix-millisecond timestamp unless the send is unscheduled first. |
+| `messages.send` | `mixmax.api.messages.send` | `write` | Send a saved Mixmax draft: this emails its recipients. Delivery is asynchronous and cannot be undone. |
+| `messages.sendPlain` | `mixmax.api.messages.sendPlain` | `write` | Send a plain email from the user’s mailbox to its recipients immediately, outside Mixmax tracking. It cannot be undone. |
 | `messages.test` | `mixmax.api.messages.test` | `write` | Send a Mixmax test email to the calling user’s own account. |
 | `messages.unschedule` | `mixmax.api.messages.unschedule` | `write` | Cancel a scheduled Mixmax send and return the message to draft. |
 | `messages.update` | `mixmax.api.messages.update` | `write` | Update the fields of a sent Mixmax message; each included field replaces the stored value. |
@@ -108,13 +108,13 @@ pnpm add @corsair-dev/mixmax
 | `sequences.cancel` | `mixmax.api.sequences.cancel` | `destructive` | Stop recipients of one Mixmax sequence; cancellation is one-way and deletes their open tasks. |
 | `sequences.cancelAll` | `mixmax.api.sequences.cancelAll` | `destructive` | Stop the user’s recipients across every Mixmax sequence at once; cancelled recipients cannot be resumed. |
 | `sequences.list` | `mixmax.api.sequences.list` | `read` | List the Mixmax sequences the user can access, including shared ones. |
-| `sequences.recipients.add` | `mixmax.api.sequences.recipients.add` | `write` | Add recipients to a Mixmax sequence, starting their sequence emails unless kept as drafts. |
+| `sequences.recipients.add` | `mixmax.api.sequences.recipients.add` | `write` | Add recipients to a Mixmax sequence: this starts emailing them the sequence unless each recipient is kept as a draft with scheduledAt false. |
 | `sequences.recipients.list` | `mixmax.api.sequences.recipients.list` | `read` | List the recipients of one Mixmax sequence with their per-stage activity. |
 | `sequences.search` | `mixmax.api.sequences.search` | `read` | Search sequence recipients across every accessible Mixmax sequence with their status and activity. |
 | `snippets.delete` | `mixmax.api.snippets.delete` | `destructive` | Move a Mixmax template to the trash, or archive it, removing it from its folders. |
 | `snippets.get` | `mixmax.api.snippets.get` | `read` | Retrieve one Mixmax template by id. |
 | `snippets.list` | `mixmax.api.snippets.list` | `read` | List the Mixmax templates (snippets) the user can access, including shared ones. |
-| `snippets.send` | `mixmax.api.snippets.send` | `destructive` | Send an email built from a Mixmax template, immediately or at a scheduled time. |
+| `snippets.send` | `mixmax.api.snippets.send` | `write` | Send an email built from a Mixmax template to its recipients, immediately or at a scheduled time. |
 | `snippets.update` | `mixmax.api.snippets.update` | `write` | Update the fields of a Mixmax template; only the fields sent change. |
 | `snippetTags.addSnippets` | `mixmax.api.snippetTags.addSnippets` | `write` | Add a template to a Mixmax template folder. |
 | `snippetTags.create` | `mixmax.api.snippetTags.create` | `write` | Create a Mixmax template folder. |
@@ -128,7 +128,7 @@ pnpm add @corsair-dev/mixmax
 | `teams.delete` | `mixmax.api.teams.delete` | `destructive` | Delete a Mixmax team permanently. |
 | `teams.get` | `mixmax.api.teams.get` | `read` | Retrieve one Mixmax team by id. |
 | `teams.list` | `mixmax.api.teams.list` | `read` | List the user’s Mixmax teams. |
-| `teams.members.add` | `mixmax.api.teams.members.add` | `write` | Invite members to a Mixmax team. |
+| `teams.members.add` | `mixmax.api.teams.members.add` | `write` | Add people to a Mixmax team; Mixmax emails each of them an invite. |
 | `teams.members.list` | `mixmax.api.teams.members.list` | `read` | List the members of one Mixmax team. |
 | `teams.members.remove` | `mixmax.api.teams.members.remove` | `destructive` | Remove one member from a Mixmax team. |
 | `teams.members.update` | `mixmax.api.teams.members.update` | `write` | Change a Mixmax team member’s role. |
