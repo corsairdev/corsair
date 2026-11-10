@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// unknown: trackers, scorecards and briefs are returned as Gong sends them.
 const rowSchema = z.record(z.string(), z.unknown());
 
 export const GongSettingsInputSchemas = {

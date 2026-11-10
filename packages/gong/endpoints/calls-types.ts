@@ -9,6 +9,7 @@ const recordsSchema = z
 	})
 	.passthrough();
 
+// unknown: a call or transcript has many optional sections picked by contentSelector; returned as Gong sends it.
 const callSchema = z.record(z.string(), z.unknown());
 const callsFilter = z
 	.object({
@@ -25,6 +26,7 @@ export const GongCallsInputSchemas = {
 		.object({
 			clientUniqueId: z.string(),
 			actualStart: z.string(),
+			// unknown: a party mixes contact fields with nested CRM context whose values depend on the CRM.
 			parties: z.array(z.record(z.string(), z.unknown())),
 			direction: z.string(),
 			primaryUser: z.string(),
@@ -40,6 +42,7 @@ export const GongCallsInputSchemas = {
 	listCallsExtensive: z.object({
 		cursor: z.string().optional(),
 		filter: callsFilter,
+		// unknown: nested on/off switches for the sections to return; Gong adds new ones over time.
 		contentSelector: z.record(z.string(), z.unknown()).optional(),
 	}),
 	getCallTranscripts: z.object({

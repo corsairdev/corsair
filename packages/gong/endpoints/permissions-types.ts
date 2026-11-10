@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// unknown: a permission profile has about 60 flags and nested access levels; passed through as Gong defines it.
 const record = z.record(z.string(), z.unknown());
 const response = z.object({ requestId: z.string() }).passthrough();
 const callAccess = z.object({

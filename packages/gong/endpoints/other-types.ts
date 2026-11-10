@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// unknown: log entries, brief sections, outcomes and summaries are returned as Gong sends them.
 const objectInput = z.record(z.string(), z.unknown());
 // Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
 const gongId = z.union([
@@ -50,6 +51,7 @@ const enrichedDataCategory = z
 		dataCategory: z.string().optional(),
 		status: z.string().optional(),
 		enriched: z.boolean().optional(),
+		// unknown: the enriched fields differ by data category.
 		data: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
 	.passthrough();
@@ -78,8 +80,11 @@ export const GongOtherInputSchemas = {
 		sourceSystemName: z.string().optional(),
 		sessionId: z.string().optional(),
 		device: z.enum(['MOBILE', 'PC']).optional(),
+		// unknown: content, person and custom fields are nested objects Gong validates; their fields vary by event type.
 		content: z.record(z.string(), z.unknown()),
+		// unknown: see content above.
 		person: z.record(z.string(), z.unknown()).optional(),
+		// unknown: see content above.
 		customFields: z.array(z.record(z.string(), z.unknown())).optional(),
 		trackingId: z.string().nullable().optional(),
 	}),

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// unknown: each setting pairs an integration type with its own options; Gong validates them.
 const integrationTypeSetting = z.record(z.string(), z.unknown());
 export const GongIntegrationSettingsInputSchemas = {
 	update: z.object({

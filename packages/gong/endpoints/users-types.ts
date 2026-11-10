@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const recordsSchema = z.object({ cursor: z.string().optional() }).passthrough();
+// unknown: a user or settings-history entry is returned as Gong sends it.
 const userSchema = z.record(z.string(), z.unknown());
 
 export const GongUsersInputSchemas = {
@@ -10,6 +11,7 @@ export const GongUsersInputSchemas = {
 	}),
 	listMultipleUsers: z.object({
 		cursor: z.string().optional(),
+		// unknown: Gong's user filter (created dates, user ids, includeAvatars) is passed through.
 		filter: z.record(z.string(), z.unknown()),
 	}),
 	getUser: z.object({ id: z.string().regex(/^\d{1,20}$/) }),

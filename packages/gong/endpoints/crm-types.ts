@@ -37,6 +37,7 @@ const field = z
 	.passthrough();
 // The same field as Gong returns it: a field type added later must not fail the read.
 const returnedField = field.extend({ type: z.string() });
+// unknown: integration details are returned as Gong sends them.
 const integration = z.record(z.string(), z.unknown());
 const requestResponse = z.object({ requestId: z.string() }).passthrough();
 const asyncResponse = z

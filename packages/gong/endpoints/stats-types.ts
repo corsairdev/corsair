@@ -9,6 +9,7 @@ const recordsSchema = z
 	})
 	.passthrough();
 
+// unknown: each stats row is returned as Gong sends it; the fields differ by report.
 const rowSchema = z.record(z.string(), z.unknown());
 const dateFilterSchema = z
 	.object({

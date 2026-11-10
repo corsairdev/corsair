@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// unknown: flow steps, folders and overrides are nested objects passed through as Gong defines them.
 const opaqueObject = z.record(z.string(), z.unknown());
 // Gong ids are 64-bit; a string keeps the digits a JavaScript number would round.
 const gongId = z.union([
