@@ -4,24 +4,43 @@ import { z } from 'zod';
 // provider does not fully document; the documented envelope is validated
 // and items stay extensible.
 const FidelRecordSchema = z.object({}).passthrough();
-// Fidel success envelope for item-bearing responses.
-const FidelItemsOutputSchema = z.object({
-	items: z.array(FidelRecordSchema).optional(),
-	resource: z.string().optional(),
-	// unknown: the envelope status is documented without a fixed type;
-	// both numeric and string forms appear in provider examples.
-	status: z.union([z.string(), z.number()]).optional(),
-	// unknown: execution timing metadata is provider-defined.
-	execution: z.record(z.string(), z.unknown()).optional(),
-});
+// unknown: every documented success body reports `execution` as a number
+// of milliseconds; the record form is kept so an object never fails a call
+// that already succeeded.
+const FidelExecutionSchema = z.union([
+	z.number(),
+	z.record(z.string(), z.unknown()),
+]);
+// Fidel success envelope for item-bearing responses. It passes unlisted
+// envelope fields through: output parsing runs after the provider has
+// already applied the call, so it must not drop or reject documented data.
+const FidelItemsOutputSchema = z
+	.object({
+		items: z.array(FidelRecordSchema).optional(),
+		count: z.number().optional(),
+		// unknown: the pagination cursor is an object on most lists and a
+		// base64 string on MID insights. Pass it back as `start` (JSON
+		// stringified when it is an object) to read the next page.
+		last: z.unknown().optional(),
+		// Set by the active-offer check: whether the offer is active on the card.
+		exists: z.boolean().optional(),
+		resource: z.string().optional(),
+		// unknown: the envelope status is documented without a fixed type;
+		// both numeric and string forms appear in provider examples.
+		status: z.union([z.string(), z.number()]).optional(),
+		execution: FidelExecutionSchema.optional(),
+	})
+	.passthrough();
 // Fidel 202 acknowledgement for asynchronous linking and marketplace
 // offer creation.
-const FidelAckOutputSchema = z.object({
-	status: z.union([z.string(), z.number()]).optional(),
-	message: z.string().optional(),
-	// unknown: execution timing metadata is provider-defined.
-	execution: z.record(z.string(), z.unknown()).optional(),
-});
+const FidelAckOutputSchema = z
+	.object({
+		status: z.union([z.string(), z.number()]).optional(),
+		message: z.string().optional(),
+		resource: z.string().optional(),
+		execution: FidelExecutionSchema.optional(),
+	})
+	.passthrough();
 // unknown: delete acknowledgements arrive as an empty body, an empty
 // object, or a provider echo; any of these is a success.
 const FidelEmptyOutputSchema = z.union([
