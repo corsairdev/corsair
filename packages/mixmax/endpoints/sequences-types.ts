@@ -115,7 +115,8 @@ export const SequenceSearchRecipientSchema = z
 		completedAt: z.number().nullish(),
 		lastStageProcessedAt: z.number().nullish(),
 		lastStageSentAt: z.number().nullish(),
-		lastStageSentOrdinal: z.number().optional(),
+		// `null` until a stage has been sent (live, 11-10).
+		lastStageSentOrdinal: z.number().nullable().optional(),
 		nextStageScheduledAt: z.number().nullish(),
 		isActive: z.number().optional(),
 		isPaused: z.number().optional(),
@@ -250,7 +251,8 @@ export const SequenceRecipientSchema = z
 		// When the recipient was added, in Unix seconds.
 		createdAt: z.number().optional(),
 		// The position of the last stage sent, counting from 1.
-		lastStageSentOrdinal: z.number().optional(),
+		// `null` until a stage has been sent (live, 11-10).
+		lastStageSentOrdinal: z.number().nullable().optional(),
 		analytics: z
 			.object({
 				events: z
