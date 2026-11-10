@@ -3157,6 +3157,14 @@
                 ]
               },
               {
+                "group": "Scrape.do",
+                "pages": [
+                  "plugins/scrapedo/overview",
+                  "plugins/scrapedo/api",
+                  "plugins/scrapedo/database"
+                ]
+              },
+              {
                 "group": "ScrapeGraphAI",
                 "pages": [
                   "plugins/scrapegraphai/overview",

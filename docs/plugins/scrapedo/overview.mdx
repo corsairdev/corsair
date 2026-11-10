@@ -1,0 +1,143 @@
+---
+title: Overview
+description: "Web scraping with Scrape.do - fetch pages as HTML, Markdown, JSON network reports or screenshots through rotating proxies, and run bulk URL jobs asynchronously."
+---
+
+Use **Scrape.do** through Corsair: one client, typed API calls.
+
+Copy your token from https://dashboard.scrape.do. It is generated when you sign up and is the only credential the API needs.
+
+Things to know before you scrape:
+
+- **Every scrape spends credits.** Only some statuses are charged: `2xx` and a target `404`, `400` or `410` cost credits, while `429`, `401` (no credits or a suspended subscription), a Scrape.do `400`, `502` and `510` are free. A plain datacenter request is 1 credit; residential proxies and rendering cost more. `account.info` and `account.asyncInfo` are free.
+- **A target 404 is a result, not an error.** `scrape.html` reports the target's status in `status_code` and still returns the page, because the credit was spent. A target `410` behaves the same way.
+- **400 means two different things.** One is Scrape.do refusing the request (a bad parameter, no credit spent); the other is the target site answering with a bad request (a credit spent). The error exposes `isTargetRejection`, which reads the provider's `PossibleCauses`, so you can tell which happened.
+- **A bad token answers HTTP 200 on `/info`.** It returns `IsActive: false` with zeros rather than an error status, so `account.info` turns that into an error instead of reporting a dead account as healthy.
+- **`/info` is limited to 10 calls a minute** and answers `429` past that. Scrape.do's own retry mechanism is separate and on by default; `disableRetry` turns it off.
+- **A screenshot needs the browser and the JSON answer.** `scrape.screenshot` requires `render: true` and always requests `returnJSON`, because the API refuses a screenshot without it. The images come back as base64 PNGs.
+- **Browser-only options are rejected here, not ignored.** `waitUntil`, `customWait`, `waitSelector` and `blockResources` do nothing without `render`, so sending one with `render: false` fails before the request.
+- **The async API is a second host.** `jobs.*` uses `https://q.scrape.do` with its own concurrency pool and its own account view in `account.asyncInfo`. A job takes up to 100 URLs, and its results are held until they expire, so read them with `jobs.result` before then. `jobs.start` declares a job, so an agent can read it back with `jobs.get` instead of polling the scrape.
+- **Writes are not retried.** A POST through the proxy forwards its body to the target site, so a failure is reported rather than replayed: the write may have landed.
+- **No webhooks.** Scrape.do does not send them to this plugin; its own async API can POST results to a URL you set with `webhookUrl` at job creation.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/scrapedo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/scrapedo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/scrapedo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/scrapedo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { scrapedo } from '@corsair-dev/scrapedo';
+
+export const corsair = createCorsair({
+	plugins: [
+		scrapedo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl` for the connection flow.
+
+```ts
+scrapedo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'scrapedo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Fetch a page as Markdown**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scrapedo.api.scrape.markdown({ url: 'https://example.com/' });
+```
+
+
+**Start an async job for two URLs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scrapedo.api.jobs.start({
+	targets: ['https://example.com/', 'https://example.org/'],
+});
+```
+
+
+See the full list on the [API](/plugins/scrapedo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/scrapedo/api">
+    Every `scrapedo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
