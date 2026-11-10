@@ -1,4 +1,4 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, BASE_AUTH_FIELDS } from 'corsair/core';
 import {
 	foursquare,
 	foursquareAuthConfig,
@@ -49,6 +49,17 @@ describe('foursquare plugin definition', () => {
 		expect(plugin.id).toBe('foursquare');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(Object.keys(foursquareAuthConfig)).toEqual(['api_key']);
+	});
+
+	it('lists each account field once', () => {
+		// `webhook_signature` is already a base api_key field; declaring it again
+		// in the plugin's auth config lists it twice.
+		// Core builds the account field list as the base fields plus the plugin's.
+		const extra: readonly string[] =
+			(foursquareAuthConfig.api_key as { account?: readonly string[] })
+				.account ?? [];
+		const fields = [...BASE_AUTH_FIELDS.api_key.account, ...extra];
+		expect(fields).toEqual(['api_key', 'webhook_signature']);
 	});
 
 	it('declares no inbound webhooks, which the Places API does not send', () => {

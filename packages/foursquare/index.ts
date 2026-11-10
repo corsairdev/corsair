@@ -105,9 +105,7 @@ const defaultAuthType: 'api_key' = 'api_key';
  * separate flows and are not wrapped.
  */
 export const foursquareAuthConfig = {
-	api_key: {
-		account: ['webhook_signature'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 const foursquareEndpointMeta = {
