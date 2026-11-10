@@ -23,7 +23,14 @@ export const endpoints = tldv({ key: 'test-key' }).endpoints!;
 let spy: jest.SpyInstance | undefined;
 
 export function installFetchMock(): void {
-	spy = jest.spyOn(globalThis, 'fetch');
+	// A bare spy calls through to the real fetch once the queued responses run
+	// out, so the default rejects: a test that forgets a mock fails here instead
+	// of sending a request to tl;dv.
+	spy = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation((input) =>
+			Promise.reject(new Error(`Unmocked fetch in a test: ${String(input)}`)),
+		);
 }
 
 export function restoreFetchMock(): void {
