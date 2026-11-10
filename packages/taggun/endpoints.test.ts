@@ -1,4 +1,8 @@
 import { Campaigns, ReceiptValidation, Simple, Verbose } from './endpoints';
+import type {
+	CampaignsCreateInput,
+	CampaignsGetResponse,
+} from './endpoints/types';
 import {
 	CAMPAIGN_IDS,
 	CAMPAIGN_SETTINGS,
@@ -158,6 +162,20 @@ describe('output parsing', () => {
 		})) as typeof CAMPAIGN_SETTINGS;
 
 		expect(result.balanceOwing.max).toBe(0);
+	});
+
+	it('keeps a real balanceOwing type on both directions', () => {
+		// The read and write schemas come from one builder. If its type parameter
+		// degrades, the field collapses to `{}` and callers lose the shape without
+		// any test failing, so pin both sides at the type level.
+		const stored: CampaignsGetResponse = { balanceOwing: { max: 0 } };
+		const writeBody: CampaignsCreateInput = {
+			campaignId: 'coffee',
+			settings: { balanceOwing: { max: 5 } },
+		};
+
+		expect(stored.balanceOwing?.max).toBe(0);
+		expect(writeBody.settings.balanceOwing?.max).toBe(5);
 	});
 });
 

@@ -684,11 +684,11 @@ const SmartValidateSectionSchema = z
  * Rules that decide whether a receipt is valid. Every section is optional, and
  * empty sections may be omitted from what Taggun returns.
  *
- * One builder serves both directions: writes carry the sections that refuse a
- * value the API would ignore, reads accept whatever is stored, including values
- * an earlier or external caller wrote.
+ * The parameter carries the section's own schema type, so the built object keeps
+ * a real `balanceOwing` type rather than widening it: only the write-time rule
+ * differs between the two directions.
  */
-function buildCampaignSettings(balanceOwing: z.ZodType) {
+function buildCampaignSettings<B extends z.ZodType>(balanceOwing: B) {
 	return z
 		.object({
 			date: z
