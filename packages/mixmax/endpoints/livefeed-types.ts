@@ -5,14 +5,18 @@ import { mixmaxBooleanFlag } from './flags';
 // and types mirror the official LiveFeedMessage, LiveFeedStats and
 // LiveFeedEvent schemas and their page envelopes.
 
+// The provider documents several of these fields as nullable (the sender's
+// display name, the delegator, the last event's author and each recipient's
+// name) and its own example returns them as `null`, so they are `nullish`
+// rather than optional: a `null` must not fail the whole page.
 export const LiveFeedMessageSchema = z
 	.object({
 		_id: z.string().optional(),
 		userId: z.string().optional(),
 		fromEmail: z.string().optional(),
-		fromName: z.string().optional(),
-		delegatorEmail: z.string().optional(),
-		delegatorName: z.string().optional(),
+		fromName: z.string().nullish(),
+		delegatorEmail: z.string().nullish(),
+		delegatorName: z.string().nullish(),
 		subject: z.string().optional(),
 		// The email service, for example `gmail`.
 		service: z.string().optional(),
@@ -20,8 +24,8 @@ export const LiveFeedMessageSchema = z
 		serviceThreadId: z.string().optional(),
 		// The most recent event, for example `sent`, `opened` or `bounced`.
 		lastEventType: z.string().optional(),
-		lastEventByEmail: z.string().optional(),
-		lastEventByName: z.string().optional(),
+		lastEventByEmail: z.string().nullish(),
+		lastEventByName: z.string().nullish(),
 		// When the message was sent, in Unix milliseconds (second precision).
 		sent: z.number().optional(),
 		// The provider encodes these flags and counters as integers: 1 yes,
@@ -47,7 +51,7 @@ export const LiveFeedMessageSchema = z
 			.array(
 				z.object({
 					email: z.string().optional(),
-					name: z.string().optional(),
+					name: z.string().nullish(),
 				}),
 			)
 			.optional(),
@@ -131,6 +135,9 @@ export const LiveFeedListOutputSchema = z.object({
 
 export type LiveFeedListOutput = z.infer<typeof LiveFeedListOutputSchema>;
 
+// Location, device and link fields are `null` on events that do not carry
+// them (the provider's example event has all of them `null`), so they are
+// `nullish` rather than optional.
 export const LiveFeedEventSchema = z
 	.object({
 		// Missing on the added `sent` event.
@@ -138,47 +145,47 @@ export const LiveFeedEventSchema = z
 		// The event type, for example `opened`, `clicked`, `downloaded`,
 		// `replied`, `bounced` or `sent`.
 		type: z.string().optional(),
-		recipientEmail: z.string().optional(),
-		recipientName: z.string().optional(),
+		recipientEmail: z.string().nullish(),
+		recipientName: z.string().nullish(),
 		subject: z.string().optional(),
 		serviceThreadId: z.string().optional(),
-		country: z.string().optional(),
-		region: z.string().optional(),
-		city: z.string().optional(),
-		os: z.string().optional(),
+		country: z.string().nullish(),
+		region: z.string().nullish(),
+		city: z.string().nullish(),
+		os: z.string().nullish(),
 		// The email client or browser, if known.
-		program: z.string().optional(),
-		linkUrl: z.string().optional(),
-		linkText: z.string().optional(),
-		fileName: z.string().optional(),
+		program: z.string().nullish(),
+		linkUrl: z.string().nullish(),
+		linkText: z.string().nullish(),
+		fileName: z.string().nullish(),
 		// Same as `type`.
 		activityType: z.string().optional(),
 		// When the event happened, in Unix milliseconds.
 		timestamp: z.number().optional(),
 		// 1 if the event came from a mobile device, if known.
-		isMobile: z.number().optional(),
+		isMobile: z.number().nullish(),
 		// `country`, `region` and `city` grouped together.
 		location: z
 			.object({
-				country: z.string().optional(),
-				region: z.string().optional(),
-				city: z.string().optional(),
+				country: z.string().nullish(),
+				region: z.string().nullish(),
+				city: z.string().nullish(),
 			})
 			.optional(),
 		// `os`, `program` and `isMobile` grouped together.
 		device: z
 			.object({
-				os: z.string().optional(),
-				program: z.string().optional(),
-				isMobile: z.number().optional(),
+				os: z.string().nullish(),
+				program: z.string().nullish(),
+				isMobile: z.number().nullish(),
 			})
 			.optional(),
 		// `linkUrl`, `linkText` and `fileName` grouped together.
 		metadata: z
 			.object({
-				linkUrl: z.string().optional(),
-				linkText: z.string().optional(),
-				fileName: z.string().optional(),
+				linkUrl: z.string().nullish(),
+				linkText: z.string().nullish(),
+				fileName: z.string().nullish(),
 			})
 			.optional(),
 	})
@@ -213,8 +220,8 @@ export const LiveFeedEventsOutputSchema = z.object({
 	results: z.array(LiveFeedEventSchema),
 	// True when the page was full, so more events may exist.
 	hasNext: z.boolean().optional(),
-	// Token for the next page.
-	next: z.string().optional(),
+	// Token for the next page; `null` on the last page.
+	next: z.string().nullish(),
 });
 
 export type LiveFeedEventsOutput = z.infer<typeof LiveFeedEventsOutputSchema>;

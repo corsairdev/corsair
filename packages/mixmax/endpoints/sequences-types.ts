@@ -104,16 +104,19 @@ export const SequenceSearchRecipientSchema = z
 		sequenceId: z.string().optional(),
 		email: z.string().optional(),
 		domain: z.string().optional(),
-		name: z.string().optional(),
+		// `null` when the recipient was added without a name.
+		name: z.string().nullish(),
 		state: z.string().optional(),
-		completedReason: z.string().optional(),
+		// `null` until the recipient finishes the sequence.
+		completedReason: z.string().nullish(),
 		// When the recipient was added, in Unix seconds.
 		createdAt: z.number().optional(),
-		completedAt: z.number().optional(),
-		lastStageProcessedAt: z.number().optional(),
-		lastStageSentAt: z.number().optional(),
+		// The four times below are `null` until that step happens.
+		completedAt: z.number().nullish(),
+		lastStageProcessedAt: z.number().nullish(),
+		lastStageSentAt: z.number().nullish(),
 		lastStageSentOrdinal: z.number().optional(),
-		nextStageScheduledAt: z.number().optional(),
+		nextStageScheduledAt: z.number().nullish(),
 		isActive: z.number().optional(),
 		isPaused: z.number().optional(),
 		isCompleted: z.number().optional(),
@@ -131,7 +134,7 @@ export const SequenceSearchRecipientSchema = z
 		to: z
 			.object({
 				email: z.string().optional(),
-				name: z.string().optional(),
+				name: z.string().nullish(),
 			})
 			.optional(),
 		lastStageSent: z
@@ -237,11 +240,13 @@ export const SequenceRecipientSchema = z
 		to: z
 			.object({
 				email: z.string().optional(),
-				name: z.string().optional(),
+				// `null` when the recipient was added without a name.
+				name: z.string().nullish(),
 			})
 			.optional(),
 		state: z.string().optional(),
-		completedReason: z.string().optional(),
+		// `null` until the recipient finishes the sequence.
+		completedReason: z.string().nullish(),
 		// When the recipient was added, in Unix seconds.
 		createdAt: z.number().optional(),
 		// The position of the last stage sent, counting from 1.
