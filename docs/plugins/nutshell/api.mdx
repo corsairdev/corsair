@@ -1,0 +1,8192 @@
+---
+title: API
+description: "API reference for Nutshell: every `nutshell.api.*` operation with input and output types."
+---
+
+Every `nutshell.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### create
+
+`accounts.create`
+
+Create an account
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.accounts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  accounts?: {
+    name?: string,
+    description?: string,
+    phones?: {
+      isPrimary?: boolean,
+      name?: string,
+      value?: string
+    }[],
+    emails?: {
+      value?: string
+    }[],
+    urls?: {
+      value?: string
+    }[],
+    addresses?: {
+      name?: string,
+      isPrimary?: boolean,
+      value?: {
+        address_1?: string,
+        city?: string,
+        state?: string
+      }
+    }[],
+    links?: {
+    },
+    customFields?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  href?: string | null,
+  revenue?: {
+    amount?: string | null,
+    formatted?: string | null
+  } | null,
+  employeeCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createCustomField
+
+`accounts.createCustomField`
+
+Create a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.accounts.createCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: any,
+  type?: any,
+  choices?: any,
+  isMultiple?: any,
+  id?: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### customFieldAttributes
+
+`accounts.customFieldAttributes`
+
+Get a list of custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.customFieldAttributes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customfields
+
+`accounts.customfields`
+
+Get custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.customfields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+(
+  {
+    id?: string | null
+  }& {
+    value?: string | null,
+    id?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`accounts.delete`
+
+Delete an account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.accounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `accounts` | `object[] \| null` | No | — |
+| `creators` | `object[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `origins` | `object[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `accountTypes` | `object[] \| null` | No | — |
+| `industries` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="accounts full type">
+
+```ts
+(((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  href?: string | null,
+  revenue?: {
+    amount?: string | null,
+    formatted?: string | null
+  } | null,
+  employeeCount?: number | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="creators full type">
+
+```ts
+(
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+(
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="origins full type">
+
+```ts
+((((
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }
+)& {
+  id?: string | null,
+  name?: string | null,
+  modifiedTime?: number | null,
+  lastseenTime?: number | null,
+  originType?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+(((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="accountTypes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  modifiedTime?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="industries full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Get an account
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `accounts` | `object[] \| null` | No | — |
+| `creators` | `object[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `origins` | `object[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `accountTypes` | `object[] \| null` | No | — |
+| `industries` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="accounts full type">
+
+```ts
+(((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  href?: string | null,
+  revenue?: {
+    amount?: string | null,
+    formatted?: string | null
+  } | null,
+  employeeCount?: number | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="creators full type">
+
+```ts
+(
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+(
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="origins full type">
+
+```ts
+((((
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }
+)& {
+  id?: string | null,
+  name?: string | null,
+  modifiedTime?: number | null,
+  lastseenTime?: number | null,
+  originType?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+(((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="accountTypes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  modifiedTime?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="industries full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+Get a list of accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `q` | `string` | No | — |
+| `filter` | `object` | No | — |
+| `sort` | `(-accountType \| -createdTime \| -industry \| -lastContactedTime \| -name \| -numberOfContacts \| -owner \| -phone \| -postalCode \| -territory \| accountType \| createdTime \| industry \| lastContactedTime \| name \| numberOfContacts \| owner \| phone \| postalCode \| territory)[]` | No | — |
+| `page[limit]` | `string` | No | — |
+| `page[page]` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `accounts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+((
+  {
+    count?: number | null
+  }& {
+    total?: number | null
+  }
+)& {
+  facets?: {
+    AccountType?: {
+      n-accountTypes?: number | null
+    } | null
+  } | null
+})& {
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="accounts full type">
+
+```ts
+(((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  href?: string | null,
+  revenue?: {
+    amount?: string | null,
+    formatted?: string | null
+  } | null,
+  employeeCount?: number | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFields
+
+`accounts.listFields`
+
+Get the fields for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.listFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  exampleProperty?: {
+    type?: string | null,
+    title?: string | null,
+    description?: string | null,
+    isFilterable?: boolean | null,
+    isDisplayable?: boolean | null,
+    isSortable?: boolean | null,
+    isGoalable?: boolean | null,
+    isAddable?: boolean | null,
+    isBoardable?: boolean | null,
+    isRequireable?: boolean | null,
+    isAndable?: boolean | null,
+    isNullable?: boolean | null,
+    relationships?: string[] | null,
+    enum?: string[] | null,
+    format?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`accounts.listItems`
+
+Get list items for all accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accounts.listItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `(-accountType \| -createdTime \| -industry \| -lastContactedTime \| -name \| -numberOfContacts \| -owner \| -phone \| -postalCode \| -territory \| accountType \| createdTime \| industry \| lastContactedTime \| name \| numberOfContacts \| owner \| phone \| postalCode \| territory)[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `listItems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+((
+  {
+    count?: number | null
+  }& {
+    total?: number | null
+  }
+)& {
+  facets?: {
+    AccountType?: {
+      n-accountTypes?: number | null
+    } | null
+  } | null
+})& {
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="listItems full type">
+
+```ts
+(((((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  primaryName?: string | null,
+  primaryInfo?: string | null,
+  relatedName?: string | null,
+  relatedInfo?: string | null,
+  relatedType?: string | null,
+  relatedUrl?: string | null,
+  relatedUrlPath?: string | null,
+  primaryContact?: string | null,
+  primaryAccount?: string | null,
+  latlon?: string | null,
+  mapUrl?: string | null,
+  isDeleted?: boolean | null,
+  fields?: {
+  }[] | null
+})& {
+  description?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`accounts.undelete`
+
+Undelete an account
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.accounts.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  href?: string | null,
+  revenue?: {
+    amount?: string | null,
+    formatted?: string | null
+  } | null,
+  employeeCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`accounts.update`
+
+Update an account
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.accounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Account Types
+
+### list
+
+`accountTypes.list`
+
+Get a list of account types
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.accountTypes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  modifiedTime?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Activities
+
+### create
+
+`activities.create`
+
+Create an activity
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.activities.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  activities?: {
+    name?: string,
+    description?: string,
+    note?: string,
+    location?: string,
+    activityType?: string,
+    startTime?: number,
+    endTime?: number,
+    transcription?: string,
+    isFlagged?: boolean,
+    isLogged?: boolean,
+    isAllDay?: boolean,
+    links?: {
+      participants?: string[],
+      leads?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  activities?: (((
+    {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      id?: string | null
+    }
+  )& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  })& {
+    id?: string | null
+  })[] | null,
+  id?: string | null,
+  agenda?: any | null,
+  createdTime?: number | null,
+  endTime?: number | null,
+  deletedTime?: number | null,
+  href?: string | null,
+  isAllDay?: boolean | null,
+  isEditable?: boolean | null,
+  isCancelled?: boolean | null,
+  isFlagged?: boolean | null,
+  isLogged?: boolean | null,
+  isOverdue?: boolean | null,
+  loggedTime?: number | null,
+  modifiedTime?: number | null,
+  name?: string | null,
+  startTime?: number | null,
+  isMediaLogged?: boolean | null,
+  transcription?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`activities.get`
+
+Get an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.activities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  activities?: (((
+    {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      id?: string | null
+    }
+  )& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  })& {
+    id?: string | null
+  })[] | null,
+  id?: string | null,
+  agenda?: any | null,
+  createdTime?: number | null,
+  endTime?: number | null,
+  deletedTime?: number | null,
+  href?: string | null,
+  isAllDay?: boolean | null,
+  isEditable?: boolean | null,
+  isCancelled?: boolean | null,
+  isFlagged?: boolean | null,
+  isLogged?: boolean | null,
+  isOverdue?: boolean | null,
+  loggedTime?: number | null,
+  modifiedTime?: number | null,
+  name?: string | null,
+  startTime?: number | null,
+  isMediaLogged?: boolean | null,
+  transcription?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`activities.list`
+
+Get activities
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.activities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filter[participant][]` | `string[]` | No | — |
+| `filter[status][]` | `(scheduled \| logged \| cancelled)[]` | No | — |
+| `filter[leadPriority][]` | `hot` | No | — |
+| `filter[activityType]` | `number[]` | No | — |
+| `filter[flagged]` | `boolean` | No | — |
+| `filter[isImportant]` | `boolean` | No | — |
+| `filter[dateMin]` | `string` | No | — |
+| `filter[dateMax]` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  activities?: (((
+    {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      id?: string | null
+    }
+  )& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  })& {
+    id?: string | null
+  })[] | null,
+  id?: string | null,
+  agenda?: any | null,
+  createdTime?: number | null,
+  endTime?: number | null,
+  deletedTime?: number | null,
+  href?: string | null,
+  isAllDay?: boolean | null,
+  isEditable?: boolean | null,
+  isCancelled?: boolean | null,
+  isFlagged?: boolean | null,
+  isLogged?: boolean | null,
+  isOverdue?: boolean | null,
+  loggedTime?: number | null,
+  modifiedTime?: number | null,
+  name?: string | null,
+  startTime?: number | null,
+  isMediaLogged?: boolean | null,
+  transcription?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`activities.update`
+
+Update an activity
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.activities.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  activities?: {
+    name?: string,
+    description?: string,
+    note?: string,
+    location?: string,
+    activityType?: string,
+    startTime?: number,
+    endTime?: number,
+    transcription?: string,
+    isFlagged?: boolean,
+    isLogged?: boolean,
+    isAllDay?: boolean,
+    links?: {
+      participants?: string[],
+      leads?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  activities?: (((
+    {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      id?: string | null
+    }
+  )& {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  })& {
+    id?: string | null
+  })[] | null,
+  id?: string | null,
+  agenda?: any | null,
+  createdTime?: number | null,
+  endTime?: number | null,
+  deletedTime?: number | null,
+  href?: string | null,
+  isAllDay?: boolean | null,
+  isEditable?: boolean | null,
+  isCancelled?: boolean | null,
+  isFlagged?: boolean | null,
+  isLogged?: boolean | null,
+  isOverdue?: boolean | null,
+  loggedTime?: number | null,
+  modifiedTime?: number | null,
+  name?: string | null,
+  startTime?: number | null,
+  isMediaLogged?: boolean | null,
+  transcription?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Activity Types
+
+### list
+
+`activityTypes.list`
+
+Get activity types
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.activityTypes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `activityTypes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="activityTypes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null,
+  isBenchmarkable?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audiences
+
+### create
+
+`audiences.create`
+
+Create an audience
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.audiences.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  emAudiences?: {
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emAudiences` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="emAudiences full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  isWebFX?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`audiences.list`
+
+Get a list of audiences
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.audiences.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  isWebFX?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Competitor Maps
+
+### delete
+
+`competitorMaps.delete`
+
+Delete a lead-competitor relationship
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nutshell.api.competitorMaps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`competitorMaps.get`
+
+Get a lead-competitor relationship
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.competitorMaps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitorMaps` | `object[] \| null` | No | — |
+| `leads` | `object[] \| null` | No | — |
+| `competitors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="competitorMaps full type">
+
+```ts
+{
+  id?: string | null,
+  relationship?: string | null,
+  name?: string | null,
+  status?: potential | stole | beat | null | null,
+  links?: {
+    lead?: string | null,
+    competitor?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="leads full type">
+
+```ts
+((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="competitors full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`competitorMaps.list`
+
+Get a list of lead-competitor relationships
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.competitorMaps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitorMaps` | `object[] \| null` | No | — |
+| `leads` | `object[] \| null` | No | — |
+| `competitors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="competitorMaps full type">
+
+```ts
+{
+  id?: string | null,
+  relationship?: string | null,
+  name?: string | null,
+  status?: potential | stole | beat | null | null,
+  links?: {
+    lead?: string | null,
+    competitor?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="leads full type">
+
+```ts
+((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="competitors full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`competitorMaps.update`
+
+Update a lead-competitor relationship
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.competitorMaps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Competitors
+
+### get
+
+`competitors.get`
+
+Get a competitor
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.competitors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitors` | `any \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `modifiedTime` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`competitors.list`
+
+Get a list of competitors
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.competitors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitors` | `any \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `modifiedTime` | `number \| null` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contacts?: {
+    name?: string,
+    description?: string,
+    phones?: {
+      isOptedOut?: boolean,
+      isPrimary?: boolean,
+      name?: string,
+      value?: {
+        countryCode?: string,
+        number?: string,
+        extension?: string,
+        numberFormatted?: string,
+        E164?: string,
+        countryCodeAndNumber?: string
+      }
+    }[],
+    emails?: {
+      isPrimary?: boolean,
+      name?: string,
+      value?: string
+    }[],
+    urls?: {
+      isPrimary?: boolean,
+      name?: string,
+      value?: string
+    }[],
+    addresses?: {
+      isPrimary?: boolean,
+      name?: string,
+      value?: {
+        location?: {
+          longitude?: number,
+          latitude?: number
+        }
+      },
+      locationAccuracy?: string,
+      address_1?: string,
+      address_2?: string,
+      address_3?: string,
+      city?: string,
+      state?: string,
+      postalCode?: string,
+      country?: string,
+      timezone?: string
+    }[],
+    customFields?: {
+    },
+    links?: {
+      accounts?: string[],
+      territory?: string,
+      owner?: string,
+      tags?: string[],
+      emAudiences?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+((((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})& {
+  links?: {
+  } | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createCustomField
+
+`contacts.createCustomField`
+
+Create a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.contacts.createCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: any,
+  type?: any,
+  choices?: any,
+  isMultiple?: any,
+  id?: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### customFieldAttributes
+
+`contacts.customFieldAttributes`
+
+Get applicable custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.customFieldAttributes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customfields
+
+`contacts.customfields`
+
+Get contact custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.customfields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+((((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})& {
+  links?: {
+  } | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Get a list of contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `accountType \| -accountType \| accounts \| -accounts \| createdTime \| -createdTime \| email \| -email \| industry \| -industry \| lastContactedTime \| -lastContactedTime \| name \| -name \| owner \| -owner \| phone \| -phone \| postalCode \| -postalCode \| territory \| -territory` | No | — |
+| `filter` | `object` | No | — |
+| `page[page]` | `number` | No | — |
+| `page[limit]` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+((((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})& {
+  links?: {
+  } | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFields
+
+`contacts.listFields`
+
+Get the fields for a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.listFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  exampleProperty?: {
+    type?: string | null,
+    title?: string | null,
+    description?: string | null,
+    isFilterable?: boolean | null,
+    isDisplayable?: boolean | null,
+    isSortable?: boolean | null,
+    isGoalable?: boolean | null,
+    isAddable?: boolean | null,
+    isBoardable?: boolean | null,
+    isRequireable?: boolean | null,
+    isAndable?: boolean | null,
+    isNullable?: boolean | null,
+    relationships?: string[] | null,
+    enum?: string[] | null,
+    format?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`contacts.listItems`
+
+Get list items for all contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.contacts.listItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `(-accountType \| -accounts \| -createdTime \| -industry \| -lastContactedTime \| -owner \| -phone \| -postalCode \| -territory \| accountType \| accounts \| createdTime \| industry \| lastContactedTime \| owner \| phone \| postalCode \| territory)[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `listItems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+(
+  {
+    count?: number | null
+  }& {
+    total?: number | null
+  }
+)& {
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="listItems full type">
+
+```ts
+(((((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  primaryName?: string | null,
+  primaryInfo?: string | null,
+  relatedName?: string | null,
+  relatedInfo?: string | null,
+  relatedType?: string | null,
+  relatedUrl?: string | null,
+  relatedUrlPath?: string | null,
+  primaryContact?: string | null,
+  primaryAccount?: string | null,
+  latlon?: string | null,
+  mapUrl?: string | null,
+  isDeleted?: boolean | null,
+  fields?: {
+  }[] | null
+})& {
+  description?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`contacts.undelete`
+
+Undelete a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.contacts.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+((((((
+  {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    createdTime?: number | null,
+    deletedTime?: number | null,
+    emails?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    addresses?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        location?: {
+          longitude?: number | null,
+          latitude?: number | null
+        } | null
+      } | null,
+      locationAccuracy?: string | null,
+      address_1?: string | null,
+      address_2?: string | null,
+      address_3?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postalCode?: string | null,
+      country?: string | null,
+      timezone?: string | null
+    }[] | null,
+    phones?: {
+      isOptedOut?: boolean | null,
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: {
+        countryCode?: string | null,
+        number?: string | null,
+        extension?: string | null,
+        numberFormatted?: string | null,
+        E164?: string | null,
+        countryCodeAndNumber?: string | null
+      } | null
+    }[] | null,
+    urls?: {
+      isPrimary?: boolean | null,
+      name?: string | null,
+      value?: string | null
+    }[] | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  jobTitle?: any | null,
+  firstName?: any | null,
+  lastName?: any | null,
+  href?: string | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})& {
+  links?: {
+  } | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Dashboards
+
+### listFields
+
+`dashboards.listFields`
+
+Get dashboard field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.dashboards.listFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$schema` | `string` | Yes | — |
+| `type` | `object` | Yes | — |
+| `description` | `string` | Yes | — |
+| `properties` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  stageset?: {
+    type: enum,
+    enum: {
+      id: string,
+      type: stagesets,
+      name: string
+    }[],
+    title: string,
+    description: string,
+    isFilterable: boolean,
+    isDisplayable: boolean,
+    isSortable: boolean,
+    isAndable: boolean,
+    isNullable: boolean,
+    size: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Editions
+
+### get
+
+`editions.get`
+
+Get a single edition by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.editions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`editions.list`
+
+Get a list of editions
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.editions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+## Emails
+
+### get
+
+`emails.get`
+
+Get an email
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.emails.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+
+
+
+---
+
+## Events
+
+### deleted
+
+`events.deleted`
+
+Get deletion events
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.events.deleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter[types]` | `accounts \| activities \| assignments \| chats \| companyEnrichment \| constantContact \| contacts \| emails \| emailInteraction \| formSubmissions \| inbox_threads \| leadUpdates \| leads \| marketingEmails \| mcfxSessions \| notes \| queued \| ticketMessages \| undelivered \| unshared` | No | — |
+| `sort` | `-change_time` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+(
+  {
+    instanceId?: string | null,
+    siteId?: string | null
+  }& {
+    previous?: string | null
+  }
+)& {
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    createdTime?: number | null,
+    actorType?: string | null,
+    payloadType?: string | null,
+    action?: string | null,
+    changes?: {
+      attribute?: string | null,
+      oldValue?: {
+        id?: string | null,
+        type?: string | null,
+        name?: string | null,
+        position?: number | null
+      } | null,
+      newValue?: {
+        id?: string | null,
+        type?: string | null,
+        name?: string | null,
+        position?: number | null
+      } | null
+    }[] | null,
+    count?: string | null
+  }& {
+    links?: {
+      actor?: string | null,
+      payloads?: string[] | null,
+      comments?: string[] | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+Get a list of events
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_id` | `string` | No | — |
+| `since_id` | `string` | No | — |
+| `max_time` | `number` | No | — |
+| `since_time` | `number` | No | — |
+| `entity_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `events` | `(comments \| mailchimp \| followup \| constantContact \| emailInteraction \| assignments \| formSubmissions)[]` | No | — |
+| `filters[payload][]` | `(accounts \| activities \| assignments \| chats \| companyEnrichment \| constantContact \| contacts \| emails \| emailInteraction \| formSubmissions \| inbox_threads \| leadUpdates \| leads \| marketingEmails \| mcfxSessions \| notes \| queued \| ticketMessages \| undelivered \| unshared)[]` | No | — |
+| `filters[creator][]` | `string[]` | No | — |
+| `filters[emailEntityType][]` | `(sender \| recipient)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+(
+  {
+    instanceId?: string | null,
+    siteId?: string | null
+  }& {
+    previous?: string | null
+  }
+)& {
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    createdTime?: number | null,
+    actorType?: string | null,
+    payloadType?: string | null,
+    action?: string | null,
+    changes?: {
+      attribute?: string | null,
+      oldValue?: {
+        id?: string | null,
+        type?: string | null,
+        name?: string | null,
+        position?: number | null
+      } | null,
+      newValue?: {
+        id?: string | null,
+        type?: string | null,
+        name?: string | null,
+        position?: number | null
+      } | null
+    }[] | null,
+    count?: string | null
+  }& {
+    links?: {
+      actor?: string | null,
+      payloads?: string[] | null,
+      comments?: string[] | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Filters
+
+### list
+
+`filters.list`
+
+Get saved filters
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.filters.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `reportType` | `report_* \| entity_list_leads \| entity_list_contacts \| entity_list_accounts` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### get
+
+`forms.get`
+
+Get a form
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    instanceId?: string | null,
+    siteId?: string | null
+  } | null,
+  links?: {
+  } | null,
+  wfForms?: (
+    {
+      id?: string | null,
+      name?: string | null,
+      href?: string | null,
+      createdTime?: string | null
+    }& {
+      links?: {
+        fields?: string[] | null
+      } | null
+    }
+  )[] | null
+}& {
+  wfFields?: {
+    id?: string | null,
+    label?: string | null,
+    fieldName?: string | null,
+    fieldType?: string | null,
+    entityName?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFieldId
+
+`forms.getFieldId`
+
+Get a form field
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.forms.getFieldId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wfFields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="wfFields full type">
+
+```ts
+{
+  id?: string | null,
+  label?: string | null,
+  fieldName?: string | null,
+  fieldType?: string | null,
+  entityName?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+Get all forms
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.forms.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `wfForms` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="wfForms full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    name?: string | null,
+    href?: string | null,
+    createdTime?: string | null
+  }& {
+    links?: {
+      fields?: string[] | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Industries
+
+### get
+
+`industries.get`
+
+Get a single industry by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.industries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `any \| null` | No | — |
+| `modifiedTime` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`industries.list`
+
+Get a list of industries
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.industries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Get an invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    paidTime?: string | null,
+    completionComment?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+Get a list of invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter[lead]` | `string` | No | — |
+| `filter[dateMin]` | `string` | No | — |
+| `filter[dateMax]` | `string` | No | — |
+| `page[limit]` | `string` | No | — |
+| `page[page]` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    paidTime?: string | null,
+    completionComment?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`invoices.status`
+
+Update the status of an invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.invoices.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  status: READY | SENT | REVOKED | ACCEPTED | ARCHIVED,
+  comment?: string,
+  acceptedName?: string,
+  acceptedEmail?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    paidTime?: string | null,
+    completionComment?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### create
+
+`leads.create`
+
+Create a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  leads?: {
+    description?: string,
+    manualValue?: string,
+    dueTime?: {
+      absoluteLocalizedString?: string,
+      timestamp?: number,
+      value?: string
+    },
+    customFields?: {
+    },
+    links?: {
+      accounts?: string[],
+      contacts?: string[],
+      owner?: string,
+      sources?: string[],
+      tags?: string[],
+      productMaps?: {
+        id?: string,
+        relationship?: any,
+        price?: {
+          formatted?: string,
+          amount?: string,
+          currency?: string
+        },
+        name?: any,
+        unit?: any,
+        quantity?: number,
+        productType?: string,
+        links?: {
+          product?: string
+        }
+      }[],
+      competitorMaps?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createCustomField
+
+`leads.createCustomField`
+
+Create a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.createCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: any,
+  type?: any,
+  choices?: any,
+  isMultiple?: any,
+  id?: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### customFieldAttributes
+
+`leads.customFieldAttributes`
+
+Get applicable custom fields for leads
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.customFieldAttributes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customfields
+
+`leads.customfields`
+
+Get a lead's custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.customfields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    id?: string | null
+  }& {
+    value?: string | null,
+    id?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.leads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`leads.get`
+
+Get a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `links` | `object` | Yes | — |
+| `leads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="leads full type">
+
+```ts
+(((((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})& {
+  attributionTracking: {
+    gclid: string[],
+    fbclid: string[],
+    msclkid: string[],
+    lifatid: string[],
+    wbraid: string[],
+    gbraid: string[]
+  }
+})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### installments
+
+`leads.installments`
+
+Get installments for a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.installments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `installments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="installments full type">
+
+```ts
+{
+  id?: string | null,
+  dueTime?: string | null,
+  description?: string | null,
+  value?: {
+    currency?: string | null,
+    amount?: number | null
+  } | null,
+  failedTime?: string | null,
+  isPaid?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+Get a list of leads
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sort` | `-age \| -value \| -milestone \| -confidence \| -name \| -closedTime \| -owner \| -sources \| age \| value \| milestone \| confidence \| name \| closedTime \| owner \| sources` | No | — |
+| `filter` | `object` | No | — |
+| `page[page]` | `number` | No | — |
+| `page[limit]` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `leads` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="leads full type">
+
+```ts
+((((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFields
+
+`leads.listFields`
+
+Get the fields for a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.listFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  exampleProperty?: {
+    type?: string | null,
+    title?: string | null,
+    description?: string | null,
+    isFilterable?: boolean | null,
+    isDisplayable?: boolean | null,
+    isSortable?: boolean | null,
+    isGoalable?: boolean | null,
+    isAddable?: boolean | null,
+    isBoardable?: boolean | null,
+    isRequireable?: boolean | null,
+    isAndable?: boolean | null,
+    isNullable?: boolean | null,
+    relationships?: string[] | null,
+    enum?: string[] | null,
+    format?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`leads.listItems`
+
+Get list items for all leads
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.listItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `-age \| -value \| -milestone \| -confidence \| -name \| -closedTime \| -owner \| -sources \| age \| value \| milestone \| confidence \| name \| closedTime \| owner \| sources` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `listItems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+(
+  {
+    count?: number | null
+  }& {
+    total?: number | null
+  }
+)& {
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="listItems full type">
+
+```ts
+((((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  primaryName?: string | null,
+  primaryInfo?: string | null,
+  relatedName?: string | null,
+  relatedInfo?: string | null,
+  relatedType?: string | null,
+  relatedUrl?: string | null,
+  relatedUrlPath?: string | null,
+  primaryContact?: string | null,
+  primaryAccount?: string | null,
+  latlon?: string | null,
+  mapUrl?: string | null,
+  isDeleted?: boolean | null,
+  fields?: {
+  }[] | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postStageset
+
+`leads.postStageset`
+
+Set the pipeline for a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.postStageset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  stageset?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reopen
+
+`leads.reopen`
+
+Reopen a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.reopen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### report
+
+`leads.report`
+
+Get reports for a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.report({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter[name]` | `string` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `format` | `json \| csv \| html` | No | — |
+| `gap` | `d \| w \| m \| y \| q` | No | — |
+| `groupByField` | `string` | No | — |
+| `pivotFacet` | `string` | No | — |
+| `reportType` | `sales \| losses \| newleads \| forecast \| attribution \| custom` | No | — |
+| `segmentByField` | `outcomes \| competitors \| products \| productCategories \| assignees \| territories \| sources \| tags \| channels` | No | — |
+| `useConfidence` | `boolean` | No | — |
+
+
+
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  reports?: {
+    report?: {
+      id?: string | null,
+      key?: string | null,
+      data?: {
+        bucket?: {
+          bucket?: string | null,
+          count?: {
+            formatted?: string | null,
+            prefix?: string | null,
+            suffix?: string | null,
+            value?: number | null
+          } | null,
+          total?: {
+            formatted?: string | null,
+            prefix?: string | null,
+            suffix?: string | null,
+            value?: number | null
+          } | null,
+          bucketType?: string | null,
+          bucketSubtype?: string | null,
+          filters?: string[] | null,
+          segments?: string[] | null
+        } | null
+      }[] | null,
+      name?: string | null,
+      prefix?: string | null,
+      summary?: {
+        bucket?: string | null,
+        count?: {
+          formatted?: string | null,
+          prefix?: string | null,
+          suffix?: string | null,
+          value?: number | null
+        } | null,
+        total?: {
+          formatted?: string | null,
+          prefix?: string | null,
+          suffix?: string | null,
+          value?: number | null
+        } | null,
+        bucketType?: string | null,
+        bucketSubtype?: string | null,
+        filters?: string[] | null,
+        segments?: string[] | null
+      } | null
+    } | null
+  }[] | null
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stages
+
+`leads.stages`
+
+Get all stages associated with lead
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.leads.stages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `stages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}& {
+  timeSpent?: {
+    formatted?: string | null,
+    prefix?: string | null,
+    suffix?: string | null,
+    value?: number | null,
+    unit?: string | null
+  }[] | null,
+  stageset?: {
+    id?: string | null,
+    name?: any | null,
+    default?: boolean | null,
+    canAccess?: boolean | null,
+    status?: 1 | 2 | 3 | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="stages full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  position?: number | null,
+  activeAvatarUrl?: string | null,
+  completeAvatarUrl?: string | null,
+  incompleteAvatarUrl?: string | null,
+  overdueAvatarUrl?: string | null,
+  numSteps?: number | null,
+  canAdvanceStage?: boolean | null,
+  links?: {
+    stageset?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`leads.status`
+
+Update the status of a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  outcomeId?: string,
+  competitorMaps?: string[],
+  productMaps?: {
+    id?: string,
+    relationship?: any,
+    price?: {
+      formatted?: string,
+      amount?: string,
+      currency?: string
+    },
+    name?: any,
+    unit?: any,
+    quantity?: number,
+    productType?: string,
+    links?: {
+      product?: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### undelete
+
+`leads.undelete`
+
+Undelete a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`leads.update`
+
+Update a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### updateInstallments
+
+`leads.updateInstallments`
+
+Replace a lead's installment schedule
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.leads.updateInstallments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id?: string,
+  dueTime: string,
+  description?: string,
+  value: string,
+  isFailed: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `installments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="installments full type">
+
+```ts
+{
+  id?: string | null,
+  dueTime?: string | null,
+  description?: string | null,
+  value?: {
+    currency?: string | null,
+    amount?: number | null
+  } | null,
+  failedTime?: string | null,
+  isPaid?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watch
+
+`leads.watch`
+
+Watch a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.leads.watch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(((
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }
+)& {
+  id?: string | null,
+  deletedTime?: string | null,
+  name?: string | null,
+  value?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  number?: number | null,
+  description?: string | null,
+  createdTime?: {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  closedTime?: string | null,
+  dueTime?: string | null,
+  anticipatedClosedTime?: string | null,
+  ownerType?: string | null,
+  status?: string | null,
+  lastContactedTime?: any | null,
+  pieState?: string | null,
+  isOverdue?: boolean | null,
+  overdueTime?: string | null,
+  href?: string | null,
+  confidence?: number | null,
+  priority?: number | null,
+  isCurrentUserWatching?: boolean | null
+})& {
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+})& {
+  avatarUrl?: string | null,
+  initials?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Markets
+
+### get
+
+`markets.get`
+
+Get a market by the ID
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.markets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `currencySymbol` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`markets.list`
+
+Get a list of markets
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.markets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `currencySymbol` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a note
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.notes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data?: {
+    body?: any,
+    links?: {
+      parent?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  createdTime?: string | null,
+  deletedTime?: string | null,
+  href?: string | null,
+  body?: string | null,
+  bodyHtml?: string | null,
+  bodyMarkup?: string | null,
+  isEditable?: boolean | null,
+  parentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete a note
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.notes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  createdTime?: string | null,
+  deletedTime?: string | null,
+  href?: string | null,
+  body?: string | null,
+  bodyHtml?: string | null,
+  bodyMarkup?: string | null,
+  isEditable?: boolean | null,
+  parentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`notes.get`
+
+Get a note
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.notes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  createdTime?: string | null,
+  deletedTime?: string | null,
+  href?: string | null,
+  body?: string | null,
+  bodyHtml?: string | null,
+  bodyMarkup?: string | null,
+  isEditable?: boolean | null,
+  parentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`notes.list`
+
+Get a list of notes
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page[limit]` | `string` | No | — |
+| `page[page]` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  createdTime?: string | null,
+  deletedTime?: string | null,
+  href?: string | null,
+  body?: string | null,
+  bodyHtml?: string | null,
+  bodyMarkup?: string | null,
+  isEditable?: boolean | null,
+  parentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### undelete
+
+`notes.undelete`
+
+Undelete a note
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.notes.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  createdTime?: string | null,
+  deletedTime?: string | null,
+  href?: string | null,
+  body?: string | null,
+  bodyHtml?: string | null,
+  bodyMarkup?: string | null,
+  isEditable?: boolean | null,
+  parentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Outcomes
+
+### get
+
+`outcomes.get`
+
+Get a lead outcome by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.outcomes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`outcomes.list`
+
+Get a list of lead outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.outcomes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+## Product Categories
+
+### create
+
+`productCategories.create`
+
+Create a product category
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.productCategories.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  productCategories?: {
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productCategories` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="productCategories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null,
+  href?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`productCategories.get`
+
+Get a product category
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.productCategories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productCategories` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="productCategories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null,
+  href?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`productCategories.list`
+
+List all product categories
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.productCategories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productCategories` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="productCategories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  modifiedTime?: number | null,
+  href?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Maps
+
+### delete
+
+`productMaps.delete`
+
+Delete a product on a lead
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nutshell.api.productMaps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `productMaps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="productMaps full type">
+
+```ts
+{
+  id?: string | null,
+  relationship?: any | null,
+  price?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  name?: any | null,
+  unit?: any | null,
+  quantity?: number | null,
+  productType?: string | null,
+  links?: {
+    product?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`productMaps.get`
+
+Get lead product
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.productMaps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `productMaps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="productMaps full type">
+
+```ts
+{
+  id?: string | null,
+  relationship?: any | null,
+  price?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  name?: any | null,
+  unit?: any | null,
+  quantity?: number | null,
+  productType?: string | null,
+  links?: {
+    product?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`productMaps.list`
+
+Get lead products
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.productMaps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `productMaps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="productMaps full type">
+
+```ts
+{
+  id?: string | null,
+  relationship?: any | null,
+  price?: {
+    formatted?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  name?: any | null,
+  unit?: any | null,
+  quantity?: number | null,
+  productType?: string | null,
+  links?: {
+    product?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`productMaps.update`
+
+Update a lead's product information
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.productMaps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Products
+
+### delete
+
+`products.delete`
+
+Delete a product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.products.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: any | null,
+  description?: any | null,
+  modifiedTime?: number | null,
+  deletedTime?: string | null,
+  sku?: any | null,
+  productType?: any | null,
+  prices?: {
+    1-markets?: {
+      amount?: number | null,
+      currency?: string | null,
+      formatted?: string | null,
+      currencySymbol?: string | null
+    } | null
+  } | null,
+  price?: {
+    amount?: number | null,
+    currency?: string | null,
+    formatted?: string | null,
+    currencySymbol?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+Get a product
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: any | null,
+  description?: any | null,
+  modifiedTime?: number | null,
+  deletedTime?: string | null,
+  sku?: any | null,
+  productType?: any | null,
+  prices?: {
+    1-markets?: {
+      amount?: number | null,
+      currency?: string | null,
+      formatted?: string | null,
+      currencySymbol?: string | null
+    } | null
+  } | null,
+  price?: {
+    amount?: number | null,
+    currency?: string | null,
+    formatted?: string | null,
+    currencySymbol?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List or search products
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sort` | `name \| -name \| sku \| -sku` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: any | null,
+  description?: any | null,
+  modifiedTime?: number | null,
+  deletedTime?: string | null,
+  sku?: any | null,
+  productType?: any | null,
+  prices?: {
+    1-markets?: {
+      amount?: number | null,
+      currency?: string | null,
+      formatted?: string | null,
+      currencySymbol?: string | null
+    } | null
+  } | null,
+  price?: {
+    amount?: number | null,
+    currency?: string | null,
+    formatted?: string | null,
+    currencySymbol?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`products.undelete`
+
+Undelete a product
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.products.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: any | null,
+  description?: any | null,
+  modifiedTime?: number | null,
+  deletedTime?: string | null,
+  sku?: any | null,
+  productType?: any | null,
+  prices?: {
+    1-markets?: {
+      amount?: number | null,
+      currency?: string | null,
+      formatted?: string | null,
+      currencySymbol?: string | null
+    } | null
+  } | null,
+  price?: {
+    amount?: number | null,
+    currency?: string | null,
+    formatted?: string | null,
+    currencySymbol?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### createInvoice
+
+`quotes.createInvoice`
+
+Create an invoice from a quote
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.quotes.createInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    paidTime?: string | null,
+    completionComment?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`quotes.get`
+
+Get a quote
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.quotes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    acceptedTime?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`quotes.list`
+
+Get a list of quotes
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.quotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter[lead]` | `string` | No | — |
+| `filter[dateMin]` | `string` | No | — |
+| `filter[dateMax]` | `string` | No | — |
+| `page[limit]` | `string` | No | — |
+| `page[page]` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    acceptedTime?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`quotes.status`
+
+Update the status of a quote
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.quotes.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  status: READY | SENT | REVOKED | ACCEPTED | ARCHIVED,
+  acceptedName?: string,
+  acceptedEmail?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null,
+    productLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      product?: string | null,
+      name?: string | null,
+      description?: string | null,
+      sku?: string | null,
+      quantity?: number | null,
+      term?: string | null,
+      price?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null,
+      discountUnit?: string | null,
+      discountNumber?: number | null
+    }[] | null,
+    subtotalLineItems?: {
+      id?: string | null,
+      position?: number | null,
+      label?: string | null,
+      modifierUnit?: string | null,
+      modifierValue?: number | null,
+      operation?: + | - | null,
+      total?: {
+        formatted?: string | null,
+        amount?: string | null,
+        currency?: string | null
+      } | null
+    }[] | null,
+    recipient?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    acceptedName?: string | null,
+    acceptedEmail?: string | null
+  }& {
+    number?: string | null,
+    total?: {
+      formatted?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    } | null,
+    validThroughTime?: string | null,
+    createdTime?: string | null,
+    publishedTime?: string | null,
+    sentTime?: string | null,
+    acceptedTime?: string | null,
+    deletedTime?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### create
+
+`sources.create`
+
+Create a new source
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.sources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  sources?: {
+    name?: string,
+    channel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  channel?: {
+    value?: number | null,
+    display?: string | null
+  } | null,
+  deletedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sources.delete`
+
+Delete a Source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.sources.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  channel?: {
+    value?: number | null,
+    display?: string | null
+  } | null,
+  deletedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sources.list`
+
+Get a list of sources
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.sources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  channel?: {
+    value?: number | null,
+    display?: string | null
+  } | null,
+  deletedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`sources.undelete`
+
+Undelete a Source
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.sources.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id?: string | null,
+  name?: any | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  channel?: {
+    value?: number | null,
+    display?: string | null
+  } | null,
+  deletedTime?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stages
+
+### list
+
+`stages.list`
+
+Get a list of stages
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.stages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `links` | `object` | Yes | — |
+| `stages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stages full type">
+
+```ts
+{
+  id: string,
+  type: stages,
+  name: string,
+  description: string,
+  position: number,
+  activeAvatarUrl: string,
+  completeAvatarUrl: string,
+  incompleteAvatarUrl: string,
+  overdueAvatarUrl: string,
+  links: {
+    stageset: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stage Sets
+
+### export
+
+`stageSets.export`
+
+Get a CSV export of lead movements through a pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.stageSets.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### list
+
+`stageSets.list`
+
+Get a list of pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.stageSets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `links` | `object` | Yes | — |
+| `stagesets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stagesets full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    name?: any | null,
+    default?: boolean | null,
+    canAccess?: boolean | null,
+    status?: 1 | 2 | 3 | null
+  }& {
+    type: stagesets,
+    links: {
+      stages: string[]
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tags?: {
+    name?: string,
+    colorType?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14,
+    tagType?: 1 | 2 | 3,
+    links?: {
+      entities?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  deletedTime?: number | null,
+  tagType?: string | null,
+  count?: number | null,
+  colorType?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nutshell.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  deletedTime?: number | null,
+  tagType?: string | null,
+  count?: number | null,
+  colorType?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+Get a list of tags
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `filter[tagType]` | `leads \| contacts \| accounts` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  deletedTime?: number | null,
+  tagType?: string | null,
+  count?: number | null,
+  colorType?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`tags.undelete`
+
+Undelete a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.tags.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  href?: string | null,
+  modifiedTime?: number | null,
+  deletedTime?: number | null,
+  tagType?: string | null,
+  count?: number | null,
+  colorType?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a new task
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  dueTime?: string,
+  recurrenceRule?: {
+    htmlUrl?: string,
+    htmlUrlPath?: string
+  }& {
+    rule?: string,
+    mode?: dueDate | completion,
+    id?: string
+  },
+  links?: {
+    relatedEntity?: string,
+    assignee?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+(
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    id?: string | null,
+    recurrenceRule?: {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      rule?: string | null,
+      mode?: dueDate | completion | null,
+      id?: string | null
+    } | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nutshell.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  recurrenceRule?: {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    rule?: string | null,
+    mode?: dueDate | completion | null,
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  htmlUrl?: string | null,
+  htmlUrlPath?: string | null
+}& {
+  id?: string | null,
+  recurrenceRule?: {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    rule?: string | null,
+    mode?: dueDate | completion | null,
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`tasks.list`
+
+Get a list of tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `filter[assignee]` | `string[]` | No | — |
+| `filter[relatedEntity]` | `string` | No | — |
+| `filter[dateMin]` | `string` | No | — |
+| `filter[dateMax]` | `string` | No | — |
+| `page[limit]` | `string` | No | — |
+| `page[page]` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+(
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    id?: string | null,
+    recurrenceRule?: {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      rule?: string | null,
+      mode?: dueDate | completion | null,
+      id?: string | null
+    } | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.nutshell.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy,
+  path: string,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Territories
+
+### list
+
+`territories.list`
+
+Get a list of territories
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.territories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  href?: string | null,
+  modifiedTime?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Todos
+
+### list
+
+`todos.list`
+
+Get tasks and sales process steps
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.todos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter[assignee]` | `string` | No | — |
+| `filter[type]` | `(tasks \| steps \| follow-ups \| follow-up tasks)[]` | No | — |
+| `filter[stagesets]` | `string[]` | No | — |
+| `filter[dueTime]` | `string` | No | — |
+| `filter[dueWindow]` | `overdue \| today \| tomorrow \| upcoming` | No | — |
+| `q` | `string` | No | — |
+| `includeComplete` | `0 \| 1` | No | — |
+| `onlyComplete` | `0 \| 1` | No | — |
+| `includeDoneFacet` | `0 \| 1` | No | — |
+| `onlyDue` | `0 \| 1` | No | — |
+| `onlyHotLeads` | `0 \| 1` | No | — |
+| `singleStep` | `0 \| 1` | No | — |
+| `page[startIndex]` | `number` | No | — |
+| `page[limit]` | `number` | No | — |
+| `page[endIndex]` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `todos` | `object[]` | Yes | — |
+| `relatedEntities` | `object[] \| null` | No | — |
+| `users` | `object[] \| null` | No | — |
+| `meta` | `object` | Yes | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="todos full type">
+
+```ts
+{
+  id: string,
+  type: tasks | steps,
+  title: string,
+  description?: string | null,
+  href?: string | null,
+  dueTime?: number | null,
+  completedTime?: number | null,
+  isCompleted?: boolean | null,
+  isOverdue?: boolean | null,
+  isRecurring?: boolean | null,
+  isSkipped?: boolean | null,
+  delays?: {
+    id?: string | null,
+    name?: string | null,
+    displayLength?: string | null
+  }[] | null,
+  links?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="relatedEntities full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number | null,
+  facets: {
+    past: number | null,
+    today: number | null,
+    tomorrow: number | null,
+    future: number | null,
+    done?: number | null
+  },
+  page: {
+    startIndex: number,
+    endIndex: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `users` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}& {
+  next?: string | null,
+  previous?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+((
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+Get a list of users
+
+**Risk:** `read`
+
+```ts
+await corsair.nutshell.api.users.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `users` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+}& {
+  next?: string | null,
+  previous?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+((
+  {
+    avatarUrl?: string | null,
+    initials?: string | null
+  }& {
+    id?: string | null,
+    name?: any | null,
+    firstName?: any | null,
+    modifiedTime?: number | null,
+    isEnabled?: boolean | null,
+    hasSetPassword?: boolean | null,
+    isAdministrator?: boolean | null,
+    isViewingRestricted?: boolean | null,
+    isHiddenFromFilters?: boolean | null,
+    canAccessEmailMarketing?: boolean | null,
+    permissions?: {
+      canAccessSetup?: boolean | null,
+      canAccessMarketing?: boolean | null,
+      canBulkEdit?: boolean | null,
+      canExport?: boolean | null,
+      canViewSharedEmails?: boolean | null,
+      canImport?: boolean | null,
+      canMergeEntities?: boolean | null,
+      canDeleteEntities?: boolean | null,
+      canAssignEntities?: boolean | null,
+      canAccessBilling?: boolean | null,
+      canManageEmailTemplates?: boolean | null,
+      canAccessCrm?: boolean | null,
+      canAccessFullCampaigns?: boolean | null,
+      canUsePeopleIQ?: boolean | null,
+      canUseInbox?: boolean | null
+    } | null,
+    emails?: string[] | null,
+    phonecallerType?: any | null
+  }
+)& {
+  avatarUrl?: string | null,
+  initials?: string | null
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
