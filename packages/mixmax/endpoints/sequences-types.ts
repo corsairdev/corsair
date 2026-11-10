@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { mixmaxBooleanFlag } from './flags';
+import { mixmaxBooleanFlag, mixmaxSendTimeMs } from './flags';
 
 // Sequences and sequence folders (developer.mixmax.com/reference, Sequences
 // section). Field names, types, and limits mirror the official inline schemas
@@ -320,8 +320,10 @@ export const SequencesRecipientsAddInputSchema = z.object({
 	id: z.string().min(1),
 	recipients: z.array(SequenceRecipientAddSchema).min(1),
 	// When to start the sequence for these recipients, in Unix milliseconds;
-	// each recipient's own `scheduledAt` takes precedence.
-	scheduledAt: z.coerce.number().int().optional(),
+	// each recipient's own `scheduledAt` takes precedence. Leave it out to
+	// start now. `false` is refused here: at this level Mixmax treats it as
+	// "now"; to keep recipients as drafts, set `false` on each recipient.
+	scheduledAt: mixmaxSendTimeMs.optional(),
 	// `true` to fill in each recipient's variables from their contact data.
 	enrich: mixmaxBooleanFlag.optional(),
 	// `true` to add recipients even when they lack values for variables the

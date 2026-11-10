@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxSendTimeMs } from './flags';
 
 // Messages and the plain send endpoint (developer.mixmax.com/reference,
 // Messages section). Body field names, types, and limits mirror the official
@@ -170,7 +171,7 @@ export const MessagesScheduleInputSchema = z.object({
 	options: z.object({
 		// When to send, in Unix milliseconds. The provider sends a number; a
 		// date string is misread.
-		scheduledDate: z.coerce.number().int(),
+		scheduledDate: mixmaxSendTimeMs,
 	}),
 	// Optional message fields applied before scheduling.
 	data: MessageFieldsSchema.optional(),

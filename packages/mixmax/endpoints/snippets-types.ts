@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { mixmaxBooleanFlag } from './flags';
+import { mixmaxBooleanFlag, mixmaxSendTimeMs } from './flags';
 
 // Templates and their folders (developer.mixmax.com/reference, Templates
 // section). In the backend templates are called snippets and their folders
@@ -223,7 +223,7 @@ export const SnippetsSendInputSchema = z.object({
 	// values filled from the first recipient's contact.
 	variables: z.object({}).passthrough().optional(),
 	// When to send, in Unix milliseconds; leave out to send right away.
-	scheduledAt: z.coerce.number().int().optional(),
+	scheduledAt: mixmaxSendTimeMs.optional(),
 	trackingEnabled: mixmaxBooleanFlag.optional(),
 	linkTrackingEnabled: mixmaxBooleanFlag.optional(),
 	fileTrackingEnabled: mixmaxBooleanFlag.optional(),
