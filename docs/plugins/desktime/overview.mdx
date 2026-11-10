@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Time tracking and productivity reporting with DeskTime - read account settings, list employees for a day, week or month, and fetch one employee's tracked apps and projects."
+---
+
+Use **DeskTime** through Corsair: one client, typed API calls.
+
+Find your API key at https://desktime.com/app/api, under Settings, API. The same page regenerates or deactivates it. API access is generally tied to a paid plan, so a free account may return 403.
+
+Things to know before you call:
+
+- **Every operation reads.** This plugin covers DeskTime's read actions, so nothing here can change an account. All seven operations are `read` and none is irreversible. DeskTime also has `create-project`, `start-project` and `stop-project`, which do change an account; they are not part of this plugin.
+- **Every call needs a key.** `ping` is served openly by DeskTime, but the Corsair runtime resolves the account key before any endpoint runs, so a call without one raises `AuthMissingError` like the rest.
+- **Keys are per tenant.** Each tenant saves the key of its own DeskTime account, through a connect link or with `corsair.withTenant(id).desktime.keys.set_api_key(key)`. `desktime({ key })` at registration is sent for every tenant and takes priority over their saved keys, so every tenant would read that one account's employees. Pass it only when the whole app reads a single DeskTime account.
+- **The API returns mixed field casing.** `groupId` and `onlineTime` are camelCase while `work_starts` and `notes` are snake_case, and this plugin keeps the names exactly as sent.
+- **`arrived`, `left`, `work_starts` and `work_ends` are timestamps or the boolean `false`.** The help-center examples only show the timestamp form, so a schema that assumes a string rejects every response for an employee who has not clocked in yet.
+- **A bad date or period is ignored, not rejected.** DeskTime answers with today's data instead of an error, so this plugin validates both before sending. Dates must be real calendar days, not just the right shape.
+- **`employees.list` nests two levels deep.** The response is keyed by date, then by employee id, so a week request returns seven buckets. `period` accepts `day`, `week` or `month`. This plugin also exposes a flattened `buckets` array, newest first, with the date kept on each entry.
+- **`employee.apps` groups by productivity class.** The raw keys are `-1` unrated, `0` neutral and `1` productive; a labelled `apps_by_productivity` map is returned alongside them.
+- **Rate limits.** DeskTime sends `x-ratelimit-limit: 600` and no `Retry-After`. A 429 is retried after the header if present, otherwise after one minute. A 401 or 403 is never retried, because only a person can fix a key.
+- **No webhooks.** DeskTime sends none, so the plugin declares no webhook surface.
+
+**What you get:**
+
+- 7 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/desktime better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/desktime better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/desktime better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/desktime better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { desktime } from '@corsair-dev/desktime';
+
+export const corsair = createCorsair({
+	plugins: [
+		desktime(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+desktime()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'desktime',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List one day of tracked time**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.desktime.api.employees.list({ date: '2026-11-02' });
+```
+
+
+**Read one employee's tracked apps**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.desktime.api.employee.apps({ id: 789760 });
+```
+
+
+See the full list on the [API](/plugins/desktime/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/desktime/api">
+    Every `desktime.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

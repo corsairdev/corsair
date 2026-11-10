@@ -1,0 +1,132 @@
+---
+title: Overview
+description: "Card-linking API for linking consumer payment cards to programs and offers, exposing cards, transactions, programs, brands, locations, offers, and webhooks operations."
+---
+
+Use **Fidel** through Corsair: one client, typed API calls.
+
+The API key is your Fidel secret key (`sk_test_…` or `sk_live_…`). A test key only sees test data.
+
+List operations return up to `limit` items (100 by default). When a response has a `last` cursor there is another page: pass `JSON.stringify(last)` as `start` on the next call. On `mid-insights.listMidInsights` the cursor is already a string, so pass it unchanged.
+
+The plugin does not link cards. Cards are linked with Fidel's own SDKs, which keep card numbers off your servers, and the plugin works with cards once they are linked.
+
+**What you get:**
+
+- 55 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fidel better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/fidel better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fidel better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/fidel better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fidel } from '@corsair-dev/fidel';
+
+export const corsair = createCorsair({
+	plugins: [
+		fidel(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+fidel()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fidel',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List programs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fidel.api.programs.listPrograms({});
+```
+
+
+**Create a brand**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fidel.api.brands.createBrand({ name: 'Acme Coffee' });
+```
+
+
+See the full list on the [API](/plugins/fidel/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fidel/api">
+    Every `fidel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
