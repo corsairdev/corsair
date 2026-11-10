@@ -119,7 +119,7 @@ const defaultAuthType: 'api_key' = 'api_key';
  */
 export const servicenowAuthConfig = {
 	api_key: {
-		account: ['host', 'webhook_signature'] as const,
+		account: ['host'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

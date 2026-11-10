@@ -1,0 +1,706 @@
+{
+  "id": "fluxguard",
+  "displayName": "Fluxguard",
+  "description": "Website change monitoring with Fluxguard - add and delete monitored pages, start crawls, read captured page data, and manage the webhooks and site categories that deliver change alerts.",
+  "npmPackageName": "@corsair-dev/fluxguard",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fluxguard.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the organisation account: plan, credits, site count and flags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Organisation ID; the webhook tenant key"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Lowercase account status, e.g. active"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "number | null",
+            "description": "Plan tier; 0 on a free account"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits remaining"
+          },
+          {
+            "key": "siteCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "Sites being monitored"
+          },
+          {
+            "key": "notifyGap",
+            "optional": true,
+            "type": "number | null",
+            "description": "Minutes between change notifications"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "When the account was created"
+          },
+          {
+            "key": "lastTouch",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Last account activity"
+          },
+          {
+            "key": "lastFreeCredits",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "ISO 8601 string or epoch milliseconds"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "Record<string, { name: string, color?: string | null, isDefault?: boolean | null }> | null",
+            "description": "Change severity labels with their console colours"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.categories.create",
+      "shortPath": "categories.create",
+      "description": "Create a site category; sites are assigned to it in the Fluxguard console",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name for the new site category"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Category ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "When the category was created"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List the site categories change notifications can be limited to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id: string, name: string, for?: string | null, created?: string | number | null, updated?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.monitoring.addPage",
+      "shortPath": "monitoring.addPage",
+      "description": "Add a URL for monitoring, creating a site and session when none is given",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL to monitor; a scheme-less host is accepted"
+          },
+          {
+            "key": "siteId",
+            "optional": true,
+            "type": "string",
+            "description": "Existing site. Must be given with sessionId; siteNickname and the category options are rejected when it is set"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string",
+            "description": "Existing session. Must be given with siteId"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Category IDs"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string",
+            "description": "Single category ID"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string",
+            "description": "Single category name"
+          },
+          {
+            "key": "siteNickname",
+            "optional": true,
+            "type": "string",
+            "description": "Nickname for the site created with this page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site the page was added to"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session the page was added to"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "New page ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.monitoring.deletePage",
+      "shortPath": "monitoring.deletePage",
+      "description": "Stop monitoring a page: Fluxguard hides it and everything captured for it, and the id still resolves with status ignore",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site ID"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "True once Fluxguard accepted the delete"
+          },
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.monitoring.deleteSite",
+      "shortPath": "monitoring.deleteSite",
+      "description": "Delete a site with all of its sessions, pages and captured versions",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "True once Fluxguard accepted the delete"
+          },
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.monitoring.getPage",
+      "shortPath": "monitoring.getPage",
+      "description": "Get one monitored page with its version counts and categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site ID"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Organisation that owns the site"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the monitored page"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL being monitored"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "active, or ignore once the page was deleted"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number | null",
+            "description": "Versions captured so far"
+          },
+          {
+            "key": "versionsKept",
+            "optional": true,
+            "type": "number | null",
+            "description": "Versions retained"
+          },
+          {
+            "key": "viewUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Console URL for this page"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "When the page was added"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "{ id: string, origin?: string | null } | null"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, comparisonType?: string | null } | null"
+          },
+          {
+            "key": "siteCategories",
+            "optional": false,
+            "type": "string[]",
+            "description": "Names of the site categories the site belongs to"
+          },
+          {
+            "key": "pageCategories",
+            "optional": false,
+            "type": "string[]",
+            "description": "Names of the page categories the page belongs to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.monitoring.startCrawl",
+      "shortPath": "monitoring.startCrawl",
+      "description": "Start capturing a session now; the capture runs in the background and spends account credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site ID"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteId",
+            "optional": false,
+            "type": "string",
+            "description": "Site that was crawled"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session that was crawled"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Add a webhook URL. Every later change event is POSTed to it, so a live URL starts receiving data immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL to POST change events to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook ID; pass it to webhooks.delete"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL the webhook posts to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Remove a webhook so its URL stops receiving change events",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook ID from webhooks.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "True once Fluxguard accepted the delete"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhook URLs change events are posted to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, url: string, secret?: string | null, api?: string | null, created?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fluxguard.api.webhooks.sample",
+      "shortPath": "webhooks.sample",
+      "description": "Get a sample delivery built from this account, to inspect the payload shape",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "samples",
+            "optional": false,
+            "type": "{ url?: string | null, finalUrl?: string | null, capturedAt?: string | number | null, comparisonType?: string | null, orgId?: string | null, orgName?: string | null, title?: string | null, statusCode?: number | null, aiFlagged?: string | null, summary?: string | null, diffSummary?: string | null, diffUrl?: string | null, fileBaseUrl?: string | null, site?: { id: string, origin?: string | null } | null, session?: { id: string, name?: string | null, comparisonType?: string | null } | null, page?: { id: string, path?: string | null } | null, siteCategories?: string[] | null, pageCategories?: string[] | null, files?: Record<string, any> | null, alarms?: Record<string, any>[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "fluxguard.webhooks.change.detected",
+      "shortPath": "change.detected",
+      "description": "A monitored page changed: Fluxguard posts the captured version with references to its HTML, screenshot and diff files",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL where the change was detected"
+          },
+          {
+            "key": "finalUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL after redirects"
+          },
+          {
+            "key": "capturedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the version was captured"
+          },
+          {
+            "key": "comparisonType",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTML, visual, text or network"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Title of the page"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "aiFlagged",
+            "optional": true,
+            "type": "string | null",
+            "description": "warning for a significant change, serenity otherwise"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "AI summary of the captured version"
+          },
+          {
+            "key": "diffSummary",
+            "optional": true,
+            "type": "string | null",
+            "description": "AI summary of what changed since the previous version"
+          },
+          {
+            "key": "diffUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Console URL for this version"
+          },
+          {
+            "key": "fileBaseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Prefix to append every filename under files to"
+          },
+          {
+            "key": "site",
+            "optional": true,
+            "type": "{ id?: string | null, origin?: string | null, nickname?: string | null } | null"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ id?: string | null, path?: string | null } | null"
+          },
+          {
+            "key": "siteCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Category names, e.g. [\"News\"]"
+          },
+          {
+            "key": "pageCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Category names, e.g. [\"News\"]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "alarms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      },
+      "responseType": "{ url?: string | null, finalUrl?: string | null, capturedAt?: string | null, comparisonType?: string | null, orgId?: string | null, orgName?: string | null, title?: string | null, statusCode?: number | null, aiFlagged?: string | null, summary?: string | null, diffSummary?: string | null, diffUrl?: string | null, fileBaseUrl?: string | null, site?: { id?: string | null, origin?: string | null, nickname?: string | null } | null, session?: { id?: string | null, name?: string | null } | null, page?: { id?: string | null, path?: string | null } | null, siteCategories?: string[] | null, pageCategories?: string[] | null, files?: Record<string, any> | null, alarms?: Record<string, any>[] | null }",
+      "usageExample": "fluxguard({\n    webhookHooks: {\n        change: {\n            detected: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

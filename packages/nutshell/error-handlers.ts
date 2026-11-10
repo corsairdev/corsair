@@ -1,0 +1,78 @@
+import type {
+	CorsairErrorHandler,
+	EndpointRiskLevel,
+	ErrorContext,
+} from 'corsair/core';
+import { NutshellAPIError } from './client';
+import { NUTSHELL_OPERATIONS } from './operations';
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof NutshellAPIError ? error.status : undefined;
+}
+
+const riskByOperation = new Map<string, EndpointRiskLevel>(
+	NUTSHELL_OPERATIONS.map(({ key, riskLevel }) => [key, riskLevel]),
+);
+
+/**
+ * A retry decision here replays the *whole endpoint*: the shared binder
+ * re-invokes the endpoint function when a handler returns `maxRetries > 0`.
+ * Replaying a create/update/delete after an ambiguous failure could apply the
+ * change twice, so only operations marked `read` are retried. Unknown paths
+ * default to unsafe.
+ */
+function isReplaySafe(context: ErrorContext): boolean {
+	return riskByOperation.get(context.operation) === 'read';
+}
+
+export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async (error: Error, context: ErrorContext) => {
+			if (!isReplaySafe(context)) return { maxRetries: 0 };
+			const retryAfter =
+				error instanceof NutshellAPIError ? error.retryAfter : undefined;
+			return {
+				maxRetries: 5,
+				retryStrategy: 'exponential_backoff' as const,
+				// Preserve the provider-requested delay in full. Capping it made
+				// reads retry while Nutshell still considered them blocked, which
+				// could burn the whole retry budget during a long rate window.
+				headersRetryAfterMs: retryAfter,
+			};
+		},
+	},
+	AUTH_ERROR: {
+		match: (error: Error) => statusOf(error) === 401,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => statusOf(error) === 403,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => statusOf(error) === 404,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	VALIDATION_ERROR: {
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 400 || status === 422;
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status !== undefined && status >= 500;
+		},
+		handler: async (_error: Error, context: ErrorContext) =>
+			isReplaySafe(context)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
+	},
+	DEFAULT: {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+} satisfies CorsairErrorHandler;

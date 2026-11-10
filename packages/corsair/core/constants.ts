@@ -236,6 +236,7 @@ export const BaseProviders = [
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finage',
 	'finerworks',
 	'firecrawl',
 	'fireflies',
@@ -297,6 +298,7 @@ export const BaseProviders = [
 	'klaviyo',
 	'kling',
 	'leexi',
+	'leiga',
 	'lever',
 	'linear',
 	'linkedin',
@@ -315,11 +317,13 @@ export const BaseProviders = [
 	'missive',
 	'monday',
 	'mrscraper',
+	'nanonets',
 	'neon',
 	'netsuite',
 	'nextdns',
 	'northflank',
 	'notion',
+	'nutshell',
 	'ocrspace',
 	'ocrwebservice',
 	'octen',
@@ -696,6 +700,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finage: 'Finage',
 	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -757,6 +762,7 @@ export const ProviderDisplayNames = {
 	klaviyo: 'Klaviyo',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	leiga: 'Leiga',
 	lever: 'Lever',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
@@ -775,11 +781,13 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
+	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
+	nutshell: 'Nutshell',
 	ocrspace: 'OCR.space',
 	ocrwebservice: 'OcrWebService',
 	octen: 'Octen',
@@ -1160,6 +1168,7 @@ export type AllProviders =
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finage'
 	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
@@ -1221,6 +1230,7 @@ export type AllProviders =
 	| 'klaviyo'
 	| 'kling'
 	| 'leexi'
+	| 'leiga'
 	| 'lever'
 	| 'linear'
 	| 'linkedin'
@@ -1239,11 +1249,13 @@ export type AllProviders =
 	| 'missive'
 	| 'monday'
 	| 'mrscraper'
+	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
+	| 'nutshell'
 	| 'ocrspace'
 	| 'ocrwebservice'
 	| 'octen'

@@ -855,46 +855,27 @@ export type ProformaResponse = z.infer<typeof ProformaResponseSchema>;
 
 // ── Tax ───────────────────────────────────────────────────────────────────
 
-const TaxRateCalculateInputSchema = z
-	.object({
-		to_country: z
-			.string()
-			.length(2)
-			.describe('Two-letter ISO country code of the customer.'),
-		to_postal_code: z
-			.string()
-			.optional()
-			.describe(
-				'Customer postal code, needed in countries that tax by region.',
-			),
-		to_region: z.string().optional(),
-		tax_code: z
-			.string()
-			.optional()
-			.describe('The tax code for the product, such as `standard`.'),
-		amount: z
-			.union([z.string(), z.number()])
-			.optional()
-			.describe('Amount to compute tax on, in major units.'),
-	})
-	.superRefine((value, ctx) => {
-		// The docs say `tax_code` and `amount` are required from API version
-		// 20210316, which this plugin targets. Failing here saves a round trip.
-		if (!value.tax_code) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['tax_code'],
-				message: '`tax_code` is required since API version 20210316.',
-			});
-		}
-		if (value.amount === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['amount'],
-				message: '`amount` is required since API version 20210316.',
-			});
-		}
-	});
+const TaxRateCalculateInputSchema = z.object({
+	to_country: z
+		.string()
+		.length(2)
+		.describe('Two-letter ISO country code of the customer.'),
+	to_postal_code: z
+		.string()
+		.optional()
+		.describe('Customer postal code, needed in countries that tax by region.'),
+	to_region: z.string().optional(),
+	// The docs say `tax_code` and `amount` are required from API version
+	// 20210316, which this plugin targets. They are required in the schema
+	// itself, so the catalog and an agent reading it see them as required.
+	tax_code: z
+		.string()
+		.min(1)
+		.describe('The tax code for the product, such as `standard`.'),
+	amount: z
+		.union([z.string(), z.number()])
+		.describe('Amount to compute tax on, in major units.'),
+});
 
 export type TaxRateCalculateInput = z.input<typeof TaxRateCalculateInputSchema>;
 
