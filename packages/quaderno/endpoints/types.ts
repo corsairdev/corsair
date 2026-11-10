@@ -1,0 +1,1202 @@
+import { z } from 'zod';
+
+// Field names are Quaderno's own, read from the published OpenAPI spec
+// (developers.quaderno.io, version 20241028) and corrected against live
+// responses. Nothing is renamed.
+//
+// Outputs are `.loose()` and their documented fields `.nullish()`: Quaderno
+// sends JSON `null` for unset values, and it adds response fields without a
+// version bump, which the docs state as policy. A stricter schema would break
+// callers on a non-breaking provider change.
+//
+// Every money field is a **string** in major units (`"10.0"`), not cents, and
+// the `*_cents` fields beside it are integers. Both are kept as sent.
+
+const MoneySchema = z
+	.string()
+	.describe('A decimal amount in major units, such as `10.0` for ten dollars.');
+
+const IdSchema = z.number().int().positive();
+
+// ── Shared paging ─────────────────────────────────────────────────────────
+
+/**
+ * Quaderno lists answer a **bare array**, not an envelope: `[]`, not
+ * `{ data: [] }`. Verified live on every list route.
+ *
+ * Paging is by `created_before`: pass an object id and get records created
+ * before it, newest first. The cursors ride in response **headers**
+ * (`X-Pages-HasMore`, `X-Pages-NextPage`), which `corsair/http` cannot return
+ * beside a body, so the next id is derived from the last row here instead.
+ */
+export const QUADERNO_DEFAULT_LIMIT = 25;
+export const QUADERNO_MAX_LIMIT = 100;
+
+const LimitSchema = z
+	.number()
+	.int()
+	.min(1)
+	.max(QUADERNO_MAX_LIMIT)
+	.optional()
+	.describe(
+		`Records to return. Defaults to ${QUADERNO_DEFAULT_LIMIT}, maximum ${QUADERNO_MAX_LIMIT}.`,
+	);
+
+const CreatedBeforeSchema = z
+	.number()
+	.int()
+	.positive()
+	.optional()
+	.describe(
+		'Return records created before this object id, newest first. Pass the previous page\u2019s last `id`; the response\u2019s `next_created_before` carries it.',
+	);
+
+/**
+ * Derived beside the provider rows so a caller can page without reading a
+ * header. `null` means this page was short, so it is the last one.
+ */
+const NextCreatedBeforeSchema = z
+	.number()
+	.int()
+	.nullable()
+	.describe(
+		'The id to pass as `created_before` for the next page, or null when this is the last page.',
+	);
+
+/** Reads the paging cursor for a page, given its `limit`. */
+export function nextCreatedBefore(
+	rows: { id?: number | null }[],
+	limit: number | undefined,
+): number | null {
+	const pageSize = limit ?? QUADERNO_DEFAULT_LIMIT;
+	if (rows.length < pageSize) return null;
+	const last = rows.at(-1)?.id;
+	return typeof last === 'number' ? last : null;
+}
+
+// ── Contacts ──────────────────────────────────────────────────────────────
+
+export const QUADERNO_CONTACT_KINDS = ['person', 'company'] as const;
+
+export const ContactSchema = z
+	.object({
+		id: z.number(),
+		kind: z.string().nullish(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		full_name: z.string().nullish(),
+		contact_person: z.string().nullish(),
+		department: z.string().nullish(),
+		email: z.string().nullish(),
+		phone_1: z.string().nullish(),
+		web: z.string().nullish(),
+		street_line_1: z.string().nullish(),
+		street_line_2: z.string().nullish(),
+		city: z.string().nullish(),
+		postal_code: z.string().nullish(),
+		region: z.string().nullish(),
+		country: z.string().nullish(),
+		tax_id: z.string().nullish(),
+		tax_status: z.string().nullish(),
+		notes: z.string().nullish(),
+		discount: z.union([z.string(), z.number()]).nullish(),
+		language: z.string().nullish(),
+		processor: z.string().nullish(),
+		processor_id: z.string().nullish(),
+		permalink: z.string().nullish(),
+		created_at: z.number().nullish(),
+	})
+	.loose();
+
+export type QuadernoContact = z.infer<typeof ContactSchema>;
+
+const ContactWriteShape = {
+	kind: z
+		.enum(QUADERNO_CONTACT_KINDS)
+		.optional()
+		.describe('`person` or `company`. Defaults to `person` in the dashboard.'),
+	first_name: z.string().min(1).optional(),
+	last_name: z.string().min(1).optional(),
+	email: z.string().min(3).optional().describe('Contact email address.'),
+	phone_1: z.string().optional(),
+	web: z.string().optional(),
+	street_line_1: z.string().optional(),
+	street_line_2: z.string().optional(),
+	city: z.string().optional(),
+	postal_code: z.string().optional(),
+	region: z.string().optional(),
+	country: z
+		.string()
+		.length(2)
+		.optional()
+		.describe('Two-letter ISO country code, such as `US`.'),
+	tax_id: z.string().optional(),
+	notes: z.string().optional(),
+	discount: z
+		.union([z.string(), z.number()])
+		.optional()
+		.describe('Default discount percentage for this contact.'),
+	language: z.string().optional().describe('Two-letter language code.'),
+} as const;
+
+const ContactsListInputSchema = z.object({
+	q: z.string().min(1).optional().describe('Free-text search.'),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type ContactsListInput = z.input<typeof ContactsListInputSchema>;
+
+const ContactsListResponseSchema = z.object({
+	contacts: z.array(ContactSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
+
+const ContactsCreateInputSchema = z.object({
+	...ContactWriteShape,
+	email: z
+		.string()
+		.min(3)
+		.describe('Contact email address. Quaderno uses it to deliver documents.'),
+});
+
+export type ContactsCreateInput = z.input<typeof ContactsCreateInputSchema>;
+
+const ContactsGetInputSchema = z.object({
+	id: IdSchema.describe('The contact id.'),
+});
+
+export type ContactsGetInput = z.input<typeof ContactsGetInputSchema>;
+
+const ContactsUpdateInputSchema = z.object({
+	...ContactWriteShape,
+	id: IdSchema.describe('The contact to update.'),
+});
+
+export type ContactsUpdateInput = z.input<typeof ContactsUpdateInputSchema>;
+
+const ContactsDeleteInputSchema = z.object({
+	id: IdSchema.describe('The contact to delete.'),
+});
+
+export type ContactsDeleteInput = z.input<typeof ContactsDeleteInputSchema>;
+
+/**
+ * A delete answers **204 with no body**, so there is nothing to parse. Quaderno
+ * refuses to delete a contact that still has documents attached, with 422.
+ */
+const DeleteResponseSchema = z.object({
+	deleted: z.literal(true),
+});
+
+export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
+
+const ContactResponseSchema = z.object({
+	contact: ContactSchema,
+});
+
+export type ContactResponse = z.infer<typeof ContactResponseSchema>;
+
+// ── Products ──────────────────────────────────────────────────────────────
+
+export const QUADERNO_PRODUCT_KINDS = ['one_off', 'subscription'] as const;
+export const QUADERNO_PRODUCT_TYPES = ['good', 'service'] as const;
+export const QUADERNO_TAX_CLASSES = [
+	'consulting',
+	'eservice',
+	'ebook',
+	'saas',
+	'standard',
+	'reduced',
+] as const;
+export const QUADERNO_TAX_TYPES = ['included', 'excluded'] as const;
+export const QUADERNO_TAX_BASES = ['customer_country', 'country'] as const;
+
+export const ProductSchema = z
+	.object({
+		id: z.number(),
+		name: z.string().nullish(),
+		code: z.string().nullish(),
+		description: z.string().nullish(),
+		unit_cost: MoneySchema.nullish(),
+		currency: z.string().nullish(),
+		product_type: z.string().nullish(),
+		kind: z.string().nullish(),
+		tax_class: z.string().nullish(),
+		tax_type: z.string().nullish(),
+		tax_based_on: z.string().nullish(),
+		country: z.string().nullish(),
+		stock: z.number().nullish(),
+		url: z.string().nullish(),
+		created_at: z.number().nullish(),
+		paypal_interval_duration: z.number().nullish(),
+		paypal_interval_frequency: z.number().nullish(),
+		paypal_interval_unit: z.string().nullish(),
+		stripe_plan_id: z.string().nullish(),
+	})
+	.loose();
+
+export type QuadernoProduct = z.infer<typeof ProductSchema>;
+
+const ProductWriteShape = {
+	name: z.string().min(1).describe('Product name.'),
+	code: z.string().min(1).describe('Your own SKU or code.'),
+	unit_cost: z
+		.union([z.string(), z.number()])
+		.describe('Price in major units, such as `10.00` or `10`.'),
+	currency: z
+		.string()
+		.length(3)
+		.optional()
+		.describe(
+			'Three-letter ISO currency code. Defaults to the account currency.',
+		),
+	description: z.string().optional(),
+	product_type: z
+		.enum(QUADERNO_PRODUCT_TYPES)
+		.optional()
+		.describe(
+			'`good` for a tangible item, `service` otherwise. Defaults to `service`.',
+		),
+	kind: z
+		.enum(QUADERNO_PRODUCT_KINDS)
+		.optional()
+		.describe('`one_off` or `subscription`. Defaults to `one_off`.'),
+	tax_class: z.enum(QUADERNO_TAX_CLASSES).optional(),
+	tax_type: z
+		.enum(QUADERNO_TAX_TYPES)
+		.optional()
+		.describe('Whether `unit_cost` includes tax. Defaults to `included`.'),
+	tax_based_on: z.enum(QUADERNO_TAX_BASES).optional(),
+	stock: z.number().int().min(0).optional(),
+} as const;
+
+const ProductsListInputSchema = z.object({
+	q: z.string().min(1).optional().describe('Free-text search.'),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type ProductsListInput = z.input<typeof ProductsListInputSchema>;
+
+const ProductsListResponseSchema = z.object({
+	products: z.array(ProductSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type ProductsListResponse = z.infer<typeof ProductsListResponseSchema>;
+
+const ProductsCreateInputSchema = z.object(ProductWriteShape);
+
+export type ProductsCreateInput = z.input<typeof ProductsCreateInputSchema>;
+
+const ProductsGetInputSchema = z.object({ id: IdSchema });
+
+export type ProductsGetInput = z.input<typeof ProductsGetInputSchema>;
+
+const ProductsUpdateInputSchema = z.object({
+	...ProductWriteShape,
+	id: IdSchema,
+});
+
+export type ProductsUpdateInput = z.input<typeof ProductsUpdateInputSchema>;
+
+const ProductsDeleteInputSchema = z.object({ id: IdSchema });
+
+export type ProductsDeleteInput = z.input<typeof ProductsDeleteInputSchema>;
+
+const ProductResponseSchema = z.object({ product: ProductSchema });
+
+export type ProductResponse = z.infer<typeof ProductResponseSchema>;
+
+// ── Documents (invoices, receipts, credits, proformas) ────────────────────
+
+/** A line on a document. Amounts are in major units, as strings. */
+export const DocumentItemSchema = z
+	.object({
+		id: z.number().nullish(),
+		description: z.string().nullish(),
+		quantity: z.number().nullish(),
+		unit_price: z.union([z.string(), z.number()]).nullish(),
+		discount_rate: z.union([z.string(), z.number()]).nullish(),
+		product_code: z.string().nullish(),
+		total_amount: z.union([z.string(), z.number()]).nullish(),
+		subtotal_cents: z.number().nullish(),
+		discount_cents: z.number().nullish(),
+		tax_1_name: z.string().nullish(),
+		tax_1_rate: z.number().nullish(),
+		tax_1_country: z.string().nullish(),
+		tax_1_region: z.string().nullish(),
+	})
+	.loose();
+
+export type QuadernoDocumentItem = z.infer<typeof DocumentItemSchema>;
+
+export const PaymentSchema = z
+	.object({
+		id: z.number().nullish(),
+		date: z.string().nullish(),
+		amount: z.union([z.string(), z.number()]).nullish(),
+		amount_cents: z.number().nullish(),
+		payment_method: z.string().nullish(),
+		processor: z.string().nullish(),
+		processor_id: z.string().nullish(),
+		created_at: z.number().nullish(),
+	})
+	.loose();
+
+export type QuadernoPayment = z.infer<typeof PaymentSchema>;
+
+/**
+ * The shape every billing document shares. Fields the spec omits but the live
+ * API sends are declared too: `blocked`, `delivery_state`, `secure_id`,
+ * `verification_code` and `verification_permalink`.
+ */
+const DocumentSchema = z
+	.object({
+		id: z.number(),
+		number: z.string().nullish(),
+		issue_date: z.string().nullish(),
+		due_date: z.string().nullish(),
+		currency: z.string().nullish(),
+		state: z.string().nullish(),
+		blocked: z.boolean().nullish(),
+		delivery_state: z.string().nullish(),
+		contact: z.record(z.string(), z.unknown()).nullish(),
+		items: z.array(DocumentItemSchema).nullish(),
+		payments: z.array(PaymentSchema).nullish(),
+		taxes: z.array(z.record(z.string(), z.unknown())).nullish(),
+		subtotal_cents: z.number().nullish(),
+		discount_cents: z.number().nullish(),
+		total_cents: z.number().nullish(),
+		processor_fee_cents: z.number().nullish(),
+		notes: z.string().nullish(),
+		payment_details: z.string().nullish(),
+		subject: z.string().nullish(),
+		po_number: z.string().nullish(),
+		tag_list: z.array(z.string()).nullish(),
+		secure_id: z.string().nullish(),
+		verification_code: z.string().nullish(),
+		verification_permalink: z.string().nullish(),
+		permalink: z.string().nullish(),
+		pdf: z.string().nullish(),
+		url: z.string().nullish(),
+		created_at: z.number().nullish(),
+		custom_metadata: z.record(z.string(), z.unknown()).nullish(),
+	})
+	.loose();
+
+export type QuadernoDocument = z.infer<typeof DocumentSchema>;
+
+const DocumentItemWriteSchema = z.object({
+	description: z.string().min(1).describe('Line description.'),
+	quantity: z.number().optional().describe('Defaults to 1.'),
+	unit_price: z
+		.union([z.string(), z.number()])
+		.describe('Price per unit in major units, such as `10.00`.'),
+	discount_rate: z
+		.union([z.string(), z.number()])
+		.optional()
+		.describe('Discount percentage applied to this line.'),
+	product_code: z
+		.string()
+		.optional()
+		.describe('Link this line to a product by its code.'),
+	tax_1_name: z.string().optional(),
+	tax_1_rate: z
+		.number()
+		.optional()
+		.describe('Tax rate percentage for this line.'),
+	tax_1_country: z.string().optional(),
+	tax_1_region: z.string().optional(),
+});
+
+/** The contact reference a document takes: an id is enough. */
+const DocumentContactSchema = z.object({
+	id: z.number().int().positive().describe('The contact being billed.'),
+});
+
+const DocumentWriteShape = {
+	contact: DocumentContactSchema.describe(
+		'The contact being billed, by id. Create one with contacts.create first.',
+	),
+	items: z
+		.array(DocumentItemWriteSchema)
+		.min(1)
+		.max(200)
+		.describe('Line items. Quaderno caps a document at 200 lines.'),
+	currency: z.string().length(3).optional(),
+	issue_date: z
+		.string()
+		.optional()
+		.describe('ISO date, such as `2026-11-10`. Defaults to today.'),
+	due_date: z.string().optional().describe('ISO date.'),
+	notes: z.string().optional(),
+	subject: z.string().optional(),
+	po_number: z.string().optional(),
+	payment_details: z.string().optional(),
+	tag_list: z.array(z.string()).optional(),
+} as const;
+
+// Invoices
+
+const InvoicesListInputSchema = z.object({
+	q: z.string().min(1).optional().describe('Free-text search.'),
+	date: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only documents on this ISO date.'),
+	state: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Only this state. The spec types it as a free string and names no values; observed values include `outstanding`, `paid` and `void`.',
+		),
+	contact: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Only this contact.'),
+	processor_id: z.string().min(1).optional(),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type InvoicesListInput = z.input<typeof InvoicesListInputSchema>;
+
+const InvoicesListResponseSchema = z.object({
+	invoices: z.array(DocumentSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type InvoicesListResponse = z.infer<typeof InvoicesListResponseSchema>;
+
+export const QUADERNO_PAYMENT_METHODS = [
+	'credit_card',
+	'cash',
+	'wire_transfer',
+	'direct_debit',
+	'check',
+	'iou',
+	'paypal',
+	'offset',
+	'other',
+] as const;
+
+const InvoicesCreateInputSchema = z.object({
+	...DocumentWriteShape,
+	payment_method: z
+		.enum(QUADERNO_PAYMENT_METHODS)
+		.optional()
+		.describe(
+			'If set, a payment for the full amount is recorded on creation, marking the invoice paid immediately.',
+		),
+});
+
+export type InvoicesCreateInput = z.input<typeof InvoicesCreateInputSchema>;
+
+const InvoiceGetInputSchema = z.object({ id: IdSchema });
+
+export type InvoiceGetInput = z.input<typeof InvoiceGetInputSchema>;
+
+const InvoiceUpdateInputSchema = z.object({
+	...DocumentWriteShape,
+	id: IdSchema,
+});
+
+export type InvoiceUpdateInput = z.input<typeof InvoiceUpdateInputSchema>;
+
+const InvoiceVoidInputSchema = z.object({
+	id: IdSchema,
+	void_reason: z
+		.string()
+		.min(1)
+		.describe(
+			'Why the invoice is being voided. Required: the API answers 422 `void_reason is required` without it.',
+		),
+	void_description: z.string().optional(),
+});
+
+export type InvoiceVoidInput = z.input<typeof InvoiceVoidInputSchema>;
+
+const InvoiceMarkUncollectibleInputSchema = z.object({ id: IdSchema });
+
+export type InvoiceMarkUncollectibleInput = z.input<
+	typeof InvoiceMarkUncollectibleInputSchema
+>;
+
+const InvoiceRecordPaymentInputSchema = z.object({
+	id: IdSchema,
+	date: z.string().min(1).describe('ISO payment date, such as `2026-11-10`.'),
+	amount: z
+		.union([z.string(), z.number()])
+		.describe(
+			'Amount in major units. Reaching the total marks the invoice paid.',
+		),
+	payment_method: z.enum(QUADERNO_PAYMENT_METHODS),
+	reference: z.string().optional(),
+});
+
+export type InvoiceRecordPaymentInput = z.input<
+	typeof InvoiceRecordPaymentInputSchema
+>;
+
+const InvoiceDeliverInputSchema = z.object({
+	id: IdSchema,
+	email: z
+		.string()
+		.min(3)
+		.optional()
+		.describe('Send to this address instead of the contact default.'),
+});
+
+export type InvoiceDeliverInput = z.input<typeof InvoiceDeliverInputSchema>;
+
+const InvoiceResponseSchema = z.object({ invoice: DocumentSchema });
+
+export type InvoiceResponse = z.infer<typeof InvoiceResponseSchema>;
+
+// Receipts
+
+const ReceiptsListInputSchema = z.object({
+	q: z.string().min(1).optional(),
+	date: z.string().min(1).optional(),
+	state: z.string().min(1).optional(),
+	contact: z.number().int().positive().optional(),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type ReceiptsListInput = z.input<typeof ReceiptsListInputSchema>;
+
+const ReceiptsListResponseSchema = z.object({
+	receipts: z.array(DocumentSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type ReceiptsListResponse = z.infer<typeof ReceiptsListResponseSchema>;
+
+const ReceiptsCreateInputSchema = z.object(DocumentWriteShape);
+
+export type ReceiptsCreateInput = z.input<typeof ReceiptsCreateInputSchema>;
+
+const ReceiptGetInputSchema = z.object({ id: IdSchema });
+
+export type ReceiptGetInput = z.input<typeof ReceiptGetInputSchema>;
+
+const ReceiptVoidInputSchema = z.object({
+	id: IdSchema,
+	void_reason: z.string().min(1).describe('Why the receipt is being voided.'),
+	void_description: z.string().optional(),
+});
+
+export type ReceiptVoidInput = z.input<typeof ReceiptVoidInputSchema>;
+
+const ReceiptDeliverInputSchema = z.object({
+	id: IdSchema,
+	email: z.string().min(3).optional(),
+});
+
+export type ReceiptDeliverInput = z.input<typeof ReceiptDeliverInputSchema>;
+
+const ReceiptResponseSchema = z.object({ receipt: DocumentSchema });
+
+export type ReceiptResponse = z.infer<typeof ReceiptResponseSchema>;
+
+// Credit notes
+
+const CreditsListInputSchema = z.object({
+	q: z.string().min(1).optional(),
+	date: z.string().min(1).optional(),
+	state: z.string().min(1).optional(),
+	contact: z.number().int().positive().optional(),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type CreditsListInput = z.input<typeof CreditsListInputSchema>;
+
+const CreditsListResponseSchema = z.object({
+	credits: z.array(DocumentSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type CreditsListResponse = z.infer<typeof CreditsListResponseSchema>;
+
+const CreditsCreateInputSchema = z.object({
+	...DocumentWriteShape,
+	payment_method: z.enum(QUADERNO_PAYMENT_METHODS).optional(),
+});
+
+export type CreditsCreateInput = z.input<typeof CreditsCreateInputSchema>;
+
+const CreditGetInputSchema = z.object({ id: IdSchema });
+
+export type CreditGetInput = z.input<typeof CreditGetInputSchema>;
+
+const CreditUpdateInputSchema = z.object({
+	...DocumentWriteShape,
+	id: IdSchema,
+});
+
+export type CreditUpdateInput = z.input<typeof CreditUpdateInputSchema>;
+
+const CreditVoidInputSchema = z.object({
+	id: IdSchema,
+	void_reason: z
+		.string()
+		.min(1)
+		.describe('Why the credit note is being voided.'),
+	void_description: z.string().optional(),
+});
+
+export type CreditVoidInput = z.input<typeof CreditVoidInputSchema>;
+
+const CreditDeliverInputSchema = z.object({
+	id: IdSchema,
+	email: z.string().min(3).optional(),
+});
+
+export type CreditDeliverInput = z.input<typeof CreditDeliverInputSchema>;
+
+const CreditResponseSchema = z.object({ credit: DocumentSchema });
+
+export type CreditResponse = z.infer<typeof CreditResponseSchema>;
+
+// Proformas
+
+const ProformasListInputSchema = z.object({
+	q: z.string().min(1).optional(),
+	date: z.string().min(1).optional(),
+	state: z.string().min(1).optional(),
+	contact: z.number().int().positive().optional(),
+	limit: LimitSchema,
+	created_before: CreatedBeforeSchema,
+});
+
+export type ProformasListInput = z.input<typeof ProformasListInputSchema>;
+
+const ProformasListResponseSchema = z.object({
+	proformas: z.array(DocumentSchema),
+	next_created_before: NextCreatedBeforeSchema,
+});
+
+export type ProformasListResponse = z.infer<typeof ProformasListResponseSchema>;
+
+const ProformasCreateInputSchema = z.object(DocumentWriteShape);
+
+export type ProformasCreateInput = z.input<typeof ProformasCreateInputSchema>;
+
+const ProformaGetInputSchema = z.object({ id: IdSchema });
+
+export type ProformaGetInput = z.input<typeof ProformaGetInputSchema>;
+
+const ProformaUpdateInputSchema = z.object({
+	...DocumentWriteShape,
+	id: IdSchema,
+});
+
+export type ProformaUpdateInput = z.input<typeof ProformaUpdateInputSchema>;
+
+const ProformaActionInputSchema = z.object({
+	id: IdSchema.describe('The proforma to act on.'),
+});
+
+export type ProformaActionInput = z.input<typeof ProformaActionInputSchema>;
+
+const ProformaDeliverInputSchema = z.object({
+	id: IdSchema,
+	email: z.string().min(3).optional(),
+});
+
+export type ProformaDeliverInput = z.input<typeof ProformaDeliverInputSchema>;
+
+const ProformaResponseSchema = z.object({ proforma: DocumentSchema });
+
+export type ProformaResponse = z.infer<typeof ProformaResponseSchema>;
+
+// ── Tax ───────────────────────────────────────────────────────────────────
+
+const TaxRateCalculateInputSchema = z
+	.object({
+		to_country: z
+			.string()
+			.length(2)
+			.describe('Two-letter ISO country code of the customer.'),
+		to_postal_code: z
+			.string()
+			.optional()
+			.describe(
+				'Customer postal code, needed in countries that tax by region.',
+			),
+		to_region: z.string().optional(),
+		tax_code: z
+			.string()
+			.optional()
+			.describe('The tax code for the product, such as `standard`.'),
+		amount: z
+			.union([z.string(), z.number()])
+			.optional()
+			.describe('Amount to compute tax on, in major units.'),
+	})
+	.superRefine((value, ctx) => {
+		// The docs say `tax_code` and `amount` are required from API version
+		// 20210316, which this plugin targets. Failing here saves a round trip.
+		if (!value.tax_code) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['tax_code'],
+				message: '`tax_code` is required since API version 20210316.',
+			});
+		}
+		if (value.amount === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['amount'],
+				message: '`amount` is required since API version 20210316.',
+			});
+		}
+	});
+
+export type TaxRateCalculateInput = z.input<typeof TaxRateCalculateInputSchema>;
+
+const TaxRateSchema = z
+	.object({
+		name: z.string().nullish(),
+		rate: z.number().nullish(),
+		country: z.string().nullish(),
+		region: z.string().nullish(),
+		transaction_type: z.string().nullish(),
+		tax_code: z.string().nullish(),
+		notes: z.string().nullish(),
+	})
+	.loose();
+
+/**
+ * Verified live, this answers a **single flat object**, not the
+ * `{ tax_rates, amount, total }` wrapper the spec shows. Captured:
+ * `{"country":"IN","currency":"INR","rate":0.0,"tax_behavior":"exclusive",`
+ * `"tax_code":"standard","subtotal":10.0,"tax_amount":0.0,`
+ * `"total_amount":10.0,"status":"non_taxable"}`.
+ */
+const TaxRateResponseSchema = z
+	.object({
+		country: z.string().nullish(),
+		region: z.string().nullish(),
+		currency: z.string().nullish(),
+		name: z.string().nullish(),
+		rate: z.number().nullish(),
+		tax_behavior: z.string().nullish(),
+		tax_code: z.string().nullish(),
+		product_type: z.string().nullish(),
+		subtotal: z.number().nullish(),
+		tax_amount: z.number().nullish(),
+		total_amount: z.number().nullish(),
+		// `non_taxable` on a zero-rated pair, and the field to branch on.
+		status: z.string().nullish(),
+		import: z.boolean().nullish(),
+		taxable_part: z.number().nullish(),
+		notes: z.string().nullish(),
+	})
+	.loose();
+
+export type TaxRateCalculateResponse = z.infer<typeof TaxRateResponseSchema>;
+
+const TaxIdValidateInputSchema = z.object({
+	tax_id: z.string().min(1).describe('The VAT or tax number to validate.'),
+	country: z.string().length(2).describe('Two-letter ISO country code.'),
+});
+
+export type TaxIdValidateInput = z.input<typeof TaxIdValidateInputSchema>;
+
+const TaxIdValidateResponseSchema = z
+	.object({
+		valid: z.boolean().nullish(),
+		valid_format: z.boolean().nullish(),
+		company_name: z.string().nullish(),
+		company_address: z.string().nullish(),
+	})
+	.loose();
+
+export type TaxIdValidateResponse = z.infer<typeof TaxIdValidateResponseSchema>;
+
+/**
+ * Verified live: a tax code's `id` is a **string slug** (`"standard"`,
+ * `"saas"`), not a number, and it carries `name` beside `description`. The spec
+ * types `id` as an integer, which would fail on every real row.
+ */
+export const TaxCodeSchema = z
+	.object({
+		id: z.string(),
+		code: z.string().nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+	})
+	.loose();
+
+const TaxCodesListInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Quaderno caps this list.'),
+});
+
+export type TaxCodesListInput = z.input<typeof TaxCodesListInputSchema>;
+
+const TaxCodesListResponseSchema = z.object({
+	tax_codes: z.array(TaxCodeSchema),
+});
+
+export type TaxCodesListResponse = z.infer<typeof TaxCodesListResponseSchema>;
+
+const TaxCodeGetInputSchema = z.object({
+	id: z
+		.string()
+		.min(1)
+		.describe('The tax code identifier, such as `standard`.'),
+});
+
+export type TaxCodeGetInput = z.input<typeof TaxCodeGetInputSchema>;
+
+const TaxJurisdictionSchema = z
+	.object({
+		id: z.number().nullish(),
+		country: z.string().nullish(),
+		name: z.string().nullish(),
+		region: z.string().nullish(),
+	})
+	.loose();
+
+const JurisdictionsListInputSchema = z.object({
+	// Verified live: this route ignores `limit`, so none is offered.
+	country: z.string().length(2).optional().describe('Only this country.'),
+});
+
+export type JurisdictionsListInput = z.input<
+	typeof JurisdictionsListInputSchema
+>;
+
+const JurisdictionsListResponseSchema = z.object({
+	jurisdictions: z.array(TaxJurisdictionSchema),
+});
+
+export type JurisdictionsListResponse = z.infer<
+	typeof JurisdictionsListResponseSchema
+>;
+
+const JurisdictionGetInputSchema = z.object({
+	id: IdSchema.describe('The jurisdiction id.'),
+});
+
+export type JurisdictionGetInput = z.input<typeof JurisdictionGetInputSchema>;
+
+const JurisdictionResponseSchema = z.object({
+	jurisdiction: TaxJurisdictionSchema,
+});
+
+export type JurisdictionResponse = z.infer<typeof JurisdictionResponseSchema>;
+
+// ── Account, webhooks, transactions ───────────────────────────────────────
+
+const PingInputSchema = z.object({});
+
+export type PingInput = z.input<typeof PingInputSchema>;
+
+/**
+ * `/ping` verifies credentials and, per the docs, does not consume an API call.
+ * The live response is exactly `{"status":"OK"}`.
+ */
+const PingResponseSchema = z.object({ status: z.string() }).loose();
+
+export type PingResponse = z.infer<typeof PingResponseSchema>;
+
+const AuthorizationInputSchema = z.object({});
+
+export type AuthorizationInput = z.input<typeof AuthorizationInputSchema>;
+
+/**
+ * Callable from the bare `quadernoapp.com` host as well as the account host,
+ * and the way a caller discovers which account a key belongs to: `href` is the
+ * account's own base URL.
+ */
+const IdentitySchema = z
+	.object({
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		publishable_key: z.string().nullish(),
+		href: z.string().nullish(),
+		default_api_version: z.number().nullish(),
+	})
+	.loose();
+
+const AuthorizationResponseSchema = z.object({ identity: IdentitySchema });
+
+export type AuthorizationResponse = z.infer<typeof AuthorizationResponseSchema>;
+
+const TransactionCreateInputSchema = z.object({
+	contact: DocumentContactSchema.describe('The customer, by id.'),
+	items: z.array(DocumentItemWriteSchema).min(1).max(200),
+	currency: z.string().length(3).optional(),
+	date: z.string().min(1).describe('ISO date of the sale.'),
+	payment_method: z.enum(QUADERNO_PAYMENT_METHODS).optional(),
+	notes: z.string().optional(),
+	tag_list: z.array(z.string()).optional(),
+});
+
+export type TransactionCreateInput = z.input<
+	typeof TransactionCreateInputSchema
+>;
+
+const TransactionResponseSchema = z.object({ transaction: DocumentSchema });
+
+export type TransactionResponse = z.infer<typeof TransactionResponseSchema>;
+
+const WebhooksListInputSchema = z.object({});
+
+export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
+
+export const QUADERNO_WEBHOOK_EVENTS = [
+	'invoice.created',
+	'invoice.sent',
+	'invoice.paid',
+	'invoice.voided',
+	'receipt.created',
+	'credit.created',
+	'proforma.created',
+	'expense.created',
+] as const;
+
+const WebhookSchema = z
+	.object({
+		id: z.number().nullish(),
+		url: z.string().nullish(),
+		event_name: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		created_at: z.number().nullish(),
+	})
+	.loose();
+
+export type QuadernoWebhook = z.infer<typeof WebhookSchema>;
+
+const WebhooksListResponseSchema = z.object({
+	webhooks: z.array(WebhookSchema),
+});
+
+export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
+
+// ── Registry ──────────────────────────────────────────────────────────────
+
+export type QuadernoEndpointInputs = {
+	ping: PingInput;
+	authorization: AuthorizationInput;
+	contactsList: ContactsListInput;
+	contactsCreate: ContactsCreateInput;
+	contactsGet: ContactsGetInput;
+	contactsUpdate: ContactsUpdateInput;
+	contactsDelete: ContactsDeleteInput;
+	productsList: ProductsListInput;
+	productsCreate: ProductsCreateInput;
+	productsGet: ProductsGetInput;
+	productsUpdate: ProductsUpdateInput;
+	productsDelete: ProductsDeleteInput;
+	invoicesList: InvoicesListInput;
+	invoicesCreate: InvoicesCreateInput;
+	invoicesGet: InvoiceGetInput;
+	invoicesUpdate: InvoiceUpdateInput;
+	invoicesVoid: InvoiceVoidInput;
+	invoicesMarkUncollectible: InvoiceMarkUncollectibleInput;
+	invoicesRecordPayment: InvoiceRecordPaymentInput;
+	invoicesDeliver: InvoiceDeliverInput;
+	receiptsList: ReceiptsListInput;
+	receiptsCreate: ReceiptsCreateInput;
+	receiptsGet: ReceiptGetInput;
+	receiptsVoid: ReceiptVoidInput;
+	receiptsDeliver: ReceiptDeliverInput;
+	creditsList: CreditsListInput;
+	creditsCreate: CreditsCreateInput;
+	creditsGet: CreditGetInput;
+	creditsUpdate: CreditUpdateInput;
+	creditsVoid: CreditVoidInput;
+	creditsDeliver: CreditDeliverInput;
+	proformasList: ProformasListInput;
+	proformasCreate: ProformasCreateInput;
+	proformasGet: ProformaGetInput;
+	proformasUpdate: ProformaUpdateInput;
+	proformasAccept: ProformaActionInput;
+	proformasDecline: ProformaActionInput;
+	proformasRevert: ProformaActionInput;
+	proformasConvert: ProformaActionInput;
+	proformasDeliver: ProformaDeliverInput;
+	taxRatesCalculate: TaxRateCalculateInput;
+	taxIdsValidate: TaxIdValidateInput;
+	taxCodesList: TaxCodesListInput;
+	taxCodesGet: TaxCodeGetInput;
+	jurisdictionsList: JurisdictionsListInput;
+	jurisdictionsGet: JurisdictionGetInput;
+	transactionsCreate: TransactionCreateInput;
+	webhooksList: WebhooksListInput;
+};
+
+export type QuadernoEndpointOutputs = {
+	ping: PingResponse;
+	authorization: AuthorizationResponse;
+	contactsList: ContactsListResponse;
+	contactsCreate: ContactResponse;
+	contactsGet: ContactResponse;
+	contactsUpdate: ContactResponse;
+	contactsDelete: DeleteResponse;
+	productsList: ProductsListResponse;
+	productsCreate: ProductResponse;
+	productsGet: ProductResponse;
+	productsUpdate: ProductResponse;
+	productsDelete: DeleteResponse;
+	invoicesList: InvoicesListResponse;
+	invoicesCreate: InvoiceResponse;
+	invoicesGet: InvoiceResponse;
+	invoicesUpdate: InvoiceResponse;
+	invoicesVoid: InvoiceResponse;
+	invoicesMarkUncollectible: InvoiceResponse;
+	invoicesRecordPayment: InvoiceResponse;
+	invoicesDeliver: InvoiceResponse;
+	receiptsList: ReceiptsListResponse;
+	receiptsCreate: ReceiptResponse;
+	receiptsGet: ReceiptResponse;
+	receiptsVoid: ReceiptResponse;
+	receiptsDeliver: ReceiptResponse;
+	creditsList: CreditsListResponse;
+	creditsCreate: CreditResponse;
+	creditsGet: CreditResponse;
+	creditsUpdate: CreditResponse;
+	creditsVoid: CreditResponse;
+	creditsDeliver: CreditResponse;
+	proformasList: ProformasListResponse;
+	proformasCreate: ProformaResponse;
+	proformasGet: ProformaResponse;
+	proformasUpdate: ProformaResponse;
+	proformasAccept: ProformaResponse;
+	proformasDecline: ProformaResponse;
+	proformasRevert: ProformaResponse;
+	proformasConvert: ProformaResponse;
+	proformasDeliver: ProformaResponse;
+	taxRatesCalculate: TaxRateCalculateResponse;
+	taxIdsValidate: TaxIdValidateResponse;
+	taxCodesList: TaxCodesListResponse;
+	taxCodesGet: TaxCodeResponse;
+	jurisdictionsList: JurisdictionsListResponse;
+	jurisdictionsGet: JurisdictionResponse;
+	transactionsCreate: TransactionResponse;
+	webhooksList: WebhooksListResponse;
+};
+
+export const QuadernoEndpointInputSchemas = {
+	ping: PingInputSchema,
+	authorization: AuthorizationInputSchema,
+	contactsList: ContactsListInputSchema,
+	contactsCreate: ContactsCreateInputSchema,
+	contactsGet: ContactsGetInputSchema,
+	contactsUpdate: ContactsUpdateInputSchema,
+	contactsDelete: ContactsDeleteInputSchema,
+	productsList: ProductsListInputSchema,
+	productsCreate: ProductsCreateInputSchema,
+	productsGet: ProductsGetInputSchema,
+	productsUpdate: ProductsUpdateInputSchema,
+	productsDelete: ProductsDeleteInputSchema,
+	invoicesList: InvoicesListInputSchema,
+	invoicesCreate: InvoicesCreateInputSchema,
+	invoicesGet: InvoiceGetInputSchema,
+	invoicesUpdate: InvoiceUpdateInputSchema,
+	invoicesVoid: InvoiceVoidInputSchema,
+	invoicesMarkUncollectible: InvoiceMarkUncollectibleInputSchema,
+	invoicesRecordPayment: InvoiceRecordPaymentInputSchema,
+	invoicesDeliver: InvoiceDeliverInputSchema,
+	receiptsList: ReceiptsListInputSchema,
+	receiptsCreate: ReceiptsCreateInputSchema,
+	receiptsGet: ReceiptGetInputSchema,
+	receiptsVoid: ReceiptVoidInputSchema,
+	receiptsDeliver: ReceiptDeliverInputSchema,
+	creditsList: CreditsListInputSchema,
+	creditsCreate: CreditsCreateInputSchema,
+	creditsGet: CreditGetInputSchema,
+	creditsUpdate: CreditUpdateInputSchema,
+	creditsVoid: CreditVoidInputSchema,
+	creditsDeliver: CreditDeliverInputSchema,
+	proformasList: ProformasListInputSchema,
+	proformasCreate: ProformasCreateInputSchema,
+	proformasGet: ProformaGetInputSchema,
+	proformasUpdate: ProformaUpdateInputSchema,
+	proformasAccept: ProformaActionInputSchema,
+	proformasDecline: ProformaActionInputSchema,
+	proformasRevert: ProformaActionInputSchema,
+	proformasConvert: ProformaActionInputSchema,
+	proformasDeliver: ProformaDeliverInputSchema,
+	taxRatesCalculate: TaxRateCalculateInputSchema,
+	taxIdsValidate: TaxIdValidateInputSchema,
+	taxCodesList: TaxCodesListInputSchema,
+	taxCodesGet: TaxCodeGetInputSchema,
+	jurisdictionsList: JurisdictionsListInputSchema,
+	jurisdictionsGet: JurisdictionGetInputSchema,
+	transactionsCreate: TransactionCreateInputSchema,
+	webhooksList: WebhooksListInputSchema,
+} as const;
+
+const TaxCodeResponseSchema = z.object({ tax_code: TaxCodeSchema });
+
+export type TaxCodeResponse = z.infer<typeof TaxCodeResponseSchema>;
+export const QuadernoEndpointOutputSchemas = {
+	ping: PingResponseSchema,
+	authorization: AuthorizationResponseSchema,
+	contactsList: ContactsListResponseSchema,
+	contactsCreate: ContactResponseSchema,
+	contactsGet: ContactResponseSchema,
+	contactsUpdate: ContactResponseSchema,
+	contactsDelete: DeleteResponseSchema,
+	productsList: ProductsListResponseSchema,
+	productsCreate: ProductResponseSchema,
+	productsGet: ProductResponseSchema,
+	productsUpdate: ProductResponseSchema,
+	productsDelete: DeleteResponseSchema,
+	invoicesList: InvoicesListResponseSchema,
+	invoicesCreate: InvoiceResponseSchema,
+	invoicesGet: InvoiceResponseSchema,
+	invoicesUpdate: InvoiceResponseSchema,
+	invoicesVoid: InvoiceResponseSchema,
+	invoicesMarkUncollectible: InvoiceResponseSchema,
+	invoicesRecordPayment: InvoiceResponseSchema,
+	invoicesDeliver: InvoiceResponseSchema,
+	receiptsList: ReceiptsListResponseSchema,
+	receiptsCreate: ReceiptResponseSchema,
+	receiptsGet: ReceiptResponseSchema,
+	receiptsVoid: ReceiptResponseSchema,
+	receiptsDeliver: ReceiptResponseSchema,
+	creditsList: CreditsListResponseSchema,
+	creditsCreate: CreditResponseSchema,
+	creditsGet: CreditResponseSchema,
+	creditsUpdate: CreditResponseSchema,
+	creditsVoid: CreditResponseSchema,
+	creditsDeliver: CreditResponseSchema,
+	proformasList: ProformasListResponseSchema,
+	proformasCreate: ProformaResponseSchema,
+	proformasGet: ProformaResponseSchema,
+	proformasUpdate: ProformaResponseSchema,
+	proformasAccept: ProformaResponseSchema,
+	proformasDecline: ProformaResponseSchema,
+	proformasRevert: ProformaResponseSchema,
+	proformasConvert: ProformaResponseSchema,
+	proformasDeliver: ProformaResponseSchema,
+	taxRatesCalculate: TaxRateResponseSchema,
+	taxIdsValidate: TaxIdValidateResponseSchema,
+	taxCodesList: TaxCodesListResponseSchema,
+	taxCodesGet: TaxCodeResponseSchema,
+	jurisdictionsList: JurisdictionsListResponseSchema,
+	jurisdictionsGet: JurisdictionResponseSchema,
+	transactionsCreate: TransactionResponseSchema,
+	webhooksList: WebhooksListResponseSchema,
+} as const;

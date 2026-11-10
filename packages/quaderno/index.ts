@@ -1,0 +1,744 @@
+import type {
+	AccountKeyManagerFor,
+	AuthTypes,
+	BindEndpoints,
+	BindWebhooks,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairPlugin,
+	CorsairPluginContext,
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
+} from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { Billing, Contacts, Products, Tax } from './endpoints';
+import type {
+	QuadernoEndpointInputs,
+	QuadernoEndpointOutputs,
+} from './endpoints/types';
+import {
+	QuadernoEndpointInputSchemas,
+	QuadernoEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
+import { QuadernoSchema } from './schema';
+
+export type QuadernoPluginOptions = {
+	authType?: PickAuth<'api_key'>;
+	/** A Quaderno API key, `sk_live_…` or `sk_test_…`. Overrides the stored key. */
+	key?: string;
+	/**
+	 * The account subdomain, such as `assur-224963`. There is no shared host:
+	 * every account answers on its own. Overrides the stored value.
+	 */
+	account?: string;
+	hooks?: InternalQuadernoPlugin['hooks'];
+	webhookHooks?: InternalQuadernoPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
+	permissions?: PluginPermissionsConfig<typeof quadernoEndpointsNested>;
+};
+
+/**
+ * The account key manager this plugin reads: the stored key plus the account
+ * name, both generated from `quadernoAuthConfig`'s `account: ['account_name']`.
+ * Passing the auth config through is what gives `keys` the `get_account_name`
+ * accessor; declaring the type by hand would not match the runtime manager.
+ */
+export type QuadernoKeyBuilderContext = KeyBuilderContext<
+	QuadernoPluginOptions,
+	typeof quadernoAuthConfig
+>;
+
+/**
+ * What an endpoint reads. Core spreads `key` onto the context, and `ctx.keys`
+ * is there too; the account name is read through it because the host is
+ * per-account and core has no hook for threading a second credential.
+ */
+export type QuadernoContext = CorsairPluginContext<
+	typeof QuadernoSchema,
+	QuadernoPluginOptions
+> & {
+	keys: AccountKeyManagerFor<'api_key', typeof quadernoAuthConfig>;
+	/** The plugin's own options, so an explicit `account` wins over storage. */
+	options: QuadernoPluginOptions;
+};
+
+export type QuadernoBoundEndpoints = BindEndpoints<
+	typeof quadernoEndpointsNested
+>;
+
+type QuadernoEndpoint<K extends keyof QuadernoEndpointOutputs> =
+	CorsairEndpoint<
+		QuadernoContext,
+		QuadernoEndpointInputs[K],
+		QuadernoEndpointOutputs[K]
+	>;
+
+export type QuadernoEndpoints = {
+	ping: QuadernoEndpoint<'ping'>;
+	authorization: QuadernoEndpoint<'authorization'>;
+	contactsList: QuadernoEndpoint<'contactsList'>;
+	contactsCreate: QuadernoEndpoint<'contactsCreate'>;
+	contactsGet: QuadernoEndpoint<'contactsGet'>;
+	contactsUpdate: QuadernoEndpoint<'contactsUpdate'>;
+	contactsDelete: QuadernoEndpoint<'contactsDelete'>;
+	productsList: QuadernoEndpoint<'productsList'>;
+	productsCreate: QuadernoEndpoint<'productsCreate'>;
+	productsGet: QuadernoEndpoint<'productsGet'>;
+	productsUpdate: QuadernoEndpoint<'productsUpdate'>;
+	productsDelete: QuadernoEndpoint<'productsDelete'>;
+	invoicesList: QuadernoEndpoint<'invoicesList'>;
+	invoicesCreate: QuadernoEndpoint<'invoicesCreate'>;
+	invoicesGet: QuadernoEndpoint<'invoicesGet'>;
+	invoicesUpdate: QuadernoEndpoint<'invoicesUpdate'>;
+	invoicesVoid: QuadernoEndpoint<'invoicesVoid'>;
+	invoicesMarkUncollectible: QuadernoEndpoint<'invoicesMarkUncollectible'>;
+	invoicesRecordPayment: QuadernoEndpoint<'invoicesRecordPayment'>;
+	invoicesDeliver: QuadernoEndpoint<'invoicesDeliver'>;
+	receiptsList: QuadernoEndpoint<'receiptsList'>;
+	receiptsCreate: QuadernoEndpoint<'receiptsCreate'>;
+	receiptsGet: QuadernoEndpoint<'receiptsGet'>;
+	receiptsVoid: QuadernoEndpoint<'receiptsVoid'>;
+	receiptsDeliver: QuadernoEndpoint<'receiptsDeliver'>;
+	creditsList: QuadernoEndpoint<'creditsList'>;
+	creditsCreate: QuadernoEndpoint<'creditsCreate'>;
+	creditsGet: QuadernoEndpoint<'creditsGet'>;
+	creditsUpdate: QuadernoEndpoint<'creditsUpdate'>;
+	creditsVoid: QuadernoEndpoint<'creditsVoid'>;
+	creditsDeliver: QuadernoEndpoint<'creditsDeliver'>;
+	proformasList: QuadernoEndpoint<'proformasList'>;
+	proformasCreate: QuadernoEndpoint<'proformasCreate'>;
+	proformasGet: QuadernoEndpoint<'proformasGet'>;
+	proformasUpdate: QuadernoEndpoint<'proformasUpdate'>;
+	proformasAccept: QuadernoEndpoint<'proformasAccept'>;
+	proformasDecline: QuadernoEndpoint<'proformasDecline'>;
+	proformasRevert: QuadernoEndpoint<'proformasRevert'>;
+	proformasConvert: QuadernoEndpoint<'proformasConvert'>;
+	proformasDeliver: QuadernoEndpoint<'proformasDeliver'>;
+	taxRatesCalculate: QuadernoEndpoint<'taxRatesCalculate'>;
+	taxIdsValidate: QuadernoEndpoint<'taxIdsValidate'>;
+	taxCodesList: QuadernoEndpoint<'taxCodesList'>;
+	taxCodesGet: QuadernoEndpoint<'taxCodesGet'>;
+	jurisdictionsList: QuadernoEndpoint<'jurisdictionsList'>;
+	jurisdictionsGet: QuadernoEndpoint<'jurisdictionsGet'>;
+	transactionsCreate: QuadernoEndpoint<'transactionsCreate'>;
+	webhooksList: QuadernoEndpoint<'webhooksList'>;
+};
+
+/**
+ * Quaderno sends webhooks, but they are configured in the dashboard and carry
+ * no signing secret in the docs, so nothing here can verify a delivery. No
+ * inbound webhook is registered and `pluginWebhookMatcher` refuses everything.
+ */
+export type QuadernoWebhooks = Record<never, never>;
+
+export type QuadernoBoundWebhooks = BindWebhooks<typeof quadernoWebhooksNested>;
+
+const quadernoEndpointsNested = {
+	ping: Tax.ping,
+	authorization: Tax.authorization,
+	contacts: {
+		list: Contacts.list,
+		create: Contacts.create,
+		get: Contacts.get,
+		update: Contacts.update,
+		delete: Contacts.remove,
+	},
+	products: {
+		list: Products.list,
+		create: Products.create,
+		get: Products.get,
+		update: Products.update,
+		delete: Products.remove,
+	},
+	invoices: {
+		list: Billing.list,
+		create: Billing.create,
+		get: Billing.get,
+		update: Billing.update,
+		void: Billing.voidInvoice,
+		markUncollectible: Billing.markUncollectible,
+		recordPayment: Billing.recordPayment,
+		deliver: Billing.deliver,
+	},
+	receipts: {
+		list: Billing.receiptsList,
+		create: Billing.receiptsCreate,
+		get: Billing.receiptsGet,
+		void: Billing.receiptsVoid,
+		deliver: Billing.receiptsDeliver,
+	},
+	credits: {
+		list: Billing.creditsList,
+		create: Billing.creditsCreate,
+		get: Billing.creditsGet,
+		update: Billing.creditsUpdate,
+		void: Billing.creditsVoid,
+		deliver: Billing.creditsDeliver,
+	},
+	proformas: {
+		list: Billing.proformasList,
+		create: Billing.proformasCreate,
+		get: Billing.proformasGet,
+		update: Billing.proformasUpdate,
+		accept: Billing.proformasAccept,
+		decline: Billing.proformasDecline,
+		revert: Billing.proformasRevert,
+		convert: Billing.proformasConvert,
+		deliver: Billing.proformasDeliver,
+	},
+	taxRates: {
+		calculate: Tax.calculate,
+	},
+	taxIds: {
+		validate: Tax.validateTaxId,
+	},
+	taxCodes: {
+		list: Tax.taxCodesList,
+		get: Tax.taxCodesGet,
+	},
+	jurisdictions: {
+		list: Tax.jurisdictionsList,
+		get: Tax.jurisdictionsGet,
+	},
+	transactions: {
+		create: Tax.createTransaction,
+	},
+	webhooks: {
+		list: Tax.webhooksList,
+	},
+} as const;
+
+const quadernoWebhooksNested = {} as const;
+
+const schemaEntries = {
+	ping: [QuadernoEndpointInputSchemas.ping, QuadernoEndpointOutputSchemas.ping],
+	authorization: [
+		QuadernoEndpointInputSchemas.authorization,
+		QuadernoEndpointOutputSchemas.authorization,
+	],
+	'contacts.list': [
+		QuadernoEndpointInputSchemas.contactsList,
+		QuadernoEndpointOutputSchemas.contactsList,
+	],
+	'contacts.create': [
+		QuadernoEndpointInputSchemas.contactsCreate,
+		QuadernoEndpointOutputSchemas.contactsCreate,
+	],
+	'contacts.get': [
+		QuadernoEndpointInputSchemas.contactsGet,
+		QuadernoEndpointOutputSchemas.contactsGet,
+	],
+	'contacts.update': [
+		QuadernoEndpointInputSchemas.contactsUpdate,
+		QuadernoEndpointOutputSchemas.contactsUpdate,
+	],
+	'contacts.delete': [
+		QuadernoEndpointInputSchemas.contactsDelete,
+		QuadernoEndpointOutputSchemas.contactsDelete,
+	],
+	'products.list': [
+		QuadernoEndpointInputSchemas.productsList,
+		QuadernoEndpointOutputSchemas.productsList,
+	],
+	'products.create': [
+		QuadernoEndpointInputSchemas.productsCreate,
+		QuadernoEndpointOutputSchemas.productsCreate,
+	],
+	'products.get': [
+		QuadernoEndpointInputSchemas.productsGet,
+		QuadernoEndpointOutputSchemas.productsGet,
+	],
+	'products.update': [
+		QuadernoEndpointInputSchemas.productsUpdate,
+		QuadernoEndpointOutputSchemas.productsUpdate,
+	],
+	'products.delete': [
+		QuadernoEndpointInputSchemas.productsDelete,
+		QuadernoEndpointOutputSchemas.productsDelete,
+	],
+	'invoices.list': [
+		QuadernoEndpointInputSchemas.invoicesList,
+		QuadernoEndpointOutputSchemas.invoicesList,
+	],
+	'invoices.create': [
+		QuadernoEndpointInputSchemas.invoicesCreate,
+		QuadernoEndpointOutputSchemas.invoicesCreate,
+	],
+	'invoices.get': [
+		QuadernoEndpointInputSchemas.invoicesGet,
+		QuadernoEndpointOutputSchemas.invoicesGet,
+	],
+	'invoices.update': [
+		QuadernoEndpointInputSchemas.invoicesUpdate,
+		QuadernoEndpointOutputSchemas.invoicesUpdate,
+	],
+	'invoices.void': [
+		QuadernoEndpointInputSchemas.invoicesVoid,
+		QuadernoEndpointOutputSchemas.invoicesVoid,
+	],
+	'invoices.markUncollectible': [
+		QuadernoEndpointInputSchemas.invoicesMarkUncollectible,
+		QuadernoEndpointOutputSchemas.invoicesMarkUncollectible,
+	],
+	'invoices.recordPayment': [
+		QuadernoEndpointInputSchemas.invoicesRecordPayment,
+		QuadernoEndpointOutputSchemas.invoicesRecordPayment,
+	],
+	'invoices.deliver': [
+		QuadernoEndpointInputSchemas.invoicesDeliver,
+		QuadernoEndpointOutputSchemas.invoicesDeliver,
+	],
+	'receipts.list': [
+		QuadernoEndpointInputSchemas.receiptsList,
+		QuadernoEndpointOutputSchemas.receiptsList,
+	],
+	'receipts.create': [
+		QuadernoEndpointInputSchemas.receiptsCreate,
+		QuadernoEndpointOutputSchemas.receiptsCreate,
+	],
+	'receipts.get': [
+		QuadernoEndpointInputSchemas.receiptsGet,
+		QuadernoEndpointOutputSchemas.receiptsGet,
+	],
+	'receipts.void': [
+		QuadernoEndpointInputSchemas.receiptsVoid,
+		QuadernoEndpointOutputSchemas.receiptsVoid,
+	],
+	'receipts.deliver': [
+		QuadernoEndpointInputSchemas.receiptsDeliver,
+		QuadernoEndpointOutputSchemas.receiptsDeliver,
+	],
+	'credits.list': [
+		QuadernoEndpointInputSchemas.creditsList,
+		QuadernoEndpointOutputSchemas.creditsList,
+	],
+	'credits.create': [
+		QuadernoEndpointInputSchemas.creditsCreate,
+		QuadernoEndpointOutputSchemas.creditsCreate,
+	],
+	'credits.get': [
+		QuadernoEndpointInputSchemas.creditsGet,
+		QuadernoEndpointOutputSchemas.creditsGet,
+	],
+	'credits.update': [
+		QuadernoEndpointInputSchemas.creditsUpdate,
+		QuadernoEndpointOutputSchemas.creditsUpdate,
+	],
+	'credits.void': [
+		QuadernoEndpointInputSchemas.creditsVoid,
+		QuadernoEndpointOutputSchemas.creditsVoid,
+	],
+	'credits.deliver': [
+		QuadernoEndpointInputSchemas.creditsDeliver,
+		QuadernoEndpointOutputSchemas.creditsDeliver,
+	],
+	'proformas.list': [
+		QuadernoEndpointInputSchemas.proformasList,
+		QuadernoEndpointOutputSchemas.proformasList,
+	],
+	'proformas.create': [
+		QuadernoEndpointInputSchemas.proformasCreate,
+		QuadernoEndpointOutputSchemas.proformasCreate,
+	],
+	'proformas.get': [
+		QuadernoEndpointInputSchemas.proformasGet,
+		QuadernoEndpointOutputSchemas.proformasGet,
+	],
+	'proformas.update': [
+		QuadernoEndpointInputSchemas.proformasUpdate,
+		QuadernoEndpointOutputSchemas.proformasUpdate,
+	],
+	'proformas.accept': [
+		QuadernoEndpointInputSchemas.proformasAccept,
+		QuadernoEndpointOutputSchemas.proformasAccept,
+	],
+	'proformas.decline': [
+		QuadernoEndpointInputSchemas.proformasDecline,
+		QuadernoEndpointOutputSchemas.proformasDecline,
+	],
+	'proformas.revert': [
+		QuadernoEndpointInputSchemas.proformasRevert,
+		QuadernoEndpointOutputSchemas.proformasRevert,
+	],
+	'proformas.convert': [
+		QuadernoEndpointInputSchemas.proformasConvert,
+		QuadernoEndpointOutputSchemas.proformasConvert,
+	],
+	'proformas.deliver': [
+		QuadernoEndpointInputSchemas.proformasDeliver,
+		QuadernoEndpointOutputSchemas.proformasDeliver,
+	],
+	'taxRates.calculate': [
+		QuadernoEndpointInputSchemas.taxRatesCalculate,
+		QuadernoEndpointOutputSchemas.taxRatesCalculate,
+	],
+	'taxIds.validate': [
+		QuadernoEndpointInputSchemas.taxIdsValidate,
+		QuadernoEndpointOutputSchemas.taxIdsValidate,
+	],
+	'taxCodes.list': [
+		QuadernoEndpointInputSchemas.taxCodesList,
+		QuadernoEndpointOutputSchemas.taxCodesList,
+	],
+	'taxCodes.get': [
+		QuadernoEndpointInputSchemas.taxCodesGet,
+		QuadernoEndpointOutputSchemas.taxCodesGet,
+	],
+	'jurisdictions.list': [
+		QuadernoEndpointInputSchemas.jurisdictionsList,
+		QuadernoEndpointOutputSchemas.jurisdictionsList,
+	],
+	'jurisdictions.get': [
+		QuadernoEndpointInputSchemas.jurisdictionsGet,
+		QuadernoEndpointOutputSchemas.jurisdictionsGet,
+	],
+	'transactions.create': [
+		QuadernoEndpointInputSchemas.transactionsCreate,
+		QuadernoEndpointOutputSchemas.transactionsCreate,
+	],
+	'webhooks.list': [
+		QuadernoEndpointInputSchemas.webhooksList,
+		QuadernoEndpointOutputSchemas.webhooksList,
+	],
+} as const;
+
+export const quadernoEndpointSchemas = Object.fromEntries(
+	Object.entries(schemaEntries).map(([path, [input, output]]) => [
+		path,
+		{ input, output },
+	]),
+) as unknown as RequiredPluginEndpointSchemas<typeof quadernoEndpointsNested>;
+
+const quadernoWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof quadernoWebhooksNested
+	>;
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
+
+const quadernoEndpointMeta = {
+	ping: {
+		riskLevel: 'read',
+		description:
+			'Checks that the key and account name are valid. The docs say it does not consume an API call. Answers `{"status":"OK"}`.',
+	},
+	authorization: {
+		riskLevel: 'read',
+		description:
+			'Which account this key belongs to: `identity.href` is that account\u2019s base URL, so this is how a caller finds the subdomain to pass as `account`. Also returns the default API version.',
+	},
+	'contacts.list': {
+		riskLevel: 'read',
+		description:
+			'Customers, newest first, answered as a bare array. Search with `q` and page with `created_before`; `next_created_before` carries the next cursor.',
+	},
+	'contacts.create': {
+		riskLevel: 'write',
+		description:
+			'Adds a customer. Quaderno rejects a duplicate email with 422, so this is safe to call from a retry.',
+	},
+	'contacts.get': {
+		riskLevel: 'read',
+		description:
+			'One customer by id. An unknown id answers **401**, not 404, with \u201cUnauthorized access or contact does not exist\u201d; the plugin reports it as `not_found_or_denied`.',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description:
+			'Changes a customer. Fields left out are left unchanged by the API, not cleared.',
+	},
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Removes a customer. Quaderno refuses with 422 while the contact still has documents attached, so invoices must be voided first. Answers 204 with no body.',
+	},
+	'products.list': {
+		riskLevel: 'read',
+		description:
+			'Your product catalogue, newest first, from the `/items` route. A bare array; page with `created_before`.',
+	},
+	'products.create': {
+		riskLevel: 'write',
+		description:
+			'Adds a product. `name`, `code` and `unit_cost` are required, and `kind` is `one_off` or `subscription`, not the value the spec\u2019s example suggests.',
+	},
+	'products.get': {
+		riskLevel: 'read',
+		description:
+			'One product by id, with its price, tax class and the currency it is sold in.',
+	},
+	'products.update': {
+		riskLevel: 'write',
+		description:
+			'Changes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.',
+	},
+	'products.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Removes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.',
+	},
+	'invoices.list': {
+		riskLevel: 'read',
+		description:
+			'Invoices, newest first, as a bare array. Filter by date, state, contact or processor id, search with `q`, and page with `created_before`.',
+	},
+	'invoices.create': {
+		riskLevel: 'write',
+		description:
+			'Issues an invoice and **allocates a document number**, which is not recoverable: invoices cannot be deleted, only voided. Passing `payment_method` records a full payment immediately and marks it paid. Needs a `contact` id and at least one line item.',
+	},
+	'invoices.get': {
+		riskLevel: 'read',
+		description:
+			'One invoice with its lines, taxes and payments. An unknown id answers 401 rather than 404.',
+	},
+	'invoices.update': {
+		riskLevel: 'write',
+		description:
+			'Changes an invoice. Quaderno only allows this while the invoice is still editable; a paid or voided one is refused.',
+	},
+	'invoices.void': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Reverses an invoice the way tax law requires. It cannot be deleted: voiding records an `offset` payment for the full amount and issues a credit note beside it. `void_reason` is required and the API answers 422 without it.',
+	},
+	'invoices.markUncollectible': {
+		riskLevel: 'write',
+		description:
+			'Marks an unpaid invoice as bad debt. Reversible by recording a payment later, unlike a void.',
+	},
+	'invoices.recordPayment': {
+		riskLevel: 'write',
+		description:
+			'Records a payment against an invoice; reaching the total marks it paid. This creates a real financial record, not a note.',
+	},
+	'invoices.deliver': {
+		riskLevel: 'write',
+		description:
+			'Sends the invoice to the customer by email using the account template. A **GET that mutates**, so it is a write here and never replayed: delivering twice emails twice. Records delivery history and needs a contact with a valid email.',
+	},
+	'receipts.list': {
+		riskLevel: 'read',
+		description:
+			'Receipts, newest first, as a bare array with the same filters as invoices: date, state and contact.',
+	},
+	'receipts.create': {
+		riskLevel: 'write',
+		description:
+			'Issues a receipt. Like an invoice, it consumes a document number and cannot be deleted.',
+	},
+	'receipts.get': {
+		riskLevel: 'read',
+		description:
+			'One receipt by id, with its lines, payments and the invoice it settles.',
+	},
+	'receipts.void': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Voids a receipt. `void_reason` is required, as for an invoice.',
+	},
+	'receipts.deliver': {
+		riskLevel: 'write',
+		description:
+			'Emails the receipt to the customer. A GET that mutates, so it is a write and is never replayed.',
+	},
+	'credits.list': {
+		riskLevel: 'read',
+		description:
+			'Credit notes, newest first, as a bare array. A voided invoice leaves one of these beside it.',
+	},
+	'credits.create': {
+		riskLevel: 'write',
+		description:
+			'Issues a credit note. It consumes a document number and cannot be deleted, only voided.',
+	},
+	'credits.get': {
+		riskLevel: 'read',
+		description:
+			'One credit note by id, with its lines, payments and the document it credits.',
+	},
+	'credits.update': {
+		riskLevel: 'write',
+		description:
+			'Changes a credit note. Like an invoice, only while it is still editable.',
+	},
+	'credits.void': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Voids a credit note. `void_reason` is required, exactly as for an invoice.',
+	},
+	'credits.deliver': {
+		riskLevel: 'write',
+		description:
+			'Emails the credit note. A GET that mutates, so it is a write and is never replayed.',
+	},
+	'proformas.list': {
+		riskLevel: 'read',
+		description:
+			'Proforma invoices, newest first, as a bare array. A proforma is not a tax document, so it carries no invoice number.',
+	},
+	'proformas.create': {
+		riskLevel: 'write',
+		description:
+			'Creates a proforma. Unlike an invoice this is not a tax document, so it does not consume an invoice number.',
+	},
+	'proformas.get': {
+		riskLevel: 'read',
+		description:
+			'One proforma by id, with its lines and the state it was accepted or declined in.',
+	},
+	'proformas.update': {
+		riskLevel: 'write',
+		description:
+			'Changes a proforma. It stays a proforma until `proformas.convert` issues a real invoice.',
+	},
+	'proformas.accept': {
+		riskLevel: 'write',
+		description:
+			'Marks a proforma accepted. A state change the customer would normally trigger; reversible with `proformas.revert`.',
+	},
+	'proformas.decline': {
+		riskLevel: 'write',
+		description:
+			'Marks a proforma declined. Reversible with `proformas.revert`.',
+	},
+	'proformas.revert': {
+		riskLevel: 'write',
+		description:
+			'Puts an accepted or declined proforma back to its open state.',
+	},
+	'proformas.convert': {
+		riskLevel: 'write',
+		description:
+			'Converts a proforma into a real invoice, which **consumes an invoice number and cannot be undone**. Returns the proforma, not the new invoice, so find the invoice by its `related_document`.',
+	},
+	'proformas.deliver': {
+		riskLevel: 'write',
+		description:
+			'Emails the proforma. A GET that mutates, so it is a write and is never replayed.',
+	},
+	'taxRates.calculate': {
+		riskLevel: 'read',
+		description:
+			'The tax rate Quaderno would charge for a customer country and tax code, with the resulting total. `tax_code` and `amount` are required from API version 20210316, which this plugin targets.',
+	},
+	'taxIds.validate': {
+		riskLevel: 'read',
+		description:
+			'Checks a VAT or tax number against the country\u2019s registry and returns the registered company name when it is valid.',
+	},
+	'taxCodes.list': {
+		riskLevel: 'read',
+		description:
+			'The tax codes available on the account, as a bare array. This route honours `limit`, unlike `jurisdictions.list`.',
+	},
+	'taxCodes.get': {
+		riskLevel: 'read',
+		description: 'One tax code by its identifier, such as `standard`.',
+	},
+	'jurisdictions.list': {
+		riskLevel: 'read',
+		description:
+			'Every tax jurisdiction Quaderno knows, about 290 rows, as a bare array. Verified live: this route ignores `limit` and always returns the full list.',
+	},
+	'jurisdictions.get': {
+		riskLevel: 'read',
+		description:
+			'One tax jurisdiction by id, naming the country and any region whose tax rules apply.',
+	},
+	'transactions.create': {
+		riskLevel: 'write',
+		description:
+			'Records a sale in one call: it creates the document and its payment together, which is what distinguishes it from `invoices.create`. A real financial record.',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description:
+			'The webhook subscriptions on the account, as a bare array. Read only here: Quaderno sends unsigned deliveries, so this plugin registers no inbound handler.',
+	},
+} as const satisfies RequiredPluginEndpointMeta<typeof quadernoEndpointsNested>;
+
+/**
+ * The key and the account name are both account-level credentials: there is one
+ * per Quaderno account, and no shared host to point at. Declaring `account_name`
+ * here makes core generate `get_account_name`/`set_account_name` on the account
+ * key manager, which the binding uses to put `account` on the context.
+ */
+export const quadernoAuthConfig = {
+	api_key: {
+		account: ['account_name'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
+export type BaseQuadernoPlugin<T extends QuadernoPluginOptions> = CorsairPlugin<
+	'quaderno',
+	typeof QuadernoSchema,
+	typeof quadernoEndpointsNested,
+	typeof quadernoWebhooksNested,
+	T,
+	typeof defaultAuthType,
+	typeof quadernoAuthConfig
+>;
+
+export type InternalQuadernoPlugin = BaseQuadernoPlugin<QuadernoPluginOptions>;
+
+export type ExternalQuadernoPlugin<T extends QuadernoPluginOptions> =
+	BaseQuadernoPlugin<T>;
+
+export function quaderno<const T extends QuadernoPluginOptions>(
+	incomingOptions: QuadernoPluginOptions & T = {} as QuadernoPluginOptions & T,
+): ExternalQuadernoPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
+	return {
+		id: 'quaderno',
+		authConfig: quadernoAuthConfig,
+		schema: QuadernoSchema,
+		options,
+		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
+		endpoints: quadernoEndpointsNested,
+		webhooks: quadernoWebhooksNested,
+		endpointMeta: quadernoEndpointMeta,
+		endpointSchemas: quadernoEndpointSchemas,
+		webhookSchemas: quadernoWebhookSchemas,
+		pluginWebhookMatcher: () => false,
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		keyBuilder: async (ctx: QuadernoKeyBuilderContext, source) => {
+			// No webhooks are registered, so a webhook source is unreachable. It is
+			// refused rather than handed the API key.
+			if (source === 'webhook') {
+				throw new AuthMissingError('quaderno', 'webhook');
+			}
+			if (options.key) return options.key;
+			const key = await ctx.keys.get_api_key();
+			if (!key) throw new AuthMissingError('quaderno', 'api_key');
+			return key;
+		},
+	} satisfies InternalQuadernoPlugin;
+}
+
+export {
+	accountBaseUrl,
+	QUADERNO_ROOT_HOST,
+	QuadernoAPIError,
+	QuadernoError,
+	QuadernoTransportError,
+} from './client';
+export type {
+	QuadernoEndpointInputs,
+	QuadernoEndpointOutputs,
+} from './endpoints/types';
