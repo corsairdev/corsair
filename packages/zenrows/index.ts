@@ -50,6 +50,7 @@ type ZenRowsEndpoint<K extends keyof ZenRowsEndpointOutputs> = CorsairEndpoint<
 
 export type ZenRowsEndpoints = {
 	fetchPage: ZenRowsEndpoint<'fetchPage'>;
+	fetchBrowse: ZenRowsEndpoint<'fetchBrowse'>;
 	fetchExtract: ZenRowsEndpoint<'fetchExtract'>;
 	fetchCssExtract: ZenRowsEndpoint<'fetchCssExtract'>;
 	fetchOutputs: ZenRowsEndpoint<'fetchOutputs'>;
@@ -72,6 +73,7 @@ export type ZenRowsEndpoints = {
 const zenRowsEndpointsNested = {
 	fetch: {
 		page: Fetch.fetchPage,
+		browse: Fetch.fetchBrowse,
 		extract: Fetch.fetchExtract,
 		cssExtract: Fetch.fetchCssExtract,
 		outputs: Fetch.fetchOutputs,
@@ -102,6 +104,10 @@ export const zenRowsEndpointSchemas = {
 	'fetch.page': {
 		input: ZenRowsEndpointInputSchemas.fetchPage,
 		output: ZenRowsEndpointOutputSchemas.fetchPage,
+	},
+	'fetch.browse': {
+		input: ZenRowsEndpointInputSchemas.fetchBrowse,
+		output: ZenRowsEndpointOutputSchemas.fetchBrowse,
 	},
 	'fetch.extract': {
 		input: ZenRowsEndpointInputSchemas.fetchExtract,
@@ -199,6 +205,13 @@ const zenRowsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Fetch one page through Zenrows: HTML by default, or Markdown and plaintext, with optional browser rendering, residential proxies, geolocation and resource blocking',
+	},
+	'fetch.browse': {
+		// Browser actions reach the target: filling a field, clicking submit and
+		// running `evaluate` all change the site, so this is a write, not a read.
+		riskLevel: 'write',
+		description:
+			'Render a page and act on it before capture: fill fields, click, check, scroll or run JavaScript. Reaches the site, so it can change its state',
 	},
 	'fetch.extract': {
 		riskLevel: 'read',
@@ -338,6 +351,7 @@ export function zenrows<const T extends ZenRowsPluginOptions>(
 export { ZenRowsAPIError } from './client';
 
 export type {
+	FetchBrowseInput,
 	FetchCssExtractInput,
 	FetchExtractInput,
 	FetchJsonResponseInput,
@@ -358,6 +372,7 @@ export type {
 	StopCrawlInput,
 	ZenRowsEndpointInputs,
 	ZenRowsEndpointOutputs,
+	ZenrowsBrowseResponse,
 	ZenrowsCrawl,
 	ZenrowsCrawlResult,
 	ZenrowsCrawlWithResults,

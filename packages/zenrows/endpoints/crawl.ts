@@ -10,6 +10,9 @@ import {
  * The crawl's wire body. Zenrows names every field in snake_case and nests the
  * webhook under one object; `null` is not accepted for any of them, so an unset
  * field is left out rather than sent empty.
+ *
+ * The metadata values stay `unknown` because Zenrows accepts any JSON there and
+ * echoes it back unchanged; the input schema has already restricted it to JSON.
  */
 export function crawlBody(parsed: {
 	url: string;
@@ -21,7 +24,12 @@ export function crawlBody(parsed: {
 	outputFormat?: string;
 	webhookUrl?: string;
 	webhookEvents?: readonly string[];
+	// unknown: Zenrows accepts any JSON here and echoes it back unchanged; the
+	// input schema has already restricted the values to JSON.
 	webhookMetadata?: Record<string, unknown>;
+	// unknown: corsair/http serialises this object to JSON as-is, and each key
+	// is mapped from a different input field, so a shared concrete type would
+	// be a union of every field's shape rather than a real check.
 }): Record<string, unknown> {
 	return {
 		url: parsed.url,
@@ -136,7 +144,7 @@ export const getContent: ZenRowsEndpoints['crawlGetContent'] = (ctx, input) =>
 			query: { download: parsed.download },
 		}),
 		{
-			shape: (raw) => ({ body: raw.text, contentType: raw.contentType }),
+			shape: (raw) => ({ body: raw.text, bodyFormat: raw.bodyFormat }),
 			log: (parsed, result) => ({
 				crawlId: parsed.crawlId,
 				contentId: parsed.contentId,

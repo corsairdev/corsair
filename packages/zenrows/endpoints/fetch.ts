@@ -19,9 +19,10 @@ import {
 type FetchQueryInput = {
 	mode?: 'auto';
 	jsRender?: boolean;
-	// unknown: each instruction is validated by the input schema; here they are
-	// only re-serialised as JSON for the query string.
+	// unknown: each instruction is validated by the input schema into one of
+	// seven documented shapes, which this function only re-serialises as JSON.
 	jsInstructions?: readonly unknown[];
+	headers?: Record<string, string>;
 	customHeaders?: boolean;
 	premiumProxy?: boolean;
 	proxyCountry?: string;
@@ -56,7 +57,8 @@ export function fetchQuery(
 			input.jsInstructions === undefined
 				? undefined
 				: JSON.stringify(input.jsInstructions),
-		custom_headers: input.customHeaders,
+		custom_headers:
+			input.customHeaders ?? (input.headers !== undefined || undefined),
 		premium_proxy: input.premiumProxy,
 		proxy_country: input.proxyCountry,
 		session_id: input.sessionId,
@@ -77,10 +79,28 @@ export function fetchQuery(
 }
 
 /** `custom_headers` decides where the key goes, for every Fetch operation. */
+/**
+ * Where the key has to travel for a Fetch call. With `customHeaders` on,
+ * Zenrows copies every request header onto the target, so the key moves to the
+ * `apikey` query parameter, which Zenrows strips before forwarding. Caller
+ * `headers` imply that same forwarding, so they move the key too.
+ */
 export function fetchAuth(input: {
 	customHeaders?: boolean;
+	headers?: Record<string, string>;
 }): 'header' | 'query' {
-	return input.customHeaders === true ? 'query' : 'header';
+	return input.customHeaders === true || input.headers !== undefined
+		? 'query'
+		: 'header';
+}
+
+/** The caller's headers, sent only when they asked for them to be forwarded. */
+function forwardedHeaders(input: {
+	headers?: Record<string, string>;
+}): Record<string, string> | undefined {
+	return input.headers === undefined || Object.keys(input.headers).length === 0
+		? undefined
+		: input.headers;
 }
 
 /**
@@ -101,11 +121,12 @@ export const fetchPage: ZenRowsEndpoints['fetchPage'] = (ctx, input) =>
 			path: '/v1/',
 			query: fetchQuery(parsed),
 			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
 		}),
 		{
 			shape: (raw, parsed) => ({
 				body: raw.text,
-				contentType: raw.contentType,
+				bodyFormat: raw.bodyFormat,
 				responseType: parsed.responseType ?? 'html',
 			}),
 			log: (parsed, result) => ({
@@ -114,6 +135,41 @@ export const fetchPage: ZenRowsEndpoints['fetchPage'] = (ctx, input) =>
 				jsRender: parsed.jsRender,
 				premiumProxy: parsed.premiumProxy,
 				mode: parsed.mode,
+			}),
+		},
+	);
+
+/**
+ * Browser actions change the target site, which is why this is its own
+ * write-level operation rather than an option on the reads above. The request
+ * is the same Fetch route with `js_instructions` set.
+ */
+export const fetchBrowse: ZenRowsEndpoints['fetchBrowse'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'fetch.browse',
+			input: Inputs.fetchBrowse,
+			output: Outputs.fetchBrowse,
+		},
+		input,
+		(parsed) => ({
+			method: 'GET',
+			path: '/v1/',
+			query: fetchQuery(parsed),
+			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
+		}),
+		{
+			shape: (raw, parsed) => ({
+				body: raw.text,
+				bodyFormat: raw.bodyFormat,
+				responseType: parsed.responseType ?? 'html',
+			}),
+			log: (parsed, result) => ({
+				actions: parsed.jsInstructions.length,
+				responseType: result.responseType,
+				bytes: result.body.length,
 			}),
 		},
 	);
@@ -132,6 +188,7 @@ export const fetchExtract: ZenRowsEndpoints['fetchExtract'] = (ctx, input) =>
 			path: '/v1/',
 			query: fetchQuery({ ...parsed, extract: parsed.extract ?? 'auto' }),
 			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
 		}),
 		{
 			shape: (raw) => parseJsonBody(raw, '/v1/'),
@@ -159,6 +216,7 @@ export const fetchCssExtract: ZenRowsEndpoints['fetchCssExtract'] = (
 			path: '/v1/',
 			query: fetchQuery(parsed),
 			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
 		}),
 		{
 			shape: (raw) => parseJsonBody(raw, '/v1/'),
@@ -180,6 +238,7 @@ export const fetchOutputs: ZenRowsEndpoints['fetchOutputs'] = (ctx, input) =>
 			path: '/v1/',
 			query: fetchQuery(parsed),
 			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
 		}),
 		{
 			shape: (raw) => parseJsonBody(raw, '/v1/'),
@@ -204,6 +263,7 @@ export const fetchJsonResponse: ZenRowsEndpoints['fetchJsonResponse'] = (
 			path: '/v1/',
 			query: { ...fetchQuery(parsed), json_response: true },
 			auth: fetchAuth(parsed),
+			headers: forwardedHeaders(parsed),
 		}),
 		{
 			shape: (raw) => parseJsonBody(raw, '/v1/'),
@@ -253,9 +313,10 @@ function forwardedBody(parsed: {
  * against a JSON target, which also arrived as text/plain). The body is
  * returned verbatim so nothing is claimed about it that has not been parsed.
  */
-// unknown: the answer is the target's own page, in whatever type it serves.
+// unknown: the answer is the target's own page, and corsair/http returns it as
+// a string whatever the target's declared type was.
 function forwardedShape(raw: ZenrowsResponse): unknown {
-	return { responseType: 'text', body: raw.text, contentType: raw.contentType };
+	return { body: raw.text, bodyFormat: raw.bodyFormat };
 }
 
 export const fetchPost: ZenRowsEndpoints['fetchPost'] = (ctx, input) =>
@@ -274,6 +335,7 @@ export const fetchPost: ZenRowsEndpoints['fetchPost'] = (ctx, input) =>
 				path: '/v1/',
 				query: fetchQuery(parsed),
 				auth: fetchAuth(parsed),
+				headers: forwardedHeaders(parsed),
 				body: forwarded?.body,
 				mediaType: forwarded?.mediaType,
 			};
@@ -304,6 +366,7 @@ export const fetchPut: ZenRowsEndpoints['fetchPut'] = (ctx, input) =>
 				path: '/v1/',
 				query: fetchQuery(parsed),
 				auth: fetchAuth(parsed),
+				headers: forwardedHeaders(parsed),
 				body: forwarded?.body,
 				mediaType: forwarded?.mediaType,
 			};

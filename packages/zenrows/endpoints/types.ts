@@ -49,6 +49,16 @@ export const TargetUrlSchema = z
 export const PositiveInt = z.number().int().positive();
 
 /**
+ * How the client decoded a response body. The provider's own Content-Type
+ * header is not available: corsair/http returns the body alone. Zenrows labels
+ * HTML, Markdown and its JSON modes all `text/plain`, so `text` does not mean
+ * the body is not JSON; a JSON-mode operation parses it either way.
+ */
+export const BodyFormatSchema = z.enum(['json', 'text']);
+
+export type BodyFormat = z.infer<typeof BodyFormatSchema>;
+
+/**
  * The values `block_resources` accepts. `document` answers 400 and the rest
  * answer 200 (probed against the live API); images and stylesheets are already
  * blocked by default.
@@ -122,6 +132,13 @@ const InstructionSchema = z
 		}
 	});
 
+/**
+ * Header names the client owns. `X-API-Key` and `apikey` carry the credential,
+ * and `Content-Type` frames the forwarded body; a caller-supplied value for any
+ * of them would either break auth or corrupt the request.
+ */
+export const RESERVED_HEADER_NAMES = ['x-api-key', 'apikey', 'content-type'];
+
 /** The parameters every Fetch call shares. */
 const FetchCommonShape = {
 	url: TargetUrlSchema.describe('The page to fetch.'),
@@ -137,18 +154,34 @@ const FetchCommonShape = {
 		.describe(
 			'Render the page in a headless browser first. Defaults to false.',
 		),
-	jsInstructions: z
-		.array(InstructionSchema)
-		.min(1)
+	headers: z
+		.record(z.string().min(1), z.string())
+		.refine(
+			(value) => Object.keys(value).length > 0,
+			'needs at least one header',
+		)
+		.superRefine((value, ctx) => {
+			// The API key and the body's framing are the client's own; letting a
+			// caller set them would either weaken auth or corrupt the request.
+			for (const name of Object.keys(value)) {
+				if (RESERVED_HEADER_NAMES.includes(name.toLowerCase())) {
+					ctx.addIssue({
+						code: 'custom',
+						path: [name],
+						message: `${name} is set by Corsair and cannot be forwarded`,
+					});
+				}
+			}
+		})
 		.optional()
 		.describe(
-			'Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds.',
+			'Headers to send to the target page, such as { "Referer": "https://www.google.com", "Cookie": "session=..." }. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given.',
 		),
 	customHeaders: z
 		.boolean()
 		.optional()
 		.describe(
-			"Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request.",
+			"Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request.",
 		),
 	premiumProxy: z
 		.boolean()
@@ -202,7 +235,7 @@ const FetchCommonShape = {
 type FetchCommonInput = {
 	mode?: 'auto';
 	jsRender?: boolean;
-	jsInstructions?: readonly unknown[];
+	headers?: Record<string, string>;
 	premiumProxy?: boolean;
 	proxyCountry?: string;
 	waitFor?: string;
@@ -248,13 +281,6 @@ export function refineFetchCommon(
 			code: 'custom',
 			path: ['proxyCountry'],
 			message: 'proxyCountry needs premiumProxy true or mode "auto"',
-		});
-	}
-	if (value.jsInstructions !== undefined && !browser) {
-		ctx.addIssue({
-			code: 'custom',
-			path: ['jsInstructions'],
-			message: 'jsInstructions needs jsRender true or mode "auto"',
 		});
 	}
 	if (value.waitFor !== undefined && !browser) {
@@ -311,11 +337,52 @@ export type FetchPageInput = z.input<typeof FetchPageInputSchema>;
  */
 const TextResponseSchema = z.object({
 	body: z.string(),
-	contentType: z.string(),
+	bodyFormat: BodyFormatSchema,
 	responseType: z.enum(ZENROWS_TEXT_RESPONSE_TYPES),
 });
 
 export type ZenrowsTextResponse = z.infer<typeof TextResponseSchema>;
+
+// ── fetch.browse ──────────────────────────────────────────────────────────
+
+/**
+ * Browser actions are a write, not a read. Filling a field, clicking submit,
+ * checking a box or running `evaluate` changes the target site, so they are
+ * kept out of every read operation's input and given their own operation whose
+ * risk level says so. A read-only caller then cannot mutate a site through a
+ * read, and a `strict` caller is asked to approve the action.
+ */
+const FetchBrowseInputSchema = z
+	.object({
+		...FetchCommonShape,
+		jsInstructions: z
+			.array(InstructionSchema)
+			.min(1)
+			.describe(
+				'Browser actions run in order before the page is captured, such as {"fill":["#q","x"]} then {"click":"#submit"}. Each instruction carries one action key, and the sequence has 40 seconds.',
+			),
+		responseType: z
+			.enum(['markdown', 'plaintext'])
+			.optional()
+			.describe(
+				'Convert the captured page before returning it. `markdown` and `plaintext` are text; omit it for the HTML as it stands after the actions.',
+			),
+	})
+	.superRefine((value, ctx) => {
+		// Browser actions only run inside a rendered page, so this operation
+		// always needs `jsRender` or `mode: "auto"`.
+		refineFetchCommon(value, ctx, { requiresBrowser: true });
+	});
+
+export type FetchBrowseInput = z.input<typeof FetchBrowseInputSchema>;
+
+const BrowseResponseSchema = z.object({
+	body: z.string(),
+	bodyFormat: BodyFormatSchema,
+	responseType: z.enum(ZENROWS_TEXT_RESPONSE_TYPES),
+});
+
+export type ZenrowsBrowseResponse = z.infer<typeof BrowseResponseSchema>;
 
 // ── fetch.extract ─────────────────────────────────────────────────────────
 
@@ -493,7 +560,17 @@ const ForwardedBodySchema = z.discriminatedUnion('type', [
 		contentType: z
 			.string()
 			.min(1)
-			.describe("The body's own content type, such as text/xml."),
+			// corsair/http re-serialises an object body when the media type is
+			// JSON, so a raw string sent as JSON reaches the target
+			// double-encoded. A JSON body belongs in the `json` mode above,
+			// which sends it as an object.
+			.refine(
+				(value) => !value.toLowerCase().includes('json'),
+				'use body type "json" for a JSON body; a raw string sent as JSON would be re-encoded',
+			)
+			.describe(
+				"The body's own content type, such as text/xml. Not a JSON type.",
+			),
 	}),
 ]);
 
@@ -529,7 +606,7 @@ export type FetchPutInput = z.input<typeof FetchPutInputSchema>;
  */
 const ForwardedResponseSchema = z.object({
 	body: z.string(),
-	contentType: z.string(),
+	bodyFormat: BodyFormatSchema,
 });
 
 export type ZenrowsForwardedResponse = z.infer<typeof ForwardedResponseSchema>;
@@ -780,7 +857,7 @@ export type GetCrawlContentInput = z.input<typeof GetCrawlContentInputSchema>;
 /** The page in the crawl's `output_format`: HTML as fetched, or Markdown. */
 const GetCrawlContentResponseSchema = z.object({
 	body: z.string(),
-	contentType: z.string(),
+	bodyFormat: BodyFormatSchema,
 });
 
 export type GetCrawlContentResponse = z.infer<
@@ -1030,6 +1107,7 @@ export type GetSubscriptionResponse = z.infer<
 
 export type ZenRowsEndpointInputs = {
 	fetchPage: FetchPageInput;
+	fetchBrowse: FetchBrowseInput;
 	fetchExtract: FetchExtractInput;
 	fetchCssExtract: FetchCssExtractInput;
 	fetchOutputs: FetchOutputsInput;
@@ -1051,6 +1129,7 @@ export type ZenRowsEndpointInputs = {
 
 export type ZenRowsEndpointOutputs = {
 	fetchPage: ZenrowsTextResponse;
+	fetchBrowse: ZenrowsBrowseResponse;
 	fetchExtract: ZenrowsExtractResponse;
 	fetchCssExtract: ZenrowsCssExtractResponse;
 	fetchOutputs: ZenrowsOutputsResponse;
@@ -1072,6 +1151,7 @@ export type ZenRowsEndpointOutputs = {
 
 export const ZenRowsEndpointInputSchemas = {
 	fetchPage: FetchPageInputSchema,
+	fetchBrowse: FetchBrowseInputSchema,
 	fetchExtract: FetchExtractInputSchema,
 	fetchCssExtract: FetchCssExtractInputSchema,
 	fetchOutputs: FetchOutputsInputSchema,
@@ -1093,6 +1173,7 @@ export const ZenRowsEndpointInputSchemas = {
 
 export const ZenRowsEndpointOutputSchemas = {
 	fetchPage: TextResponseSchema,
+	fetchBrowse: BrowseResponseSchema,
 	fetchExtract: ExtractResponseSchema,
 	fetchCssExtract: CssExtractResponseSchema,
 	fetchOutputs: FetchOutputsResponseSchema,

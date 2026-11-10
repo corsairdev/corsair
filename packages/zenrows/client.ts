@@ -105,7 +105,14 @@ export class ZenRowsAPIError extends Error {
  */
 export type ZenrowsResponse = {
 	status: number;
-	contentType: string;
+	/**
+	 * How corsair/http decoded the body, not the provider's Content-Type
+	 * header: that header is not returned by the client. `json` means the body
+	 * arrived as `application/json` and was parsed; `text` means it arrived as
+	 * text and `maybeParseJson` may still have found JSON inside it, because
+	 * Zenrows labels HTML, Markdown and its JSON modes all `text/plain`.
+	 */
+	bodyFormat: 'json' | 'text';
 	text: string;
 	/**
 	 * The parsed body when corsair/http parsed one, which it does for
@@ -238,6 +245,8 @@ export async function makeZenrowsRequest(
 		// and returns text for every other type, which is how a Fetch answer
 		// arrives whatever the caller asked for, so the type is only known once
 		// the body is inspected.
+		// unknown: corsair/http hands back parsed JSON for a JSON content type and
+		// a string for everything else, so the type is only known after inspection.
 		const parsed = await request<unknown>(
 			configFor(apiKey, headers),
 			requestOptions,
@@ -252,14 +261,14 @@ export async function makeZenrowsRequest(
 			const json = maybeParseJson(parsed);
 			return {
 				status: 200,
-				contentType: 'text/plain',
+				bodyFormat: 'text',
 				text: parsed,
 				...(json === undefined ? {} : { json }),
 			};
 		}
 		return {
 			status: 200,
-			contentType: 'application/json',
+			bodyFormat: 'json',
 			text: JSON.stringify(parsed),
 			json: parsed,
 		};
@@ -319,7 +328,7 @@ export function parseJsonBody(
 	const parsed = maybeParseJson(response.text);
 	if (parsed === undefined) {
 		throw new ZenRowsAPIError(
-			`Zenrows answered ${path} with a body that is not JSON (${response.contentType || 'no content type'})`,
+			`Zenrows answered ${path} with a body that is not JSON`,
 			{ status: response.status },
 		);
 	}
