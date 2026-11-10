@@ -5,6 +5,7 @@ import {
 } from './client';
 import {
 	error400,
+	error400Live,
 	error401,
 	error402,
 	error429,
@@ -191,6 +192,22 @@ describe('makeNanonetsRequest', () => {
 		expect(error.body).toEqual(error400);
 		expect(error.isRateLimit).toBe(false);
 		expect(error.isQuotaExhausted).toBe(false);
+	});
+
+	it('keeps the reason from errors[] when the top-level message is only the status phrase', async () => {
+		respond(error400Live, 400);
+
+		const error = await failure(
+			makeNanonetsRequest(API_KEY, {
+				method: 'POST',
+				path: `/ObjectDetection/Model/${modelId}/RetryPrediction`,
+				body: { file_ids: ['ebc41f3a-90fc-470b-afd3-ded217accba8'] },
+			}),
+		);
+		expect(error.status).toBe(400);
+		expect(error.message).toBe(
+			'Nanonets 400: Bad Request: Retrying file within 5 minutes of upload is not allowed',
+		);
 	});
 
 	it('treats a 429 as a rate limit, reads Retry-After and tries once', async () => {

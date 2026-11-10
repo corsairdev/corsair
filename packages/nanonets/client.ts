@@ -22,7 +22,23 @@ function isCode(value: unknown): value is number {
 function readErrorText(body: unknown): string | undefined {
 	const record = asRecord(body);
 	const message = record?.message;
-	if (typeof message === 'string' && message.length > 0) return message;
+	if (typeof message === 'string' && message.length > 0) {
+		// Live 400s carry only the status phrase ("Bad Request") at the top and
+		// the reason in errors[0].message, so the reason is added unless one
+		// text already holds the other.
+		const errors = record?.errors;
+		const first = Array.isArray(errors) ? asRecord(errors[0]) : undefined;
+		const detail = first?.message ?? first?.reason;
+		if (
+			typeof detail === 'string' &&
+			detail.length > 0 &&
+			!detail.includes(message) &&
+			!message.includes(detail)
+		) {
+			return `${message}: ${detail}`;
+		}
+		return message;
+	}
 	// unknown: per-endpoint OpenAPI blocks document plain-text error bodies.
 	if (typeof body === 'string' && body.length > 0) return body;
 	return undefined;

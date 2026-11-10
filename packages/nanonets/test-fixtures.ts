@@ -242,6 +242,20 @@ export const error400 = {
 	],
 };
 
+// Live answer (11-10) to files.retryPredictions on a file uploaded minutes
+// earlier: the top-level message is only the status phrase, the reason sits
+// in errors[].
+export const error400Live = {
+	message: 'Bad Request',
+	code: 400,
+	errors: [
+		{
+			reason: 'Retrying file within 5 minutes of upload is not allowed',
+			message: 'Retrying file within 5 minutes of upload is not allowed',
+		},
+	],
+};
+
 export const error401 = {
 	message: 'Invalid API key',
 	code: 401,
