@@ -312,6 +312,7 @@ export const BaseProviders = [
 	'merriamwebsterdict',
 	'minimax',
 	'miro',
+	'missive',
 	'monday',
 	'mrscraper',
 	'neon',
@@ -770,6 +771,7 @@ export const ProviderDisplayNames = {
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	miro: 'Miro',
+	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	neon: 'Neon',
@@ -1232,6 +1234,7 @@ export type AllProviders =
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'miro'
+	| 'missive'
 	| 'monday'
 	| 'mrscraper'
 	| 'neon'

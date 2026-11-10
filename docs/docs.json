@@ -2639,6 +2639,14 @@
                 ]
               },
               {
+                "group": "Missive",
+                "pages": [
+                  "plugins/missive/overview",
+                  "plugins/missive/api",
+                  "plugins/missive/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
