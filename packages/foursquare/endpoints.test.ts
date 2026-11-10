@@ -3,6 +3,8 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { FoursquareAPIError } from './client';
+import { errorHandlers } from './error-handlers';
 import {
 	autocompleteResponse,
 	creditsExhaustedBody,
@@ -218,6 +220,45 @@ describe('Foursquare error surfaces', () => {
 		await expect(
 			endpoints.places.tips(makeCtx(), { fsq_place_id: PLACE_ID }),
 		).rejects.toThrow(/no API credits/);
+	});
+
+	it('keeps the status of a search error whose body cannot be read', async () => {
+		// A connection that drops after the headers arrive: the status is known,
+		// the body is not.
+		mockFetch({
+			ok: false,
+			status: 503,
+			statusText: 'Service Unavailable',
+			headers: new Headers({ 'retry-after': '2' }),
+			text: () => Promise.reject(new TypeError('terminated')),
+		} as unknown as Response);
+
+		const error = await endpoints.places
+			.search(makeCtx(), { near: 'Chicago, IL' })
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(FoursquareAPIError);
+		expect((error as FoursquareAPIError).status).toBe(503);
+		expect((error as FoursquareAPIError).retryAfter).toBe(2000);
+		// The handler that replays a 5xx has to recognise it.
+		expect(errorHandlers.SERVER_ERROR.match(error as Error)).toBe(true);
+	});
+
+	it('normalises a search body that fails to read on a 200', async () => {
+		mockFetch({
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers(),
+			text: () => Promise.reject(new TypeError('terminated')),
+		} as unknown as Response);
+
+		const error = await endpoints.places
+			.search(makeCtx(), { near: 'Chicago, IL' })
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(FoursquareAPIError);
+		expect((error as FoursquareAPIError).message).toMatch(/terminated/);
 	});
 
 	it('surfaces the version error when the header is rejected', async () => {

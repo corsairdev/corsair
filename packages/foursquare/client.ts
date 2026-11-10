@@ -248,7 +248,13 @@ export async function makeFoursquarePageRequest<T>(
 		throw toFoursquareError(error, 'GET');
 	});
 
-	const text = await response.text();
+	const text = await response.text().catch((error: unknown) => {
+		// The connection can drop, or the timeout fire, after the headers arrive.
+		// A failed response is still described by its status, so that is kept;
+		// a 2xx with no readable body has nothing to return.
+		if (!response.ok) return '';
+		throw toFoursquareError(error, 'GET');
+	});
 	// unknown: the body is untyped until the caller's output schema parses it.
 	let body: unknown;
 	try {
