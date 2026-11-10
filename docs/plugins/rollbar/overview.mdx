@@ -1,0 +1,136 @@
+---
+title: Overview
+description: "Error monitoring with Rollbar - list and read error items and their occurrences, update an item's status, assignee or snooze, read an item's comments and events, comment on an item, and list and record deploys."
+---
+
+Use **Rollbar** through Corsair: one client, typed API calls.
+
+Create an access token in Rollbar: a **project** token under **Settings → Project Access Tokens**, or an **account** token under **Settings → API access tokens**. Send it as the `X-Rollbar-Access-Token` header; the plugin never uses `Authorization` or the query string. Things to know before you call:
+
+- **Every response carries `err`.** `err: 0` is success and anything else is a failure — and the HTTP status is not a reliable proxy for it. The live "access token required" response is a `401` with `{ "err": 1, "message": "access token required" }`, while a rejected item update can be a **`200` with `err: 1`**. The plugin reads `err` and turns a non-zero value into an error even on a 200.
+- **Tokens are scoped.** A project token reaches only its own project; an account token takes `project_id` to pick one. A `401` means the token is missing or bad and a `403` means it is valid but lacks the scope or project.
+- **`instances` is the API's word for occurrences.** Rollbar lists occurrences at `/api/1/instances` and returns them under an `instances` key; the plugin exposes them as `occurrences` so the name matches the concept.
+- **Repeated filters.** `level`, `ids` and `project_ids` are repeated query parameters, so `items.list` takes arrays and sends each value under the same key.
+- **Paging is a page number.** Rollbar returns 20 per page by default and reports `total_count` beside it, which is `null` when a project has more than 100,000 unique items. A snooze needs a duration, so `items.update` rejects `snooze_enabled` without `snooze_expiration_in_seconds`.
+- **Timestamps are unix seconds**, on requests and responses alike.
+- **Retries.** A `429` is the plan's rate limit and the wait is named in the message rather than a header, so the handler backs off on its own. A `5xx` is retried only for a read; a body-level failure has no status and is never retried.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/rollbar better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/rollbar better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/rollbar better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/rollbar better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { rollbar } from '@corsair-dev/rollbar';
+
+export const corsair = createCorsair({
+	plugins: [
+		rollbar(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting Rollbar.
+
+```ts
+rollbar()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'rollbar',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List errors in production**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rollbar.api.items.list({ environment: 'production' });
+```
+
+
+**Resolve an item against a version**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rollbar.api.items.update({ item_id: 12345, resolved_in_version: '1.2.3' });
+```
+
+
+See the full list on the [API](/plugins/rollbar/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/rollbar/api">
+    Every `rollbar.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

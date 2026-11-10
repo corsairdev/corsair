@@ -1,0 +1,53 @@
+displayName: Rollbar
+description: Error monitoring with Rollbar - list and read error items and their occurrences, update an item's status, assignee or snooze, read an item's comments and events, comment on an item, and list and record deploys.
+domain: rollbar.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an access token in Rollbar: a **project** token under **Settings → Project Access Tokens**, or an **account** token under **Settings → API access tokens**. Send it as the `X-Rollbar-Access-Token` header; the plugin never uses `Authorization` or the query string. Things to know before you call:
+
+  - **Every response carries `err`.** `err: 0` is success and anything else is a failure — and the HTTP status is not a reliable proxy for it. The live "access token required" response is a `401` with `{ "err": 1, "message": "access token required" }`, while a rejected item update can be a **`200` with `err: 1`**. The plugin reads `err` and turns a non-zero value into an error even on a 200.
+  - **Tokens are scoped.** A project token reaches only its own project; an account token takes `project_id` to pick one. A `401` means the token is missing or bad and a `403` means it is valid but lacks the scope or project.
+  - **`instances` is the API's word for occurrences.** Rollbar lists occurrences at `/api/1/instances` and returns them under an `instances` key; the plugin exposes them as `occurrences` so the name matches the concept.
+  - **Repeated filters.** `level`, `ids` and `project_ids` are repeated query parameters, so `items.list` takes arrays and sends each value under the same key.
+  - **Paging is a page number.** Rollbar returns 20 per page by default and reports `total_count` beside it, which is `null` when a project has more than 100,000 unique items. A snooze needs a duration, so `items.update` rejects `snooze_enabled` without `snooze_expiration_in_seconds`.
+  - **Timestamps are unix seconds**, on requests and responses alike.
+  - **Retries.** A `429` is the plan's rate limit and the wait is named in the message rather than a header, so the handler backs off on its own. A `5xx` is retried only for a read; a body-level failure has no status and is never retried.
+examples:
+  read:
+    path: items.list
+    title: List errors in production
+    args:
+      environment: production
+  write:
+    path: items.update
+    title: Resolve an item against a version
+    args:
+      item_id: 12345
+      resolved_in_version: 1.2.3
+apiExamples:
+  items.list:
+    call: "{ status: 'active', level: ['error', 'critical'], environment: 'production' }"
+  items.get:
+    call: "{ item_id: 12345 }"
+  items.update:
+    call: "{ item_id: 12345, status: 'resolved', resolved_in_version: '1.2.3' }"
+  itemComments.list:
+    call: "{ item_id: 12345 }"
+  itemComments.create:
+    call: "{ item_id: 12345, body: 'Fixed in the next deploy.' }"
+  itemEvents.list:
+    call: "{ item_id: 12345 }"
+  occurrences.list:
+    call: "{ page: 1, limit: 20 }"
+  occurrences.get:
+    call: "{ occurrence_id: 98765 }"
+  projects.list: {}
+  deploys.list:
+    call: "{ environment: 'production' }"
+  deploys.create:
+    call: "{ environment: 'production', revision: 'abc1234', comment: 'Ship it' }"
+apiNotes:
+  'items.list': '`level`, `ids` and `project_ids` repeat the query parameter, so arrays send every value.'
+  'items.update': 'A snooze needs a duration; `snooze_enabled` without `snooze_expiration_in_seconds` is rejected before the request.'
+  'occurrences.list': 'This route names occurrences `instances`; the plugin returns them as `occurrences`.'
+  'items.get': '`total_count` is null when a project has more than 100,000 unique items.'

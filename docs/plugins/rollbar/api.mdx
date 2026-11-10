@@ -1,0 +1,642 @@
+---
+title: API
+description: "API reference for Rollbar: every `rollbar.api.*` operation with input and output types."
+---
+
+Every `rollbar.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Deploys
+
+### create
+
+`deploys.create`
+
+Record a deploy with its environment, revision and optional status and comment
+
+**Risk:** `write`
+
+```ts
+await corsair.rollbar.api.deploys.create({ environment: 'production', revision: 'abc1234', comment: 'Ship it' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | Yes | The environment deployed to. |
+| `revision` | `string` | Yes | The revision deployed, up to 40 characters. |
+| `project_id` | `number` | No | — |
+| `comment` | `string` | No | — |
+| `local_username` | `string` | No | — |
+| `rollbar_username` | `string` | No | — |
+| `status` | `started \| succeeded \| failed \| timed_out` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploy_id` | `number \| null` | No | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deploys.list`
+
+List deploys with environment and project filters, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.deploys.list({ environment: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
+| `environment` | `string` | No | — |
+| `project_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploys` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="deploys full type">
+
+```ts
+{
+  id?: number | null,
+  project_id?: number | null,
+  environment?: string | null,
+  revision?: string | null,
+  comment?: string | null,
+  status?: string | null,
+  local_username?: string | null,
+  rollbar_username?: string | null,
+  start_time?: number | null,
+  end_time?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Item Comments
+
+### create
+
+`itemComments.create`
+
+Add a comment to an item
+
+**Risk:** `write`
+
+```ts
+await corsair.rollbar.api.itemComments.create({ item_id: 12345, body: 'Fixed in the next deploy.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `body` | `string` | Yes | The comment text. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `number \| null` | No | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  body?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`itemComments.list`
+
+List the comments on an item, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.itemComments.list({ item_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id?: number | null,
+  item_id?: number | null,
+  project_id?: number | null,
+  user_id?: number | null,
+  body?: string | null,
+  timestamp?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Item Events
+
+### list
+
+`itemEvents.list`
+
+List the history events for an item: status changes, assignments and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.itemEvents.list({ item_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: number | null,
+  event_name?: string | null,
+  event?: string | null,
+  timestamp?: number | null,
+  user_id?: number | null,
+  data?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### get
+
+`items.get`
+
+Fetch one item with its occurrence counts, timestamps and resolution state
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.items.get({ item_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+
+`total_count` is null when a project has more than 100,000 unique items.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id?: number | null,
+  public_item_id?: number | null,
+  group_item_id?: number | null,
+  project_id?: number | null,
+  counter?: number | null,
+  title?: string | null,
+  hash?: string | null,
+  environment?: string | null,
+  platform?: string | null,
+  framework?: string | null,
+  level?: string | null,
+  status?: string | null,
+  group_status?: number | null,
+  total_occurrences?: number | null,
+  unique_occurrences?: number | null,
+  last_occurrence_id?: number | null,
+  last_occurrence_timestamp?: number | null,
+  first_occurrence_id?: number | null,
+  first_occurrence_timestamp?: number | null,
+  last_activated_timestamp?: number | null,
+  last_resolved_timestamp?: number | null,
+  last_modified_by?: number | null,
+  assigned_user_id?: number | null,
+  assigned_team_id?: number | null,
+  resolved_in_version?: string | null,
+  title_lock?: number | null,
+  level_lock?: number | null,
+  controlling_id?: number | null,
+  activating_occurrence_id?: number | null,
+  integrations_data?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List error items with status, level, environment and assignee filters plus page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.items.list({ status: 'active', level: ['error', 'critical'], environment: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
+| `limit` | `number` | No | Records per page, up to 100. |
+| `status` | `active \| resolved \| muted` | No | — |
+| `level` | `(critical \| error \| warning \| info \| debug)[]` | No | Sent as a repeated parameter, so several levels can be asked for. |
+| `environment` | `string` | No | — |
+| `framework` | `string` | No | — |
+| `query` | `string` | No | A search string. |
+| `ids` | `number[]` | No | — |
+| `project_ids` | `number[]` | No | Account tokens only: search these projects. |
+| `assigned_user` | `string` | No | A user id or email. |
+| `assigned_team` | `string` | No | — |
+| `is_snoozed` | `boolean` | No | — |
+
+`level`, `ids` and `project_ids` repeat the query parameter, so arrays send every value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  public_item_id?: number | null,
+  group_item_id?: number | null,
+  project_id?: number | null,
+  counter?: number | null,
+  title?: string | null,
+  hash?: string | null,
+  environment?: string | null,
+  platform?: string | null,
+  framework?: string | null,
+  level?: string | null,
+  status?: string | null,
+  group_status?: number | null,
+  total_occurrences?: number | null,
+  unique_occurrences?: number | null,
+  last_occurrence_id?: number | null,
+  last_occurrence_timestamp?: number | null,
+  first_occurrence_id?: number | null,
+  first_occurrence_timestamp?: number | null,
+  last_activated_timestamp?: number | null,
+  last_resolved_timestamp?: number | null,
+  last_modified_by?: number | null,
+  assigned_user_id?: number | null,
+  assigned_team_id?: number | null,
+  resolved_in_version?: string | null,
+  title_lock?: number | null,
+  level_lock?: number | null,
+  controlling_id?: number | null,
+  activating_occurrence_id?: number | null,
+  integrations_data?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`items.update`
+
+Update an item: its status, level, title, assignee, resolved-in version or snooze
+
+**Risk:** `write`
+
+```ts
+await corsair.rollbar.api.items.update({ item_id: 12345, status: 'resolved', resolved_in_version: '1.2.3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `status` | `active \| resolved \| muted` | No | — |
+| `level` | `critical \| error \| warning \| info \| debug` | No | — |
+| `title` | `string` | No | A new title, up to 255 characters. |
+| `assigned_user_id` | `number` | No | — |
+| `assigned_team_id` | `number` | No | — |
+| `resolved_in_version` | `string` | No | The version the item is resolved in, up to 40 characters. |
+| `snooze_enabled` | `boolean` | No | — |
+| `snooze_expiration_in_seconds` | `number` | No | — |
+
+A snooze needs a duration; `snooze_enabled` without `snooze_expiration_in_seconds` is rejected before the request.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  status?: string | null,
+  resolved_in_version?: string | null,
+  title?: string | null,
+  level?: string | null,
+  assigned_user_id?: number | null,
+  assigned_team_id?: number | null,
+  snooze_enabled?: boolean | null,
+  snooze_expiration_in_seconds?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Occurrences
+
+### get
+
+`occurrences.get`
+
+Fetch one occurrence with its level, timestamp, request and person context
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.occurrences.get({ occurrence_id: 98765 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `occurrence_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `occurrence` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="occurrence full type">
+
+```ts
+{
+  id?: number | null,
+  project_id?: number | null,
+  item_id?: number | null,
+  environment?: string | null,
+  level?: string | null,
+  timestamp?: number | null,
+  platform?: string | null,
+  framework?: string | null,
+  language?: string | null,
+  server?: Record<string, JsonValue> | null,
+  client?: Record<string, JsonValue> | null,
+  request?: Record<string, JsonValue> | null,
+  person?: Record<string, JsonValue> | null,
+  body?: Record<string, JsonValue> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`occurrences.list`
+
+List occurrences in a project with page paging, for a forward walk from a known id
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.occurrences.list({ page: 1, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
+| `limit` | `number` | No | Records per page, up to 100. |
+| `project_id` | `number` | No | Account tokens only: read this project. |
+| `last_id` | `number` | No | Only occurrences after this id, for a forward walk. |
+
+This route names occurrences `instances`; the plugin returns them as `occurrences`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `occurrences` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="occurrences full type">
+
+```ts
+{
+  id?: number | null,
+  project_id?: number | null,
+  item_id?: number | null,
+  environment?: string | null,
+  level?: string | null,
+  timestamp?: number | null,
+  platform?: string | null,
+  framework?: string | null,
+  language?: string | null,
+  server?: Record<string, JsonValue> | null,
+  client?: Record<string, JsonValue> | null,
+  request?: Record<string, JsonValue> | null,
+  person?: Record<string, JsonValue> | null,
+  body?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### list
+
+`projects.list`
+
+List the projects the token can see on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.rollbar.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `page` | `number \| null` | Yes | — |
+| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  account_id?: number | null,
+  status?: string | null,
+  date_created?: number | null,
+  date_modified?: number | null,
+  settings?: Record<string, JsonValue> | null,
+  access_tokens?: Record<string, JsonValue>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
