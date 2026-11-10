@@ -72,9 +72,18 @@ export type FluxguardRequest = {
 	body?: unknown;
 };
 
-/** Encodes one path segment. */
+/**
+ * Encodes one path segment. `encodeURIComponent` leaves `.` and `..` alone and
+ * fetch resolves them away, and the gateway matches a trailing slash, so
+ * `/site/s1/session/../page/..` would arrive as `DELETE /site/s1/` and delete
+ * the site. An empty id is refused for the same reason: it drops a segment.
+ */
 export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const id = String(value);
+	if (id === '' || id === '.' || id === '..') {
+		throw new FluxguardAPIError(`"${id}" is not a valid Fluxguard id`);
+	}
+	return encodeURIComponent(id);
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema. It is

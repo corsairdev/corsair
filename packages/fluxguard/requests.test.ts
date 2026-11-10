@@ -220,6 +220,51 @@ describe('Fluxguard HTTP requests', () => {
 		expect(lastCall().url).toBe(`${BASE}/site/a%2Fb/session/se1/page/p1`);
 	});
 
+	// fetch resolves `.` and `..` away and Fluxguard's gateway matches a trailing
+	// slash, so `/site/s1/session/../page/..` would arrive as DELETE /site/s1/
+	// and delete the whole site instead of one page.
+	it.each([
+		['..', '..'],
+		['.', 'p1'],
+		['', 'p1'],
+	])(
+		'refuses sessionId %p with pageId %p instead of sending a rewritten path',
+		async (sessionId, pageId) => {
+			fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+
+			await expect(
+				endpoints.monitoring.deletePage(makeCtx(), {
+					siteId: 's1',
+					sessionId,
+					pageId,
+				}),
+			).rejects.toThrow('is not a valid Fluxguard id');
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('refuses a dot-segment site id on every path that takes one', async () => {
+		fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+
+		await expect(
+			endpoints.monitoring.deleteSite(makeCtx(), { siteId: '..' }),
+		).rejects.toThrow('is not a valid Fluxguard id');
+		await expect(
+			endpoints.monitoring.startCrawl(makeCtx(), {
+				siteId: '..',
+				sessionId: 'se1',
+			}),
+		).rejects.toThrow('is not a valid Fluxguard id');
+		await expect(
+			endpoints.monitoring.getPage(makeCtx(), {
+				siteId: 's1',
+				sessionId: 'se1',
+				pageId: '..',
+			}),
+		).rejects.toThrow('is not a valid Fluxguard id');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('deletes a page with DELETE on the session path', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 
