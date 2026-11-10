@@ -269,7 +269,8 @@ const NutshellQuotesListOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -379,7 +380,8 @@ const NutshellTasksGetOutputSchema = z.intersection(
 					z
 						.object({
 							rule: z.string().nullish(),
-							mode: z.enum(['dueDate', 'completion']).nullish(),
+							// Documented values: dueDate, completion. Kept open for later additions.
+							mode: z.string().nullish(),
 							id: z.string().nullish(),
 						})
 						.loose(),
@@ -1696,7 +1698,8 @@ const NutshellTasksEnvelopeSchema = z
 								z
 									.object({
 										rule: z.string().nullish(),
-										mode: z.enum(['dueDate', 'completion']).nullish(),
+										// Documented values: dueDate, completion. Kept open for later additions.
+										mode: z.string().nullish(),
 										id: z.string().nullish(),
 									})
 									.loose(),
@@ -2098,7 +2101,8 @@ const NutshellLeadsStagesOutputSchema = z
 									.nullish(),
 								default: z.boolean().nullish(),
 								canAccess: z.boolean().nullish(),
-								status: z.enum(['1', '2', '3']).nullish(),
+								// Documented values: 1, 2, 3. Kept open for later additions.
+								status: z.string().nullish(),
 							})
 							.loose()
 							.nullish(),
@@ -2400,7 +2404,8 @@ const NutshellInvoicesListOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -2787,7 +2792,8 @@ const NutshellQuotesGetOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -2930,8 +2936,10 @@ const NutshellTodosListOutputSchema = z
 		todos: z.array(
 			z
 				.object({
-					id: z.string().regex(new RegExp('^[0-9]+-(tasks|steps)$')),
-					type: z.enum(['tasks', 'steps']),
+					// Documented as <n>-tasks or <n>-steps; kept open with `type`.
+					id: z.string(),
+					// Documented values: tasks, steps (filter[type] also accepts follow-ups). Kept open for later additions.
+					type: z.string(),
 					title: z.string(),
 					description: z.string().nullable().optional(),
 					href: z.string().nullish(),
@@ -3898,7 +3906,8 @@ const NutshellStageSetsListOutputSchema = z
 							.nullish(),
 						default: z.boolean().nullish(),
 						canAccess: z.boolean().nullish(),
-						status: z.enum(['1', '2', '3']).nullish(),
+						// Documented values: 1, 2, 3. Kept open for later additions.
+						status: z.string().nullish(),
 					})
 					.loose(),
 				z
@@ -4193,7 +4202,8 @@ const NutshellTasksDeleteOutputSchema = z.intersection(
 					z
 						.object({
 							rule: z.string().nullish(),
-							mode: z.enum(['dueDate', 'completion']).nullish(),
+							// Documented values: dueDate, completion. Kept open for later additions.
+							mode: z.string().nullish(),
 							id: z.string().nullish(),
 						})
 						.loose(),
@@ -4270,7 +4280,8 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -4669,7 +4680,8 @@ const NutshellQuotesStatusOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -5096,7 +5108,8 @@ const NutshellCompetitorMapsGetOutputSchema = z
 						relationship: z.string().nullish(),
 						name: z.string().nullish(),
 						status: z
-							.union([z.enum(['potential', 'stole', 'beat']), z.null()])
+							// Documented values: potential, stole, beat. Kept open for later additions.
+							.union([z.string(), z.null()])
 							.nullish(),
 						links: z
 							.object({
@@ -5256,7 +5269,8 @@ const NutshellInvoicesGetOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -6151,7 +6165,8 @@ const NutshellInvoicesStatusOutputSchema = z
 											label: z.string().nullish(),
 											modifierUnit: z.string().nullish(),
 											modifierValue: z.number().nullish(),
-											operation: z.enum(['+', '-']).nullish(),
+											// Documented values: + and -. Kept open so a value Nutshell adds later does not fail the response.
+											operation: z.string().nullish(),
 											total: z
 												.object({
 													formatted: z.string().nullish(),
@@ -7107,7 +7122,8 @@ const NutshellCompetitorMapsListOutputSchema = z
 						relationship: z.string().nullish(),
 						name: z.string().nullish(),
 						status: z
-							.union([z.enum(['potential', 'stole', 'beat']), z.null()])
+							// Documented values: potential, stole, beat. Kept open for later additions.
+							.union([z.string(), z.null()])
 							.nullish(),
 						links: z
 							.object({

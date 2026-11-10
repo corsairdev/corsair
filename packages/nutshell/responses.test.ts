@@ -198,4 +198,42 @@ describe('Nutshell responses with unset fields', () => {
 			installments,
 		);
 	});
+
+	it('returns a value Nutshell adds to a documented set later', async () => {
+		// filter[type] already accepts follow-ups, which the documented response
+		// set (tasks, steps) does not list.
+		const todos = {
+			todos: [
+				{
+					id: '9-followUps',
+					type: 'follow-ups',
+					title: 'Call back',
+					isComplete: false,
+					isOverdue: false,
+				},
+			],
+			meta: {
+				count: 1,
+				facets: { past: 0, today: 1, tomorrow: 0, future: 0 },
+				page: { startIndex: 0, endIndex: 0, limit: 100 },
+			},
+		};
+		reply(todos);
+		await expect(
+			api.todos.list({ 'filter[type]': ['follow-ups'] }),
+		).resolves.toEqual(todos);
+
+		const quotes = {
+			quotes: [
+				{
+					...documentedQuote,
+					subtotalLineItems: [
+						{ id: '2-quoteSubtotalLineItems', operation: '*', label: 'Rate' },
+					],
+				},
+			],
+		};
+		reply(quotes);
+		await expect(api.quotes.get({ id: '123-quotes' })).resolves.toEqual(quotes);
+	});
 });
