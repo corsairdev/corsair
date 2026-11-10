@@ -2699,6 +2699,14 @@
                 ]
               },
               {
+                "group": "OpenSea",
+                "pages": [
+                  "plugins/opensea/overview",
+                  "plugins/opensea/api",
+                  "plugins/opensea/database"
+                ]
+              },
+              {
                 "group": "OpenWeatherMap",
                 "pages": [
                   "plugins/openweathermap/overview",
