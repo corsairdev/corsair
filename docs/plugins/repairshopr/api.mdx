@@ -1,0 +1,1382 @@
+---
+title: API
+description: "API reference for RepairShopr: every `repairshopr.api.*` operation with input and output types."
+---
+
+Every `repairshopr.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### list
+
+`contacts.list`
+
+List contact people, optionally for one customer
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.contacts.list({ customer_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `customer_id` | `number` | No | — |
+
+A contact spells its street `address1`, not `address` as a customer does.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_entries` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  customer_id?: number | null,
+  vendor_id?: number | null,
+  account_id?: number | null,
+  notes?: string | null,
+  opt_out?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer from a business name or a person name, with contact details and notification settings
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.customers.create({ firstname: 'Walkin', lastname: 'Customer', email: 'walkin@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `get_sms` | `boolean` | No | — |
+| `opt_out` | `boolean` | No | — |
+| `no_email` | `boolean` | No | — |
+| `get_billing` | `boolean` | No | — |
+| `get_marketing` | `boolean` | No | — |
+| `get_reports` | `boolean` | No | — |
+| `tax_rate_id` | `number` | No | — |
+| `notification_email` | `string` | No | — |
+| `invoice_cc_emails` | `string` | No | — |
+| `invoice_term_id` | `number` | No | — |
+| `referred_by` | `string` | No | — |
+| `properties` | `Record<string, string \| number \| boolean \| null>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  fullname?: string | null,
+  business_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  pdf_url?: string | null,
+  location_name?: string | null,
+  get_sms?: boolean | null,
+  opt_out?: boolean | null,
+  no_email?: boolean | null,
+  get_billing?: boolean | null,
+  get_marketing?: boolean | null,
+  get_reports?: boolean | null,
+  disabled?: boolean | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.repairshopr.api.customers.delete({ customer_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `customer_id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Fetch one customer with their contact details, addresses and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.customers.get({ customer_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  fullname?: string | null,
+  business_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  pdf_url?: string | null,
+  location_name?: string | null,
+  get_sms?: boolean | null,
+  opt_out?: boolean | null,
+  no_email?: boolean | null,
+  get_billing?: boolean | null,
+  get_marketing?: boolean | null,
+  get_reports?: boolean | null,
+  disabled?: boolean | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with name, email and id filters, an optional sort, and page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.customers.list({ page: 1, query: 'walkin', sort: '-created_at' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `query` | `string` | No | A free-text search. |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `id` | `number` | No | Only this customer id. |
+| `id_not` | `number` | No | Every customer but this id. |
+| `include_disabled` | `boolean` | No | Include disabled customers. |
+| `sort` | `string` | No | A column to sort on; prefix with `-` for descending. |
+
+Pages by number; `meta.total_pages` is what `next_page` is derived from.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_entries` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  fullname?: string | null,
+  business_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  pdf_url?: string | null,
+  location_name?: string | null,
+  get_sms?: boolean | null,
+  opt_out?: boolean | null,
+  no_email?: boolean | null,
+  get_billing?: boolean | null,
+  get_marketing?: boolean | null,
+  get_reports?: boolean | null,
+  disabled?: boolean | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer: their name, addresses, contact details or notification settings
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.customers.update({ customer_id: 1, business_name: 'Acme B.V.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `get_sms` | `boolean` | No | — |
+| `opt_out` | `boolean` | No | — |
+| `no_email` | `boolean` | No | — |
+| `get_billing` | `boolean` | No | — |
+| `get_marketing` | `boolean` | No | — |
+| `get_reports` | `boolean` | No | — |
+| `tax_rate_id` | `number` | No | — |
+| `notification_email` | `string` | No | — |
+| `invoice_cc_emails` | `string` | No | — |
+| `invoice_term_id` | `number` | No | — |
+| `referred_by` | `string` | No | — |
+| `properties` | `Record<string, string \| number \| boolean \| null>` | No | — |
+| `customer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  fullname?: string | null,
+  business_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  pdf_url?: string | null,
+  location_name?: string | null,
+  get_sms?: boolean | null,
+  opt_out?: boolean | null,
+  no_email?: boolean | null,
+  get_billing?: boolean | null,
+  get_marketing?: boolean | null,
+  get_reports?: boolean | null,
+  disabled?: boolean | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Fetch one invoice with its totals, tax, paid state and linked ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.invoices.get({ invoice_id: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  number?: string | null,
+  external_id?: string | null,
+  schedule_id?: number | null,
+  qbsdk_external_id?: string | null,
+  xero_id?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  ticket_id?: number | null,
+  location_id?: number | null,
+  contact_id?: number | null,
+  po_number?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  date?: string | null,
+  due_date?: string | null,
+  subtotal?: string | null,
+  total?: string | null,
+  tax?: string | null,
+  verified_paid?: boolean | null,
+  tech_marked_paid?: boolean | null,
+  is_paid?: boolean | null,
+  pdf_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices with ticket, paid-state and update filters, plus page and per_page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.invoices.list({ unpaid: true, per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `per_page` | `number` | No | Invoices per page; the one collection that accepts it. |
+| `ticket_id` | `number` | No | — |
+| `paid` | `boolean` | No | — |
+| `unpaid` | `boolean` | No | — |
+| `since_updated_at` | `string` | No | An ISO timestamp. |
+
+Money fields come back as decimal strings on this resource.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_entries` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  number?: string | null,
+  external_id?: string | null,
+  schedule_id?: number | null,
+  qbsdk_external_id?: string | null,
+  xero_id?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  ticket_id?: number | null,
+  location_id?: number | null,
+  contact_id?: number | null,
+  po_number?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  date?: string | null,
+  due_date?: string | null,
+  subtotal?: string | null,
+  total?: string | null,
+  tax?: string | null,
+  verified_paid?: boolean | null,
+  tech_marked_paid?: boolean | null,
+  is_paid?: boolean | null,
+  pdf_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product; the name and description are both required by RepairShopr
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.products.create({ name: 'SSD 1TB', description: 'Samsung 980 Pro', price_retail: 150 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | Required by RepairShopr, so it is required here. |
+| `price_cost` | `number` | No | — |
+| `price_retail` | `number` | No | — |
+| `price_wholesale` | `number` | No | — |
+| `condition` | `string` | No | — |
+| `maintain_stock` | `boolean` | No | — |
+| `quantity` | `number` | No | — |
+| `warranty` | `string` | No | — |
+| `reorder_at` | `number` | No | — |
+| `desired_stock_level` | `number` | No | — |
+| `disabled` | `boolean` | No | — |
+| `taxable` | `boolean` | No | — |
+| `upc_code` | `string` | No | — |
+| `tax_rate_id` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `serialized` | `boolean` | No | — |
+| `category_ids` | `number[]` | No | — |
+| `vendor_ids` | `number[]` | No | — |
+
+The description is required; RepairShopr rejects a product without one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  condition?: string | null,
+  price_cost?: number | null,
+  price_retail?: number | null,
+  price_wholesale?: number | null,
+  maintain_stock?: boolean | null,
+  quantity?: number | null,
+  warranty?: string | null,
+  sort_order?: number | null,
+  reorder_at?: number | null,
+  disabled?: boolean | null,
+  taxable?: boolean | null,
+  product_category?: string | null,
+  category_path?: string | null,
+  upc_code?: string | null,
+  discount_percent?: number | null,
+  warranty_template_id?: number | null,
+  qb_item_id?: number | null,
+  desired_stock_level?: number | null,
+  notes?: string | null,
+  tax_rate_id?: number | null,
+  physical_location?: string | null,
+  serialized?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+Fetch one product with its pricing, stock level, warranty and category
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.products.get({ product_id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  condition?: string | null,
+  price_cost?: number | null,
+  price_retail?: number | null,
+  price_wholesale?: number | null,
+  maintain_stock?: boolean | null,
+  quantity?: number | null,
+  warranty?: string | null,
+  sort_order?: number | null,
+  reorder_at?: number | null,
+  disabled?: boolean | null,
+  taxable?: boolean | null,
+  product_category?: string | null,
+  category_path?: string | null,
+  upc_code?: string | null,
+  discount_percent?: number | null,
+  warranty_template_id?: number | null,
+  qb_item_id?: number | null,
+  desired_stock_level?: number | null,
+  notes?: string | null,
+  tax_rate_id?: number | null,
+  physical_location?: string | null,
+  serialized?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products with sku, name, upc and category filters, plus an optional sort
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.products.list({ sku: 'SSD-1TB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `query` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `name` | `string` | No | — |
+| `upc_code` | `string` | No | — |
+| `category_id` | `number` | No | — |
+| `id` | `number` | No | — |
+| `id_not` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+This collection has no `meta` block, so `next_page` is always null.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  condition?: string | null,
+  price_cost?: number | null,
+  price_retail?: number | null,
+  price_wholesale?: number | null,
+  maintain_stock?: boolean | null,
+  quantity?: number | null,
+  warranty?: string | null,
+  sort_order?: number | null,
+  reorder_at?: number | null,
+  disabled?: boolean | null,
+  taxable?: boolean | null,
+  product_category?: string | null,
+  category_path?: string | null,
+  upc_code?: string | null,
+  discount_percent?: number | null,
+  warranty_template_id?: number | null,
+  qb_item_id?: number | null,
+  desired_stock_level?: number | null,
+  notes?: string | null,
+  tax_rate_id?: number | null,
+  physical_location?: string | null,
+  serialized?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product: its name, description, pricing, stock settings or category
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.products.update({ product_id: 7, price_retail: 165 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `description` | `string` | No | Required by RepairShopr, so it is required here. |
+| `price_cost` | `number` | No | — |
+| `price_retail` | `number` | No | — |
+| `price_wholesale` | `number` | No | — |
+| `condition` | `string` | No | — |
+| `maintain_stock` | `boolean` | No | — |
+| `quantity` | `number` | No | — |
+| `warranty` | `string` | No | — |
+| `reorder_at` | `number` | No | — |
+| `desired_stock_level` | `number` | No | — |
+| `disabled` | `boolean` | No | — |
+| `taxable` | `boolean` | No | — |
+| `upc_code` | `string` | No | — |
+| `tax_rate_id` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `serialized` | `boolean` | No | — |
+| `category_ids` | `number[]` | No | — |
+| `vendor_ids` | `number[]` | No | — |
+| `product_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  condition?: string | null,
+  price_cost?: number | null,
+  price_retail?: number | null,
+  price_wholesale?: number | null,
+  maintain_stock?: boolean | null,
+  quantity?: number | null,
+  warranty?: string | null,
+  sort_order?: number | null,
+  reorder_at?: number | null,
+  disabled?: boolean | null,
+  taxable?: boolean | null,
+  product_category?: string | null,
+  category_path?: string | null,
+  upc_code?: string | null,
+  discount_percent?: number | null,
+  warranty_template_id?: number | null,
+  qb_item_id?: number | null,
+  desired_stock_level?: number | null,
+  notes?: string | null,
+  tax_rate_id?: number | null,
+  physical_location?: string | null,
+  serialized?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### create
+
+`tickets.create`
+
+Create a ticket for a customer with its subject, status, priority, assignee and assets
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.tickets.create({ customer_id: 1, subject: 'Laptop will not boot', priority: 'High' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `number` | Yes | The customer the ticket belongs to. |
+| `subject` | `string` | Yes | The ticket subject. |
+| `number` | `string` | No | — |
+| `ticket_type_id` | `number` | No | — |
+| `status` | `New \| In Progress \| Waiting on Customer \| Waiting on Parts \| Resolved` | No | — |
+| `priority` | `Urgent \| High \| Medium \| Low` | No | RepairShopr's four priority values. |
+| `problem_type` | `string` | No | — |
+| `due_date` | `string` | No | A date, as `YYYY-MM-DD`. |
+| `start_at` | `string` | No | — |
+| `end_at` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `user_id` | `number` | No | The assigned user. |
+| `contact_id` | `number` | No | — |
+| `parent_id` | `number` | No | — |
+| `sla_id` | `number` | No | — |
+| `asset_ids` | `number[]` | No | — |
+| `properties` | `Record<string, string \| number \| boolean \| null>` | No | — |
+
+The status and priority values are validated before the request, because RepairShopr rejects an unknown one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id?: number | null,
+  number?: number | null,
+  subject?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  due_date?: string | null,
+  resolved_at?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  location_id?: number | null,
+  location_name?: string | null,
+  problem_type?: string | null,
+  status?: string | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null,
+  user_id?: number | null,
+  pdf_url?: string | null,
+  priority?: string | null,
+  billing_status?: string | null,
+  tag_list?: string[] | null,
+  sla_name?: string | null,
+  contact_id?: number | null,
+  parent_id?: number | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tickets.delete`
+
+Delete a ticket permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.repairshopr.api.tickets.delete({ ticket_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `ticket_id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`tickets.get`
+
+Fetch one ticket with its customer, location, status, priority and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.tickets.get({ ticket_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id?: number | null,
+  number?: number | null,
+  subject?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  due_date?: string | null,
+  resolved_at?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  location_id?: number | null,
+  location_name?: string | null,
+  problem_type?: string | null,
+  status?: string | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null,
+  user_id?: number | null,
+  pdf_url?: string | null,
+  priority?: string | null,
+  billing_status?: string | null,
+  tag_list?: string[] | null,
+  sla_name?: string | null,
+  contact_id?: number | null,
+  parent_id?: number | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tickets.list`
+
+List tickets with customer, contact, status, assignee and date filters, plus page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.tickets.list({ customer_id: 1, status: 'New' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `customer_id` | `number` | No | — |
+| `contact_id` | `number` | No | — |
+| `number` | `string` | No | — |
+| `status` | `string` | No | The ticket status, such as `New` or `Resolved`. |
+| `query` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `mine` | `boolean` | No | Only the calling user’s tickets. |
+| `resolved_after` | `string` | No | An ISO timestamp. |
+| `created_after` | `string` | No | An ISO timestamp. |
+| `since_updated_at` | `string` | No | An ISO timestamp. |
+| `parent_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickets` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_entries` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  id?: number | null,
+  number?: number | null,
+  subject?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  due_date?: string | null,
+  resolved_at?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  location_id?: number | null,
+  location_name?: string | null,
+  problem_type?: string | null,
+  status?: string | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null,
+  user_id?: number | null,
+  pdf_url?: string | null,
+  priority?: string | null,
+  billing_status?: string | null,
+  tag_list?: string[] | null,
+  sla_name?: string | null,
+  contact_id?: number | null,
+  parent_id?: number | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tickets.update`
+
+Update a ticket: its subject, status, priority, assignee or due date
+
+**Risk:** `write`
+
+```ts
+await corsair.repairshopr.api.tickets.update({ ticket_id: 3, status: 'Resolved' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `number` | No | The customer the ticket belongs to. |
+| `subject` | `string` | No | The ticket subject. |
+| `number` | `string` | No | — |
+| `ticket_type_id` | `number` | No | — |
+| `status` | `New \| In Progress \| Waiting on Customer \| Waiting on Parts \| Resolved` | No | — |
+| `priority` | `Urgent \| High \| Medium \| Low` | No | RepairShopr's four priority values. |
+| `problem_type` | `string` | No | — |
+| `due_date` | `string` | No | A date, as `YYYY-MM-DD`. |
+| `start_at` | `string` | No | — |
+| `end_at` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `user_id` | `number` | No | The assigned user. |
+| `contact_id` | `number` | No | — |
+| `parent_id` | `number` | No | — |
+| `sla_id` | `number` | No | — |
+| `asset_ids` | `number[]` | No | — |
+| `properties` | `Record<string, string \| number \| boolean \| null>` | No | — |
+| `ticket_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id?: number | null,
+  number?: number | null,
+  subject?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  customer_id?: number | null,
+  customer_business_then_name?: string | null,
+  due_date?: string | null,
+  resolved_at?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  location_id?: number | null,
+  location_name?: string | null,
+  problem_type?: string | null,
+  status?: string | null,
+  ticket_type_id?: number | null,
+  ticket_type_name?: string | null,
+  user_id?: number | null,
+  pdf_url?: string | null,
+  priority?: string | null,
+  billing_status?: string | null,
+  tag_list?: string[] | null,
+  sla_name?: string | null,
+  contact_id?: number | null,
+  parent_id?: number | null,
+  properties?: Record<string, string | number | boolean | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vendors
+
+### list
+
+`vendors.list`
+
+List vendors with their sales rep and contact details
+
+**Risk:** `read`
+
+```ts
+await corsair.repairshopr.api.vendors.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendors` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_entries` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="vendors full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  rep_first_name?: string | null,
+  rep_last_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  account_number?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  website?: string | null,
+  notes?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_entries?: number | null,
+  per_page?: number | null,
+  page?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -3065,6 +3065,14 @@
                 ]
               },
               {
+                "group": "RepairShopr",
+                "pages": [
+                  "plugins/repairshopr/overview",
+                  "plugins/repairshopr/api",
+                  "plugins/repairshopr/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",
