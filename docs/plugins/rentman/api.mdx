@@ -1,0 +1,1857 @@
+---
+title: API
+description: "API reference for Rentman: every `rentman.api.*` operation with input and output types."
+---
+
+Every `rentman.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Appointments
+
+### get
+
+`appointments.get`
+
+Fetch one appointment with its start, end, location and recurrence settings
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.appointments.get({ appointment_id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment_id` | `number` | Yes | — |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appointment full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  start?: string | null,
+  end?: string | null,
+  color?: string | null,
+  location?: string | null,
+  remark?: string | null,
+  is_public?: boolean | null,
+  is_plannable?: boolean | null,
+  recurrence_interval_unit?: string | null,
+  recurrence_enddate?: string | null,
+  recurrence_interval?: number | null,
+  recurrence_group?: string | null,
+  recurrence_weekdays?: string | null,
+  synchronization_id?: string | null,
+  synchronisation_uri?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`appointments.list`
+
+List calendar appointments with project and start/end filters plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.appointments.list({ project: 201, start: { gte: '2026-07-01' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `project` | `number` | No | Only this project id. |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `modified` | `object` | No | — |
+
+The date operators are `lt`, `gt`, `lte`, `gte` and `neq`.
+
+<AccordionGroup>
+<Accordion title="start full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointments` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="appointments full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  start?: string | null,
+  end?: string | null,
+  color?: string | null,
+  location?: string | null,
+  remark?: string | null,
+  is_public?: boolean | null,
+  is_plannable?: boolean | null,
+  recurrence_interval_unit?: string | null,
+  recurrence_enddate?: string | null,
+  recurrence_interval?: number | null,
+  recurrence_group?: string | null,
+  recurrence_weekdays?: string | null,
+  synchronization_id?: string | null,
+  synchronisation_uri?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a company or person contact with its mailing, visit and invoice addresses
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.contacts.create({ name: 'Acme Inc', type: 'company', country: 'NL', mailing_address: { street: 'Damrak', city: 'Amsterdam' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | No | — |
+| `type` | `string` | No | `company` or `person`; Rentman derives `displayname` from it. |
+| `ext_name_line` | `string` | No | — |
+| `name` | `string` | No | The company name. |
+| `firstname` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `surfix` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `code` | `string` | No | — |
+| `accounting_code` | `string` | No | — |
+| `vendor_accounting_code` | `string` | No | — |
+| `country` | `string` | No | A two-letter country code. |
+| `longitude` | `number` | No | — |
+| `latitude` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `travel_time` | `number` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mailing_address` | `object` | No | — |
+| `visit_address` | `object` | No | — |
+| `invoice_address` | `object` | No | — |
+
+The three address blocks are folded into `mailing_`, `visit_` and `invoice_` prefixed fields.
+
+<AccordionGroup>
+<Accordion title="mailing_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="visit_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="invoice_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  firstname?: string | null,
+  surname?: string | null,
+  ext_name_line?: string | null,
+  surfix?: string | null,
+  gender?: string | null,
+  type?: string | null,
+  code?: string | null,
+  accounting_code?: string | null,
+  folder?: string | null,
+  country?: string | null,
+  distance?: number | null,
+  travel_time?: number | null,
+  longitude?: number | null,
+  latitude?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  mailing_city?: string | null,
+  mailing_street?: string | null,
+  mailing_postalcode?: string | null,
+  mailing_country?: string | null,
+  visit_city?: string | null,
+  visit_street?: string | null,
+  visit_postalcode?: string | null,
+  visit_country?: string | null,
+  invoice_city?: string | null,
+  invoice_street?: string | null,
+  invoice_postalcode?: string | null,
+  invoice_country?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rentman.api.contacts.delete({ contact_id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | — |
+
+Permanent; the API has no undo.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Fetch one contact with its address blocks and linked items expanded on request
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.contacts.get({ contact_id: 12, expand: ['customer'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | The contact id. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  firstname?: string | null,
+  surname?: string | null,
+  ext_name_line?: string | null,
+  surfix?: string | null,
+  gender?: string | null,
+  type?: string | null,
+  code?: string | null,
+  accounting_code?: string | null,
+  folder?: string | null,
+  country?: string | null,
+  distance?: number | null,
+  travel_time?: number | null,
+  longitude?: number | null,
+  latitude?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  mailing_city?: string | null,
+  mailing_street?: string | null,
+  mailing_postalcode?: string | null,
+  mailing_country?: string | null,
+  visit_city?: string | null,
+  visit_street?: string | null,
+  visit_postalcode?: string | null,
+  visit_country?: string | null,
+  invoice_city?: string | null,
+  invoice_street?: string | null,
+  invoice_postalcode?: string | null,
+  invoice_country?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with country, type and folder filters, field projection and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.contacts.list({ country: 'NL', fields: ['displayname', 'email'], limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `country` | `string` | No | A two-letter country code. |
+| `type` | `string` | No | The contact type, such as `company` or `person`. |
+| `folder` | `string` | No | The folder path a contact is filed under. |
+| `modified` | `object` | No | — |
+
+The operator keys are percent-encoded brackets, such as `modified[gte]`.
+
+<AccordionGroup>
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  firstname?: string | null,
+  surname?: string | null,
+  ext_name_line?: string | null,
+  surfix?: string | null,
+  gender?: string | null,
+  type?: string | null,
+  code?: string | null,
+  accounting_code?: string | null,
+  folder?: string | null,
+  country?: string | null,
+  distance?: number | null,
+  travel_time?: number | null,
+  longitude?: number | null,
+  latitude?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  mailing_city?: string | null,
+  mailing_street?: string | null,
+  mailing_postalcode?: string | null,
+  mailing_country?: string | null,
+  visit_city?: string | null,
+  visit_street?: string | null,
+  visit_postalcode?: string | null,
+  visit_country?: string | null,
+  invoice_city?: string | null,
+  invoice_street?: string | null,
+  invoice_postalcode?: string | null,
+  invoice_country?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact: its name, code, addresses, coordinates or contact details
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.contacts.update({ contact_id: 12, name: 'Acme B.V.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | No | — |
+| `type` | `string` | No | `company` or `person`; Rentman derives `displayname` from it. |
+| `ext_name_line` | `string` | No | — |
+| `name` | `string` | No | The company name. |
+| `firstname` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `surfix` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `code` | `string` | No | — |
+| `accounting_code` | `string` | No | — |
+| `vendor_accounting_code` | `string` | No | — |
+| `country` | `string` | No | A two-letter country code. |
+| `longitude` | `number` | No | — |
+| `latitude` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `travel_time` | `number` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mailing_address` | `object` | No | — |
+| `visit_address` | `object` | No | — |
+| `invoice_address` | `object` | No | — |
+| `contact_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailing_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="visit_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="invoice_address full type">
+
+```ts
+{
+  street?: string,
+  number?: string,
+  unit_number?: string,
+  district?: string,
+  extra_address_line?: string,
+  postalcode?: string,
+  city?: string,
+  state?: string,
+  country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  firstname?: string | null,
+  surname?: string | null,
+  ext_name_line?: string | null,
+  surfix?: string | null,
+  gender?: string | null,
+  type?: string | null,
+  code?: string | null,
+  accounting_code?: string | null,
+  folder?: string | null,
+  country?: string | null,
+  distance?: number | null,
+  travel_time?: number | null,
+  longitude?: number | null,
+  latitude?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  mailing_city?: string | null,
+  mailing_street?: string | null,
+  mailing_postalcode?: string | null,
+  mailing_country?: string | null,
+  visit_city?: string | null,
+  visit_street?: string | null,
+  visit_postalcode?: string | null,
+  visit_country?: string | null,
+  invoice_city?: string | null,
+  invoice_street?: string | null,
+  invoice_postalcode?: string | null,
+  invoice_country?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Crew
+
+### get
+
+`crew.get`
+
+Fetch one crew member with their contact details, address and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.crew.get({ crew_id: 44 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crew_id` | `number` | Yes | — |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crew` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="crew full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  firstname?: string | null,
+  middle_name?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  active?: boolean | null,
+  avatar?: string | null,
+  folder?: string | null,
+  company_name?: string | null,
+  external_reference?: string | null,
+  tags?: string | null,
+  street?: string | null,
+  housenumber?: string | null,
+  unit_number?: string | null,
+  district?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  addressline2?: string | null,
+  extraaddressline?: string | null,
+  state?: string | null,
+  country?: string | null,
+  custom?: Record<string, string | number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`crew.list`
+
+List crew members with name and availability filters, field projection and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.crew.list({ active: true, sort: '+lastname' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `name` | `object` | No | — |
+| `active` | `boolean` | No | — |
+| `crew_type` | `string` | No | The crew member type. |
+| `modified` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crew` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="crew full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  firstname?: string | null,
+  middle_name?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  active?: boolean | null,
+  avatar?: string | null,
+  folder?: string | null,
+  company_name?: string | null,
+  external_reference?: string | null,
+  tags?: string | null,
+  street?: string | null,
+  housenumber?: string | null,
+  unit_number?: string | null,
+  district?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  addressline2?: string | null,
+  extraaddressline?: string | null,
+  state?: string | null,
+  country?: string | null,
+  custom?: Record<string, string | number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Equipment
+
+### create
+
+`equipment.create`
+
+Create an equipment item with its code, price, replacement value, dimensions and remarks
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.equipment.create({ name: 'Yamaha QL5 Mixer', code: 'AUD-001', price: 150, list_price: 12000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The equipment name. |
+| `code` | `string` | No | — |
+| `in_shop` | `boolean` | No | Whether the item is offered in the shop. Equipment has no `active` flag. |
+| `folder` | `string` | No | — |
+| `type` | `number` | No | — |
+| `price` | `number` | No | The rental price. |
+| `list_price` | `number` | No | The replacement value. |
+| `weight` | `number` | No | — |
+| `volume` | `number` | No | — |
+| `power` | `number` | No | — |
+| `height` | `number` | No | — |
+| `width` | `number` | No | — |
+| `length` | `number` | No | — |
+| `internal_remark` | `string` | No | — |
+| `external_remark` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `equipment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="equipment full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  code?: string | null,
+  folder?: string | null,
+  factor_group?: string | null,
+  unit?: string | null,
+  type?: string | null,
+  taxclass?: string | null,
+  ledger?: string | null,
+  ledger_debit?: string | null,
+  defaultgroup?: string | null,
+  country_of_origin?: string | null,
+  image?: string | null,
+  in_shop?: boolean | null,
+  in_planner?: boolean | null,
+  in_archive?: boolean | null,
+  rental_sales?: boolean | null,
+  temporary?: boolean | null,
+  stock_management?: boolean | null,
+  price?: number | null,
+  list_price?: number | null,
+  subrental_costs?: number | null,
+  critical_stock_level?: number | null,
+  volume?: number | null,
+  packed_per?: number | null,
+  height?: number | null,
+  width?: number | null,
+  length?: number | null,
+  weight?: number | null,
+  empty_weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  internal_remark?: string | null,
+  external_remark?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`equipment.get`
+
+Fetch one equipment item with its pricing, dimensions and stock settings
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.equipment.get({ equipment_id: 33 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `equipment_id` | `number` | Yes | — |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `equipment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="equipment full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  code?: string | null,
+  folder?: string | null,
+  factor_group?: string | null,
+  unit?: string | null,
+  type?: string | null,
+  taxclass?: string | null,
+  ledger?: string | null,
+  ledger_debit?: string | null,
+  defaultgroup?: string | null,
+  country_of_origin?: string | null,
+  image?: string | null,
+  in_shop?: boolean | null,
+  in_planner?: boolean | null,
+  in_archive?: boolean | null,
+  rental_sales?: boolean | null,
+  temporary?: boolean | null,
+  stock_management?: boolean | null,
+  price?: number | null,
+  list_price?: number | null,
+  subrental_costs?: number | null,
+  critical_stock_level?: number | null,
+  volume?: number | null,
+  packed_per?: number | null,
+  height?: number | null,
+  width?: number | null,
+  length?: number | null,
+  weight?: number | null,
+  empty_weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  internal_remark?: string | null,
+  external_remark?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`equipment.list`
+
+List equipment with name, code and shop-availability filters, field projection and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.equipment.list({ in_shop: true, name: { eq: 'Yamaha QL5 Mixer' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `name` | `object` | No | — |
+| `code` | `object` | No | — |
+| `in_shop` | `boolean` | No | — |
+| `folder` | `string` | No | — |
+| `modified` | `object` | No | — |
+
+Equipment has no `active` flag; availability is `in_shop`, `in_planner` and `in_archive`.
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="code full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `equipment` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="equipment full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  code?: string | null,
+  folder?: string | null,
+  factor_group?: string | null,
+  unit?: string | null,
+  type?: string | null,
+  taxclass?: string | null,
+  ledger?: string | null,
+  ledger_debit?: string | null,
+  defaultgroup?: string | null,
+  country_of_origin?: string | null,
+  image?: string | null,
+  in_shop?: boolean | null,
+  in_planner?: boolean | null,
+  in_archive?: boolean | null,
+  rental_sales?: boolean | null,
+  temporary?: boolean | null,
+  stock_management?: boolean | null,
+  price?: number | null,
+  list_price?: number | null,
+  subrental_costs?: number | null,
+  critical_stock_level?: number | null,
+  volume?: number | null,
+  packed_per?: number | null,
+  height?: number | null,
+  width?: number | null,
+  length?: number | null,
+  weight?: number | null,
+  empty_weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  internal_remark?: string | null,
+  external_remark?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`equipment.update`
+
+Update an equipment item: its name, code, price, dimensions or remarks
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.equipment.update({ equipment_id: 33, price: 165 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | The equipment name. |
+| `code` | `string` | No | — |
+| `in_shop` | `boolean` | No | Whether the item is offered in the shop. Equipment has no `active` flag. |
+| `folder` | `string` | No | — |
+| `type` | `number` | No | — |
+| `price` | `number` | No | The rental price. |
+| `list_price` | `number` | No | The replacement value. |
+| `weight` | `number` | No | — |
+| `volume` | `number` | No | — |
+| `power` | `number` | No | — |
+| `height` | `number` | No | — |
+| `width` | `number` | No | — |
+| `length` | `number` | No | — |
+| `internal_remark` | `string` | No | — |
+| `external_remark` | `string` | No | — |
+| `equipment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `equipment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="equipment full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  code?: string | null,
+  folder?: string | null,
+  factor_group?: string | null,
+  unit?: string | null,
+  type?: string | null,
+  taxclass?: string | null,
+  ledger?: string | null,
+  ledger_debit?: string | null,
+  defaultgroup?: string | null,
+  country_of_origin?: string | null,
+  image?: string | null,
+  in_shop?: boolean | null,
+  in_planner?: boolean | null,
+  in_archive?: boolean | null,
+  rental_sales?: boolean | null,
+  temporary?: boolean | null,
+  stock_management?: boolean | null,
+  price?: number | null,
+  list_price?: number | null,
+  subrental_costs?: number | null,
+  critical_stock_level?: number | null,
+  volume?: number | null,
+  packed_per?: number | null,
+  height?: number | null,
+  width?: number | null,
+  length?: number | null,
+  weight?: number | null,
+  empty_weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  internal_remark?: string | null,
+  external_remark?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Fetch one invoice with its totals, balance and payment state
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.invoices.get({ invoice_id: 66 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  number?: string | null,
+  project?: string | null,
+  contact?: string | null,
+  status?: string | null,
+  date?: string | null,
+  expiration?: string | null,
+  total_excl_vat?: number | null,
+  total_incl_vat?: number | null,
+  amount_paid?: number | null,
+  balance?: number | null,
+  locked?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices with number and project filters plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.invoices.list({ project: 201, number: { eq: 'F-2026-001' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `number` | `object` | No | — |
+| `project` | `number` | No | — |
+| `modified` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="number full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  number?: string | null,
+  project?: string | null,
+  contact?: string | null,
+  status?: string | null,
+  date?: string | null,
+  expiration?: string | null,
+  total_excl_vat?: number | null,
+  total_incl_vat?: number | null,
+  amount_paid?: number | null,
+  balance?: number | null,
+  locked?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project for a customer contact with its number, account manager and deposit settings
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.projects.create({ name: 'Festival 2026', customer: 12, number: 'P-2026-001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The project name. |
+| `customer` | `number` | Yes | The contact id the project belongs to. |
+| `number` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `account_manager` | `number` | No | A crew member id. |
+| `deposit_status` | `string` | No | — |
+| `color` | `string` | No | — |
+| `conditions` | `string` | No | — |
+| `refundabledeposit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  number?: string | null,
+  reference?: string | null,
+  project_type?: string | null,
+  deposit_status?: string | null,
+  color?: string | null,
+  conditions?: string | null,
+  tags?: string | null,
+  customer?: string | null,
+  cust_contact?: string | null,
+  loc_contact?: string | null,
+  location?: string | null,
+  account_manager?: string | null,
+  usageperiod_start?: string | null,
+  usageperiod_end?: string | null,
+  planperiod_start?: string | null,
+  planperiod_end?: string | null,
+  equipment_period_from?: string | null,
+  equipment_period_to?: string | null,
+  refundabledeposit?: number | null,
+  project_total_price?: number | null,
+  project_rental_price?: number | null,
+  project_sale_price?: number | null,
+  project_crew_price?: number | null,
+  project_transport_price?: number | null,
+  project_other_price?: number | null,
+  project_insurance_price?: number | null,
+  project_services_price?: number | null,
+  estimated_cost?: number | null,
+  planned_cost?: number | null,
+  actual_cost?: number | null,
+  already_invoiced?: number | null,
+  weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  purchasecosts?: number | null,
+  volume?: number | null,
+  custom?: Record<string, string | number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Fetch one project with its customer, totals and period fields, expanding linked items on request
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.projects.get({ project_id: 201, expand: ['customer'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+
+A linked item is a path like `/contacts/12` unless `expand` inlines it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  number?: string | null,
+  reference?: string | null,
+  project_type?: string | null,
+  deposit_status?: string | null,
+  color?: string | null,
+  conditions?: string | null,
+  tags?: string | null,
+  customer?: string | null,
+  cust_contact?: string | null,
+  loc_contact?: string | null,
+  location?: string | null,
+  account_manager?: string | null,
+  usageperiod_start?: string | null,
+  usageperiod_end?: string | null,
+  planperiod_start?: string | null,
+  planperiod_end?: string | null,
+  equipment_period_from?: string | null,
+  equipment_period_to?: string | null,
+  refundabledeposit?: number | null,
+  project_total_price?: number | null,
+  project_rental_price?: number | null,
+  project_sale_price?: number | null,
+  project_crew_price?: number | null,
+  project_transport_price?: number | null,
+  project_other_price?: number | null,
+  project_insurance_price?: number | null,
+  project_services_price?: number | null,
+  estimated_cost?: number | null,
+  planned_cost?: number | null,
+  actual_cost?: number | null,
+  already_invoiced?: number | null,
+  weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  purchasecosts?: number | null,
+  volume?: number | null,
+  custom?: Record<string, string | number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List rental projects with name and number filters, field projection and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rentman.api.projects.list({ name: { eq: 'Festival 2026' }, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, 1 to 1500. Rentman uses 300 when omitted and carries the value into later pages. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, used verbatim. Rentman warns against constructing or editing it. |
+| `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
+| `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
+| `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
+| `name` | `object` | No | — |
+| `number` | `object` | No | — |
+| `deposit_status` | `string` | No | — |
+| `modified` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="number full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified full type">
+
+```ts
+{
+  eq?: string,
+  neq?: string,
+  lt?: string,
+  gt?: string,
+  lte?: string,
+  gte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `next_page_url` | `string \| null` | Yes | The absolute next-page URL, for callers that follow it directly. |
+| `item_count` | `number` | Yes | Items in this page. |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  number?: string | null,
+  reference?: string | null,
+  project_type?: string | null,
+  deposit_status?: string | null,
+  color?: string | null,
+  conditions?: string | null,
+  tags?: string | null,
+  customer?: string | null,
+  cust_contact?: string | null,
+  loc_contact?: string | null,
+  location?: string | null,
+  account_manager?: string | null,
+  usageperiod_start?: string | null,
+  usageperiod_end?: string | null,
+  planperiod_start?: string | null,
+  planperiod_end?: string | null,
+  equipment_period_from?: string | null,
+  equipment_period_to?: string | null,
+  refundabledeposit?: number | null,
+  project_total_price?: number | null,
+  project_rental_price?: number | null,
+  project_sale_price?: number | null,
+  project_crew_price?: number | null,
+  project_transport_price?: number | null,
+  project_other_price?: number | null,
+  project_insurance_price?: number | null,
+  project_services_price?: number | null,
+  estimated_cost?: number | null,
+  planned_cost?: number | null,
+  actual_cost?: number | null,
+  already_invoiced?: number | null,
+  weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  purchasecosts?: number | null,
+  volume?: number | null,
+  custom?: Record<string, string | number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project: its name, customer, number, account manager or deposit settings
+
+**Risk:** `write`
+
+```ts
+await corsair.rentman.api.projects.update({ project_id: 201, reference: 'PO-9988' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | The project name. |
+| `customer` | `number` | No | The contact id the project belongs to. |
+| `number` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `account_manager` | `number` | No | A crew member id. |
+| `deposit_status` | `string` | No | — |
+| `color` | `string` | No | — |
+| `conditions` | `string` | No | — |
+| `refundabledeposit` | `number` | No | — |
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  modified?: string | null,
+  creator?: string | null,
+  displayname?: string | null,
+  name?: string | null,
+  number?: string | null,
+  reference?: string | null,
+  project_type?: string | null,
+  deposit_status?: string | null,
+  color?: string | null,
+  conditions?: string | null,
+  tags?: string | null,
+  customer?: string | null,
+  cust_contact?: string | null,
+  loc_contact?: string | null,
+  location?: string | null,
+  account_manager?: string | null,
+  usageperiod_start?: string | null,
+  usageperiod_end?: string | null,
+  planperiod_start?: string | null,
+  planperiod_end?: string | null,
+  equipment_period_from?: string | null,
+  equipment_period_to?: string | null,
+  refundabledeposit?: number | null,
+  project_total_price?: number | null,
+  project_rental_price?: number | null,
+  project_sale_price?: number | null,
+  project_crew_price?: number | null,
+  project_transport_price?: number | null,
+  project_other_price?: number | null,
+  project_insurance_price?: number | null,
+  project_services_price?: number | null,
+  estimated_cost?: number | null,
+  planned_cost?: number | null,
+  actual_cost?: number | null,
+  already_invoiced?: number | null,
+  weight?: number | null,
+  power?: number | null,
+  current?: number | null,
+  purchasecosts?: number | null,
+  volume?: number | null,
+  custom?: Record<string, string | number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
