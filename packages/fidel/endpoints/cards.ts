@@ -4,31 +4,6 @@ import { makeFidelRequest } from '../client';
 import { fidelPathParameter } from './path';
 import type { FidelEndpointOutputs } from './types';
 
-export const createCard: FidelEndpoints['createCard'] = async (ctx, input) => {
-	const { programId, ...rest } = input;
-	const response = await makeFidelRequest<FidelEndpointOutputs['createCard']>(
-		ctx,
-		fidelPathParameter(
-			'/v1/programs/{programId}/cards',
-			'programId',
-			input.programId,
-		),
-		{ method: 'POST', body: rest },
-	);
-	await logEventFromContext(
-		ctx,
-		'fidel.cards.createCard',
-		{
-			...input,
-			number: '[redacted]',
-			expMonth: '[redacted]',
-			expYear: '[redacted]',
-		},
-		'completed',
-	);
-	return response;
-};
-
 export const retrieveCard: FidelEndpoints['retrieveCard'] = async (
 	ctx,
 	input,

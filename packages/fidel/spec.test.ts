@@ -70,32 +70,6 @@ describe('Fidel responses as the provider documents them', () => {
 		).resolves.toEqual(documented);
 	});
 
-	it('does not turn a successful card link into an error', async () => {
-		const documented = {
-			items: [
-				{
-					id: '612ff311-dc0c-448d-8199-5a371f07433d',
-					lastNumbers: '4222',
-					firstNumbers: '444400',
-				},
-			],
-			resource: '/v1/programs/f76ed1be-e434-480b-aa1d-ff48f548f62a/cards',
-			status: 201,
-			execution: 126.820606,
-		};
-		request.mockResolvedValue(documented);
-		await expect(
-			api.cards!.createCard!(ctx, {
-				programId: 'f76ed1be-e434-480b-aa1d-ff48f548f62a',
-				countryCode: 'GBR',
-				expMonth: 10,
-				expYear: 2030,
-				number: '4444000000004222',
-				termsOfUse: true,
-			}),
-		).resolves.toEqual(documented);
-	});
-
 	it('keeps the exists flag of the active-offer check', async () => {
 		const documented = {
 			count: 0,

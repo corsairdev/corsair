@@ -3,7 +3,6 @@ import {
 	activateOfferOnCard,
 	createBrand,
 	createBrandWebhook,
-	createCard,
 	createLocation,
 	createMidRequest,
 	createMissingTransactionRequest,
@@ -269,26 +268,6 @@ describe('Fidel endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(ctx, '/v1/locations/locationId-1', {
 			method: 'DELETE',
 		});
-		await createCard(ctx, {
-			programId: 'programId-1',
-			countryCode: 'CAN',
-			expMonth: 1,
-			expYear: 1,
-			number: 'number-1',
-		} as never);
-		expect(request).toHaveBeenCalledWith(
-			ctx,
-			'/v1/programs/programId-1/cards',
-			{
-				method: 'POST',
-				body: {
-					countryCode: 'CAN',
-					expMonth: 1,
-					expYear: 1,
-					number: 'number-1',
-				},
-			},
-		);
 		await retrieveCard(ctx, { cardId: 'cardId-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/v1/cards/cardId-1', {
 			method: 'GET',
@@ -849,36 +828,5 @@ describe('Fidel endpoint request seams', () => {
 				},
 			},
 		);
-	});
-
-	it('redacts card credentials from the endpoint event log', async () => {
-		const ctx = {
-			key: 'secret',
-			options: {},
-			$getAccountId: jest.fn().mockResolvedValue('account-1'),
-		} as never;
-		const logMock = jest.requireMock('corsair/core')
-			.logEventFromContext as jest.Mock;
-		logMock.mockClear();
-		await createCard(ctx, {
-			programId: 'program-1',
-			countryCode: 'USA',
-			expMonth: 12,
-			expYear: 2030,
-			number: '4111111111111111',
-			termsOfUse: true,
-		} as never);
-		// unknown: the event-writer mock records the runtime context and the
-		// provider payload, which the endpoint signature does not expose; only
-		// the logged payload element is asserted, so the tuple is read
-		// structurally.
-		const calls = logMock.mock.calls as Array<
-			[unknown, string, Record<string, unknown>, string]
-		>;
-		const payload = calls[calls.length - 1]?.[2];
-		expect(payload?.number).toBe('[redacted]');
-		expect(payload?.expMonth).toBe('[redacted]');
-		expect(payload?.expYear).toBe('[redacted]');
-		expect(payload?.programId).toBe('program-1');
 	});
 });

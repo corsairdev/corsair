@@ -17,7 +17,6 @@ pnpm add @corsair-dev/fidel
 | `brands.listBrands` | `fidel.api.brands.listBrands` | `read` | List the brands on the Fidel account |
 | `brands.retrieveBrand` | `fidel.api.brands.retrieveBrand` | `read` | Retrieve a brand by ID |
 | `brands.updateBrand` | `fidel.api.brands.updateBrand` | `write` | Update the details of a brand |
-| `cards.createCard` | `fidel.api.cards.createCard` | `write` | Link a payment card to a program on Fidel |
 | `cards.deleteCard` | `fidel.api.cards.deleteCard` | `destructive` | Remove a linked card from a program |
 | `cards.listCards` | `fidel.api.cards.listCards` | `read` | List the linked cards of a program |
 | `cards.listCardsFromMetadataId` | `fidel.api.cards.listCardsFromMetadataId` | `read` | List the linked cards matching a metadata identifier |

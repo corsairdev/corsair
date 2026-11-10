@@ -187,27 +187,6 @@ const DeleteLocationInputSchema = z.object({
 	locationId: z.string().min(1),
 });
 
-const CreateCardInputSchema = z.object({
-	programId: z.string().min(1),
-	countryCode: z.enum([
-		'CAN',
-		'DNK',
-		'FIN',
-		'GBR',
-		'IRL',
-		'JPN',
-		'NOR',
-		'SWE',
-		'USA',
-	]),
-	expMonth: z.number(),
-	expYear: z.number(),
-	number: z.string(),
-	termsOfUse: z.boolean(),
-	// unknown: the provider documents metadata as an open shape; values pass through as-is
-	metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
 const RetrieveCardInputSchema = z.object({
 	cardId: z.string().min(1),
 });
@@ -594,7 +573,6 @@ export const FidelEndpointInputSchemas = {
 	listLocationsByBrand: ListLocationsByBrandInputSchema,
 	listLocationsByOffer: ListLocationsByOfferInputSchema,
 	deleteLocation: DeleteLocationInputSchema,
-	createCard: CreateCardInputSchema,
 	retrieveCard: RetrieveCardInputSchema,
 	listCards: ListCardsInputSchema,
 	listCardsFromMetadataId: ListCardsFromMetadataIdInputSchema,
@@ -654,7 +632,6 @@ export const FidelEndpointOutputSchemas = {
 	listLocationsByBrand: FidelItemsOutputSchema,
 	listLocationsByOffer: FidelItemsOutputSchema,
 	deleteLocation: FidelEmptyOutputSchema,
-	createCard: FidelItemsOutputSchema,
 	retrieveCard: FidelItemsOutputSchema,
 	listCards: FidelItemsOutputSchema,
 	listCardsFromMetadataId: FidelItemsOutputSchema,

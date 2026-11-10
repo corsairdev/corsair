@@ -6,7 +6,6 @@ export {
 	updateBrand,
 } from './brands';
 export {
-	createCard,
 	deleteCard,
 	listCards,
 	listCardsFromMetadataId,

@@ -241,60 +241,6 @@ await corsair.fidel.api.brands.updateBrand({});
 
 ## Cards
 
-### createCard
-
-`cards.createCard`
-
-Link a payment card to a program on Fidel
-
-**Risk:** `write`
-
-```ts
-await corsair.fidel.api.cards.createCard({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `programId` | `string` | Yes | — |
-| `countryCode` | `CAN \| DNK \| FIN \| GBR \| IRL \| JPN \| NOR \| SWE \| USA` | Yes | — |
-| `expMonth` | `number` | Yes | — |
-| `expYear` | `number` | Yes | — |
-| `number` | `string` | Yes | — |
-| `termsOfUse` | `boolean` | Yes | — |
-| `metadata` | `Record<string, any>` | No | — |
-
-Fidel documents this endpoint with the public SDK key (`pk_test_…` or `pk_live_…`) and requires PCI compliance to call it in the live environment. For real cards, use Fidel's SDKs, which send the card number straight to Fidel.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `items` | `object[]` | No | — |
-| `count` | `number` | No | — |
-| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
-| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
-| `resource` | `string` | No | — |
-| `status` | `string \| number` | No | — |
-| `execution` | `number \| Record<string, any>` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### deleteCard
 
 `cards.deleteCard`

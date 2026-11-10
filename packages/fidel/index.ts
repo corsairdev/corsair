@@ -20,7 +20,6 @@ import {
 	updateBrand,
 } from './endpoints/brands';
 import {
-	createCard,
 	deleteCard,
 	listCards,
 	listCardsFromMetadataId,
@@ -217,7 +216,6 @@ const fidelEndpointsNested = {
 		deleteLocation: deleteLocation,
 	},
 	cards: {
-		createCard: createCard,
 		retrieveCard: retrieveCard,
 		listCards: listCards,
 		listCardsFromMetadataId: listCardsFromMetadataId,
@@ -340,10 +338,6 @@ export const fidelEndpointMeta = {
 	'locations.deleteLocation': {
 		riskLevel: 'destructive',
 		description: 'Delete a location from a program',
-	},
-	'cards.createCard': {
-		riskLevel: 'write',
-		description: 'Link a payment card to a program on Fidel',
 	},
 	'cards.retrieveCard': {
 		riskLevel: 'read',
@@ -569,10 +563,6 @@ export const fidelEndpointSchemas = {
 	'locations.deleteLocation': {
 		input: FidelEndpointInputSchemas.deleteLocation,
 		output: FidelEndpointOutputSchemas.deleteLocation,
-	},
-	'cards.createCard': {
-		input: FidelEndpointInputSchemas.createCard,
-		output: FidelEndpointOutputSchemas.createCard,
 	},
 	'cards.retrieveCard': {
 		input: FidelEndpointInputSchemas.retrieveCard,
