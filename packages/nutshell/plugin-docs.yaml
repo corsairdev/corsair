@@ -1,0 +1,8 @@
+displayName: Nutshell
+description: CRM integration for accounts, contacts, leads, activities, tasks, products, quotes, and invoices.
+domain: nutshell.com
+recommendedAuth: api_key
+overviewNote: |
+  Authenticate with the Nutshell user's email as the HTTP Basic username and that user's API key as the password. Requests use the HTTPS REST API at `https://app.nutshell.com/rest`.
+
+  This plugin implements the documented REST operations. Nutshell's legacy JSON-RPC API is not included. Its webhooks are outbound notifications configured in Nutshell, not inbound operations for this integration.

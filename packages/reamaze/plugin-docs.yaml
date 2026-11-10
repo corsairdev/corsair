@@ -1,0 +1,185 @@
+displayName: Re:amaze
+description: Customer support inbox for Re:amaze - read and reply to conversations, manage contacts, identities and notes, publish help articles, and pull the volume, response time, tag and channel reports.
+domain: reamaze.com
+recommendedAuth: api_key
+overviewNote: |
+  **Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. The brand name on its own (`acme`) and a pasted `https://acme.reamaze.io/` are accepted too. Requests only go to `https://<brand>.reamaze.io`: another domain, an IP address or a port is rejected before anything is sent. Without a host the plugin throws before it sends anything.
+
+  Credentials are a **login email and a personal API token**, sent as HTTP Basic. The token lives under Settings, then API tokens, inside the brand. Store the pair as the account's `api_key`, JSON-encoded as `{"email":"...","token":"..."}`, which is how a single-string key carries two values; `reamaze({ key })` takes the same string.
+
+  Things to know before you call:
+
+  - **Paging is by page number.** Pass `page`; the response carries `page_size`, `page_count` and `total_count`. `channels.list` sends only `total_count`, so read `channels.length` for that route.
+  - **Three routes answer a bare array**, not a wrapper: contact notes, incidents and systems. The plugin wraps each under a named key (`notes`, `incidents`, `systems`) so a caller always reads a collection, and a non-array body throws instead of becoming an empty list.
+  - **Report payloads are maps, not arrays.** `reports.volume` keys conversation counts by `YYYY-MM-DD`, `reports.tags` keys tag counts by tag name, `reports.staff` keys metrics by staff display name, and `reports.channelSummary` keys them by channel id. Read them with `Object.entries`.
+  - **Conversation status is an integer**: 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7 and 8 for the AI agent, 9 AI spam.
+  - **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` and `notes.update` send the fields unwrapped, as a bare `{ body }` plus the optional `creator_email` and `created_at`.
+  - **`incidents.update` is a PUT.** The vendor heading says PUT and its curl example sends `-X POST`; the route only answers PUT, so that is what the endpoint sends.
+  - **An unknown route answers HTML, not JSON.** An unknown resource answers `{"errors":"Not Found"}`, an unknown route `{"status":404,"error":"Not Found"}`, and a validation failure a map of field to message with status 422.
+examples:
+  read:
+    path: conversations.list
+    title: List recent conversations
+    args:
+      page: 1
+  write:
+    path: messages.create
+    title: Reply to a conversation
+    args:
+      slug: knock-knock
+      body: Thanks for reaching out, we are looking into this now.
+      visibility: 0
+apiExamples:
+  conversations.list:
+    call: "{ filter: 'open', sort: 'updated', page: 1 }"
+  conversations.get:
+    call: "{ slug: 'knock-knock' }"
+  conversations.create:
+    call: "{ subject: 'Printer offline', category: 'support', message: { body: 'The printer on floor 3 is offline.' }, user: { name: 'bob', email: 'bob@example.com' } }"
+  conversations.update:
+    call: "{ slug: 'knock-knock', status: 2, tag_list: ['resolved'] }"
+  messages.list:
+    call: "{ filter: 'customer', page: 1 }"
+  messages.create:
+    call: "{ slug: 'knock-knock', body: 'Thanks for reaching out.', visibility: 0 }"
+  contacts.list:
+    call: "{ q: 'bob', page: 1 }"
+  contacts.create:
+    call: "{ name: 'bob', email: 'bob@example.com', data: { plan: 'pro' } }"
+  contacts.update:
+    call: "{ email: 'bob@example.com', friendly_name: 'Bobby' }"
+  identities.list:
+    call: "{ email: 'bob@example.com' }"
+  identities.create:
+    call: "{ email: 'bob@example.com', type: 'email', identifier: 'bob.work@example.com' }"
+  notes.list:
+    call: "{ contact: 'bob@example.com' }"
+  notes.create:
+    call: "{ contact: 'bob@example.com', body: 'Called about the invoice.' }"
+  notes.update:
+    call: "{ contact: 'bob@example.com', id: 123, body: 'Called again about the invoice.' }"
+  notes.delete:
+    call: "{ contact: 'bob@example.com', id: 123 }"
+  channels.list:
+    call: "{ channel: 'email' }"
+  channels.get:
+    call: "{ slug: 'support' }"
+  articles.list:
+    call: "{ status: 'published', page: 1 }"
+  articles.get:
+    call: "{ slug: 'advantage-of-the-union' }"
+  articles.create:
+    call: "{ topic: 'the-federalist-papers', title: 'Returns policy', body: 'Send it back within 30 days.', status: 1 }"
+  articles.update:
+    call: "{ slug: 'advantage-of-the-union', title: 'New title' }"
+  reports.volume:
+    call: "{ start_date: '2026-10-11', end_date: '2026-11-09' }"
+  reports.responseTime:
+    call: "{ start_date: '2026-10-11', end_date: '2026-11-09' }"
+  reports.staff:
+    call: "{ start_date: '2026-10-11', end_date: '2026-11-09' }"
+  reports.tags:
+    call: "{ start_date: '2026-10-11', end_date: '2026-11-09' }"
+  reports.channelSummary:
+    call: "{ start_date: '2026-10-11', end_date: '2026-11-09' }"
+  responseTemplates.list:
+    call: "{ q: 'returns', page: 1 }"
+  responseTemplates.get:
+    call: "{ id: 123 }"
+  responseTemplates.create:
+    call: "{ name: 'Returns instructions', body: 'Send it back within 30 days.', is_personal: 0 }"
+  responseTemplates.update:
+    call: "{ id: 123, name: 'Returns instructions', body: 'Send it back within 14 days.' }"
+  staff.list:
+    call: "{ page: 1 }"
+  staff.create:
+    call: "{ name: 'Jean Super Agent', email: 'jean@example.com', password: 'temporary password' }"
+  satisfaction.list:
+    call: "{ rating: 5, page: 1 }"
+  incidents.list:
+    call: "{}"
+  incidents.get:
+    call: "{ identifier: 'inc-1' }"
+  incidents.create:
+    call: "{ title: 'Shipment issues', updates_attributes: [{ status: 'investigating', message: 'Looking into it.' }] }"
+  incidents.update:
+    call: "{ identifier: 'inc-1', updates_attributes: [{ status: 'resolved', message: 'Fixed.' }] }"
+  systems.list:
+    call: "{}"
+apiNotes:
+  conversations.list: |
+    Answers `{ conversations, page_size, page_count, total_count }`. `filter` takes `archived`, `open`, `unassigned` or `all`; omitting it returns unarchived conversations only. `data` is sent as one `data[key]=value` entry per key, so `data: { plan: 'pro' }` becomes `data[plan]=pro`.
+  conversations.get: |
+    Answers one conversation object. The path segment is normally the slug; set `id_type` to `ref` to look up by reference id, or to `origin` with `category` to look up by an origin id within a channel.
+  conversations.create: |
+    Wraps the payload in `conversation` and answers the created conversation. `category` is a channel slug, and the nested `message` is the first message in the thread.
+  conversations.update: |
+    Sends PUT with a `conversation` wrapper. Only `assignee`, `tag_list`, `status`, `hold_until`, `data`, `category` and `brand` can change; `category` must be an email channel, and `brand` is only used when moving a conversation to another brand.
+  messages.list: |
+    Answers `{ messages, page_size, page_count, total_count }`, newest first. `include: 'original_body'` adds the message HTML when the brand stored it.
+  messages.create: |
+    **A reply is sent to the real customer** and the other participants, by email or the conversation's channel, unless `suppress_notifications` is true. `visibility: 1` posts an internal note that only staff see. The conversation slug is a path segment, so it never appears in the body, and the payload is wrapped in `message`. `origin_id` lets Re:amaze discard a duplicate send.
+  contacts.list: |
+    Answers `{ contacts, page_size, page_count, total_count }`. Contacts belong to the account rather than a brand. `type` takes `email` or `mobile`, and `data` filters the same way it does on conversations.
+  contacts.create: |
+    Wraps the payload in `contact` and answers `{ contact }`. Pass an `email` or a `mobile` number in E.164 form; other contact types cannot be created. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
+  contacts.update: |
+    Sends PUT with a `contact` wrapper, and the identifier stays in the path only because Re:amaze cannot change an email, mobile number or other identifier. `notes` appends notes; editing one goes through the notes endpoints.
+  identities.list: |
+    Answers `{ identities: [{ type, identifier }] }`. The type is one of `email`, `twitter`, `facebook`, `instagram`, `igsid` or `mobile`.
+  identities.create: |
+    Wraps the payload in `identity` and answers the contact's full identity list. An identity already attached to another contact is moved here, along with its messages and data.
+  notes.list: |
+    Answers a **bare array** of notes, so the plugin returns `{ notes }`. There is no paging on this route. A body that is not an array throws rather than reading as an empty list.
+  notes.create: |
+    The one resource whose payload is not wrapped: the body is a bare `{ body }`. `creator_email` credits a staff member instead of the caller, and `created_at` defaults to now.
+  notes.update: |
+    Sends PUT to the note id with a bare `{ body }`. The creator is only replaced when `creator_email` is sent, and `created_at` is kept when it is omitted.
+  notes.delete: |
+    Deletes the note and answers 200 with no body, so the plugin reports `{ deleted, contact, id }`. The note text is gone; there is no undo.
+  channels.list: |
+    Answers `{ channels, total_count }` with **no** `page_size` or `page_count`. The `channel` filter takes `email`, `facebook`, `twitter` or `chat`, and each channel carries a numeric `channel` type.
+  channels.get: |
+    Answers one channel with its `brand` object. `settings_reply_from_name` is `channel`, `brand` or `staff`.
+  articles.list: |
+    Answers `{ articles, page_size, page_count, total_count }`. The status filter takes `published`, `draft` or `internal`, and omitting it returns published articles only.
+  articles.get: |
+    Answers one article with its `author` and `topic` objects.
+  articles.create: |
+    Posts to the topic named by `topic`, with the payload wrapped in `article`. The numeric `status` is 0 published, 1 draft or 4 internal.
+  articles.update: |
+    Sends PUT to the article slug with an `article` wrapper.
+  reports.volume: |
+    Answers `{ conversation_counts, start_date, end_date }`, where `conversation_counts` is a **map of `YYYY-MM-DD` to a count**. Dates default to the last 30 days, and a window must be between 1 day and 1 year.
+  reports.responseTime: |
+    Answers `{ response_times, summary, start_date, end_date }`. Response times are seconds keyed by date, and `summary` carries averages, trends and ratios.
+  reports.staff: |
+    Answers `{ report, start_date, end_date }`, keyed by each staff member's display name. Each entry has a response count, a response time and a per-day trend.
+  reports.tags: |
+    Answers `{ tags, start_date, end_date }`, where `tags` is a **map of tag name to count**, not an array. Iterate it with `Object.entries`.
+  reports.channelSummary: |
+    Answers `{ channels, start_date, end_date }`, keyed by channel id. Each entry carries staff and customer response counts, average response time, appreciations, open and resolved counts, average satisfaction and average thread size.
+  responseTemplates.list: |
+    Answers `{ response_templates, page_size, page_count, total_count }` and includes personal templates the caller's role can see.
+  responseTemplates.get: |
+    Answers one template with its `response_template_group`.
+  responseTemplates.create: |
+    Wraps the payload in `response_template`. `is_personal: 1` creates a personal template when the caller's role allows one.
+  responseTemplates.update: |
+    Sends PUT to the id with a `response_template` wrapper.
+  staff.list: |
+    Answers `{ staff, page_size, page_count, total_count }`, oldest first. The `role` hash is documented as unstable, so treat it as informational.
+  staff.create: |
+    Wraps the payload in `staff` and answers the created user. This counts toward the monthly subscription, no invite email is sent, and the user must change the password at first login.
+  satisfaction.list: |
+    Answers `{ satisfaction_ratings, page_size, page_count, total_count }`. The route needs the `access_reports` permission, so a user without it gets a 403. `rating` is 1 to 5, and `brand` accepts `all_brands`.
+  incidents.list: |
+    Answers a **bare array**, so the plugin returns `{ incidents }`. A brand with no incidents answers `[]`.
+  incidents.get: |
+    Answers one incident with its `updates` and `incidents_systems` arrays.
+  incidents.create: |
+    Wraps the payload in `incident`. Each update status is `investigating`, `identified`, `monitoring` or `resolved`; each system status is `operational`, `degraded_performance`, `partial_outage`, `major_outage` or `under_maintenance`.
+  incidents.update: |
+    Sends PUT to the incident id, with an `incident` wrapper. The vendor's curl example shows `-X POST`, but a POST to this path is answered as an unknown route. New `updates_attributes` are appended to the incident.
+  systems.list: |
+    Answers a **bare array**, so the plugin returns `{ systems }`. Each system carries its current status and any active incidents.

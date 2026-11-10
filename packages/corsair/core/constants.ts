@@ -165,9 +165,11 @@ export const BaseProviders = [
 	'coda',
 	'codacy',
 	'codeinterpreter',
+	'codereadr',
 	'cody',
 	'coinbase',
 	'coinmarketcal',
+	'coinmarketcap',
 	'collegefootballdata',
 	'composio',
 	'confluence',
@@ -193,6 +195,7 @@ export const BaseProviders = [
 	'dataforseo',
 	'datarobot',
 	'deepseek',
+	'desktime',
 	'devinmcp',
 	'diffbot',
 	'digitalocean',
@@ -219,6 +222,8 @@ export const BaseProviders = [
 	'epicgames',
 	'esignatures',
 	'esputnik',
+	'eventbrite',
+	'eventzilla',
 	'everhour',
 	'exa',
 	'excel',
@@ -227,17 +232,21 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finage',
 	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'fixer',
 	'flexisign',
 	'flutterwave',
+	'fluxguard',
 	'followupboss',
 	'formbricks',
+	'foursquare',
 	'fundable',
 	'gemini',
 	'giphy',
@@ -286,8 +295,10 @@ export const BaseProviders = [
 	'kaggle',
 	'keenable',
 	'kibana',
+	'klaviyo',
 	'kling',
 	'leexi',
+	'leiga',
 	'lemonsqueezy',
 	'lever',
 	'linear',
@@ -303,13 +314,17 @@ export const BaseProviders = [
 	'mem0',
 	'merriamwebsterdict',
 	'minimax',
+	'miro',
+	'missive',
 	'monday',
 	'mrscraper',
+	'nanonets',
 	'neon',
 	'netsuite',
 	'nextdns',
 	'northflank',
 	'notion',
+	'nutshell',
 	'ocrspace',
 	'ocrwebservice',
 	'octen',
@@ -318,6 +333,7 @@ export const BaseProviders = [
 	'onepassword',
 	'openai',
 	'openrouter',
+	'opensea',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -337,7 +353,9 @@ export const BaseProviders = [
 	'prisma',
 	'pushbullet',
 	'qdrant',
+	'quaderno',
 	'razorpay',
+	'reamaze',
 	'recallai',
 	'reddit',
 	'reducto',
@@ -365,7 +383,9 @@ export const BaseProviders = [
 	'sendgrid',
 	'sentry',
 	'serpapi',
+	'servicenow',
 	'sharepoint',
+	'shippo',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -609,9 +629,11 @@ export const ProviderDisplayNames = {
 	coda: 'Coda',
 	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
+	codereadr: 'CodeREADr',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
+	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
 	composio: 'Composio',
 	confluence: 'Confluence',
@@ -637,6 +659,7 @@ export const ProviderDisplayNames = {
 	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
+	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
@@ -663,6 +686,8 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
+	eventbrite: 'Eventbrite',
+	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -671,17 +696,21 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finage: 'Finage',
 	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
+	fluxguard: 'Fluxguard',
 	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
+	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
 	giphy: 'Giphy',
@@ -730,8 +759,10 @@ export const ProviderDisplayNames = {
 	kaggle: 'Kaggle',
 	keenable: 'Keenable',
 	kibana: 'Kibana',
+	klaviyo: 'Klaviyo',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
@@ -747,13 +778,17 @@ export const ProviderDisplayNames = {
 	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
+	miro: 'Miro',
+	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
+	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
+	nutshell: 'Nutshell',
 	ocrspace: 'OCR.space',
 	ocrwebservice: 'OcrWebService',
 	octen: 'Octen',
@@ -762,6 +797,7 @@ export const ProviderDisplayNames = {
 	onepassword: '1Password',
 	openai: 'OpenAI',
 	openrouter: 'OpenRouter',
+	opensea: 'OpenSea',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -781,7 +817,9 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
+	quaderno: 'Quaderno',
 	razorpay: 'Razorpay',
+	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
@@ -808,7 +846,9 @@ export const ProviderDisplayNames = {
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
+	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
+	shippo: 'Shippo',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1058,9 +1098,11 @@ export type AllProviders =
 	| 'coda'
 	| 'codacy'
 	| 'codeinterpreter'
+	| 'codereadr'
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
+	| 'coinmarketcap'
 	| 'collegefootballdata'
 	| 'composio'
 	| 'confluence'
@@ -1086,6 +1128,7 @@ export type AllProviders =
 	| 'dataforseo'
 	| 'datarobot'
 	| 'deepseek'
+	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'
 	| 'digitalocean'
@@ -1111,6 +1154,8 @@ export type AllProviders =
 	| 'epicgames'
 	| 'esignatures'
 	| 'esputnik'
+	| 'eventbrite'
+	| 'eventzilla'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
@@ -1119,17 +1164,21 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finage'
 	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
+	| 'fluxguard'
 	| 'followupboss'
 	| 'formbricks'
+	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
 	| 'giphy'
@@ -1178,8 +1227,10 @@ export type AllProviders =
 	| 'kaggle'
 	| 'keenable'
 	| 'kibana'
+	| 'klaviyo'
 	| 'kling'
 	| 'leexi'
+	| 'leiga'
 	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
@@ -1195,13 +1246,17 @@ export type AllProviders =
 	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
+	| 'miro'
+	| 'missive'
 	| 'monday'
 	| 'mrscraper'
+	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
+	| 'nutshell'
 	| 'ocrspace'
 	| 'ocrwebservice'
 	| 'octen'
@@ -1210,6 +1265,7 @@ export type AllProviders =
 	| 'onepassword'
 	| 'openai'
 	| 'openrouter'
+	| 'opensea'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
@@ -1229,7 +1285,9 @@ export type AllProviders =
 	| 'prisma'
 	| 'pushbullet'
 	| 'qdrant'
+	| 'quaderno'
 	| 'razorpay'
+	| 'reamaze'
 	| 'recallai'
 	| 'reddit'
 	| 'reducto'
@@ -1257,7 +1315,9 @@ export type AllProviders =
 	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
+	| 'servicenow'
 	| 'sharepoint'
+	| 'shippo'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
