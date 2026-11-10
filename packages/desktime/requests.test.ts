@@ -44,7 +44,11 @@ function sentCall(index = 0): { url: URL; init: RequestInit } {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call no test queued a response for must fail here, never reach the
+	// network.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch: queue a response for every request');
+	});
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
