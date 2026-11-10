@@ -193,31 +193,33 @@ export const LiveFeedEventSchema = z
 
 export type LiveFeedEvent = z.infer<typeof LiveFeedEventSchema>;
 
-export const LiveFeedEventsInputSchema = z.object({
-	// The `_id` of a live feed message. Either this or `contactEmail` is
-	// required by the provider.
-	messageId: z.string().optional(),
-	// Whether the message in `messageId` was sent through Mixmax.
-	wasSentViaMixmax: mixmaxBooleanFlag.optional(),
-	// A recipient email address; returns that contact's events across your
-	// messages.
-	contactEmail: z.string().optional(),
-	// Include events on messages from people who share a group with you,
-	// limited to messages shared to the team live feed.
-	includeGroupMembers: mixmaxBooleanFlag.optional(),
-	// Same as `includeGroupMembers`; used only when that is not set.
-	includeTeammates: mixmaxBooleanFlag.optional(),
-	// Number of events to return.
-	limit: z.coerce.number().int().optional(),
-	// The `next` token from a previous events page. Tokens from
-	// GET /v1/livefeed do not work here.
-	next: z.string().optional(),
-}).refine(
-	// The reference: "Pass `messageId` or `contactEmail`"; a request with
-	// neither answers 500, so it is refused here with a message that says why.
-	(input) => Boolean(input.messageId) || Boolean(input.contactEmail),
-	{ message: 'Provide `messageId` or `contactEmail`' },
-);
+export const LiveFeedEventsInputSchema = z
+	.object({
+		// The `_id` of a live feed message. Either this or `contactEmail` is
+		// required by the provider.
+		messageId: z.string().optional(),
+		// Whether the message in `messageId` was sent through Mixmax.
+		wasSentViaMixmax: mixmaxBooleanFlag.optional(),
+		// A recipient email address; returns that contact's events across your
+		// messages.
+		contactEmail: z.string().optional(),
+		// Include events on messages from people who share a group with you,
+		// limited to messages shared to the team live feed.
+		includeGroupMembers: mixmaxBooleanFlag.optional(),
+		// Same as `includeGroupMembers`; used only when that is not set.
+		includeTeammates: mixmaxBooleanFlag.optional(),
+		// Number of events to return.
+		limit: z.coerce.number().int().optional(),
+		// The `next` token from a previous events page. Tokens from
+		// GET /v1/livefeed do not work here.
+		next: z.string().optional(),
+	})
+	.refine(
+		// The reference: "Pass `messageId` or `contactEmail`"; a request with
+		// neither answers 500, so it is refused here with a message that says why.
+		(input) => Boolean(input.messageId) || Boolean(input.contactEmail),
+		{ message: 'Provide `messageId` or `contactEmail`' },
+	);
 
 export type LiveFeedEventsInput = z.infer<typeof LiveFeedEventsInputSchema>;
 

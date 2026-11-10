@@ -325,8 +325,8 @@ describe('Mixmax responses with values the reference does not list yet', () => {
 		};
 		request.mockResolvedValue(response);
 
-		await expect(
-			endpoints.meetings.searchSummaries(ctx, {}),
-		).resolves.toEqual(response);
+		await expect(endpoints.meetings.searchSummaries(ctx, {})).resolves.toEqual(
+			response,
+		);
 	});
 });

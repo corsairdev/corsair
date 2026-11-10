@@ -167,9 +167,9 @@ describe('Mixmax livefeed endpoints', () => {
 		await expect(endpoints.livefeed.events(ctx, {})).rejects.toThrow(
 			'Provide `messageId` or `contactEmail`',
 		);
-		await expect(
-			endpoints.livefeed.events(ctx, { limit: 10 }),
-		).rejects.toThrow('Provide `messageId` or `contactEmail`');
+		await expect(endpoints.livefeed.events(ctx, { limit: 10 })).rejects.toThrow(
+			'Provide `messageId` or `contactEmail`',
+		);
 		expect(request).not.toHaveBeenCalled();
 	});
 

@@ -188,16 +188,19 @@ describe('Mixmax salesforce endpoints', () => {
 		['updateLead', {}],
 		['updateOpportunity', { CloseDate: '2026-12-31' }],
 		['updateTask', {}],
-	] as const)('salesforce.%s rejects a body Id that names a different record than the path id', async (operation, extra) => {
-		await expect(
-			endpoints.salesforce[operation](ctx, {
-				id: '0011I000003h7gdQAA',
-				Id: '0011I000009zzzzQAA',
-				...extra,
-			} as never),
-		).rejects.toThrow('must name the same Salesforce record');
-		expect(request).not.toHaveBeenCalled();
-	});
+	] as const)(
+		'salesforce.%s rejects a body Id that names a different record than the path id',
+		async (operation, extra) => {
+			await expect(
+				endpoints.salesforce[operation](ctx, {
+					id: '0011I000003h7gdQAA',
+					Id: '0011I000009zzzzQAA',
+					...extra,
+				} as never),
+			).rejects.toThrow('must name the same Salesforce record');
+			expect(request).not.toHaveBeenCalled();
+		},
+	);
 
 	it('salesforce.updateAccount accepts the 15-character form of the same record Id', async () => {
 		request.mockResolvedValue(RESULT);
