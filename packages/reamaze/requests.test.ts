@@ -835,7 +835,7 @@ describe('Re:amaze request shapes', () => {
 		});
 	});
 
-	it('incidents.update sends POST, which is what the vendor example uses', async () => {
+	it('incidents.update sends PUT, the only method the route answers', async () => {
 		mockFetch(jsonResponse(fixtures.incidentResponse));
 
 		await endpoints.incidents.update(makeCtx(), {
@@ -849,8 +849,10 @@ describe('Re:amaze request shapes', () => {
 			],
 		});
 
-		// The vendor heading says PUT, but its own curl example sends -X POST.
-		expect(lastCall().init.method).toBe('POST');
+		// The vendor heading says PUT and its curl example says -X POST. Probed
+		// without credentials, POST to this path is "no such route" (404) while
+		// PUT reaches the auth check (401), so the heading is the right one.
+		expect(lastCall().init.method).toBe('PUT');
 		expect(new URL(lastCall().url).pathname).toBe('/api/v1/incidents/inc-1');
 		expect(sentBody()).toEqual({
 			incident: {

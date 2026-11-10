@@ -14,7 +14,7 @@ overviewNote: |
   - **Report payloads are maps, not arrays.** `reports.volume` keys conversation counts by `YYYY-MM-DD`, `reports.tags` keys tag counts by tag name, `reports.staff` keys metrics by staff display name, and `reports.channelSummary` keys them by channel id. Read them with `Object.entries`.
   - **Conversation status is an integer**: 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7 and 8 for the AI agent, 9 AI spam.
   - **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` and `notes.update` send the fields unwrapped, as a bare `{ body }` plus the optional `creator_email` and `created_at`.
-  - **`incidents.update` is a POST.** The vendor heading says PUT, but its own curl example sends `-X POST` to the same path, and that is what the endpoint sends.
+  - **`incidents.update` is a PUT.** The vendor heading says PUT and its curl example sends `-X POST`; the route only answers PUT, so that is what the endpoint sends.
   - **An unknown route answers HTML, not JSON.** An unknown resource answers `{"errors":"Not Found"}`, an unknown route `{"status":404,"error":"Not Found"}`, and a validation failure a map of field to message with status 422.
 examples:
   read:
@@ -180,6 +180,6 @@ apiNotes:
   incidents.create: |
     Wraps the payload in `incident`. Each update status is `investigating`, `identified`, `monitoring` or `resolved`; each system status is `operational`, `degraded_performance`, `partial_outage`, `major_outage` or `under_maintenance`.
   incidents.update: |
-    Sent as POST to the incident id, with an `incident` wrapper. The vendor heading says PUT, but its own curl example sends `-X POST`, and that is what works. New `updates_attributes` are appended to the incident.
+    Sends PUT to the incident id, with an `incident` wrapper. The vendor's curl example shows `-X POST`, but a POST to this path is answered as an unknown route. New `updates_attributes` are appended to the incident.
   systems.list: |
     Answers a **bare array**, so the plugin returns `{ systems }`. Each system carries its current status and any active incidents.

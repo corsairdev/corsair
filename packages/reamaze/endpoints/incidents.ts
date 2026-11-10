@@ -82,9 +82,11 @@ export const update: ReamazeEndpoints['incidentsUpdate'] = (ctx, input) =>
 			updates_attributes,
 			incidents_systems_attributes,
 		}) => ({
-			// POST, not PUT. The vendor heading for this route says PUT, but its own
-			// curl example sends `-X POST` to the same path, and a PUT is rejected.
-			method: 'POST',
+			// PUT. The vendor heading for this route says PUT while its curl example
+			// sends `-X POST`. The router settles it: without credentials, POST to
+			// this path answers 404 `{"status":404,"error":"Not Found"}`, which is
+			// the no-such-route body, and PUT answers 401.
+			method: 'PUT',
 			path: `/incidents/${pathSegment(identifier)}`,
 			body: {
 				incident: { title, updates_attributes, incidents_systems_attributes },

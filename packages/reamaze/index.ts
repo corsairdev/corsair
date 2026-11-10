@@ -473,7 +473,7 @@ const reamazeEndpointMeta = {
 	'incidents.update': {
 		riskLevel: 'write',
 		description:
-			'Change a status page incident and append an update. Sent as POST, which is what the vendor example uses',
+			'Change a status page incident and append an update, which shows on the public status page',
 	},
 	'systems.list': {
 		riskLevel: 'read',
