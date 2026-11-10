@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
 import { missive, missiveEndpointSchemas } from './index';
+import { MissiveSchema } from './schema';
 
 // Payloads below are copied from the examples on
 // https://missiveapp.com/docs/developers/rest-api/endpoints, not derived from
@@ -303,5 +304,11 @@ describe('Missive writes that answer without a JSON body', () => {
 		} finally {
 			fetchSpy.mockRestore();
 		}
+	});
+});
+
+describe('Missive local data', () => {
+	it('declares no entities, since no endpoint writes local rows', () => {
+		expect(Object.keys(MissiveSchema.entities)).toEqual([]);
 	});
 });

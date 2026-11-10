@@ -24,13 +24,6 @@ describe('Missive schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof MissiveSchema.entities).toBe('object');
 		expect(MissiveSchema.entities).not.toBeNull();
-		expect(Object.keys(MissiveSchema.entities)).toEqual([
-			'contacts',
-			'conversations',
-		]);
-		for (const entity of Object.values(MissiveSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
 	});
 
 	it('registers all Part 1 operations exactly once with matching schemas', () => {
