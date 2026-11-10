@@ -151,11 +151,11 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never;
 		await listClients(ctx, {
 			external_id: 'external_id-1',
-			status: 'status-1',
+			status: 'active',
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/clients', {
 			method: 'GET',
-			query: { external_id: 'external_id-1', status: 'status-1' },
+			query: { external_id: 'external_id-1', status: 'active' },
 		});
 		await retrieveClient(ctx, { id: 'id-1', full: true } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/clients/id-1', {
@@ -165,7 +165,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await createClient(ctx, {
 			name: 'name-1',
 			description: 'description-1',
-			status: 'status-1',
+			status: 'active',
 			seats: 1,
 			custom_theme: true,
 			external_id: 'external_id-1',
@@ -175,7 +175,7 @@ describe('Klipfolio endpoint request seams', () => {
 			body: {
 				name: 'name-1',
 				description: 'description-1',
-				status: 'status-1',
+				status: 'active',
 				seats: 1,
 				custom_theme: true,
 				external_id: 'external_id-1',
@@ -185,7 +185,7 @@ describe('Klipfolio endpoint request seams', () => {
 			id: 'id-1',
 			name: 'name-1',
 			description: 'description-1',
-			status: 'status-1',
+			status: 'active',
 			seats: 1,
 			custom_theme: true,
 			external_id: 'external_id-1',
@@ -195,7 +195,7 @@ describe('Klipfolio endpoint request seams', () => {
 			body: {
 				name: 'name-1',
 				description: 'description-1',
-				status: 'status-1',
+				status: 'active',
 				seats: 1,
 				custom_theme: true,
 				external_id: 'external_id-1',
@@ -240,9 +240,14 @@ describe('Klipfolio endpoint request seams', () => {
 			method: 'PUT',
 			body: { properties: { value: 'properties-1' } },
 		});
-		await deleteClientProperties(ctx, { id: 'id-1', name: 'name-1' } as never);
+		await deleteClientProperties(ctx, {
+			id: 'id-1',
+			name: 'name-1',
+			client_id: 'client_id-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/clients/id-1/properties', {
 			method: 'DELETE',
+			query: { name: 'name-1', client_id: 'client_id-1' },
 		});
 		await retrieveClientResources(ctx, { id: 'id-1', full: true } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/clients/id-1/resources', {
@@ -397,6 +402,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/datasources/id-1/properties', {
 			method: 'DELETE',
+			query: { name: 'name-1', client_id: 'client_id-1' },
 		});
 		await retrieveDatasourceShareRights(ctx, {
 			id: 'id-1',
@@ -486,17 +492,16 @@ describe('Klipfolio endpoint request seams', () => {
 		await updateDatasourceInstancesData(ctx, {
 			id: 'id-1',
 			client_id: 'client_id-1',
-			'(raw data or file)': '(raw data or file)-1',
+			rawContent: 'raw-content-1',
 		} as never);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/datasource-instances/id-1/data',
 			{
 				method: 'PUT',
-				body: {
-					client_id: 'client_id-1',
-					'(raw data or file)': '(raw data or file)-1',
-				},
+				body: 'raw-content-1',
+				mediaType: 'text/plain; charset=utf-8',
+				query: { client_id: 'client_id-1' },
 			},
 		);
 		await refreshDatasourceInstances(ctx, {
@@ -549,7 +554,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/datasource-instances/id-1/properties',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { name: 'name-1', client_id: 'client_id-1' } },
 		);
 		await listGroups(ctx, { client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/groups', {
@@ -850,9 +855,13 @@ describe('Klipfolio endpoint request seams', () => {
 			method: 'PUT',
 			body: { groups: ['groups-1'] },
 		});
-		await deleteKlipShareRights(ctx, { id: 'id-1' } as never);
+		await deleteKlipShareRights(ctx, {
+			id: 'id-1',
+			groups: ['groups-1'],
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/klips/id-1/share-rights', {
 			method: 'DELETE',
+			body: { groups: ['groups-1'] },
 		});
 		await importKlip(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/klips/id-1/@/import', {
@@ -1289,19 +1298,16 @@ describe('Klipfolio endpoint request seams', () => {
 		await updateUserProperties(ctx, {
 			id: 'id-1',
 			client_id: 'client_id-1',
-			properties: 'properties-1',
+			properties: { key: 'value-1' },
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/properties', {
 			method: 'PUT',
-			body: { client_id: 'client_id-1', properties: 'properties-1' },
+			body: { client_id: 'client_id-1', properties: { key: 'value-1' } },
 		});
-		await deleteUserProperties(ctx, {
-			id: 'id-1',
-			name: 'name-1',
-			client_id: 'client_id-1',
-		} as never);
+		await deleteUserProperties(ctx, { id: 'id-1', name: 'name-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/properties', {
 			method: 'DELETE',
+			query: { name: 'name-1' },
 		});
 		await retrieveUserRoles(ctx, {
 			id: 'id-1',
@@ -1374,11 +1380,17 @@ describe('Klipfolio endpoint request seams', () => {
 			roles: ['role-1'],
 			password: 'tempPassword',
 		} as never);
+		// unknown: the event-writer mock records the runtime context and provider
+		// payload, which the endpoint signature does not expose; only the logged
+		// payload is asserted.
 		const calls = logMock.mock.calls as Array<
 			[unknown, string, unknown, string]
 		>;
 		expect(calls[calls.length - 1]?.[2]).toEqual({ redacted: true });
 		await retrieveUser(ctx, { id: 'user-1' } as never);
+		// unknown: the event-writer mock records the runtime context and provider
+		// payload, which the endpoint signature does not expose; only the logged
+		// payload is asserted.
 		const readCalls = logMock.mock.calls as Array<
 			[unknown, string, Record<string, unknown>, string]
 		>;

@@ -1,4 +1,7 @@
-import { KlipfolioEndpointInputSchemas } from './endpoints/types';
+import {
+	KlipfolioEndpointInputSchemas,
+	KlipfolioEndpointOutputSchemas,
+} from './endpoints/types';
 import { klipfolio, klipfolioEndpointSchemas } from './index';
 import { KlipfolioSchema } from './schema';
 
@@ -117,6 +120,99 @@ describe('Klipfolio schema', () => {
 			expect(schema.safeParse({}).success).toBe(false);
 			expect(schema.safeParse(buildValidInput(schema)).success).toBe(true);
 		}
+	});
+
+	it('rejects malformed envelopes at the output boundary', () => {
+		// unknown: zod v4 schema objects are exercised structurally through
+		// safeParse; stricter typing would couple the test to zod internals.
+		const parse = (schema: unknown, value: unknown): { success: boolean } =>
+			(schema as { safeParse: (v: unknown) => { success: boolean } }).safeParse(
+				value,
+			);
+		// List-shaped operation: data must be an array of provider records.
+		const listOutput = KlipfolioEndpointOutputSchemas.listClients;
+		expect(parse(listOutput, {}).success).toBe(false);
+		expect(
+			parse(listOutput, { data: 42, meta: { success: 'yes' } }).success,
+		).toBe(false);
+		expect(
+			parse(listOutput, {
+				data: [{ id: 'rec-1' }],
+				meta: { status: 200, success: true },
+			}).success,
+		).toBe(true);
+		// Single-shaped operation: data must be a provider record.
+		const singleOutput = KlipfolioEndpointOutputSchemas.retrieveClient;
+		expect(parse(singleOutput, {}).success).toBe(false);
+		expect(
+			parse(singleOutput, { data: 42, meta: { success: 'yes' } }).success,
+		).toBe(false);
+		expect(
+			parse(singleOutput, {
+				data: { id: 'rec-1' },
+				meta: { status: 200, success: true },
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects undocumented enum values at the input boundary', () => {
+		// unknown: zod v4 schema objects are exercised structurally through
+		// safeParse; stricter typing would couple the test to zod internals.
+		const parse = (schema: unknown, value: unknown): { success: boolean } =>
+			(schema as { safeParse: (v: unknown) => { success: boolean } }).safeParse(
+				value,
+			);
+		// account/client status: setup | trial | active | disabled
+		const accountStatus = KlipfolioEndpointInputSchemas.listClients;
+		const createClient = KlipfolioEndpointInputSchemas.createClient;
+		expect(parse(accountStatus, { status: 'bogus' }).success).toBe(false);
+		expect(parse(accountStatus, { status: 'active' }).success).toBe(true);
+		expect(parse(createClient, { name: 'c', status: 'bogus' }).success).toBe(
+			false,
+		);
+		// group default-tab visibility: library | dashboard | permanent
+		const defaultTabs = KlipfolioEndpointInputSchemas.addGroupDefaultTabs;
+		expect(
+			parse(defaultTabs, { id: 'id-1', tab_id: 'tab-1', visibility: 'bogus' })
+				.success,
+		).toBe(false);
+		expect(
+			parse(defaultTabs, {
+				id: 'id-1',
+				tab_id: 'tab-1',
+				visibility: 'permanent',
+			}).success,
+		).toBe(true);
+		// published-link theme: light | dark
+		const publishedLinks =
+			KlipfolioEndpointInputSchemas.createDashboardPublishedLinks;
+		expect(
+			parse(publishedLinks, {
+				dashboardId: 'dash-1',
+				name: 'name-1',
+				theme: 'bogus',
+			}).success,
+		).toBe(false);
+		expect(
+			parse(publishedLinks, {
+				dashboardId: 'dash-1',
+				name: 'name-1',
+				theme: 'dark',
+			}).success,
+		).toBe(true);
+	});
+
+	it('validates and encodes each identifier in bulk comma-separated paths', async () => {
+		const { klipfolioBulkPathParameter } = await import('./endpoints/path');
+		expect(
+			klipfolioBulkPathParameter('/users/{user_ids}', 'user_ids', 'u1,u2'),
+		).toBe('/users/u1,u2');
+		expect(() =>
+			klipfolioBulkPathParameter('/users/{user_ids}', 'user_ids', 'u1,,u2'),
+		).toThrow('Invalid Klipfolio user_ids');
+		expect(() =>
+			klipfolioBulkPathParameter('/users/{user_ids}', 'user_ids', 'u1/../u2'),
+		).toThrow('Invalid Klipfolio user_ids');
 	});
 
 	// Per the plugin endpoint-test rule, this table-driven traversal invokes
