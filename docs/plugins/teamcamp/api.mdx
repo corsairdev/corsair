@@ -419,13 +419,13 @@ await corsair.teamcamp.api.tasks.create({ projectId: '<project id>', taskName: '
 | `projectId` | `string` | Yes | The project the task belongs to. |
 | `taskName` | `string` | Yes | The task name. |
 | `description` | `string` | No | The task description. |
-| `priority` | `none \| urgent \| high \| medium \| low` | No | The task priority. Omit it for no priority. |
+| `priority` | `none \| urgent \| high \| medium \| low` | No | The task priority. Omit it for no priority. The project must have task priorities turned on in Teamcamp, or Teamcamp answers 400 "Not enable priority in your project." |
 | `dueDate` | `string` | No | The task due date. |
 | `groupId` | `string` | No | The task group to place it in. |
 | `taskUsers` | `string[]` | No | User ids to assign as the task assignees. |
-| `statusId` | `string` | No | The workflow status id, as a project read lists it under `status`. |
+| `statusId` | `string` | No | The workflow status id, as a project read lists it under `status`. Teamcamp does not check it, so a wrong id is saved as given. |
 | `milestoneId` | `number` | No | The milestone id, when the project has milestones. |
-| `estimateTime` | `number` | No | The estimated hours for the task. |
+| `estimateTime` | `number` | No | The estimated hours for the task. The project must have estimates turned on in Teamcamp, or Teamcamp answers 400. |
 | `files` | `object[]` | No | Files to attach, each with its type, url, name and a human-readable size such as "12 KB". |
 
 The name field is sent as `taskName`, which is what the API accepts; the published spec calls it `name` and that is rejected.

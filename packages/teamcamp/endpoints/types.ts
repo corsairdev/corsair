@@ -372,7 +372,9 @@ const CreateTaskInputSchema = z.object({
 	priority: z
 		.enum(TEAMCAMP_TASK_PRIORITIES)
 		.optional()
-		.describe('The task priority. Omit it for no priority.'),
+		.describe(
+			'The task priority. Omit it for no priority. The project must have task priorities turned on in Teamcamp, or Teamcamp answers 400 "Not enable priority in your project."',
+		),
 	dueDate: DateOnly.optional().describe('The task due date.'),
 	groupId: z
 		.string()
@@ -389,7 +391,7 @@ const CreateTaskInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe(
-			'The workflow status id, as a project read lists it under `status`.',
+			'The workflow status id, as a project read lists it under `status`. Teamcamp does not check it, so a wrong id is saved as given.',
 		),
 	milestoneId: z
 		.number()
@@ -401,7 +403,9 @@ const CreateTaskInputSchema = z.object({
 		.int()
 		.min(0)
 		.optional()
-		.describe('The estimated hours for the task.'),
+		.describe(
+			'The estimated hours for the task. The project must have estimates turned on in Teamcamp, or Teamcamp answers 400.',
+		),
 	files: z
 		.array(
 			z.object({
