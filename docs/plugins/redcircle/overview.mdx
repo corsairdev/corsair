@@ -1,0 +1,138 @@
+---
+title: Overview
+description: "Target product data with RedCircle API - read Target products, search results, customer reviews and category listings, and read the account's credit usage, through Traject Data's RedCircle API."
+---
+
+Use **RedCircle API** through Corsair: one client, typed API calls.
+
+Sign up at `app.redcircleapi.com` for a key, then pass it as the `api_key` query parameter. RedCircle is a **credit-metered** API: every retrieved page costs one credit, and the account response reports what is left. Things to know before you call:
+
+- **Sorting and delivery values.** `sort_by` takes `best_seller`, `price_high_to_low`, `price_low_to_high`, `best_match`, `highest_rating`, `newly_listed` or `featured`; `delivery_type` takes `in_store_pickup`, `same_day_delivery`, `buy_at_store` or `ship_to_home`.
+- **One route does the product work.** `GET /request` is discriminated by `type`: `product`, `search`, `reviews`, `category` or `store_stock`. This plugin exposes each type as its own typed operation and pins the `type` value, so an invalid one cannot be sent.
+- **Each page costs a credit.** `max_page` retrieves several pages and concatenates them in one response, which is convenient but multiplies the cost; it is capped here, and a request that yields fewer pages than asked is charged only for what it returned.
+- **A `402` is a spent balance.** It means the credits are exhausted or there is a payment problem, and no retry fixes it. The plugin matches it before the rate-limit handler and stops immediately.
+- **A `503` is a parsing incident.** RedCircle raises it deliberately so it never serves unstable data, the body says the request was **not charged**, and it carries `retry_after` **in seconds**. The plugin converts that to the delay the retry uses, so a 503 is the one failure that is safe to repeat.
+- **Paging is `page`, and the response says where you are.** `pagination.current.page` and `pagination.next.page` are returned as `current_page` and `next_page`, with `total_pages` and `total_results`. `next_page` is null on the last page.
+- **Some routes do not page.** `/categories` has no pagination at all; it returns `categories` (with `parent_id` or `search_term`) or a single `category`.
+- **The account route echoes the key.** RedCircle returns `account_info.api_key`; the plugin strips it before the output parse, so it cannot reach a caller or a log.
+- **The demo key is limited.** `api_key=demo` works on `/request` and `/account` but answers 401 on other routes, which reads as an auth failure — check the message, not just the status.
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/redcircle better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/redcircle better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/redcircle better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/redcircle better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { redcircle } from '@corsair-dev/redcircle';
+
+export const corsair = createCorsair({
+	plugins: [
+		redcircle(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting RedCircle API.
+
+```ts
+redcircle()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'redcircle',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search Target for highlighter pens**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.redcircle.api.search.products({ search_term: 'highlighter pens' });
+```
+
+
+**Read the account's remaining credits**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.redcircle.api.account.get({});
+```
+
+
+See the full list on the [API](/plugins/redcircle/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/redcircle/api">
+    Every `redcircle.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,505 @@
+---
+title: API
+description: "API reference for RedCircle API: every `redcircle.api.*` operation with input and output types."
+---
+
+Every `redcircle.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account plan, credits used and remaining, and its per-resource limits
+
+**Risk:** `read`
+
+```ts
+await corsair.redcircle.api.account.get({});
+```
+
+**Input:** _empty object_
+
+RedCircle echoes the api_key in this response; the plugin strips it before parsing.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+| `request_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  plan?: string | null,
+  timezone?: string | null,
+  credits_used?: number | null,
+  credits_remaining?: number | null,
+  credits_limit?: number | null,
+  credits_reset_at?: string | null,
+  overage_enabled?: boolean | null,
+  zipcodes_used?: number | null,
+  zipcodes_limit?: number | null,
+  zipcodes_available?: number | null,
+  destinations_used?: number | null,
+  destinations_limit?: number | null,
+  destinations_available?: number | null,
+  account_balance_usd?: number | null,
+  account_balance_message?: string | null,
+  usage_history?: {
+    date?: string | null,
+    requests?: number | null,
+    credits?: number | null
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean | null,
+  demo?: boolean | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### list
+
+`categories.list`
+
+List Target categories, their children by parent id, or the matches for a search term
+
+**Risk:** `read`
+
+```ts
+await corsair.redcircle.api.categories.list({ parent_id: '5xt1a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent_id` | `string` | No | Return the children of this category. |
+| `search_term` | `string` | No | Search the whole hierarchy for this term. |
+
+`parent_id` and `search_term` are mutually exclusive; with neither, the root categories return.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[] \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `current_category` | `object \| null` | No | — |
+| `parent_category` | `object \| null` | No | — |
+| `request_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  has_children?: boolean | null,
+  is_root?: boolean | null,
+  path?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  has_children?: boolean | null,
+  is_root?: boolean | null,
+  path?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_category full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  has_children?: boolean | null,
+  is_root?: boolean | null,
+  path?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="parent_category full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  has_children?: boolean | null,
+  is_root?: boolean | null,
+  path?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean | null,
+  demo?: boolean | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Fetch one Target product by TCIN, DPCI, GTIN or URL, with its price, images and specifications
+
+**Risk:** `read`
+
+```ts
+await corsair.redcircle.api.products.get({ tcin: '94907686' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tcin` | `string` | No | The Target TCIN (item id). |
+| `dpci` | `string` | No | A DPCI code; it is searched first, then the first match read. |
+| `gtin` | `string` | No | A GTIN/ISBN/UPC; it overrides `tcin` and `dpci`. |
+| `url` | `string` | No | A Target product URL, which overrides every other selector. |
+
+`gtin` overrides `tcin` and `dpci`, and `url` overrides all three.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+| `request_info` | `object \| null` | No | — |
+| `request_metadata` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | Pass as `page` to read the next page; null on the last. |
+| `current_page` | `number \| null` | Yes | — |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_results` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  title?: string | null,
+  link?: string | null,
+  tcin?: string | null,
+  dpci?: string | null,
+  class_id?: number | null,
+  department_id?: number | null,
+  sponsored?: boolean | null,
+  brand?: string | null,
+  brand_link?: string | null,
+  rating?: number | null,
+  ratings_total?: number | null,
+  main_image?: string | null,
+  images?: string[] | null,
+  videos?: string[] | null,
+  price?: {
+    value?: number | null,
+    currency?: string | null,
+    symbol?: string | null,
+    raw?: string | null
+  } | null,
+  description?: string | null,
+  feature_bullets?: string[] | null,
+  specifications?: Record<string, string>[] | null,
+  categories?: Record<string, string>[] | null,
+  variants?: {
+    tcin?: string | null,
+    dpci?: string | null,
+    title?: string | null,
+    link?: string | null,
+    swatch_image?: string | null,
+    availability?: string | null,
+    price?: number | null
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean | null,
+  demo?: boolean | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  target_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reviews
+
+### list
+
+`reviews.list`
+
+List a Target product’s customer reviews with their ratings and sort order
+
+**Risk:** `read`
+
+```ts
+await corsair.redcircle.api.reviews.list({ tcin: '94907686', sort_by: 'most_recent' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tcin` | `string` | No | The Target TCIN (item id). |
+| `dpci` | `string` | No | — |
+| `gtin` | `string` | No | — |
+| `url` | `string` | No | — |
+| `sort_by` | `most_recent \| most_helpful \| highest_rating \| lowest_rating` | No | — |
+| `page` | `number` | No | 1-based page of results. |
+| `max_page` | `number` | No | Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10. |
+
+The sort values are `most_recent`, `most_helpful`, `highest_rating` and `lowest_rating`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `request_info` | `object \| null` | No | — |
+| `request_metadata` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | Pass as `page` to read the next page; null on the last. |
+| `current_page` | `number \| null` | Yes | — |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_results` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  rating?: number | null,
+  title?: string | null,
+  body?: string | null,
+  date?: string | null,
+  nickname?: string | null,
+  verified_purchase?: boolean | null,
+  helpful_votes?: number | null,
+  recommended?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean | null,
+  demo?: boolean | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  target_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### products
+
+`search.products`
+
+Search Target products, filtered by category and delivery type and sorted, with page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.redcircle.api.search.products({ search_term: 'highlighter pens', sort_by: 'best_seller' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_term` | `string` | No | The term to search Target for; `url` is an alternative. |
+| `category_id` | `string` | No | — |
+| `sort_by` | `best_seller \| price_high_to_low \| price_low_to_high \| best_match \| highest_rating \| newly_listed \| featured` | No | — |
+| `delivery_type` | `in_store_pickup \| same_day_delivery \| buy_at_store \| ship_to_home` | No | — |
+| `customer_zipcode` | `string` | No | The store to localise an in-store filter to. |
+| `url` | `string` | No | A Target search-results URL, which overrides every other parameter. |
+| `page` | `number` | No | 1-based page of results. |
+| `max_page` | `number` | No | Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10. |
+
+Each page costs a credit; `max_page` concatenates several and is capped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_results` | `object[]` | Yes | — |
+| `request_info` | `object \| null` | No | — |
+| `request_metadata` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | Pass as `page` to read the next page; null on the last. |
+| `current_page` | `number \| null` | Yes | — |
+| `total_pages` | `number \| null` | Yes | — |
+| `total_results` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="search_results full type">
+
+```ts
+{
+  position?: number | null,
+  product?: {
+    title?: string | null,
+    link?: string | null,
+    tcin?: string | null,
+    dpci?: string | null,
+    class_id?: number | null,
+    department_id?: number | null,
+    sponsored?: boolean | null,
+    brand?: string | null,
+    brand_link?: string | null,
+    rating?: number | null,
+    ratings_total?: number | null,
+    main_image?: string | null,
+    images?: string[] | null,
+    videos?: string[] | null,
+    price?: {
+      value?: number | null,
+      currency?: string | null,
+      symbol?: string | null,
+      raw?: string | null
+    } | null,
+    description?: string | null,
+    feature_bullets?: string[] | null,
+    specifications?: Record<string, string>[] | null,
+    categories?: Record<string, string>[] | null,
+    variants?: {
+      tcin?: string | null,
+      dpci?: string | null,
+      title?: string | null,
+      link?: string | null,
+      swatch_image?: string | null,
+      availability?: string | null,
+      price?: number | null
+    }[] | null
+  } | null,
+  offers?: {
+    seller?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    link?: string | null,
+    condition?: string | null
+  }[] | null,
+  fulfillment?: {
+    in_store_pickup?: boolean | null,
+    same_day_delivery?: boolean | null,
+    buy_at_store?: boolean | null,
+    ship_to_home?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="request_info full type">
+
+```ts
+{
+  success?: boolean | null,
+  demo?: boolean | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  target_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

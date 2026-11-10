@@ -359,6 +359,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reamaze',
 	'recallai',
+	'redcircle',
 	'reddit',
 	'reducto',
 	'remoet',
@@ -829,6 +830,7 @@ export const ProviderDisplayNames = {
 	razorpay: 'Razorpay',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
+	redcircle: 'RedCircle API',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
@@ -1303,6 +1305,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reamaze'
 	| 'recallai'
+	| 'redcircle'
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
