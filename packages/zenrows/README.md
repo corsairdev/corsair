@@ -23,6 +23,7 @@ pnpm add @corsair-dev/zenrows
 | `extract.getDomainStatus` | `zenrows.api.extract.getDomainStatus` | `read` | Read how far a domain preparation has got: preparing, ready or failed |
 | `extract.listPreparedDomains` | `zenrows.api.extract.listPreparedDomains` | `read` | List the domains this account submitted for preparation, with the monthly allowance |
 | `extract.prepareDomain` | `zenrows.api.extract.prepareDomain` | `write` | Ask Zenrows to prepare a domain for Extract, which takes minutes and one slot of the monthly allowance; preparation is free and shared across accounts |
+| `fetch.browse` | `zenrows.api.fetch.browse` | `write` | Render a page and act on it before capture: fill fields, click, check, scroll or run JavaScript. Reaches the site, so it can change its state |
 | `fetch.cssExtract` | `zenrows.api.fetch.cssExtract` | `read` | Extract named fields from a page with your own CSS or XPath selectors, such as a title, a price and every link, on any site with no preparation |
 | `fetch.extract` | `zenrows.api.fetch.extract` | `read` | Turn a page into structured JSON with Extract: the site's own field names, or a canonical Real Estate schema, on a domain prepared for it |
 | `fetch.jsonResponse` | `zenrows.api.fetch.jsonResponse` | `read` | Capture the page and the XHR and fetch calls it made, as a JSON envelope, from a rendered page |

@@ -193,7 +193,7 @@ await corsair.zenrows.api.crawl.getContent({ crawlId: '<crawl_id>', contentId: '
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `string` | Yes | — |
-| `contentType` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
 
 
 
@@ -366,7 +366,7 @@ Stop a running crawl. Pages already being fetched finish and are billed
 **Risk:** `write`
 
 ```ts
-await corsair.zenrows.api.crawl.stop({});
+await corsair.zenrows.api.crawl.stop({ crawlId: '<crawl_id from crawl.start>' });
 ```
 
 **Input**
@@ -654,16 +654,16 @@ Preparation is free and needs no credits, but it takes one slot of the monthly a
 
 ## Fetch
 
-### cssExtract
+### browse
 
-`fetch.cssExtract`
+`fetch.browse`
 
-Extract named fields from a page with your own CSS or XPath selectors, such as a title, a price and every link, on any site with no preparation
+Render a page and act on it before capture: fill fields, click, check, scroll or run JavaScript. Reaches the site, so it can change its state
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.zenrows.api.fetch.cssExtract({ url: 'https://example.com', cssExtractor: { title: 'h1', links: 'a @href' } });
+await corsair.zenrows.api.fetch.browse({ url: 'https://example.com', jsRender: true, jsInstructions: [{ click: 'a' }] });
 ```
 
 **Input**
@@ -673,8 +673,8 @@ await corsair.zenrows.api.fetch.cssExtract({ url: 'https://example.com', cssExtr
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -683,76 +683,10 @@ await corsair.zenrows.api.fetch.cssExtract({ url: 'https://example.com', cssExtr
 | `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
 | `wait` | `number` | No | Milliseconds to wait after load before capture. Defaults to 0. |
 | `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
-| `cssExtractor` | `Record<string, string>` | Yes | Extraction rules: a map from output key to CSS or XPath selector, such as &#123;"product_name":"h1.title","links":"a @href"&#125;. Append `@attribute` to read an attribute instead of the text. Works on any site, with no preparation. |
+| `jsInstructions` | `object[]` | Yes | Browser actions run in order before the page is captured, such as &#123;"fill":["#q","x"]&#125; then &#123;"click":"#submit"&#125;. Each instruction carries one action key, and the sequence has 40 seconds. |
+| `responseType` | `markdown \| plaintext` | No | Convert the captured page before returning it. `markdown` and `plaintext` are text; omit it for the HTML as it stands after the actions. |
 
-The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.
-
-<AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `Record<string, JsonValue>`
-
-
----
-
-### extract
-
-`fetch.extract`
-
-Turn a page into structured JSON with Extract: the site's own field names, or a canonical Real Estate schema, on a domain prepared for it
-
-**Risk:** `read`
-
-```ts
-await corsair.zenrows.api.fetch.extract({ url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `url` | `string` | Yes | The page to fetch. |
-| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
-| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
-| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
-| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
-| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
-| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
-| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
-| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
-| `wait` | `number` | No | Milliseconds to wait after load before capture. Defaults to 0. |
-| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
-| `extract` | `auto \| native \| standard` | No | Return structured JSON extracted from the page. `auto` and `native` return the site's own field names; `standard` returns a canonical Real Estate schema. Defaults to `auto`. |
-| `extractFields` | `string[]` | No | Fields to keep, dot-notated inside a group, such as ["products.name","products.price"]. Omit it for every field. |
-
-Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.
+A write: browser actions reach the site, so this is not available to a read-only caller. Needs `jsRender` or `mode: 'auto'`, and the whole sequence has 40 seconds.
 
 <AccordionGroup>
 <Accordion title="jsInstructions full type">
@@ -786,6 +720,94 @@ Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `au
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
+| `responseType` | `html \| markdown \| plaintext` | Yes | — |
+
+
+
+---
+
+### cssExtract
+
+`fetch.cssExtract`
+
+Extract named fields from a page with your own CSS or XPath selectors, such as a title, a price and every link, on any site with no preparation
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.cssExtract({ url: 'https://example.com', cssExtractor: { title: 'h1', links: 'a @href' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `cssExtractor` | `Record<string, string>` | Yes | Extraction rules: a map from output key to CSS or XPath selector, such as &#123;"product_name":"h1.title","links":"a @href"&#125;. Append `@attribute` to read an attribute instead of the text. Works on any site, with no preparation. |
+
+The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### extract
+
+`fetch.extract`
+
+Turn a page into structured JSON with Extract: the site's own field names, or a canonical Real Estate schema, on a domain prepared for it
+
+**Risk:** `read`
+
+```ts
+await corsair.zenrows.api.fetch.extract({ url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
+| `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
+| `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
+| `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
+| `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
+| `originalStatus` | `boolean` | No | Answer with the target's own status code instead of Zenrows' one. A 4xx or 5xx from the target then arrives as an error, and the request is still charged. |
+| `allowedStatusCodes` | `number[]` | No | Status codes whose page body is returned instead of raising an error, such as [404]. The answer is then a 200 carrying that page. |
+| `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
+| `wait` | `number` | No | Milliseconds to wait after load before capture. Defaults to 0. |
+| `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
+| `extract` | `auto \| native \| standard` | No | Return structured JSON extracted from the page. `auto` and `native` return the site's own field names; `standard` returns a canonical Real Estate schema. Defaults to `auto`. |
+| `extractFields` | `string[]` | No | Fields to keep, dot-notated inside a group, such as ["products.name","products.price"]. Omit it for every field. |
+
+Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
 | `html` | `string \| null` | No | — |
 | `parsed` | `Record<string, JsonValue> \| null` | No | — |
 
@@ -812,8 +834,8 @@ await corsair.zenrows.api.fetch.jsonResponse({ url: 'https://example.com', jsRen
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -826,32 +848,6 @@ await corsair.zenrows.api.fetch.jsonResponse({ url: 'https://example.com', jsRen
 | `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | No | Data types to pull out of the captured page; the result arrives under `outputs`. |
 
 Needs `jsRender` or `mode: 'auto'`. Selectors arrive under `css_extractor` and output filters under `outputs`, inside the envelope.
-
-<AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -888,8 +884,8 @@ await corsair.zenrows.api.fetch.outputs({ url: 'https://example.com', outputs: [
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -899,32 +895,6 @@ await corsair.zenrows.api.fetch.outputs({ url: 'https://example.com', outputs: [
 | `wait` | `number` | No | Milliseconds to wait after load before capture. Defaults to 0. |
 | `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
 | `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | Yes | Data types to pull out of the page. `phone_numbers` also matches `tel:` links; `tables` reads real &lt;table&gt; elements, not CSS grids. |
-
-<AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -952,8 +922,8 @@ await corsair.zenrows.api.fetch.page({ url: 'https://example.com', responseType:
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -966,32 +936,6 @@ await corsair.zenrows.api.fetch.page({ url: 'https://example.com', responseType:
 
 Returns the page itself, so the body is text. `responseType` picks HTML (the default), Markdown or plaintext; the PDF conversion is not exposed because this client cannot return a binary body.
 
-<AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -999,7 +943,7 @@ Returns the page itself, so the body is text. `responseType` picks HTML (the def
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `string` | Yes | — |
-| `contentType` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
 | `responseType` | `html \| markdown \| plaintext` | Yes | — |
 
 
@@ -1025,8 +969,8 @@ await corsair.zenrows.api.fetch.post({ url: 'https://httpbin.io/anything', body:
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -1040,30 +984,6 @@ await corsair.zenrows.api.fetch.post({ url: 'https://httpbin.io/anything', body:
 The forwarded body reaches the target, so the site's state can change. `jsRender` cannot be combined with a JSON body, because ZenRows reads the body as a query parameter.
 
 <AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -1089,7 +1009,7 @@ The forwarded body reaches the target, so the site's state can change. `jsRender
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `string` | Yes | — |
-| `contentType` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
 
 
 
@@ -1104,7 +1024,7 @@ Send a PUT to the target through Zenrows and return its answer. Reaches the site
 **Risk:** `write`
 
 ```ts
-await corsair.zenrows.api.fetch.put({});
+await corsair.zenrows.api.fetch.put({ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } });
 ```
 
 **Input**
@@ -1114,8 +1034,8 @@ await corsair.zenrows.api.fetch.put({});
 | `url` | `string` | Yes | The page to fetch. |
 | `mode` | `auto` | No | Adaptive Stealth Mode: starts from the cheapest configuration and escalates to rendering or residential proxies only when the target needs it. Rejects `jsRender` and `premiumProxy`. |
 | `jsRender` | `boolean` | No | Render the page in a headless browser first. Defaults to false. |
-| `jsInstructions` | `object[]` | No | Browser actions run in order before capture, such as filling a field and clicking submit. Needs `jsRender` or `mode: "auto"`, and the whole sequence has 40 seconds. |
-| `customHeaders` | `boolean` | No | Forward the caller's own request headers (cookies, referer) to the page. The API key moves to the query string for this operation, because Zenrows copies every request header onto the target request. |
+| `headers` | `Record<string, string>` | No | Headers to send to the target page, such as &#123; "Referer": "https://www.google.com", "Cookie": "session=..." &#125;. ZenRows forwards every request header when `customHeaders` is on, so the API key moves to the query string for this call. The target sees these exactly as given. |
+| `customHeaders` | `boolean` | No | Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request. |
 | `premiumProxy` | `boolean` | No | Route through residential IPs. Most protected sites need it. |
 | `proxyCountry` | `string` | No | Two-letter exit country, such as "us". Needs `premiumProxy` or `mode: "auto"`. |
 | `sessionId` | `number` | No | Any integer; requests sharing it leave through the same IP for 10 minutes. It pins the IP, not cookies. |
@@ -1129,30 +1049,6 @@ await corsair.zenrows.api.fetch.put({});
 The forwarded body reaches the target, so the site's state can change.
 
 <AccordionGroup>
-<Accordion title="jsInstructions full type">
-
-```ts
-{
-  click?: string,
-  wait_for?: string,
-  wait?: number,
-  fill?: [
-    string,
-    string
-  ],
-  check?: string,
-  uncheck?: string,
-  select_option?: [
-    string,
-    string
-  ],
-  scroll_y?: number,
-  scroll_x?: number,
-  evaluate?: string
-}[]
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -1178,7 +1074,7 @@ The forwarded body reaches the target, so the site's state can change.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `string` | Yes | — |
-| `contentType` | `string` | Yes | — |
+| `bodyFormat` | `json \| text` | Yes | — |
 
 
 

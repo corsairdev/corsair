@@ -26,6 +26,8 @@ examples:
 apiExamples:
   fetch.page:
     call: "{ url: 'https://example.com', responseType: 'markdown' }"
+  fetch.browse:
+    call: "{ url: 'https://example.com', jsRender: true, jsInstructions: [{ click: 'a' }] }"
   fetch.extract:
     call: "{ url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/' }"
   fetch.cssExtract:
@@ -36,12 +38,16 @@ apiExamples:
     call: "{ url: 'https://example.com', jsRender: true }"
   fetch.post:
     call: "{ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } }"
+  fetch.put:
+    call: "{ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } }"
   crawl.start:
     call: "{ url: 'https://www.scrapingcourse.com/ecommerce/', maxPages: 10, includePatterns: ['/product/'], outputFormat: 'html' }"
   crawl.get:
     call: "{ crawlId: '<crawl_id from crawl.start>' }"
   crawl.getContent:
     call: "{ crawlId: '<crawl_id>', contentId: '<last segment of content_url>' }"
+  crawl.stop:
+    call: "{ crawlId: '<crawl_id from crawl.start>' }"
   extract.prepareDomain:
     call: "{ domain: 'example.com', exampleUrls: ['https://example.com/1', 'https://example.com/2', 'https://example.com/3'] }"
   extract.getDomainStatus:
@@ -50,6 +56,7 @@ apiExamples:
     call: "{}"
 apiNotes:
   fetch.page: 'Returns the page itself, so the body is text. `responseType` picks HTML (the default), Markdown or plaintext; the PDF conversion is not exposed because this client cannot return a binary body.'
+  fetch.browse: 'A write: browser actions reach the site, so this is not available to a read-only caller. Needs `jsRender` or `mode: ''auto''`, and the whole sequence has 40 seconds.'
   fetch.extract: 'Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.'
   fetch.cssExtract: 'The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.'
   fetch.jsonResponse: 'Needs `jsRender` or `mode: ''auto''`. Selectors arrive under `css_extractor` and output filters under `outputs`, inside the envelope.'
