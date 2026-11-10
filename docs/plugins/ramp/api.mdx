@@ -1,0 +1,1602 @@
+---
+title: API
+description: "API reference for Ramp: every `ramp.api.*` operation with input and output types."
+---
+
+Every `ramp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bills
+
+### get
+
+`bills.get`
+
+Fetch one bill by id, including its vendor, payment details, line items and attachment URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.bills.get({ bill_id: '1e3b0a4e-6f4c-4b3a-9f6d-0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bill_id` | `string` | Yes | The bill id, from `bills.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bill` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bill full type">
+
+```ts
+{
+  id?: string | null,
+  invoice_number?: string | null,
+  memo?: string | null,
+  vendor_memo?: string | null,
+  status?: string | null,
+  status_summary?: string | null,
+  approval_status?: string | null,
+  sync_status?: string | null,
+  amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  due_at?: string | null,
+  issued_at?: string | null,
+  created_at?: string | null,
+  paid_at?: string | null,
+  accounting_date?: string | null,
+  posting_date?: string | null,
+  archived_at?: string | null,
+  entity_id?: string | null,
+  draft_bill_id?: string | null,
+  remote_id?: string | null,
+  purchase_order_id?: string | null,
+  vendor_contact_id?: string | null,
+  deep_link_url?: string | null,
+  is_payment_sync_ready?: boolean | null,
+  fx_conversion_rate?: string | null,
+  vendor?: {
+    id?: string | null,
+    name?: string | null,
+    remote_code?: string | null,
+    remote_id?: string | null,
+    remote_name?: string | null,
+    type?: string | null
+  } | null,
+  bill_owner?: {
+    id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  payment?: {
+    id?: string | null,
+    customer_friendly_payment_id?: string | null,
+    payment_method?: string | null,
+    payment_date?: string | null,
+    effective_date?: string | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    purchase_order_line_item_id?: string | null
+  }[] | null,
+  invoice_urls?: string[] | null,
+  item_receipt_ids?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bills.list`
+
+List bills with filters for vendor, status, approval, payment and date ranges, plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.bills.list({ status_summaries: ['AWAITING_PAYMENT'], from_due_date: '2026-05-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendor_id` | `string` | No | — |
+| `entity_id` | `string` | No | — |
+| `invoice_number` | `string` | No | — |
+| `status_summaries` | `(APPROVAL_PENDING \| APPROVAL_REJECTED \| ARCHIVED \| AWAITING_PAYMENT \| AWAITING_RELEASE \| BLOCKED \| PAID \| PARTIAL_PAYMENT \| PAYMENT_FAILED \| PAYMENT_PROCESSING)[]` | No | Sent as a comma-separated list. |
+| `approval_status` | `APPROVED \| INITIALIZED \| PENDING \| REJECTED \| TERMINATED` | No | — |
+| `payment_status` | `OPEN \| PAID` | No | — |
+| `sync_status` | `BILL_AND_PAYMENT_SYNCED \| BILL_SYNCED \| NOT_SYNCED` | No | — |
+| `is_archived` | `boolean` | No | Show archived bills instead of active ones. |
+| `sync_ready` | `boolean` | No | — |
+| `payment_details_missing` | `boolean` | No | — |
+| `from_created_at` | `string` | No | — |
+| `to_created_at` | `string` | No | — |
+| `from_due_date` | `string` | No | — |
+| `to_due_date` | `string` | No | — |
+| `from_paid_at` | `string` | No | — |
+| `to_paid_at` | `string` | No | — |
+| `min_amount` | `string \| number` | No | A decimal amount, as a string or a number. |
+| `max_amount` | `string \| number` | No | A decimal amount, as a string or a number. |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+`status_summaries` is sent as a comma-separated list; Ramp rejects a value outside the documented set.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bills` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="bills full type">
+
+```ts
+{
+  id?: string | null,
+  invoice_number?: string | null,
+  memo?: string | null,
+  vendor_memo?: string | null,
+  status?: string | null,
+  status_summary?: string | null,
+  approval_status?: string | null,
+  sync_status?: string | null,
+  amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  due_at?: string | null,
+  issued_at?: string | null,
+  created_at?: string | null,
+  paid_at?: string | null,
+  accounting_date?: string | null,
+  posting_date?: string | null,
+  archived_at?: string | null,
+  entity_id?: string | null,
+  draft_bill_id?: string | null,
+  remote_id?: string | null,
+  purchase_order_id?: string | null,
+  vendor_contact_id?: string | null,
+  deep_link_url?: string | null,
+  is_payment_sync_ready?: boolean | null,
+  fx_conversion_rate?: string | null,
+  vendor?: {
+    id?: string | null,
+    name?: string | null,
+    remote_code?: string | null,
+    remote_id?: string | null,
+    remote_name?: string | null,
+    type?: string | null
+  } | null,
+  bill_owner?: {
+    id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  payment?: {
+    id?: string | null,
+    customer_friendly_payment_id?: string | null,
+    payment_method?: string | null,
+    payment_date?: string | null,
+    effective_date?: string | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    purchase_order_line_item_id?: string | null
+  }[] | null,
+  invoice_urls?: string[] | null,
+  item_receipt_ids?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bills.update`
+
+Update a bill: its internal memo, the memo shown to the vendor, the invoice number or the due date
+
+**Risk:** `write`
+
+```ts
+await corsair.ramp.api.bills.update({ bill_id: '1e3b0a4e-6f4c-4b3a-9f6d-0a1b2c3d4e5f', memo: 'Q2 hosting, corrected' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bill_id` | `string` | Yes | — |
+| `memo` | `string` | No | Replaces the internal bill memo. |
+| `vendor_memo` | `string` | No | Replaces the memo shown to the vendor. |
+| `invoice_number` | `string` | No | — |
+| `due_at` | `string` | No | A new due date, in ISO 8601 format. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bill` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bill full type">
+
+```ts
+{
+  id?: string | null,
+  invoice_number?: string | null,
+  memo?: string | null,
+  vendor_memo?: string | null,
+  status?: string | null,
+  status_summary?: string | null,
+  approval_status?: string | null,
+  sync_status?: string | null,
+  amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  due_at?: string | null,
+  issued_at?: string | null,
+  created_at?: string | null,
+  paid_at?: string | null,
+  accounting_date?: string | null,
+  posting_date?: string | null,
+  archived_at?: string | null,
+  entity_id?: string | null,
+  draft_bill_id?: string | null,
+  remote_id?: string | null,
+  purchase_order_id?: string | null,
+  vendor_contact_id?: string | null,
+  deep_link_url?: string | null,
+  is_payment_sync_ready?: boolean | null,
+  fx_conversion_rate?: string | null,
+  vendor?: {
+    id?: string | null,
+    name?: string | null,
+    remote_code?: string | null,
+    remote_id?: string | null,
+    remote_name?: string | null,
+    type?: string | null
+  } | null,
+  bill_owner?: {
+    id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  payment?: {
+    id?: string | null,
+    customer_friendly_payment_id?: string | null,
+    payment_method?: string | null,
+    payment_date?: string | null,
+    effective_date?: string | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    purchase_order_line_item_id?: string | null
+  }[] | null,
+  invoice_urls?: string[] | null,
+  item_receipt_ids?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Business
+
+### get
+
+`business.get`
+
+Fetch the business profile: legal and card names, billing address, SSO and reimbursement settings
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.business.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `business` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="business full type">
+
+```ts
+{
+  id?: string | null,
+  business_name_legal?: string | null,
+  business_name_on_card?: string | null,
+  active?: boolean | null,
+  website?: string | null,
+  phone?: string | null,
+  created_time?: string | null,
+  enforce_sso?: boolean | null,
+  is_integrated_with_slack?: boolean | null,
+  is_reimbursements_enabled?: boolean | null,
+  limit_locked?: boolean | null,
+  billing_address?: {
+    address_line1?: string | null,
+    address_line2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### listVirtual
+
+`cards.listVirtual`
+
+List virtual cards with their fund, owner and suspension state; a terminated card is excluded unless asked for
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.cards.listVirtual({ is_terminated: false, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_id` | `string` | No | Only cards for this entity. |
+| `user_id` | `string` | No | Only cards owned by this user. |
+| `is_terminated` | `boolean` | No | Only terminated cards. Ramp defaults to excluding them. |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cards` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cards full type">
+
+```ts
+{
+  id?: string | null,
+  fund_id?: string | null,
+  user_id?: string | null,
+  is_card_suspended?: boolean | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Departments
+
+### create
+
+`departments.create`
+
+Create a department with the given name
+
+**Risk:** `write`
+
+```ts
+await corsair.ramp.api.departments.create({ name: 'Engineering' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The department name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `department` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="department full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`departments.list`
+
+List the departments configured for the business
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.departments.list({ page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departments` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="departments full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Memos
+
+### create
+
+`memos.create`
+
+Attach a memo of up to 255 characters to a transaction, replacing the existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.ramp.api.memos.create({ transaction_id: 'fd14cd6a-846e-4994-9315-5a59e6bb465f', memo: 'Q2 team lunch' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `string` | Yes | — |
+| `memo` | `string` | Yes | The memo text. Ramp caps it at 255 characters. |
+
+Ramp caps the memo at 255 characters; the schema rejects a longer one before the request is sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="memo full type">
+
+```ts
+{
+  id?: string | null,
+  memo?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`memos.get`
+
+Read the memo attached to a transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.memos.get({ transaction_id: 'fd14cd6a-846e-4994-9315-5a59e6bb465f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="memo full type">
+
+```ts
+{
+  id?: string | null,
+  memo?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Merchants
+
+### list
+
+`merchants.list`
+
+List merchants the business has transacted with, optionally filtered by name, domain or transaction date
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.merchants.list({ merchant_name: 'Chipotle', page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merchant_name` | `string` | No | A case-sensitive display-name prefix. |
+| `merchant_url` | `string` | No | A URL or domain, matched after normalisation. |
+| `transaction_from_date` | `string` | No | — |
+| `transaction_to_date` | `string` | No | — |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `merchants` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="merchants full type">
+
+```ts
+{
+  id?: string | null,
+  merchant_name?: string | null,
+  sk_category_name?: string | null,
+  is_auto_approved?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reimbursements
+
+### list
+
+`reimbursements.list`
+
+List reimbursements and repayments with filters for state, direction, user, entity and date ranges
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.reimbursements.list({ state: 'APPROVED', page_size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `direction` | `BUSINESS_TO_USER \| USER_TO_BUSINESS` | No | Ramp defaults to `BUSINESS_TO_USER`; `USER_TO_BUSINESS` reads repayments. |
+| `state` | `APPROVED \| AWAITING_EXPORT \| AWAITING_PAYMENT \| AWAITING_PUSH_PAYMENT \| CANCELED \| DELETED \| DRAFT \| EXPORTED \| EXPORT_FAILED \| REJECTED \| SUBMITTED` | No | — |
+| `sync_status` | `NOT_SYNC_READY \| SYNCED \| SYNC_READY` | No | — |
+| `user_id` | `string` | No | — |
+| `entity_id` | `string` | No | — |
+| `trip_id` | `string` | No | — |
+| `has_been_approved` | `boolean` | No | — |
+| `sync_ready` | `boolean` | No | — |
+| `has_no_sync_commits` | `boolean` | No | — |
+| `from_date` | `string` | No | — |
+| `to_date` | `string` | No | — |
+| `from_submitted_at` | `string` | No | — |
+| `to_submitted_at` | `string` | No | — |
+| `from_transaction_date` | `string` | No | — |
+| `to_transaction_date` | `string` | No | — |
+| `updated_after` | `string` | No | — |
+| `synced_after` | `string` | No | — |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reimbursements` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reimbursements full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  direction?: string | null,
+  state?: string | null,
+  sync_status?: string | null,
+  memo?: string | null,
+  merchant?: string | null,
+  merchant_id?: string | null,
+  user_id?: string | null,
+  user_email?: string | null,
+  user_full_name?: string | null,
+  employee_id?: string | null,
+  entity_id?: string | null,
+  fund_id?: string | null,
+  trip_id?: string | null,
+  transaction_date?: string | null,
+  accounting_date?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  submitted_at?: string | null,
+  approved_at?: string | null,
+  synced_at?: string | null,
+  payment_processed_at?: string | null,
+  distance?: number | null,
+  payee_amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  entity_amount?: {
+    amount?: number | null,
+    currency_code?: string | null
+  } | null,
+  merchant_amount?: {
+    amount?: number | null,
+    currency_code?: string | null
+  } | null,
+  receipts?: string[] | null,
+  line_items?: {
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  }[] | null,
+  attendees?: {
+    name?: string | null,
+    user_id?: string | null
+  }[] | null,
+  waypoints?: {
+    address?: string | null,
+    latitude?: number | null,
+    longitude?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+Fetch one transaction by id, including its cardholder, merchant location, line items and approval state
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.transactions.get({ transaction_id: 'fd14cd6a-846e-4994-9315-5a59e6bb465f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `string` | Yes | The transaction id, from `transactions.list`. |
+| `include_merchant_data` | `boolean` | No | Ask for the full purchase data the merchant sent. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transaction full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: number | null,
+  currency_code?: string | null,
+  memo?: string | null,
+  state?: string | null,
+  sync_status?: string | null,
+  sk_category_id?: number | null,
+  sk_category_name?: string | null,
+  merchant_id?: string | null,
+  merchant_name?: string | null,
+  merchant_descriptor?: string | null,
+  merchant_category_code?: string | null,
+  merchant_category_code_description?: string | null,
+  merchant_location?: {
+    city?: string | null,
+    country?: string | null,
+    postal_code?: string | null,
+    state?: string | null
+  } | null,
+  card_id?: string | null,
+  card_holder?: {
+    department_id?: string | null,
+    department_name?: string | null,
+    employee_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    location_id?: string | null,
+    location_name?: string | null,
+    user_id?: string | null
+  } | null,
+  card_present?: boolean | null,
+  user_transaction_time?: string | null,
+  accounting_date?: string | null,
+  settlement_date?: string | null,
+  updated_at?: string | null,
+  synced_at?: string | null,
+  entity_id?: string | null,
+  statement_id?: string | null,
+  trip_id?: string | null,
+  trip_name?: string | null,
+  fund_id?: string | null,
+  limit_id?: string | null,
+  spend_program_id?: string | null,
+  original_transaction_id?: string | null,
+  all_requirements_met_and_approved?: boolean | null,
+  requires_accounting_vendor_creation_to_sync?: boolean | null,
+  entity_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  merchant_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  original_transaction_amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    converted_amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  }[] | null,
+  receipts?: string[] | null,
+  disputes?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null,
+  policy_violations?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List card transactions with filters for date, merchant, cardholder, state and approval, plus sorting and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.transactions.list({ state: 'ALL', from_date: '2026-05-01T00:00:00Z', page_size: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `ALL \| CLEARED \| COMPLETION \| DECLINED \| ERROR \| PENDING \| PENDING_INITIATION` | No | Transaction state. Ramp omits declined transactions unless this is `ALL`. |
+| `sync_status` | `NOT_SYNC_READY \| SYNCED \| SYNC_READY` | No | — |
+| `from_date` | `string` | No | Only transactions whose `user_transaction_time` is after this ISO 8601 date. |
+| `to_date` | `string` | No | Only transactions whose `user_transaction_time` is before this ISO 8601 date. |
+| `user_id` | `string` | No | Only this cardholder. |
+| `card_id` | `string` | No | Only this physical card. |
+| `merchant_id` | `string` | No | — |
+| `department_id` | `string` | No | — |
+| `location_id` | `string` | No | — |
+| `entity_id` | `string` | No | Only this business entity. |
+| `statement_id` | `string` | No | — |
+| `trip_id` | `string` | No | — |
+| `spend_program_id` | `string` | No | — |
+| `limit_id` | `string` | No | — |
+| `sk_category_id` | `number` | No | Ramp's own category code, for example 19 for restaurants. |
+| `has_been_approved` | `boolean` | No | — |
+| `all_requirements_met_and_approved` | `boolean` | No | — |
+| `requires_memo` | `boolean` | No | Only transactions that require a memo and do not have one. |
+| `has_statement` | `boolean` | No | — |
+| `has_no_sync_commits` | `boolean` | No | — |
+| `min_amount` | `string \| number` | No | A decimal amount, as a string or a number. |
+| `max_amount` | `string \| number` | No | A decimal amount, as a string or a number. |
+| `synced_after` | `string` | No | Only transactions with an accounting sync commit at or after this date. This is not an updated-at filter. |
+| `sort` | `object` | No | Ramp takes one of four separate booleans and rejects more than one ordering parameter at once, so the pair is modelled as a single field. |
+| `include_count` | `boolean` | No | Ask Ramp to count the matches. Adds latency and caps the count at 10,000. |
+| `include_merchant_data` | `boolean` | No | — |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+Set `include_count: true` to get `total_count`, which adds latency and caps at 10,000.
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  by: date | amount,
+  direction: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactions` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="transactions full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: number | null,
+  currency_code?: string | null,
+  memo?: string | null,
+  state?: string | null,
+  sync_status?: string | null,
+  sk_category_id?: number | null,
+  sk_category_name?: string | null,
+  merchant_id?: string | null,
+  merchant_name?: string | null,
+  merchant_descriptor?: string | null,
+  merchant_category_code?: string | null,
+  merchant_category_code_description?: string | null,
+  merchant_location?: {
+    city?: string | null,
+    country?: string | null,
+    postal_code?: string | null,
+    state?: string | null
+  } | null,
+  card_id?: string | null,
+  card_holder?: {
+    department_id?: string | null,
+    department_name?: string | null,
+    employee_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    location_id?: string | null,
+    location_name?: string | null,
+    user_id?: string | null
+  } | null,
+  card_present?: boolean | null,
+  user_transaction_time?: string | null,
+  accounting_date?: string | null,
+  settlement_date?: string | null,
+  updated_at?: string | null,
+  synced_at?: string | null,
+  entity_id?: string | null,
+  statement_id?: string | null,
+  trip_id?: string | null,
+  trip_name?: string | null,
+  fund_id?: string | null,
+  limit_id?: string | null,
+  spend_program_id?: string | null,
+  original_transaction_id?: string | null,
+  all_requirements_met_and_approved?: boolean | null,
+  requires_accounting_vendor_creation_to_sync?: boolean | null,
+  entity_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  merchant_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  original_transaction_amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    converted_amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  }[] | null,
+  receipts?: string[] | null,
+  disputes?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null,
+  policy_violations?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactions.update`
+
+Replace or remove a transaction's line items: the amounts, split into minor units, must sum to the transaction amount
+
+**Risk:** `write`
+
+```ts
+await corsair.ramp.api.transactions.update({ transaction_id: 'fd14cd6a-846e-4994-9315-5a59e6bb465f', line_items: [{ amount: 5000, memo: 'Entrees' }, { amount: 4000, memo: 'Drinks' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `string` | Yes | — |
+| `line_items` | `object[]` | Yes | The line items to split the transaction into. Send an empty array to remove an existing split. |
+
+`amount` values are minor units and must sum to the transaction amount; an empty `line_items` array removes the split.
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  amount: number,
+  memo?: string,
+  accounting_field_selections?: {
+    field_id?: string,
+    field_external_id?: string,
+    field_option_id?: string,
+    field_option_external_id?: string,
+    free_form_text?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transaction full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: number | null,
+  currency_code?: string | null,
+  memo?: string | null,
+  state?: string | null,
+  sync_status?: string | null,
+  sk_category_id?: number | null,
+  sk_category_name?: string | null,
+  merchant_id?: string | null,
+  merchant_name?: string | null,
+  merchant_descriptor?: string | null,
+  merchant_category_code?: string | null,
+  merchant_category_code_description?: string | null,
+  merchant_location?: {
+    city?: string | null,
+    country?: string | null,
+    postal_code?: string | null,
+    state?: string | null
+  } | null,
+  card_id?: string | null,
+  card_holder?: {
+    department_id?: string | null,
+    department_name?: string | null,
+    employee_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    location_id?: string | null,
+    location_name?: string | null,
+    user_id?: string | null
+  } | null,
+  card_present?: boolean | null,
+  user_transaction_time?: string | null,
+  accounting_date?: string | null,
+  settlement_date?: string | null,
+  updated_at?: string | null,
+  synced_at?: string | null,
+  entity_id?: string | null,
+  statement_id?: string | null,
+  trip_id?: string | null,
+  trip_name?: string | null,
+  fund_id?: string | null,
+  limit_id?: string | null,
+  spend_program_id?: string | null,
+  original_transaction_id?: string | null,
+  all_requirements_met_and_approved?: boolean | null,
+  requires_accounting_vendor_creation_to_sync?: boolean | null,
+  entity_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  merchant_amount?: {
+    currency?: string | null,
+    value?: number | null
+  } | null,
+  original_transaction_amount?: {
+    amount?: number | null,
+    currency_code?: string | null,
+    minor_unit_conversion_rate?: number | null
+  } | null,
+  line_items?: {
+    id?: string | null,
+    memo?: string | null,
+    accounting_field_selections?: {
+      id?: string | null,
+      name?: string | null,
+      display_name?: string | null,
+      type?: string | null,
+      external_id?: string | null,
+      external_code?: string | null,
+      provider_name?: string | null,
+      category_info?: {
+        id?: string | null,
+        name?: string | null,
+        type?: string | null,
+        external_id?: string | null
+      } | null
+    }[] | null,
+    amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null,
+    converted_amount?: {
+      amount?: number | null,
+      currency_code?: string | null,
+      minor_unit_conversion_rate?: number | null
+    } | null
+  }[] | null,
+  receipts?: string[] | null,
+  disputes?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null,
+  policy_violations?: {
+    id?: string | null,
+    created_at?: string | null,
+    memo?: string | null,
+    type?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Fetch one user by id, including their role, department and manager
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.users.get({ user_id: 'bde8334e-042e-4f39-9a5d-355ae17342e6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  status?: string | null,
+  employee_id?: string | null,
+  business_id?: string | null,
+  entity_id?: string | null,
+  department_id?: string | null,
+  location_id?: string | null,
+  manager_id?: string | null,
+  is_manager?: boolean | null,
+  phone?: string | number | null,
+  scheduled_deactivation_date?: string | null,
+  scheduled_invitation_date?: string | null,
+  custom_fields?: {
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users with filters for email, role, status, department, location and entity
+
+**Risk:** `read`
+
+```ts
+await corsair.ramp.api.users.list({ status: 'USER_ACTIVE', page_size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `role` | `BUSINESS_ADMIN \| BUSINESS_BOOKKEEPER \| BUSINESS_OWNER \| BUSINESS_USER \| DEVELOPER \| EXTERNAL_ACCOUNTANT \| GLOBAL_ADMIN \| GLOBAL_VIEWER \| MANAGER \| MERCHANT \| VENDOR_ADMIN` | No | — |
+| `status` | `INVITE_EXPIRED \| INVITE_PENDING \| USER_ACTIVE \| USER_DISABLED \| USER_SUSPENDED` | No | — |
+| `employee_id` | `string` | No | — |
+| `entity_id` | `string` | No | — |
+| `department_id` | `string` | No | — |
+| `location_id` | `string` | No | — |
+| `start` | `string` | No | The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it. |
+| `page_size` | `number` | No | Results per page, 2 to 100. Defaults to 20 when omitted. |
+
+Ramp sends `phone` as a bare number in its own example, so the field accepts a string or a number.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `start` to read the next page. Null once `page.next` is null. |
+| `next_page_url` | `string \| null` | Yes | The absolute `page.next` URL, for callers that prefer it. |
+| `total_count` | `number \| null` | No | — |
+| `total_count_capped` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  status?: string | null,
+  employee_id?: string | null,
+  business_id?: string | null,
+  entity_id?: string | null,
+  department_id?: string | null,
+  location_id?: string | null,
+  manager_id?: string | null,
+  is_manager?: boolean | null,
+  phone?: string | number | null,
+  scheduled_deactivation_date?: string | null,
+  scheduled_invitation_date?: string | null,
+  custom_fields?: {
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  total_count?: number | null,
+  total_count_capped?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,152 @@
+---
+title: Overview
+description: "Corporate cards and spend management with Ramp - read card transactions, bills, reimbursements, virtual cards, merchants, users and departments, split a transaction into line items, edit a bill and attach memos."
+---
+
+Use **Ramp** through Corsair: one client, typed API calls.
+
+Create a developer app in Ramp under **Company → Developer**, add the **Client Credentials** grant type, select the scopes you need, then exchange the client ID and secret for an access token:
+
+```bash
+curl -X POST 'https://api.ramp.com/developer/v1/token' \
+  -H "Authorization: Basic $(echo -n "$CLIENT_ID:$CLIENT_SECRET" | base64)" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "scope=transactions:read business:read"
+```
+
+Store the `access_token` (it starts with `ramp_business_tok_` or `ramp_business_jwt_`) as the API key. Client Credentials tokens last 10 days; Ramp issues no refresh token, so request a new one when it expires. Sandbox uses `https://demo-api.ramp.com` and separate credentials. Things to know before you call:
+
+- **A rejected token looks like a missing record.** Ramp documents `401` for a bad token, but the live API answers **404** with `error_v2.error_code: 'DEVELOPER_7002'`. The plugin reads that code, so `RampAPIError.isAuthError` is true for it and `isNotFound` is false.
+- **Every route is scoped.** `403` means the token lacks the scope or the business lacks a plan feature; `DEVELOPER_7100` is the explicit refusal a read-only token gets on a write. `business.get` needs `business:read`, not `transactions:read`.
+- **Paging is cursor based.** `start` is the id of the last record on the page, not an offset, and it is only meaningful for the filters that produced it. Each list returns `next_cursor` (read out of `page.next` for you) and `next_page_url`. `page_size` must be 2 to 100 and defaults to 20.
+- **Only one ordering parameter per call.** Ramp takes four separate sort booleans and rejects more than one, so `transactions.list` models the pair as `sort: { by, direction }` and sends exactly one.
+- **Splitting a transaction must balance.** `transactions.update` replaces the line items, and their `amount` values are in minor units that must sum to the transaction total. Sending an empty array removes an existing split.
+- **Rate limits.** 200 requests per 10 seconds per source IP, then a 60 second block. The plugin honours `Retry-After` and otherwise waits the documented 60 seconds before retrying, up to three times.
+- **Writes are not replayed on a 5xx.** Ramp says to check whether a timed-out write landed before retrying it, so only reads are retried.
+- **Webhooks are not received.** Ramp can deliver them, but this plugin does not verify or route deliveries.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ramp better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ramp better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ramp better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ramp better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ramp } from '@corsair-dev/ramp';
+
+export const corsair = createCorsair({
+	plugins: [
+		ramp(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting Ramp.
+
+```ts
+ramp()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ramp',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List this month's card transactions**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ramp.api.transactions.list({
+	from_date: '2026-05-01T00:00:00Z',
+	to_date: '2026-06-01T00:00:00Z',
+	sort: { by: 'date', direction: 'desc' },
+	page_size: 50,
+});
+```
+
+
+**Attach a memo to a transaction**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ramp.api.memos.create({ transaction_id: 'fd14cd6a-846e-4994-9315-5a59e6bb465f', memo: 'Q2 team lunch' });
+```
+
+
+See the full list on the [API](/plugins/ramp/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ramp/api">
+    Every `ramp.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
