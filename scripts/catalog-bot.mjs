@@ -18,6 +18,9 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const BOT_BRANCH = 'bot/catalog';
+// Holds the new commit while the bot branch is replaced (see pushBranch). It
+// only outlives a run that stopped halfway, and the next run reads it.
+export const BACKUP_BRANCH = 'bot/catalog-next';
 export const MARKER = '<!-- corsair-catalog-bot -->';
 
 const CATALOG = 'explorer/data/catalog.json';
@@ -216,10 +219,19 @@ function removeIcon(cwd, id) {
 	if (removed) writeJson(sourcesPath, rest);
 }
 
+const refExists = (cwd, ref) =>
+	tryGit(cwd, ['rev-parse', '--verify', '-q', ref]) !== null;
+
+/** Where saved icons are read from: the bot branch, else what a stopped run left. */
+function savedRef(cwd) {
+	const refs = [BOT_BRANCH, BACKUP_BRANCH].map((branch) => `origin/${branch}`);
+	return refs.find((ref) => refExists(cwd, ref)) ?? refs[0];
+}
+
 export function icons({
 	cwd,
 	plan,
-	ref = `origin/${BOT_BRANCH}`,
+	ref = savedRef(cwd),
 	hasKey = Boolean(process.env.CONTEXT_DEV_API_KEY),
 	fetchIcons = defaultFetchIcons,
 	importIcon = defaultImportIcon,
@@ -227,16 +239,16 @@ export function icons({
 	const ids = plan.missingIcons;
 	if (ids.length === 0) return { ...plan, icons: [] };
 
-	const refExists = tryGit(cwd, ['rev-parse', '--verify', '-q', ref]) !== null;
+	const hasRef = refExists(cwd, ref);
 	const showRef = (path) => {
-		if (!refExists) return {};
+		if (!hasRef) return {};
 		const text = tryGit(cwd, ['show', `${ref}:${path}`]);
 		return text ? JSON.parse(text) : {};
 	};
 	const refSources = showRef(SOURCES);
 	const refManifest = showRef(MANIFEST);
 
-	const restored = refExists
+	const restored = hasRef
 		? ids.filter((id) => reuseIcon(cwd, ref, id, refSources))
 		: [];
 
@@ -457,14 +469,25 @@ function closedWithoutMerging(cwd, repo, headSha) {
 	return rows.length > 0 && !rows[0].mergedAt && rows[0].headRefOid === headSha;
 }
 
+function dropBackup(cwd) {
+	spawnSync('git', ['push', 'origin', `:refs/heads/${BACKUP_BRANCH}`], {
+		cwd,
+		stdio: 'ignore',
+	});
+}
+
 function pushBranch(cwd, remoteSha, log) {
 	const lease = `--force-with-lease=${BOT_BRANCH}:${remoteSha ?? ''}`;
 	const refspec = `HEAD:refs/heads/${BOT_BRANCH}`;
+	const leftover = refExists(cwd, `origin/${BACKUP_BRANCH}`);
 	const push = spawnSync('git', ['push', lease, 'origin', refspec], {
 		cwd,
 		encoding: 'utf-8',
 	});
-	if (push.status === 0) return { recreated: false };
+	if (push.status === 0) {
+		if (leftover) dropBackup(cwd);
+		return { recreated: false };
+	}
 	// GitHub refuses an app token without the workflows permission when a
 	// force-push's diff from the old head includes .github/workflows, which
 	// happens once main's workflows change under the branch. A new branch has no
@@ -474,8 +497,16 @@ function pushBranch(cwd, remoteSha, log) {
 		throw new Error(`pushing ${BOT_BRANCH} failed:\n${push.stderr}`);
 	}
 	log(`Force-push to ${BOT_BRANCH} refused; replacing the branch.`);
+	// The bot branch is the only copy of the icons a reviewer pushed to it, and
+	// this run's commit carries them. Put that commit on a second branch before
+	// deleting, so a run that fails or is cancelled before the last push leaves
+	// them where the next run looks. A leftover copy goes first: updating it
+	// could be refused for the same reason.
+	if (leftover) dropBackup(cwd);
+	git(cwd, ['push', 'origin', `HEAD:refs/heads/${BACKUP_BRANCH}`]);
 	git(cwd, ['push', lease, 'origin', `:refs/heads/${BOT_BRANCH}`]);
 	git(cwd, ['push', `--force-with-lease=${BOT_BRANCH}:`, 'origin', refspec]);
+	dropBackup(cwd);
 	return { recreated: true };
 }
 
@@ -493,6 +524,8 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 	const current = openPr(cwd, repo);
 
 	if (!plan.changed && plan.missingIcons.length === 0) {
+		// Nothing needs the icons a stopped run saved any more.
+		if (refExists(cwd, `origin/${BACKUP_BRANCH}`)) dropBackup(cwd);
 		if (current === null) return 'none';
 		// A later merge undid the change, or someone did the rebuild by hand.
 		gh(cwd, [

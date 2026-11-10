@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { delimiter, dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import {
+	BACKUP_BRANCH,
 	BOT_BRANCH,
 	build,
 	icons,
@@ -232,6 +233,29 @@ describe('on a git repo', () => {
 		]);
 	const remoteHead = () =>
 		git(['rev-parse', `refs/heads/${BOT_BRANCH}`], remote);
+	const remoteBranches = () =>
+		git(['for-each-ref', '--format=%(refname:short)', 'refs/heads'], remote)
+			.split('\n')
+			.sort();
+	const WORKFLOW_REFUSAL =
+		'echo "refusing to allow a GitHub App to create or update workflow without workflows permission" >&2';
+	// GitHub's refusal, as an update hook: a new or deleted branch goes through,
+	// a force-push doesn't. `first` runs before that, with $1 the ref, $2 the old
+	// commit and $3 the new one.
+	const refuseForcePushes = (first = '') => {
+		const hook = join(remote, 'hooks/update');
+		writeFileSync(
+			hook,
+			`#!/bin/sh
+${first}
+case "$2" in 0000000*) exit 0;; esac
+case "$3" in 0000000*) exit 0;; esac
+${WORKFLOW_REFUSAL}
+exit 1
+`,
+		);
+		chmodSync(hook, 0o755);
+	};
 	const resetToMain = () => {
 		git(['checkout', '-q', '--detach', 'main']);
 		git(['clean', '-fdq']);
@@ -487,6 +511,32 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			assert.equal(out.icons[0].kept, true);
 			assert.equal(out.icons[0].source, 'curated');
 		});
+
+		it('reads the copy a stopped run left when the bot branch is gone', () => {
+			git(['checkout', '-q', '-b', 'bot']);
+			write('explorer/icons/b.png', 'replaced by a person\n');
+			write(
+				'explorer/data/icon-manifest.json',
+				`${JSON.stringify({ domains: { a: 'a.io', b: 'b.io' }, sources: { a: 'twenty-icons', b: 'curated' }, dark: [] })}\n`,
+			);
+			git(['add', '.']);
+			git(['commit', '-q', '-m', 'the commit a stopped run saved']);
+			git(['update-ref', `refs/remotes/origin/${BACKUP_BRANCH}`, 'HEAD']);
+			git(['checkout', '-q', '--detach', 'main']);
+
+			const out = icons({
+				cwd,
+				plan,
+				hasKey: true,
+				fetchIcons: fakeFetch,
+				importIcon: () => assert.fail('already have it'),
+			});
+			assert.equal(
+				readFileSync(join(cwd, 'explorer/icons/b.png'), 'utf-8'),
+				'replaced by a person\n',
+			);
+			assert.equal(out.icons[0].kept, true);
+		});
 	});
 
 	describe('publish', () => {
@@ -595,20 +645,48 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			fetchBranch();
 			resetToMain();
 			setPrs([{ number: 7 }]);
-			const hook = join(remote, 'hooks/update');
-			writeFileSync(
-				hook,
-				`#!/bin/sh
-case "$2" in 0000000*) exit 0;; esac
-case "$3" in 0000000*) exit 0;; esac
-echo "refusing to allow a GitHub App to create or update workflow without workflows permission" >&2
-exit 1
-`,
-			);
-			chmodSync(hook, 0o755);
+			refuseForcePushes();
 			writeCatalog([plugin('a'), plugin('b'), plugin('c')]);
 			assert.equal(run(added), 'opened');
 			assert.equal(ghCalls().filter((c) => c === 'pr create').length, 2);
+			assert.equal(remoteHead(), git(['rev-parse', 'HEAD']));
+			assert.deepEqual(remoteBranches(), [BOT_BRANCH, 'main']);
+		});
+
+		it('leaves a copy when replacing the branch stops after the delete', () => {
+			writeCatalog([plugin('a'), plugin('b')]);
+			run(added);
+			fetchBranch();
+			resetToMain();
+			setPrs([{ number: 7 }]);
+			// The delete goes through, and the push that should follow it fails.
+			refuseForcePushes(
+				`case "$1 $2" in "refs/heads/${BOT_BRANCH} 0000000"*) exit 1;; esac`,
+			);
+			writeCatalog([plugin('a'), plugin('b'), plugin('c')]);
+			assert.throws(() => run(added));
+			assert.deepEqual(remoteBranches(), [BACKUP_BRANCH, 'main']);
+			assert.equal(
+				git(['rev-parse', `refs/heads/${BACKUP_BRANCH}`], remote),
+				git(['rev-parse', 'HEAD']),
+			);
+		});
+
+		it('opens the PR again from that copy, then removes it', () => {
+			writeCatalog([plugin('a'), plugin('b')]);
+			git(['add', '.']);
+			git(['commit', '-q', '-m', 'the commit a stopped run saved']);
+			git(['push', '-q', 'origin', `HEAD:refs/heads/${BACKUP_BRANCH}`]);
+			git([
+				'fetch',
+				'-q',
+				'origin',
+				`+refs/heads/${BACKUP_BRANCH}:refs/remotes/origin/${BACKUP_BRANCH}`,
+			]);
+			resetToMain();
+			writeCatalog([plugin('a'), plugin('b')]);
+			assert.equal(run(added), 'opened');
+			assert.deepEqual(remoteBranches(), [BOT_BRANCH, 'main']);
 		});
 
 		it('does not delete a commit pushed between the refusal and the delete', () => {

@@ -63,8 +63,12 @@ jobs:
         run: node scripts/catalog-bot.mjs build --out "$RUNNER_TEMP/catalog-plan.json"
 
       # So a run keeps the icons a previous one found or a person replaced.
+      # bot/catalog-next only exists after a run stopped while replacing the branch.
       - name: Fetch the bot branch
-        run: git fetch -q --depth=1 origin +refs/heads/bot/catalog:refs/remotes/origin/bot/catalog || echo "No bot branch yet"
+        run: |
+          for branch in bot/catalog bot/catalog-next; do
+            git fetch -q --depth=1 origin "+refs/heads/$branch:refs/remotes/origin/$branch" || echo "No $branch"
+          done
 
       - name: Get icons for new plugins
         env:
