@@ -302,6 +302,7 @@ export const BaseProviders = [
 	'lemonsqueezy',
 	'lever',
 	'linear',
+	'linguapop',
 	'linkedin',
 	'litescrape',
 	'loyverse',
@@ -768,6 +769,7 @@ export const ProviderDisplayNames = {
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
+	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
@@ -1238,6 +1240,7 @@ export type AllProviders =
 	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
+	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
 	| 'loyverse'
