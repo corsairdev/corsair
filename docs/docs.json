@@ -3393,6 +3393,14 @@
                 ]
               },
               {
+                "group": "Taggun",
+                "pages": [
+                  "plugins/taggun/overview",
+                  "plugins/taggun/api",
+                  "plugins/taggun/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
