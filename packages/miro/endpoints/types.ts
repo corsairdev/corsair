@@ -998,6 +998,24 @@ const ConnectorEndpointSchema = z
 	})
 	.loose();
 
+/**
+ * A connector label. Miro sends and expects each one as an object, with the
+ * text under `content`, in both directions.
+ */
+const CaptionSchema = z
+	.object({
+		content: z.string().nullish().describe('The label text.'),
+		position: z
+			.string()
+			.nullish()
+			.describe('Where it sits along the line, as a percentage such as `50%`.'),
+		textAlignVertical: z.string().nullish(),
+	})
+	.loose();
+
+/** Up to 20 labels of up to 200 characters each, which is what Miro allows. */
+const CaptionsInputSchema = z.array(z.string().max(200)).max(20);
+
 const FlatConnectorSchema = ItemBaseSchema.extend({
 	startItem: ConnectorEndpointSchema.nullish(),
 	endItem: ConnectorEndpointSchema.nullish(),
@@ -1012,7 +1030,7 @@ const FlatConnectorSchema = ItemBaseSchema.extend({
 		})
 		.loose()
 		.nullish(),
-	captions: z.array(z.string()).nullish(),
+	captions: z.array(CaptionSchema).nullish(),
 });
 
 /** Every item route wraps the resource in `{ item }`. */
@@ -1071,10 +1089,9 @@ const ConnectorsCreateInputSchema = z.object({
 			'filled_triangle',
 		])
 		.optional(),
-	captions: z
-		.array(z.string())
-		.optional()
-		.describe('Labels shown along the line.'),
+	captions: CaptionsInputSchema.optional().describe(
+		'Labels shown along the line: up to 20, each up to 200 characters.',
+	),
 });
 
 export type ConnectorsCreateInput = z.input<typeof ConnectorsCreateInputSchema>;
@@ -1094,7 +1111,9 @@ const ConnectorsUpdateInputSchema = z
 		strokeColor: z.string().optional(),
 		strokeWidth: z.string().optional(),
 		strokeStyle: z.enum(['normal', 'dotted', 'dashed']).optional(),
-		captions: z.array(z.string()).optional(),
+		captions: CaptionsInputSchema.optional().describe(
+			'Replaces the labels; pass an empty list to remove them.',
+		),
 	})
 	.superRefine((value, ctx) => {
 		if (

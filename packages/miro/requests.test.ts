@@ -748,8 +748,32 @@ describe('connectors', () => {
 			endItem: { id: '3458764513820541003' },
 			shape: 'curved',
 			style: { strokeColor: '#4262ff' },
-			captions: ['depends on'],
+			// Miro takes each caption as an object; the flat strings are wrapped.
+			captions: [{ content: 'depends on' }],
 		});
+	});
+
+	it('reads captions as the objects Miro returns', async () => {
+		respond(connector);
+
+		const result = (await invoke(connectorsGet, {
+			boardId: BOARD,
+			connectorId: connector.id,
+		})) as { item: { captions?: { content?: string | null }[] | null } };
+
+		expect(result.item.captions?.[0]?.content).toBe('depends on');
+	});
+
+	it('rejects a caption over 200 characters and more than 20 captions', async () => {
+		const base = { boardId: BOARD, startItemId: 'a', endItemId: 'b' };
+
+		await expect(
+			invoke(connectorsCreate, { ...base, captions: ['x'.repeat(201)] }),
+		).rejects.toThrow();
+		await expect(
+			invoke(connectorsCreate, { ...base, captions: Array(21).fill('x') }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('requires both endpoints', async () => {
@@ -818,7 +842,7 @@ describe('connectors', () => {
 			captions: ['renamed'],
 		});
 
-		expect(lastRequest().body).toEqual({ captions: ['renamed'] });
+		expect(lastRequest().body).toEqual({ captions: [{ content: 'renamed' }] });
 		expect(lastRequest().body).not.toHaveProperty('style');
 	});
 

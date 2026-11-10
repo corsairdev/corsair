@@ -65,6 +65,16 @@ function connectorStyle(parsed: {
 	return Object.keys(style).length > 0 ? style : undefined;
 }
 
+/**
+ * Connector labels in the wire format. The input takes plain strings; Miro
+ * wants each as `{ content }`, and rejects a bare string.
+ */
+function captionsBody(
+	captions: string[] | undefined,
+): { content: string }[] | undefined {
+	return captions?.map((content) => ({ content }));
+}
+
 // ── boards ──────────────────────────────────────────────────────────────────
 
 export const boardsList: MiroEndpoints['boardsList'] = (ctx, input) =>
@@ -789,7 +799,7 @@ export const connectorsCreate: MiroEndpoints['connectorsCreate'] = (
 				endItem: { id: parsed.endItemId },
 				shape: parsed.shape,
 				style: connectorStyle(parsed),
-				captions: parsed.captions,
+				captions: captionsBody(parsed.captions),
 			},
 		}),
 		{
@@ -835,7 +845,7 @@ export const connectorsUpdate: MiroEndpoints['connectorsUpdate'] = (
 			body: {
 				shape: parsed.shape,
 				style: connectorStyle(parsed),
-				captions: parsed.captions,
+				captions: captionsBody(parsed.captions),
 			},
 		}),
 		{

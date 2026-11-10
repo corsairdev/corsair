@@ -174,7 +174,10 @@ export const connector = {
 		startStrokeCap: 'none',
 		endStrokeCap: 'stealth',
 	},
-	captions: ['depends on'],
+	// Captions are objects on the wire, in requests and responses alike.
+	captions: [
+		{ content: 'depends on', position: '50%', textAlignVertical: 'middle' },
+	],
 	links: {},
 };
 
