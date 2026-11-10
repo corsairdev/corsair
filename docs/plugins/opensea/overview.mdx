@@ -12,11 +12,10 @@ requires it: a request with no key answers 401 and
 `{"errors":["Missing an API Key, ..."]}`.
 
 Every `chain` argument takes a slug from `chains.list`, such as `ethereum` or
-`base`. The set is closed, so a value outside it is refused before the request
-is sent.
+`base`. OpenSea adds chains over time, so the slug is sent as given and the
+API refuses one it does not index.
 
-`collections.list` also accepts a `chain` filter, but the generator renders an
-enum unquoted, so that one is named here rather than in the example.
+`collections.list` also accepts a `chain` filter.
 
 Order lookups come in two shapes. `orders.get` wraps the result under `order`;
 `offers.best` returns the order bare. Both carry the Seaport `protocol_data`
@@ -27,10 +26,11 @@ response's `next` as this call's `next`, which is `null` on the last page.
 Three routes differ: `collections.top`, `collections.trending` and
 `collections.holders` take `cursor` instead of `next`.
 
-`traits.list` answers the trait names on a collection and the type of each
-value, not the values themselves. To select NFTs by trait, pass
-`collection.nfts` a `traits` filter as `trait_type:value`, with several joined
-by commas.
+`traits.list` answers the trait names on a collection, the type of each, and
+under `counts` every value with how many NFTs carry it. To select NFTs by
+trait, pass `collection.nfts` a `traits` filter: a JSON array sent as a
+string, such as `[{"traitType":"Background","value":"Red"}]`. Several filters
+are AND-combined.
 
 Prices arrive as base-unit strings. An 18-decimal wei amount such as
 `"5900000000000000000"` does not fit a JavaScript number, so the value stays a
@@ -94,7 +94,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required up front. Store the key for the account before the first call: a request with no saved key throws `AuthMissingError` rather than prompting, and the error carries a `connectUrl` when a Connect link can be minted.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 opensea()

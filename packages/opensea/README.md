@@ -14,9 +14,9 @@ pnpm add @corsair-dev/opensea
 |-----------|--------------|------|-------------|
 | `accounts.get` | `opensea.api.accounts.get` | `read` | One OpenSea profile by wallet address or username, with its display name, bio, follower counts and verification flag. `is_agent` is a self-declaration, not a check by OpenSea. |
 | `accounts.portfolio` | `opensea.api.accounts.portfolio` | `read` | USD value of one wallet’s NFTs and tokens, with profit and loss over a timeframe. Every figure is a string. `pnl_absolute` and `pnl_percentage` are absent, not zero, when the account has no history. |
-| `chains.list` | `opensea.api.chains.list` | `read` | The chains OpenSea indexes, with each one’s symbol and block explorer. No input; the list is a closed set and is the valid source for every `chain` argument elsewhere. |
-| `collection.nfts` | `opensea.api.collection.nfts` | `read` | The NFTs in one collection, paged with `next`. Filter by trait with `trait_type:value`, several joined by commas. |
-| `collections.floorPrices` | `opensea.api.collections.floorPrices` | `read` | Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe` or a `resolution` in seconds. |
+| `chains.list` | `opensea.api.chains.list` | `read` | The chains OpenSea indexes, with each one’s symbol and block explorer. No input; the list is the valid source for every `chain` argument elsewhere. |
+| `collection.nfts` | `opensea.api.collection.nfts` | `read` | The NFTs in one collection, paged with `next`. Filter by trait with `traits`, a JSON array of `traitType` and `value` pairs sent as a string. |
+| `collections.floorPrices` | `opensea.api.collections.floorPrices` | `read` | Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe`, and set how many points come back with `resolution`. |
 | `collections.get` | `opensea.api.collections.get` | `read` | One collection by slug, with its contract addresses, links and NFT counts. The answer is a bare object, not an array, and an unknown slug is a 404. |
 | `collections.holders` | `opensea.api.collections.holders` | `read` | Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way. This route pages with `cursor`, not `next`. |
 | `collections.list` | `opensea.api.collections.list` | `read` | Collections, paged with the returned `next` cursor. Filter by chain, creator or hidden status, and sort with `order_by`. OpenSea defaults the page size to 50. |
@@ -35,7 +35,7 @@ pnpm add @corsair-dev/opensea
 | `offers.collection` | `opensea.api.offers.collection` | `read` | Active collection-wide offers, paged with `next`. Same order shape as listings, with `remaining_quantity` for how much of the offer is unfilled. |
 | `orders.get` | `opensea.api.orders.get` | `read` | One order by chain, Seaport contract address and order hash, as a single object rather than an array. Takes the `order_hash` from a listing or offer row; a cancelled or filled order still answers with its final state. |
 | `search.search` | `opensea.api.search.search` | `read` | Search across collections, NFTs, tokens and accounts. Each result carries a `type` and one payload key, so branch on `type` before reading the rest. |
-| `traits.list` | `opensea.api.traits.list` | `read` | The trait names on one collection and the type of each value. It answers types, not the values themselves; use `collection.nfts` with a trait filter to select by value. |
+| `traits.list` | `opensea.api.traits.list` | `read` | The trait names on one collection, the type of each, and under `counts` every value with how many NFTs carry it (`min` and `max` for a numeric trait). Use `collection.nfts` with a `traits` filter to select NFTs by value. |
 
 ## Auth
 

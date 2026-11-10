@@ -69,8 +69,8 @@ await corsair.opensea.api.accounts.portfolio({ address: "0xaba7161a7fb69c88e16ed
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `address` | `string` | Yes | The wallet address to value. |
-| `timeframe` | `string` | No | Window for the P&L figures. The API defaults to `DAY`. |
-| `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only value assets on these chains. |
+| `timeframe` | `string` | No | Window for the P&L figures: `HOUR`, `DAY`, `WEEK` or `MONTH`. The API defaults to `DAY`. |
+| `chains` | `string[]` | No | Only value assets on these chains. |
 
 
 
@@ -95,7 +95,7 @@ await corsair.opensea.api.accounts.portfolio({ address: "0xaba7161a7fb69c88e16ed
 
 `chains.list`
 
-The chains OpenSea indexes, with each one’s symbol and block explorer. No input; the list is a closed set and is the valid source for every `chain` argument elsewhere.
+The chains OpenSea indexes, with each one’s symbol and block explorer. No input; the list is the valid source for every `chain` argument elsewhere.
 
 **Risk:** `read`
 
@@ -138,7 +138,7 @@ await corsair.opensea.api.chains.list({});
 
 `collection.nfts`
 
-The NFTs in one collection, paged with `next`. Filter by trait with `trait_type:value`, several joined by commas.
+The NFTs in one collection, paged with `next`. Filter by trait with `traits`, a JSON array of `traitType` and `value` pairs sent as a string.
 
 **Risk:** `read`
 
@@ -151,7 +151,7 @@ await corsair.opensea.api.collection.nfts({ slug: 'boredapeyachtclub', limit: 5 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | The collection slug. |
-| `traits` | `string` | No | Trait filter, as OpenSea documents it: `trait_type:value`, and several joined with commas. |
+| `traits` | `string` | No | JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined. |
 | `has_agent_binding` | `boolean` | No | Only NFTs with (or without) an agent binding. |
 | `limit` | `number` | No | Page size. |
 | `next` | `string` | No | The `next` cursor. |
@@ -217,12 +217,12 @@ await corsair.opensea.api.collection.nfts({ slug: 'boredapeyachtclub', limit: 5 
 
 `collections.floorPrices`
 
-Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe` or a `resolution` in seconds.
+Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe`, and set how many points come back with `resolution`.
 
 **Risk:** `read`
 
 ```ts
-await corsair.opensea.api.collections.floorPrices({ slug: 'boredapeyachtclub', timeframe: 'seven_day' });
+await corsair.opensea.api.collections.floorPrices({ slug: 'boredapeyachtclub', timeframe: 'seven_days' });
 ```
 
 **Input**
@@ -230,8 +230,8 @@ await corsair.opensea.api.collections.floorPrices({ slug: 'boredapeyachtclub', t
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | The collection slug. |
-| `timeframe` | `string` | No | Window to report. The API defaults to `one_day`. |
-| `resolution` | `number` | No | Bucket width in seconds. The spec gives no default or bounds. |
+| `timeframe` | `string` | No | Window to report, such as `one_hour`, `one_day`, `seven_days`, `thirty_days` or `all_time`. The API defaults to `one_day`. |
+| `resolution` | `number` | No | Number of data points to return. The spec gives no default or bounds. |
 
 
 
@@ -385,7 +385,7 @@ await corsair.opensea.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | No | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `chain` | `string` | No | The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index. |
 | `creator_username` | `string` | No | Only collections made by this OpenSea account. |
 | `include_hidden` | `boolean` | No | Include collections hidden from search and browse. |
 | `order_by` | `string` | No | Field to sort by. The spec types this as a free string and names no values. |
@@ -514,7 +514,7 @@ await corsair.opensea.api.collections.top({ limit: 5 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sort_by` | `string` | No | Ranking metric. The API defaults to `one_day_volume`. |
-| `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only collections on these chains. |
+| `chains` | `string[]` | No | Only collections on these chains. |
 | `category` | `string` | No | Only this category. |
 | `limit` | `number` | No | Defaults to 50. |
 | `cursor` | `string` | No | The previous response's `next` value. This route calls it `cursor`. |
@@ -581,8 +581,8 @@ await corsair.opensea.api.collections.trending({ limit: 5 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timeframe` | `string` | No | Window to rank by. The API defaults to `one_day`. |
-| `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only collections on these chains. |
+| `timeframe` | `string` | No | Window to rank by, such as `one_hour`, `one_day`, `seven_days` or `thirty_days`. The API defaults to `one_day`. |
+| `chains` | `string[]` | No | Only collections on these chains. |
 | `category` | `string` | No | Only this category. |
 | `limit` | `number` | No | Defaults to 20. |
 | `cursor` | `string` | No | The previous response's `next` value. This route calls it `cursor`. |
@@ -651,7 +651,7 @@ await corsair.opensea.api.contract.nfts({ chain: "ethereum", address: "0xBC4CA0E
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `chain` | `string` | Yes | The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index. |
 | `address` | `string` | Yes | The contract address. |
 | `limit` | `number` | No | Page size. |
 | `next` | `string` | No | The `next` cursor. |
@@ -730,8 +730,8 @@ await corsair.opensea.api.events.collection({ slug: 'boredapeyachtclub', limit: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | The collection slug. |
-| `event_type` | `(sale \| transfer \| order \| redemption \| listing \| offer \| collection_offer \| trait_offer)[]` | No | Only these event types. |
-| `traits` | `string` | No | Trait filter, as `trait_type:value`, comma separated. |
+| `event_type` | `(sale \| transfer \| mint \| order \| redemption \| listing \| offer \| collection_offer \| trait_offer)[]` | No | Only these event types. |
+| `traits` | `string` | No | JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined. |
 | `after` | `number` | No | Only events after this unix timestamp. |
 | `before` | `number` | No | Only events before this unix timestamp. |
 | `limit` | `number` | No | Page size. |
@@ -760,8 +760,8 @@ await corsair.opensea.api.events.collection({ slug: 'boredapeyachtclub', limit: 
   from_address?: string | null,
   to_address?: string | null,
   quantity?: number | null,
-  payment?: Record<string, unknown> | null,
-  nft?: Record<string, unknown> | null
+  payment?: Record<string, any> | null,
+  nft?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -787,7 +787,7 @@ await corsair.opensea.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `(sale \| transfer \| order \| redemption \| listing \| offer \| collection_offer \| trait_offer)[]` | No | Only these event types. |
+| `event_type` | `(sale \| transfer \| mint \| order \| redemption \| listing \| offer \| collection_offer \| trait_offer)[]` | No | Only these event types. |
 | `after` | `number` | No | Only events after this unix timestamp. |
 | `before` | `number` | No | Only events before this unix timestamp. |
 | `limit` | `number` | No | Page size. |
@@ -816,8 +816,8 @@ await corsair.opensea.api.events.list({});
   from_address?: string | null,
   to_address?: string | null,
   quantity?: number | null,
-  payment?: Record<string, unknown> | null,
-  nft?: Record<string, unknown> | null
+  payment?: Record<string, any> | null,
+  nft?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -876,7 +876,7 @@ await corsair.opensea.api.listings.all({ slug: 'boredapeyachtclub', limit: 5 });
     identifier?: string | null
   } | null,
   protocol_data?: {
-    parameters?: Record<string, unknown> | null,
+    parameters?: Record<string, any> | null,
     signature?: string | null
   } | null,
   price?: {
@@ -920,7 +920,7 @@ await corsair.opensea.api.listings.best({ slug: 'boredapeyachtclub', limit: 5 })
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | The collection slug. |
 | `include_private_listings` | `boolean` | No | Include listings not shown on the public marketplace. |
-| `traits` | `string` | No | Trait filter, as `trait_type:value`, comma separated. |
+| `traits` | `string` | No | JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined. |
 | `limit` | `number` | No | Page size. |
 | `next` | `string` | No | The `next` cursor. |
 
@@ -949,7 +949,7 @@ await corsair.opensea.api.listings.best({ slug: 'boredapeyachtclub', limit: 5 })
     identifier?: string | null
   } | null,
   protocol_data?: {
-    parameters?: Record<string, unknown> | null,
+    parameters?: Record<string, any> | null,
     signature?: string | null
   } | null,
   price?: {
@@ -993,7 +993,7 @@ await corsair.opensea.api.nfts.get({ chain: "ethereum", address: "0xBC4CA0EdA764
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `chain` | `string` | Yes | The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index. |
 | `address` | `string` | Yes | The contract address that holds the token. |
 | `identifier` | `string` | Yes | The token id within that contract, as a string. |
 
@@ -1067,7 +1067,7 @@ await corsair.opensea.api.nfts.owners({ chain: "ethereum", address: "0xBC4CA0EdA
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `chain` | `string` | Yes | The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index. |
 | `address` | `string` | Yes | The contract address. |
 | `identifier` | `string` | Yes | The token id, as a string. |
 | `limit` | `number` | No | Defaults to 20. |
@@ -1147,7 +1147,7 @@ await corsair.opensea.api.offers.all({ slug: 'boredapeyachtclub', limit: 5 });
     identifier?: string | null
   } | null,
   protocol_data?: {
-    parameters?: Record<string, unknown> | null,
+    parameters?: Record<string, any> | null,
     signature?: string | null
   } | null,
   price?: {
@@ -1226,7 +1226,7 @@ await corsair.opensea.api.offers.best({ slug: 'boredapeyachtclub', identifier: '
 
 ```ts
 {
-  parameters?: Record<string, unknown> | null,
+  parameters?: Record<string, any> | null,
   signature?: string | null
 } | null
 ```
@@ -1306,7 +1306,7 @@ await corsair.opensea.api.offers.collection({ slug: 'boredapeyachtclub', limit: 
     identifier?: string | null
   } | null,
   protocol_data?: {
-    parameters?: Record<string, unknown> | null,
+    parameters?: Record<string, any> | null,
     signature?: string | null
   } | null,
   price?: {
@@ -1350,7 +1350,7 @@ await corsair.opensea.api.orders.get({ chain: "ethereum", protocol_address: "0x0
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `chain` | `string` | Yes | The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index. |
 | `protocol_address` | `string` | Yes | The Seaport contract address, such as OpenSea's 0x0000000000000068f116a894984e2db1123eb395. |
 | `order_hash` | `string` | Yes | The `order_hash` from a listing or offer row. |
 
@@ -1378,7 +1378,7 @@ await corsair.opensea.api.orders.get({ chain: "ethereum", protocol_address: "0x0
     identifier?: string | null
   } | null,
   protocol_data?: {
-    parameters?: Record<string, unknown> | null,
+    parameters?: Record<string, any> | null,
     signature?: string | null
   } | null,
   price?: {
@@ -1423,8 +1423,8 @@ await corsair.opensea.api.search.search({ query: 'bored ape', limit: 5 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | What to search for. |
-| `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only results on these chains. |
-| `asset_types` | `string[]` | No | Only these result kinds. The spec names no enum here. |
+| `chains` | `string[]` | No | Only results on these chains. |
+| `asset_types` | `string[]` | No | Only these result kinds: `collection`, `nft`, `token`, `account`. The API defaults to collections and tokens. |
 | `limit` | `number` | No | Defaults to 20. |
 
 Each result carries a `type` and one payload key. Branch on `type` before reading the rest.
@@ -1443,10 +1443,10 @@ Each result carries a `type` and one payload key. Branch on `type` before readin
 ```ts
 {
   type: string,
-  collection?: Record<string, unknown> | null,
-  nft?: Record<string, unknown> | null,
-  account?: Record<string, unknown> | null,
-  token?: Record<string, unknown> | null
+  collection?: Record<string, any> | null,
+  nft?: Record<string, any> | null,
+  account?: Record<string, any> | null,
+  token?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1462,7 +1462,7 @@ Each result carries a `type` and one payload key. Branch on `type` before readin
 
 `traits.list`
 
-The trait names on one collection and the type of each value. It answers types, not the values themselves; use `collection.nfts` with a trait filter to select by value.
+The trait names on one collection, the type of each, and under `counts` every value with how many NFTs carry it (`min` and `max` for a numeric trait). Use `collection.nfts` with a `traits` filter to select NFTs by value.
 
 **Risk:** `read`
 
@@ -1483,6 +1483,7 @@ await corsair.opensea.api.traits.list({ slug: 'boredapeyachtclub' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `categories` | `Record<string, string>` | Yes | — |
+| `counts` | `Record<string, any> \| null` | No | — |
 
 
 
