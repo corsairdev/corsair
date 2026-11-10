@@ -1,6 +1,6 @@
 import type { ShippoEndpoints } from '..';
 import { segment } from '../client';
-import { bracketList, call } from './call';
+import { call } from './call';
 import {
 	ShippoEndpointInputSchemas as Inputs,
 	ShippoEndpointOutputSchemas as Outputs,
@@ -29,7 +29,9 @@ export const list: ShippoEndpoints['ordersList'] = (ctx, input) =>
 			query: {
 				page,
 				results,
-				...bracketList('order_status', order_status),
+				// One `order_status[]=` per value: corsair/http repeats the key
+				// for an array, which is the form the spec's array parameter takes.
+				'order_status[]': order_status,
 				shop_app,
 				start_date,
 				end_date,

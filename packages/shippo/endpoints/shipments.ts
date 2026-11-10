@@ -104,9 +104,10 @@ export const rates: ShippoEndpoints['shipmentsRates'] = (ctx, input) =>
 			output: Outputs.shipmentsRates,
 		},
 		input,
-		({ shipment_id, shippo_account_id }) => ({
+		({ shipment_id, page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: `/shipments/${segment(shipment_id)}/rates`,
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{
@@ -129,9 +130,10 @@ export const ratesInCurrency: ShippoEndpoints['shipmentsRatesInCurrency'] = (
 			output: Outputs.shipmentsRatesInCurrency,
 		},
 		input,
-		({ shipment_id, currency_code, shippo_account_id }) => ({
+		({ shipment_id, currency_code, page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: `/shipments/${segment(shipment_id)}/rates/${segment(currency_code)}`,
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{

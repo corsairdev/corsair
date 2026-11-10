@@ -159,6 +159,6 @@ apiNotes:
   refunds.list: "This route is `/refunds/` with a trailing slash; `/refunds` answers 404."
   batches.create: "Each shipment needs a carrier and a servicelevel, from the entry or the batch defaults. Those two resolve independently."
   batches.purchase: "Charges once per shipment and answers 202, so the merged label URLs arrive through `batches.get`, one PDF per 100 labels."
-  orders.list: "The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing."
+  orders.list: "The status filter is sent as one `order_status[]` query parameter per status. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing."
   tracks.register: "Registers a tracking number Shippo has not seen, usually from a label bought elsewhere. `track_updated` webhooks fire for it afterwards."
   webhooks.create: "`url`, `event` and `is_test` are the only fields this route accepts, so an HMAC secret is arranged with Shippo support rather than passed here. One subscription per event, but a label it sells creates its own tracking webhook."

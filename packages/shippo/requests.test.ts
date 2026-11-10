@@ -354,6 +354,24 @@ describe('shipments', () => {
 		expect(h.lastRequest().path).toBe(`/shipments/${SHIPMENT_ID}/rates/EUR`);
 	});
 
+	it('pages a shipment’s rates, in either currency form', async () => {
+		h.respond(paged([rate]));
+		await invoke(Shipments.rates, {
+			shipment_id: SHIPMENT_ID,
+			page: 2,
+			results: 100,
+		});
+		expect(h.lastRequest().query).toEqual({ page: '2', results: '100' });
+
+		h.respond(paged([rate]));
+		await invoke(Shipments.ratesInCurrency, {
+			shipment_id: SHIPMENT_ID,
+			currency_code: 'EUR',
+			page: 3,
+		});
+		expect(h.lastRequest().query).toEqual({ page: '3' });
+	});
+
 	it('rejects a currency code that is not three letters', async () => {
 		const error = await h.failure<Error>(
 			invoke(Shipments.ratesInCurrency, {
@@ -760,10 +778,15 @@ describe('orders', () => {
 			end_date: '2026-02-01T00:00:00Z',
 		});
 
-		// Shippo spells the status filter `order_status[]`, which corsair/http
-		// would otherwise flatten to repeated plain keys.
-		expect(h.lastRequest().query).toEqual({
-			'order_status[]': 'PAID,SHIPPED',
+		// An array query parameter with no `style` is form-exploded in OpenAPI:
+		// one `order_status[]=` per value, not a comma-joined list.
+		const [url] = h.fetchMock.mock.calls.at(-1) as [string];
+		expect(new URL(url).searchParams.getAll('order_status[]')).toEqual([
+			'PAID',
+			'SHIPPED',
+		]);
+		expect(url).toContain('order_status%5B%5D=PAID&order_status%5B%5D=SHIPPED');
+		expect(h.lastRequest().query).toMatchObject({
 			// `start_date`/`end_date`, the API's own names. Shippo ignores an
 			// unknown query parameter and answers 200, so inventing
 			// `placed_at_gte` would filter nothing and look like it worked.

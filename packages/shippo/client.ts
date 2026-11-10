@@ -144,7 +144,11 @@ export function describeShippoError(
 	return status ? `Shippo ${status}: ${fallback}` : fallback;
 }
 
-export type ShippoQuery = Record<string, string | number | boolean | undefined>;
+// An array value is sent as one repeated key per entry.
+export type ShippoQuery = Record<
+	string,
+	string | number | boolean | readonly string[] | undefined
+>;
 
 export type ShippoRequest = {
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE';

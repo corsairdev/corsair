@@ -18,15 +18,6 @@ export function readObjectId(raw: unknown): string | undefined {
 	return typeof id === 'string' ? id : undefined;
 }
 
-/** Joined for the query parameters Shippo takes as `key[]`. */
-export function bracketList(
-	key: string,
-	values: ReadonlyArray<string | number> | undefined,
-): Record<string, string | undefined> {
-	if (!values || values.length === 0) return {};
-	return { [`${key}[]`]: values.join(',') };
-}
-
 /**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event.

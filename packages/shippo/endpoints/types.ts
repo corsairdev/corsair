@@ -593,7 +593,11 @@ const ShipmentCreateInputSchema = ShipmentFieldsSchema.extend({
 
 export type ShipmentCreateInput = z.input<typeof ShipmentCreateInputSchema>;
 
-const ShipmentRatesInputSchema = ShipmentGetInputSchema;
+const ShipmentRatesInputSchema = z.object({
+	shipment_id: Id.describe('The shipment `object_id`.'),
+	...PagingShape,
+	...accountIdHeader,
+});
 
 export type ShipmentRatesInput = z.input<typeof ShipmentRatesInputSchema>;
 
@@ -603,6 +607,7 @@ const ShipmentRatesInCurrencyInputSchema = z.object({
 		.string()
 		.length(3)
 		.describe('ISO 4217 code to express the amounts in, e.g. `EUR`.'),
+	...PagingShape,
 	...accountIdHeader,
 });
 
