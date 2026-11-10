@@ -12,7 +12,11 @@ import { captureError } from './test-fixtures';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A spy with no queued response falls through to the real fetch, so every
+	// call a test did not stub fails here instead of reaching the network.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		throw new Error('unmocked fetch: queue a response first');
+	});
 });
 
 afterEach(() => {
