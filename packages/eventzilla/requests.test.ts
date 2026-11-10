@@ -622,3 +622,53 @@ describe('auth', () => {
 		expect(lastCall().headers.get('x-api-key')).toBe(API_KEY);
 	});
 });
+
+/**
+ * `boxoffice_only`, `is_visible` and `allow_partial_payment` are documented as
+ * a boolean or one of eight strings. The list is the provider's to extend, so a
+ * spelling outside it must not fail the whole read, or lose the response of a
+ * write that already happened.
+ */
+describe('boolean-like output fields', () => {
+	it('tickets.list accepts a boolean string outside the documented list', async () => {
+		respond({
+			tickets: [
+				{
+					...ticketTypesFixture.tickets[0],
+					boxoffice_only: 'TRUE',
+					is_visible: 'Y',
+					allow_partial_payment: '',
+				},
+			],
+		});
+
+		const { result } = await run({ eventid: 1 }, endpoints.tickets.list);
+
+		expect(result.tickets[0]?.boxoffice_only).toBe('TRUE');
+		expect(result.tickets[0]?.is_visible).toBe('Y');
+	});
+
+	it('tickets.create returns the created ticket type when a flag is spelled differently', async () => {
+		respond({ ...ticketTypeFixture, boxoffice_only: 'FALSE', is_visible: '1' });
+
+		const { result } = await run(
+			{
+				eventid: 1,
+				ticket_type_name: 'General',
+				quantity_total: 10,
+				ticket_type_description: '',
+				sales_start_date: '2026-02-05',
+				sales_start_time: '09:00',
+				sales_end_date: '2026-04-20',
+				sales_end_time: '23:00',
+				limit_minimum: 1,
+				limit_maximum: 2,
+				is_visible: true,
+				boxoffice_only: false,
+			},
+			endpoints.tickets.create,
+		);
+
+		expect(result.ticket_type_id).toBe(ticketTypeFixture.ticket_type_id);
+	});
+});

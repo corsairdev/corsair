@@ -171,17 +171,20 @@ describe('accepts both forms the API sends for one field', () => {
 		).toBe(true);
 	});
 
-	it('takes is_visible as a boolean or as one of the documented strings', () => {
-		for (const value of [true, 'true', 'Yes', 'no']) {
+	it('takes is_visible as a boolean or as any string the provider sends', () => {
+		// 'TRUE' and '' are outside the reference's eight spellings: an output
+		// field must not fail the read over a spelling the provider adds.
+		for (const value of [true, 'true', 'Yes', 'no', 'TRUE', '']) {
 			expect(
 				Outputs.ticketsList.safeParse({
 					tickets: [{ id: 1, is_visible: value }],
 				}).success,
 			).toBe(true);
 		}
+		// Still a boolean or a string: another type is a malformed payload.
 		expect(
 			Outputs.ticketsList.safeParse({
-				tickets: [{ id: 1, is_visible: 'maybe' }],
+				tickets: [{ id: 1, is_visible: { nested: true } }],
 			}).success,
 		).toBe(false);
 	});

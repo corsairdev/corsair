@@ -20,11 +20,14 @@ import { z } from 'zod';
  */
 export const FlexibleNumberSchema = z.union([z.number(), z.string()]);
 
-/** `true`/`false` as booleans, or the strings the API sometimes sends. */
-export const FlexibleBooleanSchema = z.union([
-	z.boolean(),
-	z.enum(['true', 'false', 'True', 'False', 'yes', 'no', 'Yes', 'No']),
-]);
+/**
+ * `true`/`false` as booleans, or the strings the API sometimes sends. The
+ * reference lists eight spellings (`true`, `False`, `yes`, `No`, …); this is an
+ * output-only schema, so any string is accepted rather than that list. A ninth
+ * spelling would otherwise fail a whole ticket list, or throw away the answer
+ * to a create that had already gone through.
+ */
+export const FlexibleBooleanSchema = z.union([z.boolean(), z.string()]);
 
 /** Both list routes default to 20 and the reference documents no maximum. */
 export const EVENTZILLA_DEFAULT_LIMIT = 20;
