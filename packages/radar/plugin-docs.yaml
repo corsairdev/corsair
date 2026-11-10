@@ -1,0 +1,74 @@
+displayName: Radar
+description: Location infrastructure with Radar - geocode addresses and coordinates, search places and geofences, read tracked users, geofences and trips, upsert a geofence, submit location updates and log conversions.
+domain: radar.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key on the **Settings** page of the Radar dashboard. Radar has two kinds: a **publishable** key (`pk`) for the routes that are safe to call client-side, and a **secret** key (`sk`) for the server-side routes. Send it **bare** in the `Authorization` header — no `Bearer` prefix — and use the test keys for non-production. Things to know before you call:
+
+  - **No `Bearer` prefix.** Radar reads the raw key, so `Authorization: prj_live_sk_…` is correct and `Authorization: Bearer …` is not. The plugin sets the header literally for that reason.
+  - **Every response is wrapped in `meta`.** A success and a failure differ only in `meta.code`, which repeats the HTTP status, so `meta.code === 200` is the check.
+  - **A 402 is a spent quota, not a rate limit.** It means the organisation is disabled or the usage allowance is exhausted, and no retry fixes it. The plugin matches it first and stops immediately.
+  - **`429` may mean selective throttling.** Radar says no state changed in that case, so a read is safe to repeat; the plugin retries three times and honours `Retry-After`.
+  - **`451` is a country blocklist.** It is a legal refusal, not a request defect, and no retry clears it.
+  - **Paging is by timestamp, not a token.** Lists return `meta.hasMore` and are ordered by `updatedAt`; page by passing the last row's timestamp as `updated_before`. The plugin exposes `has_more` and the raw `meta`.
+  - **Choosing a geofence type.** `type` takes `circle`, `polygon` or `isochrone`; a circle and an isochrone take a centre and a radius, while a polygon takes a closed ring.
+  - **A geofence is a circle, a polygon or an isochrone.** A circle takes a `center` and a `radius`, a polygon takes a closed `ring` with the first point repeated last, and the schema rejects a shape that is missing its required part.
+  - **`geofences.upsert` is an upsert.** Supplying a tag and external id creates the geofence when none matches; supplying the Radar id updates that one instead.
+  - **`track` creates a user.** It is the write that turns a location update into a user, so it needs a `device_id`, both coordinates and a positive `accuracy`. The plugin never replays it.
+  - **Coordinates are `[longitude, latitude]` in bodies.** Geofence geometry follows the GeoJSON convention, which is the reverse of the `latitude,longitude` string the geocode routes take.
+examples:
+  read:
+    path: geocode.reverse
+    title: Reverse geocode a coordinate
+    args:
+      coordinates: 40.70390,-73.98670
+  write:
+    path: geofences.upsert
+    title: Upsert a circular store geofence
+    args:
+      tag: store
+      external_id: store-42
+      description: Brooklyn store
+      center:
+        - -73.9867
+        - 40.7039
+      radius: 100
+apiExamples:
+  geocode.forward:
+    call: "{ query: '20 Jay Street, Brooklyn', layers: ['address'], country: ['US'] }"
+  geocode.reverse:
+    call: "{ coordinates: '40.70390,-73.98670' }"
+  search.places:
+    call: "{ near: '40.70390,-73.98670', categories: ['coffee-shop'], limit: 10 }"
+  search.geofences:
+    call: "{ near: '40.70390,-73.98670', radius: 500, tags: ['store'] }"
+  users.list:
+    call: "{ limit: 100, updated_before: '2026-11-01T00:00:00.000Z' }"
+  users.get:
+    call: "{ user_id: '56db1f4613012711002229f4' }"
+  geofences.list:
+    call: "{ tag: 'store', limit: 100 }"
+  geofences.get:
+    call: "{ geofence_id: '5e4a1b2c3d4e5f6a7b8c9d0e' }"
+  geofences.upsert:
+    call: "{ tag: 'store', external_id: 'store-42', description: 'Brooklyn store', type: 'circle', center: [-73.9867, 40.7039], radius: 100 }"
+  geofences.delete:
+    call: "{ geofence_id: '5e4a1b2c3d4e5f6a7b8c9d0e' }"
+  trips.list:
+    call: "{ status: ['started'], user_id: 'user-1' }"
+  trips.get:
+    call: "{ trip_id: '6f5b2c3d4e5f6a7b8c9d0e1f' }"
+  trips.create:
+    call: "{ external_id: 'order-42', user_id: 'user-1', destination_geofence_tag: 'store', destination_geofence_external_id: 'store-42' }"
+  trips.update:
+    call: "{ trip_id: '6f5b2c3d4e5f6a7b8c9d0e1f', status: 'arrived' }"
+  track.update:
+    call: "{ device_id: 'device-1', latitude: 40.7039, longitude: -73.9867, accuracy: 10, user_id: 'user-1' }"
+  events.conversion:
+    call: "{ name: 'in_app_purchase', user_id: 'user-1', revenue: 499 }"
+apiNotes:
+  'geocode.forward': 'Layers and countries are comma-separated on the wire; the confidence is `exact`, `interpolated` or `fallback`.'
+  'geofences.upsert': 'A polygon takes a closed `ring` instead of a centre and radius; geometry is `[longitude, latitude]`.'
+  'track.update': 'Creates or updates the user; a positive `accuracy` is required and a replay is never attempted.'
+  'trips.update': 'The status values are validated before the request, because Radar rejects an unknown one.'
+  'events.conversion': 'The name may only contain letters, digits and underscores, and one identifier is required.'

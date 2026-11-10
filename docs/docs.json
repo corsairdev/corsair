@@ -2999,6 +2999,14 @@
                 ]
               },
               {
+                "group": "Radar",
+                "pages": [
+                  "plugins/radar/overview",
+                  "plugins/radar/api",
+                  "plugins/radar/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",

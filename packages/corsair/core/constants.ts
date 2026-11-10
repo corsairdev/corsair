@@ -356,6 +356,7 @@ export const BaseProviders = [
 	'pushbullet',
 	'qdrant',
 	'quaderno',
+	'radar',
 	'razorpay',
 	'reamaze',
 	'recallai',
@@ -826,6 +827,7 @@ export const ProviderDisplayNames = {
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
+	radar: 'Radar',
 	razorpay: 'Razorpay',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
@@ -1300,6 +1302,7 @@ export type AllProviders =
 	| 'pushbullet'
 	| 'qdrant'
 	| 'quaderno'
+	| 'radar'
 	| 'razorpay'
 	| 'reamaze'
 	| 'recallai'
