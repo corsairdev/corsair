@@ -1775,5 +1775,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/fidel",
+    "dir": "packages/fidel",
+    "name": "Fidel",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
