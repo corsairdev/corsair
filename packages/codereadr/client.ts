@@ -270,9 +270,10 @@ export class CodereadrAPIError extends Error {
 	/** Milliseconds from a Retry-After header, when the server sent one. */
 	readonly retryAfter?: number;
 	/**
-	 * True when the request never got an answer: a connection reset, DNS
-	 * failure, or abort. Nothing reached the provider, so the call did not
-	 * happen and a replay cannot duplicate it.
+	 * True when the request got no answer: a connection reset, DNS failure,
+	 * timeout or abort. The outcome is unknown. The provider may have applied
+	 * the call before the response was lost, so only replay it when
+	 * `replaySafe` is also true.
 	 */
 	readonly transport: boolean;
 	/**

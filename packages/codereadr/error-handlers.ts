@@ -62,10 +62,9 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A connection reset, DNS failure or timeout never reached CodeREADr, so the
-	// call did not happen and replaying it cannot duplicate anything. Retrying
-	// still requires `replaySafe`, because a write whose response was lost may
-	// already have been applied on the server.
+	// A connection reset, DNS failure or timeout gave no answer, so the outcome
+	// is unknown. Retrying requires `replaySafe`, because a write whose response
+	// was lost may already have been applied on the server.
 	TRANSPORT_ERROR: {
 		match: (error: Error) =>
 			error instanceof CodereadrAPIError && error.transport && error.replaySafe,
