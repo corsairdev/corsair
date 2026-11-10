@@ -30,6 +30,13 @@ async function createClient() {
 		database: testDb.db,
 		kek: KEK,
 	});
+	// Without a ready token the plugin mints one, which needs the pair on the
+	// account. The describe block only runs when both halves are set.
+	if (!process.env.LEIGA_ACCESS_TOKEN && CLIENT_ID && CLIENT_SECRET) {
+		await corsair.leiga.keys.issue_new_dek();
+		await corsair.leiga.keys.set_client_id(CLIENT_ID);
+		await corsair.leiga.keys.set_api_key(CLIENT_SECRET);
+	}
 	return { corsair, testDb };
 }
 
