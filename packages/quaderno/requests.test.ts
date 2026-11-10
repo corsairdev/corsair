@@ -647,15 +647,17 @@ describe('tax routes', () => {
 });
 
 describe('transactions and webhooks', () => {
-	it('transactions.create POSTs /transactions', async () => {
+	it('transactions.create POSTs the documented transaction body', async () => {
 		respond(invoiceFixture, 201);
 
 		await run(
 			{
-				contact: { id: 1 },
-				items: [{ description: 'x', unit_price: 5 }],
+				type: 'sale',
+				customer: { id: 1 },
+				items: [{ description: 'x', amount: 5 }],
+				payment: { method: 'cash' },
 				date: '2026-11-10',
-				payment_method: 'cash',
+				tags: 'probe,live',
 			},
 			endpoints.transactions.create,
 		);
@@ -663,7 +665,32 @@ describe('transactions and webhooks', () => {
 		const { parsed, init, body } = lastCall();
 		expect(init.method).toBe('POST');
 		expect(parsed.pathname).toBe('/api/transactions');
-		expect(body.payment_method).toBe('cash');
+		// Not an invoice body: the buyer is `customer`, a line carries `amount`,
+		// and the payment is a nested, required object.
+		expect(body).toEqual({
+			type: 'sale',
+			customer: { id: 1 },
+			items: [{ description: 'x', amount: 5 }],
+			payment: { method: 'cash' },
+			date: '2026-11-10',
+			tags: 'probe,live',
+		});
+		expect(body).not.toHaveProperty('contact');
+		expect(body).not.toHaveProperty('payment_method');
+	});
+
+	it('transactions.create refuses a transaction with no payment', async () => {
+		await expect(
+			run(
+				// unknown: a deliberately incomplete input, to reach the schema.
+				{
+					customer: { id: 1 },
+					items: [{ description: 'x', amount: 5 }],
+				} as unknown as Parameters<typeof endpoints.transactions.create>[1],
+				endpoints.transactions.create,
+			),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('webhooks.list GETs /webhooks', async () => {

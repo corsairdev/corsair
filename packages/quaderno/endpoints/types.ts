@@ -666,6 +666,26 @@ const CreditsListResponseSchema = z.object({
 
 export type CreditsListResponse = z.infer<typeof CreditsListResponseSchema>;
 
+/**
+ * The methods a credit note's refund or a transaction's payment accepts: the
+ * invoice list without `offset`, which Quaderno only records itself on a void.
+ */
+export const QUADERNO_REFUND_METHODS = [
+	'credit_card',
+	'cash',
+	'wire_transfer',
+	'direct_debit',
+	'check',
+	'iou',
+	'paypal',
+	'other',
+] as const;
+
+/**
+ * A credit note is issued **against an existing invoice**, not built from a
+ * contact and line items: the body is the invoice id, and Quaderno copies the
+ * customer and lines from it.
+ */
 const CreditsCreateInputSchema = z.object({
 	...DocumentWriteShape,
 	payment_method: z.enum(QUADERNO_PAYMENT_METHODS).optional(),
@@ -979,14 +999,82 @@ const AuthorizationResponseSchema = z.object({ identity: IdentitySchema });
 
 export type AuthorizationResponse = z.infer<typeof AuthorizationResponseSchema>;
 
+export const QUADERNO_TRANSACTION_TYPES = ['sale', 'refund'] as const;
+
+/**
+ * A transaction line is **not** a document line: it carries the total charged
+ * as `amount`, where an invoice line carries `unit_price`.
+ */
+const TransactionItemWriteSchema = z.object({
+	description: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'What was sold or refunded. Not needed when `product_code` is set.',
+		),
+	product_code: z.string().optional().describe('Code of an existing product.'),
+	quantity: z.number().optional().describe('Defaults to 1.'),
+	amount: z
+		.number()
+		.describe(
+			'Total charged for this line in major units, after discounts and taxes.',
+		),
+	discount_rate: z
+		.number()
+		.optional()
+		.describe('Discount percentage already included in `amount`.'),
+});
+
+/**
+ * `/transactions` has its own body, unlike the document routes: the buyer is
+ * `customer` (not `contact`), the payment is a nested `payment` object and is
+ * required, and tags are one comma-separated string named `tags`.
+ */
 const TransactionCreateInputSchema = z.object({
-	contact: DocumentContactSchema.describe('The customer, by id.'),
-	items: z.array(DocumentItemWriteSchema).min(1).max(200),
+	type: z
+		.enum(QUADERNO_TRANSACTION_TYPES)
+		.optional()
+		.describe('`sale` or `refund`. Quaderno treats it as a sale when omitted.'),
+	customer: DocumentContactSchema.describe('The customer, by contact id.'),
+	items: z.array(TransactionItemWriteSchema).min(1).max(200),
+	payment: z
+		.object({
+			method: z
+				.enum(QUADERNO_REFUND_METHODS)
+				.describe('How the transaction was paid.'),
+			processor: z
+				.string()
+				.optional()
+				.describe('The payment processor, such as `stripe`.'),
+			processor_id: z
+				.string()
+				.optional()
+				.describe('The id of the payment in that processor.'),
+		})
+		.describe('The payment for the transaction. Required.'),
 	currency: z.string().length(3).optional(),
-	date: z.string().min(1).describe('ISO date of the sale.'),
-	payment_method: z.enum(QUADERNO_PAYMENT_METHODS).optional(),
+	date: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('ISO date of the transaction. Defaults to today.'),
+	processor: z
+		.string()
+		.optional()
+		.describe('The platform that processed the sale, such as `shopify`.'),
+	processor_id: z
+		.string()
+		.optional()
+		.describe(
+			'The id of the sale in that platform. Use the same id on a refund to link it to its sale.',
+		),
+	po_number: z.string().optional(),
 	notes: z.string().optional(),
-	tag_list: z.array(z.string()).optional(),
+	tags: z
+		.string()
+		.optional()
+		.describe('Tags as one comma-separated string, such as `a,b`.'),
 });
 
 export type TransactionCreateInput = z.input<

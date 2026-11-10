@@ -663,7 +663,7 @@ const quadernoEndpointMeta = {
 	'transactions.create': {
 		riskLevel: 'write',
 		description:
-			'Records a sale in one call: it creates the document and its payment together, which is what distinguishes it from `invoices.create`. A real financial record.',
+			'Records a sale or a refund in one call: it creates the document and its payment together, which is what distinguishes it from `invoices.create`. The body is not an invoice body: the buyer is `customer`, each line carries its total as `amount`, and `payment.method` is required. A real financial record.',
 	},
 	'webhooks.list': {
 		riskLevel: 'read',

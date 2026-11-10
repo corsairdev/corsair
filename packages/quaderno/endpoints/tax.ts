@@ -207,13 +207,27 @@ export const createTransaction: QuadernoEndpoints['transactionsCreate'] = (
 		input,
 		{
 			shape: (raw) => wrap('transaction', raw),
-			log: ({ payment_method }, result) => ({
+			log: ({ type, payment }, result) => ({
 				transactionId: result.transaction.id,
 				number: result.transaction.number ?? undefined,
-				paid: payment_method !== undefined,
+				type: type ?? 'sale',
+				paymentMethod: payment.method,
 			}),
 		},
 	);
+
+/**
+ * Removes `auth_key` from a webhook row. It is the secret Quaderno signs that
+ * endpoint's deliveries with, and nothing in this plugin needs it: left in, it
+ * would travel to whoever reads the list, including a model's context.
+ */
+// unknown: one row of the untyped list body; the output schema validates it.
+function withoutAuthKey(row: unknown): unknown {
+	if (!row || typeof row !== 'object' || Array.isArray(row)) return row;
+	// unknown: the remaining fields are passed through as sent.
+	const { auth_key: _authKey, ...rest } = row as Record<string, unknown>;
+	return rest;
+}
 
 export const webhooksList: QuadernoEndpoints['webhooksList'] = (ctx, input) =>
 	call(
