@@ -24,9 +24,10 @@ export const url: TaggunEndpoints['simpleUrl'] = (ctx, input) =>
 			}),
 		}),
 		{
+			// Receipt fields stay out of the event log: they are the user's
+			// purchase. The overall confidence describes the scan, not the buyer.
 			log: (_parsed, result) => ({
-				merchantName: result.merchantName?.data,
-				totalAmount: result.totalAmount?.data,
+				confidenceLevel: result.confidenceLevel,
 			}),
 		},
 	);
@@ -55,7 +56,7 @@ export const encoded: TaggunEndpoints['simpleEncoded'] = (ctx, input) =>
 			log: (parsed, result) => ({
 				filename: parsed.filename,
 				contentType: parsed.contentType,
-				totalAmount: result.totalAmount?.data,
+				confidenceLevel: result.confidenceLevel,
 			}),
 		},
 	);
@@ -75,9 +76,10 @@ export const file: TaggunEndpoints['simpleFile'] = (ctx, input) =>
 			formData: { file: parsed.file, ...scanFields(parsed) },
 		}),
 		{
+			// Receipt fields stay out of the event log: they are the user's
+			// purchase. The overall confidence describes the scan, not the buyer.
 			log: (_parsed, result) => ({
-				merchantName: result.merchantName?.data,
-				totalAmount: result.totalAmount?.data,
+				confidenceLevel: result.confidenceLevel,
 			}),
 		},
 	);

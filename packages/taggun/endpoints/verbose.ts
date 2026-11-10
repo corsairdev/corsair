@@ -25,10 +25,9 @@ export const url: TaggunEndpoints['verboseUrl'] = (ctx, input) =>
 			}),
 		}),
 		{
+			// Receipt fields stay out of the event log: ids and counts only.
 			log: (_parsed, result) => ({
 				trackingId: result.trackingId,
-				merchantName: result.merchantName?.data,
-				totalAmount: result.totalAmount?.data,
 				lineItems: result.entities?.productLineItems?.length ?? 0,
 			}),
 		},
@@ -83,10 +82,9 @@ export const file: TaggunEndpoints['verboseFile'] = (ctx, input) =>
 			}),
 		}),
 		{
+			// Receipt fields stay out of the event log: ids and counts only.
 			log: (_parsed, result) => ({
 				trackingId: result.trackingId,
-				merchantName: result.merchantName?.data,
-				totalAmount: result.totalAmount?.data,
 				lineItems: result.entities?.productLineItems?.length ?? 0,
 			}),
 		},
