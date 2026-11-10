@@ -2875,32 +2875,41 @@ const NutshellTasksCreateInputSchema = z
 	.object({
 		body: z
 			.object({
-				title: z.string().optional(),
-				description: z.string().optional(),
-				dueTime: z.string().optional(),
-				recurrenceRule: z
-					.intersection(
+				// One task per request, inside a `tasks` array: a flat body gets 400.
+				tasks: z
+					.array(
 						z
 							.object({
-								htmlUrl: z.string().optional(),
-								htmlUrlPath: z.string().optional(),
-							})
-							.loose(),
-						z
-							.object({
-								rule: z.string().optional(),
-								mode: z.enum(['dueDate', 'completion']).optional(),
-								id: z.string().optional(),
+								title: z.string().optional(),
+								description: z.string().optional(),
+								dueTime: z.string().optional(),
+								recurrenceRule: z
+									.intersection(
+										z
+											.object({
+												htmlUrl: z.string().optional(),
+												htmlUrlPath: z.string().optional(),
+											})
+											.loose(),
+										z
+											.object({
+												rule: z.string().optional(),
+												mode: z.enum(['dueDate', 'completion']).optional(),
+												id: z.string().optional(),
+											})
+											.loose(),
+									)
+									.optional(),
+								links: z
+									.object({
+										relatedEntity: z.string().optional(),
+										assignee: z.string().optional(),
+									})
+									.loose()
+									.optional(),
 							})
 							.loose(),
 					)
-					.optional(),
-				links: z
-					.object({
-						relatedEntity: z.string().optional(),
-						assignee: z.string().optional(),
-					})
-					.loose()
 					.optional(),
 			})
 			.loose(),
