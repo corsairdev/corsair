@@ -148,7 +148,8 @@ const deskTimeEndpointMeta = {
 	},
 	'projects.list': {
 		riskLevel: 'read',
-		description: "List the account's projects",
+		description:
+			"List the account's active projects with their tasks. Archived projects are left out",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof deskTimeEndpointsNested>;
 

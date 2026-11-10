@@ -436,7 +436,7 @@ await corsair.desktime.api.ping.get({});
 
 `projects.list`
 
-List the account's projects
+List the account's active projects with their tasks. Archived projects are left out
 
 **Risk:** `read`
 
@@ -460,7 +460,15 @@ await corsair.desktime.api.projects.list({});
 ```ts
 {
   id?: number | null,
-  name?: string | null
+  name?: string | null,
+  created_at?: string | number | null,
+  created_at_iso?: string | null,
+  tasks?: {
+    id?: number | null,
+    name?: string | null,
+    created_at?: string | number | null,
+    created_at_iso?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>

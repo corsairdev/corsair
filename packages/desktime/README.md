@@ -18,7 +18,7 @@ pnpm add @corsair-dev/desktime
 | `employee.projects` | `desktime.api.employee.projects` | `read` | Read the projects one employee tracked time against on a day |
 | `employees.list` | `desktime.api.employees.list` | `read` | List every employee for a day, week or month with their arrival, tracked time and productivity, nested by date then employee id |
 | `ping.get` | `desktime.api.ping.get` | `read` | Check that the DeskTime API answers. A configured key is still required, because the runtime resolves the account key before any endpoint runs |
-| `projects.list` | `desktime.api.projects.list` | `read` | List the account's projects |
+| `projects.list` | `desktime.api.projects.list` | `read` | List the account's active projects with their tasks. Archived projects are left out |
 
 ## Auth
 

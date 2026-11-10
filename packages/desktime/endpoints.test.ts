@@ -213,6 +213,54 @@ describe('projects', () => {
 	it('rejects a body with no projects key', () => {
 		expect(() => Outputs.projects.parse({})).toThrow();
 	});
+
+	it('declares the tasks and creation dates the reference documents', () => {
+		// The row from https://help.desktime.com/hc/en-us/articles/25495195415453.
+		const output = Outputs.projects.parse({
+			projects: [
+				{
+					id: 104211,
+					name: 'Meeting with the clients',
+					created_at: '1539883088',
+					created_at_iso: '2018-10-18T17:18:08+00:00',
+					tasks: [
+						{
+							id: 2907131,
+							name: 'Meeting with the clients task',
+							created_at: '1629201786',
+							created_at_iso: '2021-08-17T12:03:06+00:00',
+						},
+					],
+				},
+			],
+		});
+		expect(output.projects[0]?.tasks?.[0]?.name).toBe(
+			'Meeting with the clients task',
+		);
+		expect(output.projects[0]?.created_at_iso).toBe(
+			'2018-10-18T17:18:08+00:00',
+		);
+
+		// The fields have to be in the schema, not only passed through, or the
+		// API reference and get_schema never mention that tasks exist.
+		const row = Outputs.projects.shape.projects.element.shape;
+		expect(Object.keys(row).sort()).toEqual([
+			'created_at',
+			'created_at_iso',
+			'id',
+			'name',
+			'tasks',
+		]);
+		expect(
+			Object.keys(row.tasks.unwrap().unwrap().element.shape).sort(),
+		).toEqual(['created_at', 'created_at_iso', 'id', 'name']);
+	});
+
+	it('rejects a task list that is not a list', () => {
+		expect(() =>
+			Outputs.projects.parse({ projects: [{ id: 1, tasks: 'nope' }] }),
+		).toThrow();
+	});
 });
 
 describe('input validation', () => {

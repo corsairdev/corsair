@@ -285,10 +285,30 @@ const ProjectsInputSchema = z.object({});
 
 export type ProjectsInput = z.input<typeof ProjectsInputSchema>;
 
+// Unix seconds. The reference shows a string; a number is accepted too, the
+// same way `work_duration` is.
+const UnixSecondsSchema = z.union([z.string(), z.number()]).nullish();
+
+const ProjectTaskSchema = z
+	.object({
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		created_at: UnixSecondsSchema,
+		created_at_iso: z.string().nullish(),
+	})
+	.loose();
+
+// https://help.desktime.com/hc/en-us/articles/25495195415453
 const ProjectSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
+		created_at: UnixSecondsSchema,
+		created_at_iso: z.string().nullish(),
+		tasks: z
+			.array(ProjectTaskSchema)
+			.nullish()
+			.describe('The tasks that belong to the project.'),
 	})
 	.loose();
 
