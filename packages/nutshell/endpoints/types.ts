@@ -27,10 +27,12 @@ const NutshellJsonValueSchema: z.ZodType<NutshellJsonValue> = z.lazy(() =>
 );
 
 // Shared item shape of the JSON Patch arrays every Nutshell PATCH route takes.
+// RFC 6902 requires `op` and `path` on every operation; `value` is absent on
+// a remove.
 const NutshellJsonPatchOperationSchema = z
 	.object({
-		op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-		path: z.string().optional(),
+		op: z.enum(['add', 'remove', 'replace', 'move', 'copy']),
+		path: z.string().min(1),
 		value: NutshellJsonValueSchema.optional(),
 	})
 	.loose();

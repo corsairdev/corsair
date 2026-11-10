@@ -42,4 +42,35 @@ describe('Nutshell request guards', () => {
 			'https://app.nutshell.com/rest/contacts/7-contacts%2F..%2Fx',
 		);
 	});
+
+	it('rejects a JSON Patch item without op or path before sending it', async () => {
+		await expect(
+			api.accounts.update({
+				id: '3-accounts',
+				// @ts-expect-error op and path are required on every patch item
+				body: [{}],
+			}),
+		).rejects.toThrow();
+		await expect(
+			api.tasks.update({
+				id: '3-tasks',
+				// @ts-expect-error path is required on every patch item
+				body: [{ op: 'replace', value: 'x' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchSpy).not.toHaveBeenCalled();
+	});
+
+	it('sends a remove patch, which has no value', async () => {
+		await api.accounts.update({
+			id: '3-accounts',
+			body: [{ op: 'remove', path: '/accounts/0/links/contacts/1-contacts' }],
+		});
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		const init = fetchSpy.mock.calls[0]?.[1] as RequestInit;
+		expect(init.method).toBe('PATCH');
+		expect(JSON.parse(String(init.body))).toEqual([
+			{ op: 'remove', path: '/accounts/0/links/contacts/1-contacts' },
+		]);
+	});
 });
