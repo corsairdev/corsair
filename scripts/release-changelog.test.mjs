@@ -479,6 +479,72 @@ describe('on a git repo', () => {
 				[50],
 			);
 		});
+		describe('a version published before any run saw it waiting', () => {
+			// The page is on main, so some commit wrote its entries last.
+			const pageWritten = () => {
+				write(ENTRIES_PATH, '[]\n');
+				return commit('chore(release): update the changelog');
+			};
+			const tagged = (tags, existing = []) =>
+				entriesFromPlan({
+					cwd,
+					date: '2026-11-10',
+					plan: plan({ tags }),
+					existing,
+				});
+
+			it('announces a new plugin from its tag', () => {
+				pageWritten();
+				pkg('packages/fal', '@corsair-dev/fal', '0.1.0');
+				write('packages/fal/plugin-docs.yaml', 'displayName: "fal"\n');
+				const sha = commit('feat(fal): add fal plugin (#2100)');
+				const [entry] = tagged([{ tag: '@corsair-dev/fal@0.1.0', sha }]);
+				assert.equal(entry.isNew, true);
+				assert.equal(entry.version, '0.1.0');
+				assert.equal(entry.name, 'fal');
+			});
+			it('lists what a version raised by hand changed, up to that version', () => {
+				const { sha: first } = released();
+				git(['tag', '@corsair-dev/gmail@0.1.8', first]);
+				pageWritten();
+				pkg('packages/gmail', '@corsair-dev/gmail', '0.2.0');
+				write('packages/gmail/index.ts', '2\n');
+				const sha = commit('feat(gmail): threads (#50)');
+				write('packages/gmail/index.ts', '3\n');
+				commit('fix(gmail): merged after 0.2.0 (#51)');
+				const [entry] = tagged([{ tag: '@corsair-dev/gmail@0.2.0', sha }]);
+				assert.equal(entry.version, '0.2.0');
+				assert.deepEqual(
+					entry.changes.map((c) => c.pr),
+					[50],
+				);
+			});
+			it('leaves out the tags the first run records for every package', () => {
+				const { tag, sha } = released();
+				pageWritten();
+				assert.deepEqual(tagged([{ tag, sha }]), []);
+			});
+			it('leaves out a version that is already on the page', () => {
+				pageWritten();
+				pkg('packages/fal', '@corsair-dev/fal', '0.1.0');
+				const sha = commit('feat(fal): add fal plugin (#2100)');
+				const tags = [{ tag: '@corsair-dev/fal@0.1.0', sha }];
+				const first = tagged(tags);
+				assert.equal(first.length, 1);
+				assert.deepEqual(tagged(tags, first), []);
+			});
+			it('does not call an old package new when its earlier tag is missing', () => {
+				const { sha: first } = released();
+				assert.ok(first);
+				pageWritten();
+				pkg('packages/gmail', '@corsair-dev/gmail', '0.1.9');
+				const sha = commit('chore(release): publish 1 package(s)');
+				assert.deepEqual(
+					tagged([{ tag: '@corsair-dev/gmail@0.1.9', sha }]),
+					[],
+				);
+			});
+		});
 		it('skips the frpc binary packages', () => {
 			pkg('packages/frpc-linux-x64', '@corsair-dev/frpc-linux-x64', '0.1.0');
 			commit('feat: binary (#1)');

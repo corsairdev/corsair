@@ -217,9 +217,33 @@ function newestTaggedVersion(cwd, name) {
 	return tags[0] ? tags[0].slice(name.length + 1) : null;
 }
 
+/** The commit that last wrote the entries. The page covers everything up to it. */
+function lastChangelogCommit(cwd) {
+	return tryGit(cwd, ['log', '-1', '--format=%H', '--', ENTRIES_PATH]) || null;
+}
+
+const isAncestor = (cwd, older, newer) =>
+	tryGit(cwd, ['merge-base', '--is-ancestor', older, newer]) !== null;
+
+/** True when the package at `dir` first appeared on main after `from`, by `to`. */
+function addedBetween(cwd, from, to, dir) {
+	return Boolean(
+		tryGit(cwd, [
+			'log',
+			'--first-parent',
+			'--diff-filter=A',
+			'--format=%H',
+			`${from}..${to}`,
+			'--',
+			`${dir}/package.json`,
+		]),
+	);
+}
+
 /**
  * What this run's plan adds. A bump lists the commits since the release it
- * replaces. A version waiting for npm is a new package or one raised by hand.
+ * replaces. A version waiting for npm is a new package or one raised by hand,
+ * and so is one that was published before any run saw it waiting.
  */
 export function entriesFromPlan({ cwd, plan, date, existing = [] }) {
 	const seen = new Set(existing.map((e) => `${e.package}@${e.version}`));
@@ -255,13 +279,13 @@ export function entriesFromPlan({ cwd, plan, date, existing = [] }) {
 			base ? publicChanges(cwd, bump.dir, [`${base}..HEAD`]) : [],
 		);
 	}
-	for (const { name, version } of plan.waiting) {
-		const dir = dirs.get(name);
-		if (!dir) continue;
+	// A version this workflow didn't choose: the first release of a new package,
+	// or one raised by hand, with what changed since the release before it.
+	const addOwnVersion = (name, dir, version, upTo) => {
 		const previous = newestTaggedVersion(cwd, name);
 		if (!previous) {
 			add(name, dir, version, [], !isSdk({ package: name, dir }));
-			continue;
+			return;
 		}
 		const base = tryGit(cwd, [
 			'rev-list',
@@ -273,8 +297,30 @@ export function entriesFromPlan({ cwd, plan, date, existing = [] }) {
 			name,
 			dir,
 			version,
-			base ? publicChanges(cwd, dir, [`${base}..HEAD`]) : [],
+			base ? publicChanges(cwd, dir, [`${base}..${upTo}`]) : [],
 		);
+	};
+	for (const { name, version } of plan.waiting) {
+		const dir = dirs.get(name);
+		if (dir) addOwnVersion(name, dir, version, 'HEAD');
+	}
+
+	// deploy.yml can publish such a version before any run sees it waiting. It
+	// then only ever arrives as a tag to record, so read those too. A tag at or
+	// before the commit that last wrote the entries is history the page already
+	// has, which keeps the first run, when every package gets its tag, off the
+	// page. Versions this workflow bumped are in `seen` from the run that did.
+	const covered = lastChangelogCommit(cwd);
+	for (const { tag, sha } of covered ? plan.tags : []) {
+		const at = tag.lastIndexOf('@');
+		const name = tag.slice(0, at);
+		const dir = dirs.get(name);
+		if (!dir || isAncestor(cwd, sha, covered)) continue;
+		// Without an earlier tag there is nothing to compare with, so call a
+		// package new only when it was added since.
+		const known =
+			newestTaggedVersion(cwd, name) || addedBetween(cwd, covered, sha, dir);
+		if (known) addOwnVersion(name, dir, tag.slice(at + 1), sha);
 	}
 	return entries;
 }
