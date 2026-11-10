@@ -59,7 +59,7 @@ export const missiveEndpointMeta = {
 	'contacts.list': {
 		riskLevel: 'read',
 		description:
-			'List or search the contacts of a contact book, newest modifications first',
+			'List or search the contacts of a contact book, ordered by last name unless order is last_modified',
 	},
 	'contacts.get': {
 		riskLevel: 'read',
@@ -115,7 +115,7 @@ export const missiveEndpointMeta = {
 	'drafts.create': {
 		riskLevel: 'write',
 		description:
-			'Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; pass send true to send it immediately',
+			'Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; send true delivers it to the real recipients at once and send_at schedules it, and a delivered message cannot be recalled',
 	},
 	'drafts.delete': {
 		riskLevel: 'destructive',
@@ -167,7 +167,7 @@ export const missiveEndpointMeta = {
 	'posts.create': {
 		riskLevel: 'write',
 		description:
-			'Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace',
+			'Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace; every teammate with access sees the post and gets its notification',
 	},
 	'posts.delete': {
 		riskLevel: 'destructive',

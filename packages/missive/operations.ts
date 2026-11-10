@@ -115,7 +115,7 @@ export const MISSIVE_OPERATIONS = [
 		responseEncoding: 'json',
 		riskLevel: 'read',
 		description:
-			'List or search the contacts of a contact book, newest modifications first',
+			'List or search the contacts of a contact book, ordered by last name unless order is last_modified',
 	},
 	{
 		key: 'contacts.get',
@@ -312,9 +312,12 @@ export const MISSIVE_OPERATIONS = [
 		bodyWrapper: 'drafts',
 		hasResponseBody: true,
 		responseEncoding: 'json',
+		// A write, like the send operations of other plugins (gmail
+		// messages.send, resend emails.send): nothing stored is lost. The
+		// description carries the warning that send reaches real people.
 		riskLevel: 'write',
 		description:
-			'Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; pass send true to send it immediately',
+			'Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; send true delivers it to the real recipients at once and send_at schedules it, and a delivered message cannot be recalled',
 	},
 	{
 		key: 'drafts.delete',
@@ -483,7 +486,7 @@ export const MISSIVE_OPERATIONS = [
 		responseEncoding: 'json',
 		riskLevel: 'write',
 		description:
-			'Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace',
+			'Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace; every teammate with access sees the post and gets its notification',
 	},
 	{
 		key: 'posts.delete',

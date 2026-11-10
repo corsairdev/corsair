@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
-import { missive, missiveEndpointSchemas } from './index';
+import { missive, missiveEndpointMeta, missiveEndpointSchemas } from './index';
+import { MISSIVE_OPERATIONS } from './operations';
 import { MissiveSchema } from './schema';
 
 // Payloads below are copied from the examples on
@@ -303,6 +304,43 @@ describe('Missive writes that answer without a JSON body', () => {
 			expect(fetchSpy).toHaveBeenCalledTimes(1);
 		} finally {
 			fetchSpy.mockRestore();
+		}
+	});
+});
+
+describe('Missive risk levels', () => {
+	it('keeps sends and posts a write and says they reach real people', () => {
+		// Same level as gmail messages.send and resend emails.send: a send
+		// loses no stored data, so the warning lives in the description.
+		expect(missiveEndpointMeta['drafts.create'].riskLevel).toBe('write');
+		expect(missiveEndpointMeta['drafts.create'].description).toMatch(
+			/real recipients.*cannot be recalled/,
+		);
+		expect(missiveEndpointMeta['posts.create'].riskLevel).toBe('write');
+		expect(missiveEndpointMeta['posts.create'].description).toMatch(
+			/every teammate with access sees the post/,
+		);
+		expect(missiveEndpointMeta['messages.create'].riskLevel).toBe('write');
+	});
+
+	it('marks every delete and the merge destructive', () => {
+		for (const operation of MISSIVE_OPERATIONS) {
+			if (operation.method === 'DELETE' || operation.key.endsWith('.merge')) {
+				expect(missiveEndpointMeta[operation.key].riskLevel).toBe(
+					'destructive',
+				);
+			}
+			if (operation.method === 'GET') {
+				expect(missiveEndpointMeta[operation.key].riskLevel).toBe('read');
+			}
+		}
+	});
+
+	it('publishes the same risk level and description as the catalog', () => {
+		for (const operation of MISSIVE_OPERATIONS) {
+			const meta = missiveEndpointMeta[operation.key];
+			expect(meta.riskLevel).toBe(operation.riskLevel);
+			expect(meta.description).toBe(operation.description);
 		}
 	});
 });

@@ -18,7 +18,7 @@ pnpm add @corsair-dev/missive
 | `contactGroups.list` | `missive.api.contactGroups.list` | `read` | List the groups or organizations linked to a contact book |
 | `contacts.create` | `missive.api.contacts.create` | `write` | Create one or more contacts in a contact book |
 | `contacts.get` | `missive.api.contacts.get` | `read` | Fetch a contact by id; deleted contacts answer 404 |
-| `contacts.list` | `missive.api.contacts.list` | `read` | List or search the contacts of a contact book, newest modifications first |
+| `contacts.list` | `missive.api.contacts.list` | `read` | List or search the contacts of a contact book, ordered by last name unless order is last_modified |
 | `contacts.update` | `missive.api.contacts.update` | `write` | Update one or more contacts; infos and memberships replace the current ones when passed |
 | `conversations.get` | `missive.api.conversations.get` | `read` | Fetch a conversation by id; a merged old id answers with the current conversation |
 | `conversations.list` | `missive.api.conversations.list` | `read` | List conversations of one mailbox, shared label, or team, newest activity first |
@@ -28,7 +28,7 @@ pnpm add @corsair-dev/missive
 | `conversations.listPosts` | `missive.api.conversations.listPosts` | `read` | List the posts of a conversation, newest first |
 | `conversations.merge` | `missive.api.conversations.merge` | `destructive` | Merge a conversation into a target conversation; the source is marked as replaced |
 | `conversations.update` | `missive.api.conversations.update` | `write` | Silently close, reopen, move, assign, label, recolor, or rename one or more conversations without adding a post |
-| `drafts.create` | `missive.api.drafts.create` | `write` | Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; pass send true to send it immediately |
+| `drafts.create` | `missive.api.drafts.create` | `write` | Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; send true delivers it to the real recipients at once and send_at schedules it, and a delivered message cannot be recalled |
 | `drafts.delete` | `missive.api.drafts.delete` | `destructive` | Delete a draft from its conversation |
 | `hooks.create` | `missive.api.hooks.create` | `write` | Create a webhook subscription for incoming-message or new-comment events, backed by a Missive rule |
 | `hooks.delete` | `missive.api.hooks.delete` | `destructive` | Delete a webhook subscription and its backing rule |
@@ -36,7 +36,7 @@ pnpm add @corsair-dev/missive
 | `messages.get` | `missive.api.messages.get` | `read` | Fetch one or more messages with headers, body, and attachments by message id |
 | `messages.list` | `missive.api.messages.list` | `read` | Fetch the messages matching an email Message-ID header, latest first |
 | `organizations.list` | `missive.api.organizations.list` | `read` | List organizations the authenticated user is part of |
-| `posts.create` | `missive.api.posts.create` | `write` | Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace |
+| `posts.create` | `missive.api.posts.create` | `write` | Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace; every teammate with access sees the post and gets its notification |
 | `posts.delete` | `missive.api.posts.delete` | `destructive` | Delete a post from its conversation |
 | `responses.create` | `missive.api.responses.create` | `write` | Create one or more saved response templates |
 | `responses.delete` | `missive.api.responses.delete` | `destructive` | Delete one or more saved response templates |
