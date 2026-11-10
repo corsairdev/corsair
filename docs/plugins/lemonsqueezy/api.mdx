@@ -2328,7 +2328,7 @@ Generate the PDF invoice for an order and return its URL. No money moves
 **Risk:** `write`
 
 ```ts
-await corsair.lemonsqueezy.api.orders.generateInvoice({ orderId: '1', name: 'Acme Ltd' });
+await corsair.lemonsqueezy.api.orders.generateInvoice({ orderId: '1', name: 'Acme Ltd', address: '123 Main St', city: 'Anytown', state: 'CA', zipCode: '12345', country: 'US' });
 ```
 
 **Input**
@@ -2336,9 +2336,16 @@ await corsair.lemonsqueezy.api.orders.generateInvoice({ orderId: '1', name: 'Acm
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `orderId` | `string` | Yes | The order to generate an invoice for. |
-| `name` | `string` | Yes | The name shown on the invoice. |
+| `name` | `string` | Yes | The full name shown on the invoice. |
+| `address` | `string` | Yes | The street address. |
+| `city` | `string` | Yes | The city. |
+| `state` | `string` | No | The state or province. Required for the US and Canada. |
+| `zipCode` | `string` | Yes | The ZIP or postal code. |
+| `country` | `string` | Yes | The country, as an ISO 3166-1 alpha-2 code such as US. |
+| `notes` | `string` | No | Extra notes printed on the invoice. |
+| `locale` | `string` | No | An ISO 639 language code for the invoice, such as en. |
 
-Builds the invoice PDF and returns the order with its invoice URL. No money moves.
+Builds the invoice PDF and returns a download link in `meta.urls.download_invoice`. The billing details are sent as query parameters; `state` is required for a US or Canadian address. No money moves.
 
 
 
@@ -2346,79 +2353,17 @@ Builds the invoice PDF and returns the order with its invoice URL. No money move
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `Record<string, JsonValue>` | No | — |
+| `meta` | `object` | Yes | — |
 | `jsonapi` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="meta full type">
 
 ```ts
 {
-  type: string,
-  id: string,
-  attributes: {
-    store_id?: number | null,
-    customer_id?: number | null,
-    affiliate_id?: number | null,
-    identifier?: string | null,
-    order_number?: number | null,
-    user_name?: string | null,
-    user_email?: string | null,
-    currency?: string | null,
-    currency_rate?: string | null,
-    subtotal?: number | null,
-    setup_fee?: number | null,
-    discount_total?: number | null,
-    tax?: number | null,
-    total?: number | null,
-    refunded_amount?: number | null,
-    subtotal_usd?: number | null,
-    setup_fee_usd?: number | null,
-    discount_total_usd?: number | null,
-    tax_usd?: number | null,
-    total_usd?: number | null,
-    refunded_amount_usd?: number | null,
-    tax_name?: string | null,
-    tax_rate?: number | null,
-    refunded?: boolean | null,
-    refunded_at?: string | null,
-    status?: string | null,
-    status_formatted?: string | null,
-    subtotal_formatted?: string | null,
-    setup_fee_formatted?: string | null,
-    discount_total_formatted?: string | null,
-    tax_formatted?: string | null,
-    total_formatted?: string | null,
-    refunded_amount_formatted?: string | null,
-    first_order_item?: Record<string, JsonValue> | null,
-    urls?: {
-      receipt?: string | null
-    } | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    test_mode?: boolean | null
-  },
-  relationships?: Record<string, {
-    links?: {
-      related?: string | null,
-      self?: string | null
-    } | null
-  }>,
-  links?: {
-    self?: string | null
+  urls: {
+    download_invoice: string
   }
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  first?: string | null,
-  last?: string | null
 }
 ```
 </Accordion>
@@ -2496,7 +2441,7 @@ await corsair.lemonsqueezy.api.orders.get({ orderId: '1' });
     total_usd?: number | null,
     refunded_amount_usd?: number | null,
     tax_name?: string | null,
-    tax_rate?: number | null,
+    tax_rate?: string | null,
     refunded?: boolean | null,
     refunded_at?: string | null,
     status?: string | null,
@@ -2617,7 +2562,7 @@ await corsair.lemonsqueezy.api.orders.list({ storeId: 1, userEmail: 'buyer@examp
     total_usd?: number | null,
     refunded_amount_usd?: number | null,
     tax_name?: string | null,
-    tax_rate?: number | null,
+    tax_rate?: string | null,
     refunded?: boolean | null,
     refunded_at?: string | null,
     status?: string | null,
@@ -2751,7 +2696,7 @@ A partial refund cannot be undone through the API. The amount is in cents and it
     total_usd?: number | null,
     refunded_amount_usd?: number | null,
     tax_name?: string | null,
-    tax_rate?: number | null,
+    tax_rate?: string | null,
     refunded?: boolean | null,
     refunded_at?: string | null,
     status?: string | null,
@@ -3441,7 +3386,7 @@ Generate the PDF invoice for a subscription invoice and return its URL. No money
 **Risk:** `write`
 
 ```ts
-await corsair.lemonsqueezy.api.subscriptionInvoices.generate({ subscriptionInvoiceId: '1', name: 'Acme Ltd' });
+await corsair.lemonsqueezy.api.subscriptionInvoices.generate({ subscriptionInvoiceId: '1', name: 'Acme Ltd', address: '1 High St', city: 'London', zipCode: 'N1 1AA', country: 'GB' });
 ```
 
 **Input**
@@ -3449,7 +3394,14 @@ await corsair.lemonsqueezy.api.subscriptionInvoices.generate({ subscriptionInvoi
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subscriptionInvoiceId` | `string` | Yes | The subscription invoice to generate a PDF invoice for. |
-| `name` | `string` | Yes | The name shown on the invoice. |
+| `name` | `string` | Yes | The full name shown on the invoice. |
+| `address` | `string` | Yes | The street address. |
+| `city` | `string` | Yes | The city. |
+| `state` | `string` | No | The state or province. Required for the US and Canada. |
+| `zipCode` | `string` | Yes | The ZIP or postal code. |
+| `country` | `string` | Yes | The country, as an ISO 3166-1 alpha-2 code such as US. |
+| `notes` | `string` | No | Extra notes printed on the invoice. |
+| `locale` | `string` | No | An ISO 639 language code for the invoice, such as en. |
 
 
 
@@ -3457,74 +3409,17 @@ await corsair.lemonsqueezy.api.subscriptionInvoices.generate({ subscriptionInvoi
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `Record<string, JsonValue>` | No | — |
+| `meta` | `object` | Yes | — |
 | `jsonapi` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="meta full type">
 
 ```ts
 {
-  type: string,
-  id: string,
-  attributes: {
-    store_id?: number | null,
-    subscription_id?: number | null,
-    customer_id?: number | null,
-    user_name?: string | null,
-    user_email?: string | null,
-    billing_reason?: string | null,
-    card_brand?: string | null,
-    card_last_four?: string | null,
-    currency?: string | null,
-    currency_rate?: string | null,
-    status?: string | null,
-    status_formatted?: string | null,
-    refunded?: boolean | null,
-    refunded_at?: string | null,
-    subtotal?: number | null,
-    discount_total?: number | null,
-    tax?: number | null,
-    total?: number | null,
-    refunded_amount?: number | null,
-    subtotal_usd?: number | null,
-    discount_total_usd?: number | null,
-    tax_usd?: number | null,
-    total_usd?: number | null,
-    refunded_amount_usd?: number | null,
-    subtotal_formatted?: string | null,
-    discount_total_formatted?: string | null,
-    tax_formatted?: string | null,
-    total_formatted?: string | null,
-    refunded_amount_formatted?: string | null,
-    urls?: {
-      invoice_url?: string | null
-    } | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    test_mode?: boolean | null
-  },
-  relationships?: Record<string, {
-    links?: {
-      related?: string | null,
-      self?: string | null
-    } | null
-  }>,
-  links?: {
-    self?: string | null
+  urls: {
+    download_invoice: string
   }
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  first?: string | null,
-  last?: string | null
 }
 ```
 </Accordion>
@@ -4190,54 +4085,19 @@ await corsair.lemonsqueezy.api.subscriptionItems.usage({ subscriptionItemId: '1'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `meta` | `object \| null` | No | — |
-| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
 | `jsonapi` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  type: string,
-  id: string,
-  attributes: {
-    subscription_id?: number | null,
-    price_id?: number | null,
-    quantity?: number | null,
-    is_usage_based?: boolean | null,
-    created_at?: string | null,
-    updated_at?: string | null
-  },
-  relationships?: Record<string, {
-    links?: {
-      related?: string | null,
-      self?: string | null
-    } | null
-  }>,
-  links?: {
-    self?: string | null
-  }
-}
-```
-</Accordion>
-
 <Accordion title="meta full type">
 
 ```ts
 {
-  current_usage?: number | null
-} | null
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  first?: string | null,
-  last?: string | null
+  period_start?: string | null,
+  period_end?: string | null,
+  quantity?: number | null,
+  interval_unit?: string | null,
+  interval_quantity?: number | null
 }
 ```
 </Accordion>
@@ -4655,7 +4515,7 @@ await corsair.lemonsqueezy.api.subscriptions.update({ subscriptionId: '1', varia
 | `invoiceImmediately` | `boolean` | No | Charge the prorated difference now instead of at the next billing date. |
 | `disableProrations` | `boolean` | No | Do not prorate the charge when the plan changes. |
 | `pause` | `object` | No | Pause collection. Only valid on an active subscription. |
-| `unpause` | `boolean` | No | Resume collection on a paused subscription. |
+| `unpause` | `boolean` | No | Resume collection on a paused subscription. Sent as `pause: null`, which is how the API unpauses. |
 | `billingAnchor` | `number` | No | Move the billing date to this day of the month, 1 to 31. A day past the month's end uses its last day. |
 
 A variant change prorates the next charge unless `invoiceImmediately` or `disableProrations` says otherwise. `pause` and `unpause` are opposite actions, and at least one change is required.
@@ -5340,7 +5200,7 @@ await corsair.lemonsqueezy.api.webhooks.create({ storeId: 1, url: 'https://examp
 |------|------|----------|-------------|
 | `storeId` | `number` | Yes | The store the webhook listens to. |
 | `url` | `string` | Yes | The https URL Lemon Squeezy posts events to. |
-| `events` | `(order_created \| order_refunded \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| subscription_trial_will_end \| license_key_created \| license_key_updated)[]` | Yes | The events to send. At least one is required. |
+| `events` | `(order_created \| order_refunded \| customer_updated \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| license_key_created \| license_key_updated \| affiliate_activated)[]` | Yes | The events to send. At least one is required. |
 | `secret` | `string` | Yes | The signing secret. Lemon Squeezy signs each delivery with it, so store the same value to verify the `X-Signature` header. |
 
 `secret` is required, and Lemon Squeezy signs each delivery with it in the `X-Signature` header. The secret is never returned in a response.
@@ -5644,7 +5504,7 @@ await corsair.lemonsqueezy.api.webhooks.update({ webhookId: '1', events: ['order
 |------|------|----------|-------------|
 | `webhookId` | `string` | Yes | The webhook to update. |
 | `url` | `string` | No | The new https URL. |
-| `events` | `(order_created \| order_refunded \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| subscription_trial_will_end \| license_key_created \| license_key_updated)[]` | No | The new event list, which replaces the old one. |
+| `events` | `(order_created \| order_refunded \| customer_updated \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| license_key_created \| license_key_updated \| affiliate_activated)[]` | No | The new event list, which replaces the old one. |
 | `secret` | `string` | No | A new signing secret. Deliveries start using it immediately. |
 
 Give `url`, `events` or `secret`. A new `events` list replaces the old one.
