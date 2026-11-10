@@ -12,7 +12,10 @@ import { finageJsonValue } from './json-value';
 export type { FinageJsonValue } from './json-value';
 
 const text = z.string().min(1);
-const optionalText = z.string().optional();
+// Detail records leave fields a company or coin does not have as null or blank.
+const optionalText = z.string().nullable().optional();
+const optionalNumber = z.number().nullable().optional();
+const optionalBoolean = z.boolean().nullable().optional();
 const positiveInteger = z.number().int().positive();
 const limit = z.number().int().min(1).max(50_000).optional();
 const searchLimit = z.number().int().min(1).max(100).optional();
@@ -313,9 +316,9 @@ const companyDetail = z
 		industry: optionalText,
 		state: optionalText,
 		address: optionalText,
-		employees: z.number().optional(),
+		employees: optionalNumber,
 		sector: optionalText,
-		marketcap: z.number().optional(),
+		marketcap: optionalNumber,
 	})
 	.catchall(finageJsonValue);
 
@@ -339,14 +342,14 @@ const cryptoDetail = z
 		type: text,
 		isActive: z.boolean(),
 		description: optionalText,
-		developers: z.array(cryptoDeveloper).optional(),
-		opensource: z.boolean().optional(),
+		developers: z.array(cryptoDeveloper).nullable().optional(),
+		opensource: optionalBoolean,
 		startedAt: optionalText,
 		hashAlgorithm: optionalText,
-		links: cryptoLinks.optional(),
+		links: cryptoLinks.nullable().optional(),
 		thumbnail: optionalText,
 		developmentStatus: optionalText,
-		hardwareWallet: z.boolean().optional(),
+		hardwareWallet: optionalBoolean,
 	})
 	.catchall(finageJsonValue);
 const cryptoDetailedItem = z

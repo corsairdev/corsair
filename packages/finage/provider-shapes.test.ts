@@ -101,4 +101,94 @@ describe('Finage provider response shapes', () => {
 			).toBe(false);
 		}
 	});
+
+	it('keeps a calendar when one row has a blank or missing value', () => {
+		expect(
+			FinageOutputSchemas.getHistoricalDividendsCalendar.safeParse([
+				{
+					label: 'May 11, 87',
+					adj_dividend: 0.000536,
+					dividend: 0.12,
+					record_date: '',
+					payment_date: '',
+					declaration_date: '',
+					date: '1987-05-11',
+				},
+			]).success,
+		).toBe(true);
+		expect(
+			FinageOutputSchemas.getIpoCalendar.safeParse([
+				{
+					symbol: 'NEWCO',
+					date: '2026-12-01',
+					exchange: 'NASDAQ',
+					status: 'Expected',
+					shares: null,
+					price_range: null,
+					market_cap: null,
+					company: 'New Company Inc',
+				},
+			]).success,
+		).toBe(true);
+		expect(
+			FinageOutputSchemas.getDelistedCompanies.safeParse([
+				{
+					symbol: 'CEO',
+					company_name: 'Cnooc Ltd',
+					exchange: 'NYSE',
+					ipo_date: '',
+					delisted_date: '2021-11-05',
+				},
+			]).success,
+		).toBe(true);
+		expect(
+			FinageOutputSchemas.getMutualFundHolders.safeParse([
+				{
+					holder: 'Example Fund',
+					shares: 319516,
+					change: null,
+					report_date: '2020-07-31',
+					weight_percentage: null,
+				},
+			]).success,
+		).toBe(true);
+	});
+
+	it('still requires the field that identifies a calendar row', () => {
+		expect(
+			FinageOutputSchemas.getIpoCalendar.safeParse([{ date: '2026-12-01' }])
+				.success,
+		).toBe(false);
+		expect(
+			FinageOutputSchemas.getMutualFundHolders.safeParse([{ shares: 1 }])
+				.success,
+		).toBe(false);
+	});
+
+	it('accepts null for optional company and cryptocurrency details', () => {
+		expect(
+			FinageOutputSchemas.getStockCompanyDetails.safeParse([
+				{
+					symbol: 'SPY',
+					name: 'SPDR S&P 500 ETF Trust',
+					ceo: null,
+					industry: null,
+					employees: null,
+					marketcap: null,
+				},
+			]).success,
+		).toBe(true);
+		expect(
+			FinageOutputSchemas.getCryptoDetail.safeParse({
+				name: 'Example Token',
+				symbol: 'EXT',
+				type: 'token',
+				isActive: true,
+				description: null,
+				hashAlgorithm: null,
+				startedAt: null,
+				opensource: null,
+			}).success,
+		).toBe(true);
+	});
 });
