@@ -222,8 +222,11 @@ export async function makeZenrowsRequest(
 		auth = 'header',
 	}: ZenrowsRequest,
 ): Promise<ZenrowsResponse> {
+	// With `auth: 'query'` ZenRows forwards every request header to the target,
+	// Accept included, so the client's own `application/json` would ask the
+	// site for JSON. Only a caller-supplied Accept is sent then.
 	const headers: Record<string, string> = {
-		Accept: 'application/json',
+		...(auth === 'header' ? { Accept: 'application/json' } : {}),
 		...(extraHeaders ?? {}),
 	};
 	if (auth === 'header') headers['X-API-Key'] = apiKey;
@@ -237,7 +240,10 @@ export async function makeZenrowsRequest(
 		body,
 		mediaType:
 			body === undefined ? undefined : (mediaType ?? 'application/json'),
-		headers,
+		// corsair/http adds `Accept: application/json` by default and drops a
+		// header whose value is undefined, so this clears its default when
+		// forwarding while keeping an Accept the caller set.
+		headers: auth === 'query' ? { Accept: undefined, ...headers } : headers,
 	};
 
 	try {

@@ -307,6 +307,36 @@ describe('caller headers', () => {
 		}
 	});
 
+	it('does not forward its own Accept header to the target', async () => {
+		// ZenRows forwards Accept when custom_headers is on, and a site that
+		// negotiates content would answer JSON or 406 to application/json.
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			headers: { Cookie: 'session=abc' },
+		});
+		expect(lastRequest().headers.get('accept')).toBeNull();
+
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			customHeaders: true,
+		});
+		expect(lastRequest().headers.get('accept')).toBeNull();
+
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			headers: { Accept: 'text/html' },
+		});
+		expect(lastRequest().headers.get('accept')).toBe('text/html');
+
+		// Without forwarding, Accept reaches only ZenRows and stays as it was.
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, { url: 'https://example.com' });
+		expect(lastRequest().headers.get('accept')).toBe('application/json');
+	});
+
 	it('refuses a header the client owns', async () => {
 		for (const name of ['X-API-Key', 'apikey', 'Content-Type']) {
 			await expect(
