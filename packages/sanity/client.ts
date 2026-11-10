@@ -86,7 +86,8 @@ export function isValidProjectId(value: string): boolean {
 }
 
 export function isValidDataset(value: string): boolean {
-	return DATASET_RE.test(value);
+	// 64 counts the whole name, including an add-on's `~`.
+	return value.length <= 64 && DATASET_RE.test(value);
 }
 
 export function requireProjectId(value: string | null | undefined): string {

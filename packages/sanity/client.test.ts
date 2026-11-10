@@ -151,6 +151,7 @@ describe('dataset names', () => {
 			'blog_staging-2',
 			'~addon',
 			'a'.repeat(64),
+			`~${'a'.repeat(63)}`,
 		]) {
 			expect(isValidDataset(valid)).toBe(true);
 		}
@@ -161,6 +162,7 @@ describe('dataset names', () => {
 			'-staging',
 			'blog.staging',
 			'a'.repeat(65),
+			`~${'a'.repeat(64)}`,
 			'~',
 		]) {
 			expect(isValidDataset(invalid)).toBe(false);

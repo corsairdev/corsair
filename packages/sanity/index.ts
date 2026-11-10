@@ -53,7 +53,10 @@ export type SanityPluginOptions = {
 	projectId?: string;
 	/** The default dataset. Overrides the account's stored `dataset`; `production` when neither is set. */
 	dataset?: string;
-	/** The secret set on the Sanity webhook. Overrides the stored one. */
+	/**
+	 * The secret set on the Sanity webhook, for accounts with none stored. A
+	 * secret stored with keys.set_webhook_signature takes precedence.
+	 */
 	webhookSecret?: string;
 	hooks?: InternalSanityPlugin['hooks'];
 	webhookHooks?: InternalSanityPlugin['webhookHooks'];
@@ -410,8 +413,17 @@ export function sanity<const T extends SanityPluginOptions>(
 		errorHandlers: mergeErrorHandlers(options.errorHandlers),
 		keyBuilder: async (ctx: SanityKeyBuilderContext, source) => {
 			if (source === 'webhook') {
-				if (options.webhookSecret) return options.webhookSecret;
-				return (await ctx.keys.get_webhook_signature()) ?? '';
+				// The tenant's own secret comes first. Letting the option override it
+				// would let a delivery signed for one tenant verify under another
+				// tenant's id whenever the option holds the first tenant's secret.
+				let stored: string | null = null;
+				try {
+					stored = await ctx.keys.get_webhook_signature();
+				} catch {
+					// No key store for this account (an app using only the option).
+					stored = null;
+				}
+				return stored || options.webhookSecret || '';
 			}
 
 			if (options.key) return options.key;

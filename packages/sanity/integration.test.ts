@@ -214,6 +214,47 @@ describe('sanity plugin through createCorsair', () => {
 			}
 		});
 
+		it("uses the tenant's stored secret over the webhookSecret option", async () => {
+			const { corsair, testDb } = await createClient({
+				webhookSecret: WEBHOOK_SECRET,
+			});
+			try {
+				await corsair.sanity.keys.set_webhook_signature(
+					'this-tenants-own-secret',
+				);
+				const signedWithOption = await processWebhook(
+					corsair,
+					deliveryHeaders(DELIVERY_BODY, { secret: WEBHOOK_SECRET }),
+					DELIVERY_BODY,
+				);
+				expect(signedWithOption.response?.success).toBe(false);
+				const signedWithStored = await processWebhook(
+					corsair,
+					deliveryHeaders(DELIVERY_BODY, { secret: 'this-tenants-own-secret' }),
+					DELIVERY_BODY,
+				);
+				expect(signedWithStored.response?.success).toBe(true);
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
+		it('falls back to the webhookSecret option when the account stores none', async () => {
+			const { corsair, testDb } = await createClient({
+				webhookSecret: WEBHOOK_SECRET,
+			});
+			try {
+				const result = await processWebhook(
+					corsair,
+					deliveryHeaders(DELIVERY_BODY),
+					DELIVERY_BODY,
+				);
+				expect(result.response?.success).toBe(true);
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
 		it('refuses an unsigned delivery and says how to set the secret when none is stored', async () => {
 			const { corsair, testDb } = await createClient();
 			try {
