@@ -449,6 +449,18 @@ describe('refunds', () => {
 		expect(h.lastRequest().path).toBe('/refunds/');
 	});
 
+	it('forwards paging, which this route honours despite the spec omitting it', async () => {
+		h.respond(
+			paged([refund], 'https://api.goshippo.com/refunds/?page=3&results=1'),
+		);
+
+		const result = await invoke(Refunds.list, { page: 2, results: 1 });
+
+		expect(h.lastRequest().query).toEqual({ page: '2', results: '1' });
+		// The next-page URL is exposed as sent, so a caller can read its page.
+		expect(result.next).toContain('page=3');
+	});
+
 	it('gets one refund', async () => {
 		h.respond(refund);
 
@@ -875,6 +887,18 @@ describe('parcel templates', () => {
 		expect(h.lastRequest().path).toBe('/parcel-templates/USPS_FlatRateGiftBox');
 	});
 
+	it('deletes a user template that answers 204 with no body', async () => {
+		// Shippo's deletes send no payload, so a schema requiring an object threw
+		// on every successful delete.
+		h.fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+		const result = await invoke(ParcelTemplates.remove, {
+			user_parcel_template_id: userParcelTemplate.object_id,
+		});
+
+		expect(result).toEqual({ deleted: true, object_id: undefined });
+	});
+
 	it('lists, creates, updates and deletes user templates', async () => {
 		h.respond(paged([userParcelTemplate]));
 		await invoke(ParcelTemplates.list, {});
@@ -902,7 +926,7 @@ describe('parcel templates', () => {
 			path: `/user-parcel-templates/${userParcelTemplate.object_id}`,
 		});
 
-		h.respond({ object_id: userParcelTemplate.object_id });
+		h.fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 		await invoke(ParcelTemplates.remove, {
 			user_parcel_template_id: userParcelTemplate.object_id,
 		});
@@ -914,6 +938,16 @@ describe('parcel templates', () => {
 });
 
 describe('webhooks', () => {
+	it('forwards paging, which this route honours despite the spec omitting it', async () => {
+		h.respond(
+			paged([webhook], 'https://api.goshippo.com/webhooks?page=2&results=2'),
+		);
+
+		await invoke(Webhooks.list, { page: 1, results: 2 });
+
+		expect(h.lastRequest().query).toEqual({ page: '1', results: '2' });
+	});
+
 	it('lists, gets and creates subscriptions', async () => {
 		h.respond(paged([webhook]));
 		await invoke(Webhooks.list, {});
@@ -973,9 +1007,13 @@ describe('webhooks', () => {
 		});
 		expect(updated.active).toBe(false);
 
-		h.respond({ object_id: webhook.object_id });
-		await invoke(Webhooks.remove, { webhook_id: webhook.object_id });
+		// 204, no body: the old schema threw on this.
+		h.fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+		const deleted = await invoke(Webhooks.remove, {
+			webhook_id: webhook.object_id,
+		});
 		expect(h.lastRequest().method).toBe('DELETE');
+		expect(deleted).toEqual({ deleted: true, object_id: undefined });
 	});
 });
 

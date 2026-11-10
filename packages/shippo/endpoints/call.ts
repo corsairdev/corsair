@@ -6,6 +6,18 @@ import { makeShippoRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
+/**
+ * Shippo's delete routes answer 204 with no body, so there is nothing to read
+ * an id from; when a route does send one, it is returned. The success itself is
+ * the status code, which `corsair/http` has already checked.
+ */
+// unknown: a 204 body is literally absent, and a 200 delete body is untyped.
+export function readObjectId(raw: unknown): string | undefined {
+	if (typeof raw !== 'object' || raw === null) return undefined;
+	const id = (raw as Record<string, unknown>).object_id;
+	return typeof id === 'string' ? id : undefined;
+}
+
 /** Joined for the query parameters Shippo takes as `key[]`. */
 export function bracketList(
 	key: string,

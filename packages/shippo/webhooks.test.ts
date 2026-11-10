@@ -5,6 +5,7 @@ import { shippo } from './index';
 import { batch, track, transaction } from './test-fixtures';
 import {
 	isShippoDelivery,
+	isShippoEvent,
 	notification,
 	parseDelivery,
 	signatureSupported,
@@ -144,6 +145,80 @@ describe('notification.handler', () => {
 				payload: { event: 'track_updated' },
 			}),
 		).rejects.toThrow('has no data object');
+	});
+});
+
+describe('hostile and empty payloads', () => {
+	it('does not treat Object.prototype names as Shippo events', () => {
+		// `event in EVENT_TO_SCHEMA` matches inherited names, so `constructor`
+		// used to reach `schema.safeParse` on the Object constructor and throw.
+		for (const name of [
+			'constructor',
+			'toString',
+			'hasOwnProperty',
+			'valueOf',
+		]) {
+			expect(isShippoEvent(name)).toBe(false);
+			expect(() =>
+				parseDelivery({ event: name, test: true, data: {} }),
+			).toThrow('Unsupported Shippo webhook event');
+		}
+	});
+
+	it('does not claim a delivery whose event is an inherited name', () => {
+		expect(isShippoDelivery(request({ event: 'constructor', data: {} }))).toBe(
+			false,
+		);
+	});
+
+	it('rejects an empty data object rather than reading it as a blank track', () => {
+		// Every output field is nullish, so `{}` parsed cleanly and a hook fired
+		// on a record with nothing in it.
+		expect(() =>
+			parseDelivery({ event: 'track_updated', test: true, data: {} }),
+		).toThrow('carries no `tracking_number`');
+	});
+
+	it('rejects an empty data object for a transaction and a batch too', () => {
+		expect(() =>
+			parseDelivery({ event: 'transaction_created', test: true, data: {} }),
+		).toThrow('carries no `object_id`');
+		expect(() =>
+			parseDelivery({ event: 'batch_purchased', test: true, data: {} }),
+		).toThrow('carries no `object_id`');
+	});
+
+	it('rejects an unrelated object that happens to match a loose schema', () => {
+		expect(() =>
+			parseDelivery({ event: 'track_updated', test: true, data: { nope: 1 } }),
+		).toThrow('carries no `tracking_number`');
+	});
+
+	it('checks the catch-all path against every schema and its identity field', () => {
+		// `all` used to return whatever it was given, unchecked.
+		expect(() => parseDelivery({ event: 'all', test: true, data: {} })).toThrow(
+			'matches no track, transaction or batch',
+		);
+	});
+
+	it('accepts a catch-all delivery that really is a track', () => {
+		const parsed = parseDelivery({ event: 'all', test: true, data: track });
+
+		// unknown: the matched event decides which object this is.
+		const data = parsed.data as { tracking_number?: string };
+		expect(data.tracking_number).toBe(track.tracking_number);
+	});
+
+	it('accepts a catch-all delivery that really is a transaction', () => {
+		const parsed = parseDelivery({
+			event: 'all',
+			test: true,
+			data: transaction,
+		});
+
+		// unknown: see above.
+		const data = parsed.data as { object_id?: string };
+		expect(data.object_id).toBe(transaction.object_id);
 	});
 });
 

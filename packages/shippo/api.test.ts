@@ -153,6 +153,43 @@ describeIfKey('Shippo live smoke', () => {
 		expect(typeof withRates.parcels?.[0]?.weight).toBe('string');
 	});
 
+	it('pages refunds and webhooks, which the spec does not document', async () => {
+		// Both routes return a `next` URL when more results exist, even though
+		// the OpenAPI spec lists no paging parameters for them.
+		for (const path of ['/refunds/', '/webhooks']) {
+			const raw = await makeShippoRequest(KEY as string, {
+				method: 'GET',
+				path,
+				query: { results: 1, page: 1 },
+			});
+			const page = raw as { results?: unknown[]; next?: string | null };
+			expect(Array.isArray(page.results)).toBe(true);
+			// At most one result, which proves `results` was honoured.
+			expect((page.results ?? []).length).toBeLessThanOrEqual(1);
+		}
+	});
+
+	it('deletes a webhook, which answers 204 with no body', async () => {
+		const created = (await makeShippoRequest(KEY as string, {
+			method: 'POST',
+			path: '/webhooks',
+			body: {
+				url: 'https://example.com/live-delete',
+				event: 'track_updated',
+				is_test: true,
+			},
+		})) as { object_id: string };
+
+		const raw = await makeShippoRequest(KEY as string, {
+			method: 'DELETE',
+			path: `/webhooks/${created.object_id}`,
+		});
+
+		// No body at all: the client returns undefined, and the endpoint's shape
+		// handler turns that into `{ deleted: true }`.
+		expect(raw).toBeUndefined();
+	});
+
 	it('reports an unknown object as a 404 with `detail`', async () => {
 		const error = await h.failure<ShippoAPIError>(
 			makeShippoRequest(KEY as string, {

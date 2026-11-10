@@ -1,6 +1,6 @@
 import type { ShippoEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, readObjectId } from './call';
 import {
 	ShippoEndpointInputSchemas as Inputs,
 	ShippoEndpointOutputSchemas as Outputs,
@@ -15,9 +15,10 @@ export const list: ShippoEndpoints['webhooksList'] = (ctx, input) =>
 			output: Outputs.webhooksList,
 		},
 		input,
-		({ shippo_account_id }) => ({
+		({ page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: '/webhooks',
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{
@@ -110,6 +111,11 @@ export const remove: ShippoEndpoints['webhooksDelete'] = (ctx, input) =>
 			shippoAccountId: shippo_account_id,
 		}),
 		{
+			// 204, no body; the success is the status, not a payload.
+			shape: (raw) => ({
+				deleted: true as const,
+				object_id: readObjectId(raw),
+			}),
 			log: ({ webhook_id }) => ({ webhookId: webhook_id }),
 		},
 	);

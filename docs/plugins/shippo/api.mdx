@@ -106,7 +106,7 @@ Read one saved address by `object_id`
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.addresses.get({});
+await corsair.shippo.api.addresses.get({ address_id: 'd799c2679e644279b59fe661ac8fa488' });
 ```
 
 **Input**
@@ -176,7 +176,7 @@ List the account’s saved addresses, most recent first
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.addresses.list({});
+await corsair.shippo.api.addresses.list({ results: 10 });
 ```
 
 **Input**
@@ -325,7 +325,7 @@ Add shipments to a batch that is still validating or valid
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.batches.addShipments({});
+await corsair.shippo.api.batches.addShipments({ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: [{ shipment: 'adcfdddf8ec64b84ad22772bce3ea37a', servicelevel_token: 'usps_priority' }] });
 ```
 
 **Input**
@@ -518,7 +518,7 @@ Read a batch: its status, per-shipment results and the merged label URLs once pu
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.batches.get({});
+await corsair.shippo.api.batches.get({ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0' });
 ```
 
 **Input**
@@ -678,7 +678,7 @@ Remove shipments from a batch before it is purchased
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.batches.removeShipments({});
+await corsair.shippo.api.batches.removeShipments({ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: ['adcfdddf8ec64b84ad22772bce3ea37a'] });
 ```
 
 **Input**
@@ -760,7 +760,7 @@ Connect the caller’s own carrier account, with that carrier’s credential set
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.create({});
+await corsair.shippo.api.carrierAccounts.create({ carrier: 'usps', parameters: { account_number: '1234567890' } });
 ```
 
 **Input**
@@ -818,7 +818,7 @@ Read one carrier account
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.get({});
+await corsair.shippo.api.carrierAccounts.get({ carrier_account_id: '078870331023437cb917f5187429b093' });
 ```
 
 **Input**
@@ -931,7 +931,7 @@ Enrol a Shippo-supplied carrier account rather than the caller’s own
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.register({});
+await corsair.shippo.api.carrierAccounts.register({ carrier: 'usps', parameters: { account_number: '1234567890' } });
 ```
 
 **Input**
@@ -988,7 +988,7 @@ Check whether a carrier has approved the account for live rates
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.registrationStatus({});
+await corsair.shippo.api.carrierAccounts.registrationStatus({ carrier: 'usps' });
 ```
 
 **Input**
@@ -1021,7 +1021,7 @@ Change a carrier account’s credentials or switch it on or off
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.update({});
+await corsair.shippo.api.carrierAccounts.update({ carrier_account_id: '078870331023437cb917f5187429b093', active: false });
 ```
 
 **Input**
@@ -1192,7 +1192,7 @@ Read one customs declaration
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.customsDeclarations.get({});
+await corsair.shippo.api.customsDeclarations.get({ customs_declaration_id: 'b3d1a2c4e5f647089a1b2c3d4e5f6071' });
 ```
 
 **Input**
@@ -1268,7 +1268,7 @@ List customs declarations
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.customsDeclarations.list({});
+await corsair.shippo.api.customsDeclarations.list({ results: 10 });
 ```
 
 **Input**
@@ -1414,7 +1414,7 @@ Read one customs item
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.customsItems.get({});
+await corsair.shippo.api.customsItems.get({ customs_item_id: 'd799c2679e644279b59fe661ac8fa488' });
 ```
 
 **Input**
@@ -1464,7 +1464,7 @@ List customs items used in international declarations
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.customsItems.list({});
+await corsair.shippo.api.customsItems.list({ results: 10 });
 ```
 
 **Input**
@@ -1530,7 +1530,7 @@ Close out a carrier’s day with a manifest covering transactions not yet manife
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.manifests.create({});
+await corsair.shippo.api.manifests.create({ carrier_account: '078870331023437cb917f5187429b093', shipment_date: '2026-07-21T12:00:00Z', transactions: ['915d94940ea54c3a80cbfa328722f5a1'], address_from: 'd799c2679e644279b59fe661ac8fa488' });
 ```
 
 **Input**
@@ -1587,7 +1587,7 @@ Read one manifest and its document URLs
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.manifests.get({});
+await corsair.shippo.api.manifests.get({ manifest_id: 'c4e5f60718293a4b5c6d7e8f90a1b2c3' });
 ```
 
 **Input**
@@ -1641,7 +1641,7 @@ List manifests, the end-of-day paperwork a carrier requires
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.manifests.list({});
+await corsair.shippo.api.manifests.list({ results: 10 });
 ```
 
 **Input**
@@ -1955,7 +1955,7 @@ Read one order with its line items and buyer address
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.orders.get({});
+await corsair.shippo.api.orders.get({ order_id: 'adcfdddf8ec64b84ad22772bce3ea37a' });
 ```
 
 **Input**
@@ -2140,7 +2140,7 @@ List orders, filterable by status, shop app or when they were placed
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.orders.list({});
+await corsair.shippo.api.orders.list({ results: 10 });
 ```
 
 **Input**
@@ -2417,7 +2417,7 @@ Read one saved parcel by `object_id`
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.parcels.get({});
+await corsair.shippo.api.parcels.get({ parcel_id: 'adcfdddf8ec64b84ad22772bce3ea37a' });
 ```
 
 **Input**
@@ -2485,7 +2485,7 @@ List the account’s saved parcels
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.parcels.list({});
+await corsair.shippo.api.parcels.list({ results: 10 });
 ```
 
 **Input**
@@ -2560,7 +2560,7 @@ Save a reusable parcel template, optionally based on a carrier template token
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.parcelTemplates.create({});
+await corsair.shippo.api.parcelTemplates.create({ name: 'My 5x5x5 box', length: '5', width: '5', height: '5', distance_unit: 'in', weight: '12', weight_unit: 'lb' });
 ```
 
 **Input**
@@ -2630,7 +2630,7 @@ Delete one of the account’s parcel templates. Anything still referring to its 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.shippo.api.parcelTemplates.delete({});
+await corsair.shippo.api.parcelTemplates.delete({ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' });
 ```
 
 **Input**
@@ -2647,6 +2647,7 @@ await corsair.shippo.api.parcelTemplates.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object_id` | `string \| null` | No | — |
+| `deleted` | `true` | Yes | — |
 
 
 
@@ -2661,7 +2662,7 @@ Read one of the account’s parcel templates
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.parcelTemplates.get({});
+await corsair.shippo.api.parcelTemplates.get({ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' });
 ```
 
 **Input**
@@ -2724,7 +2725,7 @@ Read one carrier parcel template by its token
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.parcelTemplates.getCarrier({});
+await corsair.shippo.api.parcelTemplates.getCarrier({ carrier_parcel_template_token: 'USPS_FlatRateGiftBox' });
 ```
 
 **Input**
@@ -2765,7 +2766,7 @@ List the account’s own parcel templates
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.parcelTemplates.list({});
+await corsair.shippo.api.parcelTemplates.list({ });
 ```
 
 **Input**
@@ -2882,7 +2883,7 @@ Change one of the account’s parcel templates
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.parcelTemplates.update({});
+await corsair.shippo.api.parcelTemplates.update({ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071', name: 'Renamed box' });
 ```
 
 **Input**
@@ -3172,7 +3173,7 @@ Read one refund request
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.refunds.get({});
+await corsair.shippo.api.refunds.get({ refund_id: 'de1b3f1e1d0a4f0d9a3b2c1d0e9f8a7b' });
 ```
 
 **Input**
@@ -3209,13 +3210,15 @@ List refund requests and their outcomes
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.refunds.list({});
+await corsair.shippo.api.refunds.list({ results: 10 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 This route is `/refunds/` with a trailing slash; `/refunds` answers 404.
@@ -3649,7 +3652,7 @@ Read one shipment, including any rates already computed
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.shipments.get({});
+await corsair.shippo.api.shipments.get({ shipment_id: 'adcfdddf8ec64b84ad22772bce3ea37a' });
 ```
 
 **Input**
@@ -3905,7 +3908,7 @@ List shipments, optionally limited to a creation-date window
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.shipments.list({});
+await corsair.shippo.api.shipments.list({ results: 10 });
 ```
 
 **Input**
@@ -4708,7 +4711,7 @@ List bought labels, filterable by rate, object status or tracking status
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.transactions.list({});
+await corsair.shippo.api.transactions.list({ results: 10 });
 ```
 
 **Input**
@@ -4826,7 +4829,7 @@ Delete a webhook subscription. Shippo keeps creating tracking webhooks for label
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.shippo.api.webhooks.delete({});
+await corsair.shippo.api.webhooks.delete({ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' });
 ```
 
 **Input**
@@ -4843,6 +4846,7 @@ await corsair.shippo.api.webhooks.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object_id` | `string \| null` | No | — |
+| `deleted` | `true` | Yes | — |
 
 
 
@@ -4857,7 +4861,7 @@ Read one webhook subscription
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.webhooks.get({});
+await corsair.shippo.api.webhooks.get({ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' });
 ```
 
 **Input**
@@ -4895,13 +4899,15 @@ List the webhook subscriptions on the account
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.webhooks.list({});
+await corsair.shippo.api.webhooks.list({ });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 
@@ -4945,7 +4951,7 @@ Change a subscription’s URL or event, or switch it on or off
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.webhooks.update({});
+await corsair.shippo.api.webhooks.update({ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9', active: false });
 ```
 
 **Input**

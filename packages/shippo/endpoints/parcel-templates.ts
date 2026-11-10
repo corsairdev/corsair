@@ -1,6 +1,6 @@
 import type { ShippoEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, readObjectId } from './call';
 import {
 	ShippoEndpointInputSchemas as Inputs,
 	ShippoEndpointOutputSchemas as Outputs,
@@ -155,6 +155,12 @@ export const remove: ShippoEndpoints['userParcelTemplatesDelete'] = (
 			shippoAccountId: shippo_account_id,
 		}),
 		{
+			// This route answers 204 with no body, so `raw` is undefined and the
+			// success is the status, not a payload.
+			shape: (raw) => ({
+				deleted: true as const,
+				object_id: readObjectId(raw),
+			}),
 			log: ({ user_parcel_template_id }) => ({
 				templateId: user_parcel_template_id,
 			}),

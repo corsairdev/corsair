@@ -813,7 +813,10 @@ const RefundGetInputSchema = z.object({
 
 export type RefundGetInput = z.input<typeof RefundGetInputSchema>;
 
+// Verified live: `?results=1` returns one refund and a `next` URL, so this
+// route paginates even though the spec omits the parameters.
 const RefundsListInputSchema = z.object({
+	...PagingShape,
 	...accountIdHeader,
 });
 
@@ -1698,6 +1701,11 @@ export const UserParcelTemplateSchema = z
 
 export type ShippoUserParcelTemplate = z.infer<typeof UserParcelTemplateSchema>;
 
+/**
+ * No paging parameters: this route answers `{ results }` with no `next`, ignores
+ * `results` and `page` (verified live), and returns every template. Offering
+ * paging here would be a field that silently does nothing.
+ */
 const UserParcelTemplatesListInputSchema = z.object({
 	...accountIdHeader,
 });
@@ -1792,7 +1800,10 @@ export const WebhookSchema = z
 
 export type ShippoWebhook = z.infer<typeof WebhookSchema>;
 
+// Verified live: `?results=2` returns two webhooks and a `next` URL, so this
+// route paginates even though the spec omits the parameters.
 const WebhooksListInputSchema = z.object({
+	...PagingShape,
 	...accountIdHeader,
 });
 
@@ -1920,10 +1931,10 @@ export const ShippoEndpointInputSchemas = {
 	webhooksDelete: WebhookDeleteInputSchema,
 } as const;
 
-/** Shippo answers a delete with the deleted object's id, not a flag. */
+/** `/webhooks/{id}` answers 204 with no body at all, so every field is optional and the flag is derived; `null` is passed in for an absent body. */
 const DeletedResponseSchema = z
-	.object({ object_id: z.string().nullish() })
-	.loose();
+	.object({ object_id: z.string().nullish(), deleted: z.literal(true) })
+	.passthrough();
 
 export const ShippoEndpointOutputSchemas = {
 	addressesList: AddressesListResponseSchema,

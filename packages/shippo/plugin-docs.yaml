@@ -29,6 +29,78 @@ examples:
       rate: ec9f0d3adc9441449c85d315f0997fd5
       async: false
 apiExamples:
+  addresses.get:
+    call: "{ address_id: 'd799c2679e644279b59fe661ac8fa488' }"
+  addresses.list:
+    call: "{ results: 10 }"
+  batches.addShipments:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: [{ shipment: 'adcfdddf8ec64b84ad22772bce3ea37a', servicelevel_token: 'usps_priority' }] }"
+  batches.get:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0' }"
+  batches.removeShipments:
+    call: "{ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1f0', shipments: ['adcfdddf8ec64b84ad22772bce3ea37a'] }"
+  carrierAccounts.create:
+    call: "{ carrier: 'usps', parameters: { account_number: '1234567890' } }"
+  carrierAccounts.get:
+    call: "{ carrier_account_id: '078870331023437cb917f5187429b093' }"
+  carrierAccounts.register:
+    call: "{ carrier: 'usps', parameters: { account_number: '1234567890' } }"
+  carrierAccounts.registrationStatus:
+    call: "{ carrier: 'usps' }"
+  carrierAccounts.update:
+    call: "{ carrier_account_id: '078870331023437cb917f5187429b093', active: false }"
+  customsDeclarations.get:
+    call: "{ customs_declaration_id: 'b3d1a2c4e5f647089a1b2c3d4e5f6071' }"
+  customsDeclarations.list:
+    call: "{ results: 10 }"
+  customsItems.get:
+    call: "{ customs_item_id: 'd799c2679e644279b59fe661ac8fa488' }"
+  customsItems.list:
+    call: "{ results: 10 }"
+  manifests.create:
+    call: "{ carrier_account: '078870331023437cb917f5187429b093', shipment_date: '2026-07-21T12:00:00Z', transactions: ['915d94940ea54c3a80cbfa328722f5a1'], address_from: 'd799c2679e644279b59fe661ac8fa488' }"
+  manifests.get:
+    call: "{ manifest_id: 'c4e5f60718293a4b5c6d7e8f90a1b2c3' }"
+  manifests.list:
+    call: "{ results: 10 }"
+  orders.get:
+    call: "{ order_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  orders.list:
+    call: "{ results: 10 }"
+  parcelTemplates.create:
+    call: "{ name: 'My 5x5x5 box', length: '5', width: '5', height: '5', distance_unit: 'in', weight: '12', weight_unit: 'lb' }"
+  parcelTemplates.delete:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' }"
+  parcelTemplates.get:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071' }"
+  parcelTemplates.getCarrier:
+    call: "{ carrier_parcel_template_token: 'USPS_FlatRateGiftBox' }"
+  parcelTemplates.list:
+    call: "{ }"
+  parcelTemplates.update:
+    call: "{ user_parcel_template_id: 'a1b2c3d4e5f647089a1b2c3d4e5f6071', name: 'Renamed box' }"
+  parcels.get:
+    call: "{ parcel_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  parcels.list:
+    call: "{ results: 10 }"
+  refunds.get:
+    call: "{ refund_id: 'de1b3f1e1d0a4f0d9a3b2c1d0e9f8a7b' }"
+  refunds.list:
+    call: "{ results: 10 }"
+  shipments.get:
+    call: "{ shipment_id: 'adcfdddf8ec64b84ad22772bce3ea37a' }"
+  shipments.list:
+    call: "{ results: 10 }"
+  transactions.list:
+    call: "{ results: 10 }"
+  webhooks.delete:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' }"
+  webhooks.get:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9' }"
+  webhooks.list:
+    call: "{ }"
+  webhooks.update:
+    call: "{ webhook_id: '0e9b1c2d3e4f5061728394a5b6c7d8e9', active: false }"
   addresses.create:
     call: "{ name: 'Shawn Ippotle', street1: '215 Clayton St.', city: 'San Francisco', state: 'CA', zip: '94117', country: 'US' }"
   addresses.validate:
@@ -71,11 +143,8 @@ apiExamples:
     call: "{ }"
   webhooks.create:
     call: "{ url: 'https://myapp.com/webhooks/shippo', event: 'track_updated' }"
-exampleWebhook:
-  path: notifications.delivery
-  note: |
-    The body is the object itself, wrapped as `{ event, test, data }` — not a notification you fetch. `event` tells you which schema `data` follows: a track for `track_updated`, a transaction for `transaction_created` and `transaction_updated`, a batch for the two batch events. Shippo signs nothing and allows no custom header on the subscription, so keep the receiving URL private.
-  after: "if (result.data?.event === 'track_updated') console.log('track', result.data.data);"
+
+# A valid example for every operation, so no page shows a bare `{}`.
 apiNotes:
   addresses.create: "Only `country` is required by the API, but buying a label needs `name` and a street line. An address with `is_complete: false` still gets rates."
   addresses.validate: "Reads `validation_results`: `is_valid` plus the corrections Shippo applied or the parts it could not match."

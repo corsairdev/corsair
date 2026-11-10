@@ -16,9 +16,10 @@ export const list: ShippoEndpoints['refundsList'] = (ctx, input) =>
 			output: Outputs.refundsList,
 		},
 		input,
-		({ shippo_account_id }) => ({
+		({ page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: '/refunds/',
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{

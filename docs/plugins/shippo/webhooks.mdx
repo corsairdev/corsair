@@ -21,12 +21,21 @@ import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
-    const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+	const body = await request.text();
+	const headers = Object.fromEntries(request.headers);
+	const query = Object.fromEntries(new URL(request.url).searchParams);
+	const result = await processWebhook(corsair, headers, body, query);
+	return Response.json(result.response ?? { success: false }, {
+		status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+	});
 }
 ```
+
+`Response.json`, not `result.response` on its own: the latter is a plain object, and returning it makes even a handled delivery fail when Next.js tries to serialize the reply.
+
+Read the body as text rather than `request.json()`, and pass the query through. Shippo's delivery carries no account id, so a subscription URL like `?tenantId=acme` is the only way to route a delivery to a tenant; dropping the query sends every delivery to `default`.
+
+Shippo signs nothing and allows no custom header on the subscription, so keep the receiving URL private.
 
 ## Events
 
