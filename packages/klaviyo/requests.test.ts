@@ -840,3 +840,47 @@ describe('the included array', () => {
 		expect(result.included?.[0]?.id).toBe('c1');
 	});
 });
+
+describe('page sizes per route', () => {
+	it('lists.list rejects a page size over 10', async () => {
+		await expect(invoke(listsList, { pageSize: 11 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('segments.list rejects a page size over 10', async () => {
+		await expect(invoke(segmentsList, { pageSize: 11 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('tags.list rejects a page size over 50', async () => {
+		await expect(invoke(tagsList, { pageSize: 51 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('events.list allows the 1000 rows the route supports', async () => {
+		respond(eventsListResponse);
+
+		await invoke(eventsList, { pageSize: 1000 });
+
+		expect(lastRequest().query).toEqual({ 'page[size]': '1000' });
+	});
+
+	it('webhooks.list never sends a page size, which the route does not take', async () => {
+		respond(webhooksListResponse);
+
+		await invoke(webhooksList, { pageSize: 20 });
+
+		expect(lastRequest().query).toEqual({});
+	});
+
+	it('tagGroups.list sends the cursor for the next page', async () => {
+		respond(tagGroupsListResponse);
+
+		await invoke(tagGroupsList, { cursor: 'bmV4dA', pageSize: 25 });
+
+		expect(lastRequest().query).toEqual({
+			'page[cursor]': 'bmV4dA',
+			'page[size]': '25',
+		});
+	});
+});

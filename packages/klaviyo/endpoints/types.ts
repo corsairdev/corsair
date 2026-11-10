@@ -108,23 +108,35 @@ function singleEnvelope<T extends z.ZodType>(item: T) {
 	});
 }
 
-/** The cursor query parameters every list route shares. */
-const PageSchema = {
-	cursor: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page.',
-		),
-	pageSize: z
-		.number()
-		.int()
-		.min(1)
-		.max(100)
-		.optional()
-		.describe('Rows per page, 1 to 100. Defaults to 20.'),
-};
+/** The cursor query parameter every paged list route shares. */
+const CursorSchema = z
+	.string()
+	.min(1)
+	.optional()
+	.describe(
+		'The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page.',
+	);
+
+/**
+ * The cursor and page-size parameters of a paged list route.
+ *
+ * The spec sets a different `page[size]` ceiling and default per route (10 for
+ * lists and segments, 25 for tag groups, 50 for tags, 100 for profiles, 1000 for
+ * events), and Klaviyo answers 400 above the ceiling, so each route passes its
+ * own.
+ */
+function pageSchema(max: number, defaultSize: number) {
+	return {
+		cursor: CursorSchema,
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(max)
+			.optional()
+			.describe(`Rows per page, 1 to ${max}. Defaults to ${defaultSize}.`),
+	};
+}
 
 /**
  * Klaviyo filters with `filter=equals(email,"a@b.com")`, a string expression
@@ -221,7 +233,7 @@ const ProfilesListInputSchema = z.object({
 		.array(z.enum(['conversations', 'push-tokens']))
 		.min(1)
 		.optional(),
-	...PageSchema,
+	...pageSchema(100, 20),
 });
 
 export type ProfilesListInput = z.input<typeof ProfilesListInputSchema>;
@@ -375,7 +387,7 @@ const ListsListInputSchema = z.object({
 	filter: FilterSchema,
 	sort: SortSchema,
 	fields: FieldsSchema,
-	...PageSchema,
+	...pageSchema(10, 10),
 });
 
 export type ListsListInput = z.input<typeof ListsListInputSchema>;
@@ -410,7 +422,7 @@ export type ListsRemoveInput = z.input<typeof ListsRemoveInputSchema>;
 const ListsProfilesInputSchema = z.object({
 	id: z.string().min(1).describe('The list id.'),
 	filter: FilterSchema,
-	...PageSchema,
+	...pageSchema(100, 20),
 });
 
 export type ListsProfilesInput = z.input<typeof ListsProfilesInputSchema>;
@@ -460,7 +472,7 @@ const SegmentsListInputSchema = z.object({
 	filter: FilterSchema,
 	sort: SortSchema,
 	fields: FieldsSchema,
-	...PageSchema,
+	...pageSchema(10, 10),
 });
 
 export type SegmentsListInput = z.input<typeof SegmentsListInputSchema>;
@@ -514,7 +526,7 @@ export type SegmentsRemoveInput = z.input<typeof SegmentsRemoveInputSchema>;
 const SegmentsProfilesInputSchema = z.object({
 	id: z.string().min(1),
 	filter: FilterSchema,
-	...PageSchema,
+	...pageSchema(100, 20),
 });
 
 export type SegmentsProfilesInput = z.input<typeof SegmentsProfilesInputSchema>;
@@ -549,7 +561,7 @@ const EventsListInputSchema = z.object({
 		.array(z.enum(['profile', 'metric']))
 		.min(1)
 		.optional(),
-	...PageSchema,
+	...pageSchema(1000, 200),
 });
 
 export type EventsListInput = z.input<typeof EventsListInputSchema>;
@@ -648,7 +660,7 @@ export type KlaviyoMetric = z.infer<typeof MetricSchema>;
 const MetricsListInputSchema = z.object({
 	filter: FilterSchema,
 	fields: FieldsSchema,
-	cursor: PageSchema.cursor,
+	cursor: CursorSchema,
 });
 
 export type MetricsListInput = z.input<typeof MetricsListInputSchema>;
@@ -756,8 +768,12 @@ const WebhookSchema = z
 
 export type KlaviyoWebhook = z.infer<typeof WebhookSchema>;
 
+/**
+ * The spec gives the webhooks route no `page[size]`, like metrics, so only a
+ * cursor is accepted: the response still carries `links.next`.
+ */
 const WebhooksListInputSchema = z.object({
-	...PageSchema,
+	cursor: CursorSchema,
 });
 
 export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
@@ -867,7 +883,7 @@ export type KlaviyoTag = z.infer<typeof TagSchema>;
 
 const TagsListInputSchema = z.object({
 	filter: FilterSchema,
-	...PageSchema,
+	...pageSchema(50, 50),
 });
 
 export type TagsListInput = z.input<typeof TagsListInputSchema>;
@@ -917,7 +933,9 @@ const TagGroupSchema = z
 
 export type KlaviyoTagGroup = z.infer<typeof TagGroupSchema>;
 
-const TagGroupsListInputSchema = z.object({});
+const TagGroupsListInputSchema = z.object({
+	...pageSchema(25, 25),
+});
 
 export type TagGroupsListInput = z.input<typeof TagGroupsListInputSchema>;
 

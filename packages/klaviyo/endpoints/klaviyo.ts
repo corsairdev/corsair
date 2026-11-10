@@ -691,7 +691,8 @@ export const webhooksList: KlaviyoEndpoints['webhooksList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: '/api/webhooks',
-			query: pageQuery(parsed),
+			// No page[size]: the spec gives this route none.
+			query: { 'page[cursor]': parsed.cursor },
 		}),
 		{
 			shape: (raw) => withCursor(raw),
@@ -922,7 +923,11 @@ export const tagGroupsList: KlaviyoEndpoints['tagGroupsList'] = (ctx, input) =>
 			output: Outputs.tagGroupsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/api/tag-groups' }),
+		(parsed) => ({
+			method: 'GET',
+			path: '/api/tag-groups',
+			query: pageQuery(parsed),
+		}),
 		{
 			shape: (raw) => withCursor(raw),
 			log: (_, result) => ({ count: result.data.length }),

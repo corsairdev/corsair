@@ -10,7 +10,7 @@ overviewNote: |
   - **Every request carries a `revision` header.** Klaviyo versions the API by date and this plugin sends the revision it was built against.
   - **Bodies are JSON:API.** A write is `{ data: { type, attributes } }`. This plugin takes flat fields and builds that envelope; reads answer `data` plus `links`.
   - **Filters are expressions.** `filter` is a string such as `equals(email,"a@b.com")`, combined with `and()` and `or()`. Field names and operators differ per resource.
-  - **Paging is cursor-based.** Pass the `nextCursor` from one response as `cursor` to read the next page. Klaviyo returns the cursor inside `links.next` as a full URL, and this plugin parses it out for you.
+  - **Paging is cursor-based.** Pass the `nextCursor` from one response as `cursor` to read the next page. Klaviyo returns the cursor inside `links.next` as a full URL, and this plugin parses it out for you. The largest `pageSize` differs per route: 10 for lists and segments, 25 for tag groups, 50 for tags, 100 for profiles and 1000 for events. Metrics and webhooks take no page size.
   - **Subscription is a job.** `profiles.subscribe` grants marketing consent, so Klaviyo queues it and answers 202 with no body. The result confirms the request was accepted, not that the profile is subscribed yet.
   - **Events are recorded by metric name**, and Klaviyo creates the metric on first use. The event then counts towards any flow listening for it.
   - **Segments evaluate server-side.** A new segment is not populated immediately, and its `definition` is a condition group rather than a filter string.
@@ -41,7 +41,7 @@ apiExamples:
   lists.get:
     call: "{ id: 'R7QkZp' }"
   lists.list:
-    call: "{ pageSize: 20 }"
+    call: "{ pageSize: 10 }"
   lists.profiles:
     call: "{ id: 'R7QkZp', pageSize: 20 }"
   lists.remove:
@@ -55,7 +55,7 @@ apiExamples:
   metrics.get:
     call: "{ id: 'Mt123' }"
   metrics.list:
-    call: "{ pageSize: 20 }"
+    call: "{}"
   profiles.create:
     call: "{ email: 'jordan@acme.com', first_name: 'Jordan', last_name: 'Reyes' }"
   profiles.get:
@@ -71,7 +71,7 @@ apiExamples:
   segments.get:
     call: "{ id: 'SgXy12' }"
   segments.list:
-    call: "{ pageSize: 20 }"
+    call: "{ pageSize: 10 }"
   segments.profiles:
     call: "{ id: 'SgXy12', pageSize: 20 }"
   segments.remove:
@@ -101,7 +101,7 @@ apiExamples:
   webhooks.get:
     call: "{ id: 'Wh123' }"
   webhooks.list:
-    call: "{ pageSize: 20 }"
+    call: "{}"
   webhooks.remove:
     call: "{ id: 'Wh123' }"
   webhooks.update:
