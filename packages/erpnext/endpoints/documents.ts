@@ -23,6 +23,8 @@ export const getValue = defineEndpoint('documents.getValue');
 export const getCount = defineEndpoint('documents.getCount');
 export const renameDoc = defineEndpoint('documents.renameDoc');
 export const searchLink = defineEndpoint('documents.searchLink');
+export const submit = defineEndpoint('documents.submit');
+export const cancel = defineEndpoint('documents.cancel');
 
 export const endpoints = {
 	create,
@@ -42,4 +44,6 @@ export const endpoints = {
 	getCount,
 	renameDoc,
 	searchLink,
+	submit,
+	cancel,
 } as const;

@@ -193,6 +193,29 @@ const DocumentsSearchLinkInputSchema = z
 	})
 	.strict();
 
+// POST /api/method/frappe.client.submit — doc carries the document to submit;
+// frappe.get_doc(doc).submit() resolves it, which requires the doctype field
+// (frappe/client.py: submit, whitelisted for POST/PUT).
+const DocumentsSubmitInputSchema = z
+	.object({
+		body: z.object({ doc: ErpnextDocumentWithDoctypeSchema }).strict(),
+	})
+	.strict();
+
+// POST /api/method/frappe.client.cancel — doctype and name identify the
+// submitted document to cancel (frappe/client.py: cancel, whitelisted for
+// POST/PUT).
+const DocumentsCancelInputSchema = z
+	.object({
+		body: z
+			.object({
+				doctype: z.string().min(1),
+				name: z.string().min(1),
+			})
+			.strict(),
+	})
+	.strict();
+
 // ── Output envelopes ──────────────────────────────────────────────────────────
 
 // /api/resource single-document answers nest the document under `data`.
@@ -297,6 +320,8 @@ export const DocumentsInputSchemas = {
 	'documents.getCount': DocumentsGetCountInputSchema,
 	'documents.renameDoc': DocumentsRenameDocInputSchema,
 	'documents.searchLink': DocumentsSearchLinkInputSchema,
+	'documents.submit': DocumentsSubmitInputSchema,
+	'documents.cancel': DocumentsCancelInputSchema,
 } as const;
 
 export const DocumentsOutputSchemas = {
@@ -317,4 +342,6 @@ export const DocumentsOutputSchemas = {
 	'documents.getCount': DocumentsGetCountOutputSchema,
 	'documents.renameDoc': ErpnextMessageOutputSchema,
 	'documents.searchLink': DocumentsSearchLinkOutputSchema,
+	'documents.submit': ErpnextDocumentMessageOutputSchema,
+	'documents.cancel': ErpnextDocumentMessageOutputSchema,
 } as const;
