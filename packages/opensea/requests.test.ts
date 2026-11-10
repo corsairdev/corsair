@@ -168,6 +168,17 @@ describe('collections', () => {
 		expect(result.collection).toBe('boredapeyachtclub');
 	});
 
+	it('collections.stats sends no request for a dot-segment slug', async () => {
+		// `/collections/./stats` would be requested as `/collections/stats`, the
+		// collections.get route for a collection named "stats".
+		for (const slug of ['.', '..']) {
+			await expect(run({ slug }, endpoints.collections.stats)).rejects.toThrow(
+				'not a valid path value',
+			);
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('collections.stats GETs /collections/{slug}/stats', async () => {
 		respond(collectionStatsFixture);
 

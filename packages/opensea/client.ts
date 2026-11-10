@@ -170,9 +170,20 @@ export type OpenseaRequest = {
 	body?: unknown;
 };
 
-/** Encodes one path segment. A slug or address may contain no slash. */
+/**
+ * Encodes one path segment. A slug or address may contain no slash.
+ * `encodeURIComponent` leaves `.` and `..` as they are and the URL parser then
+ * resolves them away (also as `%2e`), so `/collections/../stats` would be sent
+ * as `/stats`. Those two values are refused before any request.
+ */
 export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const text = String(value);
+	if (text === '.' || text === '..') {
+		throw new OpenseaAPIError(`"${text}" is not a valid path value.`, {
+			kind: 'invalid_input',
+		});
+	}
+	return encodeURIComponent(text);
 }
 
 function kindFor(status: number | undefined): OpenseaErrorCode {

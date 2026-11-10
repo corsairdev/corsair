@@ -292,4 +292,13 @@ describe('segment', () => {
 		expect(segment('boredapeyachtclub')).toBe('boredapeyachtclub');
 		expect(segment('9933')).toBe('9933');
 	});
+
+	it('refuses a dot segment, which fetch would resolve away', () => {
+		// encodeURIComponent leaves `.` and `..` as they are, and the URL parser
+		// then drops them: /collections/../stats is requested as /stats.
+		expect(() => segment('..')).toThrow(OpenseaAPIError);
+		expect(() => segment('.')).toThrow(OpenseaAPIError);
+		expect(segment('...')).toBe('...');
+		expect(segment('a.b')).toBe('a.b');
+	});
 });
