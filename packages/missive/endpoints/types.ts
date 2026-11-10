@@ -133,9 +133,11 @@ const MissiveContactGroupSchema = z
 	})
 	.loose();
 
-// One `infos` entry; the required fields differ per kind, so the union keeps
-// the provider's own per-kind contract instead of one loose blob.
-const MissiveContactInfoSchema = z.discriminatedUnion('kind', [
+// One `infos` entry of a request; the required fields differ per kind, so the
+// union keeps the provider's own per-kind contract instead of one loose blob.
+// Entries stay .loose() because an update must send back every info it wants
+// to keep, including whatever extra keys Missive returned on the read.
+const MissiveContactInfoInputSchema = z.discriminatedUnion('kind', [
 	z
 		.object({
 			kind: z.literal('email'),
@@ -211,11 +213,67 @@ const MissiveContactInfoSchema = z.discriminatedUnion('kind', [
 		.object({
 			kind: z.literal('custom'),
 			value: z.string(),
-			label: z.literal('other'),
+			// The reference marks label required, but its own List contacts
+			// example returns a custom info without one; a read-then-update
+			// round trip must not fail here.
+			label: z.literal('other').optional(),
 			custom_label: z.string().optional(),
 		})
 		.loose(),
 ]);
+
+const MissiveMembershipGroupInputSchema = z
+	.object({
+		kind: z.enum(['group', 'organization']),
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.loose();
+
+const MissiveMembershipInputSchema = z
+	.object({
+		department: z.string().optional(),
+		title: z.string().optional(),
+		location: z.string().optional(),
+		description: z.string().optional(),
+		group: MissiveMembershipGroupInputSchema,
+	})
+	.loose();
+
+// Request-side contact attributes, as listed under Create contact(s). Strict,
+// so a mistyped attribute fails here instead of being dropped by Missive.
+const MissiveContactAttributesShape = {
+	first_name: z.string().nullish(),
+	last_name: z.string().nullish(),
+	middle_name: z.string().nullish(),
+	phonetic_first_name: z.string().nullish(),
+	phonetic_last_name: z.string().nullish(),
+	phonetic_middle_name: z.string().nullish(),
+	prefix: z.string().nullish(),
+	suffix: z.string().nullish(),
+	nickname: z.string().nullish(),
+	file_as: z.string().nullish(),
+	notes: z.string().nullish(),
+	starred: z.boolean().nullish(),
+	gender: z.string().nullish(),
+	infos: z.array(MissiveContactInfoInputSchema).optional(),
+	memberships: z.array(MissiveMembershipInputSchema).optional(),
+};
+
+const MissiveContactCreateItemSchema = z
+	.object({
+		contact_book: z.string().min(1),
+		...MissiveContactAttributesShape,
+	})
+	.strict();
+
+const MissiveContactUpdateItemSchema = z
+	.object({
+		id: z.string().min(1),
+		contact_book: z.string().min(1).optional(),
+		...MissiveContactAttributesShape,
+	})
+	.strict();
 
 const MissiveMembershipGroupSchema = z
 	.object({
@@ -254,7 +312,7 @@ const MissiveContactSchema = z
 		contact_book: z.string().optional(),
 		deleted: z.boolean().optional(),
 		modified_at: z.number().int().optional(),
-		infos: z.array(MissiveContactInfoSchema).optional(),
+		infos: z.array(MissiveContactInfoInputSchema).optional(),
 		memberships: z.array(MissiveMembershipSchema).optional(),
 	})
 	.loose();
@@ -384,14 +442,14 @@ const MissiveAnalyticsGetReportOutputSchema = z.record(z.string(), z.unknown());
 
 const MissiveContactCreateInputSchema = z
 	.object({
-		body: z.array(MissiveContactSchema).min(1),
+		body: z.array(MissiveContactCreateItemSchema).min(1),
 	})
 	.strict();
 
 const MissiveContactUpdateInputSchema = z
 	.object({
 		ids: z.array(z.string().min(1)).min(1),
-		body: z.array(MissiveContactSchema).min(1),
+		body: z.array(MissiveContactUpdateItemSchema).min(1),
 	})
 	.strict()
 	.refine((input) => input.body.length === input.ids.length, {
@@ -826,16 +884,67 @@ const MissiveResponseGetOutputSchema = z
 	})
 	.loose();
 
+// A response attachment in a request: a new file (`base64_data`, `filename`,
+// and a temporary `id` for an inline image), or an attachment Missive already
+// returned, sent back so an update keeps it. Loose for that second form.
+const MissiveResponseAttachmentInputSchema = z
+	.object({
+		id: z.string().optional(),
+		filename: z.string().optional(),
+		base64_data: z.string().optional(),
+	})
+	.loose();
+
+// Request-side saved-response attributes, as listed under Create response(s).
+const MissiveResponseAttributesShape = {
+	title: z.string().max(500).optional(),
+	body: z.string().optional(),
+	subject: z.string().max(500).nullish(),
+	organization: z.string().min(1).optional(),
+	user: z.string().min(1).optional(),
+	share_with_team: z.string().nullish(),
+	shared_labels: z.array(z.string()).optional(),
+	to_fields: z.array(MissiveFieldRefSchema).optional(),
+	cc_fields: z.array(MissiveFieldRefSchema).optional(),
+	bcc_fields: z.array(MissiveFieldRefSchema).optional(),
+	external_id: z.string().nullish(),
+	external_source: z.string().nullish(),
+	attachments: z.array(MissiveResponseAttachmentInputSchema).optional(),
+};
+
 const MissiveResponseCreateInputSchema = z
 	.object({
-		body: z.array(MissiveResponseSchema).min(1),
+		body: z
+			.array(
+				z
+					.object(MissiveResponseAttributesShape)
+					.strict()
+					.refine(
+						(response) =>
+							(response.organization === undefined) !==
+							(response.user === undefined),
+						{
+							message: 'Either organization or user is required, but not both',
+						},
+					),
+			)
+			.min(1),
 	})
 	.strict();
 
 const MissiveResponseUpdateInputSchema = z
 	.object({
 		ids: z.array(z.string().min(1)).min(1),
-		body: z.array(MissiveResponseSchema).min(1),
+		body: z
+			.array(
+				z
+					.object({
+						id: z.string().min(1),
+						...MissiveResponseAttributesShape,
+					})
+					.strict(),
+			)
+			.min(1),
 	})
 	.strict()
 	.refine((input) => input.body.length === input.ids.length, {
@@ -1196,9 +1305,15 @@ const MissiveTaskCreateInputSchema = z
 				},
 			)
 			.refine(
-				(body) => !(body.subtask === true && body.conversation === undefined),
+				(body) =>
+					!(
+						body.subtask === true &&
+						body.conversation === undefined &&
+						(body.references === undefined || body.references.length === 0)
+					),
 				{
-					message: 'conversation is required when subtask is true',
+					message:
+						'conversation or references is required when subtask is true',
 				},
 			),
 	})
