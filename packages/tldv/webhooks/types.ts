@@ -75,12 +75,16 @@ export function verifyTldvWebhook(
 
 const UserSchema = z.object({ name: z.string(), email: z.string() }).loose();
 
+// The webhook's note and topic are looser than the notes endpoint's: the spec's
+// MeetingWebhookNote requires `timestamp` only and MeetingWebhookTopic leaves
+// `summary` optional. A stricter schema here rejects a delivery tl;dv is
+// allowed to send.
 const NoteSchema = z
 	.object({
-		segmentId: z.string(),
+		segmentId: z.string().nullish(),
 		timestamp: z.number(),
-		text: z.string(),
-		topicId: z.string(),
+		text: z.string().nullish(),
+		topicId: z.string().nullish(),
 	})
 	.loose();
 
@@ -89,7 +93,7 @@ const TopicSchema = z
 		id: z.string(),
 		order: z.number(),
 		title: z.string(),
-		summary: z.string(),
+		summary: z.string().nullish(),
 	})
 	.loose();
 

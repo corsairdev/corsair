@@ -239,6 +239,42 @@ describe('tl;dv webhook payloads', () => {
 		expect(parsed.data?.data.meetingId).toBe('meeting-123');
 	});
 
+	it('parses notes that carry only the fields the spec requires', () => {
+		// MeetingWebhookNote requires `timestamp` alone and MeetingWebhookTopic
+		// requires `id`, `order` and `title`. Demanding the rest would reject the
+		// delivery, and tl;dv would retry an event the plugin can never accept.
+		const sparse = {
+			...meetingReadyWithoutTranscript,
+			data: {
+				...meetingReadyWithoutTranscript.data,
+				notes: {
+					structuredNotes: [{ timestamp: 12 }],
+					topics: [{ id: 'topic-1', order: 0, title: 'Progress update' }],
+				},
+			},
+		};
+
+		const parsed = MeetingReadyEventSchema.safeParse(sparse);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.notes?.structuredNotes).toEqual([
+			{ timestamp: 12 },
+		]);
+		expect(parsed.data?.data.notes?.topics?.[0]?.summary).toBeUndefined();
+	});
+
+	it('still rejects a note with no timestamp', () => {
+		const parsed = MeetingReadyEventSchema.safeParse({
+			...meetingReadyWithoutTranscript,
+			data: {
+				...meetingReadyWithoutTranscript.data,
+				notes: { structuredNotes: [{ text: 'no time' }], topics: [] },
+			},
+		});
+
+		expect(parsed.success).toBe(false);
+	});
+
 	it('rejects a MeetingReady body whose event is wrong', () => {
 		const parsed = MeetingReadyEventSchema.safeParse({
 			...meetingReadyEvent,
