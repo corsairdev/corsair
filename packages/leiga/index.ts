@@ -173,8 +173,9 @@ export const leigaAuthConfig = {
 		account: [
 			'client_id',
 			'client_secret',
+			// The minted token with its expiry and the pair it belongs to, as
+			// one value. See `LeigaStoredToken`.
 			'access_token',
-			'expires_at',
 		] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -263,11 +264,11 @@ export type ExternalLeigaPlugin<T extends LeigaPluginOptions> =
  *
  * 1. an explicit `key`, which is already a token;
  * 2. the account, through `resolveLeigaAccessToken`, which reuses a stored
- *    token until it is nearly expired and otherwise exchanges the stored client
- *    pair for a fresh one.
+ *    token while it is unexpired and was minted by the pair the account holds
+ *    now, and otherwise exchanges that pair for a fresh one.
  *
- * A missing pair and a missing token both mean the account is not connected,
- * which has to throw rather than send an empty header.
+ * A missing pair means the account is not connected, which has to throw rather
+ * than send an empty header or a token an earlier pair left behind.
  */
 async function resolveLeigaKey(
 	ctx: LeigaKeyBuilderContext,

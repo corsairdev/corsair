@@ -134,6 +134,56 @@ describe('Leiga token exchange', () => {
 		expect(jest.mocked(globalThis.fetch)).toHaveBeenCalledTimes(2);
 	});
 
+	it('shares one exchange between calls that start together', async () => {
+		mockFetch(jsonResponse(tokenResponse));
+
+		const tokens = await Promise.all([
+			resolveLeigaToken('cid', 'secret', 1_000),
+			resolveLeigaToken('cid', 'secret', 1_000),
+			resolveLeigaToken('cid', 'secret', 1_000),
+		]);
+
+		expect(tokens.map((token) => token.accessToken)).toEqual([
+			'test-access-token',
+			'test-access-token',
+			'test-access-token',
+		]);
+		expect(jest.mocked(globalThis.fetch)).toHaveBeenCalledTimes(1);
+	});
+
+	it('exchanges again after a failed exchange', async () => {
+		mockFetch(jsonResponse({ code: '18', msg: 'client_id error' }));
+		mockFetch(jsonResponse(tokenResponse));
+
+		await expect(resolveLeigaToken('cid', 'secret', 1_000)).rejects.toThrow(
+			/code 18/,
+		);
+		const token = await resolveLeigaToken('cid', 'secret', 1_100);
+
+		expect(token.accessToken).toBe('test-access-token');
+	});
+
+	it('skips a cached token that Leiga rejected', async () => {
+		mockFetch(jsonResponse(tokenResponse));
+		mockFetch(
+			jsonResponse({
+				code: '0',
+				data: { expireIn: 604800, accessToken: 'second-token' },
+			}),
+		);
+
+		await resolveLeigaToken('cid', 'secret', 1_000);
+		const replaced = await resolveLeigaToken('cid', 'secret', 1_100, {
+			rejectedToken: 'test-access-token',
+		});
+
+		expect(replaced.accessToken).toBe('second-token');
+		// The replacement is what the cache holds from here on.
+		const again = await resolveLeigaToken('cid', 'secret', 1_200);
+		expect(again.accessToken).toBe('second-token');
+		expect(jest.mocked(globalThis.fetch)).toHaveBeenCalledTimes(2);
+	});
+
 	it('keys the cache by credentials, so another pair exchanges', async () => {
 		mockFetch(jsonResponse(tokenResponse));
 		mockFetch(

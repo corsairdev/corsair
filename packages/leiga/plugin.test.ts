@@ -1,8 +1,21 @@
 import { AuthMissingError } from 'corsair/core';
 import type { LeigaAuthContext } from './auth';
-import { isStoredTokenUsable, resolveLeigaAccessToken } from './auth';
+import {
+	decodeLeigaStoredToken,
+	encodeLeigaStoredToken,
+	fingerprintLeigaPair,
+	isStoredTokenUsable,
+	resolveLeigaAccessToken,
+} from './auth';
 import { clearLeigaTokenCache } from './client';
 import { leiga, leigaAuthConfig, leigaEndpointSchemas } from './index';
+import { tokenResponse } from './test-fixtures';
+import {
+	installFetchMock,
+	jsonResponse,
+	mockFetch,
+	restoreFetchMock,
+} from './test-helpers';
 
 const OPERATIONS = [
 	'issues.fields',
@@ -38,22 +51,34 @@ function flatten(endpoints: NestedMap): string[] {
 	return paths.sort();
 }
 
+const PAIR = fingerprintLeigaPair('cid', 'secret');
+
+/** The `access_token` field as the resolver saves it. */
+function storedToken(
+	overrides: { accessToken?: string; expiresAt?: number; pair?: string } = {},
+): string {
+	return encodeLeigaStoredToken({
+		accessToken: 'stored',
+		expiresAt: Date.now() + 3_600_000,
+		pair: PAIR,
+		...overrides,
+	});
+}
+
 /** A key manager slice: only the lookups the resolver calls. */
 function authContext(
 	stored: {
 		accessToken?: string | null;
-		expiresAt?: string | null;
 		clientId?: string | null;
 		clientSecret?: string | null;
 	} = {},
-): LeigaAuthContext & { written: { token?: string; expiry?: string } } {
-	const written: { token?: string; expiry?: string } = {};
+): LeigaAuthContext & { written: { token?: string } } {
+	const written: { token?: string } = {};
 	return {
 		tenantId: 'default',
 		written,
 		keys: {
 			get_access_token: jest.fn().mockResolvedValue(stored.accessToken ?? null),
-			get_expires_at: jest.fn().mockResolvedValue(stored.expiresAt ?? null),
 			get_client_id: jest.fn().mockResolvedValue(stored.clientId ?? null),
 			get_client_secret: jest
 				.fn()
@@ -61,16 +86,15 @@ function authContext(
 			set_access_token: jest.fn(async (value: string) => {
 				written.token = value;
 			}),
-			set_expires_at: jest.fn(async (value: string) => {
-				written.expiry = value;
-			}),
 		},
 	};
 }
 
 beforeEach(() => {
+	installFetchMock();
 	clearLeigaTokenCache();
 });
+afterEach(restoreFetchMock);
 
 describe('leiga plugin definition', () => {
 	const plugin = leiga();
@@ -93,7 +117,6 @@ describe('leiga plugin definition', () => {
 			'client_id',
 			'client_secret',
 			'access_token',
-			'expires_at',
 		]);
 	});
 
@@ -159,36 +182,141 @@ describe('leiga plugin definition', () => {
 });
 
 describe('leiga stored token reuse', () => {
+	const record = (expiresAt: number, pair = PAIR) => ({
+		accessToken: 'tok',
+		expiresAt,
+		pair,
+	});
+
 	it('accepts a token whose expiry is in the future', () => {
-		expect(isStoredTokenUsable('tok', String(Date.now() + 3_600_000))).toBe(
+		expect(isStoredTokenUsable(record(Date.now() + 3_600_000), PAIR)).toBe(
 			true,
 		);
 	});
 
 	it('rejects a token inside the 60 second skew', () => {
-		expect(isStoredTokenUsable('tok', String(Date.now() + 30_000))).toBe(false);
+		expect(isStoredTokenUsable(record(Date.now() + 30_000), PAIR)).toBe(false);
 	});
 
 	it('rejects an expired token', () => {
-		expect(isStoredTokenUsable('tok', String(Date.now() - 1_000))).toBe(false);
+		expect(isStoredTokenUsable(record(Date.now() - 1_000), PAIR)).toBe(false);
 	});
 
-	it('treats a token with no recorded expiry as stale', () => {
-		// Trusting it forever would keep sending an expired token until Leiga
-		// answered code 15, since nothing would ever trigger an exchange.
-		expect(isStoredTokenUsable('tok', null)).toBe(false);
+	it('rejects a token minted by another client pair', () => {
+		const other = fingerprintLeigaPair('other', 'secret');
+		expect(
+			isStoredTokenUsable(record(Date.now() + 3_600_000, other), PAIR),
+		).toBe(false);
+	});
+
+	it('fingerprints the id and the secret, not the id alone', () => {
+		expect(fingerprintLeigaPair('cid', 'rotated')).not.toBe(PAIR);
+		// The separator keeps "ab" + "c" apart from "a" + "bc".
+		expect(fingerprintLeigaPair('ab', 'c')).not.toBe(
+			fingerprintLeigaPair('a', 'bc'),
+		);
+		expect(PAIR).not.toContain('secret');
+	});
+
+	it('treats a bare token in the field as no token', () => {
+		// Without its expiry and pair there is no telling whose it is or how
+		// long it lasts, so it is replaced rather than trusted.
+		expect(decodeLeigaStoredToken('just-a-token')).toBeUndefined();
+		expect(decodeLeigaStoredToken('{"accessToken":"tok"}')).toBeUndefined();
+		expect(decodeLeigaStoredToken('[1,2]')).toBeUndefined();
+		expect(decodeLeigaStoredToken(null)).toBeUndefined();
+	});
+
+	it('reads back the record it writes', () => {
+		const token = record(1_794_000_000_000);
+		expect(decodeLeigaStoredToken(encodeLeigaStoredToken(token))).toEqual(
+			token,
+		);
 	});
 
 	it('returns a stored token without exchanging', async () => {
 		const ctx = authContext({
-			accessToken: 'stored',
-			expiresAt: String(Date.now() + 3_600_000),
+			accessToken: storedToken(),
 			clientId: 'cid',
 			clientSecret: 'secret',
 		});
 
 		await expect(resolveLeigaAccessToken(ctx)).resolves.toBe('stored');
 		expect(ctx.keys.set_access_token).not.toHaveBeenCalled();
+		expect(jest.mocked(globalThis.fetch)).not.toHaveBeenCalled();
+	});
+
+	it('saves the token, its expiry and its pair in one write', async () => {
+		const ctx = authContext({ clientId: 'cid', clientSecret: 'secret' });
+		mockFetch(jsonResponse(tokenResponse));
+
+		await expect(resolveLeigaAccessToken(ctx, { now: 1_000 })).resolves.toBe(
+			'test-access-token',
+		);
+
+		expect(ctx.keys.set_access_token).toHaveBeenCalledTimes(1);
+		expect(decodeLeigaStoredToken(ctx.written.token)).toEqual({
+			accessToken: 'test-access-token',
+			expiresAt: 1_000 + 604_800_000,
+			pair: PAIR,
+		});
+		// The secret itself is not copied into the record.
+		expect(ctx.written.token).not.toContain('secret');
+	});
+
+	it('exchanges when the stored token belongs to another pair', async () => {
+		const ctx = authContext({
+			accessToken: storedToken({
+				pair: fingerprintLeigaPair('old-cid', 'old-secret'),
+			}),
+			clientId: 'cid',
+			clientSecret: 'secret',
+		});
+		mockFetch(jsonResponse(tokenResponse));
+
+		await expect(resolveLeigaAccessToken(ctx)).resolves.toBe(
+			'test-access-token',
+		);
+		expect(decodeLeigaStoredToken(ctx.written.token)?.pair).toBe(PAIR);
+	});
+
+	it('never hands back the token Leiga rejected', async () => {
+		const ctx = authContext({
+			accessToken: storedToken(),
+			clientId: 'cid',
+			clientSecret: 'secret',
+		});
+		mockFetch(jsonResponse(tokenResponse));
+
+		await expect(
+			resolveLeigaAccessToken(ctx, { rejectedToken: 'stored' }),
+		).resolves.toBe('test-access-token');
+	});
+
+	it('uses a stored token that is not the rejected one', async () => {
+		// Another process already replaced the token Leiga refused.
+		const ctx = authContext({
+			accessToken: storedToken({ accessToken: 'replacement' }),
+			clientId: 'cid',
+			clientSecret: 'secret',
+		});
+
+		await expect(
+			resolveLeigaAccessToken(ctx, { rejectedToken: 'stored' }),
+		).resolves.toBe('replacement');
+		expect(jest.mocked(globalThis.fetch)).not.toHaveBeenCalled();
+	});
+
+	it('still returns the token when saving it fails', async () => {
+		const ctx = authContext({ clientId: 'cid', clientSecret: 'secret' });
+		jest
+			.mocked(ctx.keys.set_access_token)
+			.mockRejectedValueOnce(new Error('database unavailable'));
+		mockFetch(jsonResponse(tokenResponse));
+
+		await expect(resolveLeigaAccessToken(ctx)).resolves.toBe(
+			'test-access-token',
+		);
 	});
 
 	it('throws AuthMissingError when no token and no client pair exist', async () => {
@@ -206,14 +334,24 @@ describe('leiga stored token reuse', () => {
 			AuthMissingError,
 		);
 	});
+
+	it('throws AuthMissingError for a stored token with no client pair', async () => {
+		// The pair was removed. The token it minted must not outlive it.
+		const ctx = authContext({ accessToken: storedToken() });
+
+		await expect(resolveLeigaAccessToken(ctx)).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+	});
 });
 
 describe('leiga key builder', () => {
 	it('prefers an explicit key without touching the store', async () => {
 		const plugin = leiga({ key: 'explicit-token' });
 		const ctx = authContext({
-			accessToken: 'stored',
-			expiresAt: String(Date.now() + 3_600_000),
+			accessToken: storedToken(),
+			clientId: 'cid',
+			clientSecret: 'secret',
 		});
 
 		const key = await plugin.keyBuilder?.(ctx as never, 'endpoint');
@@ -225,8 +363,9 @@ describe('leiga key builder', () => {
 	it('falls back to the stored token', async () => {
 		const plugin = leiga();
 		const ctx = authContext({
-			accessToken: 'stored',
-			expiresAt: String(Date.now() + 3_600_000),
+			accessToken: storedToken(),
+			clientId: 'cid',
+			clientSecret: 'secret',
 		});
 
 		await expect(plugin.keyBuilder?.(ctx as never, 'endpoint')).resolves.toBe(

@@ -16,8 +16,9 @@ function statusOf(error: Error): number | undefined {
  *
  * - `5` `object not exist: ...`: a project, issue or workflow id that does not
  *   belong to this tenant. Fatal; the same request would fail again.
- * - `15` `accessToken error`: missing or expired token. Fatal, and the token is
- *   minted per call, so a retry would send the same one.
+ * - `15` `accessToken error`: missing, expired or revoked token. The endpoint
+ *   call has already replaced the token once and tried again by the time this
+ *   handler sees the error, so a retry here would only repeat that.
  * - `18` `client_id error`: the client pair is wrong. Fatal.
  * - `100` `"<field> should not be null"`: a required input is missing. The
  *   schemas reject those before sending, so this means the provider requires a

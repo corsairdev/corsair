@@ -228,6 +228,12 @@ type CacheEntry = { token: LeigaTokenResponse; key: string };
 /** Tokens are per client pair, so one module-level cache keyed by credentials. */
 let tokenCache: CacheEntry | undefined;
 
+/**
+ * Exchanges in progress, keyed like the cache. Calls that start together and
+ * all find no usable token share one exchange instead of each minting a token.
+ */
+const pendingExchanges = new Map<string, Promise<LeigaTokenResponse>>();
+
 /** Refreshes a minute early, so a token cannot expire mid-flight. */
 const EXPIRY_SKEW_MS = 60_000;
 
@@ -236,27 +242,43 @@ const EXPIRY_SKEW_MS = 60_000;
  * close to expiry. Returns the token **and** its expiry, because the caller
  * persists both: storing the token alone leaves the next process unable to tell
  * a live token from an expired one.
+ *
+ * `rejectedToken` is a token Leiga has just refused. A cached copy of it is
+ * skipped, so the caller always gets a different token back.
  */
 export async function resolveLeigaToken(
 	clientId: string,
 	secretKey: string,
 	now: number = Date.now(),
+	options: { rejectedToken?: string } = {},
 ): Promise<LeigaTokenResponse> {
 	const key = `${clientId}\u0000${secretKey}`;
 	if (
 		tokenCache?.key === key &&
-		tokenCache.token.expiresAt - EXPIRY_SKEW_MS > now
+		tokenCache.token.expiresAt - EXPIRY_SKEW_MS > now &&
+		tokenCache.token.accessToken !== options.rejectedToken
 	) {
 		return tokenCache.token;
 	}
-	const token = await requestLeigaToken(clientId, secretKey, now);
-	tokenCache = { token, key };
-	return token;
+	const pending = pendingExchanges.get(key);
+	if (pending) return pending;
+
+	const exchange = requestLeigaToken(clientId, secretKey, now)
+		.then((token) => {
+			tokenCache = { token, key };
+			return token;
+		})
+		.finally(() => {
+			pendingExchanges.delete(key);
+		});
+	pendingExchanges.set(key, exchange);
+	return exchange;
 }
 
-/** Clears the cached token. Tests use it; a caller needs it only after an auth error. */
+/** Clears the cached token and forgets exchanges in progress. Tests use it. */
 export function clearLeigaTokenCache(): void {
 	tokenCache = undefined;
+	pendingExchanges.clear();
 }
 
 /**
