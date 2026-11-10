@@ -1,0 +1,143 @@
+---
+title: Overview
+description: "Places data from Foursquare - search places by text, category or location, read full place details, autocomplete a partial query, and pull a place's tips and photos."
+---
+
+Use **Foursquare** through Corsair: one client, typed API calls.
+
+Create a Service Key in the Foursquare Developer Console (https://foursquare.com/developers/console), then store it as the account's `api_key`. It is sent as `Authorization: Bearer <key>`.
+
+Things to know before you call:
+
+- **Two headers are required, not one.** Besides the Bearer token, every request must send `X-Places-Api-Version`. Without it the API answers `400 "Please provide a valid version."` even with a valid key, which reads like an auth failure. The plugin always sends the documented version.
+- **The host is `places-api.foursquare.com`,** not `api.foursquare.com`. The v3 paths on the old host answer `401 Invalid request token` for every request; `api.foursquare.com/v2` is the separate legacy API and is not wrapped here.
+- **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do, so almost every output field is optional. The identifier a response needs is always added back to your selection, because Foursquare returns exactly what you ask for: `fields: ['name']` alone answers `{"results":[{"name":"..."}]}` with no `fsq_place_id`.
+- **Pagination.** `places.search` returns `nextCursor`, taken from the `link` response header. Pass it back as `cursor` to continue the same search; it is absent on the last page. This is the only operation that pages, because Foursquare paginates by cursor and the other list endpoints take only `limit`.
+- **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-letter country code. Foursquare states that only English-speaking countries are supported. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found`, a 400 asking for a latitude and longitude, or a 500.
+- **Rate limits** are 50 QPS pay-as-you-go and 100 QPS enterprise, counted across all endpoints. A 429 is retried three times using `Retry-After` when present.
+- **No inbound webhooks.** The Places API does not send any, so this plugin registers none.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/foursquare better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/foursquare better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/foursquare better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/foursquare better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { foursquare } from '@corsair-dev/foursquare';
+
+export const corsair = createCorsair({
+	plugins: [
+		foursquare(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+foursquare()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'foursquare',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find coffee shops near a point**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.foursquare.api.places.search({
+	query: 'coffee',
+	ll: '41.8781,-87.6298',
+	radius: 2000,
+	limit: 10,
+});
+```
+
+
+**Read one place by id**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.foursquare.api.places.get({ fsq_place_id: '4b28f2aef964a520f9d024e3' });
+```
+
+
+See the full list on the [API](/plugins/foursquare/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/foursquare/api">
+    Every `foursquare.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

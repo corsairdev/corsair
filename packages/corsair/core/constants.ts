@@ -165,9 +165,11 @@ export const BaseProviders = [
 	'coda',
 	'codacy',
 	'codeinterpreter',
+	'codereadr',
 	'cody',
 	'coinbase',
 	'coinmarketcal',
+	'coinmarketcap',
 	'collegefootballdata',
 	'composio',
 	'confluence',
@@ -193,6 +195,7 @@ export const BaseProviders = [
 	'dataforseo',
 	'datarobot',
 	'deepseek',
+	'desktime',
 	'devinmcp',
 	'diffbot',
 	'digitalocean',
@@ -219,6 +222,7 @@ export const BaseProviders = [
 	'epicgames',
 	'esignatures',
 	'esputnik',
+	'eventzilla',
 	'everhour',
 	'exa',
 	'excel',
@@ -227,6 +231,7 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
@@ -238,6 +243,7 @@ export const BaseProviders = [
 	'flutterwave',
 	'followupboss',
 	'formbricks',
+	'foursquare',
 	'fundable',
 	'gemini',
 	'giphy',
@@ -286,6 +292,7 @@ export const BaseProviders = [
 	'kaggle',
 	'keenable',
 	'kibana',
+	'klaviyo',
 	'kling',
 	'leexi',
 	'lever',
@@ -302,6 +309,7 @@ export const BaseProviders = [
 	'mem0',
 	'merriamwebsterdict',
 	'minimax',
+	'miro',
 	'missive',
 	'monday',
 	'mrscraper',
@@ -318,6 +326,7 @@ export const BaseProviders = [
 	'onepassword',
 	'openai',
 	'openrouter',
+	'opensea',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -337,7 +346,9 @@ export const BaseProviders = [
 	'prisma',
 	'pushbullet',
 	'qdrant',
+	'quaderno',
 	'razorpay',
+	'reamaze',
 	'recallai',
 	'reddit',
 	'reducto',
@@ -365,6 +376,7 @@ export const BaseProviders = [
 	'sendgrid',
 	'sentry',
 	'serpapi',
+	'servicenow',
 	'sharepoint',
 	'slack',
 	'slackbot',
@@ -609,9 +621,11 @@ export const ProviderDisplayNames = {
 	coda: 'Coda',
 	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
+	codereadr: 'CodeREADr',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
+	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
 	composio: 'Composio',
 	confluence: 'Confluence',
@@ -637,6 +651,7 @@ export const ProviderDisplayNames = {
 	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
+	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
@@ -663,6 +678,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
+	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -671,6 +687,7 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
@@ -682,6 +699,7 @@ export const ProviderDisplayNames = {
 	flutterwave: 'Flutterwave',
 	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
+	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
 	giphy: 'Giphy',
@@ -730,6 +748,7 @@ export const ProviderDisplayNames = {
 	kaggle: 'Kaggle',
 	keenable: 'Keenable',
 	kibana: 'Kibana',
+	klaviyo: 'Klaviyo',
 	kling: 'Kling',
 	leexi: 'Leexi',
 	lever: 'Lever',
@@ -746,6 +765,7 @@ export const ProviderDisplayNames = {
 	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
+	miro: 'Miro',
 	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
@@ -762,6 +782,7 @@ export const ProviderDisplayNames = {
 	onepassword: '1Password',
 	openai: 'OpenAI',
 	openrouter: 'OpenRouter',
+	opensea: 'OpenSea',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -781,7 +802,9 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
+	quaderno: 'Quaderno',
 	razorpay: 'Razorpay',
+	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
@@ -808,6 +831,7 @@ export const ProviderDisplayNames = {
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
+	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
@@ -1058,9 +1082,11 @@ export type AllProviders =
 	| 'coda'
 	| 'codacy'
 	| 'codeinterpreter'
+	| 'codereadr'
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
+	| 'coinmarketcap'
 	| 'collegefootballdata'
 	| 'composio'
 	| 'confluence'
@@ -1086,6 +1112,7 @@ export type AllProviders =
 	| 'dataforseo'
 	| 'datarobot'
 	| 'deepseek'
+	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'
 	| 'digitalocean'
@@ -1111,6 +1138,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'esignatures'
 	| 'esputnik'
+	| 'eventzilla'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
@@ -1119,6 +1147,7 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
@@ -1130,6 +1159,7 @@ export type AllProviders =
 	| 'flutterwave'
 	| 'followupboss'
 	| 'formbricks'
+	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
 	| 'giphy'
@@ -1178,6 +1208,7 @@ export type AllProviders =
 	| 'kaggle'
 	| 'keenable'
 	| 'kibana'
+	| 'klaviyo'
 	| 'kling'
 	| 'leexi'
 	| 'lever'
@@ -1194,6 +1225,7 @@ export type AllProviders =
 	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
+	| 'miro'
 	| 'missive'
 	| 'monday'
 	| 'mrscraper'
@@ -1210,6 +1242,7 @@ export type AllProviders =
 	| 'onepassword'
 	| 'openai'
 	| 'openrouter'
+	| 'opensea'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
@@ -1229,7 +1262,9 @@ export type AllProviders =
 	| 'prisma'
 	| 'pushbullet'
 	| 'qdrant'
+	| 'quaderno'
 	| 'razorpay'
+	| 'reamaze'
 	| 'recallai'
 	| 'reddit'
 	| 'reducto'
@@ -1257,6 +1292,7 @@ export type AllProviders =
 	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
+	| 'servicenow'
 	| 'sharepoint'
 	| 'slack'
 	| 'slackbot'

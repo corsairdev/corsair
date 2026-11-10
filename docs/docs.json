@@ -1408,6 +1408,14 @@
                 ]
               },
               {
+                "group": "CodeREADr",
+                "pages": [
+                  "plugins/codereadr/overview",
+                  "plugins/codereadr/api",
+                  "plugins/codereadr/database"
+                ]
+              },
+              {
                 "group": "Cody",
                 "pages": [
                   "plugins/cody/overview",
@@ -1430,6 +1438,14 @@
                   "plugins/coinmarketcal/overview",
                   "plugins/coinmarketcal/api",
                   "plugins/coinmarketcal/database"
+                ]
+              },
+              {
+                "group": "CoinMarketCap",
+                "pages": [
+                  "plugins/coinmarketcap/overview",
+                  "plugins/coinmarketcap/api",
+                  "plugins/coinmarketcap/database"
                 ]
               },
               {
@@ -1632,6 +1648,14 @@
                   "plugins/deepseek/overview",
                   "plugins/deepseek/api",
                   "plugins/deepseek/database"
+                ]
+              },
+              {
+                "group": "DeskTime",
+                "pages": [
+                  "plugins/desktime/overview",
+                  "plugins/desktime/api",
+                  "plugins/desktime/database"
                 ]
               },
               {
@@ -1849,6 +1873,14 @@
                 ]
               },
               {
+                "group": "Eventzilla",
+                "pages": [
+                  "plugins/eventzilla/overview",
+                  "plugins/eventzilla/api",
+                  "plugins/eventzilla/database"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",
@@ -1914,6 +1946,14 @@
                   "plugins/faraday/overview",
                   "plugins/faraday/api",
                   "plugins/faraday/database"
+                ]
+              },
+              {
+                "group": "Fidel",
+                "pages": [
+                  "plugins/fidel/overview",
+                  "plugins/fidel/api",
+                  "plugins/fidel/database"
                 ]
               },
               {
@@ -2007,6 +2047,14 @@
                   "plugins/formbricks/overview",
                   "plugins/formbricks/api",
                   "plugins/formbricks/database"
+                ]
+              },
+              {
+                "group": "Foursquare",
+                "pages": [
+                  "plugins/foursquare/overview",
+                  "plugins/foursquare/api",
+                  "plugins/foursquare/database"
                 ]
               },
               {
@@ -2417,6 +2465,14 @@
                 ]
               },
               {
+                "group": "Klaviyo",
+                "pages": [
+                  "plugins/klaviyo/overview",
+                  "plugins/klaviyo/api",
+                  "plugins/klaviyo/database"
+                ]
+              },
+              {
                 "group": "Kling",
                 "pages": [
                   "plugins/kling/overview",
@@ -2557,6 +2613,14 @@
                 ]
               },
               {
+                "group": "Miro",
+                "pages": [
+                  "plugins/miro/overview",
+                  "plugins/miro/api",
+                  "plugins/miro/database"
+                ]
+              },
+              {
                 "group": "Missive",
                 "pages": [
                   "plugins/missive/overview",
@@ -2680,6 +2744,14 @@
                   "plugins/openrouter/overview",
                   "plugins/openrouter/api",
                   "plugins/openrouter/database"
+                ]
+              },
+              {
+                "group": "OpenSea",
+                "pages": [
+                  "plugins/opensea/overview",
+                  "plugins/opensea/api",
+                  "plugins/opensea/database"
                 ]
               },
               {
@@ -2845,12 +2917,28 @@
                 ]
               },
               {
+                "group": "Quaderno",
+                "pages": [
+                  "plugins/quaderno/overview",
+                  "plugins/quaderno/api",
+                  "plugins/quaderno/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",
                   "plugins/razorpay/api",
                   "plugins/razorpay/database",
                   "plugins/razorpay/webhooks"
+                ]
+              },
+              {
+                "group": "Re:amaze",
+                "pages": [
+                  "plugins/reamaze/overview",
+                  "plugins/reamaze/api",
+                  "plugins/reamaze/database"
                 ]
               },
               {
@@ -3066,6 +3154,14 @@
                   "plugins/serpapi/overview",
                   "plugins/serpapi/api",
                   "plugins/serpapi/database"
+                ]
+              },
+              {
+                "group": "ServiceNow",
+                "pages": [
+                  "plugins/servicenow/overview",
+                  "plugins/servicenow/api",
+                  "plugins/servicenow/database"
                 ]
               },
               {

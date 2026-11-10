@@ -1,0 +1,3687 @@
+---
+title: API
+description: "API reference for Quaderno: every `quaderno.api.*` operation with input and output types."
+---
+
+Every `quaderno.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Authorization
+
+### authorization
+
+`authorization`
+
+Which account this key belongs to: `identity.href` is that account’s base URL, so this is how a caller finds the subdomain to pass as `account`. Also returns the default API version.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.authorization({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identity full type">
+
+```ts
+{
+  id?: number | string | null,
+  name?: string | null,
+  email?: string | null,
+  publishable_key?: string | null,
+  href?: string | null,
+  default_api_version?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Adds a customer. `first_name` is required, and holds the company name for a `company`. Give an `email` if documents will be delivered to this contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.contacts.create({ first_name: "Amelia", last_name: "Chen", email: "amelia.chen@example.com", country: "US" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `person \| company` | No | `person` or `company`. Defaults to `person` in the dashboard. |
+| `first_name` | `string` | Yes | The first name of a person, or the company name when `kind` is `company`. Required. |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | Contact email address. Quaderno delivers documents to it, so a contact without one cannot be emailed. |
+| `phone_1` | `string` | No | — |
+| `web` | `string` | No | — |
+| `street_line_1` | `string` | No | — |
+| `street_line_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | Two-letter ISO country code, such as `US`. |
+| `tax_id` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `discount` | `string \| number` | No | Default discount percentage for this contact. |
+| `language` | `string` | No | Two-letter language code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number,
+  kind?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  contact_person?: string | null,
+  department?: string | null,
+  email?: string | null,
+  phone_1?: string | null,
+  web?: string | null,
+  street_line_1?: string | null,
+  street_line_2?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  region?: string | null,
+  country?: string | null,
+  tax_id?: string | null,
+  tax_status?: string | null,
+  notes?: string | null,
+  discount?: string | number | null,
+  language?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  permalink?: string | null,
+  created_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Removes a customer. Quaderno refuses with 422 while the contact still has documents attached, so invoices must be voided first. Answers 204 with no body.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.quaderno.api.contacts.delete({ id: 78395726 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The contact to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+One customer by id. An unknown id answers **401**, not 404, with “Unauthorized access or contact does not exist”; the plugin reports it as `not_found_or_denied`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.contacts.get({ id: 78395726 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The contact id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number,
+  kind?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  contact_person?: string | null,
+  department?: string | null,
+  email?: string | null,
+  phone_1?: string | null,
+  web?: string | null,
+  street_line_1?: string | null,
+  street_line_2?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  region?: string | null,
+  country?: string | null,
+  tax_id?: string | null,
+  tax_status?: string | null,
+  notes?: string | null,
+  discount?: string | number | null,
+  language?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  permalink?: string | null,
+  created_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Customers, newest first, answered as a bare array. Search with `q` and page with `created_before`; `next_created_before` carries the next cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.contacts.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Free-text search. |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  kind?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  contact_person?: string | null,
+  department?: string | null,
+  email?: string | null,
+  phone_1?: string | null,
+  web?: string | null,
+  street_line_1?: string | null,
+  street_line_2?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  region?: string | null,
+  country?: string | null,
+  tax_id?: string | null,
+  tax_status?: string | null,
+  notes?: string | null,
+  discount?: string | number | null,
+  language?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  permalink?: string | null,
+  created_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Changes a customer. Fields left out are left unchanged by the API, not cleared.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.contacts.update({ id: 78395726, first_name: "Amelia" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `person \| company` | No | `person` or `company`. Defaults to `person` in the dashboard. |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | Contact email address. |
+| `phone_1` | `string` | No | — |
+| `web` | `string` | No | — |
+| `street_line_1` | `string` | No | — |
+| `street_line_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | Two-letter ISO country code, such as `US`. |
+| `tax_id` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `discount` | `string \| number` | No | Default discount percentage for this contact. |
+| `language` | `string` | No | Two-letter language code. |
+| `id` | `number` | Yes | The contact to update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number,
+  kind?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  contact_person?: string | null,
+  department?: string | null,
+  email?: string | null,
+  phone_1?: string | null,
+  web?: string | null,
+  street_line_1?: string | null,
+  street_line_2?: string | null,
+  city?: string | null,
+  postal_code?: string | null,
+  region?: string | null,
+  country?: string | null,
+  tax_id?: string | null,
+  tax_status?: string | null,
+  notes?: string | null,
+  discount?: string | number | null,
+  language?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  permalink?: string | null,
+  created_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### create
+
+`credits.create`
+
+Issues a credit note against an existing invoice, by `invoice_id`, and records the refund. It credits the whole invoice unless `credited_amount` is given. It consumes a document number and cannot be deleted, only voided.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.credits.create({ invoice_id: 181235103 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | The invoice being credited. |
+| `payment_method` | `credit_card \| cash \| wire_transfer \| direct_debit \| check \| iou \| paypal \| other` | No | How the credited amount is refunded. |
+| `credited_amount` | `number` | No | Amount to credit in major units, at most the invoice total. Only works for an invoice with a single line. Defaults to the full invoice total. |
+
+A credit note is issued against an invoice: pass `invoice_id`. It credits the full invoice unless `credited_amount` is set, which only works for an invoice with one line.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliver
+
+`credits.deliver`
+
+Emails the credit note to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.credits.deliver({ id: 181235112 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The credit note to email to its contact. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`credits.get`
+
+One credit note by id, with its lines, payments and the document it credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.credits.get({ id: 181235112 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`credits.list`
+
+Credit notes, newest first, as a bare array. A voided invoice leaves one of these beside it.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.credits.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `date` | `string` | No | Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted. |
+| `state` | `string` | No | — |
+| `contact` | `number` | No | — |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`credits.update`
+
+Changes the administrative fields of a credit note: `notes`, `payment_details` and `tag_list`. Amounts, lines and the customer are immutable once it is issued.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.credits.update({ id: 181235112, notes: "Refund agreed by phone" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `notes` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### void
+
+`credits.void`
+
+Voids a credit note. `void_reason` is required, exactly as for an invoice.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.quaderno.api.credits.void({ id: 181235112, void_reason: "Issued in error" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `void_reason` | `string` | Yes | Why the credit note is being voided. |
+| `void_description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Issues an invoice and **allocates a document number**, which is not recoverable: invoices cannot be deleted, only voided. Passing `payment_method` records a full payment immediately and marks it paid. Needs a `contact` id and at least one line item.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.invoices.create({ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | Yes | Line items. Quaderno caps a document at 200 lines. |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
+| `due_date` | `string` | No | ISO date. |
+| `notes` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `po_number` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+| `payment_method` | `credit_card \| cash \| wire_transfer \| direct_debit \| check \| iou \| paypal \| offset \| other` | No | If set, a payment for the full amount is recorded on creation, marking the invoice paid immediately. |
+
+Consumes a document number, which cannot be freed. Pass `payment_method` to record a full payment at the same time.
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description: string,
+  quantity?: number,
+  unit_price: string | number,
+  discount_rate?: string | number,
+  product_code?: string,
+  tax_1_name?: string,
+  tax_1_rate?: number,
+  tax_1_country?: string,
+  tax_1_region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliver
+
+`invoices.deliver`
+
+Sends the invoice by email to the address on file for its contact, using the account template. A **GET that mutates**, so it is a write here and never replayed: delivering twice emails twice. The contact needs a valid email. Answers no document, only `delivered: true`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.invoices.deliver({ id: 181235103 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The invoice to email to its contact. |
+
+Sends to the address on file for the contact. Answers `delivered: true`; read the invoice again to see its delivery history.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+One invoice with its lines, taxes and payments. An unknown id answers 401 rather than 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.invoices.get({ id: 181235103 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+Invoices, newest first, as a bare array. Filter by date, state, contact or processor id, search with `q`, and page with `created_before`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.invoices.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search by invoice number, customer name or PO number. |
+| `date` | `string` | No | Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted. |
+| `state` | `string` | No | Only this state. Quaderno documents `outstanding`, `late`, `uncollectible` and `paid`. |
+| `contact` | `number` | No | Only this contact. |
+| `processor_id` | `string` | No | — |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+`date` takes a range, two ISO dates joined by a comma (`2026-01-01,2026-12-31`), not a single date.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markUncollectible
+
+`invoices.markUncollectible`
+
+Marks an unpaid invoice as bad debt. Reversible by recording a payment later, unlike a void.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.invoices.markUncollectible({ id: 181235103 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recordPayment
+
+`invoices.recordPayment`
+
+Records a payment against an invoice; reaching the total marks it paid. This creates a real financial record, not a note.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.invoices.recordPayment({ id: 181235103, date: "2026-11-10", amount: 150, payment_method: "cash" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `date` | `string` | Yes | ISO payment date, such as `2026-11-10`. |
+| `amount` | `string \| number` | Yes | Amount in major units. Reaching the total marks the invoice paid. |
+| `payment_method` | `credit_card \| cash \| wire_transfer \| direct_debit \| check \| iou \| paypal \| offset \| other` | Yes | — |
+| `reference` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payment full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  amount?: string | number | null,
+  amount_cents?: number | null,
+  payment_method?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  created_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Changes an invoice. Only the fields you send are changed. An issued invoice is legally immutable: Quaderno then accepts only `notes`, `payment_details` and `tag_list`, so correct anything else by voiding it and issuing a new one.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.invoices.update({ id: 181235103, notes: "Paid by wire transfer" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contact` | `object` | No | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | No | Line items. Quaderno caps a document at 200 lines. |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
+| `due_date` | `string` | No | ISO date. |
+| `notes` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `po_number` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description: string,
+  quantity?: number,
+  unit_price: string | number,
+  discount_rate?: string | number,
+  product_code?: string,
+  tax_1_name?: string,
+  tax_1_rate?: number,
+  tax_1_country?: string,
+  tax_1_region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### void
+
+`invoices.void`
+
+Reverses an invoice the way tax law requires. It cannot be deleted: voiding records an `offset` payment for the full amount and issues a credit note beside it. `void_reason` is required and the API answers 422 without it.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.quaderno.api.invoices.void({ id: 181235103, void_reason: "Issued in error" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `void_reason` | `string` | Yes | Why the invoice is being voided. Required: the API answers 422 `void_reason is required` without it. |
+| `void_description` | `string` | No | — |
+
+Voiding requires `void_reason`. It does not delete: the invoice stays and a credit note is issued beside it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jurisdictions
+
+### get
+
+`jurisdictions.get`
+
+One tax jurisdiction by id, naming the country and any region whose tax rules apply.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.jurisdictions.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The jurisdiction id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jurisdiction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jurisdiction full type">
+
+```ts
+{
+  id?: number | null,
+  country?: string | null,
+  name?: string | null,
+  region?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jurisdictions.list`
+
+Every tax jurisdiction Quaderno knows, about 290 rows, as a bare array. Verified live: this route ignores `limit` and always returns the full list.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.jurisdictions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | Only this country. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jurisdictions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jurisdictions full type">
+
+```ts
+{
+  id?: number | null,
+  country?: string | null,
+  name?: string | null,
+  region?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ping
+
+### ping
+
+`ping`
+
+Checks that the key and account name are valid. The docs say it does not consume an API call. Answers `{"status":"OK"}`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Adds a product. `name`, `code` and `unit_cost` are required, and `kind` is `one_off` or `subscription`, not the value the spec’s example suggests.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.products.create({ name: "Consulting hour", code: "CONSULT-1", unit_cost: "150.00", kind: "one_off" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Product name. |
+| `code` | `string` | Yes | Your own SKU or code. |
+| `unit_cost` | `string \| number` | Yes | Price in major units, such as `10.00` or `10`. |
+| `currency` | `string` | No | Three-letter ISO currency code. Defaults to the account currency. |
+| `description` | `string` | No | — |
+| `product_type` | `good \| service` | No | `good` for a tangible item, `service` otherwise. Defaults to `service`. |
+| `kind` | `one_off \| subscription` | No | `one_off` or `subscription`. Defaults to `one_off`. |
+| `tax_class` | `consulting \| eservice \| ebook \| saas \| standard \| reduced` | No | — |
+| `tax_type` | `included \| excluded` | No | Whether `unit_cost` includes tax. Defaults to `included`. |
+| `tax_based_on` | `customer_country \| country` | No | — |
+| `stock` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  code?: string | null,
+  description?: string | null,
+  unit_cost?: string | null,
+  currency?: string | null,
+  product_type?: string | null,
+  kind?: string | null,
+  tax_class?: string | null,
+  tax_type?: string | null,
+  tax_based_on?: string | null,
+  country?: string | null,
+  stock?: string | number | null,
+  url?: string | null,
+  created_at?: number | null,
+  paypal_interval_duration?: number | null,
+  paypal_interval_frequency?: number | null,
+  paypal_interval_unit?: string | null,
+  stripe_plan_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Removes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.quaderno.api.products.delete({ id: 321034 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+One product by id, with its price, tax class and the currency it is sold in.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.products.get({ id: 321034 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  code?: string | null,
+  description?: string | null,
+  unit_cost?: string | null,
+  currency?: string | null,
+  product_type?: string | null,
+  kind?: string | null,
+  tax_class?: string | null,
+  tax_type?: string | null,
+  tax_based_on?: string | null,
+  country?: string | null,
+  stock?: string | number | null,
+  url?: string | null,
+  created_at?: number | null,
+  paypal_interval_duration?: number | null,
+  paypal_interval_frequency?: number | null,
+  paypal_interval_unit?: string | null,
+  stripe_plan_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+Your product catalogue, newest first, from the `/items` route. A bare array; page with `created_before`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.products.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Free-text search. |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  code?: string | null,
+  description?: string | null,
+  unit_cost?: string | null,
+  currency?: string | null,
+  product_type?: string | null,
+  kind?: string | null,
+  tax_class?: string | null,
+  tax_type?: string | null,
+  tax_based_on?: string | null,
+  country?: string | null,
+  stock?: string | number | null,
+  url?: string | null,
+  created_at?: number | null,
+  paypal_interval_duration?: number | null,
+  paypal_interval_frequency?: number | null,
+  paypal_interval_unit?: string | null,
+  stripe_plan_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Changes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.products.update({ id: 321034, name: "Consulting hour", code: "CONSULT-1", unit_cost: "175.00" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | Product name. |
+| `code` | `string` | No | Your own SKU or code. |
+| `unit_cost` | `string \| number` | No | Price in major units, such as `10.00` or `10`. |
+| `currency` | `string` | No | Three-letter ISO currency code. Defaults to the account currency. |
+| `description` | `string` | No | — |
+| `product_type` | `good \| service` | No | `good` for a tangible item, `service` otherwise. Defaults to `service`. |
+| `kind` | `one_off \| subscription` | No | `one_off` or `subscription`. Defaults to `one_off`. |
+| `tax_class` | `consulting \| eservice \| ebook \| saas \| standard \| reduced` | No | — |
+| `tax_type` | `included \| excluded` | No | Whether `unit_cost` includes tax. Defaults to `included`. |
+| `tax_based_on` | `customer_country \| country` | No | — |
+| `stock` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  code?: string | null,
+  description?: string | null,
+  unit_cost?: string | null,
+  currency?: string | null,
+  product_type?: string | null,
+  kind?: string | null,
+  tax_class?: string | null,
+  tax_type?: string | null,
+  tax_based_on?: string | null,
+  country?: string | null,
+  stock?: string | number | null,
+  url?: string | null,
+  created_at?: number | null,
+  paypal_interval_duration?: number | null,
+  paypal_interval_frequency?: number | null,
+  paypal_interval_unit?: string | null,
+  stripe_plan_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Proformas
+
+### accept
+
+`proformas.accept`
+
+Marks a proforma accepted. A state change the customer would normally trigger; reversible with `proformas.revert`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.accept({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The proforma to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### convert
+
+`proformas.convert`
+
+Converts an accepted proforma into a real invoice, which **consumes an invoice number and cannot be undone**. Only a proforma in the accepted state can be converted. Returns the new invoice under `invoice`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.convert({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The proforma to act on. |
+
+Only an accepted proforma can be converted. The result is the new invoice, under `invoice`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`proformas.create`
+
+Creates a proforma. Unlike an invoice this is not a tax document, so it does not consume an invoice number.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.create({ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | Yes | Line items. Quaderno caps a document at 200 lines. |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
+| `due_date` | `string` | No | ISO date. |
+| `notes` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `po_number` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description: string,
+  quantity?: number,
+  unit_price: string | number,
+  discount_rate?: string | number,
+  product_code?: string,
+  tax_1_name?: string,
+  tax_1_rate?: number,
+  tax_1_country?: string,
+  tax_1_region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decline
+
+`proformas.decline`
+
+Marks a proforma declined. Reversible with `proformas.revert`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.decline({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The proforma to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliver
+
+`proformas.deliver`
+
+Emails the proforma to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.deliver({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The proforma to email to its contact. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`proformas.get`
+
+One proforma by id, with its lines and the state it was accepted or declined in.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.proformas.get({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`proformas.list`
+
+Proforma invoices, newest first, as a bare array. A proforma is not a tax document, so it carries no invoice number.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.proformas.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `date` | `string` | No | Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted. |
+| `state` | `string` | No | — |
+| `contact` | `number` | No | — |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proformas` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="proformas full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### revert
+
+`proformas.revert`
+
+Puts an accepted or declined proforma back to its open state.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.revert({ id: 181235300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The proforma to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`proformas.update`
+
+Changes a proforma. Only the id is required. An accepted or invoiced proforma cannot be changed. It stays a proforma until `proformas.convert` issues a real invoice.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.proformas.update({ id: 181235300, notes: "Valid for 30 days" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contact` | `object` | No | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | No | Line items. Quaderno caps a document at 200 lines. |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
+| `due_date` | `string` | No | ISO date. |
+| `notes` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `po_number` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description: string,
+  quantity?: number,
+  unit_price: string | number,
+  discount_rate?: string | number,
+  product_code?: string,
+  tax_1_name?: string,
+  tax_1_rate?: number,
+  tax_1_country?: string,
+  tax_1_region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proforma` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proforma full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Receipts
+
+### create
+
+`receipts.create`
+
+Issues a receipt for a sale that is already paid, so `payment_method` is required. Like an invoice, it consumes a document number and cannot be deleted or updated, only voided.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.receipts.create({ contact: { id: 78395726 }, items: [{ description: "Consulting hour", unit_price: 150 }], payment_method: "credit_card" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | Yes | Line items. Quaderno caps a document at 200 lines. |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
+| `due_date` | `string` | No | ISO date. |
+| `notes` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `po_number` | `string` | No | — |
+| `payment_details` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+| `payment_method` | `credit_card \| cash \| wire_transfer \| direct_debit \| check \| iou \| paypal \| offset \| other` | Yes | How the customer paid. Required on a receipt. |
+
+`payment_method` is required: a receipt records a sale that is already paid.
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description: string,
+  quantity?: number,
+  unit_price: string | number,
+  discount_rate?: string | number,
+  product_code?: string,
+  tax_1_name?: string,
+  tax_1_rate?: number,
+  tax_1_country?: string,
+  tax_1_region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="receipt full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliver
+
+`receipts.deliver`
+
+Emails the receipt to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.receipts.deliver({ id: 181235200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The receipt to email to its contact. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`receipts.get`
+
+One receipt by id, with its lines, payments and the invoice it settles.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.receipts.get({ id: 181235200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="receipt full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`receipts.list`
+
+Receipts, newest first, as a bare array. Filter by a `date` range or `contact`, and page with `created_before`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.receipts.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `date` | `string` | No | Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted. |
+| `state` | `string` | No | — |
+| `contact` | `number` | No | — |
+| `limit` | `number` | No | Records to return. Defaults to 25, maximum 100. |
+| `created_before` | `number` | No | Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipts` | `object[]` | Yes | — |
+| `next_created_before` | `number \| null` | Yes | The id to pass as `created_before` for the next page, or null when this is the last page. |
+
+<AccordionGroup>
+<Accordion title="receipts full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### void
+
+`receipts.void`
+
+Voids a receipt. `void_reason` is required, as for an invoice.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.quaderno.api.receipts.void({ id: 181235200, void_reason: "Issued in error" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `void_reason` | `string` | Yes | Why the receipt is being voided. |
+| `void_description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="receipt full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tax Codes
+
+### get
+
+`taxCodes.get`
+
+One tax code by its identifier, such as `standard`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.taxCodes.get({ id: 'standard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The tax code identifier, such as `standard`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tax_code full type">
+
+```ts
+{
+  id: string,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`taxCodes.list`
+
+The tax codes available on the account, as a bare array. This route honours `limit`, unlike `jurisdictions.list`.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.taxCodes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Quaderno caps this list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax_codes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tax_codes full type">
+
+```ts
+{
+  id: string,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tax Ids
+
+### validate
+
+`taxIds.validate`
+
+Checks a VAT or tax number against the country’s registry. `valid` is true or false, or null when the registry could not be reached, which does not mean the number is invalid.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.taxIds.validate({ tax_id: "GB123456789", country: "GB" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax_id` | `string` | Yes | The VAT or tax number to validate. |
+| `country` | `string` | Yes | Two-letter ISO country code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | `true` or `false`, or `null` when the registry could not be reached. |
+
+
+
+---
+
+## Tax Rates
+
+### calculate
+
+`taxRates.calculate`
+
+The tax rate Quaderno would charge for a customer country and tax code, with the resulting total. `tax_code` and `amount` are required from API version 20210316, which this plugin targets.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.taxRates.calculate({ to_country: "US", tax_code: "standard", amount: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to_country` | `string` | Yes | Two-letter ISO country code of the customer. |
+| `to_postal_code` | `string` | No | Customer postal code, needed in countries that tax by region. |
+| `to_region` | `string` | No | — |
+| `tax_code` | `string` | No | The tax code for the product, such as `standard`. |
+| `amount` | `string \| number` | No | Amount to compute tax on, in major units. |
+
+`tax_code` and `amount` are required from API version 20210316.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `tax_behavior` | `string \| null` | No | — |
+| `tax_code` | `string \| null` | No | — |
+| `product_type` | `string \| null` | No | — |
+| `subtotal` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `total_amount` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `import` | `boolean \| null` | No | — |
+| `taxable_part` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+
+
+
+---
+
+## Transactions
+
+### create
+
+`transactions.create`
+
+Records a sale or a refund in one call: it creates the document and its payment together, which is what distinguishes it from `invoices.create`. The body is not an invoice body: the buyer is `customer`, each line carries its total as `amount`, and `payment.method` is required. A real financial record.
+
+**Risk:** `write`
+
+```ts
+await corsair.quaderno.api.transactions.create({ customer: { id: 78395726 }, items: [{ description: "Consulting hour", amount: 150 }], payment: { method: "cash" }, date: "2026-11-10" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `sale \| refund` | No | `sale` or `refund`. Quaderno treats it as a sale when omitted. |
+| `customer` | `object` | Yes | The customer, by contact id. |
+| `items` | `object[]` | Yes | — |
+| `payment` | `object` | Yes | The payment for the transaction. Required. |
+| `currency` | `string` | No | — |
+| `date` | `string` | No | ISO date of the transaction. Defaults to today. |
+| `processor` | `string` | No | The platform that processed the sale, such as `shopify`. |
+| `processor_id` | `string` | No | The id of the sale in that platform. Use the same id on a refund to link it to its sale. |
+| `po_number` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `tags` | `string` | No | Tags as one comma-separated string, such as `a,b`. |
+
+Not an invoice body. The buyer is `customer`, each line carries its total as `amount`, and `payment.method` is required.
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  description?: string,
+  product_code?: string,
+  quantity?: number,
+  amount: number,
+  discount_rate?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="payment full type">
+
+```ts
+{
+  method: credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | other,
+  processor?: string,
+  processor_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transaction full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  blocked?: boolean | null,
+  delivery_state?: string | null,
+  contact?: Record<string, any> | null,
+  items?: {
+    id?: number | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: string | number | null,
+    discount_rate?: string | number | null,
+    product_code?: string | null,
+    total_amount?: string | number | null,
+    subtotal_cents?: number | null,
+    discount_cents?: number | null,
+    tax_1_name?: string | null,
+    tax_1_rate?: number | null,
+    tax_1_country?: string | null,
+    tax_1_region?: string | null
+  }[] | null,
+  payments?: {
+    id?: number | null,
+    date?: string | null,
+    amount?: string | number | null,
+    amount_cents?: number | null,
+    payment_method?: string | null,
+    processor?: string | null,
+    processor_id?: string | null,
+    created_at?: number | null
+  }[] | null,
+  taxes?: Record<string, any>[] | null,
+  subtotal_cents?: number | null,
+  discount_cents?: number | null,
+  total_cents?: number | null,
+  processor_fee_cents?: number | null,
+  notes?: string | null,
+  payment_details?: string | null,
+  subject?: string | null,
+  po_number?: string | null,
+  tag_list?: string[] | null,
+  secure_id?: string | null,
+  verification_code?: string | null,
+  verification_permalink?: string | null,
+  permalink?: string | null,
+  pdf?: string | null,
+  url?: string | null,
+  created_at?: number | null,
+  custom_metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### list
+
+`webhooks.list`
+
+The webhook subscriptions on the account, with the events each one receives. Read only here: this plugin registers no inbound handler. The signing secret (`auth_key`) is left out of the result.
+
+**Risk:** `read`
+
+```ts
+await corsair.quaderno.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+The signing secret (`auth_key`) is left out of each row.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  events_types?: string[] | null,
+  events_sent?: number | null,
+  last_sent_at?: string | null,
+  last_error?: string | null,
+  last_error_at?: string | null,
+  created_at?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
