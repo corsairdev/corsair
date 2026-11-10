@@ -214,6 +214,24 @@ describe('Fidel request bodies as the provider documents them', () => {
 		});
 	});
 
+	it('retrieves a single MID by program and MID id', async () => {
+		const documented = {
+			items: [{ id: 'mid-1', scheme: 'visa' }],
+			resource: '/v1/programs/program-1/mids/mid-1',
+			status: 200,
+			execution: 56.217957,
+		};
+		request.mockResolvedValue(documented);
+		await expect(
+			api.mids!.retrieveMid!(ctx, { programId: 'program-1', midId: 'mid-1' }),
+		).resolves.toEqual(documented);
+		expect(request).toHaveBeenLastCalledWith(
+			ctx,
+			'/v1/programs/program-1/mids/mid-1',
+			{ method: 'GET' },
+		);
+	});
+
 	it('rejects program IDs that are not strings before any request', async () => {
 		await expect(
 			api.marketplace!.createOfferFromMarketplaceOffer!(ctx, {

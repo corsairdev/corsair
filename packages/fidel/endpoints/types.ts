@@ -445,6 +445,11 @@ const ListMidsInputSchema = z.object({
 	order: z.string().optional(),
 });
 
+const RetrieveMidInputSchema = z.object({
+	programId: z.string().min(1),
+	midId: z.string().min(1),
+});
+
 const RetrieveMidRequestInputSchema = z.object({
 	programId: z.string().min(1),
 	midRequestId: z.string().min(1),
@@ -619,6 +624,7 @@ export const FidelEndpointInputSchemas = {
 	listTransactions: ListTransactionsInputSchema,
 	listTransactionsByCard: ListTransactionsByCardInputSchema,
 	listMids: ListMidsInputSchema,
+	retrieveMid: RetrieveMidInputSchema,
 	retrieveMidRequest: RetrieveMidRequestInputSchema,
 	listMidRequests: ListMidRequestsInputSchema,
 	createMidRequest: CreateMidRequestInputSchema,
@@ -678,6 +684,7 @@ export const FidelEndpointOutputSchemas = {
 	listTransactions: FidelItemsOutputSchema,
 	listTransactionsByCard: FidelItemsOutputSchema,
 	listMids: FidelItemsOutputSchema,
+	retrieveMid: FidelItemsOutputSchema,
 	retrieveMidRequest: FidelItemsOutputSchema,
 	listMidRequests: FidelItemsOutputSchema,
 	createMidRequest: FidelItemsOutputSchema,

@@ -32,7 +32,7 @@ export {
 	listMidRequests,
 	retrieveMidRequest,
 } from './mid-requests';
-export { listMids } from './mids';
+export { listMids, retrieveMid } from './mids';
 export {
 	createMissingTransactionRequest,
 	listMissingTransactionRequests,

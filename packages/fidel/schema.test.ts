@@ -75,7 +75,7 @@ describe('Fidel schema', () => {
 	});
 
 	it('registers the full current Fidel operation catalog', () => {
-		expect(Object.keys(fidelEndpointSchemas).length).toBeGreaterThanOrEqual(55);
+		expect(Object.keys(fidelEndpointSchemas).length).toBeGreaterThanOrEqual(56);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {
@@ -571,6 +571,17 @@ describe('Fidel schema', () => {
 				status: 200,
 			},
 			'mids.listMids': {
+				items: [
+					{
+						id: 'rec-1',
+						created: '2024-01-01T00:00:00.000Z',
+						updated: '2024-01-01T00:00:00.000Z',
+					},
+				],
+				resource: '/v1/mids',
+				status: 200,
+			},
+			'mids.retrieveMid': {
 				items: [
 					{
 						id: 'rec-1',

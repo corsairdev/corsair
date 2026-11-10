@@ -1258,6 +1258,53 @@ await corsair.fidel.api.mids.listMids({});
 
 ---
 
+### retrieveMid
+
+`mids.retrieveMid`
+
+Retrieve a merchant ID of a program by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mids.retrieveMid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `midId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Missing-transaction-requests
 
 ### createMissingTransactionRequest

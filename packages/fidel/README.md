@@ -37,6 +37,7 @@ pnpm add @corsair-dev/fidel
 | `mid-requests.listMidRequests` | `fidel.api.mid-requests.listMidRequests` | `read` | List the MID requests of a program |
 | `mid-requests.retrieveMidRequest` | `fidel.api.mid-requests.retrieveMidRequest` | `read` | Retrieve a MID request by ID |
 | `mids.listMids` | `fidel.api.mids.listMids` | `read` | List the merchant IDs of a program |
+| `mids.retrieveMid` | `fidel.api.mids.retrieveMid` | `read` | Retrieve a merchant ID of a program by ID |
 | `missing-transaction-requests.createMissingTransactionRequest` | `fidel.api.missing-transaction-requests.createMissingTransactionRequest` | `write` | Create a missing transaction request for a linked card |
 | `missing-transaction-requests.listMissingTransactionRequests` | `fidel.api.missing-transaction-requests.listMissingTransactionRequests` | `read` | List the missing transaction requests of a program |
 | `missing-transaction-requests.retrieveMissingTransactionRequest` | `fidel.api.missing-transaction-requests.retrieveMissingTransactionRequest` | `read` | Retrieve a missing transaction request by ID |

@@ -46,7 +46,7 @@ import {
 	listMidRequests,
 	retrieveMidRequest,
 } from './endpoints/mid-requests';
-import { listMids } from './endpoints/mids';
+import { listMids, retrieveMid } from './endpoints/mids';
 import {
 	createMissingTransactionRequest,
 	listMissingTransactionRequests,
@@ -255,6 +255,7 @@ const fidelEndpointsNested = {
 	},
 	mids: {
 		listMids: listMids,
+		retrieveMid: retrieveMid,
 	},
 	'mid-requests': {
 		retrieveMidRequest: retrieveMidRequest,
@@ -460,6 +461,10 @@ export const fidelEndpointMeta = {
 	'mids.listMids': {
 		riskLevel: 'read',
 		description: 'List the merchant IDs of a program',
+	},
+	'mids.retrieveMid': {
+		riskLevel: 'read',
+		description: 'Retrieve a merchant ID of a program by ID',
 	},
 	'mid-requests.retrieveMidRequest': {
 		riskLevel: 'read',
@@ -684,6 +689,10 @@ export const fidelEndpointSchemas = {
 	'mids.listMids': {
 		input: FidelEndpointInputSchemas.listMids,
 		output: FidelEndpointOutputSchemas.listMids,
+	},
+	'mids.retrieveMid': {
+		input: FidelEndpointInputSchemas.retrieveMid,
+		output: FidelEndpointOutputSchemas.retrieveMid,
 	},
 	'mid-requests.retrieveMidRequest': {
 		input: FidelEndpointInputSchemas.retrieveMidRequest,
