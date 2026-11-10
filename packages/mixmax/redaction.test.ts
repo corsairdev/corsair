@@ -1,3 +1,4 @@
+import { MeetingTypes } from './endpoints';
 import { mixmax } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -246,5 +247,192 @@ describe('Mixmax event history redaction', () => {
 		expect(payloads[1]).toEqual({ addresses: 1 });
 		expect(payloads[2]).toMatchObject({ name: 'Sales', members: 1 });
 		expect(payloads[4]).toMatchObject({ type: 'Contact' });
+	});
+
+	// One sweep over every other handler whose input can carry an address,
+	// search text or user content. Each call gets the same markers, and no
+	// logged payload may contain them. Meeting types call the handler
+	// directly: their schema needs a full weekly calendar to validate.
+	it('never logs addresses, search text or content on any other handler', async () => {
+		const ignoreOutput = () => undefined;
+		const mark = 'Private';
+		const address = 'ada@example.com';
+		const calls: Array<[string, () => Promise<unknown>]> = [
+			[
+				'users.preferences.update',
+				() =>
+					endpoints.users.preferences.update(ctx, {
+						emailSignature: `${mark} ${address}`,
+					} as never),
+			],
+			[
+				'autoBcc.list',
+				() =>
+					endpoints.users.preferences.autoBccExcludedEmails.list(ctx, {
+						email: address,
+					}),
+			],
+			[
+				'autoBcc.add',
+				() =>
+					endpoints.users.preferences.autoBccExcludedEmails.add(ctx, {
+						email: address,
+						emails: [address],
+					}),
+			],
+			[
+				'autoBcc.exists',
+				() =>
+					endpoints.users.preferences.autoBccExcludedEmails.exists(ctx, {
+						emails: [address],
+					}),
+			],
+			[
+				'livefeed.list',
+				() => endpoints.livefeed.list(ctx, { query: `to:${address} ${mark}` }),
+			],
+			[
+				'livefeed.events',
+				() =>
+					endpoints.livefeed.events(ctx, { contactEmail: address } as never),
+			],
+			[
+				'sequences.search',
+				() =>
+					endpoints.sequences.search(ctx, {
+						query: mark,
+						recipients: address,
+					} as never),
+			],
+			[
+				'sequences.cancelAll',
+				() =>
+					endpoints.sequences.cancelAll(ctx, {
+						emails: [address],
+						reason: mark,
+					} as never),
+			],
+			[
+				'sequences.cancel',
+				() =>
+					endpoints.sequences.cancel(ctx, { id: 'seq-1', emails: [address] }),
+			],
+			[
+				'sequences.recipients.list',
+				() =>
+					endpoints.sequences.recipients.list(ctx, {
+						id: 'seq-1',
+						query: address,
+					} as never),
+			],
+			['snippets.list', () => endpoints.snippets.list(ctx, { search: mark })],
+			[
+				'snippetTags.list',
+				() => endpoints.snippetTags.list(ctx, { search: mark }),
+			],
+			[
+				'snippetTags.listSnippets',
+				() =>
+					endpoints.snippetTags.listSnippets(ctx, {
+						id: 'tag-1',
+						search: mark,
+					}),
+			],
+			[
+				'snippetTags.addSnippets',
+				() =>
+					endpoints.snippetTags.addSnippets(ctx, {
+						id: 'tag-1',
+						title: mark,
+						source: `<p>${mark}</p>`,
+						cc: [{ email: address }],
+					} as never),
+			],
+			[
+				'rules.events.list',
+				() => endpoints.rules.events.list(ctx, { text: address } as never),
+			],
+			[
+				'meetingTypes.create',
+				() =>
+					MeetingTypes.create(ctx, {
+						name: 'Intro',
+						defaultGuests: [{ email: address }],
+						customFields: [{ label: mark }],
+					} as never),
+			],
+			[
+				'meetingTypes.update',
+				() =>
+					MeetingTypes.update(ctx, {
+						id: 'mt-1',
+						name: 'Intro',
+						defaultGuests: [{ email: address }],
+					} as never),
+			],
+			[
+				'meetings.searchSummaries',
+				() =>
+					endpoints.meetings.searchSummaries(ctx, {
+						attendee: address,
+						title: mark,
+					} as never),
+			],
+			[
+				'tasks.list',
+				() => endpoints.tasks.list(ctx, { search: mark, query: address }),
+			],
+			[
+				'insightsReports.create',
+				() =>
+					endpoints.insightsReports.create(ctx, {
+						title: 'Weekly',
+						type: 'messages',
+						query: `to:${address}`,
+					} as never),
+			],
+			[
+				'insightsReports.update',
+				() =>
+					endpoints.insightsReports.update(ctx, {
+						id: 'rep-1',
+						query: `to:${address}`,
+					} as never),
+			],
+			[
+				'reports.runDataTable',
+				() =>
+					endpoints.reports.runDataTable(ctx, {
+						type: 'messages',
+						query: `to:${address}`,
+					} as never),
+			],
+			[
+				'codeSnippets.create',
+				() =>
+					endpoints.codeSnippets.create(ctx, {
+						title: 'T',
+						html: `<p>${mark}</p>`,
+						code: mark,
+						language: 'js',
+					} as never),
+			],
+		];
+		for (const [name, call] of calls) {
+			logEvent.mockClear();
+			await call().catch(ignoreOutput);
+			const payloads = logEvent.mock.calls
+				.filter((c) => !String(c[1]).endsWith('.outputMismatch'))
+				.map((c) => JSON.stringify(c[2]));
+			expect([name, payloads.length]).toEqual([name, 1]);
+			expect([name, payloads[0]]).not.toEqual([
+				name,
+				expect.stringContaining('@'),
+			]);
+			expect([name, payloads[0]]).not.toEqual([
+				name,
+				expect.stringContaining(mark),
+			]);
+		}
 	});
 });

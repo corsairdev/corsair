@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import { mixmaxPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
@@ -31,7 +32,8 @@ export const snippetsList: MixmaxEndpoints['snippetsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.snippets.list',
-		{ ...input },
+		// Search text can name a person; log its presence only.
+		{ ...omit(input, 'search'), hasSearch: input.search !== undefined },
 		'completed',
 	);
 	return result;
@@ -165,7 +167,8 @@ export const snippetTagsList: MixmaxEndpoints['snippetTagsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.snippetTags.list',
-		{ ...input },
+		// Search text can name a person; log its presence only.
+		{ ...omit(input, 'search'), hasSearch: input.search !== undefined },
 		'completed',
 	);
 	return result;
@@ -283,7 +286,8 @@ export const snippetTagsListSnippets: MixmaxEndpoints['snippetTagsListSnippets']
 		await logEventFromContext(
 			ctx,
 			'mixmax.snippetTags.listSnippets',
-			{ ...input },
+			// Search text can name a person; log its presence only.
+			{ ...omit(input, 'search'), hasSearch: input.search !== undefined },
 			'completed',
 		);
 		return result;
@@ -304,7 +308,9 @@ export const snippetTagsAddSnippets: MixmaxEndpoints['snippetTagsAddSnippets'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.snippetTags.addSnippets',
-			{ ...input },
+			// The template's content and cc/bcc addresses are private; log the
+			// folder id and the moved template's id only.
+			{ id: input.id, snippetId: input._id },
 			'completed',
 		);
 		return result;

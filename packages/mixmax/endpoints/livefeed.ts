@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import type { MixmaxEndpointOutputs } from './types';
 
 export const livefeedList: MixmaxEndpoints['livefeedList'] = async (
@@ -32,7 +33,8 @@ export const livefeedList: MixmaxEndpoints['livefeedList'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.livefeed.list',
-		{ ...input },
+		// The search query often names a contact; log its presence only.
+		{ ...omit(input, 'query'), hasQuery: input.query !== undefined },
 		'completed',
 	);
 	return result;
@@ -60,7 +62,11 @@ export const livefeedEvents: MixmaxEndpoints['livefeedEvents'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.livefeed.events',
-		{ ...input },
+		// The contact's address is private; log its presence only.
+		{
+			...omit(input, 'contactEmail'),
+			hasContactEmail: input.contactEmail !== undefined,
+		},
 		'completed',
 	);
 	return result;

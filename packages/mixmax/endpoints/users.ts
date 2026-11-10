@@ -58,7 +58,9 @@ export const userPreferencesUpdate: MixmaxEndpoints['userPreferencesUpdate'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.userPreferences.update',
-			{ ...input },
+			// Preference values can hold signatures and addresses; log which
+			// preferences changed, not their values.
+			{ fields: Object.keys(input) },
 			'completed',
 		);
 		return result;
@@ -76,7 +78,8 @@ export const userPreferencesAutoBccList: MixmaxEndpoints['userPreferencesAutoBcc
 		await logEventFromContext(
 			ctx,
 			'mixmax.userPreferences.autoBccExcludedEmails.list',
-			{ ...input },
+			// The address being checked is private; log the count only.
+			{ addresses: 1 },
 			'completed',
 		);
 		return result;
@@ -97,7 +100,11 @@ export const userPreferencesAutoBccAdd: MixmaxEndpoints['userPreferencesAutoBccA
 		await logEventFromContext(
 			ctx,
 			'mixmax.userPreferences.autoBccExcludedEmails.add',
-			{ ...input },
+			// The addresses are private; log how many were sent.
+			{
+				addresses:
+					(input.email !== undefined ? 1 : 0) + (input.emails?.length ?? 0),
+			},
 			'completed',
 		);
 		return result;
@@ -117,7 +124,8 @@ export const userPreferencesAutoBccExists: MixmaxEndpoints['userPreferencesAutoB
 		await logEventFromContext(
 			ctx,
 			'mixmax.userPreferences.autoBccExcludedEmails.exists',
-			{ ...input },
+			// The addresses are private; log how many were checked.
+			{ addresses: input.emails.length },
 			'completed',
 		);
 		return result;

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import { mixmaxMultiSegmentPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
@@ -25,7 +26,12 @@ export const meetingsSearchSummaries: MixmaxEndpoints['meetingsSearchSummaries']
 		await logEventFromContext(
 			ctx,
 			'mixmax.meetings.searchSummaries',
-			{ ...input },
+			// The attendee address and title text are private; log presence.
+			{
+				...omit(input, 'attendee', 'title'),
+				hasAttendee: input.attendee !== undefined,
+				hasTitle: input.title !== undefined,
+			},
 			'completed',
 		);
 		return result;

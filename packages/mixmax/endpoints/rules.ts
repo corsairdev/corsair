@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import { mixmaxPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
@@ -273,7 +274,8 @@ export const rulesListEvents: MixmaxEndpoints['rulesListEvents'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.rules.events.list',
-		{ ...input },
+		// The text filter can hold names or addresses; log its presence.
+		{ ...omit(input, 'text'), hasText: input.text !== undefined },
 		'completed',
 	);
 	return result;

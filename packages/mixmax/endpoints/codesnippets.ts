@@ -44,7 +44,9 @@ export const codeSnippetsCreate: MixmaxEndpoints['codeSnippetsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.codeSnippets.create',
-		{ ...input },
+		// The snippet's code and rendered html are user content; log the
+		// language only.
+		{ language: input.language },
 		'completed',
 	);
 	return result;

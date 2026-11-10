@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import { mixmaxPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
@@ -40,7 +41,9 @@ export const insightsReportsCreate: MixmaxEndpoints['insightsReportsCreate'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.insightsReports.create',
-			{ ...input },
+			// The report query can filter by recipient address; log the
+			// title and type only.
+			{ title: input.title, type: input.type },
 			'completed',
 		);
 		return result;
@@ -59,7 +62,8 @@ export const insightsReportsUpdate: MixmaxEndpoints['insightsReportsUpdate'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.insightsReports.update',
-			{ ...input },
+			// Same as create: no query text.
+			{ id: input.id, title: input.title, type: input.type },
 			'completed',
 		);
 		return result;
@@ -95,7 +99,8 @@ export const reportsRunDataTable: MixmaxEndpoints['reportsRunDataTable'] =
 		await logEventFromContext(
 			ctx,
 			'mixmax.reports.runDataTable',
-			{ ...input },
+			// The query can filter by recipient address; log its presence.
+			{ ...omit(input, 'query'), hasQuery: input.query !== undefined },
 			'completed',
 		);
 		return result;

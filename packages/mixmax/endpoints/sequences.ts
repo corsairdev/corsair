@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { omit } from './omit';
 import { mixmaxPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
@@ -54,7 +55,13 @@ export const sequencesSearch: MixmaxEndpoints['sequencesSearch'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.sequences.search',
-		{ ...input },
+		// The query and recipient filter carry names and addresses; log
+		// the paging and sort only.
+		{
+			...omit(input, 'query', 'recipients'),
+			hasQuery: input.query !== undefined,
+			hasRecipients: input.recipients !== undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -78,7 +85,12 @@ export const sequencesCancelAll: MixmaxEndpoints['sequencesCancelAll'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.sequences.cancelAll',
-		{ ...input },
+		// The addresses and the free-text reason are private; log counts.
+		{
+			orgId: input.orgId,
+			addresses: input.emails?.length ?? 0,
+			hasReason: input.reason !== undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -101,7 +113,8 @@ export const sequencesCancel: MixmaxEndpoints['sequencesCancel'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.sequences.cancel',
-		{ ...input },
+		// The addresses are private; log the sequence id and the count.
+		{ id: input.id, addresses: input.emails?.length ?? 0 },
 		'completed',
 	);
 	return result;
@@ -133,7 +146,8 @@ export const sequencesRecipientsList: MixmaxEndpoints['sequencesRecipientsList']
 		await logEventFromContext(
 			ctx,
 			'mixmax.sequences.recipients.list',
-			{ ...input },
+			// The query filters recipients by name or address; log its presence.
+			{ ...omit(input, 'query'), hasQuery: input.query !== undefined },
 			'completed',
 		);
 		return result;

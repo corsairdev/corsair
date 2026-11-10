@@ -99,7 +99,9 @@ export const meetingTypesCreate: MixmaxEndpoints['meetingTypesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.meetingTypes.create',
-		{ ...input },
+		// Default guests and custom fields can hold addresses; log the
+		// meeting type's name only.
+		{ name: input.name },
 		'completed',
 	);
 	return result;
@@ -142,7 +144,8 @@ export const meetingTypesUpdate: MixmaxEndpoints['meetingTypesUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.meetingTypes.update',
-		{ ...input },
+		// Same as create: id and name only.
+		{ id: input.id, name: input.name },
 		'completed',
 	);
 	return result;
