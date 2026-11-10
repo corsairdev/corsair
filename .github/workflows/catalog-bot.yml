@@ -64,10 +64,22 @@ jobs:
 
       # So a run keeps the icons a previous one found or a person replaced.
       # bot/catalog-next only exists after a run stopped while replacing the branch.
+      # A branch that can't be read fails the run: carrying on as if it weren't
+      # there would rebuild the PR without the icons it holds.
       - name: Fetch the bot branch
         run: |
           for branch in bot/catalog bot/catalog-next; do
-            git fetch -q --depth=1 origin "+refs/heads/$branch:refs/remotes/origin/$branch" || echo "No $branch"
+            if git ls-remote --exit-code --heads origin "refs/heads/$branch" > /dev/null; then
+              git fetch -q --depth=1 origin "+refs/heads/$branch:refs/remotes/origin/$branch"
+            else
+              status=$?
+              # 2 is ls-remote's "no such branch". Anything else is an error.
+              if [ "$status" -ne 2 ]; then
+                echo "::error::Could not check whether $branch exists (git ls-remote exited $status)."
+                exit "$status"
+              fi
+              echo "No $branch"
+            fi
           done
 
       - name: Get icons for new plugins
