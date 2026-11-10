@@ -47,7 +47,7 @@ A meeting finished processing. Carries its notes when they exist, and its transc
 | `id` | `string` | Yes | Webhook delivery id |
 | `event` | `MeetingReady` | Yes | — |
 | `data` | `object` | Yes | — |
-| `executedAt` | `string` | Yes | ISO 8601 timestamp |
+| `executedAt` | `string \| null` | No | ISO 8601 timestamp |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -164,7 +164,7 @@ A meeting finished processing. Carries its notes when they exist, and its transc
       }[]
     } | null
   },
-  executedAt: string
+  executedAt?: string | null
 }
 ```
 </Accordion>
@@ -205,7 +205,7 @@ A meeting transcript has been generated
 | `id` | `string` | Yes | Webhook delivery id |
 | `event` | `TranscriptReady` | Yes | — |
 | `data` | `object` | Yes | — |
-| `executedAt` | `string` | Yes | ISO 8601 timestamp |
+| `executedAt` | `string \| null` | No | ISO 8601 timestamp |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -244,7 +244,7 @@ A meeting transcript has been generated
       endTime: number
     }[]
   },
-  executedAt: string
+  executedAt?: string | null
 }
 ```
 </Accordion>

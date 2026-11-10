@@ -275,6 +275,19 @@ describe('tl;dv webhook payloads', () => {
 		expect(parsed.success).toBe(false);
 	});
 
+	it('parses a delivery with no executedAt', () => {
+		// The spec's schema lists `executedAt` as required, but both of its own
+		// example deliveries leave it out. Nothing reads the field, so its absence
+		// must not cost the delivery.
+		const { executedAt: _m, ...meetingReady } = meetingReadyEvent;
+		const { executedAt: _t, ...transcriptReady } = transcriptReadyEvent;
+
+		expect(MeetingReadyEventSchema.safeParse(meetingReady).success).toBe(true);
+		expect(TranscriptReadyEventSchema.safeParse(transcriptReady).success).toBe(
+			true,
+		);
+	});
+
 	it('rejects a MeetingReady body whose event is wrong', () => {
 		const parsed = MeetingReadyEventSchema.safeParse({
 			...meetingReadyEvent,

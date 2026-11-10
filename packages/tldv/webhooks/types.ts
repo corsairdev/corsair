@@ -157,7 +157,8 @@ export const MeetingReadyEventSchema = z
 		id: z.string().describe('Webhook delivery id'),
 		event: z.literal('MeetingReady'),
 		data: MeetingReadyDataSchema,
-		executedAt: z.string().describe('ISO 8601 timestamp'),
+		// Required in the spec's schema, absent from the spec's own examples.
+		executedAt: z.string().nullish().describe('ISO 8601 timestamp'),
 	})
 	.loose();
 
@@ -168,7 +169,8 @@ export const TranscriptReadyEventSchema = z
 		id: z.string().describe('Webhook delivery id'),
 		event: z.literal('TranscriptReady'),
 		data: TranscriptSchema,
-		executedAt: z.string().describe('ISO 8601 timestamp'),
+		// Required in the spec's schema, absent from the spec's own examples.
+		executedAt: z.string().nullish().describe('ISO 8601 timestamp'),
 	})
 	.loose();
 
