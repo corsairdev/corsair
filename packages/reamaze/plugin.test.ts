@@ -236,12 +236,15 @@ describe('reamaze plugin definition', () => {
 });
 
 describe('reamaze key builder', () => {
-	function ctx(stored: string | null) {
+	function ctx(stored: string | null, host: string | null = 'acme') {
 		return {
 			authType: 'api_key' as const,
 			options: {},
 			tenantId: 'default',
-			keys: { get_api_key: jest.fn().mockResolvedValue(stored) },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(stored),
+				get_host: jest.fn().mockResolvedValue(host),
+			},
 		};
 	}
 
@@ -263,6 +266,27 @@ describe('reamaze key builder', () => {
 		await expect(
 			reamaze().keyBuilder?.(ctx(PAIR) as never, 'endpoint'),
 		).resolves.toBe(PAIR);
+	});
+
+	it('throws AuthMissingError when a pair is stored without a brand host', async () => {
+		// The host is the other half of a connection. Only an AuthMissingError
+		// from the key builder gets the tenant a connect link, so a missing host
+		// must not surface later as a plain error from the endpoint.
+		await expect(
+			reamaze().keyBuilder?.(ctx(PAIR, null) as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			reamaze().keyBuilder?.(ctx(PAIR, '  ') as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('takes the brand host from the plugin option without reading the store', async () => {
+		const fixture = ctx(PAIR, null);
+
+		await expect(
+			reamaze({ host: 'acme' }).keyBuilder?.(fixture as never, 'endpoint'),
+		).resolves.toBe(PAIR);
+		expect(fixture.keys.get_host).not.toHaveBeenCalled();
 	});
 
 	it('throws AuthMissingError when no pair is stored', async () => {

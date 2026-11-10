@@ -528,8 +528,14 @@ export function reamaze<const T extends ReamazePluginOptions>(
 			// test) has no `keys` at all, so this is guarded before reading it.
 			if (!ctx.keys) throw new AuthMissingError('reamaze', 'api_key');
 			const stored = await ctx.keys.get_api_key();
-			if (stored) return stored;
-			throw new AuthMissingError('reamaze', 'api_key');
+			if (!stored) throw new AuthMissingError('reamaze', 'api_key');
+			// The brand host is the other half of a connection. A stored pair
+			// without one is raised here, not in the endpoint: the binder only
+			// offers a connect link for an AuthMissingError from the keyBuilder.
+			if (!options.host?.trim() && !(await ctx.keys.get_host())?.trim()) {
+				throw new AuthMissingError('reamaze', 'api_key');
+			}
+			return stored;
 		},
 	} satisfies InternalReamazePlugin;
 }
