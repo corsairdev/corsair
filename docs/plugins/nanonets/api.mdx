@@ -111,7 +111,25 @@ await corsair.nanonets.api.files.retryExports({ model_id: 'd4d3beec-1029-497a-8d
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | No | One entry per file whose export was retried. |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -187,8 +205,8 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
 | `model_id` | `string` | Yes | The Nanonets model ID. |
 | `id` | `string` | Yes | The page ID whose fields are replaced, as returned by predictions.getFileByPageId or predictions.listFiles. |
 | `page` | `number` | No | The page number of that page, copied from the read. |
-| `day_since_epoch` | `number` | No | The day_since_epoch of that page, copied from the read. |
-| `hour_of_day` | `number` | No | The hour_of_day of that page, copied from the read. |
+| `day_since_epoch` | `number` | Yes | The day_since_epoch of that page, copied from the read. Required: Nanonets looks the page up by it. |
+| `hour_of_day` | `number` | Yes | The hour_of_day of that page, copied from the read. Required: Nanonets looks the page up by it. |
 | `is_moderated` | `boolean` | No | The is_moderated flag of that page, copied from the read. |
 | `moderated_boxes` | `object[]` | Yes | The full field list: existing boxes unchanged, new boxes with is_new: true, any omitted field is deleted, and an empty array removes every field. |
 
