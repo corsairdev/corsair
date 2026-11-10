@@ -1,5 +1,5 @@
 import type { TeamcampEndpoints } from '..';
-import { segment } from '../client';
+import { segment, TeamcampAPIError } from '../client';
 import { asArray, call } from './call';
 import {
 	TeamcampEndpointInputSchemas as Inputs,
@@ -171,11 +171,22 @@ export const projectsDelete: TeamcampEndpoints['projectsDelete'] = (
 			shape: (raw, parsed) => ({
 				archived: true,
 				projectId: parsed.projectId,
-				message: typeof raw === 'string' ? raw : String(raw),
+				message: deletedMessage(raw, parsed.projectId),
 			}),
 			log: (parsed) => ({ projectId: parsed.projectId }),
 		},
 	);
+
+// unknown: `raw` is the provider's answer before the output schema runs; a
+// delete is documented to answer a bare string, and anything else is a failure
+// this reports rather than coercing into a fake success message.
+function deletedMessage(raw: unknown, projectId: string): string {
+	if (typeof raw === 'string' && raw.length > 0) return raw;
+	throw new TeamcampAPIError(
+		`Teamcamp answered the delete of ${projectId} with ${typeof raw}, not the expected message string`,
+		{ status: 200 },
+	);
+}
 
 export const groupsList: TeamcampEndpoints['groupsList'] = (ctx, input) =>
 	call(

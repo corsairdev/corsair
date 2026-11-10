@@ -206,6 +206,30 @@ describe('projects.delete', () => {
 		});
 	});
 
+	it('fails rather than inventing a message when the answer is not a string', async () => {
+		respond({ ok: true });
+
+		const error = await captureError(
+			invoke(Endpoints.projectsDelete, { projectId: 'p1' }),
+		);
+
+		expect((error as Error).message).toContain(
+			'not the expected message string',
+		);
+	});
+
+	it('fails when the delete answers an empty body', async () => {
+		respond('');
+
+		const error = await captureError(
+			invoke(Endpoints.projectsDelete, { projectId: 'p1' }),
+		);
+
+		expect((error as Error).message).toContain(
+			'not the expected message string',
+		);
+	});
+
 	it('still reads a project by id after the delete, marked archived', async () => {
 		respond(archivedProject);
 

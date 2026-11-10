@@ -110,7 +110,8 @@ export const task = {
 	subscribers: [],
 	groupId: null,
 	group: null,
-	taskUsers: [],
+	// A read answers objects here, while a create takes plain id strings.
+	taskUsers: [{ taskUserId: 'iXH_-M_COvz453E5uQgoJ' }],
 	description: '',
 	files: [],
 	labels: [],

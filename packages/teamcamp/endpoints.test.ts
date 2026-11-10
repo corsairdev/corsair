@@ -107,6 +107,8 @@ describe('output schemas parse live answers', () => {
 		expect(comment?.Type).toBe(17);
 		expect(output.groupId).toBeNull();
 		expect(output.description).toBe('');
+		// A read answers objects here, where a create takes plain ids.
+		expect(output.taskUsers?.[0]?.taskUserId).toBe('iXH_-M_COvz453E5uQgoJ');
 	});
 
 	it('tasks.create reads a created task', () => {

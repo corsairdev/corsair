@@ -292,7 +292,12 @@ export const TeamcampTaskSchema = z
 		statusId: z.string().nullish(),
 		groupId: z.string().nullish(),
 		group: z.string().nullish(),
-		taskUsers: z.array(z.string()).nullish(),
+		// unknown: a task read answers `taskUsers` as objects, `[{ taskUserId }]`,
+		// while a task create takes plain id strings; the field is read here as
+		// the objects the API sends.
+		taskUsers: z
+			.array(z.object({ taskUserId: z.string().nullish() }).loose())
+			.nullish(),
 		subscribers: z.array(z.string()).nullish(),
 		description: z.string().nullish(),
 		dueDate: z.string().nullish(),

@@ -1,5 +1,6 @@
 import type { TeamcampAPIError } from './client';
 import { makeTeamcampRequest, TEAMCAMP_API_BASE } from './client';
+import { TeamcampEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { captureError } from './test-errors';
 
 const KEY = process.env.TEAMCAMP_API_KEY;
@@ -14,118 +15,86 @@ if (!KEY) {
 describeIfKey('Teamcamp live', () => {
 	const apiKey = KEY as string;
 
-	it('reads the workspace behind the key', async () => {
-		const body = await makeTeamcampRequest<{
-			workspaceId: string;
-			workspaceName?: string | null;
-		}>(apiKey, { method: 'GET', path: '/verify' });
+	// unknown: every raw answer is parsed through its output schema below, which
+	// is what checks the contract a user receives; a type here would bypass it.
+	const read = (
+		path: string,
+		query?: Record<string, string | number | boolean | undefined>,
+	): Promise<unknown> =>
+		makeTeamcampRequest<unknown>(apiKey, { method: 'GET', path, query });
 
+	it('reads the workspace behind the key', async () => {
+		const raw = await read('/verify');
+		const body = Outputs.accountVerify.parse(raw);
 		expect(body.workspaceId).toBeTruthy();
 	});
 
 	it('lists the workspace members', async () => {
-		const users = await makeTeamcampRequest<{ id: string; email?: string }[]>(
-			apiKey,
-			{ method: 'GET', path: '/company/users' },
-		);
-
-		expect(Array.isArray(users)).toBe(true);
-		if (users[0]) expect(users[0].id).toBeTruthy();
+		const raw = await read('/company/users');
+		const { users } = Outputs.usersList.parse({ users: raw });
+		expect(users.length).toBeGreaterThan(0);
+		expect(users[0]?.id).toBeTruthy();
 	});
 
 	it('lists customers', async () => {
-		const customers = await makeTeamcampRequest<
-			{ id?: string; taskId?: string }[]
-		>(apiKey, {
-			method: 'GET',
-			path: '/company/customers',
-		});
+		const raw = await read('/company/customers');
+		const { customers } = Outputs.customersList.parse({ customers: raw });
 		expect(Array.isArray(customers)).toBe(true);
 	});
 
 	it('lists projects, then reads one with its groups and tasks', async () => {
-		const projects = await makeTeamcampRequest<{ projectId: string }[]>(
-			apiKey,
-			{
-				method: 'GET',
-				path: '/project',
-			},
-		);
-		expect(Array.isArray(projects)).toBe(true);
-
+		const projectRows = await read('/project');
+		const { projects } = Outputs.projectsList.parse({ projects: projectRows });
 		const first = projects[0];
 		if (!first) {
 			expect(projects).toEqual([]);
 			return;
 		}
 
-		const project = await makeTeamcampRequest<{
-			projectId: string;
-			status?: { _id?: string | null; Name?: string | null }[];
-		}>(apiKey, { method: 'GET', path: `/project/${first.projectId}` });
+		const project = Outputs.projectsGet.parse(
+			await read(`/project/${first.projectId}`),
+		);
 		expect(project.projectId).toBe(first.projectId);
 		expect(Array.isArray(project.status)).toBe(true);
 
-		const groups = await makeTeamcampRequest<
-			{ id?: string; taskId?: string }[]
-		>(apiKey, {
-			method: 'GET',
-			path: `/project/${first.projectId}/group`,
-		});
+		const groupRows = await read(`/project/${first.projectId}/group`);
+		const { groups } = Outputs.groupsList.parse({ groups: groupRows });
 		expect(Array.isArray(groups)).toBe(true);
 
-		const tasks = await makeTeamcampRequest<{ taskId: string }[]>(apiKey, {
-			method: 'GET',
-			path: '/task',
-			query: { projectId: first.projectId },
+		const taskRows = await read('/task', {
+			projectId: first.projectId,
 		});
+		const { tasks } = Outputs.tasksList.parse({ tasks: taskRows });
 		expect(Array.isArray(tasks)).toBe(true);
 	});
 
 	it('reads a task when the project has any', async () => {
-		const projects = await makeTeamcampRequest<{ projectId: string }[]>(
-			apiKey,
-			{
-				method: 'GET',
-				path: '/project',
-			},
-		);
+		const { projects } = Outputs.projectsList.parse({
+			projects: await read('/project'),
+		});
 		const projectId = projects[0]?.projectId;
 		if (!projectId) return;
 
-		const tasks = await makeTeamcampRequest<{ taskId: string }[]>(apiKey, {
-			method: 'GET',
-			path: '/task',
-			query: { projectId },
+		const { tasks } = Outputs.tasksList.parse({
+			tasks: await read('/task', { projectId }),
 		});
 		const taskId = tasks[0]?.taskId;
 		if (!taskId) return;
 
-		const task = await makeTeamcampRequest<{ taskId: string }>(apiKey, {
-			method: 'GET',
-			path: `/task/${taskId}`,
-		});
+		const task = Outputs.tasksGet.parse(await read(`/task/${taskId}`));
 		expect(task.taskId).toBe(taskId);
 	});
 
 	it('filters the task list by completion', async () => {
-		const projects = await makeTeamcampRequest<{ projectId: string }[]>(
-			apiKey,
-			{
-				method: 'GET',
-				path: '/project',
-			},
-		);
+		const { projects } = Outputs.projectsList.parse({
+			projects: await read('/project'),
+		});
 		const projectId = projects[0]?.projectId;
 		if (!projectId) return;
 
 		for (const complete of [true, false]) {
-			const tasks = await makeTeamcampRequest<
-				{ id?: string; taskId?: string }[]
-			>(apiKey, {
-				method: 'GET',
-				path: '/task',
-				query: { projectId, complete },
+			const { tasks } = Outputs.tasksList.parse({
+				tasks: await read('/task', { projectId, complete }),
 			});
 			expect(Array.isArray(tasks)).toBe(true);
 		}
@@ -155,15 +124,15 @@ describeIfKey('Teamcamp live', () => {
 		expect((error as TeamcampAPIError).isAuthError).toBe(false);
 	});
 
+	it('points at the documented host', () => {
+		expect(TEAMCAMP_API_BASE).toBe('https://api.teamcamp.app/v1.0');
+	});
+
 	it('requires a project id on the task list', async () => {
 		const error = await captureError(
 			makeTeamcampRequest(apiKey, { method: 'GET', path: '/task' }),
 		);
 		expect((error as { status?: number }).status).toBe(400);
 		expect((error as Error).message).toContain('ProjectId is required');
-	});
-
-	it('points at the documented host', () => {
-		expect(TEAMCAMP_API_BASE).toBe('https://api.teamcamp.app/v1.0');
 	});
 });
