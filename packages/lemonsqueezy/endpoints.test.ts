@@ -201,6 +201,24 @@ describe('input schemas pin the provider rules', () => {
 	});
 });
 
+describe('usage record descriptions match the aggregation rules', () => {
+	// Lemon Squeezy reads `set` only under "most recent usage" aggregation; under
+	// "sum of usage" a set record adds to the total (live, 11-10: an increment of
+	// 5 then a set of 3 gave 8). Agents choose the action from this text.
+	const shape = LemonSqueezyEndpointInputSchemas.usageRecordsCreate.shape;
+
+	it('ties each action to the price aggregation it works with', () => {
+		const action = shape.action.description ?? '';
+		expect(action).toMatch(/sum of usage/i);
+		expect(action).toMatch(/most recent usage/i);
+		expect(action).not.toMatch(/`set` replaces it\./);
+	});
+
+	it('does not promise that quantity always adds', () => {
+		expect(shape.quantity.description).not.toMatch(/Each call adds/);
+	});
+});
+
 describe('error bodies parse', () => {
 	it('reads each documented error shape', () => {
 		expect(webhookMissingSecret.errors[0]?.source?.pointer).toBe(

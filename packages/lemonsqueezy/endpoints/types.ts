@@ -1480,8 +1480,9 @@ export type GetUsageRecordResponse = z.infer<
 >;
 
 /**
- * Records metered usage against a subscription item. `quantity` is additive:
- * each call increases the period's usage by that amount.
+ * Records metered usage against a subscription item. How a record counts
+ * depends on the price's usage aggregation: under "sum of usage" every record
+ * adds, and under "most recent usage" the latest `set` record is the total.
  */
 const CreateUsageRecordInputSchema = z.object({
 	subscriptionItemId: z
@@ -1494,13 +1495,13 @@ const CreateUsageRecordInputSchema = z.object({
 		.int()
 		.min(1)
 		.describe(
-			'The amount to add for this period. Each call adds to the total.',
+			'The usage to report: added to the period total with `increment`, or the new total with `set`.',
 		),
 	action: z
 		.enum(['increment', 'set'])
 		.optional()
 		.describe(
-			'`increment` adds the quantity to the period total; `set` replaces it. Defaults to increment.',
+			'`increment` (the default) adds the quantity to the period total and is for a price with "sum of usage" aggregation. `set` makes the quantity the period total and only works with "most recent usage" aggregation; under "sum of usage" a `set` record is added like an increment.',
 		),
 });
 

@@ -397,8 +397,10 @@ export const usageRecordsGet: LemonSqueezyEndpoints['usageRecordsGet'] = (
 	);
 
 /**
- * Records metered usage. `quantity` is additive by default, so calling twice
- * with 5 records 10 for the period; `action: 'set'` replaces the total instead.
+ * Records metered usage. With the default `increment` on a "sum of usage"
+ * price, calling twice with 5 records 10 for the period. `action: 'set'` makes
+ * the quantity the total only on a "most recent usage" price; on a sum price
+ * it adds like an increment (seen live in test mode).
  */
 export const usageRecordsCreate: LemonSqueezyEndpoints['usageRecordsCreate'] = (
 	ctx,

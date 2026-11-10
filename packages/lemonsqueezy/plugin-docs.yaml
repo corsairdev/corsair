@@ -144,7 +144,7 @@ apiNotes:
   subscriptions.update: 'A variant change prorates the next charge unless `invoiceImmediately` or `disableProrations` says otherwise. `pause` and `unpause` are opposite actions, and at least one change is required.'
   subscriptions.cancel: 'Cancels an active subscription. It stays readable and keeps its history, but stops renewing.'
   subscriptionInvoices.refund: 'The same rules as an order refund: the amount is optional and in cents, and a partial refund cannot be undone through the API.'
-  usageRecords.create: '`quantity` adds to the period total by default; `action: "set"` replaces it. Only a usage-based subscription item accepts records.'
+  usageRecords.create: 'The default `increment` adds `quantity` to the period total and suits a "sum of usage" price. `action: "set"` makes `quantity` the total only on a "most recent usage" price; on a sum price it is added like an increment. Only a usage-based subscription item accepts records.'
   checkouts.create: 'The answer''s `data.attributes.url` is the page to send a buyer to. `customPrice` is only valid for a pay-what-you-want product.'
   customers.create: 'Creates the customer record only. Lemon Squeezy does not send the customer an invitation.'
   customers.update: 'Give `name`, `email`, or both.'
