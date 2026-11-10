@@ -966,7 +966,7 @@ const AttendeesCheckinResponseSchema = z
 			.boolean()
 			.nullable()
 			.describe(
-				'Whether this call is believed to have taken effect, derived from `checkinstatus.status`. Null when the provider’s status text does not say. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code.',
+				'True only when `checkinstatus.status` confirms a check-in this call asked for. False when the status reports a failure, an "already" state or a revert; null when the status text does not say. A revert (`eventcheckin: false`) therefore never answers true: read `checkinstatus.status` for its outcome. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code.',
 			),
 	})
 	.loose();
@@ -979,8 +979,13 @@ export type AttendeesCheckinResponse = z.infer<
  * A check-in that failed still answers HTTP 200 with a `checkinstatus` whose
  * `status` is not a check-in (`"Already Reverted checked in"` was observed, and
  * every field `null` for an unknown barcode). The response is not an error at
- * the transport level, so `checkedIn` states plainly whether this call is
+ * the transport level, so `checkedIn` states plainly whether a check-in is
  * believed to have taken effect — null when the answer does not say.
+ *
+ * It is true only for a confirmed check-in. A revert answers false or null and
+ * never true, because the status vocabulary for a successful revert is not
+ * documented and was not observed; the output schema says so, so a caller
+ * reverting a check-in reads `checkinstatus.status` instead.
  */
 export function checkinSucceeded(
 	status: string | null | undefined,

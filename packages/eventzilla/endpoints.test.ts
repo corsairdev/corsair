@@ -522,6 +522,29 @@ describe('checkinSucceeded', () => {
 	it('answers null for a status it does not recognise', () => {
 		expect(checkinSucceeded('Pending', true)).toBeNull();
 	});
+
+	// Pinned because the output schema documents it: a revert is never reported
+	// as `checkedIn: true`, whatever the status text says.
+	it('never answers true for a revert', () => {
+		for (const status of [
+			'Checkin',
+			'Reverted checked in',
+			'Already Reverted checked in',
+			'Checkout',
+			null,
+		]) {
+			expect(checkinSucceeded(status, false)).not.toBe(true);
+		}
+	});
+
+	it('documents the revert behaviour on the output field', () => {
+		const description =
+			Outputs.attendeesCheckin.shape.checkedIn.description ?? '';
+		expect(description).toMatch(/revert/i);
+		expect(description).not.toMatch(
+			/this call is believed to have taken effect/,
+		);
+	});
 });
 
 describe('shapeAttendees', () => {
