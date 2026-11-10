@@ -116,11 +116,20 @@ export type MailssoRequest = {
 /**
  * While a batch job runs, GET /v1/batch/{id} answers HTTP 202 with
  * `{ data: { id, created_at, status: 'processing' }, error: 'Job is still
- * processing' }`. The non-null `error` there is a progress note, so this
- * returns the job from `data` for that shape and undefined for anything else.
+ * processing' }`. That non-null `error` is a progress note, not a failure.
+ *
+ * The exception is limited to that exact note: a real failure can also carry
+ * `data.id` and `status: 'processing'` (for example an error raised while a job
+ * is mid-flight), and treating every message as progress would leave the caller
+ * polling a job that has already failed.
  */
+export const JOB_IN_PROGRESS_MESSAGE = 'Job is still processing';
+
 export function readJobInProgress(body: MailssoBody): MailssoBody | undefined {
-	const data = asRecord(asRecord(body)?.data);
+	const record = asRecord(body);
+	const data = asRecord(record?.data);
+	const message = readStringField(record, 'error');
+	if (message !== JOB_IN_PROGRESS_MESSAGE) return undefined;
 	return typeof data?.id === 'string' && data.status === 'processing'
 		? data
 		: undefined;

@@ -216,6 +216,18 @@ describe('makeMailssoRequest', () => {
 			{ data: null, error: 'Job is still processing' },
 			{ data: { status: 'processing' }, error: 'Job is still processing' },
 			{ data: { id: 'x', status: 'failed' }, error: 'Job failed' },
+			// The shape of a running job but a real failure message: a job can
+			// fail while its data still reads as processing, so the note has to
+			// match exactly or the caller polls a job that will never finish.
+			{ data: { id: 'x', status: 'processing' }, error: 'Quota exceeded' },
+			{
+				data: {
+					id: 'x',
+					status: 'processing',
+					created_at: '2024-07-22T08:15:33Z',
+				},
+				error: 'Internal error while validating',
+			},
 		];
 		for (const body of bodies) {
 			fetchMock.mockResolvedValueOnce(jsonResponse(body, 202));
