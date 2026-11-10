@@ -265,7 +265,9 @@ const TrendingCollectionsInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Window to rank by. The API defaults to `one_day`.'),
+		.describe(
+			'Window to rank by, such as `one_hour`, `one_day`, `seven_days` or `thirty_days`. The API defaults to `one_day`.',
+		),
 	chains: z
 		.array(ChainIdentifierSchema)
 		.min(1)
@@ -355,7 +357,7 @@ const CollectionNftsInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe(
-			'Trait filter, as OpenSea documents it: `trait_type:value`, and several joined with commas.',
+			'JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined.',
 		),
 	has_agent_binding: z
 		.boolean()
@@ -507,7 +509,9 @@ const CollectionEventsInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Trait filter, as `trait_type:value`, comma separated.'),
+		.describe(
+			'JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined.',
+		),
 	after: z
 		.number()
 		.int()
@@ -537,7 +541,9 @@ const SearchInputSchema = z.object({
 		.array(z.string())
 		.min(1)
 		.optional()
-		.describe('Only these result kinds. The spec names no enum here.'),
+		.describe(
+			'Only these result kinds: `collection`, `nft`, `token`, `account`. The API defaults to collections and tokens.',
+		),
 	limit: z.number().int().min(1).optional().describe('Defaults to 20.'),
 });
 
@@ -581,12 +587,16 @@ export type TraitsListInput = z.input<typeof TraitsListInputSchema>;
 
 /**
  * `categories` maps a trait name to its value **type** (`"string"`,
- * `"number"`), not to the values themselves, which is what the docs' example
- * shows. A record of strings.
+ * `"number"`). `counts` maps the same name to its values: for a string trait,
+ * each value and how many NFTs carry it (`{ "Blue": 1242 }`); for a numeric
+ * trait, `min` and `max`.
  */
 const TraitsResponseSchema = z
 	.object({
 		categories: z.record(z.string(), z.string()),
+		// unknown: one object per trait, value counts or a min/max pair depending
+		// on the trait's type. Left open so a new trait type cannot fail the call.
+		counts: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -654,7 +664,9 @@ const BestListingsInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Trait filter, as `trait_type:value`, comma separated.'),
+		.describe(
+			'JSON array of trait filters, sent as a string: `[{"traitType":"Background","value":"Red"}]`. Several filters are AND-combined.',
+		),
 	limit: z.number().int().min(1).optional().describe('Page size.'),
 	next: z.string().min(1).optional().describe('The `next` cursor.'),
 });
@@ -772,13 +784,17 @@ const FloorPricesInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Window to report. The API defaults to `one_day`.'),
+		.describe(
+			'Window to report, such as `one_hour`, `one_day`, `seven_days`, `thirty_days` or `all_time`. The API defaults to `one_day`.',
+		),
 	resolution: z
 		.number()
 		.int()
 		.min(1)
 		.optional()
-		.describe('Bucket width in seconds. The spec gives no default or bounds.'),
+		.describe(
+			'Number of data points to return. The spec gives no default or bounds.',
+		),
 });
 
 export type FloorPricesInput = z.input<typeof FloorPricesInputSchema>;
@@ -885,7 +901,9 @@ const PortfolioInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Window for the P&L figures. The API defaults to `DAY`.'),
+		.describe(
+			'Window for the P&L figures: `HOUR`, `DAY`, `WEEK` or `MONTH`. The API defaults to `DAY`.',
+		),
 	chains: z
 		.array(ChainIdentifierSchema)
 		.min(1)

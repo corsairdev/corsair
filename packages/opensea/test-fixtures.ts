@@ -85,7 +85,10 @@ export const collectionStatsFixture = {
 	],
 } as const;
 
-/** Captured live: `categories` maps a trait name to its value type. */
+/**
+ * Captured live and trimmed: `categories` maps a trait name to its value type,
+ * and `counts` maps it to how many NFTs carry each value.
+ */
 export const traitsFixture = {
 	categories: {
 		Background: 'string',
@@ -93,7 +96,9 @@ export const traitsFixture = {
 		Earring: 'string',
 	},
 	counts: {
-		Background: 10000,
+		Background: { Gray: 1169, Aquamarine: 1265, Yellow: 1283 },
+		Clothes: { 'Smoking Jacket': 221, 'Bone Necklace': 203 },
+		Earring: { 'Silver Hoop': 882 },
 	},
 } as const;
 

@@ -133,6 +133,21 @@ describe('output schemas reject wrong shapes', () => {
 		).toBe(false);
 	});
 
+	it('declares the per-value counts that traits.list returns', () => {
+		// Live /traits/{slug}: a string trait maps each value to how many NFTs
+		// carry it, a numeric trait carries `min` and `max`.
+		expect(Object.keys(Outputs.traitsList.shape)).toContain('counts');
+		const parsed = Outputs.traitsList.parse({
+			categories: { Background: 'string', Level: 'number' },
+			counts: {
+				Background: { Blue: 1242, Gray: 1169 },
+				Level: { min: 1, max: 99 },
+			},
+		});
+		expect(parsed.counts?.Background).toEqual({ Blue: 1242, Gray: 1169 });
+		expect(Outputs.traitsList.safeParse({ categories: {} }).success).toBe(true);
+	});
+
 	it('rejects a traits body whose categories are not strings', () => {
 		expect(
 			Outputs.traitsList.safeParse({ categories: { Background: ['Blue'] } })
@@ -182,6 +197,32 @@ describe('accepts the nullish values the API sends', () => {
 				next: null,
 			}).success,
 		).toBe(true);
+	});
+});
+
+describe('input descriptions say what the API reference says', () => {
+	it('describes a trait filter as a JSON array of traitType and value', () => {
+		for (const schema of [
+			Inputs.collectionNfts,
+			Inputs.listingsBest,
+			Inputs.eventsCollection,
+		]) {
+			const text = schema.shape.traits.description ?? '';
+			expect(text).toContain('[{"traitType":"Background","value":"Red"}]');
+			expect(text).not.toContain('trait_type:value');
+		}
+	});
+
+	it('describes resolution as a number of points, not seconds', () => {
+		const text = Inputs.collectionsFloorPrices.shape.resolution.description;
+		expect(text).toContain('data points');
+		expect(text).not.toContain('seconds');
+	});
+
+	it('names the values search takes for asset_types', () => {
+		expect(Inputs.search.shape.asset_types.description).toContain(
+			'`collection`, `nft`, `token`, `account`',
+		);
 	});
 });
 

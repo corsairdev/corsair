@@ -25,10 +25,11 @@ overviewNote: |-
   Three routes differ: `collections.top`, `collections.trending` and
   `collections.holders` take `cursor` instead of `next`.
 
-  `traits.list` answers the trait names on a collection and the type of each
-  value, not the values themselves. To select NFTs by trait, pass
-  `collection.nfts` a `traits` filter as `trait_type:value`, with several joined
-  by commas.
+  `traits.list` answers the trait names on a collection, the type of each, and
+  under `counts` every value with how many NFTs carry it. To select NFTs by
+  trait, pass `collection.nfts` a `traits` filter: a JSON array sent as a
+  string, such as `[{"traitType":"Background","value":"Red"}]`. Several filters
+  are AND-combined.
 
   Prices arrive as base-unit strings. An 18-decimal wei amount such as
   `"5900000000000000000"` does not fit a JavaScript number, so the value stays a
@@ -50,7 +51,7 @@ apiNotes:
 apiExamples:
   collections.get: { args: { slug: "boredapeyachtclub" } }
   collections.stats: { args: { slug: "boredapeyachtclub" } }
-  collections.floorPrices: { args: { slug: "boredapeyachtclub", timeframe: "seven_day" } }
+  collections.floorPrices: { args: { slug: "boredapeyachtclub", timeframe: "seven_days" } }
   collections.holders: { args: { slug: "boredapeyachtclub", limit: 5 } }
   collections.top: { args: { limit: 5 } }
   collections.trending: { args: { limit: 5 } }

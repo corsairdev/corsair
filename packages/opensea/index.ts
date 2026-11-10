@@ -283,7 +283,7 @@ const openseaEndpointMeta = {
 	'collections.floorPrices': {
 		riskLevel: 'read',
 		description:
-			'Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe` or a `resolution` in seconds.',
+			'Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe`, and set how many points come back with `resolution`.',
 	},
 	'collections.holders': {
 		riskLevel: 'read',
@@ -293,7 +293,7 @@ const openseaEndpointMeta = {
 	'collection.nfts': {
 		riskLevel: 'read',
 		description:
-			'The NFTs in one collection, paged with `next`. Filter by trait with `trait_type:value`, several joined by commas.',
+			'The NFTs in one collection, paged with `next`. Filter by trait with `traits`, a JSON array of `traitType` and `value` pairs sent as a string.',
 	},
 	'contract.nfts': {
 		riskLevel: 'read',
@@ -343,7 +343,7 @@ const openseaEndpointMeta = {
 	'traits.list': {
 		riskLevel: 'read',
 		description:
-			'The trait names on one collection and the type of each value. It answers types, not the values themselves; use `collection.nfts` with a trait filter to select by value.',
+			'The trait names on one collection, the type of each, and under `counts` every value with how many NFTs carry it (`min` and `max` for a numeric trait). Use `collection.nfts` with a `traits` filter to select NFTs by value.',
 	},
 	'listings.best': {
 		riskLevel: 'read',

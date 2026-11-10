@@ -218,13 +218,13 @@ describe('collections', () => {
 		respond(collectionsPageFixture);
 
 		await run(
-			{ timeframe: 'seven_day', chains: ['ethereum'], limit: 3 },
+			{ timeframe: 'seven_days', chains: ['ethereum'], limit: 3 },
 			endpoints.collections.trending,
 		);
 
 		const { parsed } = lastCall();
 		expect(parsed.pathname).toBe('/api/v2/collections/trending');
-		expect(parsed.searchParams.get('timeframe')).toBe('seven_day');
+		expect(parsed.searchParams.get('timeframe')).toBe('seven_days');
 		expect(parsed.searchParams.get('chains')).toBe('ethereum');
 	});
 
@@ -234,7 +234,7 @@ describe('collections', () => {
 		const { result } = await run(
 			{
 				slug: 'boredapeyachtclub',
-				traits: 'Background:Blue,Earring:Silver',
+				traits: '[{"traitType":"Background","value":"Blue"}]',
 				limit: 2,
 				next: 'N1',
 			},
@@ -245,7 +245,7 @@ describe('collections', () => {
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/v2/collection/boredapeyachtclub/nfts');
 		expect(parsed.searchParams.get('traits')).toBe(
-			'Background:Blue,Earring:Silver',
+			'[{"traitType":"Background","value":"Blue"}]',
 		);
 		expect(result.nfts).toHaveLength(1);
 	});
@@ -445,7 +445,7 @@ describe('extended reads', () => {
 			{
 				slug: 'boredapeyachtclub',
 				event_type: ['sale'],
-				traits: 'Background:Blue',
+				traits: '[{"traitType":"Background","value":"Blue"}]',
 				limit: 5,
 			},
 			endpoints.events.collection,
@@ -454,7 +454,9 @@ describe('extended reads', () => {
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/v2/events/collection/boredapeyachtclub');
 		expect(parsed.searchParams.get('event_type')).toBe('sale');
-		expect(parsed.searchParams.get('traits')).toBe('Background:Blue');
+		expect(parsed.searchParams.get('traits')).toBe(
+			'[{"traitType":"Background","value":"Blue"}]',
+		);
 	});
 
 	it('listings.all GETs every listing, comma-joining nothing', async () => {
@@ -515,14 +517,14 @@ describe('extended reads', () => {
 	it('collections.floorPrices GETs the history with a timeframe', async () => {
 		respond(floorPricesFixture);
 		const { result } = await run(
-			{ slug: 'boredapeyachtclub', timeframe: 'seven_day', resolution: 3600 },
+			{ slug: 'boredapeyachtclub', timeframe: 'seven_days', resolution: 3600 },
 			endpoints.collections.floorPrices,
 		);
 		const { parsed } = lastCall();
 		expect(parsed.pathname).toBe(
 			'/api/v2/collections/boredapeyachtclub/floor_prices',
 		);
-		expect(parsed.searchParams.get('timeframe')).toBe('seven_day');
+		expect(parsed.searchParams.get('timeframe')).toBe('seven_days');
 		expect(result.floor_prices.length).toBeGreaterThan(0);
 	});
 
