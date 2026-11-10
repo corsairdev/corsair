@@ -80,6 +80,14 @@ describe('eventbrite plugin', () => {
 		}
 	});
 
+	it('marks cancel destructive, since a canceled event cannot be reopened', () => {
+		const entry: { riskLevel: string; irreversible?: boolean } =
+			eventbriteEndpointMeta['events.cancel'];
+
+		expect(entry.riskLevel).toBe('destructive');
+		expect(entry.irreversible).toBe(true);
+	});
+
 	it('registers no webhook delivery as a read, since it is not one', () => {
 		const plugin = eventbrite();
 

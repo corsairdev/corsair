@@ -469,7 +469,7 @@ export const eventbriteEndpointMeta = {
 			'Take a published event back to draft. Refused while the event has any pending or completed orders, unless it is completed and paid out',
 	},
 	'events.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Cancel an event. Refused while it has any pending or completed orders; a canceled event cannot be reopened, only copied',
