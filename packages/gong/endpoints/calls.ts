@@ -10,27 +10,6 @@ function credentials(ctx: GongFamilyContext) {
 	return gongCredentials(ctx);
 }
 
-function baseUrl(ctx: GongContext): string {
-	const value = ctx.options.baseUrl;
-	if (!value)
-		throw new Error(
-			'Gong baseUrl is required; use the workspace API URL from Gong',
-		);
-	const parsed = new URL(value);
-	if (
-		parsed.protocol !== 'https:' ||
-		parsed.username ||
-		parsed.password ||
-		parsed.search ||
-		parsed.hash
-	) {
-		throw new Error(
-			'Gong baseUrl must be an HTTPS origin or API base path without credentials, query, or fragment',
-		);
-	}
-	return parsed.toString().replace(/\/$/, '');
-}
-
 // Gong call filters and records are provider-defined; registered Zod schemas validate each public operation.
 async function call<T>(
 	ctx: GongContext,
@@ -41,7 +20,7 @@ async function call<T>(
 	body?: GongOpaqueValue,
 ): Promise<T> {
 	const result = await gongRequest<T>({
-		baseUrl: baseUrl(ctx),
+		baseUrl: ctx.options.baseUrl,
 		credentials: credentials(ctx),
 		method,
 		path,
@@ -106,10 +85,6 @@ export const addCallRecording: GongEndpoints['callsAddCallRecording'] = async (
 	input,
 ) => {
 	const options = ctx.options;
-	if (!options.baseUrl)
-		throw new Error(
-			'Gong baseUrl is required; use the workspace API URL from Gong',
-		);
 	if (!/^\d{1,20}$/.test(input.id))
 		throw new Error('Gong call id must contain 1 to 20 digits');
 	const result = await gongRequest<GongCallsOutputs['addCallRecording']>({

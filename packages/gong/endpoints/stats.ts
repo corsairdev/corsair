@@ -10,7 +10,6 @@ async function postStats<K extends keyof GongStatsInputs>(
 	path: string,
 	input: GongStatsInputs[K],
 ): Promise<GongStatsOutputs[K]> {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	return gongRequest<GongStatsOutputs[K]>({
 		baseUrl: ctx.options.baseUrl,

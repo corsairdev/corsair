@@ -10,7 +10,6 @@ async function getSettings<K extends keyof GongSettingsInputs>(
 	path: string,
 	input: GongSettingsInputs[K],
 ): Promise<GongSettingsOutputs[K]> {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	return gongRequest<GongSettingsOutputs[K]>({
 		baseUrl: ctx.options.baseUrl,

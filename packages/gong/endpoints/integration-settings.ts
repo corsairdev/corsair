@@ -12,7 +12,6 @@ export async function updateIntegrationSettings(
 	input: GongIntegrationSettingsInputs['update'],
 ): Promise<GongIntegrationSettingsOutputs['update']> {
 	const options = ctx.options;
-	if (!options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<GongIntegrationSettingsOutputs['update']>({
 		baseUrl: options.baseUrl,

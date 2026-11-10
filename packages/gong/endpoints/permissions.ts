@@ -13,7 +13,6 @@ async function call<T>(
 	query?: GongOpaqueRecord,
 	body?: GongOpaqueValue,
 ): Promise<T> {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<T>({
 		baseUrl: ctx.options.baseUrl,

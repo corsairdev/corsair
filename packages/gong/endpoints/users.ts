@@ -13,15 +13,9 @@ async function call<T>(
 	query?: GongOpaqueRecord,
 	body?: GongOpaqueValue,
 ): Promise<T> {
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl)
-		throw new Error(
-			'Gong baseUrl is required; use the workspace API URL from Gong',
-		);
-	new URL(baseUrl);
 	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<T>({
-		baseUrl,
+		baseUrl: ctx.options.baseUrl,
 		credentials,
 		method,
 		path,

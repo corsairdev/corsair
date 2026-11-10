@@ -8,7 +8,6 @@ async function run<K extends keyof GongLibraryInputs>(
 	path: string,
 	input: GongLibraryInputs[K],
 ): Promise<GongLibraryOutputs[K]> {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	return gongRequest<GongLibraryOutputs[K]>({
 		baseUrl: ctx.options.baseUrl,

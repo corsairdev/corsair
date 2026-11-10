@@ -11,7 +11,6 @@ export async function listWorkspaces(
 	ctx: GongFamilyContext,
 	input: GongWorkspacesInputs['listWorkspaces'],
 ): Promise<GongWorkspacesOutputs['listWorkspaces']> {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<GongWorkspacesOutputs['listWorkspaces']>({
 		baseUrl: ctx.options.baseUrl,

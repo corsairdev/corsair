@@ -22,7 +22,6 @@ export const listTargetDefinitions: Endpoint<'listTargetDefinitions'> = async (
 	ctx,
 	input,
 ) => {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const result = await gongRequest<GongTargetsOutputs['listTargetDefinitions']>(
 		{
 			baseUrl: ctx.options.baseUrl,
@@ -44,7 +43,6 @@ export const uploadAssignments: Endpoint<'uploadAssignments'> = async (
 	ctx,
 	input,
 ) => {
-	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const { targetId, workspaceId, validateOnly = false, file } = input;
 	const result = await gongRequest<GongTargetsOutputs['uploadAssignments']>({
 		baseUrl: ctx.options.baseUrl,

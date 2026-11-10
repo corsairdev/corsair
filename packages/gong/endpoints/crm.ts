@@ -16,7 +16,6 @@ async function run<K extends keyof GongCrmInputs>(
 	formData?: Record<string, Blob | string>,
 ): Promise<GongCrmOutputs[K]> {
 	const options = ctx.options;
-	if (!options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
 	const response = await gongRequest<GongCrmOutputs[K]>({
 		baseUrl: options.baseUrl,

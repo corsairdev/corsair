@@ -22,7 +22,8 @@ export type GongCredentials =
 	| { type: 'bearer'; accessToken: string };
 
 export type GongRequestOptions = {
-	baseUrl: string;
+	/** Company name, host or URL on api.gong.io; the shared host when omitted. */
+	baseUrl?: string;
 	credentials: GongCredentials;
 	method: ApiRequestOptions['method'];
 	path: string;
@@ -163,24 +164,68 @@ export function requestGetWithBody<T>(
 	});
 }
 
-function secureBaseUrl(value: string): string {
-	const parsed = new URL(value);
-	if (
-		parsed.protocol !== 'https:' ||
-		parsed.username ||
-		parsed.password ||
-		parsed.search ||
-		parsed.hash
-	) {
+/** Gong's shared API host. Every company can also be reached on its own `<name>.api.gong.io` host. */
+export const GONG_DEFAULT_BASE_URL = 'https://api.gong.io';
+const GONG_API_DOMAIN = 'api.gong.io';
+// One DNS label: the company part of `<name>.api.gong.io`, for example `us-12345`.
+const GONG_HOST_NAME = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/**
+ * Resolves the Gong API base URL. The host is never taken from input as is: it
+ * is rebuilt as `api.gong.io` or `<name>.api.gong.io` from a validated name, so
+ * credentials cannot be sent to another host.
+ *
+ * Accepts nothing (the shared host), the company name (`us-12345`), the host
+ * (`us-12345.api.gong.io`) or the URL Gong shows on its API page
+ * (`https://us-12345.api.gong.io`).
+ */
+export function gongBaseUrl(value?: string): string {
+	const raw = value?.trim().toLowerCase();
+	if (!raw) return GONG_DEFAULT_BASE_URL;
+	let host = raw;
+	if (raw.includes('://')) {
+		let parsed: URL;
+		try {
+			parsed = new URL(raw);
+		} catch {
+			throw new Error('Gong baseUrl is not a valid URL');
+		}
+		if (
+			parsed.protocol !== 'https:' ||
+			parsed.username ||
+			parsed.password ||
+			parsed.port ||
+			parsed.search ||
+			parsed.hash
+		) {
+			throw new Error(
+				'Gong baseUrl must use HTTPS and cannot include credentials, a port, a query, or a fragment',
+			);
+		}
+		if (!['', '/', '/v2', '/v2/'].includes(parsed.pathname)) {
+			throw new Error('Gong baseUrl cannot include a path');
+		}
+		host = parsed.hostname;
+	}
+	if (host === GONG_API_DOMAIN) return GONG_DEFAULT_BASE_URL;
+	const suffix = `.${GONG_API_DOMAIN}`;
+	// A bare company name is accepted on its own, never as the host of a URL.
+	const isBareName = host === raw && !host.includes('.');
+	const name = host.endsWith(suffix)
+		? host.slice(0, -suffix.length)
+		: isBareName
+			? host
+			: '';
+	if (!GONG_HOST_NAME.test(name)) {
 		throw new Error(
-			'Gong baseUrl must use HTTPS and cannot include credentials, query, or fragment',
+			'Gong baseUrl must be https://api.gong.io or https://<name>.api.gong.io',
 		);
 	}
-	return parsed.toString().replace(/\/$/, '');
+	return `https://${name}${suffix}`;
 }
 
 export async function gongRequest<T>(options: GongRequestOptions): Promise<T> {
-	const baseUrl = secureBaseUrl(options.baseUrl);
+	const baseUrl = gongBaseUrl(options.baseUrl);
 	const authorization =
 		options.credentials.type === 'basic'
 			? `Basic ${Buffer.from(`${options.credentials.accessKey}:${options.credentials.accessKeySecret}`).toString('base64')}`

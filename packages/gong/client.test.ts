@@ -26,6 +26,66 @@ describe('Gong HTTP transport', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
+	const basic = {
+		type: 'basic' as const,
+		accessKey: 'key',
+		accessKeySecret: 'secret',
+	};
+
+	it.each([
+		['https://evil.example.com'],
+		['https://api.gong.io.example.com'],
+		['https://us-123.api.gong.io.example.com'],
+		['https://example.com/.api.gong.io'],
+		['https://us-123.api.gong.io@example.com'],
+		['https://user:pass@us-123.api.gong.io'],
+		['https://us-123.api.gong.io:8443'],
+		['https://us-123.api.gong.io/other/path'],
+		['https://us-123.api.gong.io?x=1'],
+		['https://a.b.api.gong.io'],
+		['https://127.0.0.1'],
+		['https://localhost'],
+		['localhost:8443'],
+		['example.com'],
+		['-bad'],
+	])('sends nothing when baseUrl is %s', async (baseUrl) => {
+		mockedRequest.mockReset();
+		await expect(
+			gongRequest({
+				baseUrl,
+				credentials: basic,
+				method: 'GET',
+				path: '/v2/users',
+			}),
+		).rejects.toThrow('Gong baseUrl');
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		[undefined, 'https://api.gong.io'],
+		['', 'https://api.gong.io'],
+		['https://api.gong.io', 'https://api.gong.io'],
+		['https://api.gong.io/v2', 'https://api.gong.io'],
+		['us-123', 'https://us-123.api.gong.io'],
+		['us-123.api.gong.io', 'https://us-123.api.gong.io'],
+		['https://US-123.api.gong.io/', 'https://us-123.api.gong.io'],
+		['https://us-123.api.gong.io/v2/', 'https://us-123.api.gong.io'],
+	])('builds the host for baseUrl %s as %s', async (baseUrl, expected) => {
+		mockedRequest.mockReset();
+		mockedRequest.mockResolvedValue({ requestId: 'r' });
+		expect(client.gongBaseUrl(baseUrl)).toBe(expected);
+		await gongRequest({
+			baseUrl,
+			credentials: basic,
+			method: 'GET',
+			path: '/v2/users',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: expected }),
+			expect.objectContaining({ url: '/v2/users' }),
+		);
+	});
+
 	it('sends Gong’s GET JSON body through a transport that supports it', async () => {
 		let requestMethod = '';
 		let requestAuthorization = '';

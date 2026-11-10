@@ -22,23 +22,9 @@ async function send<T>(
 	query?: GongOpaqueRecord,
 	body?: GongOpaqueValue,
 ): Promise<T> {
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl)
-		throw new Error(
-			'Gong baseUrl is required; use the workspace API URL from Gong',
-		);
-	const parsed = new URL(baseUrl);
-	if (
-		parsed.protocol !== 'https:' ||
-		parsed.username ||
-		parsed.password ||
-		parsed.search ||
-		parsed.hash
-	)
-		throw new Error('Gong baseUrl must be a safe HTTPS URL');
 	const credentials = gongCredentials(ctx);
 	const response = await gongRequest<T>({
-		baseUrl,
+		baseUrl: ctx.options.baseUrl,
 		credentials,
 		method,
 		path,
