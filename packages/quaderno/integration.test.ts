@@ -61,13 +61,13 @@ describe('quaderno through createCorsair', () => {
 		try {
 			await corsair.quaderno.keys.issue_new_dek();
 			await corsair.quaderno.keys.set_api_key('stored-quaderno-key');
-			await corsair.quaderno.keys.set_account_name('assur-224963');
+			await corsair.quaderno.keys.set_account_name('acme-123456');
 			respond(pingFixture);
 
 			await corsair.quaderno.api.ping({});
 
 			const { url, headers } = lastRequest();
-			expect(url).toContain('https://assur-224963.quadernoapp.com/api/ping');
+			expect(url).toContain('https://acme-123456.quadernoapp.com/api/ping');
 			// Basic auth with the key as username and an empty password.
 			expect(headers.get('authorization')).toBe(
 				`Basic ${Buffer.from('stored-quaderno-key:').toString('base64')}`,
@@ -81,7 +81,7 @@ describe('quaderno through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			await corsair.quaderno.keys.issue_new_dek();
-			await corsair.quaderno.keys.set_account_name('assur-224963');
+			await corsair.quaderno.keys.set_account_name('acme-123456');
 
 			await expect(corsair.quaderno.api.contacts.list({})).rejects.toThrow(
 				/auth-missing/,

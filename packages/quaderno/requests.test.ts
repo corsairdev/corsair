@@ -16,7 +16,7 @@ import {
 } from './test-fixtures';
 
 const API_KEY = 'sk_live_test';
-const ACCOUNT = 'assur-224963';
+const ACCOUNT = 'acme-123456';
 
 let fetchMock: jest.SpyInstance;
 
@@ -95,7 +95,7 @@ describe('credential and account routes', () => {
 
 		const { parsed, init, headers } = lastCall();
 		expect(init.method).toBe('GET');
-		expect(parsed.origin).toBe('https://assur-224963.quadernoapp.com');
+		expect(parsed.origin).toBe('https://acme-123456.quadernoapp.com');
 		expect(parsed.pathname).toBe('/api/ping');
 		expect(headers.get('authorization')).toContain('Basic ');
 		expect(result.status).toBe('OK');

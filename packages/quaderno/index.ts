@@ -33,7 +33,7 @@ export type QuadernoPluginOptions = {
 	/** A Quaderno API key, `sk_live_…` or `sk_test_…`. Overrides the stored key. */
 	key?: string;
 	/**
-	 * The account subdomain, such as `assur-224963`. There is no shared host:
+	 * The account subdomain, such as `acme-123456`. There is no shared host:
 	 * every account answers on its own. Overrides the stored value.
 	 */
 	account?: string;

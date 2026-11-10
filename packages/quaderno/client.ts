@@ -22,7 +22,7 @@ export function accountBaseUrl(account: string): string {
 	const name = account.trim();
 	if (!/^[a-z0-9][a-z0-9-]*$/i.test(name)) {
 		throw new QuadernoError(
-			'The Quaderno account name must be the subdomain only, such as `assur-224963`. Call GET /authorization to find it.',
+			'The Quaderno account name must be the subdomain only, such as `acme-123456`. Call GET /authorization to find it.',
 			'invalid_account',
 		);
 	}

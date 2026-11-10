@@ -17,7 +17,7 @@ import {
 } from './test-fixtures';
 
 const API_KEY = 'sk_live_test_key';
-const ACCOUNT = 'assur-224963';
+const ACCOUNT = 'acme-123456';
 
 let fetchMock: jest.SpyInstance;
 
@@ -58,8 +58,8 @@ describe('accountBaseUrl', () => {
 	 * this is the one place the account name becomes a URL.
 	 */
 	it('builds the per-account host with /api attached', () => {
-		expect(accountBaseUrl('assur-224963')).toBe(
-			'https://assur-224963.quadernoapp.com/api',
+		expect(accountBaseUrl('acme-123456')).toBe(
+			'https://acme-123456.quadernoapp.com/api',
 		);
 	});
 
@@ -116,7 +116,7 @@ describe('makeQuadernoRequest', () => {
 		});
 
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe('https://assur-224963.quadernoapp.com/api/ping');
+		expect(url).toBe('https://acme-123456.quadernoapp.com/api/ping');
 		expect(new Headers(init.headers).get('authorization')).toBe(
 			basicAuthHeader(API_KEY),
 		);
