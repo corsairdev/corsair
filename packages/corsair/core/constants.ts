@@ -209,11 +209,12 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
-	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'elevenlabs',
 	'emailoctopus',
 	'emelia',
+	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
@@ -265,6 +266,7 @@ export const BaseProviders = [
 	'hashnode',
 	'here',
 	'heygen',
+	'higgsfield',
 	'hookdeck',
 	'htmltoimage',
 	'hubspot',
@@ -274,6 +276,7 @@ export const BaseProviders = [
 	'imagior',
 	'imejisio',
 	'imgbb',
+	'inboxkit',
 	'insightoai',
 	'instagram',
 	'instantly',
@@ -649,11 +652,12 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
-	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
@@ -705,6 +709,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	here: 'HERE',
 	heygen: 'HeyGen',
+	higgsfield: 'Higgsfield',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
@@ -714,6 +719,7 @@ export const ProviderDisplayNames = {
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
+	inboxkit: 'InboxKit',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	instantly: 'Instantly',
@@ -1093,11 +1099,12 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
-	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
@@ -1149,6 +1156,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'here'
 	| 'heygen'
+	| 'higgsfield'
 	| 'hookdeck'
 	| 'htmltoimage'
 	| 'hubspot'
@@ -1158,6 +1166,7 @@ export type AllProviders =
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
+	| 'inboxkit'
 	| 'insightoai'
 	| 'instagram'
 	| 'instantly'
