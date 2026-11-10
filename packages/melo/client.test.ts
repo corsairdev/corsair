@@ -29,7 +29,9 @@ afterEach(() => {
 
 // unknown: the promise resolves to whatever the endpoint returned; only its
 // rejection is read.
-async function failure(promise: Promise<unknown>): Promise<MeloAPIError> {
+async function failure(
+	promise: Promise<unknown /* unknown: a rejected call's reason */>,
+): Promise<MeloAPIError> {
 	const error = await captureError(promise);
 	expect(error).toBeInstanceOf(MeloAPIError);
 	if (!(error instanceof MeloAPIError)) throw error;
@@ -284,6 +286,28 @@ describe('makeMeloRequest', () => {
 		expect(error.status).toBeUndefined();
 		expect(error.message).toBe('fetch failed');
 		expect(error.cause).toBeInstanceOf(TypeError);
+	});
+
+	it('does not retain the request when a webhook URL carries a secret', async () => {
+		// `webhooks.simulate` puts the target URL in the query, and a URL can hold
+		// a token. Keeping the ApiError as `cause` would expose it to any logger
+		// that walks the chain, so only the safe fields travel.
+		respondText(fetchMock, 'Not Found', 404);
+
+		const error = await failure(
+			makeMeloRequest(API_KEY, {
+				method: 'GET',
+				path: '/webhook-tester',
+				query: { endpoint: 'https://hooks.example.com/x?token=super-secret' },
+			}),
+		);
+
+		expect(error.cause).toBeUndefined();
+		expect(inspect(error)).not.toContain('super-secret');
+		expect(JSON.stringify(error)).not.toContain('super-secret');
+		// The fields handlers read still travel.
+		expect(error.status).toBe(404);
+		expect(error.method).toBe('GET');
 	});
 
 	it('does not replay a transport failure on a write', async () => {

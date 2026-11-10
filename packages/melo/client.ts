@@ -119,7 +119,9 @@ export function buildMeloQuery(
 
 // unknown: an error body is whatever the API or a proxy sent: JSON text,
 // plain text or HTML. Callers narrow it with asRecord or typeof.
-function readJsonText(body: unknown): unknown {
+function readJsonText(
+	body: unknown /* unknown: an untyped response body */,
+): unknown /* unknown: see above */ {
 	if (typeof body !== 'string') return body;
 	const text = body.trim();
 	if (!(text.startsWith('{') || text.startsWith('['))) return body;
@@ -132,7 +134,10 @@ function readJsonText(body: unknown): unknown {
 
 function readString(
 	// unknown: a decoded JSON object whose fields are read one by one.
-	record: Record<string, unknown> | null | undefined,
+	record:
+		| Record<string, unknown /* unknown: an untyped JSON object */>
+		| null
+		| undefined,
 	key: string,
 ): string | undefined {
 	const value = record?.[key];
@@ -145,7 +150,7 @@ const MAX_MESSAGE_LENGTH = 300;
 export function describeMeloError(
 	status: number | undefined,
 	// unknown: see readJsonText.
-	body: unknown,
+	body: unknown /* unknown: an error body, narrowed by the caller */,
 	fallback: string,
 ): string {
 	const parsed = readJsonText(body);
@@ -179,7 +184,7 @@ export class MeloAPIError extends Error {
 	/** True when the request never got an HTTP answer (reset, DNS, timeout). */
 	readonly transport: boolean;
 	// unknown: error bodies are JSON, plain text or HTML depending on the route.
-	readonly body?: unknown;
+	readonly body?: unknown /* unknown: an error body of any shape */;
 
 	constructor(
 		message: string,
@@ -191,7 +196,7 @@ export class MeloAPIError extends Error {
 			replaySafe?: boolean;
 			transport?: boolean;
 			// unknown: same open error body as the field above.
-			body?: unknown;
+			body?: unknown /* unknown: see above */;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -223,7 +228,7 @@ export async function makeMeloRequest(
 	apiKey: string,
 	{ method, path, query, body, replaySafe, bodyless }: MeloRequest,
 	// unknown: the decoded body is untyped until the output schema parses it.
-): Promise<unknown> {
+): Promise<unknown /* unknown: callers parse the answer */> {
 	const config: OpenAPIConfig = {
 		BASE: MELO_API_BASE,
 		VERSION: '1.0.0',
@@ -243,18 +248,28 @@ export async function makeMeloRequest(
 
 	// unknown: the raw body, a string for `application/ld+json` because
 	// corsair/http only decodes `application/json` itself.
-	let raw: unknown;
+	let raw: unknown /* unknown: parsed by parseMeloBody below */;
 	try {
 		// unknown: see the declaration of raw above.
-		raw = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: MELO_RATE_LIMIT_CONFIG,
-		});
+		raw = await request<unknown /* unknown: see the note above */>(
+			config,
+			requestOptions,
+			{
+				rateLimitConfig: MELO_RATE_LIMIT_CONFIG,
+			},
+		);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// No `cause`: `ApiError.request` keeps the unredacted query, and
+			// `webhooks.simulate` puts the target URL there. A URL can carry a
+			// secret (`?token=...`), so the fields a handler needs are copied and
+			// the transport error is dropped.
 			throw new MeloAPIError(
 				describeMeloError(error.status, error.body, error.message),
 				{
-					cause: error,
+					status: error.status,
+					retryAfter: error.retryAfter,
+					method,
 					body: readJsonText(error.body),
 					replaySafe: safeToReplay,
 				},
@@ -281,7 +296,10 @@ export async function makeMeloRequest(
 
 /** Decodes a 2xx body: JSON text becomes a value and an empty body undefined. */
 // unknown: the decoded body is untyped until the output schema parses it.
-export function parseMeloBody(raw: unknown, method?: string): unknown {
+export function parseMeloBody(
+	raw: unknown /* unknown: the raw body */,
+	method?: string,
+): unknown /* unknown: see above */ {
 	if (typeof raw !== 'string') return raw;
 	if (raw.trim() === '') return undefined;
 	try {
