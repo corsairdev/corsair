@@ -407,13 +407,14 @@ await corsair.reamaze.api.contacts.create({ name: 'bob', email: 'bob@example.com
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `email` | `string` | Yes | — |
+| `email` | `string` | No | Either this or mobile is required |
+| `mobile` | `string` | No | E.164 without spaces, e.g. +12223334444. Either this or email is required |
 | `id` | `string` | No | Your own id for this contact |
 | `external_avatar_url` | `string` | No | — |
 | `notes` | `string[]` | No | Plain note bodies attached at creation |
-| `data` | `Record<string, unknown>` | No | Customer data attributes, one level deep |
+| `data` | `Record<string, any>` | No | Customer data attributes, one level deep |
 
-Wraps the payload in `contact` and answers `{ contact }`. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
+Wraps the payload in `contact` and answers `{ contact }`. Pass an `email` or a `mobile` number in E.164 form; other contact types cannot be created. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
 
 
 
@@ -446,7 +447,7 @@ Wraps the payload in `contact` and answers `{ contact }`. `notes` is an array of
       email?: string | null
     } | null
   }[] | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -475,7 +476,7 @@ await corsair.reamaze.api.contacts.list({ q: 'bob', page: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | No | Search over contact name and email |
-| `data` | `Record<string, unknown>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
+| `data` | `Record<string, any>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
 | `sort` | `date` | No | date orders by create time descending; default is by name |
 | `type` | `email \| mobile` | No | Only contacts that have an email address or a phone number |
 | `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
@@ -516,7 +517,7 @@ Answers `{ contacts, page_size, page_count, total_count }`. Contacts belong to t
       email?: string | null
     } | null
   }[] | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -550,7 +551,7 @@ await corsair.reamaze.api.contacts.update({ email: 'bob@example.com', friendly_n
 | `friendly_name` | `string` | No | — |
 | `external_avatar_url` | `string` | No | — |
 | `notes` | `string[]` | No | Appends notes; a note is edited through the notes endpoints |
-| `data` | `Record<string, unknown>` | No | Customer data attributes, one level deep |
+| `data` | `Record<string, any>` | No | Customer data attributes, one level deep |
 
 Sends PUT with a `contact` wrapper, and the identifier stays in the path only because Re:amaze cannot change an email, mobile number or other identifier. `notes` appends notes; editing one goes through the notes endpoints.
 
@@ -585,7 +586,7 @@ Sends PUT with a `contact` wrapper, and the identifier stays in the path only be
       email?: string | null
     } | null
   }[] | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -620,7 +621,7 @@ await corsair.reamaze.api.conversations.create({ subject: 'Printer offline', cat
 | `tag_list` | `string[]` | No | — |
 | `status` | `number` | No | 0 open, 2 done, 3 spam, 5 on hold, 9 AI spam |
 | `hold_until` | `string` | No | ISO 8601; only meaningful when status is 5 (On Hold) |
-| `data` | `Record<string, unknown>` | No | Conversation data attributes |
+| `data` | `Record<string, any>` | No | Conversation data attributes |
 | `assignee` | `string` | No | Staff email the conversation is assigned to |
 | `message` | `object` | Yes | — |
 | `user` | `object` | Yes | The customer the conversation is created for |
@@ -649,7 +650,7 @@ Wraps the payload in `conversation` and answers the created conversation. `categ
 {
   name: string,
   email: string,
-  data?: Record<string, unknown>
+  data?: Record<string, any>
 }
 ```
 </Accordion>
@@ -661,7 +662,7 @@ Wraps the payload in `conversation` and answers the created conversation. `categ
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slug` | `string \| null` | No | — |
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
 | `subject` | `string \| null` | No | — |
 | `status` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -673,7 +674,7 @@ Wraps the payload in `conversation` and answers the created conversation. `categ
 | `author` | `object \| null` | No | — |
 | `assignee` | `object \| null` | No | — |
 | `category` | `object \| null` | No | — |
-| `data` | `Record<string, unknown> \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
 | `followers` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -783,7 +784,7 @@ Answers one conversation object. The path segment is normally the slug; set `id_
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slug` | `string \| null` | No | — |
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
 | `subject` | `string \| null` | No | — |
 | `status` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -795,7 +796,7 @@ Answers one conversation object. The path segment is normally the slug; set `id_
 | `author` | `object \| null` | No | — |
 | `assignee` | `object \| null` | No | — |
 | `category` | `object \| null` | No | — |
-| `data` | `Record<string, unknown> \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
 | `followers` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -902,7 +903,7 @@ await corsair.reamaze.api.conversations.list({ filter: 'open', sort: 'updated', 
 | `start_date` | `string` | No | ISO 8601; filters on the latest customer message time |
 | `end_date` | `string` | No | ISO 8601; filters on the latest customer message time |
 | `origin` | `number \| string` | No | Origin number (1 email) or name (email) |
-| `data` | `Record<string, unknown>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
+| `data` | `Record<string, any>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
 
 Answers `{ conversations, page_size, page_count, total_count }`. `filter` takes `archived`, `open`, `unassigned` or `all`; omitting it returns unarchived conversations only. `data` is sent as one `data[key]=value` entry per key, so `data: { plan: 'pro' }` becomes `data[plan]=pro`.
 
@@ -922,7 +923,7 @@ Answers `{ conversations, page_size, page_count, total_count }`. `filter` takes 
 
 ```ts
 {
-  slug?: string | null,
+  slug: string,
   subject?: string | null,
   status?: number | null,
   created_at?: string | null,
@@ -954,7 +955,7 @@ Answers `{ conversations, page_size, page_count, total_count }`. `filter` takes 
     email?: string | null,
     channel?: number | null
   } | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   followers?: {
     name?: string | null,
     email?: string | null
@@ -989,7 +990,7 @@ await corsair.reamaze.api.conversations.update({ slug: 'knock-knock', status: 2,
 | `tag_list` | `string[]` | No | Replaces the tag list |
 | `status` | `number` | No | — |
 | `hold_until` | `string` | No | ISO 8601; only meaningful when status is 5 (On Hold) |
-| `data` | `Record<string, unknown>` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `category` | `string` | No | Moves the conversation to this channel; it must be an email channel |
 | `brand` | `string` | No | Destination brand URL, only when moving to another brand |
 
@@ -1012,7 +1013,7 @@ Sends PUT with a `conversation` wrapper. Only `assignee`, `tag_list`, `status`, 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slug` | `string \| null` | No | — |
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
 | `subject` | `string \| null` | No | — |
 | `status` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1024,7 +1025,7 @@ Sends PUT with a `conversation` wrapper. Only `assignee`, `tag_list`, `status`, 
 | `author` | `object \| null` | No | — |
 | `assignee` | `object \| null` | No | — |
 | `category` | `object \| null` | No | — |
-| `data` | `Record<string, unknown> \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
 | `followers` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -1203,7 +1204,7 @@ Answers `{ identities: [{ type, identifier }] }`. The type is one of `email`, `t
 
 `incidents.create`
 
-Create a status page incident with its first update
+Create a status page incident with its first update, which shows on the public status page
 
 **Risk:** `write`
 
@@ -1254,7 +1255,7 @@ Wraps the payload in `incident`. Each update status is `investigating`, `identif
 | `title` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `status` | `investigating \| identified \| monitoring \| resolved \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
 | `updates` | `object[] \| null` | No | — |
 | `incidents_systems` | `object[] \| null` | No | — |
 
@@ -1264,7 +1265,7 @@ Wraps the payload in `incident`. Each update status is `investigating`, `identif
 ```ts
 {
   id?: string | number | null,
-  status?: investigating | identified | monitoring | resolved | null,
+  status?: string | null,
   message?: string | null
 }[] | null
 ```
@@ -1276,7 +1277,7 @@ Wraps the payload in `incident`. Each update status is `investigating`, `identif
 {
   id?: string | number | null,
   system_id?: string | number | null,
-  status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+  status?: string | null,
   system?: {
     id?: string | number | null,
     title?: string | null
@@ -1320,7 +1321,7 @@ Answers one incident with its `updates` and `incidents_systems` arrays.
 | `title` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `status` | `investigating \| identified \| monitoring \| resolved \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
 | `updates` | `object[] \| null` | No | — |
 | `incidents_systems` | `object[] \| null` | No | — |
 
@@ -1330,7 +1331,7 @@ Answers one incident with its `updates` and `incidents_systems` arrays.
 ```ts
 {
   id?: string | number | null,
-  status?: investigating | identified | monitoring | resolved | null,
+  status?: string | null,
   message?: string | null
 }[] | null
 ```
@@ -1342,7 +1343,7 @@ Answers one incident with its `updates` and `incidents_systems` arrays.
 {
   id?: string | number | null,
   system_id?: string | number | null,
-  status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+  status?: string | null,
   system?: {
     id?: string | number | null,
     title?: string | null
@@ -1388,16 +1389,16 @@ Answers a **bare array**, so the plugin returns `{ incidents }`. A brand with no
   title?: string | null,
   created_at?: string | null,
   updated_at?: string | null,
-  status?: investigating | identified | monitoring | resolved | null,
+  status?: string | null,
   updates?: {
     id?: string | number | null,
-    status?: investigating | identified | monitoring | resolved | null,
+    status?: string | null,
     message?: string | null
   }[] | null,
   incidents_systems?: {
     id?: string | number | null,
     system_id?: string | number | null,
-    status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+    status?: string | null,
     system?: {
       id?: string | number | null,
       title?: string | null
@@ -1416,7 +1417,7 @@ Answers a **bare array**, so the plugin returns `{ incidents }`. A brand with no
 
 `incidents.update`
 
-Change a status page incident and append an update. Sent as POST, which is what the vendor example uses
+Change a status page incident and append an update, which shows on the public status page
 
 **Risk:** `write`
 
@@ -1433,7 +1434,7 @@ await corsair.reamaze.api.incidents.update({ identifier: 'inc-1', updates_attrib
 | `updates_attributes` | `object[]` | No | Appends updates to the incident |
 | `incidents_systems_attributes` | `object[]` | No | — |
 
-Sent as POST to the incident id, with an `incident` wrapper. The vendor heading says PUT, but its own curl example sends `-X POST`, and that is what works. New `updates_attributes` are appended to the incident.
+Sends PUT to the incident id, with an `incident` wrapper. The vendor's curl example shows `-X POST`, but a POST to this path is answered as an unknown route. New `updates_attributes` are appended to the incident.
 
 <AccordionGroup>
 <Accordion title="updates_attributes full type">
@@ -1468,7 +1469,7 @@ Sent as POST to the incident id, with an `incident` wrapper. The vendor heading 
 | `title` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `status` | `investigating \| identified \| monitoring \| resolved \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
 | `updates` | `object[] \| null` | No | — |
 | `incidents_systems` | `object[] \| null` | No | — |
 
@@ -1478,7 +1479,7 @@ Sent as POST to the incident id, with an `incident` wrapper. The vendor heading 
 ```ts
 {
   id?: string | number | null,
-  status?: investigating | identified | monitoring | resolved | null,
+  status?: string | null,
   message?: string | null
 }[] | null
 ```
@@ -1490,7 +1491,7 @@ Sent as POST to the incident id, with an `incident` wrapper. The vendor heading 
 {
   id?: string | number | null,
   system_id?: string | number | null,
-  status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+  status?: string | null,
   system?: {
     id?: string | number | null,
     title?: string | null
@@ -1510,7 +1511,7 @@ Sent as POST to the incident id, with an `incident` wrapper. The vendor heading 
 
 `messages.create`
 
-Post a reply or an internal note into a conversation, which notifies participants unless suppressed
+Send a reply in a conversation. It goes out to the real customer and the other participants unless suppress_notifications is set. visibility 1 posts an internal note only staff see
 
 **Risk:** `write`
 
@@ -1534,7 +1535,7 @@ await corsair.reamaze.api.messages.create({ slug: 'knock-knock', body: 'Thanks f
 | `attachments` | `string[]` | No | — |
 | `recipients` | `string[]` | No | Emails or phone numbers added as thread participants |
 
-The conversation slug is a path segment, so it never appears in the body. The payload is wrapped in `message`. `visibility: 1` posts an internal note instead of a reply, and `origin_id` lets Re:amaze discard a duplicate send.
+**A reply is sent to the real customer** and the other participants, by email or the conversation's channel, unless `suppress_notifications` is true. `visibility: 1` posts an internal note that only staff see. The conversation slug is a path segment, so it never appears in the body, and the payload is wrapped in `message`. `origin_id` lets Re:amaze discard a duplicate send.
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1938,7 +1939,7 @@ Answers `{ channels, start_date, end_date }`, keyed by channel id. Each entry ca
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `channels` | `Record<string, unknown> \| null` | No | — |
+| `channels` | `Record<string, any> \| null` | No | — |
 | `start_date` | `string \| null` | No | — |
 | `end_date` | `string \| null` | No | — |
 
@@ -1974,8 +1975,8 @@ Answers `{ response_times, summary, start_date, end_date }`. Response times are 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response_times` | `Record<string, unknown> \| null` | No | — |
-| `summary` | `Record<string, unknown> \| null` | No | — |
+| `response_times` | `Record<string, any> \| null` | No | — |
+| `summary` | `Record<string, any> \| null` | No | — |
 | `start_date` | `string \| null` | No | — |
 | `end_date` | `string \| null` | No | — |
 
@@ -2011,7 +2012,7 @@ Answers `{ report, start_date, end_date }`, keyed by each staff member's display
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `report` | `Record<string, unknown> \| null` | No | — |
+| `report` | `Record<string, any> \| null` | No | — |
 | `start_date` | `string \| null` | No | — |
 | `end_date` | `string \| null` | No | — |
 
@@ -2391,7 +2392,7 @@ Wraps the payload in `staff` and answers the created user. This counts toward th
 | `name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
-| `role` | `Record<string, unknown> \| null` | No | — |
+| `role` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -2436,7 +2437,7 @@ Answers `{ staff, page_size, page_count, total_count }`, oldest first. The `role
   name?: string | null,
   email?: string | null,
   created_at?: string | null,
-  role?: Record<string, unknown> | null
+  role?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2482,22 +2483,22 @@ Answers a **bare array**, so the plugin returns `{ systems }`. Each system carri
   brand_id?: string | number | null,
   created_at?: string | null,
   updated_at?: string | null,
-  status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+  status?: string | null,
   active_incidents?: {
     id?: string | number | null,
     title?: string | null,
     created_at?: string | null,
     updated_at?: string | null,
-    status?: investigating | identified | monitoring | resolved | null,
+    status?: string | null,
     updates?: {
       id?: string | number | null,
-      status?: investigating | identified | monitoring | resolved | null,
+      status?: string | null,
       message?: string | null
     }[] | null,
     incidents_systems?: {
       id?: string | number | null,
       system_id?: string | number | null,
-      status?: operational | degraded_performance | partial_outage | major_outage | under_maintenance | null,
+      status?: string | null,
       system?: {
         id?: string | number | null,
         title?: string | null

@@ -27,11 +27,11 @@ pnpm add @corsair-dev/reamaze
 | `conversations.update` | `reamaze.api.conversations.update` | `write` | Change a conversation status, tags, assignee, data attributes or channel |
 | `identities.create` | `reamaze.api.identities.create` | `write` | Attach an identity to a contact. An identity already on another contact is moved here with its messages |
 | `identities.list` | `reamaze.api.identities.list` | `read` | List the emails, handles and phone numbers attached to a contact |
-| `incidents.create` | `reamaze.api.incidents.create` | `write` | Create a status page incident with its first update |
+| `incidents.create` | `reamaze.api.incidents.create` | `write` | Create a status page incident with its first update, which shows on the public status page |
 | `incidents.get` | `reamaze.api.incidents.get` | `read` | Read one status page incident by id |
 | `incidents.list` | `reamaze.api.incidents.list` | `read` | List status page incidents |
-| `incidents.update` | `reamaze.api.incidents.update` | `write` | Change a status page incident and append an update. Sent as POST, which is what the vendor example uses |
-| `messages.create` | `reamaze.api.messages.create` | `write` | Post a reply or an internal note into a conversation, which notifies participants unless suppressed |
+| `incidents.update` | `reamaze.api.incidents.update` | `write` | Change a status page incident and append an update, which shows on the public status page |
+| `messages.create` | `reamaze.api.messages.create` | `write` | Send a reply in a conversation. It goes out to the real customer and the other participants unless suppress_notifications is set. visibility 1 posts an internal note only staff see |
 | `messages.list` | `reamaze.api.messages.list` | `read` | List messages across the brand, filtered by sender, tag, channel or date |
 | `notes.create` | `reamaze.api.notes.create` | `write` | Add a note to one contact |
 | `notes.delete` | `reamaze.api.notes.delete` | `destructive` | Delete one contact note. Re:amaze keeps no undo and the note text is not returned anywhere afterwards |

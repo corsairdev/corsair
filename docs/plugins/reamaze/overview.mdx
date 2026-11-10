@@ -5,7 +5,7 @@ description: "Customer support inbox for Re:amaze - read and reply to conversati
 
 Use **Re:amaze** through Corsair: one client, typed API calls.
 
-**Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. A pasted `https://acme.reamaze.io/` is accepted and reduced to the bare host. Without one the plugin throws before it sends anything.
+**Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. The brand name on its own (`acme`) and a pasted `https://acme.reamaze.io/` are accepted too. Requests only go to `https://<brand>.reamaze.io`: another domain, an IP address or a port is rejected before anything is sent. Without a host the plugin throws before it sends anything.
 
 Credentials are a **login email and a personal API token**, sent as HTTP Basic. The token lives under Settings, then API tokens, inside the brand. Store the pair as the account's `api_key`, JSON-encoded as `{"email":"...","token":"..."}`, which is how a single-string key carries two values; `reamaze({ key })` takes the same string.
 
@@ -16,7 +16,7 @@ Things to know before you call:
 - **Report payloads are maps, not arrays.** `reports.volume` keys conversation counts by `YYYY-MM-DD`, `reports.tags` keys tag counts by tag name, `reports.staff` keys metrics by staff display name, and `reports.channelSummary` keys them by channel id. Read them with `Object.entries`.
 - **Conversation status is an integer**: 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7 and 8 for the AI agent, 9 AI spam.
 - **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` and `notes.update` send the fields unwrapped, as a bare `{ body }` plus the optional `creator_email` and `created_at`.
-- **`incidents.update` is a POST.** The vendor heading says PUT, but its own curl example sends `-X POST` to the same path, and that is what the endpoint sends.
+- **`incidents.update` is a PUT.** The vendor heading says PUT and its curl example sends `-X POST`; the route only answers PUT, so that is what the endpoint sends.
 - **An unknown route answers HTML, not JSON.** An unknown resource answers `{"errors":"Not Found"}`, an unknown route `{"status":404,"error":"Not Found"}`, and a validation failure a map of field to message with status 422.
 
 **What you get:**
@@ -77,7 +77,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no credentials throws `AuthMissingError`. Store the pair with `keys.set_api_key(JSON.stringify({ email, token }))` and the brand with `keys.set_host('yourbrand.reamaze.io')`.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 reamaze()
