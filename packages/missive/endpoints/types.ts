@@ -4,22 +4,24 @@ import { z } from 'zod';
 // conversations). Schemas come from the examples and property tables of
 // https://missiveapp.com/docs/developers/rest-api/endpoints. Response objects
 // are .loose() because the documented components are partial views of the
-// live payload; request objects are .strict() so typos fail at the boundary.
+// live payload, and their fields accept null and unknown enum values so one
+// unexpected record cannot fail a whole page; request objects are .strict()
+// so typos fail at the boundary.
 
 const MissiveOrganizationRefSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
 const MissiveUserRefSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		username: z.string().optional(),
-		avatar_url: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		username: z.string().nullish(),
+		avatar_url: z.string().nullish(),
 	})
 	.loose();
 
@@ -33,41 +35,41 @@ const MissiveFieldRefSchema = z
 
 const MissiveMessageAttachmentSchema = z
 	.object({
-		id: z.string().optional(),
-		filename: z.string().optional(),
-		extension: z.string().optional(),
-		url: z.string().optional(),
-		media_type: z.string().optional(),
-		sub_type: z.string().optional(),
-		size: z.number().int().optional(),
-		width: z.number().int().optional(),
-		height: z.number().int().optional(),
+		id: z.string().nullish(),
+		filename: z.string().nullish(),
+		extension: z.string().nullish(),
+		url: z.string().nullish(),
+		media_type: z.string().nullish(),
+		sub_type: z.string().nullish(),
+		size: z.number().int().nullish(),
+		width: z.number().int().nullish(),
+		height: z.number().int().nullish(),
 	})
 	.loose();
 
 const MissiveTeamRefSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		organization: z.string().optional(),
-		active_members: z.array(z.string()).optional(),
-		observers: z.array(z.unknown()).optional(), // unknown: team observers are documented only by name in the reference.
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		organization: z.string().nullish(),
+		active_members: z.array(z.string()).nullish(),
+		observers: z.array(z.unknown()).nullish(), // unknown: team observers are documented only by name in the reference.
 	})
 	.loose();
 
 const MissiveConversationUserSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		unassigned: z.boolean().optional(),
-		closed: z.boolean().optional(),
-		archived: z.boolean().optional(),
-		trashed: z.boolean().optional(),
-		junked: z.boolean().optional(),
-		assigned: z.boolean().optional(),
-		flagged: z.boolean().optional(),
-		snoozed: z.boolean().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		unassigned: z.boolean().nullish(),
+		closed: z.boolean().nullish(),
+		archived: z.boolean().nullish(),
+		trashed: z.boolean().nullish(),
+		junked: z.boolean().nullish(),
+		assigned: z.boolean().nullish(),
+		flagged: z.boolean().nullish(),
+		snoozed: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -78,32 +80,43 @@ const MissiveAuthorSchema = z
 	})
 	.loose();
 
+const MissiveSharedLabelRefSchema = z
+	.object({
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+	})
+	.loose();
+
 const MissiveConversationSchema = z
 	.object({
-		id: z.string().optional(),
-		created_at: z.number().int().optional(),
+		id: z.string().nullish(),
+		created_at: z.number().int().nullish(),
 		subject: z.string().nullish(),
 		latest_message_subject: z.string().nullish(),
 		organization: MissiveOrganizationRefSchema.nullish(),
 		color: z.string().nullish(),
-		assignees: z.array(MissiveUserRefSchema).optional(),
-		users: z.array(MissiveConversationUserSchema).optional(),
-		attachments_count: z.number().int().optional(),
-		messages_count: z.number().int().optional(),
-		authors: z.array(MissiveAuthorSchema).optional(),
-		external_authors: z.array(MissiveAuthorSchema).optional(),
-		drafts_count: z.number().int().optional(),
-		send_later_messages_count: z.number().int().optional(),
-		tasks_count: z.number().int().optional(),
-		completed_tasks_count: z.number().int().optional(),
-		web_url: z.string().optional(),
-		app_url: z.string().optional(),
-		assignee_names: z.string().optional(),
-		assignee_emails: z.string().optional(),
-		shared_label_names: z.string().optional(),
-		last_activity_at: z.number().int().optional(),
+		assignees: z.array(MissiveUserRefSchema).nullish(),
+		users: z.array(MissiveConversationUserSchema).nullish(),
+		attachments_count: z.number().int().nullish(),
+		messages_count: z.number().int().nullish(),
+		authors: z.array(MissiveAuthorSchema).nullish(),
+		external_authors: z.array(MissiveAuthorSchema).nullish(),
+		drafts_count: z.number().int().nullish(),
+		send_later_messages_count: z.number().int().nullish(),
+		tasks_count: z.number().int().nullish(),
+		completed_tasks_count: z.number().int().nullish(),
+		web_url: z.string().nullish(),
+		app_url: z.string().nullish(),
+		assignee_names: z.string().nullish(),
+		assignee_emails: z.string().nullish(),
+		shared_label_names: z.string().nullish(),
+		last_activity_at: z.number().int().nullish(),
 		team: MissiveTeamRefSchema.nullish(),
-		shared_labels: z.array(z.string()).optional(),
+		// Documented as "Array of shared label objects" and shown as
+		// [{ id, name }] in the Get a Message example; ids are accepted too.
+		shared_labels: z
+			.array(z.union([z.string(), MissiveSharedLabelRefSchema]))
+			.nullish(),
 	})
 	.loose();
 
@@ -111,25 +124,25 @@ const MissiveConversationSchema = z
 
 const MissiveContactBookSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		user: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		user: z.string().nullish(),
 		organization: z.string().nullish(),
-		share_with_organization: z.boolean().optional(),
+		share_with_organization: z.boolean().nullish(),
 		share_with_team: z.string().nullish(),
-		share_with_users: z.array(z.string()).optional(),
+		share_with_users: z.array(z.string()).nullish(),
 		description: z.string().nullish(),
-		importing: z.boolean().optional(),
+		importing: z.boolean().nullish(),
 		import_error_text: z.string().nullish(),
-		import_rows_count: z.number().int().optional(),
-		import_processed_rows_count: z.number().int().optional(),
+		import_rows_count: z.number().int().nullish(),
+		import_processed_rows_count: z.number().int().nullish(),
 	})
 	.loose();
 
 const MissiveContactGroupSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
@@ -275,27 +288,40 @@ const MissiveContactUpdateItemSchema = z
 	})
 	.strict();
 
+// Response-side contact info. Only field types are checked: Missive's own
+// List contacts example returns a custom info without a label, and a kind or
+// label added later must not fail a whole page of contacts.
+const MissiveContactInfoSchema = z
+	.object({
+		kind: z.string().nullish(),
+		label: z.string().nullish(),
+		custom_label: z.string().nullish(),
+		value: z.string().nullish(),
+		name: z.string().nullish(),
+	})
+	.loose();
+
 const MissiveMembershipGroupSchema = z
 	.object({
-		kind: z.enum(['group', 'organization']),
-		id: z.string().optional(),
-		name: z.string().optional(),
+		kind: z.string().nullish(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
 const MissiveMembershipSchema = z
 	.object({
-		department: z.string().optional(),
-		title: z.string().optional(),
-		location: z.string().optional(),
-		description: z.string().optional(),
-		group: MissiveMembershipGroupSchema,
+		department: z.string().nullish(),
+		title: z.string().nullish(),
+		location: z.string().nullish(),
+		description: z.string().nullish(),
+		group: MissiveMembershipGroupSchema.nullish(),
 	})
 	.loose();
 
 const MissiveContactSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().nullish(),
 		first_name: z.string().nullish(),
 		last_name: z.string().nullish(),
 		middle_name: z.string().nullish(),
@@ -309,11 +335,11 @@ const MissiveContactSchema = z
 		notes: z.string().nullish(),
 		starred: z.boolean().nullish(),
 		gender: z.string().nullish(),
-		contact_book: z.string().optional(),
-		deleted: z.boolean().optional(),
-		modified_at: z.number().int().optional(),
-		infos: z.array(MissiveContactInfoInputSchema).optional(),
-		memberships: z.array(MissiveMembershipSchema).optional(),
+		contact_book: z.string().nullish(),
+		deleted: z.boolean().nullish(),
+		modified_at: z.number().int().nullish(),
+		infos: z.array(MissiveContactInfoSchema).nullish(),
+		memberships: z.array(MissiveMembershipSchema).nullish(),
 	})
 	.loose();
 
@@ -321,58 +347,58 @@ const MissiveContactSchema = z
 
 const MissiveMessageSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().nullish(),
 		subject: z.string().nullish(),
-		draft: z.boolean().optional(),
-		preview: z.string().optional(),
-		type: z.string().optional(),
+		draft: z.boolean().nullish(),
+		preview: z.string().nullish(),
+		type: z.string().nullish(),
 		delivered_at: z.number().int().nullish(),
-		updated_at: z.number().int().optional(),
-		created_at: z.number().int().optional(),
+		updated_at: z.number().int().nullish(),
+		created_at: z.number().int().nullish(),
 		email_message_id: z.string().nullish(),
-		in_reply_to: z.array(z.string()).optional(),
-		references: z.array(z.string()).optional(),
+		in_reply_to: z.array(z.string()).nullish(),
+		references: z.array(z.string()).nullish(),
 		from_field: MissiveFieldRefSchema.nullish(),
-		to_fields: z.array(MissiveFieldRefSchema).optional(),
-		cc_fields: z.array(MissiveFieldRefSchema).optional(),
-		bcc_fields: z.array(MissiveFieldRefSchema).optional(),
-		reply_to_fields: z.array(MissiveFieldRefSchema).optional(),
-		attachments: z.array(MissiveMessageAttachmentSchema).optional(),
+		to_fields: z.array(MissiveFieldRefSchema).nullish(),
+		cc_fields: z.array(MissiveFieldRefSchema).nullish(),
+		bcc_fields: z.array(MissiveFieldRefSchema).nullish(),
+		reply_to_fields: z.array(MissiveFieldRefSchema).nullish(),
+		attachments: z.array(MissiveMessageAttachmentSchema).nullish(),
 		author: MissiveUserRefSchema.nullish(),
 	})
 	.loose();
 
 const MissiveCommentSchema = z
 	.object({
-		id: z.string().optional(),
-		body: z.string().optional(),
-		created_at: z.number().int().optional(),
+		id: z.string().nullish(),
+		body: z.string().nullish(),
+		created_at: z.number().int().nullish(),
 		mentions: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						index: z.number().int().optional(),
-						length: z.number().int().optional(),
+						id: z.string().nullish(),
+						index: z.number().int().nullish(),
+						length: z.number().int().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		author: MissiveUserRefSchema.nullish(),
 	})
 	.loose();
 
 const MissivePostSchema = z
 	.object({
-		id: z.string().optional(),
-		created_at: z.number().int().optional(),
+		id: z.string().nullish(),
+		created_at: z.number().int().nullish(),
 		username: z.string().nullish(),
 		username_icon: z.string().nullish(),
 		conversation_icon: z.string().nullish(),
 		notification: z
 			.object({
-				title: z.string().optional(),
-				body: z.string().optional(),
+				title: z.string().nullish(),
+				body: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -384,7 +410,7 @@ const MissivePostSchema = z
 				// provider renders generically; only the example fields are known.
 				z.record(z.string(), z.unknown()),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -699,26 +725,26 @@ const MissiveUploadAttachmentSchema = z
 
 const MissiveOrganizationSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
 	})
 	.loose();
 
 const MissiveResponseSchema = z
 	.object({
-		id: z.string().optional(),
-		title: z.string().optional(),
-		body: z.string().optional(),
+		id: z.string().nullish(),
+		title: z.string().nullish(),
+		body: z.string().nullish(),
 		subject: z.string().nullish(),
-		modified_at: z.number().int().optional(),
+		modified_at: z.number().int().nullish(),
 		organization: z.string().nullish(),
 		user: z.string().nullish(),
 		share_with_team: z.string().nullish(),
-		shared_labels: z.array(z.string()).optional(),
-		to_fields: z.array(MissiveFieldRefSchema).optional(),
-		cc_fields: z.array(MissiveFieldRefSchema).optional(),
-		bcc_fields: z.array(MissiveFieldRefSchema).optional(),
-		attachments: z.array(MissiveMessageAttachmentSchema).optional(),
+		shared_labels: z.array(z.string()).nullish(),
+		to_fields: z.array(MissiveFieldRefSchema).nullish(),
+		cc_fields: z.array(MissiveFieldRefSchema).nullish(),
+		bcc_fields: z.array(MissiveFieldRefSchema).nullish(),
+		attachments: z.array(MissiveMessageAttachmentSchema).nullish(),
 		external_id: z.string().nullish(),
 		external_source: z.string().nullish(),
 	})
@@ -1017,16 +1043,17 @@ const MissivePostsDeleteOutputSchema = z.undefined();
 
 const MissiveSharedLabelSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		name_with_parent_names: z.string().optional(),
-		organization: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		name_with_parent_names: z.string().nullish(),
+		organization: z.string().nullish(),
 		color: z.string().nullish(),
 		parent: z.string().nullish(),
-		share_with_organization: z.boolean().optional(),
+		share_with_organization: z.boolean().nullish(),
 		share_with_team: z.string().nullish(),
-		share_with_users: z.array(z.string()).optional(),
-		visibility: z.enum(['organization', 'delegates']).optional(),
+		share_with_users: z.array(z.string()).nullish(),
+		// A string in responses; documented today: organization, delegates.
+		visibility: z.string().nullish(),
 	})
 	.loose();
 
@@ -1129,16 +1156,22 @@ const MissiveTeamBehaviorShape = {
 
 const MissiveTeamSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		organization: z.string().optional(),
-		active_members: z.array(z.string()).optional(),
-		observers: z.array(z.string()).optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		organization: z.string().nullish(),
+		active_members: z.array(z.string()).nullish(),
+		observers: z.array(z.string()).nullish(),
 		emoji: z.string().nullish(),
 		color: z.string().nullish(),
 		business_hours: MissiveBusinessHoursSchema.nullish(),
-		inactivity_period: z.number().int().optional(),
-		...MissiveTeamBehaviorShape,
+		inactivity_period: z.number().int().nullish(),
+		// Strings in responses; requests keep the documented enums.
+		team_mention_behavior: z.string().nullish(),
+		user_reply_behavior: z.string().nullish(),
+		received_reply_behavior: z.string().nullish(),
+		team_sidebar_behavior: z.string().nullish(),
+		team_inbox_enabled: z.boolean().nullish(),
+		chat_room_enabled: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -1200,11 +1233,11 @@ const MissiveTeamUpdateInputSchema = z
 
 const MissiveUserSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		avatar_url: z.string().optional(),
-		me: z.boolean().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		avatar_url: z.string().nullish(),
+		me: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -1218,11 +1251,14 @@ const MissiveUserListOutputSchema = z
 // user and team objects instead, so the value accepts both forms.
 const MissiveTaskSchema = z
 	.object({
-		id: z.string().optional(),
-		title: z.string().optional(),
+		id: z.string().nullish(),
+		title: z.string().nullish(),
 		description: z.string().nullish(),
-		state: z.enum(['todo', 'in_progress', 'closed']).optional(),
-		type: z.enum(['task', 'conversation']).optional(),
+		// Strings, not enums: a state or type Missive adds later must not fail
+		// a whole page. Documented today: todo, in_progress, closed; task,
+		// conversation.
+		state: z.string().nullish(),
+		type: z.string().nullish(),
 		conversation: z.string().nullish(),
 		due_at: z.number().int().nullish(),
 		started_at: z.number().int().nullish(),
@@ -1235,7 +1271,7 @@ const MissiveTaskSchema = z
 		// Team is a UUID in list/create/update, a full object in get, and
 		// absent or null on unassigned tasks.
 		team: z.union([z.string(), MissiveTeamSchema]).nullish(),
-		last_activity_at: z.number().int().optional(),
+		last_activity_at: z.number().int().nullish(),
 	})
 	.loose();
 

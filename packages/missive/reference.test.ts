@@ -23,6 +23,151 @@ function mockResponse(response: Response) {
 	return jest.spyOn(global, 'fetch').mockImplementation(async () => response);
 }
 
+describe('Missive documented response shapes', () => {
+	it('parses the List contacts example, whose custom info has no label', () => {
+		const example = {
+			contacts: [
+				{
+					id: 'b40713e2-e790-4c67-9eb3-22e83bd1bdf9',
+					first_name: 'Alex',
+					last_name: 'Alstorm',
+					starred: false,
+					contact_book: '487bc080-6631-4edc-830e-1d114eef4ab0',
+					deleted: false,
+					modified_at: 1556200643,
+					infos: [
+						{
+							kind: 'phone_number',
+							label: 'work',
+							value: '+1 (418) 717-1066',
+						},
+						{
+							kind: 'custom',
+							custom_label: 'Favorite food',
+							value: 'Pizza',
+						},
+					],
+					memberships: [
+						{
+							title: 'Project manager',
+							group: {
+								id: '522f8e19-0261-4f8b-b8b1-8d8bb4055569',
+								kind: 'organization',
+								name: 'Pagac Inc',
+							},
+						},
+					],
+				},
+			],
+		};
+		for (const key of [
+			'contacts.list',
+			'contacts.create',
+			'contacts.update',
+			'contacts.get',
+		] as const) {
+			expect(
+				missiveEndpointSchemas[key].output.safeParse(example).success,
+			).toBe(true);
+		}
+	});
+
+	it('keeps a contact whose info kind or label Missive adds later', () => {
+		const result = missiveEndpointSchemas['contacts.list'].output.safeParse({
+			contacts: [
+				{
+					id: 'c1',
+					infos: [
+						{ kind: 'linkedin', label: 'work', value: 'in/someone' },
+						{ kind: 'email', label: 'school', value: 'a@b.co' },
+					],
+					memberships: [{ group: { kind: 'department', name: 'Ops' } }],
+				},
+			],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('parses conversations whose shared_labels are objects', () => {
+		// "shared_labels: Array of shared label objects on the conversation";
+		// the Get a Message example shows [{ id, name }].
+		const example = {
+			conversations: [
+				{
+					id: '47a57b76-df42-4d8k-927x-80dbe5d87191',
+					subject: null,
+					team: {
+						id: '2f618f9e-d3d4-4a01-b7d5-57124ab366b8',
+						name: 'Hobbits',
+						organization: '93e5e5d5-11a2-4c9b-80b8-94f3c08068cf',
+					},
+					shared_labels: [
+						{ id: '146ff5c4-d5la-3b63-b994-76711fn790lq', name: 'Elfs' },
+					],
+					shared_label_names: 'Elfs',
+				},
+			],
+		};
+		for (const key of [
+			'conversations.list',
+			'conversations.get',
+			'conversations.update',
+			'conversations.merge',
+		] as const) {
+			expect(
+				missiveEndpointSchemas[key].output.safeParse(example).success,
+			).toBe(true);
+		}
+	});
+
+	it('does not reject a list page for an enum value Missive adds later', () => {
+		expect(
+			missiveEndpointSchemas['tasks.list'].output.safeParse({
+				tasks: [{ id: 't1', state: 'blocked', type: 'milestone' }],
+			}).success,
+		).toBe(true);
+		expect(
+			missiveEndpointSchemas['sharedLabels.list'].output.safeParse({
+				shared_labels: [{ id: 'l1', visibility: 'team' }],
+			}).success,
+		).toBe(true);
+		expect(
+			missiveEndpointSchemas['teams.list'].output.safeParse({
+				teams: [
+					{
+						id: 'team1',
+						team_mention_behavior: 'nobody',
+						user_reply_behavior: 'ask',
+						received_reply_behavior: 'hide',
+						team_sidebar_behavior: 'show_nothing',
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+
+	it('does not reject a list page for a null optional field', () => {
+		expect(
+			missiveEndpointSchemas['users.list'].output.safeParse({
+				users: [{ id: 'u1', name: 'No Avatar', avatar_url: null }],
+			}).success,
+		).toBe(true);
+		expect(
+			missiveEndpointSchemas['conversations.listMessages'].output.safeParse({
+				messages: [
+					{
+						id: 'm1',
+						preview: null,
+						to_fields: null,
+						in_reply_to: null,
+						attachments: null,
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+});
+
 describe('Missive request inputs', () => {
 	const contact = {
 		contact_book: '551b8675-11e9-49c3-aac0-01fb8510d862',
