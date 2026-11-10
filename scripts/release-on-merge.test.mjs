@@ -478,6 +478,80 @@ describe('planRelease on a git repo', () => {
 		);
 	});
 
+	it('does not release a dependent again when npm is slow to show a version', async () => {
+		pkg('packages/core', 'core', '0.1.0');
+		pkg('packages/cli', '@x/cli', '0.1.0', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('release');
+		pkg('packages/core', 'core', '0.1.1');
+		pkg('packages/cli', '@x/cli', '0.1.1', {
+			dependencies: { core: 'workspace:*' },
+		});
+		const together = commit('chore(release): publish 2 package(s)');
+		// Both are published. npm shows the dependent and not yet its dependency.
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.0'] },
+				'@x/cli': { versions: ['0.1.0', '0.1.1'] },
+			}),
+		});
+		assert.deepEqual(plan, {
+			bumps: [],
+			tags: [{ tag: '@x/cli@0.1.1', sha: together }],
+			waiting: [{ name: 'core', version: '0.1.1' }],
+		});
+	});
+
+	it('releases a dependent once, however long its dependency stays unpublished', async () => {
+		pkg('packages/core', 'core', '0.1.0');
+		pkg('packages/cli', '@x/cli', '0.1.0', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('release');
+		pkg('packages/core', 'core', '0.1.1');
+		commit('chore(release): publish 1 package(s)'); // npm never serves core 0.1.1
+		pkg('packages/cli', '@x/cli', '0.1.1', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('chore(release): publish 1 package(s)'); // cli, released for core 0.1.1
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.0'] },
+				'@x/cli': { versions: ['0.1.0', '0.1.1'] },
+			}),
+		});
+		assert.deepEqual(plan.bumps, []);
+		assert.deepEqual(plan.waiting, [{ name: 'core', version: '0.1.1' }]);
+	});
+
+	it('releases a dependent that was last released before the waiting version', async () => {
+		pkg('packages/core', 'core', '0.1.0');
+		pkg('packages/cli', '@x/cli', '0.1.0', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('release');
+		pkg('packages/cli', '@x/cli', '0.1.1', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('cli 0.1.1');
+		pkg('packages/core', 'core', '0.2.0');
+		commit('core 0.2.0 by hand');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.0'] },
+				'@x/cli': { versions: ['0.1.0', '0.1.1'] },
+			}),
+		});
+		assert.deepEqual(
+			plan.bumps.map((b) => [b.name, b.to, b.files]),
+			[['@x/cli', '0.1.2', ['depends on core 0.2.0']]],
+		);
+	});
+
 	it('does not bump a dependent again while it waits for npm itself', async () => {
 		pkg('packages/core', 'core', '0.2.0');
 		pkg('packages/cli', '@x/cli', '0.1.1', {

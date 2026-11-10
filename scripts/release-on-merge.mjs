@@ -195,6 +195,9 @@ export function versionSetCommit(cwd, dir, version) {
 	return null;
 }
 
+const isAncestor = (cwd, older, newer) =>
+	tryGit(cwd, ['merge-base', '--is-ancestor', older, newer]) !== null;
+
 /** Files in the package that changed between `base` and HEAD and can change what ships. */
 function shippedChanges(cwd, base, dir) {
 	// --no-renames: a shipped file moved into tests/ would otherwise show up only
@@ -267,6 +270,8 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 	);
 	const tags = [];
 	const waiting = [];
+	// The commit that set each waiting version.
+	const waitingSetAt = new Map();
 	// Released packages: their current version is on npm.
 	const released = new Map();
 	const npmCache = new Map();
@@ -285,6 +290,7 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 			if (!npm?.versions.has(pkg.version)) {
 				log(`WAIT ${tag}: not on npm yet; deploy.yml publishes it`);
 				waiting.push({ name: pkg.name, version: pkg.version });
+				waitingSetAt.set(pkg.name, versionSetCommit(cwd, pkg.dir, pkg.version));
 				return;
 			}
 			base = versionSetCommit(cwd, pkg.dir, pkg.version);
@@ -294,7 +300,11 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 			}
 			tags.push({ tag, sha: base });
 		}
-		released.set(pkg.name, { pkg, files: shippedChanges(cwd, base, pkg.dir) });
+		released.set(pkg.name, {
+			pkg,
+			base,
+			files: shippedChanges(cwd, base, pkg.dir),
+		});
 	});
 
 	const bumps = new Map();
@@ -325,17 +335,29 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 	// corsair, corsair on its frpc binaries) is released again to pick it up. A
 	// version waiting for npm counts: a minor raised by hand gets no entry in
 	// `bumps`, and once it lands no later run would see a change in its dependents.
+	//
+	// Not when the dependent's own release sits at or after the commit that set
+	// the waiting version: it was published with that version pinned. That is
+	// every package this workflow bumped in the same commit, and it matters
+	// right after a publish. npm can take minutes to show a new version, and a
+	// dependent it shows first would otherwise be released a second time.
 	const pending = new Map(waiting.map((w) => [w.name, w.version]));
-	const newVersion = (name) => bumps.get(name)?.to ?? pending.get(name);
+	const carries = (base, dep) => {
+		const setAt = waitingSetAt.get(dep);
+		return Boolean(setAt) && isAncestor(cwd, setAt, base);
+	};
+	const newVersion = (name, base) =>
+		bumps.get(name)?.to ??
+		(carries(base, name) ? undefined : pending.get(name));
 	for (let grew = true; grew; ) {
 		grew = false;
-		for (const { pkg } of released.values()) {
+		for (const { pkg, base } of released.values()) {
 			if (bumps.has(pkg.name)) continue;
-			const bumpedDeps = pkg.deps.filter((d) => newVersion(d));
+			const bumpedDeps = pkg.deps.filter((d) => newVersion(d, base));
 			if (bumpedDeps.length === 0) continue;
 			await bump(
 				pkg,
-				bumpedDeps.map((d) => `depends on ${d} ${newVersion(d)}`),
+				bumpedDeps.map((d) => `depends on ${d} ${newVersion(d, base)}`),
 			);
 			if (bumps.has(pkg.name)) grew = true;
 		}
