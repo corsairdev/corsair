@@ -1,0 +1,94 @@
+---
+title: API
+description: "API reference for Linguapop: every `linguapop.api.*` operation with input and output types."
+---
+
+Every `linguapop.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Invitations
+
+### create
+
+`invitations.create`
+
+Create a placement test invitation for a candidate and optionally email it; returns the test link. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.linguapop.api.invitations.create({ email: 'sam.rivera@example.com', name: 'Sam Rivera', languageCode: 'ita', sendEmail: true, testReading: true, testListening: false, externalIdentifier: 'crm-lead-4812', callbackUrl: 'https://crm.example.com/linguapop/results' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The candidate's email address. Linguapop also uses it to identify the candidate. |
+| `languageCode` | `string` | Yes | Linguapop code of the language to test, from `languages.list`. |
+| `sendEmail` | `boolean` | Yes | Whether Linguapop emails the invitation to the candidate. When false, share the returned `url` yourself. |
+| `name` | `string` | No | The candidate's name. It appears in Linguapop's example request but not in its field list, and the API does not require it. |
+| `externalIdentifier` | `string` | No | An ID from your own system to identify the candidate, at most 500 characters. It comes back on the response and the result callback. |
+| `generateKioskCode` | `boolean` | No | Generate and return a kiosk code. A kiosk must already be set up in Linguapop under Customization. |
+| `testReading` | `boolean` | No | Include a reading section. When omitted, the default from Customization applies. |
+| `testListening` | `boolean` | No | Include a listening section. When omitted, the default from Customization applies. |
+| `callbackUrl` | `string` | No | URL Linguapop POSTs the placement test result to once the candidate finishes, at most 1000 characters. The call is unsigned, and this plugin does not receive it. |
+| `returnUrl` | `string` | No | URL the candidate is redirected to from a button on the results screen, at most 1000 characters. Without it the button is hidden. |
+
+The key is added to the JSON body, not sent as a header. `email`, `languageCode` and `sendEmail` are required. `externalIdentifier` is at most 500 characters, and `callbackUrl` and `returnUrl` must be http(s) URLs of at most 1000. Not retried after a 5xx or a timeout. The response shape is from the docs and has not been checked against a paid account.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invitationId` | `number` | Yes | Unique ID of the invitation; keep it to track the test. |
+| `url` | `string` | Yes | Direct link to the placement test, the same one the invitation email carries. It holds the invitation token, so treat it as a secret. |
+| `externalIdentifier` | `string \| null` | No | The externalIdentifier from the request, when one was sent. |
+| `emailSent` | `boolean \| null` | No | Whether the invitation email went out; always false when sendEmail was false. |
+| `kioskCode` | `string \| null` | No | Kiosk code for the candidate; null unless one was requested. |
+
+
+
+---
+
+## Languages
+
+### list
+
+`languages.list`
+
+List the languages Linguapop can test, each with the code to pass as languageCode when creating an invitation
+
+**Risk:** `read`
+
+```ts
+await corsair.linguapop.api.languages.list({});
+```
+
+**Input:** _empty object_
+
+Sends no key: a live request without one answered 200. Codes are Linguapop's own (`ger` for German), and new languages will be added.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  code: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

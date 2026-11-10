@@ -2541,6 +2541,14 @@
                 ]
               },
               {
+                "group": "Linguapop",
+                "pages": [
+                  "plugins/linguapop/overview",
+                  "plugins/linguapop/api",
+                  "plugins/linguapop/database"
+                ]
+              },
+              {
                 "group": "LinkedIn",
                 "pages": [
                   "plugins/linkedin/overview",
