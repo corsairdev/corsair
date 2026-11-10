@@ -263,7 +263,9 @@ export type BaseFluxguardPlugin<T extends FluxguardPluginOptions> =
 		typeof fluxguardEndpointsNested,
 		typeof fluxguardWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		// Types `keys.set_tenant_external_id`, which the tenant lookup needs.
+		typeof fluxguardAuthConfig
 	>;
 
 export type InternalFluxguardPlugin =
