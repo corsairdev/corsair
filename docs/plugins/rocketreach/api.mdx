@@ -1,0 +1,781 @@
+---
+title: API
+description: "API reference for RocketReach: every `rocketreach.api.*` operation with input and output types."
+---
+
+Every `rocketreach.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account state, credit usage per pool and the current rate limits
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketreach.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `state` | `string \| null` | No | anonymous, test_user or registered. |
+| `credit_usage` | `object[] \| null` | No | — |
+| `rate_limits` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credit_usage full type">
+
+```ts
+{
+  credit_type?: string | null,
+  allocated?: number | null,
+  used?: number | null,
+  remaining?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="rate_limits full type">
+
+```ts
+{
+  action?: string | null,
+  duration?: string | null,
+  limit?: number | null,
+  used?: number | null,
+  remaining?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### universal
+
+`account.universal`
+
+Read the universal-credits account: plan, daily call count and limit, credit usage by action and rate limits. The key RocketReach echoes back is stripped
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketreach.api.account.universal({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+| `api_key_domain` | `string \| null` | No | — |
+| `daily_api_num_calls` | `number \| null` | No | — |
+| `daily_api_limit` | `string \| null` | No | A numeric string, as RocketReach sends it. |
+| `credit_usage` | `Record<string, JsonValue> \| null` | No | — |
+| `credit_usage_by_action` | `Record<string, JsonValue>[] \| null` | No | — |
+| `rate_limits` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  lookup_limit?: number | null,
+  export_limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="rate_limits full type">
+
+```ts
+{
+  action?: string | null,
+  duration?: string | null,
+  limit?: number | null,
+  used?: number | null,
+  remaining?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### lookup
+
+`company.lookup`
+
+Look up one company by domain, name, LinkedIn URL, ID or ticker, spending a lookup credit
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.company.lookup({ domain: 'google.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | Preferred identifier. |
+| `id` | `number \| string` | No | A RocketReach company ID. |
+| `name` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `ticker` | `string` | No | A stock ticker. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `email_domain` | `string \| null` | No | — |
+| `website_domain` | `string \| null` | No | — |
+| `ticker_symbol` | `string \| null` | No | — |
+| `links` | `Record<string, JsonValue> \| null` | No | Social links keyed by network. |
+| `year_founded` | `number \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `num_employees` | `number \| null` | No | — |
+| `revenue` | `number \| null` | No | — |
+| `funding_investors` | `string[] \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `sic_codes` | `string[] \| null` | No | — |
+| `naics_codes` | `string[] \| null` | No | — |
+| `rr_profile_url` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `industry_keywords` | `string[] \| null` | No | — |
+| `techstack` | `string[] \| null` | No | — |
+| `industries` | `string[] \| null` | No | — |
+| `competitors` | `string[] \| null` | No | — |
+| `departments` | `Record<string, JsonValue> \| null` | No | — |
+| `company_growth` | `Record<string, JsonValue>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  street?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`company.search`
+
+Search companies by name, domain, industry, size, revenue and other filters
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.company.search({ query: { industry: ['Internet'], employees: ['1001-5000'] }, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | At least one filter. |
+| `start` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `order_by` | `relevance \| popularity \| score` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  name?: string[],
+  domain?: string[],
+  email_domain?: string[],
+  website_url?: string[],
+  industry?: string[],
+  industry_keywords?: string[],
+  employees?: string[],
+  revenue?: string[],
+  total_funding?: string[],
+  publicly_traded?: string[],
+  naics_code?: string[],
+  sic_code?: string[],
+  geo?: string[],
+  location?: string[],
+  techstack?: string[],
+  competitors?: string[],
+  keyword?: string[],
+  link?: string[],
+  phone?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email_domain?: string | null,
+  ticker_symbol?: string | null,
+  industry_str?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country_code?: string | null,
+  linkedin_url?: string | null,
+  logo_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Email
+
+### verify
+
+`email.verify`
+
+Verify whether one address can receive mail, with per-check detail; charges a verification credit, refunded when the answer is unknown or the address is malformed
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.email.verify({ email: 'johndoe@google.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The address to verify. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | The address, canonicalized. |
+| `status` | `string \| null` | No | valid, invalid, catchall or unknown. invalid covers a malformed, disposable or risky address. |
+| `credits_charged` | `number \| null` | No | 1, or 0 when the result was refunded. |
+| `mx_record` | `string \| null` | No | The domain's primary MX host. Null when it publishes none, so it is not on its own evidence that mail cannot be delivered. |
+| `checks` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="checks full type">
+
+```ts
+{
+  format_valid?: boolean | null,
+  domain_valid?: boolean | null,
+  disposable?: boolean | null,
+  catchall?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Person
+
+### bulkLookup
+
+`person.bulkLookup`
+
+Start a bulk lookup of up to 100 people and return the RR-Request-ID to poll with person.checkStatus
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.person.bulkLookup({ queries: [{ email: 'john.doe@example.com' }, { linkedin_url: 'www.linkedin.com/in/jamesgullbrand' }], profile_list: 'Q1 prospects' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `object[]` | Yes | Between 1 and 100 people. |
+| `profile_list` | `string` | No | Add the looked-up profiles to this list. Defaults to API Bulk Lookup. |
+| `webhook_id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="queries full type">
+
+```ts
+{
+  email?: string,
+  id?: number | string,
+  linkedin_url?: string,
+  name?: string,
+  current_employer?: string,
+  title?: string,
+  phone?: string,
+  npi_number?: string,
+  return_cached_emails?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | The RR-Request-ID header, to poll person.checkStatus or match a webhook delivery. |
+
+
+
+---
+
+### checkStatus
+
+`person.checkStatus`
+
+Read the current state of one or more profile lookups by profile ID or RR-Request-ID
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketreach.api.person.checkStatus({ ids: [5244, 5245] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `(number \| string)[]` | No | The profile IDs to check. |
+| `rr_request_id` | `string` | No | The RR-Request-ID from a lookup or bulk lookup. Takes priority over ids. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  status?: string | null,
+  profile_list?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  name?: string | null,
+  linkedin_url?: string | null,
+  connections?: number | null,
+  links?: Record<string, JsonValue> | null,
+  location?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  birth_year?: number | null,
+  current_title?: string | null,
+  current_employer?: string | null,
+  current_employer_id?: number | null,
+  current_employer_domain?: string | null,
+  current_employer_website?: string | null,
+  current_employer_linkedin_url?: string | null,
+  current_employer_industry?: string | null,
+  current_employer_phone?: {
+    number?: string | null,
+    e164?: string | null,
+    country_code?: string | null,
+    extension?: string | null,
+    type?: string | null,
+    grade?: string | null,
+    recommended?: boolean | null
+  } | null,
+  job_history?: {
+    start_date?: string | null,
+    end_date?: string | null,
+    company?: string | null,
+    company_name?: string | null,
+    company_id?: number | null,
+    company_linkedin_url?: string | null,
+    company_city?: string | null,
+    company_region?: string | null,
+    company_country_code?: string | null,
+    department?: string | null,
+    title?: string | null,
+    highest_level?: string | null,
+    description?: string | null,
+    last_updated?: string | null,
+    sub_department?: string | null,
+    is_current?: boolean | null
+  }[] | null,
+  education?: {
+    major?: string | null,
+    school?: string | null,
+    degree?: string | null,
+    start?: number | null,
+    end?: number | null
+  }[] | null,
+  skills?: string[] | null,
+  npi_data?: Record<string, JsonValue> | null,
+  tags?: string | null,
+  return_cached_emails?: boolean | null,
+  linkedin_url_active?: boolean | null,
+  recommended_email?: string | null,
+  recommended_personal_email?: string | null,
+  recommended_professional_email?: string | null,
+  current_work_email?: string | null,
+  current_personal_email?: string | null,
+  emails?: {
+    email?: string | null,
+    smtp_valid?: string | null,
+    type?: string | null,
+    last_validation_check?: string | null,
+    grade?: string | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    e164?: string | null,
+    country_code?: string | null,
+    extension?: string | null,
+    type?: string | null,
+    grade?: string | null,
+    recommended?: boolean | null
+  }[] | null,
+  metadata?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### lookup
+
+`person.lookup`
+
+Look up one person by email, LinkedIn URL, ID, phone, NPI number or name and employer, spending a lookup credit; a status other than complete means poll person.checkStatus
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.person.lookup({ email: 'john.doe@example.com', return_cached_emails: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | An email address. |
+| `id` | `number \| string` | No | A RocketReach profile ID. |
+| `linkedin_url` | `string` | No | Such as www.linkedin.com/in/jamesgullbrand. |
+| `name` | `string` | No | Requires current_employer as well. |
+| `current_employer` | `string` | No | Requires name as well. |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | E.164 or international format. |
+| `npi_number` | `string` | No | For a US healthcare professional. |
+| `lookup_type` | `standard \| premium \| premium (feeds disabled) \| bulk` | No | standard is the default. |
+| `return_cached_emails` | `boolean` | No | Include cached emails in a progress answer. False nulls every email field until the lookup finishes. |
+| `webhook_id` | `number` | No | Post the finished result to this webhook instead of polling. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | The RocketReach profile ID. |
+| `status` | `string \| null` | No | complete, progress, searching or not queued. Anything but complete means the answer is not final yet; poll person.checkStatus. |
+| `profile_list` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `linkedin_url` | `string \| null` | No | — |
+| `connections` | `number \| null` | No | — |
+| `links` | `Record<string, JsonValue> \| null` | No | Social links keyed by network. |
+| `location` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `birth_year` | `number \| null` | No | — |
+| `current_title` | `string \| null` | No | — |
+| `current_employer` | `string \| null` | No | — |
+| `current_employer_id` | `number \| null` | No | — |
+| `current_employer_domain` | `string \| null` | No | — |
+| `current_employer_website` | `string \| null` | No | — |
+| `current_employer_linkedin_url` | `string \| null` | No | — |
+| `current_employer_industry` | `string \| null` | No | — |
+| `current_employer_phone` | `object \| null` | No | — |
+| `job_history` | `object[] \| null` | No | — |
+| `education` | `object[] \| null` | No | — |
+| `skills` | `string[] \| null` | No | — |
+| `npi_data` | `Record<string, JsonValue> \| null` | No | Present for a US healthcare professional. |
+| `tags` | `string \| null` | No | — |
+| `return_cached_emails` | `boolean \| null` | No | True when cached emails were included in this synchronous answer. |
+| `linkedin_url_active` | `boolean \| null` | No | — |
+| `recommended_email` | `string \| null` | No | — |
+| `recommended_personal_email` | `string \| null` | No | — |
+| `recommended_professional_email` | `string \| null` | No | — |
+| `current_work_email` | `string \| null` | No | — |
+| `current_personal_email` | `string \| null` | No | — |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile_list full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_employer_phone full type">
+
+```ts
+{
+  number?: string | null,
+  e164?: string | null,
+  country_code?: string | null,
+  extension?: string | null,
+  type?: string | null,
+  grade?: string | null,
+  recommended?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="job_history full type">
+
+```ts
+{
+  start_date?: string | null,
+  end_date?: string | null,
+  company?: string | null,
+  company_name?: string | null,
+  company_id?: number | null,
+  company_linkedin_url?: string | null,
+  company_city?: string | null,
+  company_region?: string | null,
+  company_country_code?: string | null,
+  department?: string | null,
+  title?: string | null,
+  highest_level?: string | null,
+  description?: string | null,
+  last_updated?: string | null,
+  sub_department?: string | null,
+  is_current?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="education full type">
+
+```ts
+{
+  major?: string | null,
+  school?: string | null,
+  degree?: string | null,
+  start?: number | null,
+  end?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  email?: string | null,
+  smtp_valid?: string | null,
+  type?: string | null,
+  last_validation_check?: string | null,
+  grade?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  number?: string | null,
+  e164?: string | null,
+  country_code?: string | null,
+  extension?: string | null,
+  type?: string | null,
+  grade?: string | null,
+  recommended?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`person.search`
+
+Search people by title, employer, skills, school and other filters, returning summaries without contact details
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketreach.api.person.search({ query: { current_title: ['CTO'], company_domain: ['stripe.com'] }, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | At least one filter. |
+| `start` | `number` | No | 1-based result to start at. |
+| `page_size` | `number` | No | Defaults to 100, maximum 100. |
+| `order_by` | `relevance \| popularity \| score` | No | Defaults to relevance. |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  name?: string[],
+  current_title?: string[],
+  previous_title?: string[],
+  current_or_previous_title?: string[],
+  employer?: string[],
+  previous_employer?: string[],
+  company_domain?: string[],
+  company_name?: string[],
+  company_industry?: string[],
+  company_size?: string[],
+  company_revenue?: string[],
+  company_publicly_traded?: string[],
+  company_naics_code?: string[],
+  company_sic_code?: string[],
+  department?: string[],
+  management_levels?: string[],
+  skills?: string[],
+  all_skills?: string[],
+  geo?: string[],
+  country_code?: string[],
+  state?: string[],
+  email?: string[],
+  email_grade?: string,
+  phone?: string[],
+  phone_grade?: string[],
+  contact_method?: string[],
+  linkedin_url?: string[],
+  school?: string[],
+  degree?: string[],
+  major?: string[],
+  years_experience?: string[],
+  keyword?: string,
+  keywords?: string,
+  update_time?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  status?: string | null,
+  name?: string | null,
+  linkedin_url?: string | null,
+  connections?: number | null,
+  links?: Record<string, JsonValue> | null,
+  location?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  birth_year?: number | null,
+  current_title?: string | null,
+  current_employer?: string | null,
+  current_employer_id?: number | null,
+  current_employer_domain?: string | null,
+  current_employer_website?: string | null,
+  current_employer_linkedin_url?: string | null,
+  region_latitude?: number | null,
+  region_longitude?: number | null,
+  teaser?: Record<string, JsonValue> | null,
+  suppressed?: string | null,
+  update_time?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
