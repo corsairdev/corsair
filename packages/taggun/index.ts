@@ -204,10 +204,11 @@ const taggunEndpointMeta = {
 			'Store a new set of validation rules under a campaign ID you choose; rejected if that ID already exists',
 	},
 	'campaigns.update': {
-		// Not destructive, but it loses rules the caller leaves out, so the
-		// description says how to undo that rather than marking it irreversible:
-		// the previous settings can be sent again.
-		riskLevel: 'write',
+		// A replace-all: every section left out is removed, and Taggun keeps no
+		// earlier version to restore from, as with other plugins' replace-all
+		// calls. The description says how to keep the rules that should stay.
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			"Replace a campaign's stored validation rules wholesale: every section left out is removed, so re-send the response from `campaigns.get` with your changes",
 	},

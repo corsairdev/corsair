@@ -123,6 +123,12 @@ describe('taggun plugin', () => {
 		expect(meta['campaigns.delete']?.riskLevel).toBe('destructive');
 	});
 
+	it('counts the wholesale settings replace as destructive', () => {
+		// Sections left out of an update are removed and Taggun keeps no prior
+		// version, which is the replace-all case other plugins mark destructive.
+		expect(meta['campaigns.update']?.riskLevel).toBe('destructive');
+	});
+
 	it('treats every scan as a write, because it stores and bills', () => {
 		for (const operation of [
 			'simple.url',
