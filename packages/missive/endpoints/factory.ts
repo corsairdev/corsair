@@ -110,11 +110,23 @@ export function defineEndpoint<K extends MissiveOperationKey>(
 				body,
 			},
 		);
+		// Routes documented without a response body (the deletes) ignore
+		// whatever came back. A 200 with an empty or `{}` body is still a
+		// successful delete, and failing the parse would report an error for a
+		// change Missive already applied.
+		// `as MissiveEndpointOutputs[K]`: these operations' output is undefined.
+		if (!operation.hasResponseBody) {
+			return undefined as MissiveEndpointOutputs[K];
+		}
+		// The shared client returns '' for an empty non-JSON body. Treat it as
+		// no body, so a create that answers 201 with nothing parses instead of
+		// throwing after the draft was created or sent.
+		const payload = result === '' || result === null ? undefined : result;
 		// Parse the transport result through the operation's output schema so
 		// malformed provider responses are rejected at the boundary instead of
 		// being cast through to callers.
 		// `as MissiveEndpointOutputs[K]`: parse() already validated the shape;
 		// this cast only narrows the TypeScript type for callers.
-		return outputSchema.parse(result) as MissiveEndpointOutputs[K];
+		return outputSchema.parse(payload) as MissiveEndpointOutputs[K];
 	};
 }

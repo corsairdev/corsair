@@ -247,3 +247,61 @@ describe('Missive request inputs', () => {
 		).toBe(false);
 	});
 });
+
+describe('Missive writes that answer without a JSON body', () => {
+	it.each([
+		['drafts', 'delete', { id: 'd1' }],
+		['posts', 'delete', { id: 'p1' }],
+		['hooks', 'delete', { id: 'h1' }],
+		['responses', 'delete', { ids: ['r1', 'r2'] }],
+	] as const)(
+		'%s.%s resolves when the delete answers 200 with a body',
+		async (group, name, input) => {
+			for (const response of [
+				new Response('', {
+					status: 200,
+					headers: { 'content-type': 'text/html' },
+				}),
+				new Response('{}', {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				}),
+			]) {
+				const fetchSpy = mockResponse(response);
+				try {
+					await expect(api[group]?.[name]?.(input)).resolves.toBeUndefined();
+					expect(fetchSpy).toHaveBeenCalledTimes(1);
+				} finally {
+					fetchSpy.mockRestore();
+				}
+			}
+		},
+	);
+
+	it('drafts.create resolves when a sent draft answers with an empty text body', async () => {
+		const fetchSpy = mockResponse(
+			new Response('', {
+				status: 201,
+				headers: { 'content-type': 'text/plain' },
+			}),
+		);
+		try {
+			await expect(
+				api.drafts?.create?.({
+					body: {
+						send: true,
+						subject: 'Hello',
+						body: 'World!',
+						to_fields: [{ address: 'paul@acme.com' }],
+						from_field: { address: 'philippe@missiveapp.com' },
+					},
+				}),
+			).resolves.toBeUndefined();
+			// One request only: a thrown parse error would invite a retry that
+			// sends the email a second time.
+			expect(fetchSpy).toHaveBeenCalledTimes(1);
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+});
