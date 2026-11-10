@@ -9,13 +9,15 @@ import { z } from 'zod';
 // typos fail at the boundary, and query names stay provider-verbatim
 // (limit_page_length), exactly as the Frappe sources declare them.
 //
-// `system.getUserRoles` lists the `Has Role` child DocType, whose name
-// contains a space. The space is a literal part of the catalog path — not a
+// `system.getUserRoles` lists the `Has Role` child DocType and
+// `system.getFiscalYear` lists the `Fiscal Year` DocType; both names contain
+// a space. The space is a literal part of the catalog path — not a
 // path parameter — so the factory's encodeURIComponent substitution never
 // touches it. The WHATWG URL parser normalizes a literal space in the path to
 // %20 on the wire (new URL('https://site/api/resource/Has Role').pathname ===
-// '/api/resource/Has%20Role'), which Frappe accepts, so the raw catalog path
-// works as-is and no extra encoding step is added here.
+// '/api/resource/Has%20Role', likewise '/api/resource/Fiscal Year' to
+// '/api/resource/Fiscal%20Year'), which Frappe accepts, so the raw catalog
+// path works as-is and no extra encoding step is added here.
 
 // ── Input schemas ─────────────────────────────────────────────────────────────
 
@@ -110,6 +112,40 @@ const SystemUserRolesInputSchema = z
 	})
 	.strict();
 
+// GET /api/method/frappe.core.doctype.user.user.get_timezones — takes no
+// parameters (frappe/core/doctype/user/user.py: whitelisted get_timezones).
+const SystemGetTimezonesInputSchema = z.object({}).strict();
+
+// GET /api/resource/Fiscal Year — the shared /api/resource list query against
+// the Fiscal Year records (see the header note about the space in the
+// DocType name). `fields` and `filters` stay JSON strings that Frappe parses
+// server-side.
+const SystemGetFiscalYearInputSchema = z
+	.object({
+		fields: z
+			.string()
+			.optional()
+			.describe(
+				'JSON array string of field names to return, for example ["name","year_start_date","year_end_date"], passed verbatim to Frappe',
+			),
+		filters: z
+			.string()
+			.optional()
+			.describe(
+				'JSON string filter expression in Frappe list format, for example [["disabled","=",0]], passed verbatim',
+			),
+		limit_start: z.number().int().min(0).optional(),
+		limit_page_length: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe(
+				'Maximum rows per page; Frappe treats 0 as no page limit and returns every fiscal year',
+			),
+	})
+	.strict();
+
 // ── Output envelopes ──────────────────────────────────────────────────────────
 
 // frappe.auth.get_logged_user answers the session user's email under the
@@ -141,8 +177,23 @@ const SystemGetFrameworkVersionOutputSchema = z
 	})
 	.loose();
 
-// /api/resource list answers (Language, Role, Has Role) nest the rows under
-// `data`.
+// frappe/core/doctype/user/user.py get_timezones returns
+// {"timezones": _get_timezones()}, so the /api/method `message` wrapper
+// nests the answer one level deeper as a timezones-keyed object.
+// unknown: the wrapper object carries only the timezones list today, but the
+// envelope stays loose so added keys keep parsing.
+const SystemGetTimezonesOutputSchema = z
+	.object({
+		message: z
+			.object({
+				timezones: z.array(z.string()),
+			})
+			.loose(),
+	})
+	.loose();
+
+// /api/resource list answers (Language, Role, Has Role, Fiscal Year) nest the
+// rows under `data`.
 // unknown: resource list rows are open field bags — each DocType defines its
 // own columns and the `fields` query picks which ones come back — so rows
 // validate as string-keyed records of JSON values.
@@ -161,6 +212,8 @@ export const SystemInputSchemas = {
 	'system.getAllLanguages': SystemAllLanguagesInputSchema,
 	'system.getAllRoles': SystemAllRolesInputSchema,
 	'system.getUserRoles': SystemUserRolesInputSchema,
+	'system.getTimezones': SystemGetTimezonesInputSchema,
+	'system.getFiscalYear': SystemGetFiscalYearInputSchema,
 } as const;
 
 export const SystemOutputSchemas = {
@@ -170,4 +223,6 @@ export const SystemOutputSchemas = {
 	'system.getAllLanguages': SystemResourceListOutputSchema,
 	'system.getAllRoles': SystemResourceListOutputSchema,
 	'system.getUserRoles': SystemResourceListOutputSchema,
+	'system.getTimezones': SystemGetTimezonesOutputSchema,
+	'system.getFiscalYear': SystemResourceListOutputSchema,
 } as const;
