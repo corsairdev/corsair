@@ -16,11 +16,12 @@ import {
 	unknownRoute,
 	webhookMissingSecret,
 } from './test-fixtures';
+import { spyOnFetch } from './test-network';
 
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = spyOnFetch();
 });
 
 afterEach(() => {

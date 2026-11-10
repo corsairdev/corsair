@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { spyOnFetch } from './test-network';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -19,7 +20,7 @@ let fetchMock: jest.SpyInstance | undefined;
 
 /** Starts the fetch spy and clears the log between tests. */
 export function setUp() {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = spyOnFetch();
 	mockLog.mockClear();
 }
 

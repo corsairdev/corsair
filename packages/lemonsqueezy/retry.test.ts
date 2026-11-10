@@ -2,6 +2,7 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { lemonsqueezy } from './index';
 import { captureError } from './test-errors';
+import { spyOnFetch } from './test-network';
 
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -38,7 +39,7 @@ const rateLimited = {
 };
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = spyOnFetch();
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 

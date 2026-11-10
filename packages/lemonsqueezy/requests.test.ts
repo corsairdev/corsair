@@ -25,6 +25,15 @@ import {
 beforeEach(setUp);
 afterEach(tearDown);
 
+describe('the fetch mock', () => {
+	it('refuses a request no test queued an answer for', async () => {
+		const error = await captureError(invoke(Catalog.usersGet));
+
+		expect(calls()).toBe(1);
+		expect((error as Error).message).toMatch(/unmocked fetch/);
+	});
+});
+
 // One test per operation: the URL, the method, where the key went, and every
 // query or body field sent. A shared client means a wrong selector is a silent
 // wrong result rather than an error, so each route is pinned here.
