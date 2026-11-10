@@ -55,6 +55,16 @@ const SignedUrlsSchema = z
 	])
 	.nullish();
 
+// The reference documents raw_ocr as an array of boxes; the record form is
+// kept for answers that key the same data by page.
+// unknown: raw OCR fields vary by document and engine.
+const RawOcrSchema = z
+	.union([
+		z.array(z.record(z.string(), z.unknown())),
+		z.record(z.string(), z.unknown()),
+	])
+	.nullish();
+
 const PredictionPageSchema = z
 	.object({
 		message: z.string().nullish(),
@@ -62,8 +72,7 @@ const PredictionPageSchema = z
 		prediction: z.array(BoxSchema).nullish(),
 		predicted_boxes: z.array(BoxSchema).nullish(),
 		moderated_boxes: z.array(BoxSchema).nullish(),
-		// unknown: raw OCR fields vary by document and engine.
-		raw_ocr: z.record(z.string(), z.unknown()).nullish(),
+		raw_ocr: RawOcrSchema,
 		page: z.union([z.number(), z.string()]).nullish(),
 		request_file_id: z.string().nullish(),
 		id: z.string().nullish(),
@@ -155,10 +164,10 @@ const PredictionFileSummarySchema = z
 		upload_channel: z.string().nullish(),
 		file_url: z.string().nullish(),
 		request_metadata: z.string().nullish(),
-		// unknown: raw OCR fields vary by document and engine.
-		raw_ocr: z.record(z.string(), z.unknown()).nullish(),
+		raw_ocr: RawOcrSchema,
 		approval_status: z.string().nullish(),
 		processing_type: z.string().nullish(),
+		status: z.string().nullish(),
 	})
 	.loose();
 
@@ -307,7 +316,30 @@ export type PredictionsGetFileByFileIdInput = z.input<
 	typeof PredictionsGetFileByFileIdInputSchema
 >;
 
-const PredictionsGetFileByFileIdResponseSchema = PredictionEnvelopeSchema;
+// The reference example for this route shows placeholder nulls inside its
+// lists (unmoderated_images: [null], moderated_boxes: [null]), so entries are
+// nullable here and nowhere else.
+const FilePageSchema = z
+	.object({
+		...PredictionFileSummarySchema.shape,
+		predicted_boxes: z.array(BoxSchema.nullable()).nullish(),
+		moderated_boxes: z.array(BoxSchema.nullable()).nullish(),
+	})
+	.loose();
+
+// Documented as the moderated/unmoderated page lists, not the
+// { message, result } envelope of the create calls:
+// https://docs.nanonets.com/reference/ocrmodelgetpredictionfilebyfileid
+// The envelope fields stay typed in case an answer still uses them.
+const PredictionsGetFileByFileIdResponseSchema = z
+	.object({
+		...PredictionEnvelopeSchema.shape,
+		moderated_images_count: z.number().nullish(),
+		unmoderated_images_count: z.number().nullish(),
+		moderated_images: z.array(FilePageSchema.nullable()).nullish(),
+		unmoderated_images: z.array(FilePageSchema.nullable()).nullish(),
+	})
+	.loose();
 
 export type PredictionsGetFileByFileIdResponse = z.infer<
 	typeof PredictionsGetFileByFileIdResponseSchema

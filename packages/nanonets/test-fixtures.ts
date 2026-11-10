@@ -74,6 +74,79 @@ export const filesListResponse = {
 	signed_urls: {},
 };
 
+// Get Prediction File By Page ID documents raw_ocr as an array of boxes:
+// https://docs.nanonets.com/reference/ocrmodelgetpredictionfilebypageid
+export const pageWithRawOcr = {
+	message: 'Success',
+	result: [
+		{
+			message: 'success',
+			input: 'test2_file.pdf',
+			id: 'b1d5c0a2-3e47-4e89-9f21-7c8f5a3d6e10',
+			day_since_epoch: 20168,
+			hour_of_day: 15,
+			prediction: [],
+			predicted_boxes: [],
+			moderated_boxes: [],
+			raw_ocr: [
+				{
+					id: 'f4b8d2a6-1c3e-4a59-b7d0-8e2f6c1a9b35',
+					xmin: 412,
+					ymin: 88,
+					xmax: 528,
+					ymax: 104,
+					ocr_text: '120.00',
+				},
+			],
+		},
+	],
+	signed_urls: {},
+};
+
+// The example body of Get Prediction File By File ID, verbatim in shape,
+// placeholder nulls included:
+// https://docs.nanonets.com/reference/ocrmodelgetpredictionfilebyfileid
+export const fileByFileIdResponse = {
+	moderated_images_count: 0,
+	unmoderated_images_count: 1,
+	signed_urls: [null],
+	unmoderated_images: [null],
+	moderated_images: [
+		{
+			model_id: modelId,
+			day_since_epoch: 0,
+			is_moderated: true,
+			hour_of_day: 0,
+			id: 'b1d5c0a2-3e47-4e89-9f21-7c8f5a3d6e10',
+			url: 'uploadedfiles/x/PredictionImages/invoice.jpeg',
+			file_url: 'uploadedfiles/x/PredictionImages/invoice-1700000000.jpeg',
+			page: 0,
+			request_file_id: requestFileId,
+			original_file_name: 'invoice.pdf',
+			status: 'Success',
+			updated_at: 'timeuuid',
+			verified_at: 'timeuuid',
+			verified_by: 'Reviewer',
+			request_metadata: 'invoice-0042',
+			moderated_boxes: [null],
+			predicted_boxes: [
+				{
+					label: 'total_amount',
+					xmin: 0,
+					ymin: 0,
+					xmax: 100,
+					ymax: 100,
+					score: 0.9,
+					ocr_text: '120.00',
+					id: 'c3a7e1f5-2b49-4d58-8e6a-0f9c4b2d7a33',
+					status: 'correctly_predicted',
+					type: 'field',
+				},
+			],
+		},
+	],
+};
+
 // Model Object state 5: hosted and usable.
 export const modelObject = {
 	model_id: modelId,

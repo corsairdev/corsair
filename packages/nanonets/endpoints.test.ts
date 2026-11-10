@@ -5,10 +5,12 @@ import {
 	asyncPendingEnvelope,
 	error400,
 	error404,
+	fileByFileIdResponse,
 	filesListResponse,
 	integrationsArray,
 	modelId,
 	modelObject,
+	pageWithRawOcr,
 	predictionEnvelope,
 	queryRows,
 	requestFileId,
@@ -270,6 +272,19 @@ describe('predictions.getFileByPageId', () => {
 		expect(result.result?.[0]?.prediction?.[0]?.label).toBe('total_amount');
 	});
 
+	it('accepts raw_ocr as the documented array of boxes', async () => {
+		respond(pageWithRawOcr);
+
+		const result = await invoke(Predictions.getFileByPageId, {
+			model_id: modelId,
+			id: PAGE_ID,
+		});
+
+		const page = result.result?.[0];
+		expect(page?.raw_ocr).toEqual(pageWithRawOcr.result[0]?.raw_ocr);
+		expect(page?.hour_of_day).toBe(15);
+	});
+
 	it('surfaces a 404 model-missing error', async () => {
 		respond(error404, 404);
 
@@ -300,6 +315,23 @@ describe('predictions.getFileByFileId', () => {
 			path: `/api/v2/Inferences/Model/${modelId}/InferenceRequestFiles/GetPredictions/${requestFileId}`,
 		});
 		expect(result.result?.[0]?.request_file_id).toBe(requestFileId);
+	});
+
+	it('types the documented moderated/unmoderated answer', async () => {
+		respond(fileByFileIdResponse);
+
+		const result = await invoke(Predictions.getFileByFileId, {
+			model_id: modelId,
+			request_file_id: requestFileId,
+		});
+
+		expect(result.moderated_images_count).toBe(0);
+		expect(result.unmoderated_images_count).toBe(1);
+		const page = result.moderated_images?.[0];
+		expect(page?.request_file_id).toBe(requestFileId);
+		expect(page?.status).toBe('Success');
+		expect(page?.predicted_boxes?.[0]?.label).toBe('total_amount');
+		expect(result.unmoderated_images).toEqual([null]);
 	});
 
 	it('surfaces a 404 for an unknown file', async () => {

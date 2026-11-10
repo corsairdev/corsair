@@ -196,7 +196,7 @@ const nanonetsEndpointMeta = {
 	'predictions.getFileByFileId': {
 		riskLevel: 'read',
 		description:
-			'Fetch a whole prediction file by request file ID, the poll target for async requests',
+			'Fetch every page of a prediction file by request file ID, listed as moderated and unmoderated; the poll target for async requests',
 	},
 	'models.uploadTrainingUrls': {
 		riskLevel: 'write',
