@@ -80,6 +80,11 @@ const LinksSchema = z
 function listEnvelope<T extends z.ZodType>(item: T) {
 	return z.object({
 		data: z.array(item),
+		// JSON:API puts the resources named in `include` here, beside `data`.
+		included: z
+			.array(ResourceSchema)
+			.nullish()
+			.describe('Related resources requested through `include`.'),
 		nextCursor: z
 			.string()
 			.nullish()
@@ -94,6 +99,11 @@ function listEnvelope<T extends z.ZodType>(item: T) {
 function singleEnvelope<T extends z.ZodType>(item: T) {
 	return z.object({
 		data: item,
+		// Present when `include` asked for related resources.
+		included: z
+			.array(ResourceSchema)
+			.nullish()
+			.describe('Related resources requested through `include`.'),
 		links: LinksSchema.nullish(),
 	});
 }

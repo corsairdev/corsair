@@ -647,6 +647,10 @@ export const metricsAggregate: KlaviyoEndpoints['metricsAggregate'] = (
 						metric_id: parsed.metricId,
 						measurements: parsed.measurements,
 						interval: parsed.interval,
+						// The report pages by its own cursor, which was being dropped.
+						...(parsed.pageCursor !== undefined
+							? { page_cursor: parsed.pageCursor }
+							: {}),
 						...(parsed.by !== undefined ? { by: parsed.by } : {}),
 						...(parsed.filter !== undefined ? { filter: parsed.filter } : {}),
 						...(parsed.timezone !== undefined

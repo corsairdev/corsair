@@ -1,36 +1,68 @@
 import { logEventFromContext } from 'corsair/core';
 import {
 	eventsCreate,
+	eventsGet,
 	eventsList,
 	listsAddProfiles,
 	listsCreate,
+	listsGet,
 	listsList,
 	listsProfiles,
+	listsRemove,
+	listsRemoveProfiles,
+	listsUpdate,
 	metricsAggregate,
+	metricsGet,
+	metricsList,
 	profilesCreate,
 	profilesGet,
 	profilesList,
 	profilesSubscribe,
+	profilesUpdate,
 	segmentsCreate,
+	segmentsGet,
+	segmentsList,
+	segmentsProfiles,
+	segmentsRemove,
+	segmentsUpdate,
 	tagGroupsCreate,
+	tagGroupsList,
+	tagGroupsRemove,
 	tagsCreate,
+	tagsGet,
 	tagsList,
+	tagsRemove,
+	tagsUpdate,
 	webhooksCreate,
+	webhooksGet,
 	webhooksList,
+	webhooksRemove,
+	webhooksUpdate,
+	webhookTopicsList,
 } from './endpoints';
 import {
+	event,
 	eventsListResponse,
 	jobResponse,
+	list,
 	listResponse,
 	listsListResponse,
+	metric,
 	metricAggregateResponse,
+	profile,
 	profileResponse,
 	profilesListResponse,
+	segment,
+	segmentsListResponse,
+	tag,
 	tagGroupResponse,
+	tagGroupsListResponse,
 	tagResponse,
 	tagsListResponse,
+	webhook,
 	webhookResponse,
 	webhooksListResponse,
+	webhookTopicsListResponse,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -492,5 +524,234 @@ describe('logging', () => {
 		// A profile carries personal data; only the count is logged.
 		expect(JSON.stringify(fields)).not.toContain('jordan@');
 		expect(fields).toMatchObject({ count: 2 });
+	});
+});
+
+describe('per-endpoint coverage', () => {
+	it('events.get reads one event', async () => {
+		respond({ data: event });
+		const result = (await invoke(eventsGet, { id: 'Ev123' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/events/Ev123', 'GET');
+		expect(result.data.id).toBe('Ev123');
+	});
+
+	it('lists.get reads one list', async () => {
+		respond({ data: list });
+		const result = (await invoke(listsGet, { id: 'R7QkZp' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/lists/R7QkZp', 'GET');
+		expect(result.data.id).toBe('R7QkZp');
+	});
+
+	it('lists.update renames with PATCH', async () => {
+		respond({ data: list });
+		await invoke(listsUpdate, { id: 'R7QkZp', name: 'Renamed' });
+		expectAuthenticated('/api/lists/R7QkZp', 'PATCH');
+		expect(lastRequest().body).toEqual({
+			data: { type: 'list', id: 'R7QkZp', attributes: { name: 'Renamed' } },
+		});
+	});
+
+	it('lists.remove deletes', async () => {
+		respond(undefined, 204);
+		const result = (await invoke(listsRemove, { id: 'R7QkZp' })) as {
+			success: boolean;
+		};
+		expectAuthenticated('/api/lists/R7QkZp', 'DELETE');
+		expect(result.success).toBe(true);
+	});
+
+	it('lists.removeProfiles deletes a relationship', async () => {
+		respond(undefined, 204);
+		await invoke(listsRemoveProfiles, { id: 'R7QkZp', profileIds: ['p1'] });
+		expectAuthenticated('/api/lists/R7QkZp/relationships/profiles', 'DELETE');
+		expect(lastRequest().body).toEqual({
+			data: [{ type: 'profile', id: 'p1' }],
+		});
+	});
+
+	it('metrics.get reads one metric', async () => {
+		respond({ data: metric });
+		const result = (await invoke(metricsGet, { id: 'Mt123' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/metrics/Mt123', 'GET');
+		expect(result.data.id).toBe('Mt123');
+	});
+
+	it('metrics.list sends no page size, which the route rejects', async () => {
+		respond({ data: [metric], links: { next: null } });
+		await invoke(metricsList, { filter: 'equals(name,"Placed Order")' });
+		expectAuthenticated('/api/metrics', 'GET');
+		expect(lastRequest().query).toEqual({
+			filter: 'equals(name,"Placed Order")',
+		});
+		expect(lastRequest().query).not.toHaveProperty('page[size]');
+	});
+
+	it('profiles.update patches by id', async () => {
+		respond({ data: profile });
+		await invoke(profilesUpdate, { id: 'p1', first_name: 'Jo' });
+		expectAuthenticated('/api/profiles/p1', 'PATCH');
+		expect(lastRequest().body).toEqual({
+			data: { type: 'profile', id: 'p1', attributes: { first_name: 'Jo' } },
+		});
+	});
+
+	it('profiles.update rejects a no-op', async () => {
+		await expect(invoke(profilesUpdate, { id: 'p1' })).rejects.toThrow(
+			/at least one/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('segments.get reads one segment', async () => {
+		respond({ data: segment });
+		const result = (await invoke(segmentsGet, { id: 'SgXy12' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/segments/SgXy12', 'GET');
+		expect(result.data.id).toBe('SgXy12');
+	});
+
+	it('segments.list lists', async () => {
+		respond(segmentsListResponse);
+		await invoke(segmentsList, { pageSize: 10 });
+		expectAuthenticated('/api/segments', 'GET');
+	});
+
+	it('segments.update patches name or definition', async () => {
+		respond({ data: segment });
+		await invoke(segmentsUpdate, { id: 'SgXy12', name: 'Renamed' });
+		expectAuthenticated('/api/segments/SgXy12', 'PATCH');
+	});
+
+	it('segments.update rejects a no-op', async () => {
+		await expect(invoke(segmentsUpdate, { id: 'SgXy12' })).rejects.toThrow(
+			/at least one/,
+		);
+	});
+
+	it('segments.remove deletes', async () => {
+		respond(undefined, 204);
+		await invoke(segmentsRemove, { id: 'SgXy12' });
+		expectAuthenticated('/api/segments/SgXy12', 'DELETE');
+	});
+
+	it('segments.profiles pages the members', async () => {
+		respond(profilesListResponse);
+		await invoke(segmentsProfiles, { id: 'SgXy12', pageSize: 10 });
+		expectAuthenticated('/api/segments/SgXy12/profiles', 'GET');
+	});
+
+	it('tagGroups.list lists groups', async () => {
+		respond(tagGroupsListResponse);
+		const result = (await invoke(tagGroupsList, {})) as {
+			data: { id: string }[];
+		};
+		expectAuthenticated('/api/tag-groups', 'GET');
+		expect(result.data).toHaveLength(1);
+	});
+
+	it('tagGroups.remove deletes', async () => {
+		respond(undefined, 204);
+		await invoke(tagGroupsRemove, { id: 'TgG123' });
+		expectAuthenticated('/api/tag-groups/TgG123', 'DELETE');
+	});
+
+	it('tags.get reads one tag', async () => {
+		respond({ data: tag });
+		const result = (await invoke(tagsGet, { id: 'Tg123' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/tags/Tg123', 'GET');
+		expect(result.data.id).toBe('Tg123');
+	});
+
+	it('tags.update renames', async () => {
+		respond({ data: tag });
+		await invoke(tagsUpdate, { id: 'Tg123', name: 'urgent' });
+		expectAuthenticated('/api/tags/Tg123', 'PATCH');
+		expect(lastRequest().body).toEqual({
+			data: { type: 'tag', id: 'Tg123', attributes: { name: 'urgent' } },
+		});
+	});
+
+	it('tags.remove deletes', async () => {
+		respond(undefined, 204);
+		await invoke(tagsRemove, { id: 'Tg123' });
+		expectAuthenticated('/api/tags/Tg123', 'DELETE');
+	});
+
+	it('webhookTopics.list reads the topics', async () => {
+		respond(webhookTopicsListResponse);
+		const result = (await invoke(webhookTopicsList, {})) as {
+			data: { id: string }[];
+		};
+		expectAuthenticated('/api/webhook-topics', 'GET');
+		expect(result.data[0]?.id).toBe('Placed Order');
+	});
+
+	it('webhooks.get reads one webhook', async () => {
+		respond({ data: webhook });
+		const result = (await invoke(webhooksGet, { id: 'Wh123' })) as {
+			data: { id: string };
+		};
+		expectAuthenticated('/api/webhooks/Wh123', 'GET');
+		expect(result.data.id).toBe('Wh123');
+	});
+
+	it('webhooks.update patches', async () => {
+		respond({ data: webhook });
+		await invoke(webhooksUpdate, { id: 'Wh123', enabled: false });
+		expectAuthenticated('/api/webhooks/Wh123', 'PATCH');
+	});
+
+	it('webhooks.update rejects a no-op', async () => {
+		await expect(invoke(webhooksUpdate, { id: 'Wh123' })).rejects.toThrow(
+			/at least one/,
+		);
+	});
+
+	it('webhooks.remove deletes', async () => {
+		respond(undefined, 204);
+		await invoke(webhooksRemove, { id: 'Wh123' });
+		expectAuthenticated('/api/webhooks/Wh123', 'DELETE');
+	});
+});
+
+describe('the included array', () => {
+	it('survives a list response when include was requested', async () => {
+		// JSON:API puts related resources in a top-level `included`, which the
+		// envelope has to keep or a caller never sees what it asked for.
+		respond({
+			data: [event],
+			included: [{ type: 'profile', id: '01H8XYZABC123', attributes: {} }],
+			links: { next: null },
+		});
+
+		const result = (await invoke(eventsList, {
+			include: ['profile'],
+		})) as { included?: { id: string }[] | null };
+
+		expect(result.included).toHaveLength(1);
+		expect(result.included?.[0]?.id).toBe('01H8XYZABC123');
+	});
+
+	it('survives a single-resource response', async () => {
+		respond({
+			data: profile,
+			included: [{ type: 'conversation', id: 'c1', attributes: {} }],
+		});
+
+		const result = (await invoke(profilesGet, {
+			id: 'p1',
+			include: ['conversations'],
+		})) as { included?: { id: string }[] | null };
+
+		expect(result.included?.[0]?.id).toBe('c1');
 	});
 });

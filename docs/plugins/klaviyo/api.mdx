@@ -76,6 +76,7 @@ await corsair.klaviyo.api.events.get({ id: 'Ev123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -98,6 +99,19 @@ await corsair.klaviyo.api.events.get({ id: 'Ev123' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -147,6 +161,7 @@ await corsair.klaviyo.api.events.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -170,6 +185,19 @@ await corsair.klaviyo.api.events.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -247,6 +275,7 @@ await corsair.klaviyo.api.lists.create({ name: 'Newsletter' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -267,6 +296,19 @@ await corsair.klaviyo.api.lists.create({ name: 'Newsletter' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -311,6 +353,7 @@ await corsair.klaviyo.api.lists.get({ id: 'R7QkZp' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -331,6 +374,19 @@ await corsair.klaviyo.api.lists.get({ id: 'R7QkZp' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -379,6 +435,7 @@ await corsair.klaviyo.api.lists.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -400,6 +457,19 @@ await corsair.klaviyo.api.lists.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -447,6 +517,7 @@ await corsair.klaviyo.api.lists.profiles({ id: 'R7QkZp', pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -491,6 +562,19 @@ await corsair.klaviyo.api.lists.profiles({ id: 'R7QkZp', pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -597,6 +681,7 @@ await corsair.klaviyo.api.lists.update({ id: 'R7QkZp', name: 'Newsletter 2027' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -617,6 +702,19 @@ await corsair.klaviyo.api.lists.update({ id: 'R7QkZp', name: 'Newsletter 2027' }
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -729,6 +827,7 @@ await corsair.klaviyo.api.metrics.get({ id: 'Mt123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -750,6 +849,19 @@ await corsair.klaviyo.api.metrics.get({ id: 'Mt123' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -796,6 +908,7 @@ await corsair.klaviyo.api.metrics.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -818,6 +931,19 @@ await corsair.klaviyo.api.metrics.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -893,6 +1019,7 @@ await corsair.klaviyo.api.profiles.create({ email: 'jordan@acme.com', first_name
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -936,6 +1063,19 @@ await corsair.klaviyo.api.profiles.create({ email: 'jordan@acme.com', first_name
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -981,6 +1121,7 @@ await corsair.klaviyo.api.profiles.get({ id: '01H8XYZABC123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1024,6 +1165,19 @@ await corsair.klaviyo.api.profiles.get({ id: '01H8XYZABC123' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1074,6 +1228,7 @@ await corsair.klaviyo.api.profiles.list({ pageSize: 20, filter: 'equals(email,"j
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -1118,6 +1273,19 @@ await corsair.klaviyo.api.profiles.list({ pageSize: 20, filter: 'equals(email,"j
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1252,6 +1420,7 @@ await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1295,6 +1464,19 @@ await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jo
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1344,6 +1526,7 @@ await corsair.klaviyo.api.segments.create({ name: 'Engaged 30 days', definition:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1365,6 +1548,19 @@ await corsair.klaviyo.api.segments.create({ name: 'Engaged 30 days', definition:
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1409,6 +1605,7 @@ await corsair.klaviyo.api.segments.get({ id: 'SgXy12' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1430,6 +1627,19 @@ await corsair.klaviyo.api.segments.get({ id: 'SgXy12' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1478,6 +1688,7 @@ await corsair.klaviyo.api.segments.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -1500,6 +1711,19 @@ await corsair.klaviyo.api.segments.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1547,6 +1771,7 @@ await corsair.klaviyo.api.segments.profiles({ id: 'SgXy12', pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -1591,6 +1816,19 @@ await corsair.klaviyo.api.segments.profiles({ id: 'SgXy12', pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1667,6 +1905,7 @@ await corsair.klaviyo.api.segments.update({ id: 'SgXy12', name: 'Engaged 60 days
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1688,6 +1927,19 @@ await corsair.klaviyo.api.segments.update({ id: 'SgXy12', name: 'Engaged 60 days
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1735,6 +1987,7 @@ await corsair.klaviyo.api.tagGroups.create({ name: 'Campaign type' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1755,6 +2008,19 @@ await corsair.klaviyo.api.tagGroups.create({ name: 'Campaign type' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1794,6 +2060,7 @@ await corsair.klaviyo.api.tagGroups.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -1815,6 +2082,19 @@ await corsair.klaviyo.api.tagGroups.list({});
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1891,6 +2171,7 @@ await corsair.klaviyo.api.tags.create({ name: 'priority' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1911,6 +2192,19 @@ await corsair.klaviyo.api.tags.create({ name: 'priority' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1955,6 +2249,7 @@ await corsair.klaviyo.api.tags.get({ id: 'Tg123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1975,6 +2270,19 @@ await corsair.klaviyo.api.tags.get({ id: 'Tg123' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2021,6 +2329,7 @@ await corsair.klaviyo.api.tags.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -2042,6 +2351,19 @@ await corsair.klaviyo.api.tags.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2117,6 +2439,7 @@ await corsair.klaviyo.api.tags.update({ id: 'Tg123', name: 'urgent' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2137,6 +2460,19 @@ await corsair.klaviyo.api.tags.update({ id: 'Tg123', name: 'urgent' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2189,6 +2525,7 @@ The spec marks `secret_key` and at least one topic required. Klaviyo signs each 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2212,6 +2549,19 @@ The spec marks `secret_key` and at least one topic required. Klaviyo signs each 
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2256,6 +2606,7 @@ await corsair.klaviyo.api.webhooks.get({ id: 'Wh123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2279,6 +2630,19 @@ await corsair.klaviyo.api.webhooks.get({ id: 'Wh123' });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2324,6 +2688,7 @@ await corsair.klaviyo.api.webhooks.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -2348,6 +2713,19 @@ await corsair.klaviyo.api.webhooks.list({ pageSize: 20 });
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2426,6 +2804,7 @@ await corsair.klaviyo.api.webhooks.update({ id: 'Wh123', enabled: false });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2449,6 +2828,19 @@ await corsair.klaviyo.api.webhooks.update({ id: 'Wh123', enabled: false });
     prev?: string | null
   } | null
 }
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
@@ -2490,6 +2882,7 @@ await corsair.klaviyo.api.webhookTopics.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
 | `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
 | `links` | `object \| null` | No | — |
 
@@ -2510,6 +2903,19 @@ await corsair.klaviyo.api.webhookTopics.list({});
     prev?: string | null
   } | null
 }[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
 ```
 </Accordion>
 
