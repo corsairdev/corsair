@@ -16,7 +16,7 @@ pnpm add @corsair-dev/miro
 | `boards.create` | `miro.api.boards.create` | `write` | Create a board with a name, description and sharing policy, optionally in a given team or project |
 | `boards.get` | `miro.api.boards.get` | `read` | Read one board: its name, owner, team, project, sharing policy and the membership of the calling user |
 | `boards.list` | `miro.api.boards.list` | `read` | List the boards the token can reach, filtered by team, project, owner or name, with offset paging |
-| `boards.remove` | `miro.api.boards.remove` | `destructive` | Delete a board and everything on it; every item, tag and membership goes with it and cannot be restored |
+| `boards.remove` | `miro.api.boards.remove` | `destructive` | Delete a board and everything on it; Miro moves it to Trash, where an owner can restore it in the Miro UI for 90 days, but there is no API call to do so |
 | `boards.update` | `miro.api.boards.update` | `write` | Change a board name, description or sharing policy; the policy controls who can view, comment and edit |
 | `cards.create` | `miro.api.cards.create` | `write` | Add a card with a title, description, due date and assignee, for task boards |
 | `cards.update` | `miro.api.cards.update` | `write` | Change a card title, description, due date, assignee or position |

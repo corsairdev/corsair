@@ -67,11 +67,21 @@ const ReferenceSchema = z
 	})
 	.loose();
 
-/** True when at least one field carries a value, so an update is not a no-op. */
+/**
+ * True when at least one field carries a change, so an update is not a no-op.
+ *
+ * `unknown` because the callers are zod refinements over several different
+ * update shapes; each passes the fields it owns and this only asks whether a
+ * value is present, so a union of every field type would add nothing.
+ *
+ * An empty *object* is not a change: Miro rejects `style: {}`, and a caller who
+ * passed one meant nothing by it. An empty *array* is a change, because clearing
+ * a list is a real edit: `captions: []` removes a connector's labels.
+ */
 function anySet(...values: unknown[]): boolean {
 	return values.some((value) => {
 		if (value === undefined) return false;
-		// An empty object or array is not a change on its own.
+		if (Array.isArray(value)) return true;
 		if (typeof value === 'object' && value !== null) {
 			return Object.keys(value).length > 0;
 		}

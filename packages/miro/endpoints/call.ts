@@ -103,7 +103,14 @@ export function itemBody(
 	return body;
 }
 
-/** True when the value is an object with at least one key. */
+/**
+ * True when the value is an object with at least one key.
+ *
+ * `unknown` because it guards a value coming out of a parsed input, where the
+ * field is typed loosely by the shared `itemBody` helper; narrowing the
+ * parameter would mean threading each item kind's style type through it, and
+ * this only needs to know whether any key exists.
+ */
 function hasKeys(value: unknown): boolean {
 	return (
 		typeof value === 'object' && value !== null && Object.keys(value).length > 0

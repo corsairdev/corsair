@@ -11,7 +11,7 @@ overviewNote: |
   - **List rows arrive as `data`.** Miro names every list array `data` whatever the resource, so each operation renames it after the resource: `boards`, `items`, `tags`, `members`, `connectors`. `tags.ofItem` is the exception and keys them `tags`.
   - **Item writes are nested.** Miro expects a sticky note's `content` and `shape` under `data`, its colour under `style`, and its frame under `parent.id`. This plugin takes them flat and groups them for you.
   - **Connectors need two existing items.** Both `startItemId` and `endItemId` are required and must already be on the board; a connector cannot be created against a loose point.
-  - **Tags on items travel in the query.** `tags.attach` and `tags.removeFromItem` both address `/v2/boards/{boardId}/items/{itemId}` with `tag_id` as a query parameter, so attaching a second tag replaces the query rather than the tag list.
+  - **Tags on items travel in the query.** `tags.attach` and `tags.removeFromItem` both address `/v2/boards/{boardId}/items/{itemId}` with `tag_id` as a query parameter. Each call handles one tag, so attach several by calling it once per tag; an earlier tag stays attached.
   - **`boards.copy` is a PUT on the collection** with `copy_from` as a required query parameter, not a body field.
   - **Scopes.** Reads need `boards:read`, writes need `boards:write`. A token without the write scope gets 403.
   - **Rate limits** are per minute by tier, and a 429 carries `Retry-After`; retries are capped at three.
@@ -112,4 +112,4 @@ apiExamples:
 apiNotes:
   items.list: 'Miro filters on a single item type, so `type` takes one value. Pass `parentItemId` to read only what sits inside a frame.'
   boards.copy: 'The source board is a required `copy_from` query parameter on a PUT to the collection, which this operation fills from `boardId`.'
-  tags.attach: 'The tag id goes in the query string, not the body, so this route replaces nothing; call it once per tag to attach.'
+  tags.attach: 'The tag id goes in the query string, not the body. One call attaches one tag, and calling it again adds another without removing the first.'

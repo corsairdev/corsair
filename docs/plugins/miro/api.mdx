@@ -45,11 +45,12 @@ The source board is a required `copy_from` query parameter on a PUT to the colle
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
-| `ownerId` | `string \| null` | No | — |
-| `teamId` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
 | `projectId` | `string \| null` | No | — |
 | `viewLink` | `string \| null` | No | — |
 | `type` | `string \| null` | No | — |
@@ -58,6 +59,61 @@ The source board is a required `copy_from` query parameter on a PUT to the colle
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="currentUserMembership full type">
 
 ```ts
@@ -151,11 +207,12 @@ await corsair.miro.api.boards.create({ name: 'Product roadmap', description: 'Q1
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
-| `ownerId` | `string \| null` | No | — |
-| `teamId` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
 | `projectId` | `string \| null` | No | — |
 | `viewLink` | `string \| null` | No | — |
 | `type` | `string \| null` | No | — |
@@ -164,6 +221,61 @@ await corsair.miro.api.boards.create({ name: 'Product roadmap', description: 'Q1
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="currentUserMembership full type">
 
 ```ts
@@ -233,11 +345,12 @@ await corsair.miro.api.boards.get({ boardId: 'uXjVK1abcd=' });
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
-| `ownerId` | `string \| null` | No | — |
-| `teamId` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
 | `projectId` | `string \| null` | No | — |
 | `viewLink` | `string \| null` | No | — |
 | `type` | `string \| null` | No | — |
@@ -246,6 +359,61 @@ await corsair.miro.api.boards.get({ boardId: 'uXjVK1abcd=' });
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="currentUserMembership full type">
 
 ```ts
@@ -333,11 +501,32 @@ await corsair.miro.api.boards.list({ limit: 10, sort: 'last_modified' });
   name?: string | null,
   description?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
-  ownerId?: string | null,
-  teamId?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  owner?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  team?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  organization?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   projectId?: string | null,
   viewLink?: string | null,
   type?: string | null,
@@ -381,7 +570,7 @@ await corsair.miro.api.boards.list({ limit: 10, sort: 'last_modified' });
 
 `boards.remove`
 
-Delete a board and everything on it; every item, tag and membership goes with it and cannot be restored
+Delete a board and everything on it; Miro moves it to Trash, where an owner can restore it in the Miro UI for 90 days, but there is no API call to do so
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -458,11 +647,12 @@ await corsair.miro.api.boards.update({ boardId: 'uXjVK1abcd=', name: 'Roadmap 20
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
-| `ownerId` | `string \| null` | No | — |
-| `teamId` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
 | `projectId` | `string \| null` | No | — |
 | `viewLink` | `string \| null` | No | — |
 | `type` | `string \| null` | No | — |
@@ -471,6 +661,61 @@ await corsair.miro.api.boards.update({ boardId: 'uXjVK1abcd=', name: 'Roadmap 20
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="currentUserMembership full type">
 
 ```ts
@@ -580,9 +825,17 @@ await corsair.miro.api.cards.create({ boardId: 'uXjVK1abcd=', title: 'Review des
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -684,9 +937,17 @@ await corsair.miro.api.cards.update({ boardId: 'uXjVK1abcd=', itemId: '345876451
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -767,9 +1028,17 @@ await corsair.miro.api.connectors.create({ boardId: 'uXjVK1abcd=', startItemId: 
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -838,9 +1107,17 @@ await corsair.miro.api.connectors.get({ boardId: 'uXjVK1abcd=', connectorId: '34
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -891,7 +1168,7 @@ await corsair.miro.api.connectors.list({ boardId: 'uXjVK1abcd=', limit: 10 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
-| `limit` | `number` | No | Results per page, up to 50. Defaults to 10. |
+| `limit` | `number` | No | Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route. |
 | `cursor` | `string` | No | The `cursor` from the previous page; omit for the first. |
 
 
@@ -914,9 +1191,17 @@ await corsair.miro.api.connectors.list({ boardId: 'uXjVK1abcd=', limit: 10 });
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1030,9 +1315,17 @@ await corsair.miro.api.connectors.update({ boardId: 'uXjVK1abcd=', connectorId: 
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1131,9 +1424,17 @@ await corsair.miro.api.embeds.create({ boardId: 'uXjVK1abcd=', url: 'https://www
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1228,9 +1529,17 @@ await corsair.miro.api.embeds.update({ boardId: 'uXjVK1abcd=', itemId: '34587645
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1326,9 +1635,17 @@ await corsair.miro.api.frames.create({ boardId: 'uXjVK1abcd=', title: 'Discovery
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1424,9 +1741,17 @@ await corsair.miro.api.frames.update({ boardId: 'uXjVK1abcd=', itemId: '34587645
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1493,9 +1818,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1526,9 +1859,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1561,9 +1902,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1604,9 +1953,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1639,9 +1996,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1674,9 +2039,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1706,9 +2079,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
     id: string,
     type?: string | null,
     createdAt?: string | null,
-    createdBy?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     modifiedAt?: string | null,
-    modifiedBy?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
     links?: {
       self?: string | null
     } | null,
@@ -1759,7 +2140,7 @@ await corsair.miro.api.items.list({ boardId: 'uXjVK1abcd=', type: ['sticky_note'
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
 | `type` | `(app_card \| card \| connector \| document \| embed \| frame \| image \| preview \| shape \| sticky_note \| text)[]` | No | Only these item kinds. Miro takes one value; comma-joined here. |
 | `parentItemId` | `string` | No | Only items inside this frame or parent item. |
-| `limit` | `number` | No | Results per page, up to 50. Defaults to 10. |
+| `limit` | `number` | No | Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route. |
 | `cursor` | `string` | No | The `cursor` from the previous page; omit for the first. |
 
 Miro filters on a single item type, so `type` takes one value. Pass `parentItemId` to read only what sits inside a frame.
@@ -1784,9 +2165,17 @@ Miro filters on a single item type, so `type` takes one value. Pass `parentItemI
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -1884,11 +2273,10 @@ await corsair.miro.api.members.get({ boardId: 'uXjVK1abcd=', memberId: '30744573
 | `id` | `string` | Yes | — |
 | `role` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1947,11 +2335,10 @@ await corsair.miro.api.members.list({ boardId: 'uXjVK1abcd=' });
   id: string,
   role?: string | null,
   name?: string | null,
+  type?: string | null,
   email?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
   links?: {
     self?: string | null
   } | null
@@ -2083,11 +2470,10 @@ await corsair.miro.api.members.update({ boardId: 'uXjVK1abcd=', memberId: '30744
 | `id` | `string` | Yes | — |
 | `role` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
-| `createdBy` | `string \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
-| `modifiedBy` | `string \| null` | No | — |
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2190,9 +2576,17 @@ await corsair.miro.api.shapes.create({ boardId: 'uXjVK1abcd=', shape: 'rectangle
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2318,9 +2712,17 @@ await corsair.miro.api.shapes.update({ boardId: 'uXjVK1abcd=', itemId: '34587645
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2430,9 +2832,17 @@ await corsair.miro.api.stickyNotes.create({ boardId: 'uXjVK1abcd=', content: 'Sh
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2532,9 +2942,17 @@ await corsair.miro.api.stickyNotes.update({ boardId: 'uXjVK1abcd=', itemId: '345
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2592,7 +3010,7 @@ await corsair.miro.api.tags.attach({ boardId: 'uXjVK1abcd=', itemId: '3458764513
 | `itemId` | `string` | Yes | — |
 | `tagId` | `string` | Yes | The tag to attach to the item. |
 
-The tag id goes in the query string, not the body, so this route replaces nothing; call it once per tag to attach.
+The tag id goes in the query string, not the body. One call attaches one tag, and calling it again adds another without removing the first.
 
 
 
@@ -2642,9 +3060,17 @@ await corsair.miro.api.tags.create({ boardId: 'uXjVK1abcd=', title: 'priority', 
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2694,9 +3120,17 @@ await corsair.miro.api.tags.get({ boardId: 'uXjVK1abcd=', tagId: '34587645138205
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2753,9 +3187,17 @@ await corsair.miro.api.tags.items({ boardId: 'uXjVK1abcd=', tagId: '345876451382
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2830,9 +3272,17 @@ await corsair.miro.api.tags.list({ boardId: 'uXjVK1abcd=', limit: 20 });
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -2894,9 +3344,17 @@ await corsair.miro.api.tags.ofItem({ boardId: 'uXjVK1abcd=', itemId: '3458764513
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -3020,9 +3478,17 @@ await corsair.miro.api.tags.update({ boardId: 'uXjVK1abcd=', tagId: '34587645138
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -3114,9 +3580,17 @@ await corsair.miro.api.texts.create({ boardId: 'uXjVK1abcd=', content: 'Sprint 1
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,
@@ -3227,9 +3701,17 @@ await corsair.miro.api.texts.update({ boardId: 'uXjVK1abcd=', itemId: '345876451
   id: string,
   type?: string | null,
   createdAt?: string | null,
-  createdBy?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   modifiedAt?: string | null,
-  modifiedBy?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
   links?: {
     self?: string | null
   } | null,

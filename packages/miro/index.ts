@@ -384,7 +384,7 @@ const miroEndpointMeta = {
 	'boards.remove': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a board and everything on it; every item, tag and membership goes with it and cannot be restored',
+			'Delete a board and everything on it; Miro moves it to Trash, where an owner can restore it in the Miro UI for 90 days, but there is no API call to do so',
 		irreversible: true,
 	},
 	'boards.copy': {

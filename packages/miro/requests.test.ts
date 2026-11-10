@@ -885,6 +885,20 @@ describe('tags', () => {
 		expect(lastRequest().body).toEqual({ title: 'urgent' });
 	});
 
+	it('accepts clearing a connector captions to an empty list', async () => {
+		// An empty array is a real edit: it removes the labels. Only an empty
+		// object is treated as no change.
+		respond(connector);
+
+		await invoke(connectorsUpdate, {
+			boardId: BOARD,
+			connectorId: 'c-1',
+			captions: [],
+		});
+
+		expect(lastRequest().body).toEqual({ captions: [] });
+	});
+
 	it('rejects a tag update that changes nothing', async () => {
 		await expect(
 			invoke(tagsUpdate, { boardId: BOARD, tagId: 't-1' }),
