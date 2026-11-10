@@ -239,10 +239,25 @@ const SystemStatusSchema = z.enum([
 	'under_maintenance',
 ]);
 
+/**
+ * Statuses as responses carry them. The enums above stay on the inputs; a
+ * response is read as a plain string so a status Re:amaze adds later does not
+ * fail a read.
+ */
+const IncidentStatusOutputSchema = z
+	.string()
+	.describe('investigating, identified, monitoring or resolved');
+
+const SystemStatusOutputSchema = z
+	.string()
+	.describe(
+		'operational, degraded_performance, partial_outage, major_outage or under_maintenance',
+	);
+
 const IncidentUpdateSchema = z
 	.object({
 		id: IdSchema.nullish(),
-		status: IncidentStatusSchema.nullish(),
+		status: IncidentStatusOutputSchema.nullish(),
 		message: z.string().nullish(),
 	})
 	.loose();
@@ -251,7 +266,7 @@ const IncidentSystemSchema = z
 	.object({
 		id: IdSchema.nullish(),
 		system_id: IdSchema.nullish(),
-		status: SystemStatusSchema.nullish(),
+		status: SystemStatusOutputSchema.nullish(),
 		system: z
 			.object({
 				id: IdSchema.nullish(),
@@ -268,7 +283,7 @@ const IncidentSchema = z
 		title: z.string().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
-		status: IncidentStatusSchema.nullish(),
+		status: IncidentStatusOutputSchema.nullish(),
 		updates: z.array(IncidentUpdateSchema).nullish(),
 		incidents_systems: z.array(IncidentSystemSchema).nullish(),
 	})
@@ -282,7 +297,7 @@ const SystemSchema = z
 		brand_id: IdSchema.nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
-		status: SystemStatusSchema.nullish(),
+		status: SystemStatusOutputSchema.nullish(),
 		active_incidents: z.array(IncidentSchema).nullish(),
 	})
 	.loose();

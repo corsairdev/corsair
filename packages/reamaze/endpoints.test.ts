@@ -389,6 +389,37 @@ describe('Re:amaze output parsing', () => {
 		);
 	});
 
+	it('reads an incident or system status the vendor adds later', async () => {
+		// Only the inputs are held to the documented statuses. A read must not
+		// fail because Re:amaze started sending a new one.
+		mockFetch(
+			jsonResponse([
+				{
+					...fixtures.incidentResponse,
+					status: 'scheduled',
+					updates: [{ id: 'u-1', status: 'scheduled', message: 'Planned' }],
+					incidents_systems: [
+						{ id: 'is-1', system_id: 'sys-1', status: 'planned_maintenance' },
+					],
+				},
+			]),
+		);
+		const incidents = await endpoints.incidents.list(makeCtx(), {});
+		expect(incidents.incidents[0]!.status).toBe('scheduled');
+		expect(incidents.incidents[0]!.updates?.[0]?.status).toBe('scheduled');
+		expect(incidents.incidents[0]!.incidents_systems?.[0]?.status).toBe(
+			'planned_maintenance',
+		);
+
+		mockFetch(
+			jsonResponse([
+				{ id: 'sys-1', title: 'Neat', status: 'planned_maintenance' },
+			]),
+		);
+		const systems = await endpoints.systems.list(makeCtx(), {});
+		expect(systems.systems[0]!.status).toBe('planned_maintenance');
+	});
+
 	it('wraps the bare system array under systems', async () => {
 		mockFetch(jsonResponse(fixtures.systemsResponse));
 
