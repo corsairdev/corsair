@@ -220,7 +220,9 @@ export async function makeOpenseaRequest(
 				{
 					status,
 					method,
-					// Retry-After wins when present; the reset header is the fallback.
+					// `corsair/http` folds both headers into this one value, and
+					// `resetTime` wins when the response carries both. See
+					// OPENSEA_RATE_LIMIT_CONFIG.
 					retryAfter: error.retryAfter,
 					code: readError(error.body).code,
 					kind: kindFor(status),
