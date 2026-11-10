@@ -1,36 +1,70 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const PLUGIN_ID_PATTERN = /^[a-z0-9]+$/;
+import {
+	ICON_CACHE_CONTROL,
+	missingIconResponse,
+	PLACEHOLDER_CACHE_CONTROL,
+	PLUGIN_ID_PATTERN,
+	parseIconQuery,
+	pickIconFile,
+	placeholderSvg,
+	SVG_SECURITY_HEADERS,
+} from '@/lib/plugin-icons';
 
-function iconsDir(): string {
-	return join(process.cwd(), '..', 'explorer', 'icons');
+const explorerDir = () => join(process.cwd(), '..', 'explorer');
+
+let catalogIds: Set<string> | null = null;
+
+/** Plugin ids in the catalog, from the icon manifest's domain list. */
+function isCatalogPlugin(id: string): boolean {
+	if (!catalogIds) {
+		const manifest = JSON.parse(
+			readFileSync(join(explorerDir(), 'data', 'icon-manifest.json'), 'utf8'),
+		) as { domains: Record<string, string> };
+		catalogIds = new Set(Object.keys(manifest.domains));
+	}
+	return catalogIds.has(id);
 }
 
+/**
+ * `/plugin-icons/<id>` with `?theme=dark` for dark surfaces and
+ * `?format=png` for clients that can't draw SVG. See `@/lib/plugin-icons`.
+ */
 export async function GET(
-	_request: Request,
+	request: Request,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params;
-
 	if (!PLUGIN_ID_PATTERN.test(id)) {
 		return new Response('Not found', { status: 404 });
 	}
 
-	const iconPath = join(iconsDir(), `${id}.png`);
-	if (!existsSync(iconPath)) {
-		return new Response('Not found', { status: 404 });
+	const iconsDir = join(explorerDir(), 'icons');
+	const query = parseIconQuery(new URL(request.url).searchParams);
+	const icon = pickIconFile(id, query, (file) =>
+		existsSync(join(iconsDir, file)),
+	);
+
+	if (!icon) {
+		if (!isCatalogPlugin(id) || missingIconResponse(query) === 'not-found') {
+			return new Response('Not found', { status: 404 });
+		}
+		return new Response(placeholderSvg(id), {
+			headers: {
+				'Content-Type': 'image/svg+xml',
+				'Cache-Control': PLACEHOLDER_CACHE_CONTROL,
+				'X-Icon-Fallback': '1',
+				...SVG_SECURITY_HEADERS,
+			},
+		});
 	}
 
-	const body = readFileSync(iconPath);
-
-	return new Response(body, {
+	return new Response(readFileSync(join(iconsDir, icon.file)), {
 		headers: {
-			'Content-Type': 'image/png',
-			// Not immutable: an icon can be replaced under the same URL (a wrong
-			// domain fixed in explorer/icons), and a year-long immutable copy would
-			// keep the old mark in every browser that loaded it.
-			'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
+			'Content-Type': icon.type,
+			'Cache-Control': ICON_CACHE_CONTROL,
+			...(icon.type === 'image/svg+xml' ? SVG_SECURITY_HEADERS : {}),
 		},
 	});
 }

@@ -297,6 +297,14 @@
                 ]
               },
               {
+                "group": "AI21 Studio",
+                "pages": [
+                  "plugins/studiobyai21labs/overview",
+                  "plugins/studiobyai21labs/api",
+                  "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
                 "group": "AIML API",
                 "pages": [
                   "plugins/aimlapi/overview",
@@ -1776,11 +1784,12 @@
                 ]
               },
               {
-                "group": "ElevenLabs Studio",
+                "group": "ElevenLabs",
                 "pages": [
-                  "plugins/studiobyai21labs/overview",
-                  "plugins/studiobyai21labs/api",
-                  "plugins/studiobyai21labs/database"
+                  "plugins/elevenlabs/overview",
+                  "plugins/elevenlabs/api",
+                  "plugins/elevenlabs/database",
+                  "plugins/elevenlabs/webhooks"
                 ]
               },
               {
@@ -1982,6 +1991,14 @@
                   "plugins/flutterwave/overview",
                   "plugins/flutterwave/api",
                   "plugins/flutterwave/database"
+                ]
+              },
+              {
+                "group": "Follow Up Boss",
+                "pages": [
+                  "plugins/followupboss/overview",
+                  "plugins/followupboss/api",
+                  "plugins/followupboss/database"
                 ]
               },
               {
@@ -2230,6 +2247,15 @@
                 ]
               },
               {
+                "group": "Higgsfield",
+                "pages": [
+                  "plugins/higgsfield/overview",
+                  "plugins/higgsfield/api",
+                  "plugins/higgsfield/database",
+                  "plugins/higgsfield/webhooks"
+                ]
+              },
+              {
                 "group": "Hookdeck",
                 "pages": [
                   "plugins/hookdeck/overview",
@@ -2301,6 +2327,15 @@
                   "plugins/imgbb/overview",
                   "plugins/imgbb/api",
                   "plugins/imgbb/database"
+                ]
+              },
+              {
+                "group": "InboxKit",
+                "pages": [
+                  "plugins/inboxkit/overview",
+                  "plugins/inboxkit/api",
+                  "plugins/inboxkit/database",
+                  "plugins/inboxkit/webhooks"
                 ]
               },
               {
@@ -2931,6 +2966,14 @@
                   "plugins/runpod/overview",
                   "plugins/runpod/api",
                   "plugins/runpod/database"
+                ]
+              },
+              {
+                "group": "Salesflare",
+                "pages": [
+                  "plugins/salesflare/overview",
+                  "plugins/salesflare/api",
+                  "plugins/salesflare/database"
                 ]
               },
               {
@@ -3776,6 +3819,15 @@
               "guides/webhooks",
               "guides/workflows"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
           }
         ]
       }

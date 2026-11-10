@@ -33,6 +33,8 @@ With the label, R1 still checks that every file sits inside the touched plugins'
 
 The gate reads labels when it runs, so after adding the label to an open PR, use "Re-run failed jobs" on the Plugin PR Gate.
 
+No PR needs a version bump: every merge releases the packages it changed as the next patch (see Versions and Releases in CONTRIBUTING.md).
+
 ## R2 — Tests required
 
 At least one `*.test.ts` inside `packages/<plugin>/` (see `packages/slack/`
