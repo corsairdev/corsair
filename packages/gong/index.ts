@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -60,6 +61,7 @@ import {
 	GongEngageFlowsInputSchemas,
 	GongEngageFlowsOutputSchemas,
 } from './endpoints/engage-flows-types';
+import { packGongCredentials } from './endpoints/family-context';
 import { updateIntegrationSettings } from './endpoints/integration-settings';
 import {
 	GongIntegrationSettingsInputSchemas,
@@ -163,11 +165,29 @@ import {
 import { errorHandlers } from './error-handlers';
 import { GongSchema } from './schema';
 
+/**
+ * A Gong API key has two halves. The access key is the stored `api_key`;
+ * declaring `account: ['api_key_secret']` gives the access key secret a place
+ * in the same connection (`ctx.keys.get_api_key_secret()`), so each tenant
+ * can store its own.
+ */
+export const gongAuthConfig = {
+	api_key: {
+		account: ['api_key_secret'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type GongPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** The access key (API key auth), or a bearer token you obtained (OAuth). */
 	key?: string;
 	accessKey?: string;
 	accessKeySecret?: string;
+	/**
+	 * Your company's Gong API host: the name (`us-12345`), the host or the URL
+	 * shown on Gong's API page. Defaults to `https://api.gong.io`. Only
+	 * `api.gong.io` and `<name>.api.gong.io` are accepted.
+	 */
 	baseUrl?: string;
 	hooks?: InternalGongPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -176,9 +196,14 @@ export type GongPluginOptions = {
 
 export type GongContext = CorsairPluginContext<
 	typeof GongSchema,
-	GongPluginOptions
+	GongPluginOptions,
+	undefined,
+	typeof gongAuthConfig
 >;
-export type GongKeyBuilderContext = KeyBuilderContext<GongPluginOptions>;
+export type GongKeyBuilderContext = KeyBuilderContext<
+	GongPluginOptions,
+	typeof gongAuthConfig
+>;
 export type GongBoundEndpoints = BindEndpoints<typeof gongEndpointsNested>;
 type GongEndpoint<K extends keyof GongCallsOutputs> = CorsairEndpoint<
 	GongContext,
@@ -907,7 +932,8 @@ export type BaseGongPlugin<T extends GongPluginOptions> = CorsairPlugin<
 	typeof gongEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof gongAuthConfig
 >;
 export type InternalGongPlugin = BaseGongPlugin<GongPluginOptions>;
 export type ExternalGongPlugin<T extends GongPluginOptions> = BaseGongPlugin<T>;
@@ -921,6 +947,7 @@ export function gong<const T extends GongPluginOptions>(
 	};
 	return {
 		id: 'gong',
+		authConfig: gongAuthConfig,
 		schema: GongSchema,
 		options,
 		hooks: options.hooks,
@@ -932,17 +959,28 @@ export function gong<const T extends GongPluginOptions>(
 		keyBuilder: async (ctx: GongKeyBuilderContext, source) => {
 			if (source !== 'endpoint')
 				throw new AuthMissingError('gong', ctx.authType);
-			if (options.key) return options.key;
 			if (ctx.authType === 'oauth_2') {
-				const token = await ctx.keys.get_access_token();
-				if (token) return token;
+				if (options.key) return options.key;
+				const [token, expiresAt] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+				]);
+				// Gong access tokens last a day and this plugin does not refresh
+				// them, so an expired one asks for a new connection instead of
+				// being sent.
+				const expired =
+					Boolean(expiresAt) &&
+					!(Number(expiresAt) > Math.floor(Date.now() / 1000) + 60);
+				if (token && !expired) return token;
 				throw new AuthMissingError('gong', 'oauth_2');
 			}
-			if (options.accessKey && options.accessKeySecret)
-				return options.accessKey;
-			const storedKey = await ctx.keys.get_api_key();
-			if (storedKey && options.accessKeySecret) return storedKey;
-			throw new AuthMissingError('gong', 'api_key');
+			const accessKey =
+				options.accessKey ?? options.key ?? (await ctx.keys.get_api_key());
+			const accessKeySecret =
+				options.accessKeySecret ?? (await ctx.keys.get_api_key_secret());
+			if (!accessKey || !accessKeySecret)
+				throw new AuthMissingError('gong', 'api_key');
+			return packGongCredentials(accessKey, accessKeySecret);
 		},
 	} satisfies InternalGongPlugin;
 }
