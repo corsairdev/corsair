@@ -229,7 +229,7 @@ const nanonetsEndpointMeta = {
 	'files.updateFields': {
 		riskLevel: 'write',
 		description:
-			'Replace a file field set: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted',
+			'Replace the field set of one page of a file: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted',
 	},
 	'files.assign': {
 		riskLevel: 'write',

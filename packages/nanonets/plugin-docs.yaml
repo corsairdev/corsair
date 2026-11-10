@@ -9,7 +9,7 @@ overviewNote: |
   - **`async: true`** switches a create call to the documented async variant: the response comes back pending with a `request_file_id`, which you poll with `predictions.getFileByFileId` until the returned page `message` is `success`. Recommended above 3 pages; results normally finish within ~5 minutes.
   - **Quota and rate limits.** 402 means the free API call quota is exhausted and is never retried. 429 is per model per 1-minute window on the predict calls; the plugin waits the documented 30 seconds between retries (Retry-After is honored when sent), up to three times.
   - **Paging is a day window.** `predictions.listFiles` takes `start_day_interval` and `current_batch_day` as days since 1970-01-01 GMT (floor of unix seconds over 86400) and returns moderated and unmoderated images for that window; walk the windows forward yourself.
-  - **`files.updateFields` replaces the whole field set.** Send the full `moderated_boxes` array from a prior read: unchanged boxes stay, new boxes need `is_new: true`, and any field you omit is deleted. The request is sent as `text/plain` because that is the documented working sample.
+  - **`files.updateFields` replaces the whole field set of one page.** Read the page first (`predictions.getFileByPageId` or `predictions.listFiles`), then send its `id` with the full `moderated_boxes` array: unchanged boxes stay, new boxes need `is_new: true`, and any field you omit is deleted. Copy `page`, `day_since_epoch`, `hour_of_day` and `is_moderated` from the same read when it returned them; Nanonets's own sample sends all of them. The request is sent as `text/plain` because that is the documented working sample.
   - **Deleting is permanent.** `files.delete` removes the file and its predictions for good. `integrations.executeQuery` runs arbitrary SQL against a connected store (documented examples include UPDATE), so it is also classified destructive.
   - **Training.** `models.uploadTrainingUrls` adds images by URL, then `models.train` retrains; the model state walks 2→3→4→5 (usable). `models.updateGuidelines` changes extraction behavior of Instant Learning models via natural-language instructions.
   - **Webhooks.** Nanonets can POST document events to URLs you configure in its UI (Workflow → Exports → Webhooks), but it signs nothing, so the plugin receives none.
@@ -51,7 +51,7 @@ apiExamples:
   files.delete:
     call: "{ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', file_id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' }"
   files.updateFields:
-    call: "{ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', moderated_boxes: [{ id: 'box-1', label: 'total_amount', xmin: 10, ymin: 20, xmax: 200, ymax: 40, ocr_text: '120.00' }] }"
+    call: "{ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', id: '75ff0d9d-066b-11f0-b31d-62e85b8f4aab', page: 0, day_since_epoch: 20168, hour_of_day: 15, is_moderated: true, moderated_boxes: [{ id: 'box-1', label: 'total_amount', xmin: 10, ymin: 20, xmax: 200, ymax: 40, ocr_text: '120.00' }] }"
   files.assign:
     call: "{ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', member: 'reviewer@example.com', file_ids: ['68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e'] }"
   files.retryExports:

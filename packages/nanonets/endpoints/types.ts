@@ -94,6 +94,7 @@ const PredictionPageSchema = z
 		no_of_fields: z.number().nullish(),
 		original_file_name: z.string().nullish(),
 		day_since_epoch: z.number().nullish(),
+		hour_of_day: z.number().nullish(),
 		url: z.string().nullish(),
 		// unknown: file metadata flags vary by workflow configuration.
 		file_metadata: z.record(z.string(), z.unknown()).nullish(),
@@ -125,6 +126,7 @@ const PredictionFileSummarySchema = z
 	.object({
 		model_id: z.string().nullish(),
 		day_since_epoch: z.number().nullish(),
+		hour_of_day: z.number().nullish(),
 		is_moderated: z.boolean().nullish(),
 		id: z.string().nullish(),
 		url: z.string().nullish(),
@@ -408,8 +410,36 @@ export type FilesDeleteResponse = z.infer<typeof FilesDeleteResponseSchema>;
 
 // ── files.updateFields ─────────────────────────────────────────────────────
 
+// The route names only the model, so the body carries the page's own keys
+// next to the boxes, as the documented sample does:
+// https://docs.nanonets.com/reference/update-fields-via-api
 const FilesUpdateFieldsInputSchema = z.object({
 	model_id: ModelIdSchema,
+	id: z
+		.string()
+		.min(1)
+		.describe(
+			'The page ID whose fields are replaced, as returned by predictions.getFileByPageId or predictions.listFiles.',
+		),
+	page: z
+		.number()
+		.int()
+		.optional()
+		.describe('The page number of that page, copied from the read.'),
+	day_since_epoch: z
+		.number()
+		.int()
+		.optional()
+		.describe('The day_since_epoch of that page, copied from the read.'),
+	hour_of_day: z
+		.number()
+		.int()
+		.optional()
+		.describe('The hour_of_day of that page, copied from the read.'),
+	is_moderated: z
+		.boolean()
+		.optional()
+		.describe('The is_moderated flag of that page, copied from the read.'),
 	moderated_boxes: z
 		.array(BoxSchema)
 		.describe(

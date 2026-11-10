@@ -76,17 +76,35 @@ export const updateFields: NanonetsEndpoints['filesUpdateFields'] = (
 			output: Outputs.filesUpdateFields,
 		},
 		input,
-		({ model_id, moderated_boxes }) => ({
+		({
+			model_id,
+			moderated_boxes,
+			page,
+			day_since_epoch,
+			hour_of_day,
+			id,
+			is_moderated,
+		}) => ({
 			method: 'PATCH',
 			path: `/Inferences/Model/${encodeURIComponent(model_id)}/ImageLevelInference`,
 			query: { use_ui_version: true },
-			rawBody: JSON.stringify({ moderated_boxes }),
+			// The path holds no page or file ID: without the page's keys in the
+			// body Nanonets cannot tell which page the boxes belong to.
+			rawBody: JSON.stringify({
+				moderated_boxes,
+				page,
+				day_since_epoch,
+				hour_of_day,
+				id,
+				is_moderated,
+			}),
 			mediaType: 'text/plain;charset=UTF-8',
 		}),
 		{
 			shape: emptyBodyAsRecord,
-			log: ({ model_id, moderated_boxes }) => ({
+			log: ({ model_id, id, moderated_boxes }) => ({
 				model_id,
+				id,
 				fields: moderated_boxes.length,
 			}),
 		},

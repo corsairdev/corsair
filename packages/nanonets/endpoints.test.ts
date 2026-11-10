@@ -496,6 +496,11 @@ describe('files.updateFields', () => {
 
 		const result = await invoke(Files.updateFields, {
 			model_id: modelId,
+			id: PAGE_ID,
+			page: 0,
+			day_since_epoch: 20168,
+			hour_of_day: 15,
+			is_moderated: true,
 			moderated_boxes,
 		});
 
@@ -505,10 +510,51 @@ describe('files.updateFields', () => {
 			path: `/api/v2/Inferences/Model/${modelId}/ImageLevelInference`,
 		});
 		expect(lastRequest().query).toEqual({ use_ui_version: 'true' });
+		// The route names only the model, so the body has to say which page the
+		// boxes belong to: the documented sample sends the page's own keys next
+		// to moderated_boxes.
 		const body = lastInit().body;
-		expect(body).toBe(JSON.stringify({ moderated_boxes }));
+		expect(JSON.parse(body as string)).toEqual({
+			moderated_boxes,
+			page: 0,
+			day_since_epoch: 20168,
+			hour_of_day: 15,
+			id: PAGE_ID,
+			is_moderated: true,
+		});
 		expect(lastRequest().contentType).toBe('text/plain;charset=UTF-8');
 		expect(result).toEqual({});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'nanonets.files.updateFields',
+			{ model_id: modelId, id: PAGE_ID, fields: 2 },
+			'completed',
+		);
+	});
+
+	it('sends only the page id when the other page keys are not given', async () => {
+		respondEmpty();
+
+		await invoke(Files.updateFields, {
+			model_id: modelId,
+			id: PAGE_ID,
+			moderated_boxes: [],
+		});
+
+		expect(JSON.parse(lastInit().body as string)).toEqual({
+			moderated_boxes: [],
+			id: PAGE_ID,
+		});
+	});
+
+	it('rejects a call that does not name the page, without fetching', async () => {
+		await expect(
+			invoke(Files.updateFields, {
+				model_id: modelId,
+				moderated_boxes: [],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
