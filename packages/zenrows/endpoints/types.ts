@@ -181,7 +181,7 @@ const FetchCommonShape = {
 		.boolean()
 		.optional()
 		.describe(
-			"Forward the caller's own request headers to the page. Implied by `headers`, and the API key moves to the query string because ZenRows copies every request header onto the target request.",
+			"Forward the caller's own request headers to the page. Implied by `headers`, which turn it on even when this is false, and the API key moves to the query string because ZenRows copies every request header onto the target request.",
 		),
 	premiumProxy: z
 		.boolean()

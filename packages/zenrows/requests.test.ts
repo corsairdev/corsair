@@ -307,6 +307,20 @@ describe('caller headers', () => {
 		}
 	});
 
+	it('turns forwarding on for headers even when customHeaders is false', async () => {
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			customHeaders: false,
+			headers: { Cookie: 'session=abc' },
+		});
+		const sent = lastRequest();
+		// The key already left the header for these headers, so ZenRows must
+		// forward them to the target rather than keep them for itself.
+		expect(sent.query.apikey).toBe(API_KEY);
+		expect(sent.query.custom_headers).toBe('true');
+	});
+
 	it('does not forward its own Accept header to the target', async () => {
 		// ZenRows forwards Accept when custom_headers is on, and a site that
 		// negotiates content would answer JSON or 406 to application/json.

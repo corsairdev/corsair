@@ -57,8 +57,9 @@ export function fetchQuery(
 			input.jsInstructions === undefined
 				? undefined
 				: JSON.stringify(input.jsInstructions),
-		custom_headers:
-			input.customHeaders ?? (input.headers !== undefined || undefined),
+		// Caller headers win over `customHeaders: false`: fetchAuth has already
+		// moved the key off the header for them, so they must be forwarded.
+		custom_headers: input.headers !== undefined ? true : input.customHeaders,
 		premium_proxy: input.premiumProxy,
 		proxy_country: input.proxyCountry,
 		session_id: input.sessionId,
@@ -78,7 +79,6 @@ export function fetchQuery(
 	};
 }
 
-/** `custom_headers` decides where the key goes, for every Fetch operation. */
 /**
  * Where the key has to travel for a Fetch call. With `customHeaders` on,
  * Zenrows copies every request header onto the target, so the key moves to the
