@@ -1,0 +1,77 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Mapbox"
+description: "Geocode addresses and coordinates, get routes, travel-time matrices, isochrones and optimized trips, and query vector tilesets with Mapbox."
+domain: "mapbox.com"
+recommendedAuth: "api_key"
+overviewNote: |-
+  Mapbox authenticates with an `access_token` query parameter. Create a token
+  at [account.mapbox.com/access-tokens](https://account.mapbox.com/access-tokens/)
+  (a default public `pk.` token works for every operation here), then save it for
+  the `mapbox` integration. A call with no saved token throws `AuthMissingError`.
+  The plugin never copies the token into an error. Mapbox has a free tier
+  (see its pricing page for the allowance per API), so the plugin is cheap to
+  try. Mapbox's terms allow geocoding responses to be used only together with a
+  Mapbox map.
+
+  Every operation is a read. Things to know:
+
+  - **Longitude comes first.** Coordinates are `{ longitude, latitude }`
+    objects, and the plugin writes them into URLs as `longitude,latitude` as
+    Mapbox expects. A latitude outside -90 to 90 or a longitude outside -180 to
+    180 is rejected before a request is sent.
+  - **Profiles** are `mapbox/driving-traffic`, `mapbox/driving`,
+    `mapbox/walking` and `mapbox/cycling`, with the `mapbox/` prefix.
+  - **No match is not an error for geocoding.** A query with no result is a
+    successful answer with an empty `features` list.
+  - **No route is an error for routing.** Directions, matrix and trip calls
+    that Mapbox answers with HTTP 200 and `code: 'NoRoute'`, `'NoSegment'` or
+    `'NotImplemented'` throw a `MapboxAPIError` carrying that code, rather than
+    returning an empty `routes` list.
+  - **Mapbox silently ignores some bad values**, so the plugin rejects them
+    first: a geocoding `limit` above 10 (above 5 for reverse), isochrone contours
+    that are not strictly increasing, `annotations` without `overview: 'full'`,
+    `language` without `steps: true`, and `exclude` values the profile does not
+    support.
+  - **Reverse geocoding** needs exactly one entry in `types` when `limit` is
+    above 1.
+  - **Limits** are per product and per minute, and Mapbox reports yours in
+    `x-rate-limit-limit`; a default token showed 1,000 for geocoding v6, 300 for
+    directions and isochrone, 60 for matrix and 50 for tilequery. A 429 is
+    retried twice, waiting for `x-rate-limit-reset`, or 60 seconds when Mapbox
+    sends no timing header.
+  - **Left out.** The Static Images API returns PNG bytes, which the shared HTTP
+    client cannot return intact. Optimization v2 (`/optimized-trips/v2`, async
+    jobs) answered 403 `Account does not have access to this service` on a
+    default token, so only Optimization v1, which answers immediately, is
+    wrapped as `trips.optimize`. Geocoding's `permanent` storage flag, batch
+    geocoding and structured input are not wrapped.
+  - **Webhooks.** Mapbox sends none for these APIs, so the plugin handles none.
+examples:
+  read:
+    path: geocoding.forward
+    title: Find a place by name
+    args:
+      q: Paris
+      limit: 3
+apiExamples:
+  geocoding.forward:
+    call: "{ q: 'Paris', types: ['place'], limit: 3 }"
+  geocoding.reverse:
+    call: "{ longitude: 2.3522, latitude: 48.8566, types: ['address'] }"
+  directions.route:
+    call: "{ profile: 'mapbox/driving', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }], steps: true }"
+  matrix.calculate:
+    call: "{ profile: 'mapbox/walking', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }, { longitude: 2.4, latitude: 48.87 }], annotations: ['duration', 'distance'] }"
+  isochrone.get:
+    call: "{ profile: 'mapbox/walking', coordinate: { longitude: 2.35, latitude: 48.85 }, contours_minutes: [5, 10], polygons: true }"
+  tilequery.query:
+    call: "{ tileset_ids: ['mapbox.mapbox-streets-v8'], coordinate: { longitude: 2.3522, latitude: 48.8566 }, radius: 100, limit: 5 }"
+  trips.optimize:
+    call: "{ profile: 'mapbox/driving', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }, { longitude: 2.4, latitude: 48.87 }], roundtrip: false, source: 'first', destination: 'last' }"
+apiNotes:
+  geocoding.forward: 'Searches by text; for structured address input or permanent storage, call Mapbox directly. Mapbox ignores a limit outside 1 to 10, so the plugin rejects it.'
+  directions.route: 'Throws a MapboxAPIError with code NoRoute or NoSegment when Mapbox finds no route; it answers those with HTTP 200.'
+  matrix.calculate: 'Up to 25 coordinates, or 10 for mapbox/driving-traffic. A null cell means no route between that pair.'
+  isochrone.get: 'Give contours_minutes (1 to 60) or contours_meters (1 to 100000), up to four, strictly increasing. Mapbox returns the largest contour first.'
+  tilequery.query: 'Needs a radius for point and line data. A default token showed a limit of 50 requests a minute.'
+  trips.optimize: 'Optimization v1, answered immediately. roundtrip: false needs source: first and destination: last; Mapbox answers NotImplemented for any other pair.'

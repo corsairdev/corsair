@@ -2606,6 +2606,14 @@
                 ]
               },
               {
+                "group": "Mapbox",
+                "pages": [
+                  "plugins/mapbox/overview",
+                  "plugins/mapbox/api",
+                  "plugins/mapbox/database"
+                ]
+              },
+              {
                 "group": "Marketstack",
                 "pages": [
                   "plugins/marketstack/overview",
