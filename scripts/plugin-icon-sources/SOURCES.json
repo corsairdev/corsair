@@ -1,0 +1,388 @@
+{
+  "activecampaign": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/active_campaign.svg"
+  },
+  "activetrail": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/active_trail.svg"
+  },
+  "addresszen": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/addresszen.svg"
+  },
+  "ahrefs": {
+    "from": "https://svgl.app/library/ahrefs.svg"
+  },
+  "airtable": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/airtable.svg"
+  },
+  "algolia": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/algolia.svg"
+  },
+  "alphavantage": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/alpha_vantage.svg",
+    "note": "white background shape removed"
+  },
+  "amcards": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/amcards.svg"
+  },
+  "amplitude": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/amplitude.svg"
+  },
+  "apify": {
+    "from": "https://apify.com/icon0.svg",
+    "note": "the brand site's own SVG icon"
+  },
+  "apipie": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/apipie_ai.svg"
+  },
+  "asana": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/asana.svg"
+  },
+  "ayrshare": {
+    "from": "https://www.ayrshare.com/icon.svg",
+    "note": "the brand site's own SVG icon"
+  },
+  "benchmarkemail": {
+    "from": "https://media.brand.dev/5f000d94-75ec-47af-be6f-21b23f79161b.svg",
+    "note": "found with the context.dev Brand API for benchmarkemail.com"
+  },
+  "bitbucket": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/bitbucket.svg"
+  },
+  "bitwarden": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/bitwarden.svg"
+  },
+  "boloforms": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/boloforms.svg"
+  },
+  "brevo": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/brevo.svg"
+  },
+  "bubble": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/bubble.svg"
+  },
+  "calendly": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/calendly.svg"
+  },
+  "canva": {
+    "from": "https://svgl.app/library/canva.svg"
+  },
+  "chatbotkit": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/chatbotkit.svg"
+  },
+  "clickup": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/clickup.svg"
+  },
+  "close": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/close.svg"
+  },
+  "cloudflare": {
+    "from": "https://svgl.app/library/cloudflare.svg"
+  },
+  "cloudinary": {
+    "from": "https://svgl.app/library/cloudinary.svg"
+  },
+  "coda": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/coda.svg"
+  },
+  "cody": {
+    "from": "https://meetcody.ai/icon.svg",
+    "note": "the brand site's own SVG icon"
+  },
+  "coinbase": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/coinbase.svg"
+  },
+  "connecteam": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/connecteam.svg"
+  },
+  "convex": {
+    "from": "https://svgl.app/library/convex.svg"
+  },
+  "cursor": {
+    "from": "https://svgl.app/library/cursor_light.svg",
+    "note": "stylesheet (one fill rule) inlined"
+  },
+  "datadog": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/datadog.svg"
+  },
+  "deepseek": {
+    "from": "https://svgl.app/library/deepseek.svg"
+  },
+  "diffbot": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/diffbot.svg"
+  },
+  "digitalocean": {
+    "from": "https://svgl.app/library/digitalocean.svg"
+  },
+  "discord": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/discord.svg"
+  },
+  "docusign": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/docusign.svg"
+  },
+  "doppler": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/doppler.svg"
+  },
+  "dovetail": {
+    "from": "https://dovetail.com/favicon.svg",
+    "note": "the brand site's own SVG icon; its dark-mode stylesheet dropped (the light colours are also inline fills)"
+  },
+  "dropbox": {
+    "from": "https://svgl.app/library/dropbox.svg"
+  },
+  "elevenlabs": {
+    "from": "https://media.brand.dev/990d193c-0b46-4a70-ba10-0bc9e7dd71a0.svg",
+    "note": "found with the context.dev Brand API for elevenlabs.io"
+  },
+  "epicgames": {
+    "from": "https://svgl.app/library/epicgames-icon-light.svg"
+  },
+  "excel": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/excel.svg"
+  },
+  "facebook": {
+    "from": "https://svgl.app/library/facebook-icon.svg"
+  },
+  "figma": {
+    "from": "https://svgl.app/library/figma.svg"
+  },
+  "firecrawl": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/firecrawl.svg"
+  },
+  "fireflies": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/fireflies.svg"
+  },
+  "flutterwave": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/flutterwave.svg"
+  },
+  "gemini": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gemini.svg"
+  },
+  "github": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/github.svg"
+  },
+  "gitlab": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gitlab.svg"
+  },
+  "gladia": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gladia.svg"
+  },
+  "gmail": {
+    "from": "https://svgl.app/library/gmail.svg"
+  },
+  "googleaddressvalidation": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_address_validation.svg"
+  },
+  "googleanalytics": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_analytics.svg"
+  },
+  "googlebigquery": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/googlebigquery.svg"
+  },
+  "googlecalendar": {
+    "from": "https://svgl.app/library/google-calendar.svg"
+  },
+  "googlecloudvision": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_cloud_vision.svg"
+  },
+  "googledrive": {
+    "from": "https://svgl.app/library/drive.svg"
+  },
+  "googlemaps": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_maps.svg"
+  },
+  "googlemeet": {
+    "from": "https://svgl.app/library/google-meet.svg"
+  },
+  "googlesheets": {
+    "from": "https://svgl.app/library/google-sheets.svg"
+  },
+  "grafana": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/grafana.svg"
+  },
+  "groqcloud": {
+    "from": "https://groq.com/favicon.svg",
+    "note": "the brand site's own SVG icon"
+  },
+  "hackernews": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hackernews.svg"
+  },
+  "hashnode": {
+    "from": "https://svgl.app/library/hashnode.svg"
+  },
+  "huggingface": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hugging_face.svg"
+  },
+  "instagram": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/instagram.svg"
+  },
+  "intercom": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
+  },
+  "linkedin": {
+    "from": "https://svgl.app/library/linkedin.svg"
+  },
+  "loyverse": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
+  },
+  "mem0": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/mem0.svg"
+  },
+  "monday": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"
+  },
+  "neon": {
+    "from": "https://svgl.app/library/neon.svg"
+  },
+  "nextdns": {
+    "from": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nextdns.svg",
+    "note": "Simple Icons (CC0), filled with the brand colour #007BFF"
+  },
+  "notion": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/notion.svg"
+  },
+  "octen": {
+    "from": "https://octen.ai/static/favicon.svg",
+    "note": "the brand site's own SVG icon, recoloured from its dark-site accent #70FE7E to its favicon green #039855"
+  },
+  "ollama": {
+    "from": "https://svgl.app/library/ollama_light.svg"
+  },
+  "onedrive": {
+    "from": "https://svgl.app/library/microsoft-onedrive.svg"
+  },
+  "outlook": {
+    "from": "https://svgl.app/library/microsoft-outlook.svg"
+  },
+  "parseur": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/parseur.svg"
+  },
+  "perplexityai": {
+    "from": "https://svgl.app/library/perplexity.svg"
+  },
+  "posthog": {
+    "from": "https://svgl.app/library/posthog.svg"
+  },
+  "prisma": {
+    "from": "https://svgl.app/library/prisma.svg"
+  },
+  "qdrant": {
+    "from": "https://svgl.app/library/qdrant-icon-light.svg"
+  },
+  "reddit": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/reddit.svg"
+  },
+  "render": {
+    "from": "https://svgl.app/library/render_black.svg"
+  },
+  "replicate": {
+    "from": "https://svgl.app/library/replicate_light.svg"
+  },
+  "resend": {
+    "from": "https://svgl.app/library/resend-icon-black.svg"
+  },
+  "retailed": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/retailed.svg"
+  },
+  "rootly": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/rootly.svg"
+  },
+  "salesforce": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/salesforce.svg"
+  },
+  "sapsuccessfactors": {
+    "from": "https://commons.wikimedia.org/wiki/File:SAP_2011_logo.svg",
+    "note": "stylesheet inlined"
+  },
+  "semanticscholar": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/semanticscholar.svg"
+  },
+  "sentry": {
+    "from": "https://svgl.app/library/sentry.svg"
+  },
+  "serpapi": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/serpapi.svg"
+  },
+  "sharepoint": {
+    "from": "https://svgl.app/library/microsoft-sharepoint.svg"
+  },
+  "slack": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/slack.svg"
+  },
+  "slackbot": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/slack.svg"
+  },
+  "snapchat": {
+    "from": "https://svgl.app/library/snapchat.svg"
+  },
+  "snowflake": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/snowflake.svg",
+    "note": "® removed"
+  },
+  "sourcegraph": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"
+  },
+  "strava": {
+    "from": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/strava.svg",
+    "note": "Simple Icons (CC0), filled with the brand colour #FC4C02"
+  },
+  "streamtime": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/streamtime.svg",
+    "note": "white background shape removed"
+  },
+  "stripe": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/stripe.svg"
+  },
+  "supabase": {
+    "from": "https://svgl.app/library/supabase.svg"
+  },
+  "tavilymcp": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/tavily_mcp.svg"
+  },
+  "teams": {
+    "from": "https://svgl.app/library/microsoft-teams.svg"
+  },
+  "telegram": {
+    "from": "https://svgl.app/library/telegram.svg"
+  },
+  "todoist": {
+    "from": "https://svgl.app/library/todoist.svg"
+  },
+  "trello": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/trello.svg"
+  },
+  "turso": {
+    "from": "https://svgl.app/library/turso-light.svg",
+    "note": "recoloured from #183134 to Turso teal #1EBCA1 (turso.tech touch icon)"
+  },
+  "twilio": {
+    "from": "https://svgl.app/library/twilio.svg"
+  },
+  "twitter": {
+    "from": "https://svgl.app/library/x.svg"
+  },
+  "vercel": {
+    "from": "https://svgl.app/library/vercel.svg"
+  },
+  "wakatime": {
+    "from": "https://svgl.app/library/wakatime-dark.svg"
+  },
+  "webflow": {
+    "from": "https://svgl.app/library/webflow.svg"
+  },
+  "webvizio": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/webvizio.svg",
+    "note": "wordmark under the mark removed"
+  },
+  "whatsapp": {
+    "from": "https://svgl.app/library/whatsapp-icon.svg"
+  },
+  "youcom": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/yousearch.svg"
+  },
+  "youtube": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/youtube.svg"
+  },
+  "zoominfo": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/zoominfo.svg"
+  }
+}
