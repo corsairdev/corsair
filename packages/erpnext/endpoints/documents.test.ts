@@ -39,6 +39,8 @@ const DOCUMENTS_ACTIONS = [
 	'getCount',
 	'renameDoc',
 	'searchLink',
+	'submit',
+	'cancel',
 ] as const;
 
 type Handler = (
@@ -178,6 +180,20 @@ const INPUT_FIXTURES: Record<DocumentsOperationKey, unknown> = {
 		},
 	},
 	'documents.searchLink': { doctype: 'Customer', txt: 'Acme' },
+	'documents.submit': {
+		body: {
+			doc: {
+				doctype: 'Sales Invoice',
+				name: 'ACC-SINV-2026-00001',
+			},
+		},
+	},
+	'documents.cancel': {
+		body: {
+			doctype: 'Sales Invoice',
+			name: 'ACC-SINV-2026-00001',
+		},
+	},
 };
 
 // Spec-derived response fixtures: the envelope the Frappe sources return,
@@ -282,6 +298,22 @@ const RESPONSE_FIXTURES: Record<DocumentsOperationKey, unknown> = {
 		message: [
 			{ value: 'CUST-00001', description: 'Acme GmbH', label: 'Acme GmbH' },
 		],
+	},
+	// frappe/client.py submit answers the submitted document (docstatus 1).
+	'documents.submit': {
+		message: {
+			doctype: 'Sales Invoice',
+			name: 'ACC-SINV-2026-00001',
+			docstatus: 1,
+		},
+	},
+	// frappe/client.py cancel answers the cancelled document (docstatus 2).
+	'documents.cancel': {
+		message: {
+			doctype: 'Sales Invoice',
+			name: 'ACC-SINV-2026-00001',
+			docstatus: 2,
+		},
 	},
 };
 
@@ -444,11 +476,31 @@ const EXPECTED_REQUESTS: Record<DocumentsOperationKey, ExpectedRequest> = {
 		query: { doctype: 'Customer', txt: 'Acme' },
 		authHeader: AUTH_HEADER,
 	},
+	'documents.submit': {
+		method: 'POST',
+		url: 'https://test.example.com/api/method/frappe.client.submit',
+		body: {
+			doc: {
+				doctype: 'Sales Invoice',
+				name: 'ACC-SINV-2026-00001',
+			},
+		},
+		authHeader: AUTH_HEADER,
+	},
+	'documents.cancel': {
+		method: 'POST',
+		url: 'https://test.example.com/api/method/frappe.client.cancel',
+		body: {
+			doctype: 'Sales Invoice',
+			name: 'ACC-SINV-2026-00001',
+		},
+		authHeader: AUTH_HEADER,
+	},
 };
 
 describe('ERPNext documents endpoint contract', () => {
-	it('binds exactly the 17 documented documents handlers', () => {
-		expect(DOCUMENTS_OPERATIONS).toHaveLength(17);
+	it('binds exactly the 19 documented documents handlers', () => {
+		expect(DOCUMENTS_OPERATIONS).toHaveLength(19);
 		// The family tree exposes exactly the documented action keys; these
 		// define the dotted operation ids with the `documents` prefix.
 		expect(Object.keys(erpnextEndpoints.documents).sort()).toEqual(
@@ -595,6 +647,55 @@ describe('ERPNext documents endpoint contract', () => {
 					expect(fetchSpy).not.toHaveBeenCalled();
 					fetchSpy.mockClear();
 				}
+			} finally {
+				fetchSpy.mockRestore();
+			}
+		},
+	);
+
+	// submit and cancel carry no path parameters, so the per-op table above
+	// generates no '..'/'/' guard cases for them; their boundary lives inside
+	// the body, where the strict inner schemas (and the doctype refinement on
+	// submit's doc) must reject an incomplete document reference before the
+	// handler touches fetch.
+	it.each([
+		{
+			key: 'documents.submit' as DocumentsOperationKey,
+			name: 'a body without its doc object',
+			input: { body: {} },
+		},
+		{
+			key: 'documents.submit' as DocumentsOperationKey,
+			name: 'a doc object without its doctype',
+			input: { body: { doc: { name: 'ACC-SINV-2026-00001' } } },
+		},
+		{
+			key: 'documents.cancel' as DocumentsOperationKey,
+			name: 'a body without its doctype',
+			input: { body: { name: 'ACC-SINV-2026-00001' } },
+		},
+		{
+			key: 'documents.cancel' as DocumentsOperationKey,
+			name: 'a body without its document name',
+			input: { body: { doctype: 'Sales Invoice' } },
+		},
+	])(
+		'rejects $key with $name before sending a request',
+		async ({ key, input }) => {
+			const fetchSpy = jest
+				.spyOn(global, 'fetch')
+				.mockImplementation(async () => {
+					throw new Error(`fetch must not be called for invalid ${key} input`);
+				});
+			try {
+				const schema = erpnextEndpointSchemas[key];
+				expect(schema.input.safeParse(input).success).toBe(false);
+				// Prove the rejection happens at the public boundary: the bound
+				// handler must throw before any HTTP request is attempted.
+				const handler = handlers.get(key);
+				expect(handler).toBeDefined();
+				await expect(handler?.(input)).rejects.toThrow();
+				expect(fetchSpy).not.toHaveBeenCalled();
 			} finally {
 				fetchSpy.mockRestore();
 			}

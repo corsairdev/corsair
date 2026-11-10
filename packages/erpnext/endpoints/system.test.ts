@@ -25,6 +25,8 @@ const SYSTEM_ACTIONS = [
 	'getAllLanguages',
 	'getAllRoles',
 	'getUserRoles',
+	'getTimezones',
+	'getFiscalYear',
 ] as const;
 
 type Handler = (
@@ -95,6 +97,13 @@ const INPUT_FIXTURES: Record<SystemOperationKey, unknown> = {
 		limit_start: 0,
 		limit_page_length: 50,
 	},
+	'system.getTimezones': {},
+	'system.getFiscalYear': {
+		fields: '["name","year_start_date","year_end_date"]',
+		filters: '[["disabled","=",0]]',
+		limit_start: 0,
+		limit_page_length: 20,
+	},
 };
 
 // Spec-derived response fixtures: the envelope the Frappe sources return.
@@ -134,6 +143,27 @@ const RESPONSE_FIXTURES: Record<SystemOperationKey, unknown> = {
 				parenttype: 'User',
 				parentfield: 'roles',
 				role: 'System Manager',
+			},
+		],
+	},
+	// frappe/core/doctype/user/user.py get_timezones answers
+	// {"timezones": [...]} under the message wrapper.
+	'system.getTimezones': {
+		message: {
+			timezones: ['UTC', 'Asia/Kolkata', 'America/New_York'],
+		},
+	},
+	'system.getFiscalYear': {
+		data: [
+			{
+				name: '2026-2027',
+				year_start_date: '2026-04-01',
+				year_end_date: '2027-03-31',
+			},
+			{
+				name: '2025-2026',
+				year_start_date: '2025-04-01',
+				year_end_date: '2026-03-31',
 			},
 		],
 	},
@@ -201,19 +231,38 @@ const EXPECTED_REQUESTS: Record<SystemOperationKey, ExpectedRequest> = {
 		},
 		authHeader: AUTH_HEADER,
 	},
+	'system.getTimezones': {
+		method: 'GET',
+		url: 'https://test.example.com/api/method/frappe.core.doctype.user.user.get_timezones',
+		authHeader: AUTH_HEADER,
+	},
+	'system.getFiscalYear': {
+		method: 'GET',
+		// The raw space is intentional: it is a literal part of the resource
+		// path and the URL parser normalizes it to %20 on the wire.
+		url: 'https://test.example.com/api/resource/Fiscal Year',
+		query: {
+			fields: '["name","year_start_date","year_end_date"]',
+			filters: '[["disabled","=",0]]',
+			limit_start: '0',
+			limit_page_length: '20',
+		},
+		authHeader: AUTH_HEADER,
+	},
 };
 
-// The three /api/resource list operations share the pagination query; the
+// The four /api/resource list operations share the pagination query; the
 // boundary tests below pin its non-negative bounds.
 const LIST_OPERATION_KEYS: readonly SystemOperationKey[] = [
 	'system.getAllLanguages',
 	'system.getAllRoles',
 	'system.getUserRoles',
+	'system.getFiscalYear',
 ];
 
 describe('ERPNext system endpoint contract', () => {
-	it('binds exactly the 6 documented system handlers', () => {
-		expect(SYSTEM_OPERATIONS).toHaveLength(6);
+	it('binds exactly the 8 documented system handlers', () => {
+		expect(SYSTEM_OPERATIONS).toHaveLength(8);
 		// The family tree exposes exactly the documented action keys; these
 		// define the dotted operation ids with the `system` prefix.
 		expect(Object.keys(erpnextEndpoints.system).sort()).toEqual(
@@ -352,6 +401,43 @@ describe('ERPNext system endpoint contract', () => {
 			// the URL parser encodes the space to %20 and Frappe answers the
 			// same resource.
 			expect(request.url.pathname).toBe('/api/resource/Has%20Role');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('URL-normalizes the literal space in the Fiscal Year resource path', async () => {
+		const captures: CapturedRequest[] = [];
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url, init) => {
+				captures.push({
+					url: new URL(String(url)),
+					method: init?.method ?? 'GET',
+					headers: new Headers(init?.headers),
+					body: init?.body,
+				});
+				return new Response(
+					JSON.stringify(RESPONSE_FIXTURES['system.getFiscalYear']),
+					{
+						status: 200,
+						headers: { 'content-type': 'application/json' },
+					},
+				);
+			});
+		try {
+			const handler = handlers.get('system.getFiscalYear');
+			expect(handler).toBeDefined();
+			await handler?.(INPUT_FIXTURES['system.getFiscalYear']);
+			const request = captures[0];
+			if (!request) {
+				throw new Error('No request captured');
+			}
+			// The DocType name `Fiscal Year` is a literal path section, not a
+			// path parameter, so the factory's encodeURIComponent guard never
+			// runs; the URL parser encodes the space to %20 and Frappe answers
+			// the same resource.
+			expect(request.url.pathname).toBe('/api/resource/Fiscal%20Year');
 		} finally {
 			mockFetch.mockRestore();
 		}
