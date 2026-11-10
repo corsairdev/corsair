@@ -3,8 +3,12 @@ import { DemioAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import {
 	dailyLimit,
+	emailNotVerified,
 	eventNotFound,
 	inactiveAccount,
+	noAccessToEvent,
+	noAccessToSession,
+	notEnoughParams,
 	rateLimited,
 	serverFault,
 	unauthorized,
@@ -85,6 +89,48 @@ describe('error handler classification', () => {
 		const { name, result } = await resolve(apiError(404, eventNotFound));
 
 		expect(name).toBe('VALIDATION_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	// 422 with "Not enough params." is what a live account sends when a
+	// registration identifies no event. The published spec omits it.
+	it('does not retry a 422 that the specification omits', async () => {
+		const { name, result } = await resolve(
+			apiError(422, notEnoughParams, 'POST'),
+		);
+
+		expect(name).toBe('VALIDATION_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	// Live: registration is refused until the account owner verifies the address
+	// Demio sent to them. Re-sending the same body cannot change that.
+	it('does not retry an unverified registration', async () => {
+		const { name, result } = await resolve(
+			apiError(400, emailNotVerified, 'POST'),
+		);
+
+		expect(name).toBe('VALIDATION_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	// Live: an id that does not exist answers the same 403 body a forbidden one
+	// does, so it lands on the permission handler rather than a 404.
+	it('routes a live 403 for an absent event to the permission handler', async () => {
+		const { name, result } = await resolve(
+			apiError(403, noAccessToEvent, 'GET'),
+		);
+
+		expect(name).toBe('PERMISSION_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('routes a live 403 for an absent date to the permission handler', async () => {
+		const { name, result } = await resolve(
+			apiError(403, noAccessToSession, 'GET'),
+		);
+
+		expect(name).toBe('PERMISSION_ERROR');
 		expect(result.maxRetries).toBe(0);
 	});
 

@@ -51,20 +51,28 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 403 with `errors` means the id is not one this account may read. Demio
-	// answers the same status for an id that does not exist, so the resource
-	// may be absent rather than forbidden. Re-sending the request cannot help.
+	// A 403 with `errors` means the id is not one this account may read. Live
+	// probes answered exactly this for an id that does not exist, for a date
+	// that is not on the event, and for a report on an unknown date, so the
+	// resource may be absent rather than forbidden. Re-sending cannot help.
 	PERMISSION_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 is a rejected registration payload, and 404 is a date the filter
-	// excluded: `events.get` answers it when `active=true` leaves no date on an
-	// event whose dates have all finished. The same request would fail again.
+	// 400 is a rejected registration payload and 422 is Demio's "Not enough
+	// params.", which a live account sends and the specification does not list.
+	// 404 is a date the filter excluded: `events.get` answers it when
+	// `active=true` leaves no date on an event whose dates have all finished.
+	// The same request would fail again in every case.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
-			return error.name === 'ZodError' || status === 400 || status === 404;
+			return (
+				error.name === 'ZodError' ||
+				status === 400 ||
+				status === 404 ||
+				status === 422
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

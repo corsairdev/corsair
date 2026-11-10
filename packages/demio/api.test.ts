@@ -88,19 +88,30 @@ describeIfKey('Demio live API', () => {
 		expect(detail.date_id).toBe(date.date_id);
 	});
 
-	it('reads the participants of a past date, if the account has one', async () => {
-		const past = DemioEndpointOutputSchemas.eventsList.parse(
-			await corsair.demio.api.events.list({ type: 'past' }),
+	// The report is keyed by date, and a scheduled date has registrants too, so
+	// this reads the first event's representative date rather than requiring a
+	// finished one. An account with no events at all is the only skip path.
+	it('reads the participants of an event date', async () => {
+		const events = DemioEndpointOutputSchemas.eventsList.parse(
+			await corsair.demio.api.events.list({}),
 		);
-		const first = past[0];
+		const first = events[0];
 		if (!first) {
-			expect(past).toHaveLength(0);
+			expect(events).toHaveLength(0);
 			return;
 		}
 
 		const report = DemioEndpointOutputSchemas.reportsParticipants.parse(
 			await corsair.demio.api.reports.participants({ date_id: first.date_id }),
 		);
+
 		expect(Array.isArray(report.participants)).toBe(true);
+		// Recorded live: every registrant carries these, and the status uses
+		// spaces while the filter uses hyphens.
+		for (const entry of report.participants) {
+			expect(typeof entry.email).toBe('string');
+			expect(Array.isArray(entry.custom_fields)).toBe(true);
+			expect(entry.status).not.toContain('-');
+		}
 	});
 });

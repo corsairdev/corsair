@@ -9,8 +9,8 @@ import {
 	onDemandDateDetail,
 	onDemandDateInEvent,
 	participants,
+	pingSandbox,
 	pong,
-	pongSandbox,
 	registrationResult,
 } from './test-fixtures';
 
@@ -98,14 +98,16 @@ describe('events.list', () => {
 		expect(lastRequest().query).toEqual({ type: 'upcoming' });
 	});
 
-	// An event with no description and no automated block is the shape the
-	// specification's own example uses, so it must parse.
-	it('accepts an event whose optional fields are absent or null', async () => {
-		respond([{ ...eventSummary, description: null, automated: null }]);
+	// The recorded event has `description: null` and `automated: null`, and the
+	// list must parse it rather than requiring either to be a string.
+	it('accepts an event whose optional fields are null', async () => {
+		respond([eventSummary]);
 
 		const result = (await invoke(Events.list, {})) as (typeof eventSummary)[];
 
-		expect(result[0]?.id).toBe(86);
+		expect(result[0]?.id).toBe(eventSummary.id);
+		expect(result[0]?.description).toBeNull();
+		expect(result[0]?.automated).toBeNull();
 	});
 
 	it('rejects a status value outside the documented filter', async () => {
@@ -396,9 +398,9 @@ describe('ping.check', () => {
 	});
 
 	it('keeps the sandbox marker when the account is one', async () => {
-		respond(pongSandbox);
+		respond(pingSandbox);
 
-		expect(await invoke(Ping.check, {})).toEqual(pongSandbox);
+		expect(await invoke(Ping.check, {})).toEqual(pingSandbox);
 	});
 
 	// /ping reports a rejected credential in its own body as a 401, which the
