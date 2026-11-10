@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { teamcamp } from './index';
+import { refuseNetwork } from './test-errors';
 import { project, projectDetail, task, workspace } from './test-fixtures';
 
 async function createClient() {
@@ -28,7 +29,7 @@ function respond(raw: unknown, status = 200) {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(refuseNetwork);
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 

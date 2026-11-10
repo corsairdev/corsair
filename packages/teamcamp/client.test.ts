@@ -7,13 +7,13 @@ import {
 	TEAMCAMP_API_BASE,
 	TEAMCAMP_KEY_HEADER,
 } from './client';
-import { captureError } from './test-errors';
+import { captureError, refuseNetwork, UNMOCKED_FETCH } from './test-errors';
 import { invalidKeyBody, missingProjectId } from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(refuseNetwork);
 });
 
 afterEach(() => {
@@ -240,5 +240,16 @@ describe('error translation', () => {
 	it('encodes path segments', () => {
 		expect(segment('iPSOnKVs4zSOR5-vQTK_3')).toBe('iPSOnKVs4zSOR5-vQTK_3');
 		expect(segment('a/b c')).toBe('a%2Fb%20c');
+	});
+});
+
+describe('test isolation', () => {
+	it('fails a request no test queued a response for, without reaching the network', async () => {
+		const error = (await captureError(
+			makeTeamcampRequest(KEY, { method: 'GET', path: '/verify' }),
+		)) as TeamcampAPIError;
+
+		expect(error.message).toBe(UNMOCKED_FETCH);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });

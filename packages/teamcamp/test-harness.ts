@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { refuseNetwork } from './test-errors';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -15,7 +16,7 @@ export type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 let fetchMock: jest.SpyInstance | undefined;
 
 export function setUp() {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(refuseNetwork);
 	mockLog.mockClear();
 }
 
