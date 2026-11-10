@@ -185,6 +185,14 @@ const publicApi = (corsair.nutshell as unknown as { api: object }).api;
 const handlers = endpointHandlers(publicApi);
 
 describe('Nutshell REST endpoint contract', () => {
+	// No test here may reach the network: a call that a test did not mock
+	// throws instead of going to Nutshell.
+	beforeEach(() => {
+		jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
+			throw new Error(`unmocked fetch: ${String(url)}`);
+		});
+	});
+
 	it('matches the checked-in official route inventory', () => {
 		const catalog = Object.fromEntries(
 			NUTSHELL_OPERATIONS.map(({ key, method, path }) => [

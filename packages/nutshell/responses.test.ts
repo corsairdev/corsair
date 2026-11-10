@@ -116,6 +116,14 @@ function reply(body: unknown, status = 200) {
 }
 
 describe('Nutshell responses with unset fields', () => {
+	// No test here may reach the network: a call that a test did not mock
+	// throws instead of going to Nutshell.
+	beforeEach(() => {
+		jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
+			throw new Error(`unmocked fetch: ${String(url)}`);
+		});
+	});
+
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
