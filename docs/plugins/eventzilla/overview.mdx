@@ -22,8 +22,9 @@ cannot be told apart from a forged request.
 
 List operations page with `offset` and `limit`; each result carries
 `next_offset`, which is null on the last page. `events.get`,
-`attendees.get`, `users.get` and `transactions.get` answer an array and an
-empty one for an unknown id rather than a 404.
+`attendees.get` and `users.get` answer an array, and an empty one for an
+unknown id rather than a 404. `transactions.get` answers an array too, but
+an unknown reference is a 404 error, not an empty result.
 
 **What you get:**
 
@@ -83,7 +84,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required up front. Store the key for the account before the first call: a request with no saved key throws `AuthMissingError` rather than prompting, and the error carries a `connectUrl` when a Connect link can be minted.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 eventzilla()

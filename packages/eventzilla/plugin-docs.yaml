@@ -21,8 +21,9 @@ overviewNote: |-
 
   List operations page with `offset` and `limit`; each result carries
   `next_offset`, which is null on the last page. `events.get`,
-  `attendees.get`, `users.get` and `transactions.get` answer an array and an
-  empty one for an unknown id rather than a 404.
+  `attendees.get` and `users.get` answer an array, and an empty one for an
+  unknown id rather than a 404. `transactions.get` answers an array too, but
+  an unknown reference is a 404 error, not an empty result.
 examples:
   read:
     path: events.list

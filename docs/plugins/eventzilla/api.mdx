@@ -37,7 +37,7 @@ await corsair.eventzilla.api.attendees.checkin({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `checkinstatus` | `object` | Yes | — |
-| `checkedIn` | `boolean \| null` | Yes | Whether this call is believed to have taken effect, derived from `checkinstatus.status`. Null when the provider’s status text does not say. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code. |
+| `checkedIn` | `boolean \| null` | Yes | True only when `checkinstatus.status` confirms a check-in this call asked for. False when the status reports a failure, an "already" state or a revert; null when the status text does not say. A revert (`eventcheckin: false`) therefore never answers true: read `checkinstatus.status` for its outcome. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code. |
 
 <AccordionGroup>
 <Accordion title="checkinstatus full type">
@@ -84,6 +84,7 @@ await corsair.eventzilla.api.attendees.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attendees` | `object[]` | Yes | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="attendees full type">
@@ -169,9 +170,9 @@ await corsair.eventzilla.api.categories.list({});
 
 `checkout.confirm`
 
-Record the payment result and turn a filled checkout into a confirmed order, optionally emailing the buyer. This is the step that completes a registration.
+Record the payment result and turn a filled checkout into a confirmed order. EMAILS THE BUYER unless `sendemail` is false. This is the step that completes a registration.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.eventzilla.api.checkout.confirm({});
@@ -480,6 +481,7 @@ await corsair.eventzilla.api.events.attendees({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attendees` | `object[]` | Yes | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="attendees full type">
@@ -733,7 +735,7 @@ await corsair.eventzilla.api.events.transactions({});
   buyer_last_name?: string | null,
   promo_code?: string | null,
   payment_type?: string | null,
-  comments?: string | Record<string, unknown> | null,
+  comments?: string | Record<string, any> | null,
   transaction_tax?: number | string | null,
   transaction_discount?: number | string | null,
   eventzilla_fee?: number | string | null,
@@ -786,9 +788,9 @@ await corsair.eventzilla.api.orders.cancel({});
 
 `orders.confirm`
 
-Confirm an order after checkout, optionally emailing the buyer. Confirming an already-confirmed order is the API’s own decision to make.
+Confirm an order after checkout. EMAILS THE BUYER unless `sendemail` is false. Confirming an already-confirmed order is the API’s own decision to make.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.eventzilla.api.orders.confirm({});
@@ -897,8 +899,8 @@ await corsair.eventzilla.api.tickets.create({});
 | `sales_end_time` | `string \| null` | No | — |
 | `additional_instructions` | `string \| null` | No | — |
 | `unlock_code` | `string \| null` | No | — |
-| `boxoffice_only` | `boolean \| true \| false \| True \| False \| yes \| no \| Yes \| No \| null` | No | — |
-| `is_visible` | `boolean \| true \| false \| True \| False \| yes \| no \| Yes \| No \| null` | No | — |
+| `boxoffice_only` | `boolean \| string \| null` | No | — |
+| `is_visible` | `boolean \| string \| null` | No | — |
 | `limit_minimum` | `number \| null` | No | — |
 | `limit_maximum` | `number \| null` | No | — |
 
@@ -932,6 +934,7 @@ await corsair.eventzilla.api.tickets.list({});
 |------|------|----------|-------------|
 | `tickets` | `object[]` | Yes | — |
 | `donation` | `object[] \| null` | No | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="tickets full type">
@@ -954,10 +957,10 @@ await corsair.eventzilla.api.tickets.list({});
   unlock_code?: string | null,
   ticket_type?: string | null,
   tickets?: string | null,
-  is_visible?: boolean | true | false | True | False | yes | no | Yes | No | null,
-  isvisible?: boolean | true | false | True | False | yes | no | Yes | No | null,
-  boxoffice_only?: boolean | true | false | True | False | yes | no | Yes | No | null,
-  allow_partial_payment?: boolean | true | false | True | False | yes | no | Yes | No | null,
+  is_visible?: boolean | string | null,
+  isvisible?: boolean | string | null,
+  boxoffice_only?: boolean | string | null,
+  allow_partial_payment?: boolean | string | null,
   limit_minimum?: number | null,
   limit_maximum?: number | null,
   partial_payment_installments?: number | null,
@@ -1035,8 +1038,8 @@ await corsair.eventzilla.api.tickets.update({});
 | `sales_end_time` | `string \| null` | No | — |
 | `additional_instructions` | `string \| null` | No | — |
 | `unlock_code` | `string \| null` | No | — |
-| `boxoffice_only` | `boolean \| true \| false \| True \| False \| yes \| no \| Yes \| No \| null` | No | — |
-| `is_visible` | `boolean \| true \| false \| True \| False \| yes \| no \| Yes \| No \| null` | No | — |
+| `boxoffice_only` | `boolean \| string \| null` | No | — |
+| `is_visible` | `boolean \| string \| null` | No | — |
 | `limit_minimum` | `number \| null` | No | — |
 | `limit_maximum` | `number \| null` | No | — |
 
@@ -1093,7 +1096,7 @@ await corsair.eventzilla.api.transactions.get({});
   buyer_last_name?: string | null,
   promo_code?: string | null,
   payment_type?: string | null,
-  comments?: string | Record<string, unknown> | null,
+  comments?: string | Record<string, any> | null,
   transaction_tax?: number | string | null,
   transaction_discount?: number | string | null,
   eventzilla_fee?: number | string | null,
