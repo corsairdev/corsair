@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
+	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -621,6 +622,52 @@ describe('on a git repo', () => {
 				],
 			);
 		});
+		it('adds only what is new when it runs again', () => {
+			pkg('packages/gmail', '@corsair-dev/gmail', '0.1.8');
+			write('packages/gmail/index.ts', '1\n');
+			commit('feat(gmail): add (#2)', '2026-10-10');
+			write('packages/gmail/index.ts', '2\n');
+			const first = commit('fix(gmail): shipped (#3)', '2026-10-20');
+			const backfill = (sha, existing) =>
+				backfillEntries({
+					cwd,
+					since: '2026-10-05',
+					existing,
+					plan: plan({ tags: [{ tag: '@corsair-dev/gmail@0.1.8', sha }] }),
+				});
+			const existing = backfill(first, []);
+			assert.equal(existing.length, 2);
+			assert.deepEqual(backfill(first, existing), []);
+
+			write('packages/gmail/index.ts', '3\n');
+			const second = commit('fix(gmail): shipped later (#4)', '2026-10-25');
+			assert.deepEqual(
+				backfill(second, existing).map((e) => e.changes.map((c) => c.pr)),
+				[[4]],
+			);
+		});
+		it('leaves out a pull request a release already listed', () => {
+			pkg('packages/gmail', '@corsair-dev/gmail', '0.1.9');
+			write('packages/gmail/index.ts', '1\n');
+			commit('feat(gmail): add (#2)', '2026-09-01');
+			write('packages/gmail/index.ts', '2\n');
+			const sha = commit('fix(gmail): keep labels (#1993)', '2026-10-20');
+			const released = {
+				package: '@corsair-dev/gmail',
+				version: '0.1.9',
+				isNew: false,
+				changes: [{ pr: 1993 }],
+			};
+			assert.deepEqual(
+				backfillEntries({
+					cwd,
+					since: '2026-10-05',
+					existing: [released],
+					plan: plan({ tags: [{ tag: '@corsair-dev/gmail@0.1.9', sha }] }),
+				}),
+				[],
+			);
+		});
 	});
 
 	describe('writeChangelog', () => {
@@ -673,9 +720,12 @@ describe('on a git repo', () => {
 			assert.equal(entries.length, 1);
 			assert.equal(entries[0].package, 'cloud');
 		});
-		it('refuses a Cloud version that is not one', () => {
+		it('leaves out a Cloud version that is not one, and nothing else', () => {
 			const result = run('--plan', 'plan.json', '--cloud-version', '1.0" <x>');
-			assert.equal(result.status, 2);
+			assert.equal(result.status, 0);
+			assert.match(result.stderr, /no Cloud line added/);
+			assert.equal(existsSync(join(cwd, ENTRIES_PATH)), false);
+			assert.doesNotMatch(readFileSync(join(cwd, PAGE_PATH), 'utf-8'), /<x>/);
 		});
 	});
 });

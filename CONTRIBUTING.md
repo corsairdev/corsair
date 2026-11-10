@@ -254,4 +254,4 @@ You don't need to change a package's version. Every merge to `main` releases the
 
 For a minor or major release, raise the version in your pull request. That version is published as it is.
 
-Each release adds its pull requests to the [changelog](https://docs.corsair.dev/changelog), using their titles, so write the title for someone using the package. `feat`, `fix` and `perf` titles appear there. `chore`, `ci`, `docs`, `test`, `refactor`, `style` and `build` titles don't.
+Each release adds its pull requests to the [changelog](https://docs.corsair.dev/changelog), using their titles, so write the title for someone using the package. Every title appears there unless it starts with `chore`, `ci`, `docs`, `test`, `refactor`, `style` or `build`.

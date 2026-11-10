@@ -325,8 +325,18 @@ export function entriesFromPlan({ cwd, plan, date, existing = [] }) {
 	return entries;
 }
 
-/** What is already on npm, from `since` up to each package's current release. */
-export function backfillEntries({ cwd, plan, since }) {
+/**
+ * What is already on npm, from `since` up to each package's current release.
+ * Leaves out what `existing` holds, so running it again adds only what is new:
+ * a plugin already announced, or a pull request already listed for a package.
+ */
+export function backfillEntries({ cwd, plan, since, existing = [] }) {
+	const announced = new Set(
+		existing.filter((e) => e.isNew).map((e) => e.package),
+	);
+	const listed = new Set(
+		existing.flatMap((e) => e.changes.map((c) => `${e.package}#${c.pr}`)),
+	);
 	const entries = [];
 	const waiting = new Set(plan.waiting.map((w) => w.name));
 	for (const pkg of listPackages(cwd)) {
@@ -347,14 +357,14 @@ export function backfillEntries({ cwd, plan, since }) {
 			`${pkg.dir}/package.json`,
 		]);
 		const [addedSha, addedDate] = added ? added.split('\x1f') : [];
-		if (addedSha && !isSdk(shared)) {
+		if (addedSha && !isSdk(shared) && !announced.has(pkg.name)) {
 			entries.push({ ...shared, date: addedDate, isNew: true, changes: [] });
 		}
 		for (const { sha, date, ...change } of publicChanges(cwd, pkg.dir, [
 			`--since=${since}`,
 			base,
 		])) {
-			if (sha !== addedSha) {
+			if (sha !== addedSha && !listed.has(`${pkg.name}#${change.pr}`)) {
 				entries.push({ ...shared, date, isNew: false, changes: [change] });
 			}
 		}
@@ -598,17 +608,19 @@ if (
 
 	const backfill = flag('--backfill');
 	const added = backfill
-		? backfillEntries({ cwd, plan, since: backfill })
+		? backfillEntries({ cwd, plan, since: backfill, existing })
 		: entriesFromPlan({ cwd, plan, date, existing });
 
 	const cloudVersion = flag('--cloud-version');
 	if (cloudVersion) {
 		// Comes from a workflow input, so it is checked before it reaches the page.
+		// A bad one costs its own line and nothing else: the release entries above
+		// are still written.
 		if (!PLAIN_VERSION.test(cloudVersion)) {
-			console.error(`not a plain x.y.z version: ${cloudVersion}`);
-			process.exit(2);
-		}
-		if (
+			console.error(
+				`[changelog] no Cloud line added, not a plain x.y.z version: ${JSON.stringify(cloudVersion)}`,
+			);
+		} else if (
 			!existing.some((e) => e.package === 'cloud' && e.version === cloudVersion)
 		) {
 			added.push({
