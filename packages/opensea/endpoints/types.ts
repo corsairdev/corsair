@@ -11,8 +11,11 @@ import { z } from 'zod';
 // new optional field must not fail a call that already happened.
 
 /**
- * Every chain OpenSea indexes. The spec's `ChainIdentifier` enum, verbatim.
- * It is a closed set, so a value outside it is refused before the request.
+ * The chains OpenSea indexed when this was written: the spec's
+ * `ChainIdentifier` enum plus `arc` and `elysium`, which the live `/chains`
+ * route already lists and the spec does not. A reference list, not a gate:
+ * OpenSea adds chains faster than the spec records them, so a `chain` input
+ * takes any slug and the API refuses one it does not index.
  */
 export const OPENSEA_CHAINS = [
 	'base',
@@ -41,12 +44,15 @@ export const OPENSEA_CHAINS = [
 	'megaeth',
 	'ink',
 	'robinhood',
+	'arc',
+	'elysium',
 ] as const;
 
 export const ChainIdentifierSchema = z
-	.enum(OPENSEA_CHAINS)
+	.string()
+	.min(1)
 	.describe(
-		'The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API.',
+		'The chain slug, such as `ethereum`, `base` or `solana`. `chains.list` returns the current set; OpenSea refuses a slug it does not index.',
 	);
 
 /**

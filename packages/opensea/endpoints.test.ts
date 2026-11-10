@@ -186,20 +186,31 @@ describe('accepts the nullish values the API sends', () => {
 });
 
 describe('input schemas reject what the API would refuse', () => {
-	it('rejects a chain the enum does not list', () => {
+	it('accepts a chain OpenSea added after the spec snapshot', () => {
+		// The live /chains route lists `arc` and `elysium`; the spec's
+		// ChainIdentifier enum does not yet. The slug is passed through so a new
+		// chain works without a release, and OpenSea refuses one it does not index.
 		expect(
-			Inputs.collectionsList.safeParse({ chain: 'dogecoin' }).success,
-		).toBe(false);
-		expect(
-			Inputs.collectionsList.safeParse({ chain: 'ethereum' }).success,
+			Inputs.nftsGet.safeParse({
+				chain: 'arc',
+				address: '0xabc',
+				identifier: '1',
+			}).success,
 		).toBe(true);
+		expect(
+			Inputs.collectionsTop.safeParse({ chains: ['elysium', 'ethereum'] })
+				.success,
+		).toBe(true);
+		expect(Inputs.collectionsList.safeParse({ chain: '' }).success).toBe(false);
+		expect(Inputs.collectionsList.safeParse({ chain: 1 }).success).toBe(false);
 	});
 
-	it('lists every chain the spec documents', () => {
-		// The spec's ChainIdentifier enum. A chain added upstream needs adding here.
-		expect(OPENSEA_CHAINS).toHaveLength(26);
+	it('lists the chains known when this was written', () => {
+		// A reference list, not a gate: the spec's 26 plus the two /chains adds.
+		expect(OPENSEA_CHAINS).toHaveLength(28);
 		expect(OPENSEA_CHAINS).toContain('solana');
 		expect(OPENSEA_CHAINS).toContain('ape_chain');
+		expect(OPENSEA_CHAINS).toContain('arc');
 	});
 
 	it('rejects an event type outside the enum', () => {

@@ -284,6 +284,19 @@ describe('nfts', () => {
 		expect(result.nft.identifier).toBe('1');
 	});
 
+	it('nfts.get sends a chain slug newer than the spec', async () => {
+		respond(nftFixture);
+
+		await run(
+			{ chain: 'arc', address: '0xabc', identifier: '1' },
+			endpoints.nfts.get,
+		);
+
+		expect(lastCall().parsed.pathname).toBe(
+			'/api/v2/chain/arc/contract/0xabc/nfts/1',
+		);
+	});
+
 	it('nfts.get keeps a large token id as a string', async () => {
 		respond(nftFixture);
 

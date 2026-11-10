@@ -11,11 +11,10 @@ overviewNote: |-
   `{"errors":["Missing an API Key, ..."]}`.
 
   Every `chain` argument takes a slug from `chains.list`, such as `ethereum` or
-  `base`. The set is closed, so a value outside it is refused before the request
-  is sent.
+  `base`. OpenSea adds chains over time, so the slug is sent as given and the
+  API refuses one it does not index.
 
-  `collections.list` also accepts a `chain` filter, but the generator renders an
-  enum unquoted, so that one is named here rather than in the example.
+  `collections.list` also accepts a `chain` filter.
 
   Order lookups come in two shapes. `orders.get` wraps the result under `order`;
   `offers.best` returns the order bare. Both carry the Seaport `protocol_data`

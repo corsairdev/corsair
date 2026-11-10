@@ -253,7 +253,7 @@ const openseaEndpointMeta = {
 	'chains.list': {
 		riskLevel: 'read',
 		description:
-			'The chains OpenSea indexes, with each one\u2019s symbol and block explorer. No input; the list is a closed set and is the valid source for every `chain` argument elsewhere.',
+			'The chains OpenSea indexes, with each one\u2019s symbol and block explorer. No input; the list is the valid source for every `chain` argument elsewhere.',
 	},
 	'collections.list': {
 		riskLevel: 'read',
