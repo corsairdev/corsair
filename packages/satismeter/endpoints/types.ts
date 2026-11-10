@@ -63,7 +63,7 @@ const PageCursorSchema = z
 	.min(1)
 	.optional()
 	.describe(
-		'The `page.next_page_cursor` of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page.',
+		'The `page.nextPageCursor` value of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page.',
 	);
 
 // ── projects.get ──────────────────────────────────────────────────────────

@@ -76,7 +76,7 @@ await corsair.satismeter.api.responses.list({ projectId: '61fce0adea447e24ec27d6
 | `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
 | `startDate` | `string` | No | Only include results recorded after this time, in ISO 8601. Defaults to 30 days ago, so older responses need an explicit `startDate`. |
 | `endDate` | `string` | No | Only include results recorded before this time, in ISO 8601. Defaults to now. |
-| `pageCursor` | `string` | No | The `page.next_page_cursor` of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
+| `pageCursor` | `string` | No | The `page.nextPageCursor` value of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
 | `pageSize` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
 
 Every response in the project across all its surveys. Defaults to the last 30 days and 20 rows per page; pass `startDate` for older data and `pageCursor` to continue.
@@ -174,7 +174,7 @@ await corsair.satismeter.api.responses.listForSurvey({ projectId: '61fce0adea447
 | `surveyId` | `string` | Yes | Survey ID, from Settings &gt; Integrations &gt; API &gt; Survey Keys. |
 | `startDate` | `string` | No | Only include results recorded after this time, in ISO 8601. Defaults to 30 days ago, so older responses need an explicit `startDate`. |
 | `endDate` | `string` | No | Only include results recorded before this time, in ISO 8601. Defaults to now. |
-| `pageCursor` | `string` | No | The `page.next_page_cursor` of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
+| `pageCursor` | `string` | No | The `page.nextPageCursor` value of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
 | `pageSize` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
 
 One survey\u2019s responses, with the same date-range and cursor paging.

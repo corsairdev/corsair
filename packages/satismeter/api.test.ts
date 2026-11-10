@@ -125,32 +125,72 @@ describeIfConfigured('live SatisMeter API', () => {
 describeIfWritable('live SatisMeter writes', () => {
 	const key = WRITE_API_KEY ?? '';
 	const projectId = PROJECT_ID ?? '';
-	// A name unlikely to collide with a real user in the project.
-	const userId = `corsair-smoke-${Date.now()}`;
+	/** A name unlikely to collide with a real user in the project. */
+	const userFor = (label: string) => `corsair-smoke-${label}-${Date.now()}`;
 
-	it('upserts a user, lists it back, and deletes it', async () => {
-		const text = await makeSatisMeterRequest(key, {
+	function upsert(body: Record<string, unknown>) {
+		return makeSatisMeterRequest(key, {
 			base: SATISMETER_API_WRITE,
 			method: 'POST',
 			path: '/users',
-			body: {
-				userId,
-				project: projectId,
-				traits: { name: 'Corsair Smoke', plan: 'Gold' },
-			},
+			body,
 		});
-		// Every successful write answers 204 No Content with no body.
-		expect(text).toBe('');
+	}
 
-		// Read it back: a 204 proves the request was accepted, not that the
-		// traits were stored.
-		const listedText = await makeSatisMeterRequest(key, {
+	function listUser(userId: string) {
+		return makeSatisMeterRequest(key, {
 			base: SATISMETER_API_WRITE,
 			method: 'GET',
 			path: '/users',
 			query: { project: projectId, userId },
 		});
-		const listed = Outputs.usersList.parse(parseJsonBody(listedText));
+	}
+
+	/**
+	 * These tests write to a real project, so a user created by one must be
+	 * removed even when an assertion fails part-way. Cleanup is registered before
+	 * the assertions run, and each test uses its own userId: sharing one meant the
+	 * first test deleted the user the second still needed.
+	 */
+	const created: string[] = [];
+
+	async function createUser(userId: string, traits?: Record<string, unknown>) {
+		// Register before the call: the write may land and still fail to answer.
+		created.push(userId);
+		await upsert({
+			userId,
+			project: projectId,
+			...(traits === undefined ? {} : { traits }),
+		});
+	}
+
+	afterEach(async () => {
+		for (const userId of created.splice(0)) {
+			try {
+				const text = await listUser(userId);
+				const { users } = Outputs.usersList.parse(parseJsonBody(text));
+				const internalId = users[0]?.id;
+				if (!internalId) continue;
+				await makeSatisMeterRequest(key, {
+					base: SATISMETER_API_WRITE,
+					method: 'DELETE',
+					path: `/users/${internalId}`,
+				});
+			} catch {
+				// A cleanup failure must not mask the test's own result; the next
+				// run's list would show a leftover, which is what this prevents.
+			}
+		}
+	});
+
+	it('upserts a user, lists it back, and deletes it', async () => {
+		const userId = userFor('upsert');
+		await createUser(userId, { name: 'Corsair Smoke', plan: 'Gold' });
+
+		// Read it back: a 204 proves the request was accepted, not that the
+		// traits were stored.
+		const text = await listUser(userId);
+		const listed = Outputs.usersList.parse(parseJsonBody(text));
 		expect(listed.users).toHaveLength(1);
 		expect(listed.users[0]?.traits).toMatchObject({ plan: 'Gold' });
 
@@ -166,34 +206,20 @@ describeIfWritable('live SatisMeter writes', () => {
 		// The provider documents 204 and the live API answers it.
 		expect(removed).toBe('');
 
-		const afterText = await makeSatisMeterRequest(key, {
-			base: SATISMETER_API_WRITE,
-			method: 'GET',
-			path: '/users',
-			query: { project: projectId, userId },
-		});
+		const afterText = await listUser(userId);
 		const after = Outputs.usersList.parse(parseJsonBody(afterText));
 		expect(after.users).toHaveLength(0);
 	});
 
 	it('tracks an event and accepts it', async () => {
-		// Tracking needs a user to attach to, so one is created and removed here.
-		await makeSatisMeterRequest(key, {
-			base: SATISMETER_API_WRITE,
-			method: 'POST',
-			path: '/users',
-			body: { userId, project: projectId },
-		});
-		const text = await makeSatisMeterRequest(key, {
-			base: SATISMETER_API_WRITE,
-			method: 'POST',
-			path: '/users',
-			body: {
-				type: 'track',
-				userId,
-				event: 'corsair-test-event',
-				project: projectId,
-			},
+		const userId = userFor('track');
+		await createUser(userId);
+
+		const text = await upsert({
+			type: 'track',
+			userId,
+			event: 'corsair-test-event',
+			project: projectId,
 		});
 		// 204: accepted. The event is NOT readable back through the users API,
 		// which was confirmed against the live project: `events` stays [] on both
@@ -201,40 +227,24 @@ describeIfWritable('live SatisMeter writes', () => {
 		// asserts acceptance, not persistence, and says so rather than pretending.
 		expect(text).toBe('');
 
-		const listedText = await makeSatisMeterRequest(key, {
-			base: SATISMETER_API_WRITE,
-			method: 'GET',
-			path: '/users',
-			query: { project: projectId, userId },
-		});
-		const listed = Outputs.usersList.parse(parseJsonBody(listedText));
+		const listText = await listUser(userId);
+		const listed = Outputs.usersList.parse(parseJsonBody(listText));
 		// The schema still accepts an events array, because the field is sent.
 		expect(Array.isArray(listed.users[0]?.events ?? [])).toBe(true);
-
-		const internalId = listed.users[0]?.id;
-		if (internalId) {
-			await makeSatisMeterRequest(key, {
-				base: SATISMETER_API_WRITE,
-				method: 'DELETE',
-				path: `/users/${internalId}`,
-			});
-		}
 	});
 
 	it('rejects a track with no event name', async () => {
+		const userId = userFor('reject');
+		await createUser(userId);
+
 		// The live API answers 400 "Event not specified", which is the one piece
 		// of evidence that the track path is really reached.
 		await expect(
-			makeSatisMeterRequest(key, {
-				base: SATISMETER_API_WRITE,
-				method: 'POST',
-				path: '/users',
-				body: {
-					type: 'track',
-					userId,
-					event: '',
-					project: projectId,
-				},
+			upsert({
+				type: 'track',
+				userId,
+				event: '',
+				project: projectId,
 			}),
 		).rejects.toMatchObject({ status: 400, title: 'Event not specified' });
 	});

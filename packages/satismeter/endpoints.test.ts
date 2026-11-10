@@ -99,6 +99,16 @@ describe('responses', () => {
 		]);
 	});
 
+	it('reads the cursor from nextPageCursor, the field the API sends', () => {
+		// The provider's spec and live responses both use camelCase here. A
+		// snake_case reading would yield undefined and silently replay page one.
+		const result = parseAs<ResponsesPageResponse>(Outputs.responsesList, {
+			responses: [],
+			page: { hasNextPage: true, nextPageCursor: 'abc', size: 20 },
+		});
+		expect(result.page.nextPageCursor).toBe('abc');
+	});
+
 	it('rejects a page object missing hasNextPage', () => {
 		expect(() =>
 			parseAs(Outputs.responsesList, {
