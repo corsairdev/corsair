@@ -1712,5 +1712,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/foursquare",
+    "dir": "packages/foursquare",
+    "name": "Foursquare",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
