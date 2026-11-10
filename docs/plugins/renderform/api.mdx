@@ -1,0 +1,640 @@
+---
+title: API
+description: "API reference for Renderform: every `renderform.api.*` operation with input and output types."
+---
+
+Every `renderform.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Fonts
+
+### fonts
+
+`fonts`
+
+List the fonts available to a template, with their variants and whether each is Google or custom
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.fonts({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  originalName?: string | null,
+  family?: string | null,
+  variants?: string[] | null,
+  defaultVariant?: string | null,
+  subsets?: string[] | null,
+  category?: string | null,
+  source?: string | null,
+  size?: number | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pdf
+
+### pdf
+
+`pdf`
+
+Capture a URL as a PDF in a chosen page format, optionally self-deleting after a set time; costs a credit
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.pdf({ url: 'https://renderform.io', format: 'A4', expires: 3600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to capture. |
+| `format` | `A5 \| A4 \| A3 \| LETTER \| LEGAL` | No | Defaults to A4. |
+| `expires` | `number` | No | Delete the PDF after this many seconds, at most 604800 (7 days). |
+| `waitTime` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `request` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Render
+
+### render
+
+`render`
+
+Render a template to an image, PDF or video, merging your data into its fields; costs a credit unless the answer is served from the cache, and a video render is asynchronous
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.render({ template: 'template_1234', data: { 'my-text.text': 'John' }, fileName: 'welcome-card', version: 'welcome-john-v1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | The template identifier, such as template_1234. |
+| `data` | `Record<string, JsonValue>` | No | Values keyed by the template's merge fields, such as &#123;"my-text.text": "John"&#125;. A component's own defaults fill anything omitted. |
+| `fileName` | `string` | No | The output file name, without an extension. |
+| `webhookUrl` | `string` | No | Called when the render finishes, which suits a video render. |
+| `version` | `string` | No | The cache key. The same version with the same data returns the cached file and costs no credits. |
+| `metadata` | `Record<string, JsonValue>` | No | Extra data passed through to the webhook. |
+| `batchName` | `string` | No | Groups renders together, and can be filtered on in results.list. |
+| `cache` | `boolean` | No | Defaults to true. False forces a fresh render and skips the cache, which costs credits. |
+| `waitTime` | `number` | No | Milliseconds to wait before rendering. At most 5000. |
+| `outputFormat` | `jpeg \| png \| webp \| pdf \| mp4 \| webm` | No | Overrides the template's format. A video format needs a template made in the Advanced Editor and always renders asynchronously. |
+| `duration` | `number` | No | Video renders only: length in milliseconds. Every started second costs 5 credits. |
+| `fps` | `24 \| 25 \| 30` | No | Video renders only, and sent as a string: 24, 25 or 30. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | Identifies the render, and is what results.get takes. |
+| `href` | `string \| null` | No | The rendered file. Not usable yet when status is pending. |
+| `status` | `string \| null` | No | pending, done or failed. Present only for an asynchronous video render. |
+| `cached` | `boolean \| null` | No | True when the file came from the cache, which costs no credits. |
+
+
+
+---
+
+## Results
+
+### delete
+
+`results.delete`
+
+Delete one render result
+
+**Risk:** `destructive`
+
+```ts
+await corsair.renderform.api.results.delete({ identifier: 'req-dc95beb3-8c56-40e9-b428-e6b4c68354a3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`results.get`
+
+Read one render result; this is how an asynchronous video render is polled until it is done or failed
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.results.get({ identifier: 'req-dc95beb3-8c56-40e9-b428-e6b4c68354a3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The requestId a render answered with. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `status` | `string \| null` | No | pending, done or failed. |
+| `type` | `string \| null` | No | image, video, screenshot or preview. |
+| `thumbnailHref` | `string \| null` | No | A video's JPEG poster frame, null otherwise. |
+
+
+
+---
+
+### list
+
+`results.list`
+
+List render history, optionally filtered to one template or batch
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.results.list({ template: 'template_1234', page: 0, size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | No | Only renders of this template. |
+| `batch` | `string` | No | Only renders in this batch. |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[] \| null` | No | — |
+| `totalElements` | `number \| null` | No | — |
+| `totalPages` | `number \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `number` | `number \| null` | No | — |
+| `numberOfElements` | `number \| null` | No | — |
+| `first` | `boolean \| null` | No | — |
+| `last` | `boolean \| null` | No | — |
+| `empty` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  identifier?: string | null,
+  href?: string | null,
+  width?: number | null,
+  height?: number | null,
+  templateName?: string | null,
+  templateIdentifier?: string | null,
+  createdAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Screenshot
+
+### screenshot
+
+`screenshot`
+
+Capture a URL as a screenshot at a chosen size; costs a credit
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.screenshot({ url: 'https://renderform.io', width: 1920, height: 1080, waitTime: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to capture. |
+| `width` | `number` | Yes | — |
+| `height` | `number` | Yes | — |
+| `waitTime` | `number` | No | Milliseconds to wait before capturing. At most 5000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `request` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Templates
+
+### content
+
+`templates.content`
+
+Read an html-editor template's raw HTML, CSS and sample data, which lists the merge fields a render should fill
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.templates.content({ templateId: 'template_1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string \| null` | No | — |
+| `css` | `string \| null` | No | — |
+| `sampleData` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a template in the html-editor, canvas-editor or canvas-html editor, with a size, tags and an output format
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.templates.create({ name: 'Instagram post', width: 1080, height: 1080, editor: 'canvas-editor', tags: ['marketing'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `width` | `number` | Yes | Pixels. |
+| `height` | `number` | Yes | Pixels. |
+| `editor` | `html-editor \| canvas-editor \| canvas-html` | Yes | — |
+| `tags` | `string[]` | No | Created automatically when a tag does not exist yet. |
+| `outputFormat` | `jpeg \| png \| webp \| pdf \| mp4 \| webm` | No | Defaults to jpeg. A video format needs the canvas-html editor. |
+| `recordDuration` | `number` | No | Video templates only: timeline length in milliseconds. Defaults to 5000. |
+| `fps` | `24 \| 25 \| 30` | No | Video templates only, sent as a string. Defaults to 30. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | The last rendered preview image. |
+| `scaleFactor` | `number \| null` | No | — |
+| `outputFormat` | `string \| null` | No | — |
+| `outputExtension` | `string \| null` | No | — |
+| `quality` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `editor` | `string \| null` | No | html-editor, canvas-editor or canvas-html. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.renderform.api.templates.delete({ templateId: 'template_1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template's metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.templates.get({ templateId: 'template_1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | The last rendered preview image. |
+| `scaleFactor` | `number \| null` | No | — |
+| `outputFormat` | `string \| null` | No | — |
+| `outputExtension` | `string \| null` | No | — |
+| `quality` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `editor` | `string \| null` | No | html-editor, canvas-editor or canvas-html. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List your templates with their preview, format, size and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.templates.list({ name: 'Instagram', tags: ['marketing'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Only templates whose name matches. |
+| `tags` | `string[]` | No | Only templates with these tags. |
+| `sourceTemplateId` | `string` | No | Only templates created from this source template. |
+| `page` | `number` | No | 0-based page number. |
+| `size` | `number` | No | Page size. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  identifier?: string | null,
+  name?: string | null,
+  preview?: string | null,
+  scaleFactor?: number | null,
+  outputFormat?: string | null,
+  outputExtension?: string | null,
+  quality?: number | null,
+  width?: number | null,
+  height?: number | null,
+  tags?: string[] | null,
+  editor?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a template's metadata; tags replace the whole set rather than merging
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.templates.update({ templateId: 'template_1234', name: 'Renamed', tags: ['new-tag'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `tags` | `string[]` | No | Replaces the whole set of tags, it does not merge into it. |
+| `outputFormat` | `jpeg \| png \| webp \| pdf \| mp4 \| webm` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | The last rendered preview image. |
+| `scaleFactor` | `number \| null` | No | — |
+| `outputFormat` | `string \| null` | No | — |
+| `outputExtension` | `string \| null` | No | — |
+| `quality` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `editor` | `string \| null` | No | html-editor, canvas-editor or canvas-html. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### updateContent
+
+`templates.updateContent`
+
+Replace an html-editor template's raw HTML, CSS and sample data
+
+**Risk:** `write`
+
+```ts
+await corsair.renderform.api.templates.updateContent({ templateId: 'template_1234', html: '<div class="card">{{my-text.text}}</div>', css: '.card { color: red; }' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+| `html` | `string` | Yes | Only supported for a template using the html-editor. |
+| `css` | `string` | No | — |
+| `sampleData` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string \| null` | No | — |
+| `css` | `string \| null` | No | — |
+| `sampleData` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Usage
+
+### usage
+
+`usage`
+
+Read the plan, the credits used against the total, and the next renewal
+
+**Risk:** `read`
+
+```ts
+await corsair.renderform.api.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | — |
+| `credits` | `object \| null` | No | — |
+| `uploads` | `object \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  used?: number | null,
+  total?: number | null,
+  nextRenewalAt?: string | null,
+  renewalAmount?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="uploads full type">
+
+```ts
+{
+  used?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="plan full type">
+
+```ts
+{
+  name?: string | null,
+  status?: string | null,
+  nextBillingAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

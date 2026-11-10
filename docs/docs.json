@@ -3065,6 +3065,14 @@
                 ]
               },
               {
+                "group": "Renderform",
+                "pages": [
+                  "plugins/renderform/overview",
+                  "plugins/renderform/api",
+                  "plugins/renderform/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",
