@@ -1739,5 +1739,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/reamaze",
+    "dir": "packages/reamaze",
+    "name": "Re:amaze",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
