@@ -1,0 +1,666 @@
+---
+title: API
+description: "API reference for Referral Rock: every `referralrock.api.*` operation with input and output types."
+---
+
+Every `referralrock.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Members
+
+### create
+
+`members.create`
+
+Add an advocate to a program with their name, email and an optional referral code
+
+**Risk:** `write`
+
+```ts
+await corsair.referralrock.api.members.create({ program_id: '86de93f6-95a8-473d-bb68-b9645f6e9880', first_name: 'Sam', last_name: 'Rivera', email: 'sam@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `program_id` | `string` | Yes | The program the member joins. |
+| `first_name` | `string` | Yes | — |
+| `email` | `string` | Yes | The member’s email address. |
+| `last_name` | `string` | No | — |
+| `referral_code` | `string` | No | A code the member shares; Referral Rock generates one when omitted. |
+| `phone` | `string` | No | — |
+| `external_identifier` | `string` | No | Your own id, for linking the member to another system. |
+| `date_of_birth` | `string` | No | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | A region name or ISO 3166-2 code; requires `country`. |
+| `country` | `string` | No | A country name or ISO 3166-2 code. |
+| `postal_code` | `string` | No | — |
+| `should_send_email` | `boolean` | No | Send the program’s confirmation email. Defaults to false. |
+
+A refusal arrives as a 200 with a null member and the reason in `message`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalIdentifier?: string | null,
+  dateOfBirth?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  countrySubdivision?: string | null,
+  country?: string | null,
+  postalCode?: string | null,
+  disabledFlag?: boolean | null,
+  disabledReason?: string | null,
+  customOverrideURL?: string | null,
+  payoutInfo?: {
+    payoutType?: string | null,
+    useDefaultValues?: boolean | null,
+    email?: string | null
+  } | null,
+  customOption1Name?: string | null,
+  customOption1Value?: string | null,
+  customText1Name?: string | null,
+  customText1Value?: string | null,
+  customText2Name?: string | null,
+  customText2Value?: string | null,
+  programId?: string | null,
+  programTitle?: string | null,
+  programName?: string | null,
+  referralCode?: string | null,
+  referralUrl?: string | null,
+  memberUrl?: string | null,
+  emailShares?: number | null,
+  socialShares?: number | null,
+  views?: number | null,
+  referrals?: number | null,
+  lastShare?: string | null,
+  referralsApproved?: number | null,
+  referralsQualified?: number | null,
+  referralsPending?: number | null,
+  referralsApprovedAmount?: number | null,
+  rewardsPendingAmount?: number | null,
+  rewardsIssuedAmount?: number | null,
+  rewardAmountTotal?: number | null,
+  rewards?: number | null,
+  createDt?: string | null,
+  status?: string | null,
+  utmSource?: string | null,
+  utmMedium?: string | null,
+  utmCampaign?: string | null,
+  activatedDate?: string | null,
+  lastActiveDate?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List advocates with program, search, disabled and date filters, plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.referralrock.api.members.list({ query: 'sam@example.com', offset: 0, count: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Records to skip, 0-based. Pass `next_offset` from the previous page. |
+| `count` | `number` | No | Records to return. Referral Rock returns everything matching when this is omitted. |
+| `date_from` | `string` | No | Only records created after this date. |
+| `date_to` | `string` | No | Only records created before this date. |
+| `program_id` | `string` | No | A program id, name or title. |
+| `query` | `string` | No | A value the member must match on email, internal id, external id or referral code. |
+| `show_disabled` | `boolean` | No | Include disabled members. Defaults to false. |
+| `sort` | `Member_Views_Desc \| Member_Views_Asc \| Page_Views_Desc \| Page_Views_Asc \| Lead_Count_Desc \| Lead_Count_Asc \| Reward_Issued_Total_Desc \| Reward_Issued_Total_Asc \| Member_Full_Name_Desc \| Member_Full_Name_Asc \| Create_Dt_Desc \| Create_Dt_Asc` | No | — |
+
+The sort values are case-sensitive; the API silently ignores an unrecognised one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `offset` | `number \| null` | Yes | — |
+| `total` | `number \| null` | Yes | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `message` | `string \| null` | No | Referral Rock’s own note. On a collection it can explain why nothing matched. |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalIdentifier?: string | null,
+  dateOfBirth?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  countrySubdivision?: string | null,
+  country?: string | null,
+  postalCode?: string | null,
+  disabledFlag?: boolean | null,
+  disabledReason?: string | null,
+  customOverrideURL?: string | null,
+  payoutInfo?: {
+    payoutType?: string | null,
+    useDefaultValues?: boolean | null,
+    email?: string | null
+  } | null,
+  customOption1Name?: string | null,
+  customOption1Value?: string | null,
+  customText1Name?: string | null,
+  customText1Value?: string | null,
+  customText2Name?: string | null,
+  customText2Value?: string | null,
+  programId?: string | null,
+  programTitle?: string | null,
+  programName?: string | null,
+  referralCode?: string | null,
+  referralUrl?: string | null,
+  memberUrl?: string | null,
+  emailShares?: number | null,
+  socialShares?: number | null,
+  views?: number | null,
+  referrals?: number | null,
+  lastShare?: string | null,
+  referralsApproved?: number | null,
+  referralsQualified?: number | null,
+  referralsPending?: number | null,
+  referralsApprovedAmount?: number | null,
+  rewardsPendingAmount?: number | null,
+  rewardsIssuedAmount?: number | null,
+  rewardAmountTotal?: number | null,
+  rewards?: number | null,
+  createDt?: string | null,
+  status?: string | null,
+  utmSource?: string | null,
+  utmMedium?: string | null,
+  utmCampaign?: string | null,
+  activatedDate?: string | null,
+  lastActiveDate?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Programs
+
+### list
+
+`programs.list`
+
+List the referral programs on the account, optionally narrowed to one program id
+
+**Risk:** `read`
+
+```ts
+await corsair.referralrock.api.programs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `program_id` | `string` | No | A program id; when given, only that program is returned. |
+| `offset` | `number` | No | Records to skip, 0-based. Pass `next_offset` from the previous page. |
+| `count` | `number` | No | Records to return. Referral Rock returns everything matching when this is omitted. |
+
+A program id, name or title narrows the result to one program.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programs` | `object[]` | Yes | — |
+| `offset` | `number \| null` | Yes | — |
+| `total` | `number \| null` | Yes | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `message` | `string \| null` | No | Referral Rock’s own note. On a collection it can explain why nothing matched. |
+
+<AccordionGroup>
+<Accordion title="programs full type">
+
+```ts
+{
+  id?: string | null,
+  isActive?: boolean | null,
+  name?: string | null,
+  type?: string | null,
+  title?: string | null,
+  memberOffer?: string | null,
+  referralOffer?: string | null,
+  directUrl?: string | null,
+  widgetUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Referrals
+
+### create
+
+`referrals.create`
+
+Record a referral against the code of the member who introduced it, with the order amount that reward rules key on
+
+**Risk:** `write`
+
+```ts
+await corsair.referralrock.api.referrals.create({ referral_code: 'SAM123', first_name: 'Jordan', email: 'jordan@example.com', amount: 250 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referral_code` | `string` | Yes | The referral code of the member who introduced this referral. |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `preferred_contact` | `email \| callMorning \| callAfternoon \| callEvening` | No | — |
+| `external_identifier` | `string` | No | Your own id, such as an order number. |
+| `amount` | `number` | No | The order amount, which reward rules can key on. |
+| `company_name` | `string` | No | — |
+| `note` | `string` | No | — |
+| `public_note` | `string` | No | — |
+| `custom_option1_name` | `string` | No | — |
+| `custom_option2_name` | `string` | No | — |
+| `custom_text1_name` | `string` | No | — |
+| `custom_text2_name` | `string` | No | — |
+| `custom_text3_name` | `string` | No | — |
+| `custom_option1_value` | `string` | No | — |
+| `custom_option2_value` | `string` | No | — |
+| `custom_text1_value` | `string` | No | — |
+| `custom_text2_value` | `string` | No | — |
+| `custom_text3_value` | `string` | No | — |
+
+The code is the referring member’s, and `amount` is what reward rules key on.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referral` | `object \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="referral full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  email?: string | null,
+  externalIdentifier?: string | null,
+  phoneNumber?: string | null,
+  amount?: number | null,
+  amountFormatted?: string | null,
+  preferredContact?: string | null,
+  createDate?: string | null,
+  updateDate?: string | null,
+  source?: string | null,
+  programId?: string | null,
+  programName?: string | null,
+  programTitle?: string | null,
+  referringMemberId?: string | null,
+  referringMemberName?: string | null,
+  memberEmail?: string | null,
+  memberReferralCode?: string | null,
+  memberExternalIdentifier?: string | null,
+  approvedDate?: string | null,
+  qualifiedDate?: string | null,
+  status?: string | null,
+  companyName?: string | null,
+  note?: string | null,
+  publicNote?: string | null,
+  conversionNote?: string | null,
+  customOption1Name?: string | null,
+  customOption2Name?: string | null,
+  customText1Name?: string | null,
+  customText2Name?: string | null,
+  customText3Name?: string | null,
+  customOption1Value?: string | null,
+  customOption2Value?: string | null,
+  customText1Value?: string | null,
+  customText2Value?: string | null,
+  customText3Value?: string | null,
+  utmSource?: string | null,
+  utmMedium?: string | null,
+  utmCampaign?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`referrals.list`
+
+List referrals with program, member, status and date filters, plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.referralrock.api.referrals.list({ status: 'Qualified', count: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Records to skip, 0-based. Pass `next_offset` from the previous page. |
+| `count` | `number` | No | Records to return. Referral Rock returns everything matching when this is omitted. |
+| `date_from` | `string` | No | Only records created after this date. |
+| `date_to` | `string` | No | Only records created before this date. |
+| `program_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `status` | `string` | No | The referral status, such as `Pending`, `Approved`, `Qualified` or `Denied`. |
+| `sort` | `Create_Dt_Desc \| Create_Dt_Asc \| Referral_Status_Desc \| Referral_Status_Asc \| Referral_Amount_Desc \| Referral_Amount_Asc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referrals` | `object[]` | Yes | — |
+| `offset` | `number \| null` | Yes | — |
+| `total` | `number \| null` | Yes | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `message` | `string \| null` | No | Referral Rock’s own note. On a collection it can explain why nothing matched. |
+
+<AccordionGroup>
+<Accordion title="referrals full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  email?: string | null,
+  externalIdentifier?: string | null,
+  phoneNumber?: string | null,
+  amount?: number | null,
+  amountFormatted?: string | null,
+  preferredContact?: string | null,
+  createDate?: string | null,
+  updateDate?: string | null,
+  source?: string | null,
+  programId?: string | null,
+  programName?: string | null,
+  programTitle?: string | null,
+  referringMemberId?: string | null,
+  referringMemberName?: string | null,
+  memberEmail?: string | null,
+  memberReferralCode?: string | null,
+  memberExternalIdentifier?: string | null,
+  approvedDate?: string | null,
+  qualifiedDate?: string | null,
+  status?: string | null,
+  companyName?: string | null,
+  note?: string | null,
+  publicNote?: string | null,
+  conversionNote?: string | null,
+  customOption1Name?: string | null,
+  customOption2Name?: string | null,
+  customText1Name?: string | null,
+  customText2Name?: string | null,
+  customText3Name?: string | null,
+  customOption1Value?: string | null,
+  customOption2Value?: string | null,
+  customText1Value?: string | null,
+  customText2Value?: string | null,
+  customText3Value?: string | null,
+  utmSource?: string | null,
+  utmMedium?: string | null,
+  utmCampaign?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postalCode?: string | null,
+  country?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rewards
+
+### create
+
+`rewards.create`
+
+Issue a reward to a member for an optional referral, with its amount and payout type
+
+**Risk:** `write`
+
+```ts
+await corsair.referralrock.api.rewards.create({ member_id: '19548e00-1a17-42e1-b18b-b7bf140cd21d', amount: 10, payout_id: 'paypal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `string` | Yes | The member the reward is for. |
+| `amount` | `number` | Yes | The reward amount. |
+| `payout_id` | `string` | No | The payout type to issue. |
+| `description` | `string` | No | — |
+| `eligibility_date` | `string` | No | When the reward becomes eligible, as ISO 8601. |
+| `referral_id` | `string` | No | The referral the reward is attributed to. |
+
+Sent as an array of reward infos, each naming its member and optional referral.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reward` | `object \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reward full type">
+
+```ts
+{
+  id?: string | null,
+  payoutId?: string | null,
+  payoutDescription?: string | null,
+  programId?: string | null,
+  programName?: string | null,
+  memberId?: string | null,
+  referralId?: string | null,
+  type?: string | null,
+  recipientId?: string | null,
+  recipientName?: string | null,
+  recipientEmailAddress?: string | null,
+  recipientExternalIdentifier?: string | null,
+  externalIdentifier?: string | null,
+  status?: string | null,
+  amount?: number | null,
+  createDate?: string | null,
+  issueDate?: string | null,
+  eligibilityDate?: string | null,
+  description?: string | null,
+  transactionID?: string | null,
+  updateDate?: string | null,
+  referralDisplayName?: string | null,
+  currencyCode?: string | null,
+  source?: string | null,
+  programRewardRuleId?: string | null,
+  paymentType?: string | null,
+  paymentCode?: string | null,
+  completeNote?: string | null,
+  reason?: string | null,
+  reasonOther?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rewards.list`
+
+List rewards with program, member, status and date filters, plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.referralrock.api.rewards.list({ status: 'Issued', count: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Records to skip, 0-based. Pass `next_offset` from the previous page. |
+| `count` | `number` | No | Records to return. Referral Rock returns everything matching when this is omitted. |
+| `date_from` | `string` | No | Only records created after this date. |
+| `date_to` | `string` | No | Only records created before this date. |
+| `program_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `query` | `string` | No | — |
+| `status` | `string` | No | The reward status, such as `Pending`, `Issued` or `Paid`. |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rewards` | `object[]` | Yes | — |
+| `offset` | `number \| null` | Yes | — |
+| `total` | `number \| null` | Yes | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `message` | `string \| null` | No | Referral Rock’s own note. On a collection it can explain why nothing matched. |
+
+<AccordionGroup>
+<Accordion title="rewards full type">
+
+```ts
+{
+  id?: string | null,
+  payoutId?: string | null,
+  payoutDescription?: string | null,
+  programId?: string | null,
+  programName?: string | null,
+  memberId?: string | null,
+  referralId?: string | null,
+  type?: string | null,
+  recipientId?: string | null,
+  recipientName?: string | null,
+  recipientEmailAddress?: string | null,
+  recipientExternalIdentifier?: string | null,
+  externalIdentifier?: string | null,
+  status?: string | null,
+  amount?: number | null,
+  createDate?: string | null,
+  issueDate?: string | null,
+  eligibilityDate?: string | null,
+  description?: string | null,
+  transactionID?: string | null,
+  updateDate?: string | null,
+  referralDisplayName?: string | null,
+  currencyCode?: string | null,
+  source?: string | null,
+  programRewardRuleId?: string | null,
+  paymentType?: string | null,
+  paymentCode?: string | null,
+  completeNote?: string | null,
+  reason?: string | null,
+  reasonOther?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

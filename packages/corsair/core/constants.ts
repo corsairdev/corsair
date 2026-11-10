@@ -361,6 +361,7 @@ export const BaseProviders = [
 	'recallai',
 	'reddit',
 	'reducto',
+	'referralrock',
 	'remoet',
 	'removebg',
 	'render',
@@ -831,6 +832,7 @@ export const ProviderDisplayNames = {
 	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
+	referralrock: 'Referral Rock',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
 	render: 'Render',
@@ -1305,6 +1307,7 @@ export type AllProviders =
 	| 'recallai'
 	| 'reddit'
 	| 'reducto'
+	| 'referralrock'
 	| 'remoet'
 	| 'removebg'
 	| 'render'

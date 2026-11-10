@@ -1,0 +1,51 @@
+displayName: Referral Rock
+description: Referral program management with Referral Rock - read programs, advocates, referrals and rewards, and create an advocate, a referral or a reward through the Referral Rock API.
+domain: referralrock.com
+recommendedAuth: api_key
+overviewNote: |
+  Find the API key on the **Integrations** page of the Referral Rock dashboard. It authenticates with **HTTP Basic**, using the key as the username and an empty password, which the plugin builds into the `Authorization` header. Things to know before you call:
+
+  - **The credential is Basic with an empty password.** `corsair/http` only sends a Basic header when both the username and the password are non-empty, so a key-as-username cannot go through `USERNAME`/`PASSWORD`. The plugin sets the literal header instead.
+  - **Two different 401 bodies.** A request with no credential answers a JSON wrapper, `{ response: { status_code, status_message, body } }`. A credential the host rejects answers **HTML** before the request reaches the API, so the status is all there is. The plugin reads both.
+  - **A 200 can still be a refusal.** A create that the API refused — a duplicate email, a stale referral code — comes back as a `200` with `member: null` or `referral: null` and the reason in `message`. The plugin returns both fields, so check `message` rather than assuming success.
+  - **Paging is offset and count.** A collection answers `offset`, `total` and the rows; `next_offset` is null once the rows reach the total. Omitting `count` returns everything, because that is the documented default.
+  - **Member sort values.** `sort` takes one of `Member_Views_Desc`, `Member_Views_Asc`, `Page_Views_Desc`, `Page_Views_Asc`, `Lead_Count_Desc`, `Lead_Count_Asc`, `Reward_Issued_Total_Desc`, `Reward_Issued_Total_Asc`, `Member_Full_Name_Desc`, `Member_Full_Name_Asc`, `Create_Dt_Desc` or `Create_Dt_Asc`, and it defaults to `Create_Dt_Desc`.
+  - **An unrecognised `sort` is silently ignored.** Referral Rock says so explicitly and falls back to the default, so a typo would return correctly-shaped data in the wrong order. `members.list` pins the accepted values.
+  - **A member needs a program, a first name and an email.** Referral Rock validates all three, so the schema requires them.
+  - **A reward is sent as an array.** `POST /api/rewards` takes a list of reward infos, each with a `memberQuery`, an optional `referralQuery` and a `newReward`; the plugin wraps your input in that shape.
+  - **Retries.** Referral Rock documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A `5xx` is retried only for a read.
+examples:
+  read:
+    path: members.list
+    title: List advocates in program order
+    args:
+      count: 50
+  write:
+    path: referrals.create
+    title: Record a referral against a member's code
+    args:
+      referral_code: SAM123
+      first_name: Jordan
+      email: jordan@example.com
+      amount: 250
+apiExamples:
+  programs.list:
+    call: "{}"
+  members.list:
+    call: "{ query: 'sam@example.com', offset: 0, count: 50 }"
+  members.create:
+    call: "{ program_id: '86de93f6-95a8-473d-bb68-b9645f6e9880', first_name: 'Sam', last_name: 'Rivera', email: 'sam@example.com' }"
+  referrals.list:
+    call: "{ status: 'Qualified', count: 50 }"
+  referrals.create:
+    call: "{ referral_code: 'SAM123', first_name: 'Jordan', email: 'jordan@example.com', amount: 250 }"
+  rewards.list:
+    call: "{ status: 'Issued', count: 50 }"
+  rewards.create:
+    call: "{ member_id: '19548e00-1a17-42e1-b18b-b7bf140cd21d', amount: 10, payout_id: 'paypal' }"
+apiNotes:
+  'members.list': 'The sort values are case-sensitive; the API silently ignores an unrecognised one.'
+  'members.create': 'A refusal arrives as a 200 with a null member and the reason in `message`.'
+  'referrals.create': 'The code is the referring member’s, and `amount` is what reward rules key on.'
+  'rewards.create': 'Sent as an array of reward infos, each naming its member and optional referral.'
+  'programs.list': 'A program id, name or title narrows the result to one program.'
