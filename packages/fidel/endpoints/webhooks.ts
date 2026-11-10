@@ -4,6 +4,22 @@ import { makeFidelRequest } from '../client';
 import { fidelPathParameter } from './path';
 import type { FidelEndpointOutputs } from './types';
 
+// Custom webhook headers usually carry the receiver's own credential (an
+// Authorization value or a shared secret). The provider gets the real
+// values; the event log keeps only the header names.
+// unknown: header values are caller-defined and are never read here.
+const withoutHeaderValues = <T extends { headers?: Record<string, unknown> }>(
+	input: T,
+): T =>
+	input.headers
+		? {
+				...input,
+				headers: Object.fromEntries(
+					Object.keys(input.headers).map((name) => [name, '[redacted]']),
+				),
+			}
+		: input;
+
 export const createBrandWebhook: FidelEndpoints['createBrandWebhook'] = async (
 	ctx,
 	input,
@@ -14,7 +30,7 @@ export const createBrandWebhook: FidelEndpoints['createBrandWebhook'] = async (
 	await logEventFromContext(
 		ctx,
 		'fidel.webhooks.createBrandWebhook',
-		input,
+		withoutHeaderValues(input),
 		'completed',
 	);
 	return response;
@@ -37,7 +53,7 @@ export const createProgramWebhook: FidelEndpoints['createProgramWebhook'] =
 		await logEventFromContext(
 			ctx,
 			'fidel.webhooks.createProgramWebhook',
-			input,
+			withoutHeaderValues(input),
 			'completed',
 		);
 		return response;
@@ -75,7 +91,7 @@ export const updateWebhook: FidelEndpoints['updateWebhook'] = async (
 	await logEventFromContext(
 		ctx,
 		'fidel.webhooks.updateWebhook',
-		input,
+		withoutHeaderValues(input),
 		'completed',
 	);
 	return response;
