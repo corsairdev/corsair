@@ -331,5 +331,7 @@ export function parseJsonObject(
 			`ScrapingAnt answered with JSON that is not an object: ${raw.body.slice(0, 120)}`,
 		);
 	}
+	// unknown: the keys are the provider's and no per-key type is known before
+	// an endpoint's output schema reads them, which is the very next step.
 	return parsed as Record<string, unknown>;
 }
