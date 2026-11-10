@@ -29,7 +29,7 @@ pnpm add @corsair-dev/klaviyo
 | `profiles.create` | `klaviyo.api.profiles.create` | `write` | Create a profile from an email, phone number or external id, with names, location and custom properties; Klaviyo merges a duplicate onto the existing profile |
 | `profiles.get` | `klaviyo.api.profiles.get` | `read` | Read one profile by id, optionally including its conversations or push tokens |
 | `profiles.list` | `klaviyo.api.profiles.list` | `read` | Search profiles with a Klaviyo filter expression, sorted and cursor-paged; returns each profile with its attributes and subscription state |
-| `profiles.subscribe` | `klaviyo.api.profiles.subscribe` | `write` | Subscribe a profile to a list over email or SMS; this creates a bulk job and grants marketing consent, so it returns a job id rather than the profile |
+| `profiles.subscribe` | `klaviyo.api.profiles.subscribe` | `write` | Subscribe a profile to a list over email or SMS; this grants marketing consent through a queued bulk job, so it confirms the request was accepted rather than returning the profile |
 | `profiles.update` | `klaviyo.api.profiles.update` | `write` | Change a profile name, location, custom properties or identifiers by id |
 | `segments.create` | `klaviyo.api.segments.create` | `write` | Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated |
 | `segments.get` | `klaviyo.api.segments.get` | `read` | Read one segment by id, with its active flag |

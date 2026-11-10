@@ -152,7 +152,7 @@ await corsair.klaviyo.api.events.list({ pageSize: 20 });
 | `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
 | `include` | `(profile \| metric)[]` | No | — |
 | `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
-| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+| `pageSize` | `number` | No | Rows per page, 1 to 1000. Defaults to 200. |
 
 
 
@@ -415,7 +415,7 @@ List the marketing lists on the account, filtered and cursor-paged
 **Risk:** `read`
 
 ```ts
-await corsair.klaviyo.api.lists.list({ pageSize: 20 });
+await corsair.klaviyo.api.lists.list({ pageSize: 10 });
 ```
 
 **Input**
@@ -426,7 +426,7 @@ await corsair.klaviyo.api.lists.list({ pageSize: 20 });
 | `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
 | `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
 | `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
-| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+| `pageSize` | `number` | No | Rows per page, 1 to 10. Defaults to 10. |
 
 
 
@@ -543,8 +543,8 @@ await corsair.klaviyo.api.lists.profiles({ id: 'R7QkZp', pageSize: 20 });
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -745,7 +745,7 @@ Aggregate a metric into time buckets, such as a daily count over a date range, o
 **Risk:** `read`
 
 ```ts
-await corsair.klaviyo.api.metrics.aggregate({ metricId: 'Mt123', measurements: ['count'], interval: 'day' });
+await corsair.klaviyo.api.metrics.aggregate({ metricId: 'Mt123', measurements: ['count'], interval: 'day', filter: ['greater-or-equal(datetime,2026-01-01T00:00:00)', 'less-than(datetime,2026-02-01T00:00:00)'] });
 ```
 
 **Input**
@@ -757,8 +757,10 @@ await corsair.klaviyo.api.metrics.aggregate({ metricId: 'Mt123', measurements: [
 | `interval` | `hour \| day \| week \| month` | Yes | The bucket size. |
 | `pageCursor` | `string` | No | — |
 | `by` | `string[]` | No | Group by these dimensions, such as ["$attributed_message"]. |
-| `filter` | `string[]` | No | One or more filter expressions, each in Klaviyo filter syntax. |
+| `filter` | `string[]` | Yes | Filter expressions in Klaviyo filter syntax. A date range is required, such as ["greater-or-equal(datetime,2026-01-01T00:00:00)", "less-than(datetime,2026-02-01T00:00:00)"]. |
 | `timezone` | `string` | No | — |
+
+`filter` must carry a date range, and Klaviyo rejects the call without one. `dates` in the response are the bucket start times, and each row of `data` holds its measurement arrays in the same order.
 
 
 
@@ -777,8 +779,9 @@ await corsair.klaviyo.api.metrics.aggregate({ metricId: 'Mt123', measurements: [
   type?: string | null,
   id?: string | null,
   attributes?: {
-    dates?: {
-      date?: string | null,
+    dates?: string[] | null,
+    data?: {
+      dimensions?: string[] | null,
       measurements?: Record<string, JsonValue> | null
     }[] | null
   } | null
@@ -890,7 +893,7 @@ List the metrics defined on the account, such as Placed Order
 **Risk:** `read`
 
 ```ts
-await corsair.klaviyo.api.metrics.list({ pageSize: 20 });
+await corsair.klaviyo.api.metrics.list({});
 ```
 
 **Input**
@@ -1002,8 +1005,8 @@ await corsair.klaviyo.api.profiles.create({ email: 'jordan@acme.com', first_name
   address2?: string | null,
   city?: string | null,
   country?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: string | number | null,
+  longitude?: string | number | null,
   region?: string | null,
   zip?: string | null,
   timezone?: string | null
@@ -1044,8 +1047,8 @@ await corsair.klaviyo.api.profiles.create({ email: 'jordan@acme.com', first_name
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -1146,8 +1149,8 @@ await corsair.klaviyo.api.profiles.get({ id: '01H8XYZABC123' });
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -1254,8 +1257,8 @@ await corsair.klaviyo.api.profiles.list({ pageSize: 20, filter: 'equals(email,"j
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -1309,7 +1312,7 @@ await corsair.klaviyo.api.profiles.list({ pageSize: 20, filter: 'equals(email,"j
 
 `profiles.subscribe`
 
-Subscribe a profile to a list over email or SMS; this creates a bulk job and grants marketing consent, so it returns a job id rather than the profile
+Subscribe a profile to a list over email or SMS; this grants marketing consent through a queued bulk job, so it confirms the request was accepted rather than returning the profile
 
 **Risk:** `write`
 
@@ -1326,7 +1329,7 @@ await corsair.klaviyo.api.profiles.subscribe({ listId: 'R7QkZp', email: 'jordan@
 | `phone_number` | `string` | No | — |
 | `channels` | `(email \| sms)[]` | No | Which channels to subscribe. Defaults to email. |
 
-This grants marketing consent, so Klaviyo answers 202 with a bulk job id rather than the profile. The consent is not immediate.
+This grants marketing consent, so Klaviyo queues a bulk job and answers 202 with no body. The consent is not immediate, and there is no job id to poll.
 
 
 
@@ -1334,32 +1337,7 @@ This grants marketing consent, so Klaviyo answers 202 with a bulk job id rather 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
-| `links` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  type?: string | null,
-  id?: string | null,
-  attributes?: Record<string, JsonValue> | null
-} | null
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  self?: string | null,
-  next?: string | null,
-  prev?: string | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `success` | `boolean` | Yes | — |
 
 
 
@@ -1403,8 +1381,8 @@ await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jo
   address2?: string | null,
   city?: string | null,
   country?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: string | number | null,
+  longitude?: string | number | null,
   region?: string | null,
   zip?: string | null,
   timezone?: string | null
@@ -1445,8 +1423,8 @@ await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jo
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -1668,7 +1646,7 @@ List the segments on the account, filtered and cursor-paged
 **Risk:** `read`
 
 ```ts
-await corsair.klaviyo.api.segments.list({ pageSize: 20 });
+await corsair.klaviyo.api.segments.list({ pageSize: 10 });
 ```
 
 **Input**
@@ -1679,7 +1657,7 @@ await corsair.klaviyo.api.segments.list({ pageSize: 20 });
 | `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
 | `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
 | `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
-| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+| `pageSize` | `number` | No | Rows per page, 1 to 10. Defaults to 10. |
 
 
 
@@ -1797,8 +1775,8 @@ await corsair.klaviyo.api.segments.profiles({ id: 'SgXy12', pageSize: 20 });
       address2?: string | null,
       city?: string | null,
       country?: string | null,
-      latitude?: number | null,
-      longitude?: number | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
       region?: string | null,
       zip?: string | null,
       timezone?: string | null
@@ -2052,7 +2030,13 @@ List the tag groups, which namespace tags and can allow only one tag each
 await corsair.klaviyo.api.tagGroups.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 25. Defaults to 25. |
+
 
 
 **Output**
@@ -2320,7 +2304,7 @@ await corsair.klaviyo.api.tags.list({ pageSize: 20 });
 |------|------|----------|-------------|
 | `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
 | `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
-| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+| `pageSize` | `number` | No | Rows per page, 1 to 50. Defaults to 50. |
 
 
 
@@ -2432,61 +2416,15 @@ await corsair.klaviyo.api.tags.update({ id: 'Tg123', name: 'urgent' });
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
+Klaviyo answers 204 with no body, so this returns `{ success: true }` rather than the renamed tag.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `included` | `object[] \| null` | No | Related resources requested through `include`. |
-| `links` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  type: tag,
-  id: string,
-  attributes?: {
-    name?: string | null,
-    created?: string | null,
-    updated?: string | null
-  } | null,
-  links?: {
-    self?: string | null,
-    next?: string | null,
-    prev?: string | null
-  } | null
-}
-```
-</Accordion>
-
-<Accordion title="included full type">
-
-```ts
-{
-  type: string,
-  id: string,
-  attributes?: Record<string, JsonValue> | null,
-  relationships?: Record<string, JsonValue> | null,
-  links?: Record<string, JsonValue> | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  self?: string | null,
-  next?: string | null,
-  prev?: string | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `success` | `boolean` | Yes | — |
 
 
 
@@ -2671,7 +2609,7 @@ List the webhooks configured on the account
 **Risk:** `read`
 
 ```ts
-await corsair.klaviyo.api.webhooks.list({ pageSize: 20 });
+await corsair.klaviyo.api.webhooks.list({});
 ```
 
 **Input**
@@ -2679,7 +2617,6 @@ await corsair.klaviyo.api.webhooks.list({ pageSize: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
-| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
 
 
 
