@@ -12,7 +12,7 @@ pnpm add @corsair-dev/foursquare
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `places.autocomplete` | `foursquare.api.places.autocomplete` | `read` | Suggest places, searches, geos or addresses for a partial query |
+| `places.autocomplete` | `foursquare.api.places.autocomplete` | `read` | Suggest places, searches or geos for a partial query |
 | `places.get` | `foursquare.api.places.get` | `read` | Get one place by its fsq_place_id, with all its details |
 | `places.match` | `foursquare.api.places.match` | `read` | Resolve a name and address to a Foursquare place, with a match score |
 | `places.photos` | `foursquare.api.places.photos` | `read` | List the photos attached to a place |

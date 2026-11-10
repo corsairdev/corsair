@@ -120,8 +120,7 @@ const foursquareEndpointMeta = {
 	},
 	'places.autocomplete': {
 		riskLevel: 'read',
-		description:
-			'Suggest places, searches, geos or addresses for a partial query',
+		description: 'Suggest places, searches or geos for a partial query',
 	},
 	'places.tips': {
 		riskLevel: 'read',
