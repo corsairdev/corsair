@@ -1,0 +1,51 @@
+displayName: Knack
+description: Read and write records in a Knack app - list tables and their fields, then query, create, update and delete records through the REST API.
+domain: knack.com
+recommendedAuth: api_key
+overviewNote: |
+  Knack issues a per-app Application ID and API key, and every request carries both headers. Connect with the pair together: an account connects to one Knack app, because both values identify that app.
+
+  - **Where the pair comes from.** An account Owner copies both from the Builder under **Settings > API** (Next-Gen apps: **Settings > API & Code > API**). The same page shows the plan's daily call limit.
+  - **Field names, not labels.** Knack stores each column as `field_1`, `field_2`, and so on. `applications.get` and `objects.get` return each field's key beside its name, so read those first to learn which `field_N` to send.
+  - **Read-only mirrors.** Every value comes back twice: `field_23` is the display string and `field_23_raw` is the typed form. Only the plain `field_N` is writable; the plugin rejects a `_raw` or `_html` key in a write rather than sending it.
+  - **A missing record is not a 404.** Knack answers 200 with an empty records list for an id that does not exist, and 200 with `{}` for an object key that is not in the app. `records.get` and `objects.get` raise on those answers, so a missing record cannot look like one with no fields.
+  - **Filters need their index.** Knack reads `filters[0][field]`, `filters[0][operator]` and `filters[0][value]`. The unindexed form is silently ignored and returns every record, so the plugin builds the indexed names itself.
+  - **Rate limits.** 10 requests a second for every plan, answered as a 429 whose body is the plain text `Rate limit exceeded`. A short window is retried; a reset more than a minute away is the daily plan allowance and fails immediately.
+  - **Records only, not app structure.** The plugin reads tables and fields, and writes records. Creating tables or fields is not part of the REST API.
+  - **Webhooks.** The plugin does not receive webhooks; Knack exposes no subscription call.
+examples:
+  read:
+    path: objects.list
+    title: List the tables in the app
+    args: {}
+  write:
+    path: records.create
+    title: Create a record in a table
+    args:
+      object_key: object_3
+      fields:
+        field_23: Acme Logistics
+apiExamples:
+  applications.get: {}
+  objects.list: {}
+  objects.get:
+    call: "{ object_key: 'object_3' }"
+  records.list:
+    call: "{ object_key: 'object_3', rows_per_page: 25 }"
+  records.get:
+    call: "{ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d' }"
+  records.create:
+    call: "{ object_key: 'object_3', fields: { field_23: 'Acme Logistics' } }"
+  records.update:
+    call: "{ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d', fields: { field_23: 'Acme Logistics Ltd' } }"
+  records.delete:
+    call: "{ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d' }"
+apiNotes:
+  'applications.get': 'Returns the app name, its objects, each object''s fields, and a record count per object. Use it to discover the field keys before writing.'
+  'objects.list': 'Each entry carries a `key` like `object_3` and a `name`. The key is what every records operation takes.'
+  'objects.get': 'Returns the fields with their keys, names and types. A key that is not in the app answers an empty body rather than a 404, and the plugin raises on it.'
+  'records.list': 'Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators include `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank` and the comparison forms; every filter in a list must match.'
+  'records.get': 'An id that does not exist answers an empty list rather than a 404, so the plugin raises instead of returning a blank record.'
+  'records.create': 'Send only plain `field_N` keys. An empty field map is rejected because Knack would create a record with every field blank.'
+  'records.update': 'Only the fields you send change. The same read-only rule applies as on create.'
+  'records.delete': 'Permanent. Knack answers `{"delete": true}`, and the plugin requires that flag rather than treating any 200 as success.'

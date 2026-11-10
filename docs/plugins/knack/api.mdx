@@ -1,0 +1,361 @@
+---
+title: API
+description: "API reference for Knack: every `knack.api.*` operation with input and output types."
+---
+
+Every `knack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Applications
+
+### get
+
+`applications.get`
+
+Read the app metadata: its objects, each object's fields, and per-object record counts
+
+**Risk:** `read`
+
+```ts
+await corsair.knack.api.applications.get({});
+```
+
+**Input:** _empty object_
+
+Returns the app name, its objects, each object's fields, and a record count per object. Use it to discover the field keys before writing.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `application` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="application full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  description?: string | null,
+  counts?: Record<string, number> | null,
+  objects?: {
+    key: string,
+    name: string,
+    type?: string | null,
+    user?: boolean | null,
+    fields?: {
+      key: string,
+      name: string,
+      type: string,
+      required?: boolean | null,
+      unique?: boolean | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Objects
+
+### get
+
+`objects.get`
+
+Read one table's definition and field keys
+
+**Risk:** `read`
+
+```ts
+await corsair.knack.api.objects.get({ object_key: 'object_3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+
+Returns the fields with their keys, names and types. A key that is not in the app answers an empty body rather than a 404, and the plugin raises on it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  key: string,
+  name: string,
+  type?: string | null,
+  user?: boolean | null,
+  fields?: {
+    key: string,
+    name: string,
+    type: string,
+    required?: boolean | null,
+    unique?: boolean | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`objects.list`
+
+List the tables in this app with their object keys
+
+**Risk:** `read`
+
+```ts
+await corsair.knack.api.objects.list({});
+```
+
+**Input:** _empty object_
+
+Each entry carries a `key` like `object_3` and a `name`. The key is what every records operation takes.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
+
+```ts
+{
+  key: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a record in a table
+
+**Risk:** `write`
+
+```ts
+await corsair.knack.api.records.create({ object_key: 'object_3', fields: { field_23: 'Acme Logistics' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+| `fields` | `Record<string, string \| number \| boolean \| string[]>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids. Read-only mirrors such as `field_23_raw` are not accepted. |
+
+Send only plain `field_N` keys. An empty field map is rejected because Knack would create a record with every field blank.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete a record permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.knack.api.records.delete({ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+| `record_id` | `string` | Yes | The record id, from `records.list`. |
+
+Permanent. Knack answers `{"delete": true}`, and the plugin requires that flag rather than treating any 200 as success.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete` | `true` | Yes | True when Knack removed the record. |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Read one record by id
+
+**Risk:** `read`
+
+```ts
+await corsair.knack.api.records.get({ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+| `record_id` | `string` | Yes | The record id, from `records.list`. |
+
+An id that does not exist answers an empty list rather than a 404, so the plugin raises instead of returning a blank record.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`records.list`
+
+List records in a table, with paging, sorting and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.knack.api.records.list({ object_key: 'object_3', rows_per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+| `page` | `number` | No | Defaults to the first page. |
+| `rows_per_page` | `number` | No | How many records to return per page. |
+| `sort_field` | `string` | No | The field to sort by, e.g. `field_23`. |
+| `sort_order` | `asc \| desc` | No | Used only with `sort_field`. |
+| `filters` | `object[]` | No | Conditions a record must meet. All of them must match. |
+
+Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators include `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank` and the comparison forms; every filter in a list must match.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  operator: is | is not | contains | does not contain | starts with | ends with | is blank | is not blank | is greater than | is less than | is greater than or equal to | is less than or equal to | is between,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_pages` | `number` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `total_records` | `number` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update fields on an existing record
+
+**Risk:** `write`
+
+```ts
+await corsair.knack.api.records.update({ object_key: 'object_3', record_id: '6af3598772ff96f3713a989d', fields: { field_23: 'Acme Logistics Ltd' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
+| `record_id` | `string` | Yes | The record id, from `records.list`. |
+| `fields` | `Record<string, string \| number \| boolean \| string[]>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids. Read-only mirrors such as `field_23_raw` are not accepted. |
+
+Only the fields you send change. The same read-only rule applies as on create.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+

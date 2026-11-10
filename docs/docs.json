@@ -2507,6 +2507,14 @@
                 ]
               },
               {
+                "group": "Knack",
+                "pages": [
+                  "plugins/knack/overview",
+                  "plugins/knack/api",
+                  "plugins/knack/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",

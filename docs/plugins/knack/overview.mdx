@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Read and write records in a Knack app - list tables and their fields, then query, create, update and delete records through the REST API."
+---
+
+Use **Knack** through Corsair: one client, typed API calls.
+
+Knack issues a per-app Application ID and API key, and every request carries both headers. Connect with the pair together: an account connects to one Knack app, because both values identify that app.
+
+- **Where the pair comes from.** An account Owner copies both from the Builder under **Settings > API** (Next-Gen apps: **Settings > API & Code > API**). The same page shows the plan's daily call limit.
+- **Field names, not labels.** Knack stores each column as `field_1`, `field_2`, and so on. `applications.get` and `objects.get` return each field's key beside its name, so read those first to learn which `field_N` to send.
+- **Read-only mirrors.** Every value comes back twice: `field_23` is the display string and `field_23_raw` is the typed form. Only the plain `field_N` is writable; the plugin rejects a `_raw` or `_html` key in a write rather than sending it.
+- **A missing record is not a 404.** Knack answers 200 with an empty records list for an id that does not exist, and 200 with `{}` for an object key that is not in the app. `records.get` and `objects.get` raise on those answers, so a missing record cannot look like one with no fields.
+- **Filters need their index.** Knack reads `filters[0][field]`, `filters[0][operator]` and `filters[0][value]`. The unindexed form is silently ignored and returns every record, so the plugin builds the indexed names itself.
+- **Rate limits.** 10 requests a second for every plan, answered as a 429 whose body is the plain text `Rate limit exceeded`. A short window is retried; a reset more than a minute away is the daily plan allowance and fails immediately.
+- **Records only, not app structure.** The plugin reads tables and fields, and writes records. Creating tables or fields is not part of the REST API.
+- **Webhooks.** The plugin does not receive webhooks; Knack exposes no subscription call.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/knack better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/knack better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/knack better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/knack better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { knack } from '@corsair-dev/knack';
+
+export const corsair = createCorsair({
+	plugins: [
+		knack(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. Knack needs both an Application ID and an API key, copied from the Builder under **Settings > API** (Next-Gen apps: **Settings > API & Code > API**). Store the pair on the account before the first call: a call with no saved pair throws `AuthMissingError` rather than reaching Knack.
+
+```ts
+knack()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'knack',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the tables in the app**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.knack.api.objects.list({});
+```
+
+
+**Create a record in a table**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.knack.api.records.create({
+	object_key: 'object_3',
+	fields: { field_23: 'Acme Logistics' },
+});
+```
+
+
+See the full list on the [API](/plugins/knack/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/knack/api">
+    Every `knack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
