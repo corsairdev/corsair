@@ -322,6 +322,7 @@ export const BaseProviders = [
 	'nextdns',
 	'northflank',
 	'notion',
+	'nutshell',
 	'ocrspace',
 	'ocrwebservice',
 	'octen',
@@ -783,6 +784,7 @@ export const ProviderDisplayNames = {
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
+	nutshell: 'Nutshell',
 	ocrspace: 'OCR.space',
 	ocrwebservice: 'OcrWebService',
 	octen: 'Octen',
@@ -1248,6 +1250,7 @@ export type AllProviders =
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
+	| 'nutshell'
 	| 'ocrspace'
 	| 'ocrwebservice'
 	| 'octen'

@@ -2723,6 +2723,14 @@
                 ]
               },
               {
+                "group": "Nutshell",
+                "pages": [
+                  "plugins/nutshell/overview",
+                  "plugins/nutshell/api",
+                  "plugins/nutshell/database"
+                ]
+              },
+              {
                 "group": "OCR Web Service",
                 "pages": [
                   "plugins/ocrwebservice/overview",
