@@ -120,6 +120,13 @@ const ItemDataSchema = z.record(z.string(), ItemDataValueSchema);
 /** What a board write returns: the resource plus its links. */
 const LinksSchema = z.object({ self: HrefSchema }).loose();
 
+/**
+ * A size or opacity in a returned style. Miro sends these as strings ("2.0",
+ * "14"), which is how the reference types them; a number is read too, so a
+ * route that sends one does not fail a call that has already happened.
+ */
+const StyleNumberSchema = z.union([z.string(), z.number()]).nullish();
+
 const PositionSchema = z.object({
 	x: z.number().describe('Horizontal position, in board units.'),
 	y: z.number().describe('Vertical position, in board units.'),
@@ -174,6 +181,33 @@ const BoardPolicySchema = z
 	})
 	.loose();
 
+/**
+ * The policy as a board returns it. The input above lists the values a caller
+ * may send; a response is read as plain strings, so a value Miro adds (or one
+ * only a response carries, such as `guest`) does not fail the read.
+ */
+const BoardPolicyOutputSchema = z
+	.object({
+		permissionsPolicy: z
+			.object({
+				collaborationToolsStartAccess: z.string().nullish(),
+				copyAccess: z.string().nullish(),
+				sharingAccess: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		sharingPolicy: z
+			.object({
+				access: z.string().nullish().describe('Who can reach the board.'),
+				inviteToAccountAndBoardLinkAccess: z.string().nullish(),
+				organizationAccess: z.string().nullish(),
+				teamAccess: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose();
+
 const BoardSchema = z
 	.object({
 		id: z.string(),
@@ -193,7 +227,7 @@ const BoardSchema = z
 			.object({ role: z.string().nullish() })
 			.loose()
 			.nullish(),
-		policy: BoardPolicySchema.nullish(),
+		policy: BoardPolicyOutputSchema.nullish(),
 		links: LinksSchema.nullish(),
 	})
 	.loose();
@@ -551,14 +585,15 @@ export const MIRO_STICKY_COLORS = [
 	'light_gray',
 ] as const;
 
+/** A returned sticky style: plain strings, so a new colour still parses. */
 const StickyNoteStyleSchema = z
 	.object({
 		fillColor: z
-			.enum(MIRO_STICKY_COLORS)
-			.optional()
-			.describe('Sticky colour. Defaults to `light_yellow`.'),
-		textAlign: z.enum(['left', 'center', 'right']).optional(),
-		textAlignVertical: z.enum(['top', 'middle', 'bottom']).optional(),
+			.string()
+			.nullish()
+			.describe('Sticky colour, such as `light_yellow`.'),
+		textAlign: z.string().nullish(),
+		textAlignVertical: z.string().nullish(),
 	})
 	.loose();
 
@@ -633,8 +668,8 @@ export type StickyNotesUpdateInput = z.input<
 // ── shapes ──────────────────────────────────────────────────────────────────
 
 /**
- * Documented basic shapes. Miro accepts many more flowchart names; the list is
- * a string rather than an enum so a valid name it adds is not rejected here.
+ * The style a caller may set on a shape. Sizes and opacities are numbers here
+ * and are sent as strings, which is how Miro types them.
  */
 const ShapeStyleSchema = z
 	.object({
@@ -652,6 +687,23 @@ const ShapeStyleSchema = z
 	})
 	.loose();
 
+/** A returned shape style: strings throughout, see StyleNumberSchema. */
+const ShapeStyleOutputSchema = z
+	.object({
+		fillColor: z.string().nullish(),
+		fillOpacity: StyleNumberSchema,
+		borderColor: z.string().nullish(),
+		borderWidth: StyleNumberSchema,
+		borderStyle: z.string().nullish(),
+		borderOpacity: StyleNumberSchema,
+		fontSize: StyleNumberSchema,
+		fontFamily: z.string().nullish(),
+		textAlign: z.string().nullish(),
+		textAlignVertical: z.string().nullish(),
+		color: z.string().nullish().describe('Text colour.'),
+	})
+	.loose();
+
 const FlatShapeSchema = ItemBaseSchema.extend({
 	data: z
 		.object({
@@ -660,7 +712,7 @@ const FlatShapeSchema = ItemBaseSchema.extend({
 		})
 		.loose()
 		.nullish(),
-	style: ShapeStyleSchema.nullish(),
+	style: ShapeStyleOutputSchema.nullish(),
 	position: ItemPositionSchema.nullish(),
 	geometry: ItemGeometrySchema.nullish(),
 	parent: z.object({ id: z.string().nullish() }).loose().nullish(),
@@ -810,9 +862,21 @@ const TextStyleSchema = z
 	})
 	.loose();
 
+/** A returned text style: strings throughout, see StyleNumberSchema. */
+const TextStyleOutputSchema = z
+	.object({
+		color: z.string().nullish(),
+		fillColor: z.string().nullish(),
+		fillOpacity: StyleNumberSchema,
+		fontSize: StyleNumberSchema,
+		fontFamily: z.string().nullish(),
+		textAlign: z.string().nullish(),
+	})
+	.loose();
+
 const FlatTextSchema = ItemBaseSchema.extend({
 	data: z.object({ content: z.string().nullish() }).loose().nullish(),
-	style: TextStyleSchema.nullish(),
+	style: TextStyleOutputSchema.nullish(),
 	position: ItemPositionSchema.nullish(),
 	geometry: ItemGeometrySchema.nullish(),
 	parent: z.object({ id: z.string().nullish() }).loose().nullish(),

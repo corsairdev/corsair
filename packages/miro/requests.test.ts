@@ -223,6 +223,25 @@ describe('boards', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
+	it('reads a board whose policy holds values the input does not list', async () => {
+		respond({
+			...board,
+			policy: {
+				permissionsPolicy: { copyAccess: 'a_later_value' },
+				sharingPolicy: {
+					access: 'a_later_value',
+					inviteToAccountAndBoardLinkAccess: 'guest',
+				},
+			},
+		});
+
+		const result = (await invoke(boardsGet, { boardId: BOARD })) as {
+			policy?: { permissionsPolicy?: { copyAccess?: string | null } | null };
+		};
+
+		expect(result.policy?.permissionsPolicy?.copyAccess).toBe('a_later_value');
+	});
+
 	it('gets one board and encodes the id in the path', async () => {
 		respond(board);
 
@@ -457,6 +476,16 @@ describe('stickyNotes', () => {
 		expect(result.item.data?.content).toBe('Ship the roadmap');
 	});
 
+	it('reads a sticky colour outside the list it accepts as input', async () => {
+		respond({ ...stickyNote, style: { fillColor: 'teal' } }, 201);
+
+		const result = (await invoke(stickyNotesCreate, { boardId: BOARD })) as {
+			item: { style?: { fillColor?: string | null } | null };
+		};
+
+		expect(result.item.style?.fillColor).toBe('teal');
+	});
+
 	it('sends the parent as { id }', async () => {
 		respond(stickyNote, 201);
 
@@ -510,11 +539,34 @@ describe('shapes', () => {
 			style: { fillColor: '#ffffff', borderWidth: 2 },
 		})) as { item: { id: string } };
 
+		// Miro types sizes and opacities as strings, so numbers are sent as text.
 		expect(lastRequest().body).toEqual({
 			data: { content: 'Design', shape: 'rectangle' },
-			style: { fillColor: '#ffffff', borderWidth: 2 },
+			style: { fillColor: '#ffffff', borderWidth: '2' },
 		});
 		expect(result.item.id).toBe(shape.id);
+	});
+
+	it('reads a shape style whose sizes and opacities are strings', async () => {
+		respond(shape, 201);
+
+		const result = (await invoke(shapesCreate, { boardId: BOARD })) as {
+			item: { style?: { borderWidth?: string | number | null } | null };
+		};
+
+		expect(result.item.style?.borderWidth).toBe('2.0');
+	});
+
+	it('reads a style value Miro adds later instead of failing the call', async () => {
+		// The write has already happened, so an unknown value must not throw.
+		respond({
+			...shape,
+			style: { ...shape.style, textAlign: 'unknown', borderStyle: 'wavy' },
+		});
+
+		await expect(
+			invoke(shapesUpdate, { boardId: BOARD, itemId: 'i-1', content: 'x' }),
+		).resolves.toBeDefined();
 	});
 
 	it('rejects an opacity outside 0 to 1', async () => {
@@ -634,6 +686,22 @@ describe('texts', () => {
 		await invoke(textsCreate, { boardId: BOARD, content: 'Sprint 12' });
 
 		expect(lastRequest().body).toEqual({ data: { content: 'Sprint 12' } });
+	});
+
+	it('sends the font size as text and reads it back as Miro returns it', async () => {
+		respond(textItem, 201);
+
+		const result = (await invoke(textsCreate, {
+			boardId: BOARD,
+			content: 'Sprint 12',
+			style: { fontSize: 24 },
+		})) as { item: { style?: { fontSize?: string | number | null } | null } };
+
+		expect(lastRequest().body).toEqual({
+			data: { content: 'Sprint 12' },
+			style: { fontSize: '24' },
+		});
+		expect(result.item.style?.fontSize).toBe('24');
 	});
 
 	it('updates a text item', async () => {

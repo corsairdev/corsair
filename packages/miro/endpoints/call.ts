@@ -98,7 +98,22 @@ export function itemBody(
 	// into it before calling. Miro rejects an empty `style`, so an empty object
 	// is dropped rather than sent.
 	if (parsed.style !== undefined && hasKeys(parsed.style)) {
-		body.style = parsed.style;
+		body.style = styleBody(parsed.style);
+	}
+	return body;
+}
+
+/**
+ * The style in the wire format.
+ *
+ * Miro types every numeric style field (font size, border width, the
+ * opacities) as a string, so a number is sent as text: `2` becomes `"2"`.
+ */
+// unknown: one helper serves every item kind's style, as with itemBody.
+function styleBody(style: object): Record<string, unknown> {
+	const body: Record<string, unknown> = {}; // unknown: serialized as-is.
+	for (const [key, value] of Object.entries(style)) {
+		body[key] = typeof value === 'number' ? String(value) : value;
 	}
 	return body;
 }
@@ -111,7 +126,7 @@ export function itemBody(
  * parameter would mean threading each item kind's style type through it, and
  * this only needs to know whether any key exists.
  */
-function hasKeys(value: unknown): boolean {
+function hasKeys(value: unknown): value is object {
 	return (
 		typeof value === 'object' && value !== null && Object.keys(value).length > 0
 	);
