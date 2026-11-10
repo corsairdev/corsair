@@ -41,11 +41,11 @@ export const create: ReamazeEndpoints['contactsCreate'] = (ctx, input) =>
 			output: Outputs.contactsCreate,
 		},
 		input,
-		({ name, email, id, external_avatar_url, notes, data }) => ({
+		({ name, email, mobile, id, external_avatar_url, notes, data }) => ({
 			method: 'POST',
 			path: '/contacts',
 			body: {
-				contact: { name, email, id, external_avatar_url, notes, data },
+				contact: { name, email, mobile, id, external_avatar_url, notes, data },
 			},
 		}),
 		{

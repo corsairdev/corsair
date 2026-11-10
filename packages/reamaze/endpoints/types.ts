@@ -638,21 +638,36 @@ const ContactsListResponseSchema = z
 
 export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
 
-const ContactsCreateInputSchema = z.object({
-	name: z.string().min(1),
-	email: z.string().min(1),
-	id: z.string().optional().describe('Your own id for this contact'),
-	external_avatar_url: z.string().optional(),
-	notes: z
-		.array(z.string())
-		.optional()
-		.describe('Plain note bodies attached at creation'),
-	// unknown: brand-defined custom fields; the API passes them through untyped.
-	data: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('Customer data attributes, one level deep'),
-});
+const ContactsCreateInputSchema = z
+	.object({
+		name: z.string().min(1),
+		email: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Either this or mobile is required'),
+		mobile: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'E.164 without spaces, e.g. +12223334444. Either this or email is required',
+			),
+		id: z.string().optional().describe('Your own id for this contact'),
+		external_avatar_url: z.string().optional(),
+		notes: z
+			.array(z.string())
+			.optional()
+			.describe('Plain note bodies attached at creation'),
+		// unknown: brand-defined custom fields; the API passes them through untyped.
+		data: z
+			.record(z.string(), z.unknown())
+			.optional()
+			.describe('Customer data attributes, one level deep'),
+	})
+	.refine((value) => Boolean(value.email || value.mobile), {
+		message: 'Pass an email or a mobile number',
+	});
 
 export type ContactsCreateInput = z.input<typeof ContactsCreateInputSchema>;
 

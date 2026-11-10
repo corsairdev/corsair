@@ -122,7 +122,7 @@ apiNotes:
   contacts.list: |
     Answers `{ contacts, page_size, page_count, total_count }`. Contacts belong to the account rather than a brand. `type` takes `email` or `mobile`, and `data` filters the same way it does on conversations.
   contacts.create: |
-    Wraps the payload in `contact` and answers `{ contact }`. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
+    Wraps the payload in `contact` and answers `{ contact }`. Pass an `email` or a `mobile` number in E.164 form; other contact types cannot be created. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
   contacts.update: |
     Sends PUT with a `contact` wrapper, and the identifier stays in the path only because Re:amaze cannot change an email, mobile number or other identifier. `notes` appends notes; editing one goes through the notes endpoints.
   identities.list: |

@@ -211,6 +211,18 @@ describe('reamaze plugin definition', () => {
 		).toBe(false);
 	});
 
+	it('takes an email or a mobile number on contact create', () => {
+		// The vendor requires one of the two, so a phone-only contact is valid.
+		const create = reamazeEndpointSchemas['contacts.create'];
+		expect(
+			create.input.safeParse({ name: 'bob', email: 'bob@example.com' }).success,
+		).toBe(true);
+		expect(
+			create.input.safeParse({ name: 'bob', mobile: '+12223334444' }).success,
+		).toBe(true);
+		expect(create.input.safeParse({ name: 'bob' }).success).toBe(false);
+	});
+
 	it('accepts only the documented article statuses', () => {
 		const create = reamazeEndpointSchemas['articles.create'];
 		const base = { topic: 'faq', title: 'foo', body: 'support' };

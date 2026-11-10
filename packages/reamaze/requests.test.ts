@@ -388,6 +388,21 @@ describe('Re:amaze request shapes', () => {
 		});
 	});
 
+	it('contacts.create sends a mobile number for a contact without an email', async () => {
+		mockFetch(
+			jsonResponse({ contact: { name: 'bob', mobile: '+12223334444' } }),
+		);
+
+		await endpoints.contacts.create(makeCtx(), {
+			name: 'bob',
+			mobile: '+12223334444',
+		});
+
+		expect(sentBody()).toEqual({
+			contact: { name: 'bob', mobile: '+12223334444' },
+		});
+	});
+
 	it('contacts.update omits the identifier from the body', async () => {
 		mockFetch(jsonResponse(fixtures.updatedContactResponse));
 
