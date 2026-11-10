@@ -98,15 +98,39 @@ describeIfKey('Knack live API', () => {
 		expect(page.total_records).toBeGreaterThanOrEqual(page.records.length);
 	});
 
-	// The filter must actually narrow the list: the unindexed parameter form is
-	// silently ignored by Knack, so this pins that filtering works end to end.
+	// The filter must actually narrow the list. Knack silently ignores the
+	// unindexed parameter spelling, so the control matters: a record is created
+	// first, which makes "unfiltered returns more than zero" a real assertion
+	// rather than one an empty table would satisfy either way.
 	it('applies a filter rather than ignoring it', async () => {
+		const field = writableField ?? 'field_23';
+		const marker = `corsair filter control ${Date.now()}`;
+
+		const control = KnackEndpointOutputSchemas.recordsCreate.parse(
+			await corsair.knack.api.records.create({
+				object_key: OBJECT_KEY,
+				fields: { [field]: marker },
+			}),
+		);
+		createdId = control.id;
+
 		const all = KnackEndpointOutputSchemas.recordsList.parse(
 			await corsair.knack.api.records.list({ object_key: OBJECT_KEY }),
 		);
-		const field = writableField ?? 'field_23';
+		// Without this the test passes on an empty table even when the filter is
+		// ignored, because both calls would return zero records.
+		expect(all.total_records).toBeGreaterThan(0);
 
-		const filtered = KnackEndpointOutputSchemas.recordsList.parse(
+		const matching = KnackEndpointOutputSchemas.recordsList.parse(
+			await corsair.knack.api.records.list({
+				object_key: OBJECT_KEY,
+				filters: [{ field, operator: 'is', value: marker }],
+			}),
+		);
+		expect(matching.total_records).toBe(1);
+		expect(matching.records[0]?.id).toBe(control.id);
+
+		const none = KnackEndpointOutputSchemas.recordsList.parse(
 			await corsair.knack.api.records.list({
 				object_key: OBJECT_KEY,
 				filters: [
@@ -114,11 +138,16 @@ describeIfKey('Knack live API', () => {
 				],
 			}),
 		);
+		expect(none.total_records).toBe(0);
 
-		expect(filtered.total_records).toBe(0);
-		// The unfiltered call is the control: a filter that is ignored returns
-		// everything, which this proves is more than zero.
-		expect(all.total_records).toBeGreaterThanOrEqual(0);
+		const removed = KnackEndpointOutputSchemas.recordsDelete.parse(
+			await corsair.knack.api.records.delete({
+				object_key: OBJECT_KEY,
+				record_id: control.id,
+			}),
+		);
+		expect(removed.delete).toBe(true);
+		createdId = undefined;
 	});
 
 	it('creates a record, reads it back, updates it, then deletes it', async () => {
