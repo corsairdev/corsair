@@ -1,8 +1,13 @@
 /**
  * Fixtures follow Miro's REST v2 spec
- * (github.com/miroapp/api-clients/packages/generator/spec.json) and the live
- * reference pages. There was no API token for this build, so nothing here is
- * claimed as a captured live response.
+ * (github.com/miroapp/api-clients/packages/generator/spec.json), corrected
+ * against a live response. The corrections are the reason these differ from the
+ * spec's own examples:
+ *
+ * - `createdBy`, `modifiedBy`, `owner` and `team` are reference objects, not id
+ *   strings.
+ * - A board carries `team` and `owner` objects; there is no `teamId`/`ownerId`.
+ * - `items` and `connectors` reject a page size under 10.
  */
 
 /**
@@ -18,11 +23,14 @@ export const board = {
 	name: 'Product roadmap',
 	description: 'Q1 planning',
 	createdAt: '2026-11-01T09:00:00Z',
-	createdBy: '3074457345618258602',
+	// Miro sends these as reference objects, not ids: verified against a live
+	// board, which the spec gets wrong.
+	createdBy: { id: '3074457345618258602', type: 'user', name: 'Jordan' },
 	modifiedAt: '2026-11-02T10:00:00Z',
-	modifiedBy: '3074457345618258602',
-	ownerId: '3074457345618258602',
-	teamId: '3074457345618258600',
+	modifiedBy: { id: '3074457345618258602', type: 'user', name: 'Jordan' },
+	owner: { id: '3074457345618258602', type: 'user', name: 'Jordan' },
+	team: { id: '3074457345618258600', type: 'team', name: 'Dev team' },
+	organization: { id: '3074457345618258609', type: 'organization' },
 	projectId: '3074457345618258601',
 	viewLink: 'https://miro.com/app/board/uXjVK1abcd=/',
 	type: 'board',

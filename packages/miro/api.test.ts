@@ -1,14 +1,24 @@
 import { MiroAPIError } from './client';
-import { boardsGet, boardsList, itemsList, tagsList } from './endpoints';
+import {
+	boardsGet,
+	boardsList,
+	connectorsList,
+	itemsList,
+	stickyNotesCreate,
+	stickyNotesUpdate,
+	tagsCreate,
+	tagsList,
+} from './endpoints';
 import type { MiroContext } from './index';
 
 /**
- * Live smoke tests against the real API. Gated on `MIRO_API_KEY`.
+ * Live smoke tests against the real API. Gated on `MIRO_API_KEY`, with the
+ * board-scoped ones also needing `MIRO_TEST_BOARD_ID`.
  *
  * These call the endpoint functions, so the response mapping and every output
- * schema run against a real payload. Every call is read-only: board and tag
- * lists, and a board read when `MIRO_TEST_BOARD_ID` is set. Nothing is created,
- * changed or deleted, because that would alter someone's boards.
+ * schema run against a real payload. The board-scoped group writes two things
+ * (a sticky note and a tag) on the board you point it at, so use a throwaway
+ * board rather than a real one.
  *
  * CI ignores this file by name (`api.test.ts`), so it only runs through
  * `pnpm --filter @corsair-dev/miro test:live`.
@@ -68,7 +78,8 @@ describeIfKey('Miro live API', () => {
 		it('lists items through the endpoint and its output schema', async () => {
 			const result = await itemsList(ctx, {
 				boardId: BOARD_ID as string,
-				limit: 5,
+				// Items refuse fewer than 10 per page.
+				limit: 10,
 			});
 
 			expect(Array.isArray(result.items)).toBe(true);
@@ -81,6 +92,53 @@ describeIfKey('Miro live API', () => {
 			});
 
 			expect(Array.isArray(result.tags)).toBe(true);
+		});
+
+		it('lists connectors at the minimum page size', async () => {
+			// Connectors refuse fewer than 10 rows per page, which is why the
+			// schema now enforces that minimum.
+			const result = await connectorsList(ctx, {
+				boardId: BOARD_ID as string,
+				limit: 10,
+			});
+
+			expect(Array.isArray(result.connectors)).toBe(true);
+		});
+
+		it('creates and updates a sticky note, then reads it back', async () => {
+			const created = await stickyNotesCreate(ctx, {
+				boardId: BOARD_ID as string,
+				content: 'Corsair live smoke',
+				shape: 'square',
+				fillColor: 'light_yellow',
+				position: { x: 0, y: 0 },
+			});
+
+			// The create answer is flat and wrapped by the endpoint, so this reads
+			// the declared shape rather than the wire shape.
+			expect(created.item.id).toBeTruthy();
+			expect(created.item.data?.content).toBe('Corsair live smoke');
+
+			const updated = await stickyNotesUpdate(ctx, {
+				boardId: BOARD_ID as string,
+				itemId: created.item.id,
+				content: 'Corsair live smoke, updated',
+			});
+			expect(updated.item.data?.content).toBe('Corsair live smoke, updated');
+		});
+
+		it('creates a tag', async () => {
+			// Unique per run: Miro rejects a duplicate tag title on the same board
+			// with 400 `6.0303`, so a fixed name fails on the second run.
+			const title = `corsair-live-${Date.now()}`;
+			const result = await tagsCreate(ctx, {
+				boardId: BOARD_ID as string,
+				title,
+				fillColor: 'red',
+			});
+
+			expect(result.item.id).toBeTruthy();
+			expect(result.item.title).toBe(title);
 		});
 	});
 });

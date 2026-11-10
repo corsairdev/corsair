@@ -32,22 +32,40 @@ const OffsetPagingSchema = {
 		.describe('Zero-based offset of the first result. Defaults to 0.'),
 };
 
-const CursorPagingSchema = {
+const cursorPaging = (minimum: number) => ({
 	limit: z
 		.number()
 		.int()
-		.min(1)
+		.min(minimum)
 		.max(50)
 		.optional()
-		.describe('Results per page, up to 50. Defaults to 10.'),
+		.describe(
+			`Results per page, ${minimum} to 50. Defaults to 10; Miro rejects anything below ${minimum} on this route.`,
+		),
 	cursor: z
 		.string()
 		.min(1)
 		.optional()
 		.describe('The `cursor` from the previous page; omit for the first.'),
-};
+});
+
+/** Items and connectors refuse fewer than 10 rows per page. */
+const CursorPagingSchema = cursorPaging(10);
 
 const HrefSchema = z.string().nullish();
+
+/**
+ * A reference to another resource, as Miro sends it: an object with `id`,
+ * `type` and usually `name`. The spec types `ownerId`, `teamId`, `createdBy`
+ * and `modifiedBy` as strings, but a live board returns objects for all four.
+ */
+const ReferenceSchema = z
+	.object({
+		id: z.string().nullish(),
+		type: z.string().nullish(),
+		name: z.string().nullish(),
+	})
+	.loose();
 
 /** True when at least one field carries a value, so an update is not a no-op. */
 function anySet(...values: unknown[]): boolean {
@@ -152,11 +170,12 @@ const BoardSchema = z
 		name: z.string().nullish(),
 		description: z.string().nullish(),
 		createdAt: z.string().nullish(),
-		createdBy: z.string().nullish(),
+		createdBy: ReferenceSchema.nullish(),
 		modifiedAt: z.string().nullish(),
-		modifiedBy: z.string().nullish(),
-		ownerId: z.string().nullish(),
-		teamId: z.string().nullish(),
+		modifiedBy: ReferenceSchema.nullish(),
+		owner: ReferenceSchema.nullish().describe('The board owner.'),
+		team: ReferenceSchema.nullish().describe('The team the board belongs to.'),
+		organization: ReferenceSchema.nullish(),
 		projectId: z.string().nullish(),
 		viewLink: z.string().nullish(),
 		type: z.string().nullish(),
@@ -297,11 +316,12 @@ const BoardMemberSchema = z
 		id: z.string(),
 		role: z.string().nullish(),
 		name: z.string().nullish(),
+		type: z.string().nullish(),
+		// A live member row carries no email or timestamps; they stay typed but
+		// optional so a plan that sends them still parses.
 		email: z.string().nullish(),
 		createdAt: z.string().nullish(),
-		createdBy: z.string().nullish(),
 		modifiedAt: z.string().nullish(),
-		modifiedBy: z.string().nullish(),
 		links: LinksSchema.nullish(),
 	})
 	.loose();
@@ -405,9 +425,10 @@ const ItemBaseSchema = z
 			.nullish()
 			.describe('The item kind, such as `sticky_note`.'),
 		createdAt: z.string().nullish(),
-		createdBy: z.string().nullish(),
+		// Objects, not ids, on a live response; verified against a real board.
+		createdBy: ReferenceSchema.nullish(),
 		modifiedAt: z.string().nullish(),
-		modifiedBy: z.string().nullish(),
+		modifiedBy: ReferenceSchema.nullish(),
 		links: LinksSchema.nullish(),
 	})
 	.loose();
