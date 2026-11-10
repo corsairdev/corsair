@@ -258,6 +258,21 @@ describe('input schemas reject what the API would refuse', () => {
 		).toBe(true);
 	});
 
+	it('marks tax_code and amount as required in the schema, not in a refinement', () => {
+		// The catalog reads required and optional from the schema shape. With an
+		// optional field and a refinement on top, it showed both as optional.
+		const shape = Inputs.taxRatesCalculate.shape;
+		expect(shape.tax_code.safeParse(undefined).success).toBe(false);
+		expect(shape.amount.safeParse(undefined).success).toBe(false);
+		expect(
+			Inputs.taxRatesCalculate.safeParse({
+				to_country: 'US',
+				tax_code: '',
+				amount: 10,
+			}).success,
+		).toBe(false);
+	});
+
 	it('rejects a payment method outside the documented enum', () => {
 		expect(
 			Inputs.invoicesCreate.safeParse({
