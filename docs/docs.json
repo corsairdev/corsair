@@ -3175,6 +3175,15 @@
                 ]
               },
               {
+                "group": "Shippo",
+                "pages": [
+                  "plugins/shippo/overview",
+                  "plugins/shippo/api",
+                  "plugins/shippo/database",
+                  "plugins/shippo/webhooks"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
