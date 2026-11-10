@@ -1,0 +1,1520 @@
+---
+title: API
+description: "API reference for Retently: every `retently.api.*` operation with input and output types."
+---
+
+Every `retently.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### ping
+
+`account.ping`
+
+Read the account identity, plan, remaining survey credits and usage counters in one call
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.account.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account?: {
+    id?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    timezone?: string | null
+  } | null,
+  plan?: {
+    code?: string | null,
+    billingCycle?: string | null,
+    renewsAt?: string | null,
+    credits?: {
+      surveys?: {
+        period?: string | null,
+        periodStart?: string | null,
+        periodEnd?: string | null,
+        included?: number | null,
+        purchased?: number | null,
+        limit?: number | null,
+        used?: number | null,
+        remaining?: number | null,
+        dailyLimit?: number | null
+      } | null
+    } | null
+  } | null,
+  usage?: {
+    contacts?: number | null,
+    feedback?: number | null,
+    outbox?: number | null,
+    queue?: number | null,
+    suppressions?: number | null
+  } | null,
+  cache?: {
+    updatedAt?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### list
+
+`campaigns.list`
+
+List survey campaigns with their metric, template, channel, type and active state
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `campaigns` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  isActive?: boolean | null,
+  templateId?: string | null,
+  metric?: string | null,
+  type?: string | null,
+  channel?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### get
+
+`companies.get`
+
+Get one company by ID or domain, including its NPS, CSAT, CES and STAR scores
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.companies.get({ companyId: 'acme.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | The company ID, or its domain such as acme.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  createdDate?: string | null,
+  domain?: string | null,
+  companyName?: string | null,
+  industryName?: string | null,
+  tags?: string[] | null,
+  cxMetrics?: {
+    NPS?: number | null,
+    CSAT?: number | null,
+    CES?: number | null,
+    STAR?: number | null
+  } | null,
+  contactsCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List companies with their domain, industry, tags, CX metrics and contact count
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.companies.list({ limit: 20, sort: '-createdDate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based, defaults to 1. |
+| `limit` | `number` | No | Defaults to 20, maximum 1,000. |
+| `sort` | `string` | No | Field to sort by; prefix with - for descending, such as -createdDate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  companies?: {
+    id?: string | null,
+    createdDate?: string | null,
+    domain?: string | null,
+    companyName?: string | null,
+    industryName?: string | null,
+    tags?: string[] | null,
+    cxMetrics?: {
+      NPS?: number | null,
+      CSAT?: number | null,
+      CES?: number | null,
+      STAR?: number | null
+    } | null,
+    contactsCount?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### delete
+
+`customers.delete`
+
+Permanently delete customers and all their associated data, identified by email address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.retently.api.customers.delete({ subscribers: [{ email: 'john.smith@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | The customers to delete, with all their associated data. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  deleted?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Get one customer by ID, including tags, custom properties, queue state and last survey
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.customers.get({ customerId: '6827fb27bf618a02f1234567' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The Retently customer ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  subscribers?: {
+    id?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company?: string | null,
+    jobTitle?: string | null,
+    phoneNumber?: string | null,
+    tags?: string[] | null,
+    createdDate?: string | null,
+    updatedDate?: string | null,
+    properties?: {
+      label?: string | null,
+      name?: string | null,
+      type?: string | null,
+      value?: string | number | boolean | null | null
+    }[] | null,
+    location?: {
+      countryCode?: string | null,
+      region?: string | null,
+      country?: string | null,
+      city?: string | null,
+      state?: string | null,
+      zipCode?: string | null,
+      timezone?: string | null
+    } | null,
+    integrationsLists?: {
+      name?: string | null,
+      source?: string | null
+    }[] | null,
+    surveySubscriptionStatus?: {
+      isOptedOut?: boolean | null,
+      optOutDate?: string | null,
+      optOutMessage?: string | null,
+      optOutBy?: string | null,
+      isSuppressed?: boolean | null,
+      suppressedDate?: string | null,
+      suppressedReason?: string | null
+    } | null,
+    isInQueue?: boolean | null,
+    isInQueueSetAt?: string | null,
+    lastSurveySent?: {
+      openedDate?: string | null,
+      surveyId?: string | null,
+      metric?: string | null,
+      receivedDate?: string | null,
+      status?: string | null,
+      campaignId?: string | null,
+      resent?: boolean | null,
+      sentBy?: string | null,
+      channel?: string | null,
+      isNegative?: boolean | null,
+      isNeutral?: boolean | null,
+      isPositive?: boolean | null,
+      respondedDate?: string | null
+    } | null,
+    isEmailDeliverable?: boolean | null,
+    syncId?: string | null,
+    isAtRisk?: boolean | null,
+    source?: string | null,
+    isAnonymous?: boolean | null
+  }[] | null,
+  page?: number | null,
+  pages?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with paging, sorting, a creation-date window, an email lookup and property filters
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.customers.list({ limit: 50, sort: '-createdDate', attributes: [{ name: 'country', op: 'equal', value: 'US' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based, defaults to 1. |
+| `limit` | `number` | No | Defaults to 20, maximum 1,000. |
+| `sort` | `string` | No | Field to sort by; prefix with - for descending, such as -createdDate. |
+| `email` | `string` | No | Find one customer by email. |
+| `startDate` | `string` | No | Only customers created at or after this instant. A bare YYYY-MM-DD means 00:00:00 UTC. |
+| `endDate` | `string` | No | Only customers created at or before this instant. Not expanded to the end of the day. |
+| `attributes` | `object[]` | No | Property filters. The operators allowed depend on the property type. |
+| `match` | `all \| any` | No | How to combine several attributes: all (AND, default) or any (OR). |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  subscribers?: {
+    id?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company?: string | null,
+    jobTitle?: string | null,
+    phoneNumber?: string | null,
+    tags?: string[] | null,
+    createdDate?: string | null,
+    updatedDate?: string | null,
+    properties?: {
+      label?: string | null,
+      name?: string | null,
+      type?: string | null,
+      value?: string | number | boolean | null | null
+    }[] | null,
+    location?: {
+      countryCode?: string | null,
+      region?: string | null,
+      country?: string | null,
+      city?: string | null,
+      state?: string | null,
+      zipCode?: string | null,
+      timezone?: string | null
+    } | null,
+    integrationsLists?: {
+      name?: string | null,
+      source?: string | null
+    }[] | null,
+    surveySubscriptionStatus?: {
+      isOptedOut?: boolean | null,
+      optOutDate?: string | null,
+      optOutMessage?: string | null,
+      optOutBy?: string | null,
+      isSuppressed?: boolean | null,
+      suppressedDate?: string | null,
+      suppressedReason?: string | null
+    } | null,
+    isInQueue?: boolean | null,
+    isInQueueSetAt?: string | null,
+    lastSurveySent?: {
+      openedDate?: string | null,
+      surveyId?: string | null,
+      metric?: string | null,
+      receivedDate?: string | null,
+      status?: string | null,
+      campaignId?: string | null,
+      resent?: boolean | null,
+      sentBy?: string | null,
+      channel?: string | null,
+      isNegative?: boolean | null,
+      isNeutral?: boolean | null,
+      isPositive?: boolean | null,
+      respondedDate?: string | null
+    } | null,
+    isEmailDeliverable?: boolean | null,
+    syncId?: string | null,
+    isAtRisk?: boolean | null,
+    source?: string | null,
+    isAnonymous?: boolean | null
+  }[] | null,
+  page?: number | null,
+  pages?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resubscribe
+
+`customers.resubscribe`
+
+Resubscribe previously unsubscribed customers; self-unsubscribed and bounced contacts are skipped
+
+**Risk:** `write`
+
+```ts
+await corsair.retently.api.customers.resubscribe({ subscribers: [{ email: 'john.smith@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | The customers to resubscribe. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  status?: string | null,
+  reason?: string | null,
+  suppressed?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`customers.unsubscribe`
+
+Unsubscribe customers from future surveys, optionally recording a custom opt-out message
+
+**Risk:** `write`
+
+```ts
+await corsair.retently.api.customers.unsubscribe({ subscribers: [{ email: 'john.smith@example.com' }], message: 'Unsubscribed by owner.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | The customers to unsubscribe. |
+| `message` | `string` | No | A custom opt-out message recorded with the unsubscribe. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  unsubscribed?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`customers.upsert`
+
+Create or update up to 1,000 customers in one call, setting tags and custom properties
+
+**Risk:** `write`
+
+```ts
+await corsair.retently.api.customers.upsert({ subscribers: [{ email: 'john.smith@example.com', first_name: 'John', tags: ['beta'], properties: [{ label: 'Plan', type: 'string', value: 'Pro' }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | Up to 1,000 customers. An existing email is updated. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  tags?: string[],
+  properties?: {
+    label: string,
+    type?: string | text | integer | number | date | boolean | collection,
+    value: string | number | boolean | null
+  }[],
+  unset_properties?: string[],
+  unset_tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `pages` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `sort` | `string \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  subscribers?: {
+    id?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company?: string | null,
+    jobTitle?: string | null,
+    phoneNumber?: string | null,
+    tags?: string[] | null,
+    createdDate?: string | null,
+    updatedDate?: string | null,
+    properties?: {
+      label?: string | null,
+      name?: string | null,
+      type?: string | null,
+      value?: string | number | boolean | null | null
+    }[] | null,
+    location?: {
+      countryCode?: string | null,
+      region?: string | null,
+      country?: string | null,
+      city?: string | null,
+      state?: string | null,
+      zipCode?: string | null,
+      timezone?: string | null
+    } | null,
+    integrationsLists?: {
+      name?: string | null,
+      source?: string | null
+    }[] | null,
+    surveySubscriptionStatus?: {
+      isOptedOut?: boolean | null,
+      optOutDate?: string | null,
+      optOutMessage?: string | null,
+      optOutBy?: string | null,
+      isSuppressed?: boolean | null,
+      suppressedDate?: string | null,
+      suppressedReason?: string | null
+    } | null,
+    isInQueue?: boolean | null,
+    isInQueueSetAt?: string | null,
+    lastSurveySent?: {
+      openedDate?: string | null,
+      surveyId?: string | null,
+      metric?: string | null,
+      receivedDate?: string | null,
+      status?: string | null,
+      campaignId?: string | null,
+      resent?: boolean | null,
+      sentBy?: string | null,
+      channel?: string | null,
+      isNegative?: boolean | null,
+      isNeutral?: boolean | null,
+      isPositive?: boolean | null,
+      respondedDate?: string | null
+    } | null,
+    isEmailDeliverable?: boolean | null,
+    syncId?: string | null,
+    isAtRisk?: boolean | null,
+    source?: string | null,
+    isAnonymous?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feedback
+
+### get
+
+`feedback.get`
+
+Get one survey response by feedback ID
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.feedback.get({ feedbackId: '5f1faaa4b4e2e4963e41893b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedbackId` | `string` | Yes | The response ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  responses?: {
+    id?: string | null,
+    surveyId?: string | null,
+    customerId?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    jobTitle?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    tags?: string[] | null,
+    customProps?: {
+      label?: string | null,
+      name?: string | null,
+      type?: string | null,
+      value?: string | number | boolean | null | null
+    }[] | null,
+    campaignName?: string | null,
+    campaignId?: string | null,
+    createdDate?: string | null,
+    score?: number | null,
+    comment?: string | null,
+    checkbox?: boolean | null,
+    additionalQuestions?: {
+      type?: string | null,
+      questionText?: string | null,
+      metricsType?: string | null,
+      answer?: JsonValue
+    }[] | null,
+    feedbackTags?: string[] | null,
+    feedbackTagsNew?: string[] | null,
+    feedbackTopics?: {
+      name?: string | null,
+      sentiment?: string | null
+    }[] | null,
+    notes?: {
+      author?: string | null,
+      content?: string | null,
+      metricsType?: string | null,
+      date?: string | null
+    }[] | null,
+    status?: string | null,
+    assigned?: string | null,
+    ratingCategory?: string | null,
+    resolved?: boolean | null,
+    channel?: string | null,
+    metricsType?: string | null,
+    isBogus?: boolean | null,
+    isSubmitted?: boolean | null
+  }[] | null,
+  page?: number | null,
+  pages?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`feedback.import`
+
+Import up to 200 historical survey responses into a campaign, with scores, comments, topics and additional answers
+
+**Risk:** `write`
+
+```ts
+await corsair.retently.api.feedback.import({ campaign_id: '5a9d595701c85b37224ab2d0', feedback: [{ email: 'john.smith@example.com', score: 9, comment: 'Loved the onboarding', response_date: '2024-01-15T10:30:00Z' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | The campaign to import into; it decides the metric and template. |
+| `feedback` | `object[]` | Yes | Up to 200 responses. |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="feedback full type">
+
+```ts
+{
+  email: string,
+  score: number,
+  comment?: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  job_title?: string,
+  phone?: string,
+  country?: string,
+  state?: string,
+  city?: string,
+  tags?: string[] | string,
+  customer_tags?: string[],
+  topics?: {
+    name: string,
+    sentiment: positive | negative | neutral
+  }[],
+  properties?: {
+    label: string,
+    type?: string | text | integer | number | date | boolean | collection,
+    value: string | number | boolean | null
+  }[],
+  response_date?: string,
+  send_date?: string,
+  open_date?: string,
+  additional_questions?: {
+    uuid: string,
+    type: RATING | OPEN_ENDED | MULTIPLE_OPTIONS,
+    answer: string | number | boolean | null | JsonValue[] | Record<string, JsonValue>,
+    metric?: nps | csat | ces | star | thumbs | xsat | pmf
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  create_customers?: boolean,
+  update_existing_customers?: boolean,
+  skip_duplicates?: boolean,
+  duplicate_check_window?: number,
+  default_send_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  imported?: number | null,
+  skipped?: number | null,
+  failed?: number | null,
+  customersCreated?: number | null,
+  customersUpdated?: number | null,
+  warnings?: {
+    email?: string | null,
+    reason?: string | null,
+    field?: string | null
+  }[] | null,
+  details?: {
+    skipped?: {
+      email?: string | null,
+      reason?: string | null,
+      field?: string | null
+    }[] | null,
+    failed?: {
+      email?: string | null,
+      reason?: string | null,
+      field?: string | null
+    }[] | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`feedback.list`
+
+List survey responses with scores, comments, topics, tags and answers, filtered by customer, campaign, date or property
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.feedback.list({ email: 'john@example.com', limit: 20, sort: '-createdDate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based, defaults to 1. |
+| `limit` | `number` | No | Defaults to 20, maximum 1,000. |
+| `sort` | `string` | No | Field to sort by; prefix with - for descending, such as -createdDate. |
+| `email` | `string` | No | Search by a customer's email. |
+| `customerId` | `string` | No | Search by a customer's ID. |
+| `campaignId` | `string` | No | Only this campaign. |
+| `startDate` | `string` | No | Only responses at or after this instant. |
+| `endDate` | `string` | No | Only responses at or before this instant, not expanded to the end of the day. |
+| `attributes` | `object[]` | No | — |
+| `match` | `all \| any` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  responses?: {
+    id?: string | null,
+    surveyId?: string | null,
+    customerId?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    jobTitle?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    tags?: string[] | null,
+    customProps?: {
+      label?: string | null,
+      name?: string | null,
+      type?: string | null,
+      value?: string | number | boolean | null | null
+    }[] | null,
+    campaignName?: string | null,
+    campaignId?: string | null,
+    createdDate?: string | null,
+    score?: number | null,
+    comment?: string | null,
+    checkbox?: boolean | null,
+    additionalQuestions?: {
+      type?: string | null,
+      questionText?: string | null,
+      metricsType?: string | null,
+      answer?: JsonValue
+    }[] | null,
+    feedbackTags?: string[] | null,
+    feedbackTagsNew?: string[] | null,
+    feedbackTopics?: {
+      name?: string | null,
+      sentiment?: string | null
+    }[] | null,
+    notes?: {
+      author?: string | null,
+      content?: string | null,
+      metricsType?: string | null,
+      date?: string | null
+    }[] | null,
+    status?: string | null,
+    assigned?: string | null,
+    ratingCategory?: string | null,
+    resolved?: boolean | null,
+    channel?: string | null,
+    metricsType?: string | null,
+    isBogus?: boolean | null,
+    isSubmitted?: boolean | null
+  }[] | null,
+  page?: number | null,
+  pages?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Outbox
+
+### list
+
+`outbox.list`
+
+List sent surveys with their channel, sender, status and opened/responded detail, filtered by customer, campaign or date
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.outbox.list({ channel: 'email', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based, defaults to 1. |
+| `limit` | `number` | No | Defaults to 20, maximum 1,000. |
+| `sort` | `string` | No | Field to sort by; prefix with - for descending, such as -createdDate. |
+| `email` | `string` | No | Find a customer's sent surveys. |
+| `campaignId` | `string` | No | — |
+| `startDate` | `string` | No | Surveys sent at or after this date, snapped to the start of the day in the account timezone. |
+| `endDate` | `string` | No | Surveys sent at or before this date, snapped to the end of the day in the account timezone. |
+| `channel` | `email \| link \| inapp \| intercom \| embed` | No | — |
+| `sentBy` | `campaign \| reminder \| manual \| test \| imported` | No | — |
+| `attributes` | `object[]` | No | — |
+| `match` | `all \| any` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  surveys?: {
+    surveyId?: string | null,
+    email?: string | null,
+    customerId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    companyId?: string | null,
+    personTags?: string | null,
+    sentDate?: string | null,
+    channel?: string | null,
+    campaign?: string | null,
+    campaignId?: string | null,
+    surveyTemplateId?: string | null,
+    subject?: string | null,
+    sentBy?: string | null,
+    status?: string | null,
+    detailedStatus?: {
+      isOpened?: boolean | null,
+      openedDate?: string | null,
+      isResponded?: boolean | null,
+      respondedDate?: string | null,
+      hasFeedback?: boolean | null,
+      isOptedOut?: boolean | null,
+      isBounced?: boolean | null
+    } | null,
+    additionalRecipients?: {
+      email?: string | null,
+      type?: string | null,
+      mandrillMessageId?: string | null
+    }[] | null,
+    mandrillMessageId?: string | null,
+    responseId?: string | null
+  }[] | null,
+  page?: number | null,
+  pages?: number | null,
+  limit?: number | null,
+  sort?: string | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### get
+
+`reports.get`
+
+Read campaign reports with score trend, delivery stats and per-question stats, for one campaign or all
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.reports.get({ campaignId: '5f1ec45y27b8313876299999', startDate: '2024-01-01', endDate: '2024-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | No | Omit for every campaign in the account. |
+| `startDate` | `string` | No | YYYY-MM-DD only. ISO 8601 date-times and UNIX timestamps are a 400 here, unlike elsewhere in the API. |
+| `endDate` | `string` | No | YYYY-MM-DD only, inclusive of the whole day. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  campaignId?: string | null,
+  name?: string | null,
+  isActive?: boolean | null,
+  metric?: string | null,
+  type?: string | null,
+  trend?: {
+    day?: string | null,
+    promoters?: number | null,
+    passives?: number | null,
+    detractors?: number | null,
+    total?: number | null,
+    score?: number | null,
+    ratingDistribution?: Record<string, number> | null
+  }[] | null,
+  last?: {
+    promoters?: number | null,
+    passives?: number | null,
+    detractors?: number | null,
+    total?: number | null,
+    score?: number | null,
+    ratingDistribution?: Record<string, number> | null
+  } | null,
+  deliveryStats?: {
+    totalCount?: number | null,
+    opened?: number | null,
+    responded?: number | null,
+    optedOut?: number | null,
+    isBounced?: number | null
+  } | null,
+  questionsStats?: {
+    uuid?: string | null,
+    title?: string | null,
+    isStarred?: boolean | null,
+    position?: number | null,
+    isOnMain?: boolean | null,
+    metricsType?: string | null,
+    stats?: {
+      last?: {
+        day?: string | null,
+        promoters?: number | null,
+        passives?: number | null,
+        detractors?: number | null,
+        responded?: number | null,
+        opened?: number | null,
+        skipped?: number | null,
+        total?: number | null,
+        scoreSum?: number | null,
+        score?: number | null
+      } | null,
+      first?: {
+        day?: string | null,
+        promoters?: number | null,
+        passives?: number | null,
+        detractors?: number | null,
+        responded?: number | null,
+        opened?: number | null,
+        skipped?: number | null,
+        total?: number | null,
+        scoreSum?: number | null,
+        score?: number | null
+      } | null
+    } | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Survey
+
+### send
+
+`survey.send`
+
+Queue a transactional survey to up to 100 customers through a transactional campaign, optionally delayed
+
+**Risk:** `write`
+
+```ts
+await corsair.retently.api.survey.send({ campaign: '5a9d595701c85b37224ab2d0', delay: 7, subscribers: [{ email: 'john.smith@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string` | Yes | The transactional campaign to survey through. A regular campaign is a 400. |
+| `delay` | `number` | No | Days to wait, overriding the campaign's scheduling. Omit it to respect the campaign's sending time frame. |
+| `subscribers` | `object[]` | Yes | Up to 100 customers. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  tags?: string[],
+  properties?: {
+    label: string,
+    type?: string | text | integer | number | date | boolean | collection,
+    value: string | number | boolean | null
+  }[],
+  unset_properties?: string[],
+  unset_tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `status` | `string \| null` | No | queued, or error on a refusal. |
+
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Get one survey template with its questions and their UUIDs, which feedback.import needs
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.templates.get({ templateId: '628765bf87439560a1b2c3d4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | A template ID from templates.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  channel?: string | null,
+  metric?: string | null,
+  surveyQuestions?: {
+    uuid?: string | null,
+    type?: string | null,
+    title?: string | null,
+    isMain?: boolean | null,
+    options?: {
+      uuid?: string | null,
+      text?: string | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List survey templates with their channel and metric
+
+**Risk:** `read`
+
+```ts
+await corsair.retently.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `templates` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  channel?: string | null,
+  metric?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -3107,6 +3107,14 @@
                 ]
               },
               {
+                "group": "Retently",
+                "pages": [
+                  "plugins/retently/overview",
+                  "plugins/retently/api",
+                  "plugins/retently/database"
+                ]
+              },
+              {
                 "group": "Rev AI",
                 "pages": [
                   "plugins/revai/overview",
