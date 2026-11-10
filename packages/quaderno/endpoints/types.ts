@@ -242,7 +242,8 @@ export const ProductSchema = z
 		tax_type: z.string().nullish(),
 		tax_based_on: z.string().nullish(),
 		country: z.string().nullish(),
-		stock: z.number().nullish(),
+		// The spec types `stock` as a string; only `null` was seen live.
+		stock: z.union([z.string(), z.number()]).nullish(),
 		url: z.string().nullish(),
 		created_at: z.number().nullish(),
 		paypal_interval_duration: z.number().nullish(),
@@ -474,21 +475,33 @@ const DocumentWriteShape = {
 	tag_list: z.array(z.string()).optional(),
 } as const;
 
+/**
+ * The `date` filter on a document list. Quaderno only accepts a **range**: two
+ * dates joined by a comma. A single date is not a documented format.
+ */
+const DateRangeSchema = z
+	.string()
+	.min(1)
+	.optional()
+	.describe(
+		'Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted.',
+	);
+
 // Invoices
 
 const InvoicesListInputSchema = z.object({
-	q: z.string().min(1).optional().describe('Free-text search.'),
-	date: z
+	q: z
 		.string()
 		.min(1)
 		.optional()
-		.describe('Only documents on this ISO date.'),
+		.describe('Search by invoice number, customer name or PO number.'),
+	date: DateRangeSchema,
 	state: z
 		.string()
 		.min(1)
 		.optional()
 		.describe(
-			'Only this state. The spec types it as a free string and names no values; observed values include `outstanding`, `paid` and `void`.',
+			'Only this state. Quaderno documents `outstanding`, `late`, `uncollectible` and `paid`.',
 		),
 	contact: z
 		.number()
@@ -617,7 +630,7 @@ export type InvoiceResponse = z.infer<typeof InvoiceResponseSchema>;
 
 const ReceiptsListInputSchema = z.object({
 	q: z.string().min(1).optional(),
-	date: z.string().min(1).optional(),
+	date: DateRangeSchema,
 	state: z.string().min(1).optional(),
 	contact: z.number().int().positive().optional(),
 	limit: LimitSchema,
@@ -673,7 +686,7 @@ export type ReceiptResponse = z.infer<typeof ReceiptResponseSchema>;
 
 const CreditsListInputSchema = z.object({
 	q: z.string().min(1).optional(),
-	date: z.string().min(1).optional(),
+	date: DateRangeSchema,
 	state: z.string().min(1).optional(),
 	contact: z.number().int().positive().optional(),
 	limit: LimitSchema,
@@ -763,7 +776,7 @@ export type CreditResponse = z.infer<typeof CreditResponseSchema>;
 
 const ProformasListInputSchema = z.object({
 	q: z.string().min(1).optional(),
-	date: z.string().min(1).optional(),
+	date: DateRangeSchema,
 	state: z.string().min(1).optional(),
 	contact: z.number().int().positive().optional(),
 	limit: LimitSchema,
@@ -905,12 +918,19 @@ const TaxIdValidateInputSchema = z.object({
 
 export type TaxIdValidateInput = z.input<typeof TaxIdValidateInputSchema>;
 
+/**
+ * The reference documents one field. `valid` is `true` for a registered
+ * business, `false` for an invalid number, and `null` when the external registry
+ * is unavailable, which is not the same as invalid.
+ */
 const TaxIdValidateResponseSchema = z
 	.object({
-		valid: z.boolean().nullish(),
-		valid_format: z.boolean().nullish(),
-		company_name: z.string().nullish(),
-		company_address: z.string().nullish(),
+		valid: z
+			.boolean()
+			.nullish()
+			.describe(
+				'`true` or `false`, or `null` when the registry could not be reached.',
+			),
 	})
 	.loose();
 
@@ -1019,7 +1039,8 @@ export type AuthorizationInput = z.input<typeof AuthorizationInputSchema>;
  */
 const IdentitySchema = z
 	.object({
-		id: z.number().nullish(),
+		// The reference's example sends this as a string (`"999"`).
+		id: z.union([z.number(), z.string()]).nullish(),
 		name: z.string().nullish(),
 		email: z.string().nullish(),
 		publishable_key: z.string().nullish(),

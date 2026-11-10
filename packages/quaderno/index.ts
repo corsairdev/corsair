@@ -639,7 +639,7 @@ const quadernoEndpointMeta = {
 	'taxIds.validate': {
 		riskLevel: 'read',
 		description:
-			'Checks a VAT or tax number against the country\u2019s registry and returns the registered company name when it is valid.',
+			'Checks a VAT or tax number against the country\u2019s registry. `valid` is true or false, or null when the registry could not be reached, which does not mean the number is invalid.',
 	},
 	'taxCodes.list': {
 		riskLevel: 'read',
