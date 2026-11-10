@@ -2330,6 +2330,15 @@
                 ]
               },
               {
+                "group": "InboxKit",
+                "pages": [
+                  "plugins/inboxkit/overview",
+                  "plugins/inboxkit/api",
+                  "plugins/inboxkit/database",
+                  "plugins/inboxkit/webhooks"
+                ]
+              },
+              {
                 "group": "Insighto AI",
                 "pages": [
                   "plugins/insightoai/overview",
@@ -3802,6 +3811,15 @@
               "guides/webhooks",
               "guides/workflows"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
           }
         ]
       }
