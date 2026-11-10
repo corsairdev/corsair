@@ -51,4 +51,37 @@ describe('Finage provider response shapes', () => {
 				.success,
 		).toBe(false);
 	});
+
+	it('accepts datetime bar times returned for date_format dt', () => {
+		const bars = {
+			symbol: 'AAPL',
+			totalResults: 1,
+			results: [
+				{
+					o: 80.88,
+					h: 81.19,
+					l: 79.73,
+					c: 80.36,
+					v: 118746872,
+					t: '2020-02-05',
+				},
+			],
+		};
+		for (const operation of [
+			'getStockMarketAggregates',
+			'getForexMarketAggregates',
+		] as const) {
+			expect(
+				FinageInputSchemas[operation].safeParse({
+					symbol: 'AAPL',
+					multiply: 1,
+					time: 'day',
+					from: '2020-02-05',
+					to: '2020-02-07',
+					date_format: 'dt',
+				}).success,
+			).toBe(true);
+			expect(FinageOutputSchemas[operation].safeParse(bars).success).toBe(true);
+		}
+	});
 });

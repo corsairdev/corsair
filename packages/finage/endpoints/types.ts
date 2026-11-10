@@ -194,7 +194,9 @@ const aggregateBar = z
 		l: z.number(),
 		c: z.number(),
 		v: z.number().optional(),
-		t: z.number(),
+		// A millisecond timestamp by default; a datetime string when the request
+		// sets date_format to dt.
+		t: z.union([z.number(), z.string()]),
 	})
 	.catchall(finageJsonValue);
 const aggregateResponse = z
