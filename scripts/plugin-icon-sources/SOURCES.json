@@ -129,6 +129,10 @@
   "dropbox": {
     "from": "https://svgl.app/library/dropbox.svg"
   },
+  "elevenlabs": {
+    "from": "https://media.brand.dev/990d193c-0b46-4a70-ba10-0bc9e7dd71a0.svg",
+    "note": "found with the context.dev Brand API for elevenlabs.io"
+  },
   "epicgames": {
     "from": "https://svgl.app/library/epicgames-icon-light.svg"
   },

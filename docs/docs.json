@@ -1784,6 +1784,15 @@
                 ]
               },
               {
+                "group": "ElevenLabs",
+                "pages": [
+                  "plugins/elevenlabs/overview",
+                  "plugins/elevenlabs/api",
+                  "plugins/elevenlabs/database",
+                  "plugins/elevenlabs/webhooks"
+                ]
+              },
+              {
                 "group": "EmailOctopus",
                 "pages": [
                   "plugins/emailoctopus/overview",
@@ -2246,6 +2255,15 @@
                 ]
               },
               {
+                "group": "Higgsfield",
+                "pages": [
+                  "plugins/higgsfield/overview",
+                  "plugins/higgsfield/api",
+                  "plugins/higgsfield/database",
+                  "plugins/higgsfield/webhooks"
+                ]
+              },
+              {
                 "group": "Hookdeck",
                 "pages": [
                   "plugins/hookdeck/overview",
@@ -2317,6 +2335,15 @@
                   "plugins/imgbb/overview",
                   "plugins/imgbb/api",
                   "plugins/imgbb/database"
+                ]
+              },
+              {
+                "group": "InboxKit",
+                "pages": [
+                  "plugins/inboxkit/overview",
+                  "plugins/inboxkit/api",
+                  "plugins/inboxkit/database",
+                  "plugins/inboxkit/webhooks"
                 ]
               },
               {
@@ -3792,6 +3819,15 @@
               "guides/webhooks",
               "guides/workflows"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
           }
         ]
       }
