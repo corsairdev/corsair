@@ -29,6 +29,10 @@ function scalarFor(field: ZodField, key: string): unknown {
 	if (type === 'boolean') {
 		return true;
 	}
+	if (type === 'record') {
+		// An empty object is the smallest valid open-shaped value.
+		return {};
+	}
 	if (type === 'enum') {
 		// unknown: zod v4 enum defs store the allowed members in entries; the
 		// first documented member satisfies the contract.

@@ -327,11 +327,11 @@ describe('Fidel endpoint request seams', () => {
 		});
 		await updateCardMetadata(ctx, {
 			cardId: 'cardId-1',
-			RAW_BODY: 'RAW_BODY-1',
+			metadata: { customKey: 'customValue' },
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/v1/cards/cardId-1/metadata', {
 			method: 'PUT',
-			body: { RAW_BODY: 'RAW_BODY-1' },
+			body: { customKey: 'customValue' },
 		});
 		await createBrandWebhook(ctx, {
 			event: 'brand.consent',

@@ -99,13 +99,13 @@ export const updateCardMetadata: FidelEndpoints['updateCardMetadata'] = async (
 	ctx,
 	input,
 ) => {
-	const { cardId, ...rest } = input;
+	// The provider takes the metadata object itself as the PUT body.
 	const response = await makeFidelRequest<
 		FidelEndpointOutputs['updateCardMetadata']
 	>(
 		ctx,
 		fidelPathParameter('/v1/cards/{cardId}/metadata', 'cardId', input.cardId),
-		{ method: 'PUT', body: rest },
+		{ method: 'PUT', body: input.metadata },
 	);
 	await logEventFromContext(
 		ctx,

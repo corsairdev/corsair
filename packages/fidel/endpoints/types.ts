@@ -125,8 +125,8 @@ const CreateLocationInputSchema = z.object({
 	]),
 	postcode: z.string(),
 	stateCode: z.string().optional(),
-	// unknown: the provider documents searchBy.merchantIds as an open shape; values pass through as-is
-	'searchBy.merchantIds': z.record(z.string(), z.unknown()).optional(),
+	// unknown: the provider documents searchBy as an open shape ({ merchantIds: { visa, mastercard, amex } }); values pass through as-is
+	searchBy: z.record(z.string(), z.unknown()).optional(),
 	// unknown: the provider documents metadata as an open shape; values pass through as-is
 	metadata: z.record(z.string(), z.unknown()).optional(),
 	status: z.string().optional(),
@@ -224,7 +224,9 @@ const DeleteCardInputSchema = z.object({
 
 const UpdateCardMetadataInputSchema = z.object({
 	cardId: z.string().min(1),
-	RAW_BODY: z.string(),
+	// unknown: the metadata object is the whole request body and replaces the
+	// card's metadata; its keys are caller-defined. Send {} to clear it.
+	metadata: z.record(z.string(), z.unknown()),
 });
 
 const CreateBrandWebhookInputSchema = z.object({
@@ -287,18 +289,18 @@ const CreateOfferInputSchema = z.object({
 	startDate: z.string(),
 	// unknown: the provider documents type as an open shape; values pass through as-is
 	type: z.record(z.string(), z.unknown()).optional(),
-	// unknown: the provider documents daysOfWeek as an open shape; values pass through as-is
-	daysOfWeek: z.array(z.unknown()).optional(),
+	// Days the offer runs, 0 (Sunday) to 6 (Saturday).
+	daysOfWeek: z.array(z.number().int().min(0).max(6)).optional(),
 	endDate: z.string().optional(),
 	minTransactionAmount: z.number().optional(),
 	returnPeriod: z.number().optional(),
-	schemes: z.enum(['visa', 'mastercard', 'amex']).optional(),
+	schemes: z.array(z.enum(['visa', 'mastercard', 'amex'])).optional(),
 	// unknown: the provider documents activation as an open shape; values pass through as-is
 	activation: z.record(z.string(), z.unknown()).optional(),
 	// unknown: the provider documents metadata as an open shape; values pass through as-is
 	metadata: z.record(z.string(), z.unknown()).optional(),
 	feeSplit: z.number().optional(),
-	channels: z.enum(['in-store', 'online']).optional(),
+	channels: z.array(z.enum(['in-store', 'online'])).optional(),
 	shortDescription: z.string().optional(),
 	longDescription: z.string().optional(),
 	requiresApproval: z.boolean().optional(),
@@ -315,11 +317,11 @@ const UpdateOfferInputSchema = z.object({
 	type: z.record(z.string(), z.unknown()).optional(),
 	// unknown: the provider documents activation as an open shape; values pass through as-is
 	activation: z.record(z.string(), z.unknown()).optional(),
-	// unknown: the provider documents daysOfWeek as an open shape; values pass through as-is
-	daysOfWeek: z.array(z.unknown()).optional(),
+	// Days the offer runs, 0 (Sunday) to 6 (Saturday).
+	daysOfWeek: z.array(z.number().int().min(0).max(6)).optional(),
 	minTransactionAmount: z.number().optional(),
 	returnPeriod: z.number().optional(),
-	schemes: z.enum(['visa', 'mastercard', 'amex']).optional(),
+	schemes: z.array(z.enum(['visa', 'mastercard', 'amex'])).optional(),
 	// unknown: the provider documents metadata as an open shape; values pass through as-is
 	metadata: z.record(z.string(), z.unknown()).optional(),
 });
@@ -508,8 +510,7 @@ const ListMarketplaceOffersInputSchema = z.object({
 
 const CreateOfferFromMarketplaceOfferInputSchema = z.object({
 	marketplaceOfferId: z.string().min(1),
-	// unknown: the provider documents programIds as an open shape; values pass through as-is
-	programIds: z.array(z.unknown()),
+	programIds: z.array(z.string().min(1)).min(1),
 });
 
 const CreateMissingTransactionRequestInputSchema = z.object({
