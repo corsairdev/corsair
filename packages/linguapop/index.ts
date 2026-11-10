@@ -89,7 +89,7 @@ const linguapopEndpointMeta = {
 		riskLevel: 'write',
 		irreversible: true,
 		description:
-			'Create a placement test invitation for a candidate and optionally email it; returns the test link. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed',
+			'Create a placement test invitation for a candidate and return the test link; with sendEmail true, Linguapop emails the invitation to the candidate. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof linguapopEndpointsNested

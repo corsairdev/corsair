@@ -55,6 +55,13 @@ describe('linguapop plugin definition', () => {
 		});
 	});
 
+	it('says that invitations.create can email the candidate', () => {
+		const description =
+			plugin.endpointMeta?.['invitations.create']?.description ?? '';
+		expect(description).toMatch(/emails the invitation to the candidate/);
+		expect(description).toMatch(/sendEmail/);
+	});
+
 	it('has input and output schemas for every endpoint', () => {
 		expect(Object.keys(linguapopEndpointSchemas).sort()).toEqual(operations);
 		for (const schemas of Object.values(linguapopEndpointSchemas)) {

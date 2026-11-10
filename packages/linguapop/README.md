@@ -12,7 +12,7 @@ pnpm add @corsair-dev/linguapop
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `invitations.create` | `linguapop.api.invitations.create` | `write` | Create a placement test invitation for a candidate and optionally email it; returns the test link. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed |
+| `invitations.create` | `linguapop.api.invitations.create` | `write` | Create a placement test invitation for a candidate and return the test link; with sendEmail true, Linguapop emails the invitation to the candidate. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed |
 | `languages.list` | `linguapop.api.languages.list` | `read` | List the languages Linguapop can test, each with the code to pass as languageCode when creating an invitation |
 
 ## Auth
