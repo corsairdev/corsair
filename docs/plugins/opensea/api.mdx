@@ -325,7 +325,7 @@ await corsair.opensea.api.collections.get({ slug: 'boredapeyachtclub' });
 
 `collections.holders`
 
-Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way, and page with `next`.
+Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way. This route pages with `cursor`, not `next`.
 
 **Risk:** `read`
 
@@ -339,7 +339,7 @@ await corsair.opensea.api.collections.holders({ slug: 'boredapeyachtclub', limit
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | The collection slug. |
 | `limit` | `number` | No | Defaults to 20. |
-| `cursor` | `string` | No | The `next` cursor from a previous page. |
+| `cursor` | `string` | No | The previous response's `next` value. This route calls it `cursor`. |
 | `sort_direction` | `asc \| desc` | No | Order by quantity held. Defaults to `desc`. |
 | `owned_by` | `string` | No | Only report this wallet address. |
 
@@ -501,7 +501,7 @@ await corsair.opensea.api.collections.stats({ slug: 'boredapeyachtclub' });
 
 `collections.top`
 
-Collections ranked by a metric, `one_day_volume` by default. Page with `cursor`, which is the previous response’s `next`.
+Collections ranked by a metric, `one_day_volume` by default. This route pages with `cursor`, which is the previous response’s `next`.
 
 **Risk:** `read`
 
@@ -517,7 +517,7 @@ await corsair.opensea.api.collections.top({ limit: 5 });
 | `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only collections on these chains. |
 | `category` | `string` | No | Only this category. |
 | `limit` | `number` | No | Defaults to 50. |
-| `cursor` | `string` | No | The `next` cursor from a previous page. |
+| `cursor` | `string` | No | The previous response's `next` value. This route calls it `cursor`. |
 
 
 
@@ -569,7 +569,7 @@ await corsair.opensea.api.collections.top({ limit: 5 });
 
 `collections.trending`
 
-Collections ranked by momentum over a window, `one_day` by default. Same page shape and cursor as `collections.top`.
+Collections ranked by momentum over a window, `one_day` by default. Same page shape as `collections.top`, and it pages with `cursor` too.
 
 **Risk:** `read`
 
@@ -585,7 +585,7 @@ await corsair.opensea.api.collections.trending({ limit: 5 });
 | `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only collections on these chains. |
 | `category` | `string` | No | Only this category. |
 | `limit` | `number` | No | Defaults to 20. |
-| `cursor` | `string` | No | The `next` cursor. |
+| `cursor` | `string` | No | The previous response's `next` value. This route calls it `cursor`. |
 
 
 

@@ -273,12 +273,12 @@ const openseaEndpointMeta = {
 	'collections.top': {
 		riskLevel: 'read',
 		description:
-			'Collections ranked by a metric, `one_day_volume` by default. Page with `cursor`, which is the previous response\u2019s `next`.',
+			'Collections ranked by a metric, `one_day_volume` by default. This route pages with `cursor`, which is the previous response\u2019s `next`.',
 	},
 	'collections.trending': {
 		riskLevel: 'read',
 		description:
-			'Collections ranked by momentum over a window, `one_day` by default. Same page shape and cursor as `collections.top`.',
+			'Collections ranked by momentum over a window, `one_day` by default. Same page shape as `collections.top`, and it pages with `cursor` too.',
 	},
 	'collections.floorPrices': {
 		riskLevel: 'read',
@@ -288,7 +288,7 @@ const openseaEndpointMeta = {
 	'collections.holders': {
 		riskLevel: 'read',
 		description:
-			'Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way, and page with `next`.',
+			'Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way. This route pages with `cursor`, not `next`.',
 	},
 	'collection.nfts': {
 		riskLevel: 'read',

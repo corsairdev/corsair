@@ -239,7 +239,9 @@ const CollectionsTopInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('The `next` cursor from a previous page.'),
+		.describe(
+			"The previous response's `next` value. This route calls it `cursor`.",
+		),
 });
 
 export type CollectionsTopInput = z.input<typeof CollectionsTopInputSchema>;
@@ -257,7 +259,13 @@ const TrendingCollectionsInputSchema = z.object({
 		.describe('Only collections on these chains.'),
 	category: z.string().min(1).optional().describe('Only this category.'),
 	limit: z.number().int().min(1).optional().describe('Defaults to 20.'),
-	cursor: z.string().min(1).optional().describe('The `next` cursor.'),
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			"The previous response's `next` value. This route calls it `cursor`.",
+		),
 });
 
 export type TrendingCollectionsInput = z.input<
@@ -787,7 +795,9 @@ const HoldersInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('The `next` cursor from a previous page.'),
+		.describe(
+			"The previous response's `next` value. This route calls it `cursor`.",
+		),
 	sort_direction: z
 		.enum(['asc', 'desc'])
 		.optional()
