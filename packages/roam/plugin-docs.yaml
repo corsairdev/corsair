@@ -1,0 +1,60 @@
+displayName: Roam HQ
+description: Virtual office with Roam HQ - read the token's own identity, directory users, chats, groups and meetings, read a chat history and a meeting transcript, and post or edit a message and add a reaction.
+domain: ro.am
+recommendedAuth: api_key
+overviewNote: |
+  Create an API client in **Roam Administration → Developer** to get your credentials. Send the key as `Authorization: Bearer <key>`. Things to know before you call:
+
+  - **The version header matters.** Every response is rendered against a dated API version, and the plugin pins `Roam-Version: 2026-08-25` on every request so a body's shape cannot change under it. Omitting the header would use the integration's default, which Roam moves between releases.
+  - **Errors are labelled `text/plain`.** Roam's error envelope is JSON but the response's content type makes generic clients hand it over as a raw string. The plugin parses it, so `RoamAPIError.code` is the catalog code such as `invalid_token` — not a string containing the whole body.
+  - **Branch on the code, not the status.** A 401 can be `not_authed`, `invalid_token` or `token_revoked`, and a 403 can be `missing_scope` or `approval_pending`. A revoked token is permanent: discard it rather than retrying. A `missing_scope` body names the scopes that would work in `needed`, any one of which is enough.
+  - **`chat.post` takes exactly one content type.** `text`, `items`, `asset_ids`, `blocks` or `poll` — a body with two of them is refused, and so is a body with none, so the schema rejects either before the request.
+  - **A post needs a destination.** One of `chat_id`, `group_id` or `user_ids`: the last one opens a direct conversation.
+  - **Scheduling a post returns a different shape.** Passing `send_at` returns `scheduledMessageId` instead of a live `timestamp`.
+  - **`chat.history` needs a target.** It reads one chat or one group, so `chat_id` or `group_id` is required; without one Roam returns an unscoped history.
+  - **Messages are edited, not replaced.** `chat.update` takes the chat and the message `timestamp`, and needs exactly one new content type.
+  - **Paging is a cursor.** Lists answer `cursor` plus `hasMore`, and the plugin returns `next_cursor`. A list with no cursor is the last page.
+examples:
+  read:
+    path: chat.history
+    title: Read the last messages in a chat
+    args:
+      chat_id: 757dfe66-37b4-4772-baa5-8c86ec68c176
+      limit: 50
+  write:
+    path: chat.post
+    title: Post a message to a chat
+    args:
+      chat_id: 757dfe66-37b4-4772-baa5-8c86ec68c176
+      text: Standup in five
+apiExamples:
+  token.info: {}
+  users.info:
+    call: "{ email: 'sam@example.com' }"
+  users.list:
+    call: "{ limit: 50, q: 'sam' }"
+  chat.list:
+    call: "{ limit: 20 }"
+  chat.history:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', limit: 100, ascending: false }"
+  chat.post:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five' }"
+  chat.update:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, text: 'Standup in ten' }"
+  reactions.add:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, name: 'thumbsup' }"
+  reactions.list:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032 }"
+  groups.list:
+    call: "{ limit: 20, type: 'public' }"
+  meetings.list:
+    call: "{ after: '2026-11-01T00:00:00.000Z', limit: 10 }"
+  meetings.transcript:
+    call: "{ meeting_id: '11111111-2222-3333-4444-555555555555' }"
+apiNotes:
+  'token.info': 'Also reports the API version the response was rendered with, and the token''s granted scopes.'
+  'chat.history': 'Needs `chat_id` or `group_id`; without one Roam reads an unscoped history.'
+  'chat.post': 'Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` schedules instead of sending.'
+  'chat.update': 'Needs exactly one new content type, and identifies the message by chat and timestamp.'
+  'reactions.add': 'The `name` is an emoji name such as `thumbsup`, not the emoji character.'
+  'meetings.transcript': 'Returns segments with their speaker, start and end; the plugin asks for JSON rather than WebVTT.'
