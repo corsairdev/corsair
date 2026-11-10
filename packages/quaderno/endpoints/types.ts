@@ -379,9 +379,12 @@ const DocumentSchema = z
 		state: z.string().nullish(),
 		blocked: z.boolean().nullish(),
 		delivery_state: z.string().nullish(),
+		// unknown: the embedded contact is a full customer object; it is passed
+		// through as sent rather than duplicated as a second schema here.
 		contact: z.record(z.string(), z.unknown()).nullish(),
 		items: z.array(DocumentItemSchema).nullish(),
 		payments: z.array(PaymentSchema).nullish(),
+		// unknown: a per-jurisdiction tax breakdown whose fields vary by country.
 		taxes: z.array(z.record(z.string(), z.unknown())).nullish(),
 		subtotal_cents: z.number().nullish(),
 		discount_cents: z.number().nullish(),
@@ -399,6 +402,8 @@ const DocumentSchema = z
 		pdf: z.string().nullish(),
 		url: z.string().nullish(),
 		created_at: z.number().nullish(),
+		// unknown: caller-supplied metadata of any JSON shape, stored and returned
+		// as sent; the API imposes no schema on it.
 		custom_metadata: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();

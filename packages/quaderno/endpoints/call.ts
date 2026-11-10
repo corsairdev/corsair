@@ -29,9 +29,11 @@ export function wrap<Key extends string, Value>(
 	return { [key]: value } as Record<Key, Value>;
 }
 
-/** Reads an id off a bare object or array page, for the `shape` hook. */
+// unknown: `raw` is the response body, validated by the endpoint's output schema
+// after this. `idOf` is only used to read the paging cursor off a page.
 export function idOf(raw: unknown): number | undefined {
 	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+	// unknown: the `id` field of an untyped body, checked for type before use.
 	const id = (raw as { id?: unknown }).id;
 	return typeof id === 'number' ? id : undefined;
 }

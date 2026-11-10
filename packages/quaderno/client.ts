@@ -189,7 +189,8 @@ export type QuadernoRequest = {
 	/** Path under `/api`, with a leading slash. */
 	path: string;
 	query?: Record<string, QuadernoQueryValue>;
-	// unknown: the endpoint's input schema has already validated the body.
+	// unknown: the endpoint's input schema has already validated the body, so it
+	// is only serialised here; each endpoint owns its own shape.
 	body?: unknown;
 	/**
 	 * The endpoint event name, carried onto the error. A `.deliver` route is a
@@ -241,6 +242,11 @@ function kindFor(
 
 // unknown: callers parse the body with the endpoint's zod output schema. A
 // DELETE answers 204 with no body, so undefined is a normal result.
+const RETRY_AFTER_FALLBACK_MS = 1000;
+
+// unknown: the response body is untyped here by design; the endpoint's own zod
+// output schema is what validates it. A DELETE answers 204, so undefined is a
+// normal result rather than an error.
 export async function makeQuadernoRequest(
 	apiKey: string,
 	account: string,
@@ -268,6 +274,7 @@ export async function makeQuadernoRequest(
 	};
 
 	try {
+		// unknown: the body is untyped until the caller's output schema parses it.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: QUADERNO_RATE_LIMIT_CONFIG,
 		});

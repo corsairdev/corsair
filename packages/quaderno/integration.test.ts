@@ -252,9 +252,10 @@ describe('quaderno through createCorsair', () => {
 			await corsair.quaderno.keys.issue_new_dek();
 			respond({ error: 'Unauthorized access or contact does not exist.' }, 401);
 
-			const error = await corsair.quaderno.api.contacts
-				.get({ id: 1 })
-				.catch((caught: unknown) => caught);
+			const error = await corsair.quaderno.api.contacts.get({ id: 1 }).catch(
+				// unknown: a rejection can be any value until the instanceof check below.
+				(caught: unknown) => caught,
+			);
 
 			expect(error).toBeInstanceOf(Error);
 			if (!(error instanceof Error)) throw error;

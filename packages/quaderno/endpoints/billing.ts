@@ -563,6 +563,7 @@ function proformaAction(
 ) {
 	return (
 		ctx: Parameters<QuadernoEndpoints['proformasAccept']>[0],
+		// unknown: raw caller input, parsed by call() against the action's schema.
 		input: unknown,
 	) =>
 		call(

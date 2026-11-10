@@ -44,6 +44,11 @@ function makeContext(logged: Logged) {
 			return 'account-1';
 		}),
 	} as const;
+	// unknown: the endpoint code reads only `key`, `options` and
+	// `keys.get_account_name`, plus the log path's `$getAccountId`. A full
+	// CorsairPluginContext also carries db, hooks and the bound endpoints, which
+	// these calls never reach; integration.test.ts runs the same endpoints against
+	// a real context.
 	return ctx as unknown as QuadernoContext;
 }
 

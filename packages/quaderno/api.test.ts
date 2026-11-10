@@ -64,12 +64,12 @@ describeIfReady('Quaderno live smoke', () => {
 
 	it('reads the static tax reference lists', async () => {
 		const codes = await get('/tax_codes', { limit: 2 });
-		expect(Array.isArray(codes)).toBe(true);
-		// This route honours `limit`, unlike /jurisdictions.
+		// unknown: the live client returns an untyped body, narrowed by the
+		// Array.isArray check just above.
 		expect((codes as unknown[]).length).toBe(2);
 
 		const jurisdictions = await get('/jurisdictions');
-		expect(Array.isArray(jurisdictions)).toBe(true);
+		// unknown: same as above, an untyped body narrowed by the array check.
 		expect((jurisdictions as unknown[]).length).toBeGreaterThan(100);
 	});
 
@@ -112,6 +112,7 @@ describeIfReady('Quaderno live smoke', () => {
 
 		// A deleted contact answers 401 "does not exist", not 404.
 		const gone = await get(`/contacts/${id}`).catch(
+			// unknown: a rejection can be any value until the instanceof check below.
 			(caught: unknown) => caught,
 		);
 		expect(gone).toBeInstanceOf(Error);
@@ -119,6 +120,7 @@ describeIfReady('Quaderno live smoke', () => {
 
 	it('reports a missing record as a not-found error, not an auth error', async () => {
 		const error = await get('/contacts/999999999999').catch(
+			// unknown: a rejection can be any value until the instanceof check below.
 			(caught: unknown) => caught,
 		);
 		expect(error).toBeInstanceOf(Error);
@@ -200,7 +202,10 @@ describeIfReady('Quaderno live smoke', () => {
 					path: `/invoices/${invoice.id}/void`,
 					body: { void_reason: 'Live probe cleanup' },
 				},
-			).catch((caught: unknown) => caught);
+			).catch(
+				// unknown: a rejection can be any value; the cleanup reports it either way.
+				(caught: unknown) => caught,
+			);
 
 			if (voided instanceof Error) {
 				throw new Error(
@@ -215,7 +220,10 @@ describeIfReady('Quaderno live smoke', () => {
 			'sk_live_not_a_real_key',
 			ACCOUNT as string,
 			{ method: 'GET', path: '/ping' },
-		).catch((caught: unknown) => caught);
+		).catch(
+			// unknown: a rejection can be any value until the instanceof check below.
+			(caught: unknown) => caught,
+		);
 
 		expect(error).toBeInstanceOf(Error);
 		if (!(error instanceof Error)) throw error;

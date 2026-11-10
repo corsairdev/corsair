@@ -203,11 +203,10 @@ describe('quaderno plugin', () => {
 	});
 
 	describe('keyBuilder', () => {
-		// unknown: the real manager has get_dek, issue_new_dek and the rest; only
-		// the two accessors this plugin reads are supplied.
+		// unknown: the real manager has get_dek, issue_new_dek and the rest, which
+		// this test does not implement; only the two accessors the plugin reads are
+		// supplied, and the builder never touches anything else.
 		const contextWith = (stored?: string) =>
-			// unknown: the real manager has get_dek, issue_new_dek and the rest;
-			// only the two accessors this plugin reads are supplied.
 			({
 				authType: 'api_key',
 				options: {},
