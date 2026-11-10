@@ -1,0 +1,2394 @@
+---
+title: API
+description: "API reference for ElevenLabs: every `elevenlabs.api.*` operation with input and output types."
+---
+
+Every `elevenlabs.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### subscription
+
+`account.subscription`
+
+The plan, credits used and limits.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.account.subscription({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tier` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `character_count` | `number \| null` | No | — |
+| `character_limit` | `number \| null` | No | — |
+| `voice_slots_used` | `number \| null` | No | — |
+| `voice_limit` | `number \| null` | No | — |
+| `can_use_instant_voice_cloning` | `boolean \| null` | No | — |
+| `can_use_professional_voice_cloning` | `boolean \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `next_character_count_reset_unix` | `number \| null` | No | — |
+
+
+
+---
+
+### usageStats
+
+`account.usageStats`
+
+Credits used over a time range, by product or model.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.account.usageStats({ startTime: 1793750400000, endTime: 1794355200000, groupBy: ['product_type'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startTime` | `number` | Yes | Start of the range, Unix time in milliseconds. |
+| `endTime` | `number` | Yes | End of the range, Unix time in milliseconds. |
+| `intervalSeconds` | `number` | No | Bucket size: 3600 hourly, 86400 daily. Default 86400. |
+| `groupBy` | `string[]` | No | Columns to split by, for example product_type or model. |
+| `timeZone` | `string` | No | IANA time zone for the buckets, for example Asia/Kolkata. |
+
+For workspaces billed in credits. One billed by cost gets a 400 naming a different report.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `string[] \| null` | No | — |
+| `column_types` | `string[] \| null` | No | — |
+| `column_units` | `(string \| null)[] \| null` | No | — |
+| `rows` | `any[][] \| null` | No | — |
+
+
+
+---
+
+### user
+
+`account.user`
+
+The account’s user and workspace ids and its subscription. Key fields are removed from the result.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.account.user({});
+```
+
+**Input:** _empty object_
+
+The API reports the key (or part of it) here, and those fields are removed from the result.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string \| null` | No | — |
+| `workspace_id` | `string \| null` | No | — |
+| `subscription` | `object \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `seat_type` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscription full type">
+
+```ts
+{
+  tier?: string | null,
+  status?: string | null,
+  character_count?: number | null,
+  character_limit?: number | null,
+  voice_slots_used?: number | null,
+  voice_limit?: number | null,
+  can_use_instant_voice_cloning?: boolean | null,
+  can_use_professional_voice_cloning?: boolean | null,
+  currency?: string | null,
+  next_character_count_reset_unix?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Agents
+
+### conversationDelete
+
+`agents.conversationDelete`
+
+Delete a conversation, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.agents.conversationDelete({ conversationId: '<conversation id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | conversation_id from agents.conversationsList. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### conversationGet
+
+`agents.conversationGet`
+
+Read a conversation’s transcript, metadata and analysis.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.agents.conversationGet({ conversationId: '<conversation id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | conversation_id from agents.conversationsList. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_id` | `string` | Yes | — |
+| `agent_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `transcript` | `Record<string, any>[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `analysis` | `Record<string, any> \| null` | No | — |
+| `has_audio` | `boolean \| null` | No | — |
+
+
+
+---
+
+### conversationsList
+
+`agents.conversationsList`
+
+List conversations, optionally for one agent.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.agents.conversationsList({ agentId: '<agent id>', pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | 1 to 100. Default 30. |
+| `agentId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `summaryMode` | `exclude \| include` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  conversation_id: string,
+  agent_id?: string | null,
+  agent_name?: string | null,
+  status?: string | null,
+  start_time_unix_secs?: number | null,
+  call_duration_secs?: number | null,
+  message_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`agents.create`
+
+Create a conversational agent.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.agents.create({ name: 'Support', conversationConfig: { agent: { first_message: 'Hi, how can I help?', prompt: { prompt: 'You answer questions about orders.' } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationConfig` | `Record<string, any>` | Yes | The agent’s configuration with the API’s field names, for example &#123; agent: &#123; first_message: "Hi", prompt: &#123; prompt: "You are..." &#125; &#125;, tts: &#123; voice_id: "..." &#125; &#125;. |
+| `platformSettings` | `Record<string, any>` | No | — |
+| `workflow` | `Record<string, any>` | No | — |
+| `name` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+`conversationConfig` keeps the API's field names and is passed through as sent. An empty agent is fine; `agent.prompt.prompt` and `agent.first_message` are the usual place to start.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`agents.delete`
+
+Delete an agent, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.agents.delete({ agentId: '<agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz. |
+| `force` | `boolean` | No | Delete even if other agents use this one as a subagent. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`agents.get`
+
+Read an agent’s full configuration.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.agents.get({ agentId: '<agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz. |
+| `versionId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `conversation_config` | `Record<string, any> \| null` | No | — |
+| `platform_settings` | `Record<string, any> \| null` | No | — |
+| `workflow` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `version_id` | `string \| null` | No | — |
+| `branch_id` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`agents.list`
+
+List conversational agents.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.agents.list({ pageSize: 20, search: 'support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | 1 to 100. Default 30. |
+| `search` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `showOnlyOwnedAgents` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `sortBy` | `name \| created_at \| updated_at \| call_count_7d` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agents` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="agents full type">
+
+```ts
+{
+  agent_id: string,
+  name?: string | null,
+  tags?: string[] | null,
+  created_at_unix_secs?: number | null,
+  updated_at_unix_secs?: number | null,
+  archived?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### signedUrl
+
+`agents.signedUrl`
+
+Mint a short-lived WebSocket URL a client can use to talk to an agent; the conversation spends credits.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.agents.signedUrl({ agentId: '<agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz. |
+| `includeConversationId` | `boolean` | No | — |
+| `branchId` | `string` | No | — |
+
+The URL lets a client talk to the agent, and that conversation spends credits. Treat it as a secret. This plugin doesn't hold the conversation itself.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signed_url` | `string` | Yes | WebSocket URL a client can open to talk to the agent. Valid about 15 minutes; treat it as a secret. |
+
+
+
+---
+
+### update
+
+`agents.update`
+
+Change an agent’s configuration, name or tags.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.agents.update({ agentId: '<agent id>', name: 'Support v2', tags: ['support'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz. |
+| `conversationConfig` | `Record<string, any>` | No | — |
+| `platformSettings` | `Record<string, any>` | No | — |
+| `workflow` | `Record<string, any>` | No | — |
+| `name` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `versionDescription` | `string` | No | — |
+| `branchId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `conversation_config` | `Record<string, any> \| null` | No | — |
+| `platform_settings` | `Record<string, any> \| null` | No | — |
+| `workflow` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `version_id` | `string \| null` | No | — |
+| `branch_id` | `string \| null` | No | — |
+
+
+
+---
+
+## Audio Isolation
+
+### isolate
+
+`audioIsolation.isolate`
+
+Remove background noise from audio and keep the voices; spends credits by audio length. The cleaned audio comes back in the result.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.audioIsolation.isolate({ fileBase64: '<base64 audio>', fileName: 'noisy.mp3', contentType: 'audio/mpeg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `fileFormat` | `pcm_s16le_16 \| other` | No | pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other. |
+
+ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result. It takes no `outputFormat`, and a clip of about 7.5 s came back as 302,018 bytes in one run, so in a script hand on anything over about 18 s instead of returning it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+## Dubbing
+
+### create
+
+`dubbing.create`
+
+Start dubbing a video or audio file into another language; spends credits by length. Returns at once with a dubbing_id; follow it with dubbing.get until status is dubbed or failed.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.dubbing.create({ sourceUrl: 'https://example.com/clip.mp4', targetLang: 'es', watermark: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | No | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `sourceUrl` | `string` | No | URL of the video or audio, instead of fileBase64. |
+| `targetLang` | `string` | Yes | Language to dub into, as an ISO 639 code. |
+| `sourceLang` | `string` | No | Default auto. |
+| `name` | `string` | No | — |
+| `numSpeakers` | `number` | No | 0 (default) detects them. |
+| `watermark` | `boolean` | No | — |
+| `startTime` | `number` | No | — |
+| `endTime` | `number` | No | — |
+| `highestResolution` | `boolean` | No | — |
+| `dropBackgroundAudio` | `boolean` | No | — |
+| `useProfanityFilter` | `boolean` | No | — |
+| `disableVoiceCloning` | `boolean` | No | true uses a similar voice from the library instead of cloning the speakers in the source. |
+
+Returns at once. Follow `dubbing_id` with `dubbing.get` until `status` is `dubbed` or `failed`. By default dubbing clones the speakers it hears; set `disableVoiceCloning` true to use library voices instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbing_id` | `string` | Yes | — |
+| `expected_duration_sec` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`dubbing.delete`
+
+Delete a dub, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.dubbing.delete({ dubbingId: '<dubbing id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbingId` | `string` | Yes | The dubbing_id that dubbing.create returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`dubbing.get`
+
+Where a dub stands: status dubbed or failed are final.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.dubbing.get({ dubbingId: '<dubbing id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbingId` | `string` | Yes | The dubbing_id that dubbing.create returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbing_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string` | Yes | Where the dub stands: queued, preparing, dubbing, dubbed, failed. |
+| `source_language` | `string \| null` | No | — |
+| `target_languages` | `string[] \| null` | No | — |
+| `editable` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `media_metadata` | `Record<string, any> \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### getAudio
+
+`dubbing.getAudio`
+
+Download a finished dub as base64 (audio or video), subject to the same size limit as other audio.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.dubbing.getAudio({ dubbingId: '<dubbing id>', languageCode: 'es', maxBytes: 10000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbingId` | `string` | Yes | The dubbing_id that dubbing.create returned. |
+| `languageCode` | `string` | Yes | A target language of the dub; for transcripts also `source`. |
+| `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Audio or video, per `contentType`. Subject to `maxBytes`, so raise it for anything long.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+### getTranscript
+
+`dubbing.getTranscript`
+
+Read a dub’s transcript as srt, webvtt or json.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.dubbing.getTranscript({ dubbingId: '<dubbing id>', languageCode: 'es', formatType: 'srt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubbingId` | `string` | Yes | The dubbing_id that dubbing.create returned. |
+| `languageCode` | `string` | Yes | A target language of the dub; for transcripts also `source`. |
+| `formatType` | `srt \| webvtt \| json` | No | Default srt. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript_format` | `string \| null` | No | — |
+| `srt` | `string \| null` | No | — |
+| `webvtt` | `string \| null` | No | — |
+| `json` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`dubbing.list`
+
+List dubs, newest first by default.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.dubbing.list({ pageSize: 20, dubbingStatus: 'dubbed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | 1 to 200. Default 100. |
+| `dubbingStatus` | `dubbing \| dubbed \| failed` | No | — |
+| `filterByCreator` | `personal \| others \| all` | No | — |
+| `orderBy` | `created_at \| name` | No | — |
+| `orderDirection` | `DESCENDING \| ASCENDING` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dubs` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="dubs full type">
+
+```ts
+{
+  dubbing_id: string,
+  name?: string | null,
+  status: string,
+  source_language?: string | null,
+  target_languages?: string[] | null,
+  editable?: boolean | null,
+  created_at?: string | null,
+  media_metadata?: Record<string, any> | null,
+  error?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forced Alignment
+
+### create
+
+`forcedAlignment.create`
+
+Line up known text with audio to get word and character timings; spends credits by audio length.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.forcedAlignment.create({ fileBase64: '<base64 audio>', fileName: 'line.mp3', contentType: 'audio/mpeg', text: 'Hello from Corsair.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `text` | `string` | Yes | The text spoken in the audio. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `characters` | `object[] \| null` | No | — |
+| `words` | `object[] \| null` | No | — |
+| `loss` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="characters full type">
+
+```ts
+{
+  text?: string | null,
+  start?: number | null,
+  end?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="words full type">
+
+```ts
+{
+  text?: string | null,
+  start?: number | null,
+  end?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## History
+
+### delete
+
+`history.delete`
+
+Delete a history item and its audio, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.history.delete({ historyItemId: '<history item id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `historyItemId` | `string` | Yes | historyItemId from a speech operation, or history_item_id from history.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`history.get`
+
+Read one history item: its text, voice, model and cost.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.history.get({ historyItemId: '<history item id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `historyItemId` | `string` | Yes | historyItemId from a speech operation, or history_item_id from history.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `history_item_id` | `string` | Yes | — |
+| `request_id` | `string \| null` | No | — |
+| `voice_id` | `string \| null` | No | — |
+| `model_id` | `string \| null` | No | — |
+| `voice_name` | `string \| null` | No | — |
+| `voice_category` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `date_unix` | `number \| null` | No | — |
+| `character_count_change_from` | `number \| null` | No | — |
+| `character_count_change_to` | `number \| null` | No | — |
+| `content_type` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `output_format` | `string \| null` | No | — |
+
+
+
+---
+
+### getAudio
+
+`history.getAudio`
+
+Download a history item’s audio as base64, subject to a size limit you can raise with maxBytes.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.history.getAudio({ historyItemId: '<history item id>', maxBytes: 5000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `historyItemId` | `string` | Yes | historyItemId from a speech operation, or history_item_id from history.list. |
+| `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Subject to `maxBytes` (default 700000 bytes), so raise it for anything long. A new item can take a few seconds to appear, and reading it before then answers 400.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+### list
+
+`history.list`
+
+List generated speech, newest first by default.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.history.list({ pageSize: 20, source: 'TTS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | 1 to 1000. Default 100. Deleted items count, so a page can be short or empty while has_more is true. |
+| `startAfterHistoryItemId` | `string` | No | last_history_item_id from the previous page. |
+| `voiceId` | `string` | No | — |
+| `modelId` | `string` | No | — |
+| `dateBeforeUnix` | `number` | No | — |
+| `dateAfterUnix` | `number` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+| `source` | `TTS \| STS \| Flows` | No | — |
+
+Deleted items still count toward a page, so a page can be short or even empty while `has_more` is true. Keep going with `last_history_item_id` until `has_more` is false.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `history` | `object[]` | Yes | — |
+| `last_history_item_id` | `string \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `scanned_until` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="history full type">
+
+```ts
+{
+  history_item_id: string,
+  request_id?: string | null,
+  voice_id?: string | null,
+  model_id?: string | null,
+  voice_name?: string | null,
+  voice_category?: string | null,
+  text?: string | null,
+  date_unix?: number | null,
+  character_count_change_from?: number | null,
+  character_count_change_to?: number | null,
+  content_type?: string | null,
+  state?: string | null,
+  source?: string | null,
+  output_format?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List available models with their languages and rates.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  model_id: string,
+  name?: string | null,
+  description?: string | null,
+  can_do_text_to_speech?: boolean | null,
+  can_do_voice_conversion?: boolean | null,
+  maximum_text_length_per_request?: number | null,
+  languages?: Record<string, any>[] | null,
+  model_rates?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Music
+
+### compose
+
+`music.compose`
+
+Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. At the default format, about 24 KB/s, a song over about 31 s is too big to return from a script on Corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputFormat, or pass contentBase64 to the next operation and return only metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.music.compose({ prompt: 'a calm piano loop', musicLengthMs: 10000, forceInstrumental: true, outputFormat: 'mp3_22050_32' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | No | What the song should be. |
+| `compositionPlan` | `Record<string, any>` | No | A plan from music.plan, instead of prompt. |
+| `musicLengthMs` | `number` | No | 3 s to 10 min. Only with prompt. |
+| `lyricsText` | `string` | No | — |
+| `generationMode` | `track \| loop \| ambience \| video_to_music` | No | — |
+| `modelId` | `string` | No | Model id. Default music_v2_5. |
+| `seed` | `number` | No | — |
+| `forceInstrumental` | `boolean` | No | — |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+
+Pass `prompt` or `compositionPlan`; `musicLengthMs` only works with `prompt`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+### plan
+
+`music.plan`
+
+Draft a composition plan from a prompt, to edit and pass to music.compose.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.music.plan({ prompt: 'an upbeat jingle', musicLengthMs: 15000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | What the song should be. |
+| `musicLengthMs` | `number` | No | — |
+| `sourceCompositionPlan` | `Record<string, any>` | No | — |
+| `modelId` | `string` | No | Model id. Default music_v2_5. |
+
+The API's schema allows `chunks` or `sections` in a plan; music_v2_5 answered with `chunks` in our test. Pass the plan back to `music.compose` as `compositionPlan`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chunks` | `Record<string, any>[] \| null` | No | — |
+| `sections` | `Record<string, any>[] \| null` | No | — |
+| `positive_global_styles` | `string[] \| null` | No | — |
+| `negative_global_styles` | `string[] \| null` | No | — |
+
+
+
+---
+
+### separateStems
+
+`music.separateStems`
+
+Split a song into stems, returned as a zip; spends credits by audio length.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.music.separateStems({ fileBase64: '<base64 song>', fileName: 'song.mp3', stemVariationId: 'two_stems_v1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `stemVariationId` | `two_stems_v1 \| six_stems_v1` | No | Two stems (vocals, rest) or six. Default six_stems_v1. |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+
+Returns a zip with one file per stem. No `characterCost` header; `account.usageStats` has the cost.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+## Single Use Tokens
+
+### create
+
+`singleUseTokens.create`
+
+Mint a single-use token, valid 15 minutes, to give a client instead of the API key.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.singleUseTokens.create({ tokenType: 'tts_websocket' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokenType` | `realtime_scribe \| batch_scribe \| tts_websocket` | Yes | — |
+
+Works once and expires after 15 minutes. Treat it as a secret until it's used.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | Expires after 15 minutes and works once. Hand it to a client instead of the API key. |
+
+
+
+---
+
+## Sound Effects
+
+### generate
+
+`soundEffects.generate`
+
+Generate a sound effect from a description; spends credits by duration. ElevenLabs keeps no copy, so the audio comes back in the result.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.soundEffects.generate({ text: 'a door creaking open', durationSeconds: 2, outputFormat: 'mp3_22050_32' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | What the sound should be. |
+| `durationSeconds` | `number` | No | 0.5 to 30 s. Left out, the model picks a length. |
+| `loop` | `boolean` | No | — |
+| `promptInfluence` | `number` | No | — |
+| `modelId` | `string` | No | Model id. Default eleven_text_to_sound_v3. |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+
+Defaults to eleven_text_to_sound_v3, because the API's own default, eleven_text_to_sound_v2, is removed on 2027-03-01.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+## Speech To Text
+
+### convert
+
+`speechToText.convert`
+
+Transcribe audio or video from a URL or a base64 file; spends credits by audio length. With webhook true it returns at once and delivers the transcript by webhook.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.speechToText.convert({ sourceUrl: 'https://example.com/call.mp3', diarize: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | No | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `sourceUrl` | `string` | No | URL of the audio or video to transcribe, instead of fileBase64: a hosted file or a page ElevenLabs can read, such as YouTube. |
+| `modelId` | `string` | No | Model id. Default scribe_v2. |
+| `languageCode` | `string` | No | — |
+| `tagAudioEvents` | `boolean` | No | — |
+| `numSpeakers` | `number` | No | — |
+| `timestampsGranularity` | `none \| word \| character` | No | — |
+| `diarize` | `boolean` | No | — |
+| `keyterms` | `string[]` | No | — |
+| `temperature` | `number` | No | — |
+| `seed` | `number` | No | — |
+| `fileFormat` | `pcm_s16le_16 \| other` | No | pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other. |
+| `useMultiChannel` | `boolean` | No | — |
+| `webhook` | `boolean` | No | true returns at once with request_id and transcription_id, and delivers the transcript to the workspace’s speech-to-text webhooks (the speechToText.transcriptionCompleted event). Needs a webhook set up in ElevenLabs. |
+| `webhookId` | `string` | No | Send to this webhook only. Needs webhook: true. |
+| `webhookMetadata` | `Record<string, any>` | No | Sent back as webhook_metadata in the webhook event. Needs webhook: true. |
+| `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
+
+Pass `fileBase64` or `sourceUrl`. With `webhook` true it returns `request_id` and `transcription_id` at once and delivers to the workspace's speech-to-text webhooks, which must exist first. `speechToText.getTranscript` answers 404 until the transcript is ready, the same as for a wrong id, which is why this isn't declared as a job.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language_code` | `string \| null` | No | — |
+| `language_probability` | `number \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `words` | `Record<string, any>[] \| null` | No | — |
+| `transcription_id` | `string \| null` | No | — |
+| `audio_duration_secs` | `number \| null` | No | — |
+| `transcripts` | `object[] \| null` | No | One transcript per channel, when useMultiChannel is on. |
+| `message` | `string \| null` | No | Set in webhook mode. |
+| `request_id` | `string \| null` | No | Set in webhook mode. |
+
+<AccordionGroup>
+<Accordion title="transcripts full type">
+
+```ts
+{
+  language_code?: string | null,
+  language_probability?: number | null,
+  text?: string | null,
+  words?: Record<string, any>[] | null,
+  transcription_id?: string | null,
+  audio_duration_secs?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTranscript
+
+`speechToText.deleteTranscript`
+
+Delete a stored transcript, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.speechToText.deleteTranscript({ transcriptionId: '<transcription id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptionId` | `string` | Yes | The transcription_id that speechToText.convert returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### getTranscript
+
+`speechToText.getTranscript`
+
+Read a transcript by the transcription_id speechToText.convert returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.speechToText.getTranscript({ transcriptionId: '<transcription id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptionId` | `string` | Yes | The transcription_id that speechToText.convert returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language_code` | `string \| null` | No | — |
+| `language_probability` | `number \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `words` | `Record<string, any>[] \| null` | No | — |
+| `transcription_id` | `string \| null` | No | — |
+| `audio_duration_secs` | `number \| null` | No | — |
+| `transcripts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcripts full type">
+
+```ts
+{
+  language_code?: string | null,
+  language_probability?: number | null,
+  text?: string | null,
+  words?: Record<string, any>[] | null,
+  transcription_id?: string | null,
+  audio_duration_secs?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Text To Dialogue
+
+### convert
+
+`textToDialogue.convert`
+
+Turn lines spoken by several voices into one audio clip; spends credits by text length.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.textToDialogue.convert({ inputs: [{ text: 'Are you ready?', voiceId: 'FGY2WhTYpPnrIDTdsKH5' }, { text: 'Always.', voiceId: 'JBFqnCBsd6RMkjVDRZzb' }], outputFormat: 'mp3_22050_32' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inputs` | `object[]` | Yes | The lines in order, each with the voice that speaks it. |
+| `modelId` | `string` | No | Model id. Default eleven_v3. |
+| `languageCode` | `string` | No | — |
+| `settings` | `Record<string, any>` | No | Dialogue settings (stability and so on), with the API’s field names. |
+| `seed` | `number` | No | — |
+| `previousText` | `string` | No | — |
+| `futureText` | `string` | No | — |
+| `pronunciationDictionaryLocators` | `object[]` | No | — |
+| `applyTextNormalization` | `auto \| on \| off` | No | — |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+| `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
+| `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+  text: string,
+  voiceId: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pronunciationDictionaryLocators full type">
+
+```ts
+{
+  pronunciation_dictionary_id: string,
+  version_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+## Text To Speech
+
+### convert
+
+`textToSpeech.convert`
+
+Turn text into speech; spends credits by text length. Returns the audio as base64 with its history item id; set includeContent false to keep a long clip out of the result and read it later with history.getAudio.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.textToSpeech.convert({ voiceId: 'FGY2WhTYpPnrIDTdsKH5', text: 'Your order has shipped.', modelId: 'eleven_flash_v2_5', outputFormat: 'mp3_22050_32' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `text` | `string` | Yes | The text to speak. |
+| `modelId` | `string` | No | Model id from models.list, for example eleven_flash_v2_5 (fast and cheap) or eleven_multilingual_v2 (the default). |
+| `languageCode` | `string` | No | — |
+| `voiceSettings` | `object` | No | Overrides the voice’s stored settings for this call. Fields keep the API’s names. |
+| `pronunciationDictionaryLocators` | `object[]` | No | — |
+| `seed` | `number` | No | — |
+| `previousText` | `string` | No | — |
+| `nextText` | `string` | No | — |
+| `previousRequestIds` | `string[]` | No | — |
+| `nextRequestIds` | `string[]` | No | — |
+| `applyTextNormalization` | `auto \| on \| off` | No | — |
+| `applyLanguageTextNormalization` | `boolean` | No | — |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+| `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
+| `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Spends credits by text length (`characterCost` says how many). The history item keeps its own stored format, so `history.getAudio` can return a different bitrate from `outputFormat`.
+
+<AccordionGroup>
+<Accordion title="voiceSettings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="pronunciationDictionaryLocators full type">
+
+```ts
+{
+  pronunciation_dictionary_id: string,
+  version_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+### convertWithTimestamps
+
+`textToSpeech.convertWithTimestamps`
+
+Turn text into speech with the start and end time of each character; spends credits by text length. Same audio fields as textToSpeech.convert.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.textToSpeech.convertWithTimestamps({ voiceId: 'FGY2WhTYpPnrIDTdsKH5', text: 'Hi there.', modelId: 'eleven_flash_v2_5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `text` | `string` | Yes | The text to speak. |
+| `modelId` | `string` | No | Model id from models.list, for example eleven_flash_v2_5 (fast and cheap) or eleven_multilingual_v2 (the default). |
+| `languageCode` | `string` | No | — |
+| `voiceSettings` | `object` | No | Overrides the voice’s stored settings for this call. Fields keep the API’s names. |
+| `pronunciationDictionaryLocators` | `object[]` | No | — |
+| `seed` | `number` | No | — |
+| `previousText` | `string` | No | — |
+| `nextText` | `string` | No | — |
+| `previousRequestIds` | `string[]` | No | — |
+| `nextRequestIds` | `string[]` | No | — |
+| `applyTextNormalization` | `auto \| on \| off` | No | — |
+| `applyLanguageTextNormalization` | `boolean` | No | — |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+| `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
+| `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Same audio fields as `textToSpeech.convert`, plus `alignment` and `normalized_alignment`.
+
+<AccordionGroup>
+<Accordion title="voiceSettings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="pronunciationDictionaryLocators full type">
+
+```ts
+{
+  pronunciation_dictionary_id: string,
+  version_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+| `alignment` | `object \| null` | No | When each character of the text starts and ends, in seconds. |
+| `normalized_alignment` | `object \| null` | No | The same for the text after normalization, which is what was spoken. |
+
+<AccordionGroup>
+<Accordion title="alignment full type">
+
+```ts
+{
+  characters?: string[] | null,
+  character_start_times_seconds?: number[] | null,
+  character_end_times_seconds?: number[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="normalized_alignment full type">
+
+```ts
+{
+  characters?: string[] | null,
+  character_start_times_seconds?: number[] | null,
+  character_end_times_seconds?: number[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voice Changer
+
+### convert
+
+`voiceChanger.convert`
+
+Say the same thing in a different voice, from a base64 audio file; spends credits by audio length.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voiceChanger.convert({ voiceId: 'JBFqnCBsd6RMkjVDRZzb', fileBase64: '<base64 audio>', modelId: 'eleven_multilingual_sts_v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `fileBase64` | `string` | Yes | The file, base64-encoded (at most 100 MB once decoded). |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
+| `modelId` | `string` | No | Model id, for example eleven_multilingual_sts_v2. Default eleven_english_sts_v2. |
+| `voiceSettings` | `object` | No | — |
+| `seed` | `number` | No | — |
+| `removeBackgroundNoise` | `boolean` | No | — |
+| `fileFormat` | `pcm_s16le_16 \| other` | No | pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other. |
+| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
+| `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
+| `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+<AccordionGroup>
+<Accordion title="voiceSettings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+## Voice Design
+
+### create
+
+`voiceDesign.create`
+
+Save a designed preview as a voice in this account; uses a voice slot.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voiceDesign.create({ voiceName: 'Narrator', voiceDescription: 'A calm middle-aged narrator with a warm low voice.', generatedVoiceId: '<generated_voice_id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceName` | `string` | Yes | — |
+| `voiceDescription` | `string` | Yes | — |
+| `generatedVoiceId` | `string` | Yes | generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix. |
+| `labels` | `Record<string, string>` | No | — |
+
+Needs a free voice slot; over `voice_limit` (see `account.subscription`) ElevenLabs answers 400.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `labels` | `Record<string, any> \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `settings` | `object \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `created_at_unix` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### design
+
+`voiceDesign.design`
+
+Generate voice previews from a description; spends credits. Hear one with voiceDesign.getPreview, then pass its generated_voice_id to voiceDesign.create.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voiceDesign.design({ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceDescription` | `string` | Yes | What the voice sounds like, 20 to 1000 characters. |
+| `modelId` | `string` | No | eleven_multilingual_ttv_v2 (default) or eleven_ttv_v3. |
+| `shouldEnhance` | `boolean` | No | — |
+| `text` | `string` | No | What the previews say, 100 to 1000 characters. Or set autoGenerateText. |
+| `autoGenerateText` | `boolean` | No | — |
+| `loudness` | `number` | No | — |
+| `seed` | `number` | No | — |
+| `guidanceScale` | `number` | No | — |
+| `outputFormat` | `string` | No | The format voiceDesign.getPreview will return, for example mp3_22050_32. |
+
+Cost follows the preview text, at about a credit a character in our tests (101 credits with a 101-character `text`, 200 with `autoGenerateText`). Audio doesn't come back here. Previews are always made for streaming, which is what lets `voiceDesign.getPreview` read them, and `duration_secs` reads -1 for them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `previews` | `object[]` | Yes | — |
+| `text` | `string \| null` | No | — |
+| `note` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="previews full type">
+
+```ts
+{
+  generated_voice_id: string,
+  media_type?: string | null,
+  duration_secs?: number | null,
+  language?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPreview
+
+`voiceDesign.getPreview`
+
+Read a preview's audio by its generated_voice_id, without generating again. Subject to a size limit you can raise with maxBytes.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voiceDesign.getPreview({ generatedVoiceId: '<generated_voice_id>', maxBytes: 2000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedVoiceId` | `string` | Yes | generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix. |
+| `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Reading a preview spent no credits in our test, read twice. `outputFormat` on the design or remix sets its format. We didn't test how long a preview stays readable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
+### remix
+
+`voiceDesign.remix`
+
+Generate previews of a changed version of an existing voice; spends credits. Hear one with voiceDesign.getPreview.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voiceDesign.remix({ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `voiceDescription` | `string` | Yes | The changes to make to the voice. |
+| `promptStrength` | `number` | No | — |
+| `text` | `string` | No | What the previews say, 100 to 1000 characters. Or set autoGenerateText. |
+| `autoGenerateText` | `boolean` | No | — |
+| `loudness` | `number` | No | — |
+| `seed` | `number` | No | — |
+| `guidanceScale` | `number` | No | — |
+| `outputFormat` | `string` | No | The format voiceDesign.getPreview will return, for example mp3_22050_32. |
+
+Only works on your own custom voices. It makes previews, read with `voiceDesign.getPreview`, and leaves the source voice as it is. In our tests it cost 101 credits with a 101-character `text` and 350 with `autoGenerateText`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `previews` | `object[]` | Yes | — |
+| `text` | `string \| null` | No | — |
+| `note` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="previews full type">
+
+```ts
+{
+  generated_voice_id: string,
+  media_type?: string | null,
+  duration_secs?: number | null,
+  language?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voices
+
+### addFromLibrary
+
+`voices.addFromLibrary`
+
+Add a voice from the shared library to this account; uses a voice slot.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voices.addFromLibrary({ publicUserId: '<public_owner_id>', voiceId: '<voice id>', newName: 'Narrator' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publicUserId` | `string` | Yes | public_owner_id from voices.searchLibrary. |
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `newName` | `string` | Yes | The name it gets in your voices. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+
+
+
+---
+
+### defaultSettings
+
+`voices.defaultSettings`
+
+The settings a voice has by default.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voices.defaultSettings({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stability` | `number \| null` | No | — |
+| `similarity_boost` | `number \| null` | No | — |
+| `style` | `number \| null` | No | — |
+| `use_speaker_boost` | `boolean \| null` | No | — |
+| `speed` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`voices.delete`
+
+Delete a voice from this account, for good.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.elevenlabs.api.voices.delete({ voiceId: '<voice id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+
+Works on your own voices and library copies. It can't be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### edit
+
+`voices.edit`
+
+Change a voice’s name, description or labels.
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voices.edit({ voiceId: '<voice id>', name: 'Narrator', description: 'For product videos' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `name` | `string` | Yes | The voice’s name; the API requires it. |
+| `description` | `string` | No | — |
+| `labels` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### editSettings
+
+`voices.editSettings`
+
+Change a voice’s stored settings (stability, similarity and so on).
+
+**Risk:** `write`
+
+```ts
+await corsair.elevenlabs.api.voices.editSettings({ voiceId: '<voice id>', settings: { stability: 0.4, similarity_boost: 0.7 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+| `settings` | `object` | Yes | The settings to store, with the API’s field names. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`voices.get`
+
+Read one voice with its settings and labels.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voices.get({ voiceId: 'FGY2WhTYpPnrIDTdsKH5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `labels` | `Record<string, any> \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `settings` | `object \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `created_at_unix` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  stability?: number | null,
+  similarity_boost?: number | null,
+  style?: number | null,
+  use_speaker_boost?: boolean | null,
+  speed?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSettings
+
+`voices.getSettings`
+
+Read a voice’s stored settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voices.getSettings({ voiceId: 'FGY2WhTYpPnrIDTdsKH5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voiceId` | `string` | Yes | Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stability` | `number \| null` | No | — |
+| `similarity_boost` | `number \| null` | No | — |
+| `style` | `number \| null` | No | — |
+| `use_speaker_boost` | `boolean \| null` | No | — |
+| `speed` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`voices.list`
+
+List the voices this account can use.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voices.list({ search: 'narrator', pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextPageToken` | `string` | No | next_page_token from the previous page. |
+| `pageSize` | `number` | No | 1 to 100. Default 10. |
+| `search` | `string` | No | — |
+| `sort` | `created_at_unix \| name` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+| `voiceType` | `string` | No | personal, community, default, workspace, non-default or saved. |
+| `category` | `string` | No | premade, cloned, generated or professional. |
+| `voiceIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voices` | `object[]` | Yes | — |
+| `has_more` | `boolean \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="voices full type">
+
+```ts
+{
+  voice_id: string,
+  name?: string | null,
+  category?: string | null,
+  description?: string | null,
+  labels?: Record<string, any> | null,
+  preview_url?: string | null,
+  settings?: {
+    stability?: number | null,
+    similarity_boost?: number | null,
+    style?: number | null,
+    use_speaker_boost?: boolean | null,
+    speed?: number | null
+  } | null,
+  is_owner?: boolean | null,
+  created_at_unix?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchLibrary
+
+`voices.searchLibrary`
+
+Search the shared voice library.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voices.searchLibrary({ search: 'calm narrator', language: 'en', pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number` | No | Page number from 0. |
+| `pageSize` | `number` | No | 1 to 100. Default 30. |
+| `category` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `age` | `string` | No | — |
+| `accent` | `string` | No | — |
+| `language` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `useCases` | `string[]` | No | — |
+| `descriptives` | `string[]` | No | — |
+| `featured` | `boolean` | No | — |
+| `sort` | `created_date \| usage_character_count_1y \| trending \| cloned_by_count` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voices` | `object[]` | Yes | — |
+| `has_more` | `boolean \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="voices full type">
+
+```ts
+{
+  public_owner_id?: string | null,
+  voice_id: string,
+  name?: string | null,
+  accent?: string | null,
+  gender?: string | null,
+  age?: string | null,
+  category?: string | null,
+  language?: string | null,
+  description?: string | null,
+  preview_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
