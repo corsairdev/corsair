@@ -70,4 +70,40 @@ describe('Finage live responses', () => {
 			expect(schema.safeParse([body]).success).toBe(true);
 		}
 	});
+
+	it('accepts the snake_case is_active on cryptocurrency search and detail', () => {
+		// Search sends is_active as a string, detail as a boolean; neither sends
+		// the documented isActive.
+		const search = FinageOutputSchemas.searchCryptocurrency.safeParse({
+			limit: 3,
+			key: 'bitcoin',
+			results: [
+				{ name: '0xBitcoin', symbol: '0xBTC', type: 'token', is_active: 'true' },
+				{ name: 'BitCoin One', symbol: 'BTCONE', type: 'token', is_active: 'false' },
+			],
+		});
+		expect(search.success).toBe(true);
+
+		const detail = FinageOutputSchemas.getCryptoDetail.safeParse({
+			name: 'Bitcoin',
+			symbol: 'BTC',
+			type: 'coin',
+			is_active: false,
+			description: 'Bitcoin is a cryptocurrency and worldwide payment system.',
+			developers: [{ name: 'Satoshi Nakamoto', position: 'Founder' }],
+			open_source: false,
+			started_at: '0001-01-01T00:00:00Z',
+			hash_algorithm: '',
+			links: { website: ['https://bitcoin.org/'] },
+			thumbnail:
+				'https://finage.s3.eu-west-2.amazonaws.com/cryptocurrency/128x128/bitcoin.png',
+			development_status: '',
+			hardware_wallet: false,
+		});
+		expect(detail.success).toBe(true);
+		if (detail.success) {
+			expect(detail.data.is_active).toBe(false);
+			expect(detail.data.open_source).toBe(false);
+		}
+	});
 });

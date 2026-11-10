@@ -326,6 +326,10 @@ const companyDetail = z
 	})
 	.catchall(finageJsonValue);
 
+const activeFlag = z
+	.union([z.boolean(), z.string()])
+	.nullable()
+	.optional();
 const cryptoDeveloper = z
 	.object({ name: text, position: text })
 	.catchall(finageJsonValue);
@@ -344,7 +348,11 @@ const cryptoDetail = z
 		name: text,
 		symbol: text,
 		type: text,
-		isActive: z.boolean(),
+		isActive: optionalBoolean,
+		// The API sends is_active (a boolean here, a "true"/"false" string in
+		// search results) and snake_case names for the fields below; the
+		// reference documents camelCase.
+		is_active: activeFlag,
 		description: optionalText,
 		developers: z.array(cryptoDeveloper).nullable().optional(),
 		opensource: optionalBoolean,
@@ -354,6 +362,11 @@ const cryptoDetail = z
 		thumbnail: optionalText,
 		developmentStatus: optionalText,
 		hardwareWallet: optionalBoolean,
+		open_source: optionalBoolean,
+		started_at: optionalText,
+		hash_algorithm: optionalText,
+		development_status: optionalText,
+		hardware_wallet: optionalBoolean,
 	})
 	.catchall(finageJsonValue);
 const cryptoDetailedItem = z
@@ -390,7 +403,8 @@ const cryptoSearchResult = z
 		name: text,
 		symbol: text,
 		type: text,
-		isActive: z.boolean(),
+		isActive: optionalBoolean,
+		is_active: activeFlag,
 	})
 	.catchall(finageJsonValue);
 const marketSearchEnvelope = z
