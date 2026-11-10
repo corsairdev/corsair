@@ -519,7 +519,7 @@ export const klipfolioEndpointMeta = {
 		description: 'Import a Data Source on Klipfolio',
 	},
 	'datasources.deleteInstancesDatasource': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete Instances on Klipfolio',
 	},
 	'datasources.retrieveDatasourceProperties': {
