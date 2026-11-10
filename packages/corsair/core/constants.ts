@@ -370,6 +370,7 @@ export const BaseProviders = [
 	'sendgrid',
 	'sentry',
 	'serpapi',
+	'servicenow',
 	'sharepoint',
 	'slack',
 	'slackbot',
@@ -818,6 +819,7 @@ export const ProviderDisplayNames = {
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
+	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
@@ -1272,6 +1274,7 @@ export type AllProviders =
 	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
+	| 'servicenow'
 	| 'sharepoint'
 	| 'slack'
 	| 'slackbot'
