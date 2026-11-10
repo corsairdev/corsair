@@ -1766,5 +1766,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/quaderno",
+    "dir": "packages/quaderno",
+    "name": "Quaderno",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
