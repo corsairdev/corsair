@@ -4,7 +4,11 @@ jest.mock('corsair/core', () => {
 });
 
 import type { WebhookRequest } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
+import {
+	collectPluginWebhookMatchers,
+	logEventFromContext,
+	matchWebhookPluginAndTenant,
+} from 'corsair/core';
 import { tldv } from './index';
 import {
 	meetingReadyEvent,
@@ -114,6 +118,89 @@ describe('tl;dv webhook matching', () => {
 		expect(matchTldvEvent('MeetingReady')({ headers: {}, body: {} })).toBe(
 			false,
 		);
+	});
+
+	it('matches a raw string body', () => {
+		// Tenant discovery hands matchers the body before it is parsed.
+		expect(
+			matchTldvEvent('MeetingReady')({
+				headers: {},
+				body: JSON.stringify(meetingReadyEvent),
+			}),
+		).toBe(true);
+		expect(
+			matchTldvEvent('MeetingReady')({ headers: {}, body: '{not json' }),
+		).toBe(false);
+	});
+});
+
+describe('tl;dv plugin discovery', () => {
+	// A neighbour plugin that recognises its own deliveries by a header, the way
+	// signed providers do. It is listed after tl;dv on purpose.
+	const neighbour = {
+		id: 'neighbour',
+		pluginWebhookMatcher: (request: { headers: Record<string, unknown> }) =>
+			'x-neighbour-signature' in request.headers,
+		pluginTenantWebhookMatcher: () => ({
+			linkType: 'tenant_external_id',
+			externalId: 'neighbour-account',
+		}),
+	};
+	const matchers = collectPluginWebhookMatchers([tldv(), neighbour] as never);
+
+	it('claims both tl;dv triggers', () => {
+		const matcher = tldv().pluginWebhookMatcher;
+
+		expect(matcher?.({ headers: {}, body: meetingReadyEvent })).toBe(true);
+		expect(matcher?.({ headers: {}, body: transcriptReadyEvent })).toBe(true);
+		expect(
+			matcher?.({ headers: {}, body: JSON.stringify(meetingReadyEvent) }),
+		).toBe(true);
+	});
+
+	it("leaves another provider's delivery alone", () => {
+		const matcher = tldv().pluginWebhookMatcher;
+
+		expect(matcher?.({ headers: {}, body: {} })).toBe(false);
+		expect(matcher?.({ headers: {}, body: { event: 'invitee.created' } })).toBe(
+			false,
+		);
+		expect(
+			matcher?.({ headers: {}, body: { event: { type: 'message' } } }),
+		).toBe(false);
+	});
+
+	it('does not take a delivery from a plugin listed after it', () => {
+		// Discovery stops at the first plugin whose matcher says yes. A matcher
+		// that always says yes sends this delivery to tl;dv, whose tenant matcher
+		// finds no organizer and answers null, so the tenant is never resolved.
+		const match = matchWebhookPluginAndTenant(matchers, {
+			headers: { 'x-neighbour-signature': 'sig' },
+			body: { type: 'neighbour.event' },
+		});
+
+		expect(match).toEqual({
+			plugin: 'neighbour',
+			tenantMatch: {
+				linkType: 'tenant_external_id',
+				externalId: 'neighbour-account',
+			},
+		});
+	});
+
+	it('still resolves its own delivery', () => {
+		expect(
+			matchWebhookPluginAndTenant(matchers, {
+				headers: {},
+				body: meetingReadyEvent,
+			}),
+		).toEqual({
+			plugin: 'tldv',
+			tenantMatch: {
+				linkType: 'tenant_external_id',
+				externalId: 'jordan@example.org',
+			},
+		});
 	});
 });
 

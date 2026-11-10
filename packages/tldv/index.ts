@@ -30,6 +30,7 @@ import { matchTldvTenantWebhook } from './webhooks/tenant-matcher';
 import type { TldvWebhookOutputs } from './webhooks/types';
 import {
 	MeetingReadyEventSchema,
+	matchTldvWebhook,
 	TranscriptReadyEventSchema,
 } from './webhooks/types';
 
@@ -223,8 +224,9 @@ export function tldv<const T extends TldvPluginOptions>(
 		endpointSchemas: tldvEndpointSchemas,
 		webhookSchemas: tldvWebhookSchemas,
 		// Both triggers arrive on the same route and are told apart by the
-		// `event` field, which the per-webhook matchers already do.
-		pluginWebhookMatcher: () => true,
+		// `event` field. The plugin-level check must also say no to every other
+		// provider's body: tenant discovery takes the first plugin that says yes.
+		pluginWebhookMatcher: matchTldvWebhook,
 		pluginTenantWebhookMatcher: matchTldvTenantWebhook,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx, source) => {

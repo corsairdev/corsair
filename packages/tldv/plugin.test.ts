@@ -66,10 +66,18 @@ describe('tldv plugin definition', () => {
 		expect(flatten(asNested(plugin.webhooks))).toEqual([...WEBHOOKS]);
 	});
 
-	it('accepts every delivery at the plugin level', () => {
-		// Both triggers share one route and are separated by their `event` field,
-		// which each per-webhook matcher already checks.
-		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: {} })).toBe(true);
+	it('claims only tl;dv deliveries at the plugin level', () => {
+		// Tenant discovery stops at the first plugin whose matcher says yes, so
+		// the matcher must say no to a body that is not a tl;dv trigger.
+		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: {} })).toBe(
+			false,
+		);
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: { event: 'MeetingReady' },
+			}),
+		).toBe(true);
 	});
 
 	it('gives every operation a description and the right risk level', () => {

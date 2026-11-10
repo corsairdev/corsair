@@ -21,10 +21,10 @@ export function matchTldvTenantWebhook(
 }
 
 /**
- * The tenant matcher runs before the payload is parsed, and `readBodyRecord`
- * only accepts an already-parsed object, so a raw body is parsed here.
+ * Matchers run before the payload is parsed, and `readBodyRecord` only accepts
+ * an already-parsed object, so a raw body is parsed here.
  */
-function bodyRecord(
+export function bodyRecord(
 	// unknown: the body arrives as text or as an object parsed by the framework.
 	body: unknown,
 ): Record<string, unknown> | null {

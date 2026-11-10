@@ -4,8 +4,8 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import { readBodyRecord } from 'corsair/core';
 import { z } from 'zod';
+import { bodyRecord } from './tenant-matcher';
 
 // ── Verification ──────────────────────────────────────────────────────────
 //
@@ -176,10 +176,21 @@ export type TldvWebhookOutputs = {
 	transcriptReady: TldvTranscriptReadyEvent;
 };
 
+/** The triggers tl;dv sends, as named in a delivery's `event` field. */
+const TLDV_EVENTS: readonly string[] = ['MeetingReady', 'TranscriptReady'];
+
 /** Matches a delivery whose `event` field names the trigger. */
 export function matchTldvEvent(event: string): CorsairWebhookMatcher {
-	return (request) => {
-		const body = readBodyRecord(request);
-		return body?.event === event;
-	};
+	return (request) => bodyRecord(request.body)?.event === event;
 }
+
+/**
+ * Plugin-level matcher: true only for a body whose `event` is a tl;dv trigger.
+ * Tenant discovery stops at the first plugin whose matcher says yes, so a
+ * matcher that accepts everything would take other providers' deliveries.
+ * tl;dv sends no identifying header, which leaves the body as the only signal.
+ */
+export const matchTldvWebhook: CorsairWebhookMatcher = (request) => {
+	const event = bodyRecord(request.body)?.event;
+	return typeof event === 'string' && TLDV_EVENTS.includes(event);
+};
