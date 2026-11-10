@@ -819,8 +819,35 @@ describe('input constraints from the spec', () => {
 		expect(accepts(Inputs.propertiesList, { geoShapes: [[[6.06]]] })).toBe(
 			false,
 		);
+
 		expect(accepts(Inputs.indicatorsCities, { polygon: [{ lat: 1 }] })).toBe(
 			false,
 		);
+	});
+
+	it('rejects a mistyped expression field instead of dropping it', () => {
+		// `strcit` used to parse to `{ options: {} }`: the filter vanished and the
+		// request went out matching everything, which is worse than an error.
+		expect(
+			accepts(Inputs.propertiesList, {
+				expressions: [[{ word: 'travaux', options: { strcit: true } }]],
+			}),
+		).toBe(false);
+		expect(
+			accepts(Inputs.propertiesList, {
+				expressions: [[{ word: 'travaux', optoins: { strict: true } }]],
+			}),
+		).toBe(false);
+		expect(
+			accepts(Inputs.propertiesList, {
+				expressions: [[{ word: 'travaux', extra: 'x' }]],
+			}),
+		).toBe(false);
+		// The documented spelling still parses.
+		expect(
+			accepts(Inputs.propertiesList, {
+				expressions: [[{ word: 'travaux', options: { strict: true } }]],
+			}),
+		).toBe(true);
 	});
 });

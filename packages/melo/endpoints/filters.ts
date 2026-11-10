@@ -56,21 +56,27 @@ export const SubscribedEventSchema = z.enum([
  */
 export const DateTimeSchema = z.string().min(1);
 
-const ExpressionTermSchema = z.object({
-	word: z.string().min(1).describe('The word or phrase to match.'),
-	options: z
-		.object({
-			includes: z
-				.boolean()
-				.optional()
-				.describe('true to require the word, false to exclude it.'),
-			strict: z
-				.boolean()
-				.optional()
-				.describe('true to match the word exactly.'),
-		})
-		.optional(),
-});
+const ExpressionTermSchema = z
+	.object({
+		word: z.string().min(1).describe('The word or phrase to match.'),
+		options: z
+			.object({
+				includes: z
+					.boolean()
+					.optional()
+					.describe('true to require the word, false to exclude it.'),
+				strict: z
+					.boolean()
+					.optional()
+					.describe('true to match the word exactly.'),
+			})
+			// Strict so a mistyped option (`strcit`) is an input error rather than
+			// a field that is silently dropped: the request would otherwise go out
+			// with no filter, and a search would be saved that matches everything.
+			.strict()
+			.optional(),
+	})
+	.strict();
 
 /** One OR group: every term in the array must match (AND). */
 export const ExpressionGroupSchema = z.array(ExpressionTermSchema);
