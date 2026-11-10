@@ -1,0 +1,757 @@
+---
+title: API
+description: "API reference for Recruitee: every `recruitee.api.*` operation with input and output types."
+---
+
+Every `recruitee.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Candidates
+
+### create
+
+`candidates.create`
+
+Add a candidate manually and assign them to an offer at its default stage
+
+**Risk:** `write`
+
+```ts
+await corsair.recruitee.api.candidates.create({ name: 'John Smith', emails: ['john@example.com'], offer_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The candidate name. |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `social_links` | `string[]` | No | — |
+| `links` | `string[]` | No | — |
+| `cover_letter` | `string` | No | — |
+| `sources` | `string[]` | No | — |
+| `remote_cv_url` | `string` | No | A link to a CV hosted elsewhere, instead of an upload. |
+| `offer_id` | `number` | No | The offer the candidate is assigned to at its default stage. |
+
+The record goes under `candidate` and the offer assignment beside it as `offers`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candidate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  emails?: string[] | null,
+  phones?: string[] | null,
+  social_links?: string[] | null,
+  links?: string[] | null,
+  cover_letter?: string | null,
+  sources?: string[] | null,
+  status?: string | null,
+  stage?: string | null,
+  admin_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_activity_at?: string | null,
+  my_last_rating?: number | null,
+  photo_url?: string | null,
+  cv_url?: string | null,
+  placements?: {
+    id?: number | null,
+    candidate_id?: number | null,
+    offer_id?: number | null,
+    stage?: string | null,
+    stage_id?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`candidates.delete`
+
+Delete a candidate permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.recruitee.api.candidates.delete({ candidate_id: 135145 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `candidate_id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`candidates.get`
+
+Fetch one candidate with their contact details, stage, status and placements
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.candidates.get({ candidate_id: 135145 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candidate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  emails?: string[] | null,
+  phones?: string[] | null,
+  social_links?: string[] | null,
+  links?: string[] | null,
+  cover_letter?: string | null,
+  sources?: string[] | null,
+  status?: string | null,
+  stage?: string | null,
+  admin_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_activity_at?: string | null,
+  my_last_rating?: number | null,
+  photo_url?: string | null,
+  cv_url?: string | null,
+  placements?: {
+    id?: number | null,
+    candidate_id?: number | null,
+    offer_id?: number | null,
+    stage?: string | null,
+    stage_id?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`candidates.list`
+
+Search candidates with offer, stage, status and location filters, plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.candidates.list({ offer_id: 42, stage: 'Applied', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Recruitee applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip, 0-based. |
+| `query` | `string` | No | A free-text search. |
+| `offer_id` | `number` | No | Only candidates on this offer. |
+| `stage` | `string` | No | The pipeline stage name. |
+| `status` | `string` | No | The candidate status. |
+| `department_id` | `number` | No | — |
+| `location_id` | `number` | No | — |
+| `sort_by` | `string` | No | The column to sort on, such as `created_at`. |
+| `sort_direction` | `asc \| desc` | No | — |
+
+Filtering lives on /search/new/candidates; /candidates itself is the create route.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidates` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+
+<AccordionGroup>
+<Accordion title="candidates full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  emails?: string[] | null,
+  phones?: string[] | null,
+  social_links?: string[] | null,
+  links?: string[] | null,
+  cover_letter?: string | null,
+  sources?: string[] | null,
+  status?: string | null,
+  stage?: string | null,
+  admin_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_activity_at?: string | null,
+  my_last_rating?: number | null,
+  photo_url?: string | null,
+  cv_url?: string | null,
+  placements?: {
+    id?: number | null,
+    candidate_id?: number | null,
+    offer_id?: number | null,
+    stage?: string | null,
+    stage_id?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`candidates.update`
+
+Update a candidate: their name, contacts, cover letter, status or stage
+
+**Risk:** `write`
+
+```ts
+await corsair.recruitee.api.candidates.update({ candidate_id: 135145, stage: 'Interview' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `cover_letter` | `string` | No | — |
+| `status` | `string` | No | — |
+| `stage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candidate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  emails?: string[] | null,
+  phones?: string[] | null,
+  social_links?: string[] | null,
+  links?: string[] | null,
+  cover_letter?: string | null,
+  sources?: string[] | null,
+  status?: string | null,
+  stage?: string | null,
+  admin_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_activity_at?: string | null,
+  my_last_rating?: number | null,
+  photo_url?: string | null,
+  cv_url?: string | null,
+  placements?: {
+    id?: number | null,
+    candidate_id?: number | null,
+    offer_id?: number | null,
+    stage?: string | null,
+    stage_id?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Departments
+
+### list
+
+`departments.list`
+
+List the company departments with how many offers each has
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.departments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Recruitee applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip, 0-based. |
+
+`offers_count` is how many offers the department has; `status` is only set on a create response.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departments` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+
+<AccordionGroup>
+<Accordion title="departments full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  status?: string | null,
+  offers_count?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List the company locations with how many offers each has
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Recruitee applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip, 0-based. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  city?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  note?: string | null,
+  offers_count?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offers
+
+### create
+
+`offers.create`
+
+Create an offer as a job or a talent pool, optionally already published
+
+**Risk:** `write`
+
+```ts
+await corsair.recruitee.api.offers.create({ title: 'Senior Backend Engineer', kind: 'job', department_id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `kind` | `job \| talent_pool` | No | — |
+| `description` | `string` | No | — |
+| `requirements` | `string` | No | — |
+| `department_id` | `number` | No | — |
+| `location_id` | `number` | No | — |
+| `status` | `draft \| published` | No | — |
+
+A new offer is created with the status you pass, or Recruitee's default when you omit it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  slug?: string | null,
+  status?: string | null,
+  kind?: string | null,
+  department?: string | null,
+  department_id?: number | null,
+  location?: string | null,
+  location_id?: number | null,
+  description?: string | null,
+  requirements?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  published_at?: string | null,
+  translations?: {
+    locale?: string | null,
+    title?: string | null,
+    description?: string | null,
+    requirements?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`offers.get`
+
+Fetch one offer with its title, slug, description, requirements and state
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.offers.get({ offer_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  slug?: string | null,
+  status?: string | null,
+  kind?: string | null,
+  department?: string | null,
+  department_id?: number | null,
+  location?: string | null,
+  location_id?: number | null,
+  description?: string | null,
+  requirements?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  published_at?: string | null,
+  translations?: {
+    locale?: string | null,
+    title?: string | null,
+    description?: string | null,
+    requirements?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`offers.list`
+
+List offers (jobs and talent pools) with department, location, status and kind filters
+
+**Risk:** `read`
+
+```ts
+await corsair.recruitee.api.offers.list({ status: 'published', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Recruitee applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip, 0-based. |
+| `query` | `string` | No | — |
+| `department_id` | `number` | No | — |
+| `location_id` | `number` | No | — |
+| `status` | `published \| draft \| archived` | No | — |
+| `kind` | `job \| talent_pool` | No | `job` for a posted role, `talent_pool` for a pool. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offers` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+
+<AccordionGroup>
+<Accordion title="offers full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  slug?: string | null,
+  status?: string | null,
+  kind?: string | null,
+  department?: string | null,
+  department_id?: number | null,
+  location?: string | null,
+  location_id?: number | null,
+  description?: string | null,
+  requirements?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  published_at?: string | null,
+  translations?: {
+    locale?: string | null,
+    title?: string | null,
+    description?: string | null,
+    requirements?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`offers.update`
+
+Update an offer: its title, description, requirements, department, location or status
+
+**Risk:** `write`
+
+```ts
+await corsair.recruitee.api.offers.update({ offer_id: 42, status: 'draft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `kind` | `job \| talent_pool` | No | — |
+| `description` | `string` | No | — |
+| `requirements` | `string` | No | — |
+| `department_id` | `number` | No | — |
+| `location_id` | `number` | No | — |
+| `status` | `draft \| published` | No | — |
+| `offer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  slug?: string | null,
+  status?: string | null,
+  kind?: string | null,
+  department?: string | null,
+  department_id?: number | null,
+  location?: string | null,
+  location_id?: number | null,
+  description?: string | null,
+  requirements?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  published_at?: string | null,
+  translations?: {
+    locale?: string | null,
+    title?: string | null,
+    description?: string | null,
+    requirements?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

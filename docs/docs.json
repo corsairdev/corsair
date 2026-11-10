@@ -3024,6 +3024,14 @@
                 ]
               },
               {
+                "group": "Recruitee",
+                "pages": [
+                  "plugins/recruitee/overview",
+                  "plugins/recruitee/api",
+                  "plugins/recruitee/database"
+                ]
+              },
+              {
                 "group": "Reddit",
                 "pages": [
                   "plugins/reddit/overview",

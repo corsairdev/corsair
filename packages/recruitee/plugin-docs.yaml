@@ -1,0 +1,58 @@
+displayName: Recruitee
+description: Applicant tracking with Recruitee - search, read and write candidates, read and write offers, and list the departments and locations they belong to through the Recruitee ATS API.
+domain: recruitee.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a token under **Settings → Apps and plugins → Personal API tokens**, then copy the **company id** from the same page. Send the token as `Authorization: Bearer <token>`; every ATS route sits under `/c/{company_id}`. Things to know before you call:
+
+  - **The company id is half the credential.** A token belongs to one company, and the id is part of every path. Using a token for another company answers `401`, so the plugin stores both and refuses to build a request without the id.
+  - **Tokens cannot be regenerated.** Revoking one leaves you creating a new token and updating every integration, so a `401` is terminal; the plugin never retries it. A token also carries its creator's permissions, including removing that user from the company cutting their tokens off from it.
+  - **Three error shapes exist.** The current one is `{ errors: [{ code, data, message }] }`; the older ATS routes answer `{ error, error_code }`; and the host can answer a bare `401` with no body. The plugin reads whichever arrived.
+  - **`/candidates` is the create route.** Filtering lives at `/search/new/candidates`, which is what `candidates.list` calls, so a list never accidentally writes.
+  - **Creates and updates wrap the record.** A candidate or offer goes in under a `candidate` or `offer` key, and a candidate's offer assignments sit **beside** that key as an `offers` array rather than inside it.
+  - **Paging is limit and offset.** `next_offset` is derived from the rows returned and the caller's offset, using `meta.total` when the route supplies it; a short page ends the walk.
+  - **A new offer is a draft by default.** `offers.create` accepts `status: 'draft'` or `'published'`; leaving it out lets Recruitee choose, and publishing later is `offers.update`.
+  - **Rate limit.** 1000 requests per minute per token. Recruitee documents no `Retry-After`, so a 429 is retried three times with backoff.
+examples:
+  read:
+    path: candidates.list
+    title: Search candidates on one offer
+    args:
+      offer_id: 42
+      limit: 25
+  write:
+    path: candidates.create
+    title: Add a candidate to an offer
+    args:
+      name: John Smith
+      emails:
+        - john@example.com
+      offer_id: 42
+apiExamples:
+  candidates.list:
+    call: "{ offer_id: 42, stage: 'Applied', limit: 25 }"
+  candidates.get:
+    call: "{ candidate_id: 135145 }"
+  candidates.create:
+    call: "{ name: 'John Smith', emails: ['john@example.com'], offer_id: 42 }"
+  candidates.update:
+    call: "{ candidate_id: 135145, stage: 'Interview' }"
+  candidates.delete:
+    call: "{ candidate_id: 135145 }"
+  offers.list:
+    call: "{ status: 'published', limit: 25 }"
+  offers.get:
+    call: "{ offer_id: 42 }"
+  offers.create:
+    call: "{ title: 'Senior Backend Engineer', kind: 'job', department_id: 7 }"
+  offers.update:
+    call: "{ offer_id: 42, status: 'draft' }"
+  departments.list:
+    call: "{}"
+  locations.list:
+    call: "{}"
+apiNotes:
+  'candidates.list': 'Filtering lives on /search/new/candidates; /candidates itself is the create route.'
+  'candidates.create': 'The record goes under `candidate` and the offer assignment beside it as `offers`.'
+  'offers.create': 'A new offer is created with the status you pass, or Recruitee''s default when you omit it.'
+  'departments.list': '`offers_count` is how many offers the department has; `status` is only set on a create response.'

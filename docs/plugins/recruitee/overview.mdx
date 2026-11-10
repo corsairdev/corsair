@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Applicant tracking with Recruitee - search, read and write candidates, read and write offers, and list the departments and locations they belong to through the Recruitee ATS API."
+---
+
+Use **Recruitee** through Corsair: one client, typed API calls.
+
+Create a token under **Settings → Apps and plugins → Personal API tokens**, then copy the **company id** from the same page. Send the token as `Authorization: Bearer <token>`; every ATS route sits under `/c/{company_id}`. Things to know before you call:
+
+- **The company id is half the credential.** A token belongs to one company, and the id is part of every path. Using a token for another company answers `401`, so the plugin stores both and refuses to build a request without the id.
+- **Tokens cannot be regenerated.** Revoking one leaves you creating a new token and updating every integration, so a `401` is terminal; the plugin never retries it. A token also carries its creator's permissions, including removing that user from the company cutting their tokens off from it.
+- **Three error shapes exist.** The current one is `{ errors: [{ code, data, message }] }`; the older ATS routes answer `{ error, error_code }`; and the host can answer a bare `401` with no body. The plugin reads whichever arrived.
+- **`/candidates` is the create route.** Filtering lives at `/search/new/candidates`, which is what `candidates.list` calls, so a list never accidentally writes.
+- **Creates and updates wrap the record.** A candidate or offer goes in under a `candidate` or `offer` key, and a candidate's offer assignments sit **beside** that key as an `offers` array rather than inside it.
+- **Paging is limit and offset.** `next_offset` is derived from the rows returned and the caller's offset, using `meta.total` when the route supplies it; a short page ends the walk.
+- **A new offer is a draft by default.** `offers.create` accepts `status: 'draft'` or `'published'`; leaving it out lets Recruitee choose, and publishing later is `offers.update`.
+- **Rate limit.** 1000 requests per minute per token. Recruitee documents no `Retry-After`, so a 429 is retried three times with backoff.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/recruitee better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/recruitee better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/recruitee better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/recruitee better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { recruitee } from '@corsair-dev/recruitee';
+
+export const corsair = createCorsair({
+	plugins: [
+		recruitee(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting Recruitee. The account also needs its company id stored, since every ATS route sits under it.
+
+```ts
+recruitee()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'recruitee',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search candidates on one offer**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.recruitee.api.candidates.list({ offer_id: 42, limit: 25 });
+```
+
+
+**Add a candidate to an offer**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.recruitee.api.candidates.create({
+	name: 'John Smith',
+	emails: ['john@example.com'],
+	offer_id: 42,
+});
+```
+
+
+See the full list on the [API](/plugins/recruitee/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/recruitee/api">
+    Every `recruitee.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
