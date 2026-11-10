@@ -20,6 +20,7 @@ import {
 	listPackages,
 	packageJsonChanged,
 	releaseTag,
+	versionSetCommit,
 } from './release-on-merge.mjs';
 
 export const ENTRIES_PATH = 'scripts/changelog-entries.json';
@@ -300,9 +301,17 @@ export function entriesFromPlan({ cwd, plan, date, existing = [] }) {
 			base ? publicChanges(cwd, dir, [`${base}..${upTo}`]) : [],
 		);
 	};
+	// Up to the commit that set the version, not HEAD: a fix merged while it
+	// publishes belongs to the release after it.
 	for (const { name, version } of plan.waiting) {
 		const dir = dirs.get(name);
-		if (dir) addOwnVersion(name, dir, version, 'HEAD');
+		if (!dir) continue;
+		addOwnVersion(
+			name,
+			dir,
+			version,
+			versionSetCommit(cwd, dir, version) ?? 'HEAD',
+		);
 	}
 
 	// deploy.yml can publish such a version before any run sees it waiting. It

@@ -546,6 +546,26 @@ describe('on a git repo', () => {
 				);
 			});
 		});
+		it('leaves a fix merged after a hand-raised version to the next release', () => {
+			const { sha } = released();
+			git(['tag', '@corsair-dev/gmail@0.1.8', sha]);
+			pkg('packages/gmail', '@corsair-dev/gmail', '0.2.0');
+			write('packages/gmail/index.ts', '2\n');
+			commit('feat(gmail): threads (#50)');
+			write('packages/gmail/index.ts', '3\n');
+			commit('fix(gmail): merged while 0.2.0 published (#51)');
+			const [entry] = entriesFromPlan({
+				cwd,
+				date: '2026-11-08',
+				plan: plan({
+					waiting: [{ name: '@corsair-dev/gmail', version: '0.2.0' }],
+				}),
+			});
+			assert.deepEqual(
+				entry.changes.map((c) => c.pr),
+				[50],
+			);
+		});
 		it('skips the frpc binary packages', () => {
 			pkg('packages/frpc-linux-x64', '@corsair-dev/frpc-linux-x64', '0.1.0');
 			commit('feat: binary (#1)');
