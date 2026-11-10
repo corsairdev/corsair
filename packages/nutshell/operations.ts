@@ -9,6 +9,11 @@ export type NutshellOperationDefinition = {
 	path: string;
 	pathParams: readonly string[];
 	queryParams: readonly string[];
+	/**
+	 * Array query parameters the reference documents as one comma-separated
+	 * value (`style: form, explode: false`) instead of a repeated key.
+	 */
+	commaSeparatedQueryParams?: readonly string[];
 	hasBody: boolean;
 	bodyRequired: boolean;
 	hasResponseBody: boolean;
@@ -705,6 +710,7 @@ export const NUTSHELL_OPERATIONS = [
 			'page[limit]',
 			'page[endIndex]',
 		],
+		commaSeparatedQueryParams: ['filter[type]', 'filter[stagesets]'],
 		hasBody: false,
 		bodyRequired: false,
 		hasResponseBody: true,

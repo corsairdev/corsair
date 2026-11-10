@@ -39,6 +39,7 @@ function resolvePath(
 
 function pickQuery(
 	queryParams: readonly string[],
+	commaSeparated: readonly string[],
 	// Record<string, unknown>: the schema-parsed input object is read by
 	// dynamic query-parameter name, so values are looked up generically.
 	input: Record<string, unknown>,
@@ -49,7 +50,13 @@ function pickQuery(
 	const query: Record<string, unknown> = {};
 	for (const name of queryParams) {
 		const value = input[name];
-		if (value !== undefined) query[name] = value;
+		if (value === undefined) continue;
+		// The shared transport repeats the key for an array. These parameters
+		// are documented as a single comma-separated value instead.
+		query[name] =
+			Array.isArray(value) && commaSeparated.includes(name)
+				? value.join(',')
+				: value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
@@ -74,7 +81,11 @@ export function defineEndpoint<K extends NutshellOperationKey>(
 			ctx.key,
 			{
 				method: operation.method,
-				query: pickQuery(operation.queryParams, record),
+				query: pickQuery(
+					operation.queryParams,
+					operation.commaSeparatedQueryParams ?? [],
+					record,
+				),
 				body: operation.hasBody ? record.body : undefined,
 				mediaType: operation.mediaType,
 			},

@@ -79,4 +79,30 @@ describe('Nutshell request guards', () => {
 			'destructive',
 		);
 	});
+
+	it('sends todos.list multi-value filters comma-separated, as documented', async () => {
+		fetchSpy.mockImplementation(
+			async () =>
+				new Response(
+					JSON.stringify({
+						todos: [],
+						meta: {
+							count: 0,
+							facets: { past: 0, today: 0, tomorrow: 0, future: 0 },
+							page: { startIndex: 0, endIndex: 0 },
+						},
+					}),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				),
+		);
+		await api.todos.list({
+			'filter[type]': ['tasks', 'steps'],
+			'filter[stagesets]': ['1-stagesets', '2-stagesets'],
+		});
+		const url = new URL(String(fetchSpy.mock.calls[0]?.[0]));
+		expect(url.searchParams.getAll('filter[type]')).toEqual(['tasks,steps']);
+		expect(url.searchParams.getAll('filter[stagesets]')).toEqual([
+			'1-stagesets,2-stagesets',
+		]);
+	});
 });
