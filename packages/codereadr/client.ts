@@ -14,9 +14,10 @@ import { ApiError, request } from 'corsair/http';
 export const CODEREADR_API_BASE = 'https://api.codereadr.com/api/';
 
 /**
- * API limits reset every minute (documented codes 111 and 113), and the docs
- * tell callers to resend after a limit clears, so a short wait is the expected
- * behavior rather than an exception.
+ * The documented limit codes: 111 is the per-minute limit, which resets at the
+ * start of every minute, and 113 is the per-day limit, which resets at
+ * midnight. Both mark the error as a rate limit; error-handlers.ts retries
+ * only 111, because waiting a minute cannot clear a daily limit.
  */
 const CODEREADR_RATE_LIMIT_CODES = new Set([111, 113]);
 

@@ -173,6 +173,10 @@ export const RATE_LIMIT_ERROR_XML = errorXml(
 	111,
 	'You have exceeded the number of permitted API calls during current minute.',
 );
+export const DAILY_LIMIT_ERROR_XML = errorXml(
+	113,
+	'You have exceeded the number of permitted API calls during current day.',
+);
 export const TRANSIENT_ERROR_XML = errorXml(
 	2,
 	'Your request could not be processed at this time.',

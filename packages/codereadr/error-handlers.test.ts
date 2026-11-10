@@ -36,9 +36,9 @@ describe('error handlers', () => {
 		expect(strategy.maxRetries).toBeGreaterThan(0);
 	});
 
-	it('retries the per-day limit code', async () => {
+	it('does not retry the per-day limit code, which resets at midnight', async () => {
 		const strategy = await strategyFor(providerError(113));
-		expect(strategy.maxRetries).toBeGreaterThan(0);
+		expect(strategy.maxRetries).toBe(0);
 	});
 
 	it('waits the documented minute when no Retry-After header exists', async () => {

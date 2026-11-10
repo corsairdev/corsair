@@ -3,6 +3,7 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { codereadr } from './index';
 import {
 	API_KEY_ERROR_XML,
+	DAILY_LIMIT_ERROR_XML,
 	LIMITS_XML,
 	RATE_LIMIT_ERROR_XML,
 	SCANS_XML,
@@ -121,6 +122,22 @@ describe('retry behaviour', () => {
 
 			expect(error).toMatchObject({ code: 111 });
 			expect(fetchMock).toHaveBeenCalledTimes(3);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not retry the per-day limit, which only clears at midnight', async () => {
+		const { corsair, testDb } = await createClient({
+			key: 'codereadr-test-key',
+		});
+		try {
+			respondXml(DAILY_LIMIT_ERROR_XML);
+
+			await expect(
+				corsair.codereadr.api.limits.retrieve({}),
+			).rejects.toMatchObject({ code: 113, isRateLimit: true });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

@@ -13,11 +13,19 @@ function codeOf(error: Error): number | undefined {
  * signal; there is no status to classify on.
  */
 export const errorHandlers = {
-	// Codes 111 (per-minute) and 113 (per-day), plus an HTTP 429 from a gateway
-	// in front of the API. The docs say blocked calls reset every minute and can
-	// be resent, so a retry is the documented behavior. A real Retry-After wins
-	// when the server sent one; a minute is the fallback because the minute
-	// counter resets at a boundary the handler cannot know.
+	// Code 113, the per-day limit. Its counter only resets at midnight, so a
+	// retry a minute later is rejected again: it would hold the call open for
+	// two more minutes and spend two more requests to return the same error.
+	// It has to sit before RATE_LIMIT_ERROR, which also matches 113.
+	DAILY_LIMIT_ERROR: {
+		match: (error: Error) => codeOf(error) === 113,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// Code 111 (per-minute), plus an HTTP 429 from a gateway in front of the
+	// API. The docs say the minute counter resets at the start of every minute
+	// and the call can be resent, so a retry is the documented behavior. A real
+	// Retry-After wins when the server sent one; a minute is the fallback
+	// because the counter resets at a boundary the handler cannot know.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof CodereadrAPIError && error.isRateLimit,
