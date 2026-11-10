@@ -49,10 +49,18 @@ export const ChainIdentifierSchema = z
 		'The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API.',
 	);
 
-/** Event types accepted by `events.list`, from the spec's enum. */
+/**
+ * Event types accepted by `events.list` and `events.collection`. The spec's
+ * enum is `sale`, `transfer`, `mint`, `listing`, `offer`, `trait_offer` and
+ * `collection_offer`. `order` and `redemption` are not in that enum (`order`
+ * is the `event_type` a listing or offer row comes back with). They stay
+ * accepted here so OpenSea, not this schema, decides whether the filter is
+ * valid.
+ */
 export const OPENSEA_EVENT_TYPES = [
 	'sale',
 	'transfer',
+	'mint',
 	'order',
 	'redemption',
 	'listing',

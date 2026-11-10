@@ -209,7 +209,28 @@ describe('input schemas reject what the API would refuse', () => {
 		expect(Inputs.eventsList.safeParse({ event_type: ['sale'] }).success).toBe(
 			true,
 		);
-		expect(OPENSEA_EVENT_TYPES).toHaveLength(8);
+	});
+
+	it('accepts every event type the spec lists, mint included', () => {
+		// The spec's enum on `event_type` for /events and /events/collection/{slug}.
+		for (const type of [
+			'sale',
+			'transfer',
+			'mint',
+			'listing',
+			'offer',
+			'trait_offer',
+			'collection_offer',
+		]) {
+			expect(Inputs.eventsList.safeParse({ event_type: [type] }).success).toBe(
+				true,
+			);
+			expect(
+				Inputs.eventsCollection.safeParse({ slug: 'a', event_type: [type] })
+					.success,
+			).toBe(true);
+		}
+		expect(OPENSEA_EVENT_TYPES).toContain('mint');
 	});
 
 	it('rejects an empty slug', () => {
