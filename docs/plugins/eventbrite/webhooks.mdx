@@ -29,11 +29,11 @@ export async function POST(request: Request) {
 		status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
 	});
 }
-```
 
 Read the body as text, not `request.json()`: a handler that verifies a signature needs the exact bytes. The `query` argument carries `tenantId`; without it every delivery routes to the default tenant.
 
 Eventbrite does not sign deliveries and does not allow a custom header on the subscription, so this plugin has nothing to verify. Keep the receiving URL private; the notification's `api_url` is read back with the tenant's own token, which is what proves the delivery belongs to that tenant.
+```
 
 ## Events
 

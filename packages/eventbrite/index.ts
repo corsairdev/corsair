@@ -699,11 +699,19 @@ export function eventbrite<const T extends EventbritePluginOptions>(
 		oauthWebhookTenantLinkResolver: resolveEventbriteOAuthWebhookTenantLink,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: EventbriteKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
+			if (source === 'webhook') {
+				// Eventbrite signs nothing and allows no header on the
+				// subscription, so there is no secret to resolve. Returning an
+				// empty string keeps the signed-webhook path working; throwing
+				// here would fail every delivery before the handler ran.
+				return '';
+			}
+
+			if (options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (res) return res;
 			}

@@ -18,6 +18,7 @@ import {
 	emptyOrganizationsPage,
 	eventbriteEvent,
 	eventsPage,
+	paidTicketClass,
 	publishedResult,
 	question,
 	ticketClass,
@@ -633,6 +634,78 @@ describe('ticketClasses.get / create / update / delete', () => {
 		expect(h.fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('accepts capacity 0 on a donation ticket, which means unlimited', async () => {
+		h.respond({ ...paidTicketClass, donation: true, free: false, cost: null });
+
+		await invoke(TicketClasses.create, {
+			event_id: EVENT,
+			ticket_class: { name: 'Pay what you want', donation: true, capacity: 0 },
+		});
+
+		expect(h.lastRequest().body).toEqual({
+			ticket_class: {
+				name: 'Pay what you want',
+				donation: true,
+				capacity: 0,
+			},
+		});
+	});
+
+	it('accepts a donation ticket with no capacity field at all', async () => {
+		h.respond({ ...paidTicketClass, donation: true, cost: null });
+
+		await invoke(TicketClasses.create, {
+			event_id: EVENT,
+			ticket_class: { name: 'Pay what you want', donation: true },
+		});
+
+		expect(h.lastRequest().method).toBe('POST');
+	});
+
+	it('lets an update clear a donation ticket’s capacity limit', async () => {
+		h.respond({ ...paidTicketClass, donation: true });
+
+		await invoke(TicketClasses.update, {
+			event_id: EVENT,
+			ticket_class_id: '3453243480',
+			ticket_class: { capacity: 0 },
+		});
+
+		expect(h.lastRequest().body).toEqual({ ticket_class: { capacity: 0 } });
+	});
+
+	it('rejects capacity 0 on a normal ticket, where it is not "unlimited"', async () => {
+		const caught = await h.failure<Error>(
+			invoke(TicketClasses.create, {
+				event_id: EVENT,
+				ticket_class: {
+					name: 'Early bird',
+					cost: 'USD,4500',
+					capacity: 0,
+				},
+			}),
+		);
+
+		expect(caught.name).toBe('ZodError');
+		expect(h.fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a negative capacity', async () => {
+		const caught = await h.failure<Error>(
+			invoke(TicketClasses.create, {
+				event_id: EVENT,
+				ticket_class: {
+					name: 'Early bird',
+					cost: 'USD,4500',
+					capacity: -1,
+				},
+			}),
+		);
+
+		expect(caught.name).toBe('ZodError');
+		expect(h.fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a non-donation ticket with neither capacity nor an inventory tier', async () => {
 		const caught = await h.failure<Error>(
 			invoke(TicketClasses.create, {
@@ -1046,6 +1119,24 @@ describe('discounts', () => {
 				quantity_available: 100,
 			},
 		});
+	});
+
+	it('POSTs a discount update to the discount path', async () => {
+		h.respond({ id: '12345', code: 'CORSAIR20', percent_off: '30' });
+
+		const result = await invoke(Discounts.update, {
+			discount_id: '12345',
+			discount: { percent_off: '30', quantity_available: 50 },
+		});
+
+		expect(h.lastRequest()).toMatchObject({
+			method: 'POST',
+			path: '/v3/discounts/12345/',
+		});
+		expect(h.lastRequest().body).toEqual({
+			discount: { percent_off: '30', quantity_available: 50 },
+		});
+		expect(result).toMatchObject({ id: '12345', percent_off: '30' });
 	});
 
 	it('rejects a discount with neither amount_off nor percent_off', async () => {

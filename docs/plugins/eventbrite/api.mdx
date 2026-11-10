@@ -4892,7 +4892,7 @@ await corsair.eventbrite.api.ticketClasses.create({ event_id: '2000937221092', t
 | `event_id` | `string \| number` | Yes | The event the ticket class belongs to. |
 | `ticket_class` | `object` | Yes | — |
 
-`cost` is `'<CURRENCY>,<minor units>'`, so `'USD,4500'` is 45.00 USD. A charged ticket needs `cost` and `capacity`; a free or donation ticket must not have `cost`.
+`cost` is `'<CURRENCY>,<minor units>'`, so `'USD,4500'` is 45.00 USD. A charged ticket needs `cost` and a positive `capacity`; a free or donation ticket must not have `cost`, and a donation ticket accepts capacity 0 or null as unlimited.
 
 <AccordionGroup>
 <Accordion title="ticket_class full type">
@@ -4903,7 +4903,7 @@ await corsair.eventbrite.api.ticketClasses.create({ event_id: '2000937221092', t
   cost?: string,
   free?: boolean,
   donation?: boolean,
-  capacity?: number,
+  capacity?: number | null,
   description?: string,
   sorting?: number,
   hide_description?: boolean,
@@ -4963,43 +4963,69 @@ await corsair.eventbrite.api.ticketClasses.create({ event_id: '2000937221092', t
 | `category` | `string \| null` | No | — |
 | `image_id` | `string \| null` | No | — |
 | `inventory_tier_id` | `string \| null` | No | — |
+| `actual_cost` | `object \| null` | No | — |
+| `actual_fee` | `object \| null` | No | — |
 | `cost` | `object \| null` | No | — |
+| `fee` | `object \| null` | No | — |
+| `tax` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="actual_cost full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="actual_fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="cost full type">
 
 ```ts
 {
-  actual_cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  actual_fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  tax?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tax full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
 } | null
 ```
 </Accordion>
@@ -5094,43 +5120,69 @@ await corsair.eventbrite.api.ticketClasses.get({});
 | `category` | `string \| null` | No | — |
 | `image_id` | `string \| null` | No | — |
 | `inventory_tier_id` | `string \| null` | No | — |
+| `actual_cost` | `object \| null` | No | — |
+| `actual_fee` | `object \| null` | No | — |
 | `cost` | `object \| null` | No | — |
+| `fee` | `object \| null` | No | — |
+| `tax` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="actual_cost full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="actual_fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="cost full type">
 
 ```ts
 {
-  actual_cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  actual_fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  tax?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tax full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
 } | null
 ```
 </Accordion>
@@ -5221,37 +5273,35 @@ await corsair.eventbrite.api.ticketClasses.list({ event_id: '2000937221092' });
   category?: string | null,
   image_id?: string | null,
   inventory_tier_id?: string | null,
+  actual_cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  actual_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
   cost?: {
-    actual_cost?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    actual_fee?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    cost?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    fee?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    tax?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
   } | null
 }[]
 ```
@@ -5343,37 +5393,35 @@ await corsair.eventbrite.api.ticketClasses.listForSale({ event_id: '200093722109
   category?: string | null,
   image_id?: string | null,
   inventory_tier_id?: string | null,
+  actual_cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  actual_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
   cost?: {
-    actual_cost?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    actual_fee?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    cost?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    fee?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null,
-    tax?: {
-      currency?: string | null,
-      value?: number | null,
-      major_value?: string | null,
-      display?: string | null
-    } | null
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
   } | null
 }[]
 ```
@@ -5413,7 +5461,7 @@ await corsair.eventbrite.api.ticketClasses.update({});
   cost?: string,
   free?: boolean,
   donation?: boolean,
-  capacity?: number,
+  capacity?: number | null,
   description?: string,
   sorting?: number,
   hide_description?: boolean,
@@ -5473,43 +5521,69 @@ await corsair.eventbrite.api.ticketClasses.update({});
 | `category` | `string \| null` | No | — |
 | `image_id` | `string \| null` | No | — |
 | `inventory_tier_id` | `string \| null` | No | — |
+| `actual_cost` | `object \| null` | No | — |
+| `actual_fee` | `object \| null` | No | — |
 | `cost` | `object \| null` | No | — |
+| `fee` | `object \| null` | No | — |
+| `tax` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="actual_cost full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="actual_fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="cost full type">
 
 ```ts
 {
-  actual_cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  actual_fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  cost?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  fee?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null,
-  tax?: {
-    currency?: string | null,
-    value?: number | null,
-    major_value?: string | null,
-    display?: string | null
-  } | null
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="fee full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tax full type">
+
+```ts
+{
+  currency?: string | null,
+  value?: number | null,
+  major_value?: string | null,
+  display?: string | null
 } | null
 ```
 </Accordion>

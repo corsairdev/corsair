@@ -12,7 +12,7 @@ Almost every call needs an `organization_id`. `organizations.list` reads the org
 Things to know before you write:
 
 - **Ids are strings.** Eventbrite types every id as a string (`"2000937221092"`), and the plugin accepts a number too but always sends and returns the string.
-- **`name` needs the `html` wrapper.** `events.create` and `ticketClasses.create` reject a bare string for `name`, `summary` and description; the schema requires `{ html }` so the mistake fails before a request is spent.
+- **`name` is not the same type everywhere.** `events.create` and `events.update` need `{ html }` for the event name, description and question text; `ticketClasses.create`, `venues.create` and discount `code` take plain strings. The schema enforces each, so the mistake fails before a request is spent. `summary` is always plain text, capped at 140 characters.
 - **`summary` and `description` are mutually exclusive**, as are `listed` with `invite_only` or `password`, and `online_event` with `venue_id`. Eventbrite answers 400 `ARGUMENTS_ERROR` for each; the schemas reject them first.
 - **Writes that need a clean event.** `events.publish` needs a name, an organizer, at least one ticket and valid payment options. `events.delete` and `events.cancel` are refused while any order is pending or completed, and `ticketClasses.delete` is refused once a ticket has sold, or for the last ticket while the event is live.
 - **Expansions.** Event reads take `expand` (`venue`, `organizer`, `category`, `format`, `logo`, `ticket_availability`, …), which inlines related objects instead of making a second call. Each one slows the response slightly.

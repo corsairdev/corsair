@@ -841,16 +841,14 @@ export const TicketClassSchema = z
 		category: z.string().nullish(),
 		image_id: z.string().nullish(),
 		inventory_tier_id: z.string().nullish(),
-		cost: z
-			.object({
-				actual_cost: CurrencyCostSchema.nullish(),
-				actual_fee: CurrencyCostSchema.nullish(),
-				cost: CurrencyCostSchema.nullish(),
-				fee: CurrencyCostSchema.nullish(),
-				tax: CurrencyCostSchema.nullish(),
-			})
-			.loose()
-			.nullish(),
+		// Eventbrite returns these flat, not nested under `cost` as the docs'
+		// Ticket Class structure claims; a live paid class answered
+		// `cost`, `fee` and `tax` as sibling objects of `free`.
+		actual_cost: CurrencyCostSchema.nullish(),
+		actual_fee: CurrencyCostSchema.nullish(),
+		cost: CurrencyCostSchema.nullish(),
+		fee: CurrencyCostSchema.nullish(),
+		tax: CurrencyCostSchema.nullish(),
 	})
 	.loose();
 
@@ -934,10 +932,10 @@ const TicketClassCreateFieldsSchema = z.object({
 	capacity: z
 		.number()
 		.int()
-		.positive()
-		.optional()
+		.nonnegative()
+		.nullish()
 		.describe(
-			'Total tickets available. Required for a normal ticket class; for a donation 0 or null means unlimited.',
+			'Total tickets available. For a donation ticket, 0 or null means unlimited; for any other ticket class 0 and null are rejected.',
 		),
 	description: z.string().optional(),
 	sorting: z
@@ -1027,17 +1025,24 @@ const TicketClassCreateBodySchema = TicketClassCreateFieldsSchema.superRefine(
 					'A charged ticket needs `cost`; set `free: true` or `donation: true` for the other two kinds.',
 			});
 		}
-		if (
-			value.donation !== true &&
-			value.inventory_tier_id === undefined &&
-			value.capacity === undefined
-		) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['capacity'],
-				message:
-					'A non-donation ticket needs `capacity`, unless a tiered inventory limits it.',
-			});
+		// A normal ticket needs a real capacity: 0 and null are only meaningful
+		// as "unlimited" on a donation ticket, which Eventbrite documents.
+		if (value.donation !== true && value.inventory_tier_id === undefined) {
+			if (value.capacity === undefined || value.capacity === null) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['capacity'],
+					message:
+						'A non-donation ticket needs `capacity`, unless a tiered inventory limits it.',
+				});
+			} else if (value.capacity <= 0) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['capacity'],
+					message:
+						'Only a donation ticket can have capacity 0 (unlimited); a normal ticket needs a positive capacity.',
+				});
+			}
 		}
 		if (value.include_fee === true && value.split_fee === true) {
 			ctx.addIssue({

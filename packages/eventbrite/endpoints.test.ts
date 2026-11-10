@@ -3,6 +3,7 @@ import {
 	attendee,
 	cannedQuestion,
 	eventbriteEvent,
+	paidTicketClass,
 	question,
 	ticketClass,
 	ticketClassesPage,
@@ -115,6 +116,24 @@ describe('output parsing', () => {
 
 		expect(parsedCanned.questions[0]?.id).toBe('first_name');
 		expect(parsedCanned.questions[0]?.include).toBe(true);
+	});
+
+	it('parses a paid ticket class, whose price fields are flat on the wire', async () => {
+		h.respond(paidTicketClass);
+
+		const result = await invoke(TicketClasses.get, {
+			event_id: '1990052725272',
+			ticket_class_id: '3433869327',
+		});
+
+		// Eventbrite sends `cost`, `fee` and `tax` as siblings of `free`, not
+		// nested under a `cost` wrapper; reading them through the declared type
+		// is what this pins.
+		expect(result.cost?.value).toBe(12500);
+		expect(result.fee?.display).toBe('$10.23');
+		expect(result.tax?.value).toBe(0);
+		expect(result.actual_cost).toBeNull();
+		expect(result.free).toBe(false);
 	});
 
 	it('fails a list element that is a bare string rather than an object', async () => {

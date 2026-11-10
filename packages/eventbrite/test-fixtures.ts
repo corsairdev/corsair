@@ -107,32 +107,91 @@ export const ticketClass = {
 	payment_constraints: [],
 };
 
-/** `GET /venues/299411783/` — `capacity` and `age_restriction` come back null. */
-export const venue = {
-	address: {
-		address_1: '1-14-1 Tamagawa',
-		address_2: '',
-		city: 'Setagaya City',
-		region: 'Tokyo',
-		postal_code: '158-0094',
-		country: 'JP',
+/**
+ * A **paid** ticket class from event 1990052725272, captured live. The free one
+ * above leaves every price field null, which hid the fact that Eventbrite sends
+ * `cost`, `fee` and `tax` as sibling objects of `free` rather than nested under
+ * a `cost` wrapper.
+ */
+export const paidTicketClass = {
+	actual_cost: null,
+	actual_fee: null,
+	cost: {
+		display: '$125.00',
+		currency: 'USD',
+		value: 12500,
+		major_value: '125.00',
+	},
+	fee: {
+		display: '$10.23',
+		currency: 'USD',
+		value: 1023,
+		major_value: '10.23',
+	},
+	tax: {
+		display: '$0.00',
+		currency: 'USD',
+		value: 0,
+		major_value: '0.00',
+	},
+	resource_uri:
+		'https://www.eventbriteapi.com/v3/events/1990052725272/ticket_classes/3433869327/',
+	display_name: 'Tier 1 General Admission Pass',
+	name: 'Tier 1 General Admission Pass',
+	description: null,
+	sorting: null,
+	donation: false,
+	free: false,
+	minimum_quantity: 1,
+	maximum_quantity: 5,
+	maximum_quantity_per_order: 0,
+	on_sale_status: 'UNAVAILABLE',
+	has_pdf_ticket: true,
+	order_confirmation_message: null,
+	delivery_methods: ['electronic'],
+	category: 'admission',
+	sales_channels: ['online', 'atd'],
+	secondary_assignment_enabled: false,
+	event_id: '1990052725272',
+	image_id: null,
+	id: '3433869327',
+	capacity: null,
+	sales_end_relative: null,
+	hidden_currently: null,
+	include_fee: false,
+	hide_sale_dates: false,
+	early_access_purchase_windows: false,
+	ticket_parent_id: null,
+	payment_constraints: [],
+};
+
+/** `GET /venues/299411783/` — `capacity` and `age_restriction` come back null. */ export const venue =
+	{
+		address: {
+			address_1: '1-14-1 Tamagawa',
+			address_2: '',
+			city: 'Setagaya City',
+			region: 'Tokyo',
+			postal_code: '158-0094',
+			country: 'JP',
+			latitude: '35.6105515',
+			longitude: '139.6300671',
+			localized_address_display:
+				'1-14-1 Tamagawa, Setagaya City, Tokyo 158-0094',
+			localized_area_display: 'Setagaya City, Tokyo',
+			localized_multi_line_address_display: [
+				'1-14-1 Tamagawa',
+				'Setagaya City, Tokyo 158-0094',
+			],
+		},
+		resource_uri: 'https://www.eventbriteapi.com/v3/venues/299411783/',
+		id: '299411783',
+		age_restriction: null,
+		capacity: null,
+		name: 'Rakuten Crimson House',
 		latitude: '35.6105515',
 		longitude: '139.6300671',
-		localized_address_display: '1-14-1 Tamagawa, Setagaya City, Tokyo 158-0094',
-		localized_area_display: 'Setagaya City, Tokyo',
-		localized_multi_line_address_display: [
-			'1-14-1 Tamagawa',
-			'Setagaya City, Tokyo 158-0094',
-		],
-	},
-	resource_uri: 'https://www.eventbriteapi.com/v3/venues/299411783/',
-	id: '299411783',
-	age_restriction: null,
-	capacity: null,
-	name: 'Rakuten Crimson House',
-	latitude: '35.6105515',
-	longitude: '139.6300671',
-};
+	};
 
 /**
  * The webhook object `POST /organizations/{id}/webhooks/` returns, whose

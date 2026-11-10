@@ -1,4 +1,8 @@
+import { processWebhook } from 'corsair';
+import { createCorsair } from 'corsair/core';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import type { EventbriteWebhookPayload } from './index';
+import { eventbrite } from './index';
 import { webhookDelivery, webhookTestDelivery } from './test-fixtures';
 import { actionOf, notification, organizationIdOf } from './webhooks';
 
@@ -98,5 +102,105 @@ describe('derived fields', () => {
 		// A refetch of api_url returns the order, which has no action field; the
 		// action lives only in the delivery's config.
 		expect(actionOf({ api_url: 'https://example.com/orders/1/' })).toBeNull();
+	});
+});
+
+/**
+ * The tests above call the handler directly, which is exactly the gap that let a
+ * keyBuilder rejecting `source === 'webhook'` ship: the handler never ran
+ * through the binding that resolves the key. These go through `processWebhook`
+ * and the bound client instead, so a delivery has to survive that path.
+ */
+describe('a delivery through processWebhook', () => {
+	async function createClient(withKey: boolean) {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'eventbrite', 'default');
+		const corsair = createCorsair({
+			plugins: [
+				eventbrite(withKey ? { key: 'eventbrite-webhook-test-key' } : {}),
+			],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		if (withKey) await corsair.eventbrite.keys.issue_new_dek();
+		return { corsair, testDb };
+	}
+
+	it('reaches the handler with no key configured at all', async () => {
+		const { corsair, testDb } = await createClient(false);
+		try {
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				webhookDelivery,
+			);
+
+			expect(result.plugin).toBe('eventbrite');
+			expect(result.action).toBe('notifications.delivery');
+			// The hook ran, so nothing threw while resolving a key.
+			expect(result.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('reaches the handler when a key is stored', async () => {
+		const { corsair, testDb } = await createClient(true);
+		try {
+			await corsair.eventbrite.keys.set_api_key('stored-key');
+
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				webhookDelivery,
+			);
+
+			expect(result.plugin).toBe('eventbrite');
+			expect(result.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('routes a delivery to the tenant named by config.user_id', async () => {
+		const { corsair, testDb } = await createClient(true);
+		try {
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				webhookDelivery,
+			);
+
+			// The matcher resolves this without a saved tenant link, so the
+			// delivery does not land on the default tenant by accident.
+			const match = corsair.eventbrite.pluginTenantWebhookMatcher?.({
+				headers: {},
+				body: webhookDelivery,
+			});
+			expect(match).toEqual({
+				linkType: 'organization_id',
+				externalId: '154830740213',
+			});
+			expect(result.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('reports a malformed delivery as a failure rather than a success', async () => {
+		const { corsair, testDb } = await createClient(false);
+		try {
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				{ config: { action: 'event.created' } },
+			);
+
+			// No api_url, so the plugin matcher declines and nobody claims it.
+			expect(result.plugin).toBeNull();
+			expect(result.response).toBeUndefined();
+		} finally {
+			testDb.cleanup();
+		}
 	});
 });
