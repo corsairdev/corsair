@@ -105,4 +105,32 @@ describe('Nutshell request guards', () => {
 			'1-stagesets,2-stagesets',
 		]);
 	});
+
+	it('does not ask for JSON when the answer is a CSV or HTML document', async () => {
+		fetchSpy.mockImplementation(
+			async () =>
+				new Response('lead,stage\n', {
+					status: 200,
+					headers: { 'content-type': 'text/csv' },
+				}),
+		);
+		const accept = (call: number) =>
+			new Headers((fetchSpy.mock.calls[call]?.[1] as RequestInit).headers).get(
+				'accept',
+			);
+
+		await api.stageSets.export({ id: '1-stagesets' });
+		expect(accept(0)).toBe('*/*');
+		await api.leads.report({ format: 'csv' });
+		expect(accept(1)).toBe('*/*');
+	});
+
+	it('asks for JSON on JSON routes', async () => {
+		await api.contacts.delete({ id: '7-contacts' });
+		expect(
+			new Headers((fetchSpy.mock.calls[0]?.[1] as RequestInit).headers).get(
+				'accept',
+			),
+		).toBe('application/json');
+	});
 });

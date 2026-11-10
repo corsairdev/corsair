@@ -88,6 +88,13 @@ export function defineEndpoint<K extends NutshellOperationKey>(
 				),
 				body: operation.hasBody ? record.body : undefined,
 				mediaType: operation.mediaType,
+				// A CSV export, or a report asked for as csv or html, is not JSON:
+				// accept any type there, as Nutshell's own curl examples do.
+				headers:
+					operation.responseEncoding === 'text' ||
+					(typeof record.format === 'string' && record.format !== 'json')
+						? { Accept: '*/*' }
+						: undefined,
 			},
 		);
 
