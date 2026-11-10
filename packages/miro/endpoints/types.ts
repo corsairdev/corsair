@@ -722,30 +722,47 @@ const ShapeSchema = z.object({ item: FlatShapeSchema });
 
 export type MiroShape = z.infer<typeof ShapeSchema>;
 
+/**
+ * The shape names `POST /v2/boards/{board_id}/shapes` documents, followed by
+ * six `flow_chart_*` names it does not. Miro documents those six only for its
+ * experimental flowchart route, which this plugin does not call; they stay
+ * accepted here because they were in the first version of this list, and Miro
+ * answers 400 for one it refuses.
+ */
+export const MIRO_SHAPES = [
+	'rectangle',
+	'round_rectangle',
+	'circle',
+	'triangle',
+	'rhombus',
+	'parallelogram',
+	'trapezoid',
+	'pentagon',
+	'hexagon',
+	'octagon',
+	'wedge_round_rectangle_callout',
+	'star',
+	'flow_chart_predefined_process',
+	'cloud',
+	'cross',
+	'can',
+	'right_arrow',
+	'left_arrow',
+	'left_right_arrow',
+	'left_brace',
+	'right_brace',
+	'flow_chart_connector',
+	'flow_chart_process',
+	'flow_chart_decision',
+	'flow_chart_input_output',
+	'flow_chart_internal_storage',
+	'flow_chart_cloud',
+] as const;
+
 const ShapesCreateInputSchema = z.object({
 	boardId: BoardId,
 	shape: z
-		.enum([
-			'rectangle',
-			'round_rectangle',
-			'circle',
-			'triangle',
-			'rhombus',
-			'parallelogram',
-			'trapezoid',
-			'pentagon',
-			'hexagon',
-			'octagon',
-			'wedge_round_rectangle_callout',
-			'star',
-			'flow_chart_connector',
-			'flow_chart_process',
-			'flow_chart_decision',
-			'flow_chart_input_output',
-			'flow_chart_predefined_process',
-			'flow_chart_internal_storage',
-			'flow_chart_cloud',
-		])
+		.enum(MIRO_SHAPES)
 		.optional()
 		.describe('The shape to draw. Defaults to `rectangle`.'),
 	content: z.string().optional().describe('Text inside the shape.'),

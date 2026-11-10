@@ -569,6 +569,30 @@ describe('shapes', () => {
 		).resolves.toBeDefined();
 	});
 
+	it.each([
+		'cloud',
+		'cross',
+		'can',
+		'right_arrow',
+		'left_arrow',
+		'left_right_arrow',
+		'left_brace',
+		'right_brace',
+	])('accepts the documented shape %s', async (name) => {
+		respond(shape, 201);
+
+		await invoke(shapesCreate, { boardId: BOARD, shape: name });
+
+		expect(lastRequest().body).toEqual({ data: { shape: name } });
+	});
+
+	it('rejects a shape name Miro does not list', async () => {
+		await expect(
+			invoke(shapesCreate, { boardId: BOARD, shape: 'dodecahedron' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an opacity outside 0 to 1', async () => {
 		await expect(
 			invoke(shapesCreate, {
