@@ -433,7 +433,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupDefaultTabs': {
-				data: { id: 'rec-1' },
+				data: [{ id: 'rec-1' }],
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupDefaultTab': {
@@ -453,7 +453,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupUsers': {
-				data: { id: 'rec-1' },
+				data: [{ id: 'rec-1' }],
 				meta: { status: 200, success: true },
 			},
 			'groups.updateGroupUser': {
@@ -621,7 +621,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'tabs.retrieveTabKlipInstances': {
-				data: { id: 'rec-1' },
+				data: [{ id: 'rec-1' }],
 				meta: { status: 200, success: true },
 			},
 			'tabs.updateTabKlipInstances': {
