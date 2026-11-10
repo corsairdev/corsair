@@ -367,13 +367,19 @@ export const pickup = {
 	object_updated: '2014-07-09T02:19:13.174Z',
 	status: 'CONFIRMED',
 	carrier_account: '078870331023437cb917f5187429b093',
+	// The spec's `Location`: a nested address, not an address id.
 	location: {
-		object_id: 'd799c2679e644279b59fe661ac8fa488',
-		city: 'San Francisco',
-		state: 'CA',
-		zip: '94117',
-		country: 'US',
-		building_location_type: 'floor',
+		address: {
+			name: 'Shwan Ippotle',
+			street1: '215 Clayton St.',
+			city: 'San Francisco',
+			state: 'CA',
+			zip: '94117',
+			country: 'US',
+		},
+		building_location_type: 'Front Door',
+		building_type: 'building',
+		instructions: 'Behind screen door',
 	},
 	transactions: ['915d94940ea54c3a80cbfa328722f5a1'],
 	requested_start_time: '2014-07-21T12:00:00Z',
@@ -383,7 +389,8 @@ export const pickup = {
 	cancel_by_time: '2014-07-21T12:00:00Z',
 	confirmation_code: 'KSDJHF',
 	timezone: 'America/Los_Angeles',
-	messages: [],
+	// Strings in the spec, unlike a transaction's message objects.
+	messages: ['Pickup confirmed'],
 	metadata: '',
 	is_test: true,
 };

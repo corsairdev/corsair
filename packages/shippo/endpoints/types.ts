@@ -1382,16 +1382,17 @@ export const PickupSchema = z
 		object_id: z.string().nullish(),
 		object_created: IsoDate.nullish(),
 		object_updated: IsoDate.nullish(),
-		status: z.string().nullish().describe('`PENDING`, `CONFIRMED` or `ERROR`.'),
+		status: z
+			.string()
+			.nullish()
+			.describe('`PENDING`, `CONFIRMED`, `ERROR` or `CANCELLED`.'),
 		carrier_account: z.string().nullish(),
 		location: z
 			.object({
-				object_id: z.string().nullish(),
-				city: z.string().nullish(),
-				state: z.string().nullish(),
-				zip: z.string().nullish(),
-				country: z.string().nullish(),
+				address: AddressSchema.nullish(),
 				building_location_type: z.string().nullish(),
+				building_type: z.string().nullish(),
+				instructions: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -1402,8 +1403,13 @@ export const PickupSchema = z
 		confirmed_end_time: z.string().nullish(),
 		cancel_by_time: z.string().nullish(),
 		confirmation_code: z.string().nullish(),
-		timezone: z.string().nullish(),
-		messages: z.array(ResponseMessageSchema).nullish(),
+		timezone: z
+			.string()
+			.nullish()
+			.describe('The timezone the requested and confirmed times are in.'),
+		// The spec types these as strings; other objects send message objects,
+		// so both parse.
+		messages: z.array(z.union([z.string(), ResponseMessageSchema])).nullish(),
 		metadata: z.string().nullish(),
 		is_test: z.boolean().nullish(),
 	})
@@ -1411,17 +1417,64 @@ export const PickupSchema = z
 
 export type ShippoPickup = z.infer<typeof PickupSchema>;
 
+export const PICKUP_BUILDING_LOCATION_TYPES = [
+	'Back Door',
+	'Ring Bell',
+	'Security Deck',
+	'Shipping Dock',
+	'Front Door',
+	'Knock on Door',
+	'In/At Mailbox',
+	'Mail Room',
+	'Office',
+	'Other',
+	'Reception',
+	'Side Door',
+] as const;
+
+export const PICKUP_BUILDING_TYPES = [
+	'apartment',
+	'building',
+	'department',
+	'floor',
+	'room',
+	'suite',
+] as const;
+
+/**
+ * A pickup address is a complete address: the spec requires the six fields a
+ * driver needs, where an ordinary address requires only `country`.
+ */
+const PickupAddressSchema = AddressFieldsSchema.extend({
+	name: z.string().min(1).max(100),
+	street1: z.string().min(1).max(121),
+	city: z.string().min(1),
+	state: z.string().min(1).describe('State or province code or name.'),
+	zip: z.string().min(1),
+});
+
 const PickupCreateInputSchema = z
 	.object({
 		carrier_account: Id.describe(
 			'A carrier account allowed to collect; Shippo rejects one that cannot.',
 		),
-		location: z.object({
-			object_id: Id.describe('The address `object_id` to collect from.'),
-			building_location_type: z
-				.enum(['apartment', 'building', 'floor', 'room', 'suite'])
-				.optional(),
-		}),
+		location: z
+			.object({
+				address: PickupAddressSchema.describe(
+					'Where the carrier collects. A full address, not an address `object_id`.',
+				),
+				building_location_type: z
+					.enum(PICKUP_BUILDING_LOCATION_TYPES)
+					.describe('Where on the premises the parcels are.'),
+				building_type: z.enum(PICKUP_BUILDING_TYPES).optional(),
+				instructions: z
+					.string()
+					.optional()
+					.describe(
+						'Directions for the driver. Required when `building_location_type` is `Other`.',
+					),
+			})
+			.describe('The pickup location.'),
 		transactions: z
 			.array(Id)
 			.min(1)
@@ -1431,12 +1484,10 @@ const PickupCreateInputSchema = z
 		requested_start_time: z
 			.string()
 			.min(1)
-			.describe('ISO 8601; must fall inside the carrier’s pickup window.'),
+			.describe(
+				'ISO 8601 with an offset or `Z`; must fall inside the carrier’s pickup window. The request takes no timezone field: the response reports the timezone it used.',
+			),
 		requested_end_time: z.string().min(1),
-		timezone: z
-			.string()
-			.optional()
-			.describe('Olson name for the requested times, e.g. `America/New_York`.'),
 		metadata: z.string().optional(),
 		...accountIdHeader,
 	})

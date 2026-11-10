@@ -49,6 +49,19 @@ const ADDRESS_ID = 'd799c2679e644279b59fe661ac8fa488';
 const SHIPMENT_ID = 'adcfdddf8ec64b84ad22772bce3ea37a';
 const RATE_ID = 'ec9f0d3adc9441449c85d315f0997fd5';
 const TRANSACTION_ID = '915d94940ea54c3a80cbfa328722f5a1';
+const PICKUP_LOCATION = {
+	address: {
+		name: 'Shwan Ippotle',
+		street1: '215 Clayton St.',
+		city: 'San Francisco',
+		state: 'CA',
+		zip: '94117',
+		country: 'US',
+	},
+	building_location_type: 'Front Door',
+	building_type: 'building',
+	instructions: 'Behind screen door',
+};
 
 const h = createHarness();
 
@@ -817,30 +830,66 @@ describe('pickups and manifests', () => {
 	it('creates a pickup and rejects a window that ends before it starts', async () => {
 		h.respond(pickup);
 
-		await invoke(Pickups.create, {
+		const result = await invoke(Pickups.create, {
 			carrier_account: carrierAccount.object_id,
-			location: { object_id: ADDRESS_ID },
+			location: PICKUP_LOCATION,
 			transactions: [TRANSACTION_ID],
 			requested_start_time: '2026-07-21T12:00:00Z',
 			requested_end_time: '2026-07-21T18:00:00Z',
-			timezone: 'America/Los_Angeles',
 		});
 
 		expect(h.lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/pickups',
 		});
+		// The spec's `Location`: a full address plus where on the premises to
+		// collect. An address id is not a field of it, and neither is a
+		// timezone on the request.
+		expect(h.lastRequest().body).toEqual({
+			carrier_account: carrierAccount.object_id,
+			location: PICKUP_LOCATION,
+			transactions: [TRANSACTION_ID],
+			requested_start_time: '2026-07-21T12:00:00Z',
+			requested_end_time: '2026-07-21T18:00:00Z',
+		});
+		// `messages` is an array of strings in the spec.
+		expect(result.messages).toEqual(['Pickup confirmed']);
 
 		const error = await h.failure<Error>(
 			invoke(Pickups.create, {
 				carrier_account: carrierAccount.object_id,
-				location: { object_id: ADDRESS_ID },
+				location: PICKUP_LOCATION,
 				transactions: [TRANSACTION_ID],
 				requested_start_time: '2026-07-21T18:00:00Z',
 				requested_end_time: '2026-07-21T12:00:00Z',
 			}),
 		);
 		expect(error.name).toBe('ZodError');
+	});
+
+	it('rejects a pickup location with no address or door', async () => {
+		const noAddress = await h.failure<Error>(
+			invoke(Pickups.create, {
+				carrier_account: carrierAccount.object_id,
+				location: { building_location_type: 'Front Door' },
+				transactions: [TRANSACTION_ID],
+				requested_start_time: '2026-07-21T12:00:00Z',
+				requested_end_time: '2026-07-21T18:00:00Z',
+			}),
+		);
+		expect(noAddress.name).toBe('ZodError');
+
+		const noDoor = await h.failure<Error>(
+			invoke(Pickups.create, {
+				carrier_account: carrierAccount.object_id,
+				location: { address: PICKUP_LOCATION.address },
+				transactions: [TRANSACTION_ID],
+				requested_start_time: '2026-07-21T12:00:00Z',
+				requested_end_time: '2026-07-21T18:00:00Z',
+			}),
+		);
+		expect(noDoor.name).toBe('ZodError');
+		expect(h.fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('lists, gets and creates manifests', async () => {

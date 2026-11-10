@@ -138,7 +138,7 @@ apiExamples:
   orders.create:
     call: "{ order_number: '#1068', placed_at: '2026-01-01T00:00:00Z', currency: 'USD', to_address: { name: 'Recipient', country: 'US' }, line_items: [{ title: 'T-Shirt', quantity: 2, total_price: '12.50', currency: 'USD' }] }"
   pickups.create:
-    call: "{ carrier_account: '078870331023437cb917f5187429b093', location: { object_id: 'd799c2679e644279b59fe661ac8fa488' }, transactions: ['915d94940ea54c3a80cbfa328722f5a1'], requested_start_time: '2026-07-21T12:00:00Z', requested_end_time: '2026-07-21T18:00:00Z' }"
+    call: "{ carrier_account: '078870331023437cb917f5187429b093', location: { address: { name: 'Shwan Ippotle', street1: '215 Clayton St.', city: 'San Francisco', state: 'CA', zip: '94117', country: 'US' }, building_location_type: 'Front Door' }, transactions: ['915d94940ea54c3a80cbfa328722f5a1'], requested_start_time: '2026-07-21T12:00:00Z', requested_end_time: '2026-07-21T18:00:00Z' }"
   carrierAccounts.list:
     call: "{ }"
   parcelTemplates.listCarrier:
