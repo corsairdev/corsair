@@ -129,7 +129,7 @@ export const importMeeting: TldvEndpoints['meetingsImport'] = (ctx, input) =>
 			path: '/v1alpha1/meetings/import',
 			body: {
 				url,
-				...(name === undefined ? {} : { name }),
+				name,
 				...(happenedAt === undefined ? {} : { happenedAt }),
 				...(participants === undefined ? {} : { participants }),
 				...(phoneNumber === undefined ? {} : { phoneNumber }),

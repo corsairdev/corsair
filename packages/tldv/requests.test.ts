@@ -13,6 +13,7 @@ import {
 } from './test-fixtures';
 import {
 	BASE,
+	currentFetch,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
@@ -133,16 +134,30 @@ describe('tl;dv request shapes', () => {
 		expect(lastCall().url).toBe(`${BASE}/v1alpha1/meetings/meeting-123/notes`);
 	});
 
-	it('imports a meeting with only the required url', async () => {
+	it('imports a meeting with only the required url and name', async () => {
 		mockFetch(jsonResponse(importResponse));
 
 		await endpoints.meetings.import(makeCtx(), {
 			url: 'https://example.org/call.mp4',
+			name: 'Discovery call',
 		});
 
 		expect(lastCall().url).toBe(`${BASE}/v1alpha1/meetings/import`);
 		expect(lastCall().init.method).toBe('POST');
-		expect(sentBody()).toEqual({ url: 'https://example.org/call.mp4' });
+		expect(sentBody()).toEqual({
+			url: 'https://example.org/call.mp4',
+			name: 'Discovery call',
+		});
+	});
+
+	it('does not send an import that has no name', async () => {
+		await expect(
+			endpoints.meetings.import(makeCtx(), {
+				url: 'https://example.org/call.mp4',
+			} as never),
+		).rejects.toThrow();
+
+		expect(currentFetch()).not.toHaveBeenCalled();
 	});
 
 	it('imports a meeting with every optional field', async () => {

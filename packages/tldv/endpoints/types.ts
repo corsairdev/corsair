@@ -199,7 +199,8 @@ const MeetingsImportInputSchema = z.object({
 		.describe(
 			'Publicly reachable media URL. Supported: .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac',
 		),
-	name: z.string().max(500).optional().describe('Name for the new meeting'),
+	// Required by the spec's MeetingImportControllerBody, alongside `url`.
+	name: z.string().min(1).max(500).describe('Name for the new meeting'),
 	happenedAt: z
 		.string()
 		.optional()
@@ -209,11 +210,21 @@ const MeetingsImportInputSchema = z.object({
 		.optional()
 		.describe('Emails of the invited participants'),
 	phoneNumber: z.string().max(64).optional(),
-	// unknown: the caller chooses these keys to correlate the meeting later.
+	// The documented limits: at most 20 keys matching ^[A-Za-z0-9_-]{1,64}$, and
+	// values that are strings of up to 256 characters, numbers or booleans.
+	// tl;dv answers 400 to a nested object or an array.
 	metadata: z
-		.record(z.string(), z.unknown())
+		.record(
+			z.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
+			z.union([z.string().max(256), z.number(), z.boolean()]),
+		)
+		.refine((value) => Object.keys(value).length <= 20, {
+			message: 'metadata can hold at most 20 keys',
+		})
 		.optional()
-		.describe('Flat key/value map with your own identifiers'),
+		.describe(
+			'Flat key/value map with your own identifiers: up to 20 keys, values are strings, numbers or booleans',
+		),
 });
 
 export type MeetingsImportInput = z.input<typeof MeetingsImportInputSchema>;

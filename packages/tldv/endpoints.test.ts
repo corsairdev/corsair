@@ -92,6 +92,7 @@ describe('tl;dv output parsing', () => {
 
 		const result = await endpoints.meetings.import(makeCtx(), {
 			url: 'https://example.org/call.mp4',
+			name: 'Discovery call',
 		});
 
 		expect(result.success).toBe(true);

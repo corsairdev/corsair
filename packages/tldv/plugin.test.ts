@@ -121,12 +121,38 @@ describe('tldv plugin definition', () => {
 		expect(list.input.safeParse({ limit: 101 }).success).toBe(false);
 	});
 
-	it('rejects an import with no url', () => {
+	it('rejects an import with no url or no name', () => {
+		// The spec's MeetingImportControllerBody requires both, so tl;dv answers
+		// 400 to a body with only one of them.
 		const importOp = tldvEndpointSchemas['meetings.import'];
+		const url = 'https://example.org/a.mp4';
 		expect(importOp.input.safeParse({}).success).toBe(false);
+		expect(importOp.input.safeParse({ name: 'Call' }).success).toBe(false);
+		expect(importOp.input.safeParse({ url }).success).toBe(false);
+		expect(importOp.input.safeParse({ url, name: '' }).success).toBe(false);
+		expect(importOp.input.safeParse({ url, name: 'Call' }).success).toBe(true);
+	});
+
+	it('keeps import metadata to the flat values tl;dv stores', () => {
+		const importOp = tldvEndpointSchemas['meetings.import'];
+		const base = { url: 'https://example.org/a.mp4', name: 'Call' };
+		const parse = (metadata: Record<string, unknown>) =>
+			importOp.input.safeParse({ ...base, metadata }).success;
+
+		expect(parse({ crmRecordId: 'rec_123', callId: 42, inbound: true })).toBe(
+			true,
+		);
+		// Nested objects and arrays are refused by the API.
+		expect(parse({ crm: { id: 'rec_123' } })).toBe(false);
+		expect(parse({ tags: ['a', 'b'] })).toBe(false);
+		expect(parse({ note: 'x'.repeat(257) })).toBe(false);
+		// Keys must match ^[A-Za-z0-9_-]{1,64}$ and there can be at most 20.
+		expect(parse({ 'crm id': 'rec_123' })).toBe(false);
 		expect(
-			importOp.input.safeParse({ url: 'https://example.org/a.mp4' }).success,
-		).toBe(true);
+			parse(
+				Object.fromEntries(Array.from({ length: 21 }, (_, i) => [`k${i}`, i])),
+			),
+		).toBe(false);
 	});
 
 	it('keeps DEFAULT last when a caller adds a handler', () => {
