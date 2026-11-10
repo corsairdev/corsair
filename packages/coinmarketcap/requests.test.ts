@@ -24,6 +24,7 @@ import {
 	mapResponse,
 	quotesResponse,
 	unknownRouteResponse,
+	v2Status,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -327,6 +328,43 @@ describe('cryptocurrency.info', () => {
 		).toBe(true);
 	});
 
+	it('accepts a token, whose platform id arrives as a string', async () => {
+		// Live on 2026-11-10: /v2/cryptocurrency/info sends platform.id as a
+		// string ("1027") for every token, while /v1/cryptocurrency/map and the
+		// /v3 routes send a number.
+		respond({
+			data: {
+				'825': {
+					...infoResponse.data['1'],
+					id: 825,
+					name: 'Tether USDt',
+					symbol: 'USDT',
+					slug: 'tether',
+					category: 'token',
+					platform: {
+						id: '1027',
+						name: 'Ethereum',
+						symbol: 'ETH',
+						slug: 'ethereum',
+						token_address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+					},
+				},
+			},
+			status: v2Status,
+		});
+
+		const result = (await invoke(info, { slug: ['tether'] })) as {
+			cryptocurrencies: {
+				id: number;
+				platform?: { id?: number | string | null } | null;
+			}[];
+		};
+
+		expect(result.cryptocurrencies).toHaveLength(1);
+		expect(result.cryptocurrencies[0]?.id).toBe(825);
+		expect(result.cryptocurrencies[0]?.platform?.id).toBe('1027');
+	});
+
 	it('sends skip_invalid as a real boolean, unlike every other route', async () => {
 		respond(infoResponse);
 
@@ -434,6 +472,41 @@ describe('tools.priceConversion', () => {
 
 		expect(result.conversions).toHaveLength(2);
 		expect(result.conversions.map((entry) => entry.id)).toEqual([1, 38552]);
+	});
+
+	it('keeps a same-ticker asset that has no price', async () => {
+		// Live on 2026-11-10: 5 of the 14 assets sharing the BTC ticker came back
+		// as `quote: { USD: { price: null } }` with no last_updated.
+		respond({
+			data: [
+				...conversionBySymbolResponse.data,
+				{
+					id: 30938,
+					symbol: 'BTC',
+					name: 'Satoshi Pumpomoto',
+					amount: 1,
+					quote: { USD: { price: null } },
+				},
+			],
+			status: v2Status,
+		});
+
+		const result = (await invoke(priceConversion, {
+			amount: 1,
+			symbol: 'BTC',
+			convert: ['USD'],
+		})) as {
+			conversions: {
+				id: number;
+				quote: Record<string, { price?: number | null }>;
+			}[];
+		};
+
+		expect(result.conversions.map((entry) => entry.id)).toEqual([
+			1, 38552, 30938,
+		]);
+		expect(result.conversions[0]?.quote.USD?.price).toBe(74600.20213964285);
+		expect(result.conversions[2]?.quote.USD?.price).toBeNull();
 	});
 
 	it('rejects both identifier forms and neither', async () => {

@@ -88,7 +88,9 @@ const QuoteObjectSchema = z
 
 const PlatformSchema = z
 	.object({
-		id: z.number().nullish(),
+		// A number on `/v1/cryptocurrency/map` and the `/v3` routes, a string
+		// ("1027") on `/v2/cryptocurrency/info`.
+		id: z.union([z.number(), z.string()]).nullish(),
 		slug: z.string().nullish(),
 		name: z.string().nullish(),
 		symbol: z.string().nullish(),
@@ -577,7 +579,14 @@ export type PriceConversionInput = z.input<typeof PriceConversionInputSchema>;
 
 const ConversionQuoteSchema = z
 	.object({
-		price: z.number().describe('The converted amount.'),
+		// null, with no `last_updated`, for an asset CoinMarketCap has no price
+		// for; a `symbol` lookup returns those alongside the priced ones.
+		price: z
+			.number()
+			.nullish()
+			.describe(
+				'The converted amount, or null when CoinMarketCap has no price for the asset.',
+			),
 		last_updated: z.string().nullish(),
 	})
 	.loose();
