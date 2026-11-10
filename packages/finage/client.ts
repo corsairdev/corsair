@@ -55,6 +55,23 @@ function providerError(body: unknown): { code?: string; message?: string } {
 	return { code, message };
 }
 
+// Core's query builder percent-encodes every value, commas included. Finage
+// reads symbols=AAPL%2CMSFT as one unknown symbol and answers a blank snapshot
+// entry, so the query string is built here with commas left literal (a comma is
+// a valid query character) and handed to the transport as part of the URL.
+function finageQueryString(
+	query: Record<string, string | number | boolean | undefined>,
+): string {
+	const parts = Object.entries(query).flatMap(([key, value]) =>
+		value === undefined
+			? []
+			: [
+					`${encodeURIComponent(key)}=${encodeURIComponent(String(value)).replace(/%2C/gi, ',')}`,
+				],
+	);
+	return parts.length > 0 ? `?${parts.join('&')}` : '';
+}
+
 export async function makeFinageRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -73,9 +90,8 @@ export async function makeFinageRequest<T>(
 	};
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
-		url: endpoint,
+		url: `${endpoint}${finageQueryString({ ...query, apikey: apiKey })}`,
 		mediaType: 'application/json; charset=utf-8',
-		query: { ...query, apikey: apiKey },
 	};
 	try {
 		return await request<T>(config, requestOptions, {

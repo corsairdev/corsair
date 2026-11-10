@@ -42,4 +42,31 @@ describe('Finage transport rate limits', () => {
 			retryAfter: 30_000,
 		});
 	});
+
+	it('sends a symbol list with literal commas', async () => {
+		// Finage reads symbols=AAPL%2CMSFT as one unknown symbol and answers a
+		// blank snapshot entry (seen live on 2026-11-10); AAPL,MSFT returns both.
+		const fetchMock = jest.fn(
+			async (_url: string) =>
+				new Response(JSON.stringify({ totalResults: 0 }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+		);
+		globalThis.fetch = fetchMock as unknown as typeof fetch; // unknown: jest mock narrowed to the fetch signature
+
+		await makeFinageRequest('/snapshot/stock', 'secret-key', {
+			quotes: true,
+			trades: true,
+			symbols: 'AAPL,MSFT',
+			missing: undefined,
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
+		expect(url.pathname).toBe('/snapshot/stock');
+		expect(url.search).toBe(
+			'?quotes=true&trades=true&symbols=AAPL,MSFT&apikey=secret-key',
+		);
+	});
 });

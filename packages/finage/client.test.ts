@@ -26,12 +26,7 @@ describe('Finage HTTP client', () => {
 			}),
 			expect.objectContaining({
 				method: 'GET',
-				url: '/last/stock/AAPL',
-				query: {
-					limit: 10,
-					includeExtended: false,
-					apikey: 'secret-key',
-				},
+				url: '/last/stock/AAPL?limit=10&includeExtended=false&apikey=secret-key',
 			}),
 			expect.objectContaining({
 				rateLimitConfig: expect.objectContaining({
