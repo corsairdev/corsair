@@ -672,3 +672,46 @@ describe('boolean-like output fields', () => {
 		expect(result.ticket_type_id).toBe(ticketTypeFixture.ticket_type_id);
 	});
 });
+
+/**
+ * Eventzilla answers an empty list with HTTP 200 and only a message
+ * (`{"message":"No events found"}` was captured live on /events). The client
+ * lets every `No … found` body through as "not an error", so each list route
+ * has to read it as an empty list: left alone it fails the output schema, and
+ * an event nobody has registered for yet reads as a broken response.
+ */
+describe('the empty-list message on unpaged lists', () => {
+	it('events.attendees reads it as no attendees', async () => {
+		respond({ message: 'No attendees found' });
+
+		const { result } = await run({ eventid: 1 }, endpoints.events.attendees);
+
+		expect(result.attendees).toEqual([]);
+		expect(result.message).toBe('No attendees found');
+	});
+
+	it('attendees.get reads it as no attendee', async () => {
+		respond({ message: 'No attendees found' });
+
+		const { result } = await run({ attendeeid: 1 }, endpoints.attendees.get);
+
+		expect(result.attendees).toEqual([]);
+	});
+
+	it('tickets.list reads it as no ticket types', async () => {
+		respond({ message: 'No tickets found' });
+
+		const { result } = await run({ eventid: 1 }, endpoints.tickets.list);
+
+		expect(result.tickets).toEqual([]);
+		expect(result.message).toBe('No tickets found');
+	});
+
+	it('still rejects a payload that is neither a list nor the empty message', async () => {
+		respond({ attendees: 'not an array' });
+
+		await expect(
+			run({ eventid: 1 }, endpoints.events.attendees),
+		).rejects.toThrow();
+	});
+});

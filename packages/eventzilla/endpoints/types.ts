@@ -1,5 +1,6 @@
 import { asRecord } from 'corsair/core';
 import { z } from 'zod';
+import { emptyListMessage } from '../client';
 
 // Inputs use Eventzilla's own parameter names. Outputs are `.loose()` with
 // every documented field nullish, because the reference marks no response
@@ -319,11 +320,18 @@ export type EventzillaAttendeeWithFlag = z.infer<typeof AttendeeWithFlagSchema>;
  * malformed successful response into an empty list would report "no attendees"
  * when the truth is "this payload was wrong". Shared by `events.attendees` and
  * `attendees.get`, which receive the same rows.
+ *
+ * The one body read as empty is the provider's own empty-list answer, a 200
+ * with only `{"message":"No … found"}` (captured live on /events). The client
+ * already lets that body through as "not an error", so it has to become an
+ * empty list here or an event with no registrations fails the parse.
  */
 export function shapeAttendees(
 	// unknown: the response body, validated by the output schema after this.
 	raw: unknown,
 ): Record<string, unknown> {
+	const empty = emptyListMessage(raw);
+	if (empty !== undefined) return { attendees: [], message: empty };
 	const body = asRecord(raw);
 	if (!body) return {};
 	if (!Array.isArray(body.attendees)) return body;
@@ -352,6 +360,8 @@ export type EventsAttendeesInput = z.input<typeof EventsAttendeesInputSchema>;
 const EventsAttendeesResponseSchema = z
 	.object({
 		attendees: z.array(AttendeeWithFlagSchema),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
 	})
 	.loose();
 
@@ -416,6 +426,8 @@ const TicketsListResponseSchema = z
 	.object({
 		tickets: z.array(TicketTypeSchema),
 		donation: z.array(DonationSchema).nullish(),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
 	})
 	.loose();
 
@@ -903,7 +915,11 @@ const AttendeesGetInputSchema = z.object({
 export type AttendeesGetInput = z.input<typeof AttendeesGetInputSchema>;
 
 const AttendeesGetResponseSchema = z
-	.object({ attendees: z.array(AttendeeWithFlagSchema) })
+	.object({
+		attendees: z.array(AttendeeWithFlagSchema),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
+	})
 	.loose();
 
 export type AttendeesGetResponse = z.infer<typeof AttendeesGetResponseSchema>;

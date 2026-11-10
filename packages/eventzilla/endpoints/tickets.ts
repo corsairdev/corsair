@@ -23,6 +23,12 @@ export const list: EventzillaEndpoints['ticketsList'] = (ctx, input) =>
 		},
 		input,
 		{
+			// An event with no ticket types yet answers the empty-list message
+			// rather than `tickets: []`; anything else goes to the schema as sent.
+			shape: (raw) => {
+				const empty = emptyListMessage(raw);
+				return empty === undefined ? raw : { tickets: [], message: empty };
+			},
 			log: ({ eventid }, result) => ({
 				eventId: eventid,
 				count: result.tickets.length,
