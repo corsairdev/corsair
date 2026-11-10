@@ -384,6 +384,38 @@ describe('records.create', () => {
 			invoke(Records.create, { object_key: 'object_3', fields: {} }),
 		).rejects.toThrow();
 	});
+
+	// Knack accepts an unknown key and silently ignores it, so a column label or
+	// a typo would look like a successful write that changed nothing.
+	it('rejects a column label used as a field key', async () => {
+		await expect(
+			invoke(Records.create, {
+				object_key: 'object_3',
+				fields: { Name: 'Acme' },
+			}),
+		).rejects.toThrow(/not a Knack field key/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a near-miss field key', async () => {
+		await expect(
+			invoke(Records.create, {
+				object_key: 'object_3',
+				fields: { field_23_typo: 'Acme' },
+			}),
+		).rejects.toThrow(/not a Knack field key/);
+	});
+
+	// A `_raw` mirror gets its own message, because it is a real key that is
+	// read-only rather than a typo.
+	it('reports a read-only mirror differently from a typo', async () => {
+		await expect(
+			invoke(Records.create, {
+				object_key: 'object_3',
+				fields: { field_23_raw: 'Acme' },
+			}),
+		).rejects.toThrow(/read-only/);
+	});
 });
 
 describe('records.update', () => {

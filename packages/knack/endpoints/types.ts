@@ -267,11 +267,13 @@ export type KnackRecordsGetResponse = KnackRecord;
 // ── records.create ────────────────────────────────────────────────────────
 
 const READ_ONLY_FIELD_PATTERN = /(_raw$|_html$)/;
+const FIELD_KEY_PATTERN = /^field_\d+$/;
 
 /**
- * The write body is a flat map of `field_N` to value. A `_raw` or `_html`
- * mirror is read-only, and sending one would draw a validation error from
- * Knack, so it is rejected here before a request is spent.
+ * The write body is a flat map of `field_N` to value. Two checks, in order:
+ * a `_raw` or `_html` mirror gets its own message because it is a real key that
+ * is read-only, and anything else that is not `field_N` is a typo or a column
+ * label, which Knack would accept silently and ignore.
  */
 export const KnackRecordWriteFieldsSchema = KnackFieldsSchema.refine(
 	(fields) => Object.keys(fields).length > 0,
@@ -284,6 +286,14 @@ export const KnackRecordWriteFieldsSchema = KnackFieldsSchema.refine(
 				path: [key],
 				message:
 					'`_raw` and `_html` values are read-only mirrors; send the plain field key instead.',
+			});
+			continue;
+		}
+		if (!FIELD_KEY_PATTERN.test(key)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: [key],
+				message: `"${key}" is not a Knack field key. Use the field_N key from \`objects.get\`, not the column label.`,
 			});
 		}
 	}
