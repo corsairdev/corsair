@@ -175,7 +175,10 @@ const PlacesSearchInputSchema = z.object({
 		.enum(['RELEVANCE', 'RATING', 'DISTANCE', 'POPULARITY'])
 		.optional()
 		.describe('Defaults to RELEVANCE'),
-	tel_format: z.string().optional().describe('E164, INTERNATIONAL or NATIONAL'),
+	tel_format: z
+		.enum(['NATIONAL', 'E164'])
+		.optional()
+		.describe('Format of the returned telephone number'),
 	fields: z
 		.array(z.string())
 		.optional()
@@ -249,11 +252,11 @@ const PlacesAutocompleteInputSchema = z.object({
 	ll: z.string().optional(),
 	radius: z.number().int().min(0).max(100_000).optional(),
 	types: z
-		.array(z.enum(['place', 'search', 'geo', 'address']))
+		.array(z.enum(['place', 'search', 'geo']))
 		.optional()
 		.describe('Any combination of result types'),
 	bias: z
-		.enum(['place', 'search', 'geo', 'address'])
+		.enum(['place', 'search', 'geo'])
 		.optional()
 		.describe('Prefer one result type'),
 	session_token: z
@@ -316,7 +319,7 @@ const PlacesTipsInputSchema = z.object({
 	fsq_place_id: z.string().min(1),
 	limit: z.number().int().min(1).max(50).optional(),
 	sort: z
-		.enum(['POPULAR', 'NEWEST', 'OLDEST'])
+		.enum(['POPULAR', 'NEWEST'])
 		.optional()
 		.describe('Defaults to POPULAR'),
 	fields: z.array(z.string()).optional(),
@@ -349,7 +352,10 @@ export type PlacesTipsResponse = z.infer<typeof PlacesTipsResponseSchema>;
 const PlacesPhotosInputSchema = z.object({
 	fsq_place_id: z.string().min(1),
 	limit: z.number().int().min(1).max(50).optional(),
-	sort: z.enum(['POPULAR', 'NEWEST', 'OLDEST']).optional(),
+	sort: z
+		.enum(['POPULAR', 'NEWEST'])
+		.optional()
+		.describe('Defaults to POPULAR'),
 	classifications: z
 		.array(z.string())
 		.optional()

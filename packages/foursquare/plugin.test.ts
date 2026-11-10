@@ -95,6 +95,44 @@ describe('foursquare plugin definition', () => {
 		}
 	});
 
+	it('accepts only the tel_format values the reference lists', () => {
+		const search = foursquareEndpointSchemas['places.search'];
+		expect(search.input.safeParse({ tel_format: 'E164' }).success).toBe(true);
+		expect(search.input.safeParse({ tel_format: 'NATIONAL' }).success).toBe(
+			true,
+		);
+		expect(
+			search.input.safeParse({ tel_format: 'INTERNATIONAL' }).success,
+		).toBe(false);
+	});
+
+	it('accepts only POPULAR and NEWEST as a tips or photos sort', () => {
+		for (const path of ['places.tips', 'places.photos'] as const) {
+			const { input } = foursquareEndpointSchemas[path];
+			const base = { fsq_place_id: '4b28f2aef964a520f9d024e3' };
+			expect(input.safeParse({ ...base, sort: 'POPULAR' }).success).toBe(true);
+			expect(input.safeParse({ ...base, sort: 'NEWEST' }).success).toBe(true);
+			// Not in the reference's enum for either endpoint.
+			expect(input.safeParse({ ...base, sort: 'OLDEST' }).success).toBe(false);
+		}
+	});
+
+	it('accepts only place, search and geo as autocomplete types', () => {
+		const { input } = foursquareEndpointSchemas['places.autocomplete'];
+		expect(
+			input.safeParse({ query: 'star', types: ['place', 'search', 'geo'] })
+				.success,
+		).toBe(true);
+		expect(input.safeParse({ query: 'star', bias: 'geo' }).success).toBe(true);
+		// The current reference no longer lists address for types or bias.
+		expect(input.safeParse({ query: 'star', types: ['address'] }).success).toBe(
+			false,
+		);
+		expect(input.safeParse({ query: 'star', bias: 'address' }).success).toBe(
+			false,
+		);
+	});
+
 	it('rejects a search limit above the documented cap of 50', () => {
 		const search = foursquareEndpointSchemas['places.search'];
 		expect(search.input.safeParse({ limit: 50 }).success).toBe(true);
