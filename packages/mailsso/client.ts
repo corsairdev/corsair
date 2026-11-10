@@ -24,6 +24,13 @@ const SUBSCRIPTION_MESSAGE = /paid subscription/i;
 /** An untyped response body: each endpoint's zod output schema gives it a shape. */
 export type MailssoBody = unknown; // unknown: the body's shape differs per route (enveloped for validate, bare for batch jobs).
 
+/**
+ * Reads a non-empty string field from a response body, and nothing else.
+ *
+ * Every body here is `unknown`: Mails.so mixes shapes across routes, so a
+ * missing field, a number, or an empty string all read as `undefined` instead
+ * of leaking a wrong type into an error message or a code.
+ */
 function readStringField(body: MailssoBody, key: string): string | undefined {
 	const value = asRecord(body)?.[key];
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -125,6 +132,15 @@ export type MailssoRequest = {
  */
 export const JOB_IN_PROGRESS_MESSAGE = 'Job is still processing';
 
+/**
+ * Reads the job out of the progress note, or `undefined` when the body is
+ * anything else.
+ *
+ * The note has to match exactly (`JOB_IN_PROGRESS_MESSAGE` *and* a job id
+ * *and* `status: 'processing'`): a real failure can carry the same data, and
+ * treating it as progress would leave the caller polling a job that has
+ * already failed.
+ */
 export function readJobInProgress(body: MailssoBody): MailssoBody | undefined {
 	const record = asRecord(body);
 	const data = asRecord(record?.data);

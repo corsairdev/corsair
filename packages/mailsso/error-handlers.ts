@@ -72,9 +72,14 @@ export const errorHandlers = {
 	},
 } satisfies CorsairErrorHandler;
 
-// Core runs the first handler whose match passes, in key order, and DEFAULT
-// matches everything. Caller keys go first so a caller handler for a status no
-// builtin covers runs before DEFAULT claims it, and DEFAULT stays last.
+/**
+ * Merges a caller's handlers over the builtins, keeping `DEFAULT` last.
+ *
+ * Core runs the first handler whose `match` passes, in key order, and `DEFAULT`
+ * matches everything. Caller keys go first so a handler for a status no builtin
+ * covers is reached before `DEFAULT` claims it; a caller `DEFAULT` replaces the
+ * builtin one, and the builtin `DEFAULT` is only used when the caller has none.
+ */
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
