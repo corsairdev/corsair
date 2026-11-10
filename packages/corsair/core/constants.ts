@@ -372,6 +372,7 @@ export const BaseProviders = [
 	'retellai',
 	'revai',
 	'rootly',
+	'rudderstacktransform',
 	'runpod',
 	'salesflare',
 	'salesforce',
@@ -841,6 +842,7 @@ export const ProviderDisplayNames = {
 	retellai: 'Retell AI',
 	revai: 'RevAI',
 	rootly: 'Rootly',
+	rudderstacktransform: 'RudderStack Transformations',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
@@ -1316,6 +1318,7 @@ export type AllProviders =
 	| 'retellai'
 	| 'revai'
 	| 'rootly'
+	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
 	| 'salesforce'

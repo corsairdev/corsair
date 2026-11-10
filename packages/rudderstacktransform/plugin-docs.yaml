@@ -1,0 +1,67 @@
+displayName: RudderStack Transformations
+description: Create, version, publish and connect RudderStack transformations, and manage the reusable libraries they import.
+domain: rudderstack.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a **workspace-level Service Access Token** under Settings, Access Tokens, and give it these permissions: Transformations **Create & Delete**, **Connect** and **Edit**; Transformation Libraries **Edit**; Destinations **Connect**. A Personal Access Token with the Read-Write role also works, but RudderStack warns it breaks if its user leaves the organization.
+
+  The token goes in `Authorization: Bearer …`. Two things are easy to get wrong:
+
+  - **Publishing is not a separate resource.** `publish` is a query flag on `transformations.create`, `transformations.update`, `libraries.create` and `libraries.update`. Without it the call only writes a *revision*: the code is not live, and `transformations.connect` answers `400 "Transformation is not published"`.
+  - **Use the right region.** A token only works on the host its workspace lives in. Pass `region: 'eu'` when you sign in at `app.eu.rudderstack.com`; the default is the US host, `api.rudderstack.com`.
+
+  Other things worth knowing:
+
+  - **`libraries.publish` publishes both kinds of revision.** Despite the path, it takes `transformations` and `libraries` arrays of version IDs and needs at least one of them. RudderStack runs the code on its servers first, so a failing test rejects the whole call and publishes nothing.
+  - **Every update writes a revision.** `transformations.update` and `libraries.update` always append one, so the plugin never retries them after a failure: a retry would leave a second revision behind that nobody asked for.
+  - **A destination holds one transformation.** `transformations.connect` replaces whatever was connected to that destination, so read `transformations` before connecting if the existing one matters.
+  - **The name and language are fixed.** A library's `importName` comes from its name at creation and neither can be changed; a transformation cannot switch between `javascript` and `pythonfaas`. `libraries.update` still requires `language`, because RudderStack validates it against the existing value.
+  - **Container keys differ per route.** `GET /transformations` answers `transformations`, the version routes answer `TransformationVersions` (capital T) and `libraryVersions`, and the get-by-ID routes answer the object itself. The response models follow each route.
+  - **Errors carry only a message.** There is no error code and no documented error catalogue, so the status is the only structured signal. `401` is `Invalid Access Token` or `Unauthorised`; `403` is a token missing a scope.
+  - **Paging:** the version routes take `count` (default 5) and `orderBy` (`asc` or `desc` on `createdAt`), and nothing else.
+examples:
+  read:
+    path: transformations.list
+    title: List the published transformations
+    args: {}
+  write:
+    path: transformations.update
+    title: Update and publish a transformation
+    args:
+      id: 2C8Vk2wj8qkofy00YzJbvJOGeqa
+      name: Normalise event names
+      publish: true
+      code: export function transformEvent(event) { return event; }
+apiExamples:
+  transformations.list: {}
+  transformations.create:
+    call: "{ name: 'Get metadata', language: 'javascript', code: 'export function transformEvent(event) { return event; }', publish: true }"
+  transformations.get:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa' }"
+  transformations.update:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', name: 'Updated transformation', code: 'export function transformEvent(event) { return event; }', publish: true }"
+  transformations.delete:
+    call: "{ id: '2LyH0PQOBAJo7UgFXfDoMacGDPZ' }"
+  transformations.listVersions:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', count: 5, orderBy: 'desc' }"
+  transformations.getVersion:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', versionId: '2C8ifOCgRIpxgyF9voHIgUHFP4c' }"
+  transformations.connect:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', destinationId: '2C8YtptB4KF2eL3KRi9mCFkY3BF' }"
+  transformations.disconnect:
+    call: "{ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', destinationId: '2C8YtptB4KF2eL3KRi9mCFkY3BF' }"
+  libraries.create:
+    call: "{ name: 'cool library', language: 'javascript', code: 'export function add(a,b) { return a+b; }', publish: true }"
+  libraries.list: {}
+  libraries.get:
+    call: "{ id: '2DmDQHMNpAk1HvvWBK2SlWhmPS2' }"
+  libraries.listVersions:
+    call: "{ id: '1pT7933tHRBPlEMIZt5Zi3VIht1', count: 10 }"
+  libraries.getVersion:
+    call: "{ id: '1pT7933tHRBPlEMIZt5Zi3VIht1', versionId: '1pT8KDAD66mQxnaUQxJpNs9qLFn' }"
+  libraries.update:
+    call: "{ id: '2MTEP4IhlKLXYtnbOqAOx1kKcBd', code: 'export function sum(a, b) { return a + b; }', language: 'javascript', publish: true }"
+  libraries.delete:
+    call: "{ id: '2LyH0PQOBAJo7UgFXfDoMacGDPZ' }"
+  libraries.publish:
+    call: "{ transformations: [{ versionId: '2MTC30bbSUANEeLb7TeknDbBeFy' }], libraries: [{ versionId: '2MTDbAFBqzB7Wg8mWyWNBIk5DOU' }] }"

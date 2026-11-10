@@ -1,0 +1,148 @@
+---
+title: Overview
+description: "Create, version, publish and connect RudderStack transformations, and manage the reusable libraries they import."
+---
+
+Use **RudderStack Transformations** through Corsair: one client, typed API calls.
+
+Create a **workspace-level Service Access Token** under Settings, Access Tokens, and give it these permissions: Transformations **Create & Delete**, **Connect** and **Edit**; Transformation Libraries **Edit**; Destinations **Connect**. A Personal Access Token with the Read-Write role also works, but RudderStack warns it breaks if its user leaves the organization.
+
+The token goes in `Authorization: Bearer …`. Two things are easy to get wrong:
+
+- **Publishing is not a separate resource.** `publish` is a query flag on `transformations.create`, `transformations.update`, `libraries.create` and `libraries.update`. Without it the call only writes a *revision*: the code is not live, and `transformations.connect` answers `400 "Transformation is not published"`.
+- **Use the right region.** A token only works on the host its workspace lives in. Pass `region: 'eu'` when you sign in at `app.eu.rudderstack.com`; the default is the US host, `api.rudderstack.com`.
+
+Other things worth knowing:
+
+- **`libraries.publish` publishes both kinds of revision.** Despite the path, it takes `transformations` and `libraries` arrays of version IDs and needs at least one of them. RudderStack runs the code on its servers first, so a failing test rejects the whole call and publishes nothing.
+- **Every update writes a revision.** `transformations.update` and `libraries.update` always append one, so the plugin never retries them after a failure: a retry would leave a second revision behind that nobody asked for.
+- **A destination holds one transformation.** `transformations.connect` replaces whatever was connected to that destination, so read `transformations` before connecting if the existing one matters.
+- **The name and language are fixed.** A library's `importName` comes from its name at creation and neither can be changed; a transformation cannot switch between `javascript` and `pythonfaas`. `libraries.update` still requires `language`, because RudderStack validates it against the existing value.
+- **Container keys differ per route.** `GET /transformations` answers `transformations`, the version routes answer `TransformationVersions` (capital T) and `libraryVersions`, and the get-by-ID routes answer the object itself. The response models follow each route.
+- **Errors carry only a message.** There is no error code and no documented error catalogue, so the status is the only structured signal. `401` is `Invalid Access Token` or `Unauthorised`; `403` is a token missing a scope.
+- **Paging:** the version routes take `count` (default 5) and `orderBy` (`asc` or `desc` on `createdAt`), and nothing else.
+
+**What you get:**
+
+- 17 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/rudderstacktransform better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/rudderstacktransform better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/rudderstacktransform better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/rudderstacktransform better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { rudderstacktransform } from '@corsair-dev/rudderstacktransform';
+
+export const corsair = createCorsair({
+	plugins: [
+		rudderstacktransform(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+rudderstacktransform()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'rudderstacktransform',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the published transformations**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rudderstacktransform.api.transformations.list({});
+```
+
+
+**Update and publish a transformation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rudderstacktransform.api.transformations.update({
+	id: '2C8Vk2wj8qkofy00YzJbvJOGeqa',
+	name: 'Normalise event names',
+	publish: true,
+	code: 'export function transformEvent(event) { return event; }',
+});
+```
+
+
+See the full list on the [API](/plugins/rudderstacktransform/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/rudderstacktransform/api">
+    Every `rudderstacktransform.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
