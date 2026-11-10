@@ -1,0 +1,10 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "ERPNext"
+description: Open-source ERP integration for documents, DocTypes, workflows, stock, selling, buying, and accounting over the Frappe REST API.
+domain: frappe.io
+recommendedAuth: api_key
+overviewNote: |
+  Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own tenant, so the plugin takes a `baseUrl` option (the site origin, for example `https://yourcompany.frappe.cloud`).
+
+  This plugin implements the requested 51 operations over the generic Frappe REST surface. Inbound webhooks are not included.
