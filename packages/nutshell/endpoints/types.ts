@@ -212,7 +212,7 @@ const NutshellQuotesListOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -223,67 +223,67 @@ const NutshellQuotesListOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -295,34 +295,34 @@ const NutshellQuotesListOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							acceptedTime: z.string().optional(),
-							deletedTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							acceptedTime: z.string().nullish(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
-		links: z.object({}).loose().optional(),
+			.nullish(),
+		links: z.object({}).loose().nullish(),
 	})
 	.loose();
 
@@ -2343,7 +2343,7 @@ const NutshellInvoicesListOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -2354,67 +2354,67 @@ const NutshellInvoicesListOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -2426,35 +2426,35 @@ const NutshellInvoicesListOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							paidTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().optional(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 		meta: z
 			.object({
-				instanceId: z.string().optional(),
-				siteId: z.string().optional(),
+				instanceId: z.string().nullish(),
+				siteId: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
-		links: z.object({}).loose().optional(),
+			.nullish(),
+		links: z.object({}).loose().nullish(),
 	})
 	.loose();
 
@@ -2730,7 +2730,7 @@ const NutshellQuotesGetOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -2741,67 +2741,67 @@ const NutshellQuotesGetOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -2813,26 +2813,26 @@ const NutshellQuotesGetOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							acceptedTime: z.string().optional(),
-							deletedTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							acceptedTime: z.string().nullish(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4213,7 +4213,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -4224,67 +4224,67 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -4296,27 +4296,27 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							paidTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().optional(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -4612,7 +4612,7 @@ const NutshellQuotesStatusOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -4623,67 +4623,67 @@ const NutshellQuotesStatusOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -4695,26 +4695,26 @@ const NutshellQuotesStatusOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							acceptedTime: z.string().optional(),
-							deletedTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							acceptedTime: z.string().nullish(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -5199,7 +5199,7 @@ const NutshellInvoicesGetOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -5210,67 +5210,67 @@ const NutshellInvoicesGetOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -5282,27 +5282,27 @@ const NutshellInvoicesGetOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							paidTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().optional(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -6094,7 +6094,7 @@ const NutshellInvoicesStatusOutputSchema = z
 				z.intersection(
 					z
 						.object({
-							id: z.string().optional(),
+							id: z.string().nullish(),
 							displayStatus: z
 								.enum([
 									'DRAFT',
@@ -6105,67 +6105,67 @@ const NutshellInvoicesStatusOutputSchema = z
 									'ARCHIVED',
 									'EXPIRED',
 								])
-								.optional(),
+								.nullish(),
 							productLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
 											product: z.string().nullable().optional(),
-											name: z.string().optional(),
-											description: z.string().optional(),
-											sku: z.string().optional(),
-											quantity: z.number().optional(),
+											name: z.string().nullish(),
+											description: z.string().nullish(),
+											sku: z.string().nullish(),
+											quantity: z.number().nullish(),
 											term: z.string().nullable().optional(),
 											price: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 											discountUnit: z.string().nullable().optional(),
 											discountNumber: z.number().nullable().optional(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							subtotalLineItems: z
 								.array(
 									z
 										.object({
-											id: z.string().optional(),
-											position: z.number().int().optional(),
-											label: z.string().optional(),
-											modifierUnit: z.string().optional(),
-											modifierValue: z.number().optional(),
-											operation: z.enum(['+', '-']).optional(),
+											id: z.string().nullish(),
+											position: z.number().int().nullish(),
+											label: z.string().nullish(),
+											modifierUnit: z.string().nullish(),
+											modifierValue: z.number().nullish(),
+											operation: z.enum(['+', '-']).nullish(),
 											total: z
 												.object({
-													formatted: z.string().optional(),
-													amount: z.string().optional(),
-													currency: z.string().optional(),
+													formatted: z.string().nullish(),
+													amount: z.string().nullish(),
+													currency: z.string().nullish(),
 												})
 												.loose()
-												.optional(),
+												.nullish(),
 										})
 										.loose(),
 								)
-								.optional(),
+								.nullish(),
 							recipient: z
 								.object({
-									id: z.string().optional(),
-									name: z.string().optional(),
+									id: z.string().nullish(),
+									name: z.string().nullish(),
 									email: z.string().nullable().optional(),
 								})
 								.loose()
@@ -6177,27 +6177,27 @@ const NutshellInvoicesStatusOutputSchema = z
 						.loose(),
 					z
 						.object({
-							number: z.string().optional(),
+							number: z.string().nullish(),
 							total: z
 								.object({
-									formatted: z.string().optional(),
-									amount: z.string().optional(),
-									currency: z.string().optional(),
+									formatted: z.string().nullish(),
+									amount: z.string().nullish(),
+									currency: z.string().nullish(),
 								})
 								.loose()
-								.optional(),
-							validThroughTime: z.string().optional(),
-							createdTime: z.string().optional(),
-							publishedTime: z.string().optional(),
-							sentTime: z.string().optional(),
-							paidTime: z.string().optional(),
+								.nullish(),
+							validThroughTime: z.string().nullish(),
+							createdTime: z.string().nullish(),
+							publishedTime: z.string().nullish(),
+							sentTime: z.string().nullish(),
+							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().optional(),
+							deletedTime: z.string().nullish(),
 						})
 						.loose(),
 				),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
