@@ -1,0 +1,170 @@
+---
+title: Overview
+description: "Create equipment-return orders, track pending, new and in-progress shipments, and read company details and live device prices with Remote Retrieval."
+---
+
+Use **Remote Retrieval** through Corsair: one client, typed API calls.
+
+The API key comes from the **Enterprise Remote Retriever portal** and goes in `Authorization: Bearer`. It is only available on an enterprise account, and every route lives under `https://www.remoteretrieval.com/api/v1` — there is no separate API host.
+
+**`orders.create` books a real shipment.** A box is sent to a named employee at a home address and collected from there, so read this before calling it in a loop:
+
+- **Check `prices` first** when the cost matters. It is the live per-device price, and it is the only place `Monitor_27` is explained: it is a display of 24 to 27 inches, where plain `Monitor` means 17 to 23.
+- **Two cross-field rules are enforced before the request.** `return_add_srv: 2` means data wipe and delivery to a *new* employee, so it needs `new_employee_info`; `ins_active: 1` needs an `ins_amount`. The plugin rejects either omission rather than letting the API create an order it cannot fulfil. `return_add_srv` also only makes sense on a `Return To Company` order, not a recycle.
+- **The request and response spellings differ.** A create takes `employee_info.address_city`, `address_state` and `address_zip`; every list answers `employee_info.city`, `state` and `zip`. The models follow each side, so a value copied from a read will not fit a write without renaming.
+- **One order ID comes back for a batch.** `orders.create` accepts an array, but the response carries a single `order` reference, as a string.
+
+Reading, in practice:
+
+- **The four order lists do not share a shape.** `orders.pending`, `orders.new`, `orders.inprogress` and `orders.get` answer a bare array (paged by `page`, up to 25); only `orders.list` answers `{next, previous, results}` and pages by the response's own `next` link. Use the cursor there rather than a page number.
+- **`orders.get` takes its ID as a query parameter, not a path segment.** The route is `device_returns` and the id is `?oid=`.
+- **The three list routes are a pipeline, not a filter.** `pending` is payment not yet completed (on hold), `new` is payment done and ready to process, and `inprogress` has the return leg started but the device not yet back. `orders.list` is the one place both `payment_status` and `order_status` appear together.
+- **`---` means "not started".** `shipments.send_status` and `return_status` carry that placeholder before a leg begins, so it is not a failure state to alert on.
+- **A refusal can arrive as a `401` with `Invalid Key!`,** which is the live answer for both a missing key and a wrong key — the message cannot tell them apart. A failure also carries `status: "Fail"` alongside its `code`, and the plugin checks for that, so a refusal reported inside a `200` still throws rather than being read as an order.
+- **No rate limit is documented.** Orders are created at a real logistics company, so `orders.create` is never retried; the reads retry a `5xx` twice.
+
+**What you get:**
+
+- 9 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/remoteretrieval better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/remoteretrieval better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/remoteretrieval better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/remoteretrieval better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { remoteretrieval } from '@corsair-dev/remoteretrieval';
+
+export const corsair = createCorsair({
+	plugins: [
+		remoteretrieval(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+remoteretrieval()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'remoteretrieval',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List orders awaiting payment**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.remoteretrieval.api.orders.pending({ page: 1 });
+```
+
+
+**Create an equipment-return order**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.remoteretrieval.api.orders.create({
+	orders: [{
+		type_of_equipment: 'Laptop',
+		order_type: 'Return To Company',
+		employee_info: {
+			email: 'kennethdavis@example.com',
+			name: 'Kenneth Davis',
+			address_line_1: '1734 Steele Street',
+			address_city: 'Houston',
+			address_state: 'TX',
+			address_country: 'United States',
+			address_zip: '77001',
+			phone: '1231231234',
+		},
+		company_info: {
+			return_person_name: 'Dorothy Buchanan',
+			return_company_name: 'BigCo',
+			return_address_line_1: '4522 Hanover Street',
+			return_address_city: 'San Antonio',
+			return_address_state: 'TX',
+			return_address_country: 'United States',
+			return_address_zip: '78015',
+			email: 'it-team@example.com',
+			phone: '1231231234',
+		},
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/remoteretrieval/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/remoteretrieval/api">
+    Every `remoteretrieval.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

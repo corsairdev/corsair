@@ -362,6 +362,7 @@ export const BaseProviders = [
 	'reddit',
 	'reducto',
 	'remoet',
+	'remoteretrieval',
 	'removebg',
 	'render',
 	'replicate',
@@ -832,6 +833,7 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
+	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
 	render: 'Render',
 	replicate: 'Replicate',
@@ -1306,6 +1308,7 @@ export type AllProviders =
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
+	| 'remoteretrieval'
 	| 'removebg'
 	| 'render'
 	| 'replicate'

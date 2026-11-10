@@ -3049,6 +3049,14 @@
                 ]
               },
               {
+                "group": "Remote Retrieval",
+                "pages": [
+                  "plugins/remoteretrieval/overview",
+                  "plugins/remoteretrieval/api",
+                  "plugins/remoteretrieval/database"
+                ]
+              },
+              {
                 "group": "remove.bg",
                 "pages": [
                   "plugins/removebg/overview",

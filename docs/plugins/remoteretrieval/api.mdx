@@ -1,0 +1,507 @@
+---
+title: API
+description: "API reference for Remote Retrieval: every `remoteretrieval.api.*` operation with input and output types."
+---
+
+Every `remoteretrieval.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### get
+
+`company.get`
+
+Read the company record the key belongs to: name, address and creation date
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.company.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_name` | `string \| null` | No | — |
+| `company_email` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `created_date` | `string \| null` | No | A date such as 24-Jun-2024, not ISO 8601. |
+
+
+
+---
+
+## Orders
+
+### create
+
+`orders.create`
+
+Create one or more equipment-return orders, booking a real box shipment to a named employee at a home address
+
+**Risk:** `write`
+
+```ts
+await corsair.remoteretrieval.api.orders.create({ orders: [{ type_of_equipment: 'Laptop', order_type: 'Return To Company', employee_info: { email: 'a@b.com', name: 'Kenneth Davis', address_line_1: '1734 Steele Street', address_city: 'Houston', address_state: 'TX', address_country: 'United States', address_zip: '77001', phone: '1231231234' }, company_info: { return_person_name: 'Dorothy Buchanan', return_company_name: 'BigCo', return_address_line_1: '4522 Hanover Street', return_address_city: 'San Antonio', return_address_state: 'TX', return_address_country: 'United States', return_address_zip: '78015', email: 'it-team@example.com', phone: '1231231234' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  type_of_equipment: Laptop | Monitor | Monitor_27 | Cell Phone | Tablet,
+  order_type: Return To Company | Recycle with Data Destruction,
+  return_add_srv?: 1 | 2,
+  ins_active?: 0 | 1,
+  ins_amount?: number,
+  employee_info: {
+    email: string,
+    name: string,
+    address_line_1: string,
+    address_line_2?: string,
+    address_city: string,
+    address_state: string,
+    address_country: string,
+    address_zip: string,
+    phone: string
+  },
+  company_info: {
+    return_person_name: string,
+    return_company_name: string,
+    return_address_line_1: string,
+    return_address_line_2?: string,
+    return_address_city: string,
+    return_address_state: string,
+    return_address_country: string,
+    return_address_zip: string,
+    email: string,
+    phone: string
+  },
+  new_employee_info?: {
+    first_name: string,
+    last_name: string,
+    phone: string,
+    email: string,
+    address_line_1: string,
+    address_city: string,
+    address_state: string,
+    address_zip: string,
+    address_country: string,
+    newemp_msg?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `string \| null` | No | The created order reference, as a string. One id comes back for a batch. |
+| `message` | `string \| null` | No | — |
+| `status` | `string \| null` | No | Success. |
+| `response_code` | `number \| null` | No | — |
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Read one order by ID, taking it as the oid query parameter
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.orders.get({ oid: 148 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `oid` | `number` | Yes | The order ID. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  order_id?: number | null,
+  payment_status?: string | null,
+  order_status?: string | null,
+  employee_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  company_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  shipments?: {
+    device_type?: string | null,
+    send_status?: string | null,
+    return_status?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### inprogress
+
+`orders.inprogress`
+
+List orders whose return has started but whose device has not arrived yet, with both shipment legs
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.orders.inprogress({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | A page holds up to 25 orders. Defaults to 1. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  order_id?: number | null,
+  payment_status?: string | null,
+  order_status?: string | null,
+  employee_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  company_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  shipments?: {
+    device_type?: string | null,
+    send_status?: string | null,
+    return_status?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`orders.list`
+
+List every order with its payment status and shipping status, paged by the response's own next link
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.orders.list({ cursor: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The next-page link the response hands back. Pass it verbatim rather than a page number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  order_id?: number | null,
+  payment_status?: string | null,
+  order_status?: string | null,
+  employee_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  company_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  shipments?: {
+    device_type?: string | null,
+    send_status?: string | null,
+    return_status?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### new
+
+`orders.new`
+
+List orders whose payment completed and which are ready to process
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.orders.new({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | A page holds up to 25 orders. Defaults to 1. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  order_id?: number | null,
+  payment_status?: string | null,
+  order_status?: string | null,
+  employee_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  company_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  shipments?: {
+    device_type?: string | null,
+    send_status?: string | null,
+    return_status?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pending
+
+`orders.pending`
+
+List orders whose payment has not completed; they are on hold until it does
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.orders.pending({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | A page holds up to 25 orders. Defaults to 1. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  order_id?: number | null,
+  payment_status?: string | null,
+  order_status?: string | null,
+  employee_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  company_info?: {
+    email?: string | null,
+    name?: string | null,
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null
+  } | null,
+  shipments?: {
+    device_type?: string | null,
+    send_status?: string | null,
+    return_status?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Prices
+
+### prices
+
+`prices`
+
+Read the live per-device prices, including the Monitor_27 band for 24-to-27-inch displays
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.prices({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  equipment_type?: string | null,
+  order_amount?: number | null,
+  option_lbl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Validate
+
+### validate
+
+`validate`
+
+Check that the API key works and read the account email it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.remoteretrieval.api.validate({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | "Valid Key!" on success. |
+| `email` | `string \| null` | No | The account the key belongs to. |
+| `status` | `string \| null` | No | Success. |
+| `response_code` | `number \| null` | No | — |
+
+
+
+---
+
