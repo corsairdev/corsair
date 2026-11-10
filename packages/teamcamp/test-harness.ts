@@ -1,11 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { refuseNetwork } from './test-errors';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
-
+// The test file must call jest.mock('corsair/core', ...) itself: a mock
+// registered here runs after the endpoints have already bound the real
+// logEventFromContext, so it would never apply to them.
 export const mockLog = jest.mocked(logEventFromContext);
 export const API_KEY = 'tc-test-key';
 

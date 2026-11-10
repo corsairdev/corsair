@@ -23,10 +23,18 @@ import {
 	expectAuthenticated,
 	invoke,
 	lastRequest,
+	mockLog,
 	respond,
 	setUp,
 	tearDown,
 } from './test-harness';
+
+// Hoisted above the imports, so the endpoints bind the mock, not the real
+// logger (which warns on the test context's missing $getAccountId).
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
 
 beforeEach(setUp);
 afterEach(tearDown);
@@ -43,6 +51,12 @@ describe('account.verify', () => {
 			path: '/v1.0/verify',
 		});
 		expect(result.workspaceId).toBe('5-YTy0zgMFoXJSV4joyB5');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'teamcamp.account.verify',
+			{ workspaceId: '5-YTy0zgMFoXJSV4joyB5' },
+			'completed',
+		);
 	});
 });
 
