@@ -1,3 +1,5 @@
+// Installs the corsair/core logger mock before the endpoints load and bind it.
+import './test-harness';
 import { Subscriptions } from './endpoints';
 import { emptyList, generatedInvoice } from './test-fixtures';
 import {

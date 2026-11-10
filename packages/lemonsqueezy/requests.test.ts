@@ -1,3 +1,5 @@
+// Installs the corsair/core logger mock before the endpoints load and bind it.
+import './test-harness';
 import { Billing, Catalog } from './endpoints';
 import { captureError } from './test-errors';
 import {
@@ -257,6 +259,7 @@ describe('orders', () => {
 			generatedInvoice.meta.urls.download_invoice,
 		);
 		// The billing details are personal data and stay out of the event log.
+		expect(mockLog).toHaveBeenCalledTimes(1);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('Main St');
 	});
 
