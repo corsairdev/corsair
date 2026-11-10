@@ -662,8 +662,10 @@ const MetricsGetInputSchema = z.object({ id: z.string().min(1) });
 export type MetricsGetInput = z.input<typeof MetricsGetInputSchema>;
 
 /**
- * The aggregate endpoint answers a small report rather than a resource: each
- * `data.attributes.dates` entry holds one date and the values computed for it.
+ * The aggregate endpoint answers a small report rather than a resource:
+ * `data.attributes.dates` lists the bucket start times, and each entry of
+ * `data.attributes.data` is one series whose measurement arrays line up with
+ * those dates.
  */
 const MetricAggregateInputSchema = z.object({
 	metricId: z.string().min(1).describe('The metric to aggregate.'),
@@ -680,11 +682,13 @@ const MetricAggregateInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Group by these dimensions, such as ["$attributed_message"].'),
+	// Required by the spec: Klaviyo rejects an aggregate with no date range.
 	filter: z
 		.array(z.string().min(1))
 		.min(1)
-		.optional()
-		.describe('One or more filter expressions, each in Klaviyo filter syntax.'),
+		.describe(
+			'Filter expressions in Klaviyo filter syntax. A date range is required, such as ["greater-or-equal(datetime,2026-01-01T00:00:00)", "less-than(datetime,2026-02-01T00:00:00)"].',
+		),
 	timezone: z.string().optional(),
 });
 
@@ -699,15 +703,22 @@ const MetricAggregateResponseSchema = z
 				attributes: z
 					.object({
 						dates: z
+							.array(z.string())
+							.nullish()
+							.describe('The start of each bucket, as ISO 8601 strings.'),
+						data: z
 							.array(
 								z
 									.object({
-										date: z.string().nullish(),
-										measurements: JsonObjectSchema.nullish(), // unknown: one entry per requested measurement.
+										dimensions: z.array(z.string()).nullish(),
+										measurements: JsonObjectSchema.nullish(), // unknown: one array per requested measurement.
 									})
 									.loose(),
 							)
-							.nullish(),
+							.nullish()
+							.describe(
+								'One row per `by` grouping; each measurement array lines up with `dates`.',
+							),
 					})
 					.loose()
 					.nullish(),

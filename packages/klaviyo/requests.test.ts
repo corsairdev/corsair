@@ -72,6 +72,12 @@ jest.mock('corsair/core', () => ({
 const mockLog = jest.mocked(logEventFromContext);
 const API_KEY = 'pk_test_key';
 
+// The date range every aggregate needs: the spec marks `filter` required.
+const AGGREGATE_RANGE = [
+	'greater-or-equal(datetime,2026-01-01T00:00:00)',
+	'less-than(datetime,2026-01-03T00:00:00)',
+];
+
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type, so
 // the shared return is unknown.
@@ -444,9 +450,18 @@ describe('metrics', () => {
 			metricId: 'Mt123',
 			measurements: ['count'],
 			interval: 'day',
+			filter: AGGREGATE_RANGE,
 		})) as {
 			data?: {
-				attributes?: { dates?: { date?: string | null }[] | null } | null;
+				attributes?: {
+					dates?: string[] | null;
+					data?:
+						| {
+								dimensions?: string[] | null;
+								measurements?: { count?: number[] } | null;
+						  }[]
+						| null;
+				} | null;
 			} | null;
 		};
 
@@ -458,10 +473,30 @@ describe('metrics', () => {
 					metric_id: 'Mt123',
 					measurements: ['count'],
 					interval: 'day',
+					filter: AGGREGATE_RANGE,
 				},
 			},
 		});
-		expect(result.data?.attributes?.dates).toHaveLength(2);
+		// The spec's report: bucket times as strings, the series under `data`.
+		expect(result.data?.attributes?.dates).toEqual([
+			'2026-01-01T00:00:00+00:00',
+			'2026-01-02T00:00:00+00:00',
+		]);
+		expect(result.data?.attributes?.data?.[0]?.dimensions).toEqual([]);
+		expect(result.data?.attributes?.data?.[0]?.measurements?.count).toEqual([
+			3, 5,
+		]);
+	});
+
+	it('requires the date range filter the spec marks required', async () => {
+		await expect(
+			invoke(metricsAggregate, {
+				metricId: 'Mt123',
+				measurements: ['count'],
+				interval: 'day',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an interval outside the enum', async () => {
@@ -470,6 +505,7 @@ describe('metrics', () => {
 				metricId: 'Mt123',
 				measurements: ['count'],
 				interval: 'year',
+				filter: AGGREGATE_RANGE,
 			}),
 		).rejects.toThrow();
 	});

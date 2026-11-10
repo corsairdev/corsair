@@ -128,16 +128,16 @@ export const metricsListResponse = {
 export const metricResponse = { data: metric };
 
 /** The aggregate route answers date buckets, not resources. */
+/** The report shape of the spec: `dates` are strings, the series sit in `data`. */
 export const metricAggregateResponse = {
 	data: {
 		type: 'metric-aggregate',
 		id: 'Mt123',
 		attributes: {
-			dates: [
-				{ date: '2026-01-01', measurements: { count: [3] } },
-				{ date: '2026-01-02', measurements: { count: [5] } },
-			],
+			dates: ['2026-01-01T00:00:00+00:00', '2026-01-02T00:00:00+00:00'],
+			data: [{ dimensions: [], measurements: { count: [3, 5] } }],
 		},
+		links: { self: 'https://a.klaviyo.com/api/metric-aggregates' },
 	},
 	links: { self: 'https://a.klaviyo.com/api/metric-aggregates' },
 };

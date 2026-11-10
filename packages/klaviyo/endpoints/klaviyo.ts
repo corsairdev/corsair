@@ -660,8 +660,8 @@ export const metricsAggregate: KlaviyoEndpoints['metricsAggregate'] = (
 						...(parsed.pageCursor !== undefined
 							? { page_cursor: parsed.pageCursor }
 							: {}),
+						filter: parsed.filter,
 						...(parsed.by !== undefined ? { by: parsed.by } : {}),
-						...(parsed.filter !== undefined ? { filter: parsed.filter } : {}),
 						...(parsed.timezone !== undefined
 							? { timezone: parsed.timezone }
 							: {}),
