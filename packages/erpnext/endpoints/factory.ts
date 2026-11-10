@@ -4,20 +4,59 @@ import { getErpnextOperation } from '../operations';
 import type { ErpnextEndpointInputs, ErpnextEndpointOutputs } from './registry';
 
 /**
+ * The stored `documents` entity client the runtime binds when the
+ * integration runs with a database. Handlers use it to mirror fetched
+ * documents into local search.
+ */
+export type ErpnextDbDocumentsClient = {
+	upsertByEntityId: (entityId: string, data: unknown) => Promise<unknown>;
+	deleteByEntityId: (entityId: string) => Promise<unknown>;
+};
+
+/**
  * The context the shared binder hands to every endpoint. `key` is the
  * `<api_key>:<api_secret>` composite produced by the plugin's key builder,
- * and `options.baseUrl` is the tenant's site origin, passed through the
- * plugin options into the bound context.
+ * and `options.baseUrl` is the plugin-instance site origin fallback.
+ * `keys` (present with multi-tenancy) and `db` (present with a database)
+ * come from the bound runtime context.
  */
 export type ErpnextHandlerContext = {
 	key: string;
 	options: { baseUrl?: string };
+	keys?: { get_base_url?: () => Promise<string | null> };
+	db?: { documents?: ErpnextDbDocumentsClient };
 };
 
 export type ErpnextEndpointHandler<K extends ErpnextOperationKey> = (
 	ctx: ErpnextHandlerContext,
 	input: ErpnextEndpointInputs[K],
 ) => Promise<ErpnextEndpointOutputs[K]>;
+
+/**
+ * Resolves the site origin for the *calling tenant*. The tenant-stored
+ * `base_url` account field wins over the plugin option: stored credentials
+ * and their host come from the same tenant account, so with multi-tenancy
+ * tenant B's token can never reach tenant A's site. Without an account key
+ * manager (API-only usage), the plugin option applies.
+ */
+export async function resolveErpnextBaseUrl(
+	ctx: ErpnextHandlerContext,
+): Promise<string> {
+	try {
+		const stored = await ctx.keys?.get_base_url?.();
+		if (stored) return stored;
+	} catch {
+		// No account key manager bound (no database): fall through to the
+		// plugin option below.
+	}
+	const option = ctx.options?.baseUrl;
+	if (!option) {
+		throw new Error(
+			'[erpnext] missing baseUrl: set the plugin option or the tenant base_url, for example https://yourcompany.frappe.cloud',
+		);
+	}
+	return option;
+}
 
 function encodeSegment(name: string, value: string): string {
 	if (value.length === 0 || value === '.' || value === '..') {
@@ -87,14 +126,9 @@ export function defineEndpoint<K extends ErpnextOperationKey>(
 	return async (ctx, input) => {
 		// The public Corsair binder validates the operation's object input schema.
 		const record = (input ?? {}) as Record<string, unknown>; // Record<string, unknown>: the schema-parsed input is read by dynamic parameter names.
-		// Every ERPNext deployment is its own host; the site origin is a
-		// required plugin option and missing it is a configuration error.
-		const baseUrl = ctx.options?.baseUrl;
-		if (!baseUrl) {
-			throw new Error(
-				'[erpnext] missing baseUrl plugin option: set it to the site origin, for example https://yourcompany.frappe.cloud',
-			);
-		}
+		// Every ERPNext deployment is its own host; the site origin resolves
+		// per calling tenant and missing it is a configuration error.
+		const baseUrl = await resolveErpnextBaseUrl(ctx);
 		// unknown: the raw transport result before the wrapper's output-schema
 		// parse; narrowing belongs to the public boundary, not the transport.
 		const result = await makeErpnextRequest<unknown>(

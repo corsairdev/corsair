@@ -3,6 +3,7 @@ import { ErpnextAPIError, fetchErpnextBinary } from '../client';
 import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
 import { ERPNEXT_OPERATIONS } from '../operations';
+import { FilesOutputSchemas } from './files-types';
 
 const BASE_URL = 'https://test.example.com';
 const AUTH_HEADER = 'token test-key:test-secret';
@@ -369,4 +370,23 @@ describe('ERPNext files endpoint contract', () => {
 			}
 		},
 	);
+});
+
+// A zero-byte stored file (or an empty render result) downloads successfully
+// as an empty base64 string; the output schema must accept it as a success
+// (Greptile round 2: "Empty files fail to download").
+describe('ERPNext files output contract', () => {
+	it('accepts an empty base64 payload for stored-file downloads', () => {
+		const parsed = FilesOutputSchemas['files.downloadFile'].parse({
+			base64: '',
+		});
+		expect(parsed.base64).toBe('');
+	});
+
+	it('accepts an empty base64 payload for PDF downloads', () => {
+		const parsed = FilesOutputSchemas['files.downloadPdf'].parse({
+			base64: '',
+		});
+		expect(parsed.base64).toBe('');
+	});
 });

@@ -41,11 +41,13 @@ const FilesDownloadFileInputSchema = z
 	.strict();
 
 // Both downloads return the binary payload base64-encoded, so the output is
-// exactly one non-empty base64 string; the shape is closed because the plugin
-// itself produces it, not the provider.
+// exactly one base64 string; the shape is closed because the plugin itself
+// produces it, not the provider. Zero-byte files are a legitimate success
+// (an empty stored file downloads as an empty string), so the empty string
+// is accepted.
 const FilesBinaryOutputSchema = z
 	.object({
-		base64: z.string().min(1),
+		base64: z.string(),
 	})
 	.strict();
 

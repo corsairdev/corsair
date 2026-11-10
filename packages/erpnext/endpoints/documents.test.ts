@@ -2,6 +2,7 @@ import { createCorsair } from 'corsair/core';
 import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
 import { ERPNEXT_OPERATIONS } from '../operations';
+import { endpoints as documentsEndpoints } from './documents';
 
 const BASE_URL = 'https://test.example.com';
 const AUTH_HEADER = 'token test-key:test-secret';
@@ -742,4 +743,108 @@ describe('ERPNext documents endpoint contract', () => {
 			}
 		},
 	);
+});
+
+// ── Greptile round-2 regressions ─────────────────────────────────────────────
+
+describe('ERPNext tenant host and local document sync', () => {
+	it('resolves a tenant-stored base_url over the plugin option so tokens never cross sites', async () => {
+		const captures: Array<{ url: URL; method: string }> = [];
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url, init) => {
+				captures.push({
+					url: new URL(String(url)),
+					method: init?.method ?? 'GET',
+				});
+				return new Response(
+					JSON.stringify({
+						data: { doctype: 'Customer', name: 'CUST-001' },
+					}),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			// Raw handler call with a tenant-bound context: the stored base_url
+			// must win over the plugin option (unvalidated unit seam; the
+			// schema walk above covers parsing).
+			const result = await documentsEndpoints.get(
+				{
+					key: 'tenant-b-key:secret',
+					options: { baseUrl: 'https://tenant-a.example.com' },
+					keys: { get_base_url: async () => 'https://tenant-b.example.com' },
+				},
+				{ doctype: 'Customer', name: 'CUST-001' },
+			);
+			expect(result).toEqual({
+				data: { doctype: 'Customer', name: 'CUST-001' },
+			});
+			expect(captures).toHaveLength(1);
+			expect(captures[0]?.url.origin).toBe('https://tenant-b.example.com');
+			expect(captures[0]?.url.pathname).toBe('/api/resource/Customer/CUST-001');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('mirrors fetched documents into the stored documents entity', async () => {
+		const upsertByEntityId = jest.fn();
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => {
+				return new Response(
+					JSON.stringify({
+						data: {
+							doctype: 'Customer',
+							name: 'CUST-002',
+							customer_name: 'Acme',
+						},
+					}),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			await documentsEndpoints.get(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: { upsertByEntityId, deleteByEntityId: jest.fn() } },
+				},
+				{ doctype: 'Customer', name: 'CUST-002' },
+			);
+			expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+			expect(upsertByEntityId).toHaveBeenCalledWith('Customer:CUST-002', {
+				doctype: 'Customer',
+				name: 'CUST-002',
+				customer_name: 'Acme',
+			});
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('removes the stored row when a document is deleted', async () => {
+		const deleteByEntityId = jest.fn();
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => {
+				return new Response(JSON.stringify({ message: 'ok' }), {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				});
+			});
+		try {
+			await documentsEndpoints.delete(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: { upsertByEntityId: jest.fn(), deleteByEntityId } },
+				},
+				{ doctype: 'Customer', name: 'CUST-003' },
+			);
+			expect(deleteByEntityId).toHaveBeenCalledWith('Customer:CUST-003');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
 });

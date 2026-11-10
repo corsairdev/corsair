@@ -25,8 +25,10 @@ export const erpnextAuthConfig = {
 	api_key: {
 		// Frappe tokens are an api_key/api_secret pair generated per user
 		// under Settings > My Settings > API Access; the secret is the extra
-		// account-level credential beside the base api_key field.
-		account: ['api_secret'],
+		// account-level credential beside the base api_key field. The site
+		// origin is stored per tenant too: credentials and their host come
+		// from the same tenant account, so tokens never cross sites.
+		account: ['api_secret', 'base_url'],
 	},
 } as const satisfies PluginAuthConfig;
 

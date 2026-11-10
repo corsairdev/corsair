@@ -48,7 +48,10 @@ import { erpnext } from '@corsair-dev/erpnext';
 
 export const corsair = createCorsair({
 	plugins: [
-		erpnext(),
+		// Every ERPNext deployment is its own host, so baseUrl is required:
+		// set it to your site origin (per tenant when using multi-tenancy,
+		// stored alongside that tenant's credentials).
+		erpnext({ baseUrl: 'https://yourcompany.frappe.cloud' }),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,

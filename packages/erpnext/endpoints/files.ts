@@ -1,4 +1,6 @@
 import { fetchErpnextBinary } from '../client';
+import type { ErpnextHandlerContext } from './factory';
+import { resolveErpnextBaseUrl } from './factory';
 import type { ErpnextEndpointInputs, ErpnextEndpointOutputs } from './registry';
 
 /**
@@ -7,12 +9,10 @@ import type { ErpnextEndpointInputs, ErpnextEndpointOutputs } from './registry';
  * for method calls, so the shared factory's defineEndpoint (JSON transport
  * plus output-envelope schemas) does not apply. The handlers are typed
  * directly against the registry maps and fetch through fetchErpnextBinary,
- * which returns the payload base64-encoded.
+ * which returns the payload base64-encoded. The site origin resolves per
+ * calling tenant exactly as the JSON endpoints resolve it.
  */
-export type ErpnextFilesHandlerContext = {
-	key: string;
-	options: { baseUrl?: string };
-};
+export type ErpnextFilesHandlerContext = ErpnextHandlerContext;
 
 // GET /api/method/frappe.utils.print_format.download_pdf — Frappe renders the
 // document print format server-side and answers the PDF bytes (print_format.py:
@@ -22,14 +22,7 @@ export const downloadPdf = async (
 	ctx: ErpnextFilesHandlerContext,
 	input: ErpnextEndpointInputs['files.downloadPdf'],
 ): Promise<ErpnextEndpointOutputs['files.downloadPdf']> => {
-	// Every ERPNext deployment is its own host; the site origin is a required
-	// plugin option and missing it is a configuration error.
-	const baseUrl = ctx.options?.baseUrl;
-	if (!baseUrl) {
-		throw new Error(
-			'[erpnext] missing baseUrl plugin option: set it to the site origin, for example https://yourcompany.frappe.cloud',
-		);
-	}
+	const baseUrl = await resolveErpnextBaseUrl(ctx);
 	const query = new URLSearchParams({
 		doctype: input.doctype,
 		name: input.name,
@@ -59,12 +52,7 @@ export const downloadFile = async (
 	ctx: ErpnextFilesHandlerContext,
 	input: ErpnextEndpointInputs['files.downloadFile'],
 ): Promise<ErpnextEndpointOutputs['files.downloadFile']> => {
-	const baseUrl = ctx.options?.baseUrl;
-	if (!baseUrl) {
-		throw new Error(
-			'[erpnext] missing baseUrl plugin option: set it to the site origin, for example https://yourcompany.frappe.cloud',
-		);
-	}
+	const baseUrl = await resolveErpnextBaseUrl(ctx);
 	const query = new URLSearchParams({ file_url: input.file_url });
 	const base64 = await fetchErpnextBinary(
 		`/api/method/download_file?${query.toString()}`,
