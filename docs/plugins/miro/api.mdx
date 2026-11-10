@@ -128,15 +128,16 @@ The source board is a required `copy_from` query parameter on a PUT to the colle
 ```ts
 {
   permissionsPolicy?: {
-    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
-    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
-  },
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
   sharingPolicy?: {
-    access?: private | view | comment | edit,
-    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
-    teamAccess?: private | view | comment | edit
-  }
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -184,7 +185,7 @@ await corsair.miro.api.boards.create({ name: 'Product roadmap', description: 'Q1
 {
   permissionsPolicy?: {
     collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
+    copyAccess?: anyone | team_members | team_editors | board_owner,
     sharingAccess?: team_members_with_editing_rights | owner_and_coowners
   },
   sharingPolicy?: {
@@ -290,15 +291,16 @@ await corsair.miro.api.boards.create({ name: 'Product roadmap', description: 'Q1
 ```ts
 {
   permissionsPolicy?: {
-    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
-    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
-  },
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
   sharingPolicy?: {
-    access?: private | view | comment | edit,
-    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
-    teamAccess?: private | view | comment | edit
-  }
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -428,15 +430,16 @@ await corsair.miro.api.boards.get({ boardId: 'uXjVK1abcd=' });
 ```ts
 {
   permissionsPolicy?: {
-    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
-    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
-  },
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
   sharingPolicy?: {
-    access?: private | view | comment | edit,
-    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
-    teamAccess?: private | view | comment | edit
-  }
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -535,15 +538,16 @@ await corsair.miro.api.boards.list({ limit: 10, sort: 'last_modified' });
   } | null,
   policy?: {
     permissionsPolicy?: {
-      collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-      copyAccess?: everyone | team_members | team_editors | board_members,
-      sharingAccess?: team_members_with_editing_rights | owner_and_coowners
-    },
+      collaborationToolsStartAccess?: string | null,
+      copyAccess?: string | null,
+      sharingAccess?: string | null
+    } | null,
     sharingPolicy?: {
-      access?: private | view | comment | edit,
-      inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
-      teamAccess?: private | view | comment | edit
-    }
+      access?: string | null,
+      inviteToAccountAndBoardLinkAccess?: string | null,
+      organizationAccess?: string | null,
+      teamAccess?: string | null
+    } | null
   } | null,
   links?: {
     self?: string | null
@@ -624,7 +628,7 @@ await corsair.miro.api.boards.update({ boardId: 'uXjVK1abcd=', name: 'Roadmap 20
 {
   permissionsPolicy?: {
     collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
+    copyAccess?: anyone | team_members | team_editors | board_owner,
     sharingAccess?: team_members_with_editing_rights | owner_and_coowners
   },
   sharingPolicy?: {
@@ -730,15 +734,16 @@ await corsair.miro.api.boards.update({ boardId: 'uXjVK1abcd=', name: 'Roadmap 20
 ```ts
 {
   permissionsPolicy?: {
-    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
-    copyAccess?: everyone | team_members | team_editors | board_members,
-    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
-  },
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
   sharingPolicy?: {
-    access?: private | view | comment | edit,
-    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
-    teamAccess?: private | view | comment | edit
-  }
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -1010,7 +1015,7 @@ await corsair.miro.api.connectors.create({ boardId: 'uXjVK1abcd=', startItemId: 
 | `strokeStyle` | `normal \| dotted \| dashed` | No | — |
 | `startStrokeCap` | `none \| stealth \| rounded_stealth \| arrow \| triangle \| filled_triangle` | No | — |
 | `endStrokeCap` | `none \| stealth \| rounded_stealth \| arrow \| triangle \| filled_triangle` | No | — |
-| `captions` | `string[]` | No | Labels shown along the line. |
+| `captions` | `string[]` | No | Labels shown along the line: up to 20, each up to 200 characters. |
 
 
 
@@ -1062,7 +1067,11 @@ await corsair.miro.api.connectors.create({ boardId: 'uXjVK1abcd=', startItemId: 
     startStrokeCap?: string | null,
     endStrokeCap?: string | null
   } | null,
-  captions?: string[] | null
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1141,7 +1150,11 @@ await corsair.miro.api.connectors.get({ boardId: 'uXjVK1abcd=', connectorId: '34
     startStrokeCap?: string | null,
     endStrokeCap?: string | null
   } | null,
-  captions?: string[] | null
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1225,7 +1238,11 @@ await corsair.miro.api.connectors.list({ boardId: 'uXjVK1abcd=', limit: 10 });
     startStrokeCap?: string | null,
     endStrokeCap?: string | null
   } | null,
-  captions?: string[] | null
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -1297,7 +1314,7 @@ await corsair.miro.api.connectors.update({ boardId: 'uXjVK1abcd=', connectorId: 
 | `strokeColor` | `string` | No | — |
 | `strokeWidth` | `string` | No | — |
 | `strokeStyle` | `normal \| dotted \| dashed` | No | — |
-| `captions` | `string[]` | No | — |
+| `captions` | `string[]` | No | Replaces the labels; pass an empty list to remove them. |
 
 
 
@@ -1349,7 +1366,11 @@ await corsair.miro.api.connectors.update({ boardId: 'uXjVK1abcd=', connectorId: 
     startStrokeCap?: string | null,
     endStrokeCap?: string | null
   } | null,
-  captions?: string[] | null
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -1852,7 +1873,11 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
       startStrokeCap?: string | null,
       endStrokeCap?: string | null
     } | null,
-    captions?: string[] | null
+    captions?: {
+      content?: string | null,
+      position?: string | null,
+      textAlignVertical?: string | null
+    }[] | null
   }
 } | {
   item: {
@@ -1878,9 +1903,9 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
       shape?: string | null
     } | null,
     style?: {
-      fillColor?: gray | light_yellow | yellow | orange | light_green | green | dark_green | cyan | light_blue | blue | dark_blue | violet | dark_violet | pink | light_pink | red | dark_red | black | light_gray,
-      textAlign?: left | center | right,
-      textAlignVertical?: top | middle | bottom
+      fillColor?: string | null,
+      textAlign?: string | null,
+      textAlignVertical?: string | null
     } | null,
     position?: {
       x?: number | null,
@@ -1921,17 +1946,17 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
       content?: string | null
     } | null,
     style?: {
-      fillColor?: string,
-      fillOpacity?: number,
-      borderColor?: string,
-      borderWidth?: number,
-      borderStyle?: normal | dashed | dotted,
-      borderOpacity?: number,
-      fontSize?: number,
-      fontFamily?: string,
-      textAlign?: left | center | right,
-      textAlignVertical?: top | middle | bottom,
-      color?: string
+      fillColor?: string | null,
+      fillOpacity?: string | number | null,
+      borderColor?: string | null,
+      borderWidth?: string | number | null,
+      borderStyle?: string | null,
+      borderOpacity?: string | number | null,
+      fontSize?: string | number | null,
+      fontFamily?: string | null,
+      textAlign?: string | null,
+      textAlignVertical?: string | null,
+      color?: string | null
     } | null,
     position?: {
       x?: number | null,
@@ -2014,10 +2039,12 @@ await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '345876451382
       content?: string | null
     } | null,
     style?: {
-      color?: string,
-      fontSize?: number,
-      fontFamily?: string,
-      textAlign?: left | center | right
+      color?: string | null,
+      fillColor?: string | null,
+      fillOpacity?: string | number | null,
+      fontSize?: string | number | null,
+      fontFamily?: string | null,
+      textAlign?: string | null
     } | null,
     position?: {
       x?: number | null,
@@ -2138,7 +2165,7 @@ await corsair.miro.api.items.list({ boardId: 'uXjVK1abcd=', type: ['sticky_note'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
-| `type` | `(app_card \| card \| connector \| document \| embed \| frame \| image \| preview \| shape \| sticky_note \| text)[]` | No | Only these item kinds. Miro takes one value; comma-joined here. |
+| `type` | `(app_card \| card \| data_table_format \| doc_format \| document \| embed \| frame \| image \| preview \| shape \| sticky_note \| text)[]` | No | Only this item kind. Miro filters on one type per call, so pass a single value. |
 | `parentItemId` | `string` | No | Only items inside this frame or parent item. |
 | `limit` | `number` | No | Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route. |
 | `cursor` | `string` | No | The `cursor` from the previous page; omit for the first. |
@@ -2408,8 +2435,8 @@ await corsair.miro.api.members.share({ boardId: 'uXjVK1abcd=', emails: ['jordan@
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
-| `emails` | `string[]` | Yes | Email addresses to invite to the board. |
-| `role` | `viewer \| commenter \| editor \| coowner \| owner` | No | The role they get. Defaults to `viewer`. |
+| `emails` | `string[]` | Yes | Email addresses to invite to the board, up to 20 per call. |
+| `role` | `viewer \| commenter \| editor \| coowner \| owner` | No | The role they get. Defaults to `commenter`; `owner` is treated as `coowner`. |
 | `message` | `string` | No | Note included in the invitation. |
 
 
@@ -2418,21 +2445,17 @@ await corsair.miro.api.members.share({ boardId: 'uXjVK1abcd=', emails: ['jordan@
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `invitation` | `object \| null` | No | — |
-| `invitedEmails` | `string[] \| null` | No | — |
-| `failedEmails` | `string[] \| null` | No | — |
+| `successful` | `(string \| number)[] \| null` | No | Ids of the invitations that were sent, one per address that worked. |
+| `failed` | `object[] \| null` | No | The addresses that could not be invited, each with a reason. |
 
 <AccordionGroup>
-<Accordion title="invitation full type">
+<Accordion title="failed full type">
 
 ```ts
 {
-  id?: string | null,
-  role?: string | null,
-  links?: {
-    self?: string | null
-  } | null
-} | null
+  email?: string | null,
+  reason?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2510,7 +2533,7 @@ await corsair.miro.api.shapes.create({ boardId: 'uXjVK1abcd=', shape: 'rectangle
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
-| `shape` | `rectangle \| round_rectangle \| circle \| triangle \| rhombus \| parallelogram \| trapezoid \| pentagon \| hexagon \| octagon \| wedge_round_rectangle_callout \| star \| flow_chart_connector \| flow_chart_process \| flow_chart_decision \| flow_chart_input_output \| flow_chart_predefined_process \| flow_chart_internal_storage \| flow_chart_cloud` | No | The shape to draw. Defaults to `rectangle`. |
+| `shape` | `rectangle \| round_rectangle \| circle \| triangle \| rhombus \| parallelogram \| trapezoid \| pentagon \| hexagon \| octagon \| wedge_round_rectangle_callout \| star \| flow_chart_predefined_process \| cloud \| cross \| can \| right_arrow \| left_arrow \| left_right_arrow \| left_brace \| right_brace \| flow_chart_connector \| flow_chart_process \| flow_chart_decision \| flow_chart_input_output \| flow_chart_internal_storage \| flow_chart_cloud` | No | The shape to draw. Defaults to `rectangle`. |
 | `content` | `string` | No | Text inside the shape. |
 | `style` | `object` | No | — |
 | `position` | `object` | No | — |
@@ -2595,17 +2618,17 @@ await corsair.miro.api.shapes.create({ boardId: 'uXjVK1abcd=', shape: 'rectangle
     content?: string | null
   } | null,
   style?: {
-    fillColor?: string,
-    fillOpacity?: number,
-    borderColor?: string,
-    borderWidth?: number,
-    borderStyle?: normal | dashed | dotted,
-    borderOpacity?: number,
-    fontSize?: number,
-    fontFamily?: string,
-    textAlign?: left | center | right,
-    textAlignVertical?: top | middle | bottom,
-    color?: string
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    borderColor?: string | null,
+    borderWidth?: string | number | null,
+    borderStyle?: string | null,
+    borderOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null,
+    color?: string | null
   } | null,
   position?: {
     x?: number | null,
@@ -2731,17 +2754,17 @@ await corsair.miro.api.shapes.update({ boardId: 'uXjVK1abcd=', itemId: '34587645
     content?: string | null
   } | null,
   style?: {
-    fillColor?: string,
-    fillOpacity?: number,
-    borderColor?: string,
-    borderWidth?: number,
-    borderStyle?: normal | dashed | dotted,
-    borderOpacity?: number,
-    fontSize?: number,
-    fontFamily?: string,
-    textAlign?: left | center | right,
-    textAlignVertical?: top | middle | bottom,
-    color?: string
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    borderColor?: string | null,
+    borderWidth?: string | number | null,
+    borderStyle?: string | null,
+    borderOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null,
+    color?: string | null
   } | null,
   position?: {
     x?: number | null,
@@ -2787,7 +2810,7 @@ await corsair.miro.api.stickyNotes.create({ boardId: 'uXjVK1abcd=', content: 'Sh
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
 | `content` | `string` | No | The note text. |
 | `shape` | `square \| rectangle` | No | — |
-| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_blue \| blue \| dark_blue \| violet \| dark_violet \| pink \| light_pink \| red \| dark_red \| black \| light_gray` | No | — |
+| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_pink \| pink \| violet \| red \| light_blue \| blue \| dark_blue \| black` | No | — |
 | `position` | `object` | No | — |
 | `geometry` | `object` | No | — |
 | `parentId` | `string` | No | Frame or parent item to place it inside. |
@@ -2851,9 +2874,9 @@ await corsair.miro.api.stickyNotes.create({ boardId: 'uXjVK1abcd=', content: 'Sh
     shape?: string | null
   } | null,
   style?: {
-    fillColor?: gray | light_yellow | yellow | orange | light_green | green | dark_green | cyan | light_blue | blue | dark_blue | violet | dark_violet | pink | light_pink | red | dark_red | black | light_gray,
-    textAlign?: left | center | right,
-    textAlignVertical?: top | middle | bottom
+    fillColor?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null
   } | null,
   position?: {
     x?: number | null,
@@ -2898,7 +2921,7 @@ await corsair.miro.api.stickyNotes.update({ boardId: 'uXjVK1abcd=', itemId: '345
 | `itemId` | `string` | Yes | — |
 | `content` | `string` | No | — |
 | `shape` | `square \| rectangle` | No | — |
-| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_blue \| blue \| dark_blue \| violet \| dark_violet \| pink \| light_pink \| red \| dark_red \| black \| light_gray` | No | — |
+| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_pink \| pink \| violet \| red \| light_blue \| blue \| dark_blue \| black` | No | — |
 | `position` | `object` | No | — |
 | `geometry` | `object` | No | — |
 
@@ -2961,9 +2984,9 @@ await corsair.miro.api.stickyNotes.update({ boardId: 'uXjVK1abcd=', itemId: '345
     shape?: string | null
   } | null,
   style?: {
-    fillColor?: gray | light_yellow | yellow | orange | light_green | green | dark_green | cyan | light_blue | blue | dark_blue | violet | dark_violet | pink | light_pink | red | dark_red | black | light_gray,
-    textAlign?: left | center | right,
-    textAlignVertical?: top | middle | bottom
+    fillColor?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null
   } | null,
   position?: {
     x?: number | null,
@@ -3042,7 +3065,7 @@ await corsair.miro.api.tags.create({ boardId: 'uXjVK1abcd=', title: 'priority', 
 |------|------|----------|-------------|
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
 | `title` | `string` | Yes | Tag text, up to 120 characters. |
-| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| black \| gray \| violet \| light_blue \| light_yellow \| light_red \| light_magenta \| dark_green \| dark_blue \| dark_red` | No | Tag colour. Defaults to `red`. |
+| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| gray \| violet \| dark_green \| dark_blue \| black` | No | Tag colour. Defaults to `red`. |
 
 
 
@@ -3460,7 +3483,7 @@ await corsair.miro.api.tags.update({ boardId: 'uXjVK1abcd=', tagId: '34587645138
 | `boardId` | `string` | Yes | The board id, as shown in the board URL. |
 | `tagId` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| black \| gray \| violet \| light_blue \| light_yellow \| light_red \| light_magenta \| dark_green \| dark_blue \| dark_red` | No | — |
+| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| gray \| violet \| dark_green \| dark_blue \| black` | No | — |
 
 
 
@@ -3598,10 +3621,12 @@ await corsair.miro.api.texts.create({ boardId: 'uXjVK1abcd=', content: 'Sprint 1
     content?: string | null
   } | null,
   style?: {
-    color?: string,
-    fontSize?: number,
-    fontFamily?: string,
-    textAlign?: left | center | right
+    color?: string | null,
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null
   } | null,
   position?: {
     x?: number | null,
@@ -3719,10 +3744,12 @@ await corsair.miro.api.texts.update({ boardId: 'uXjVK1abcd=', itemId: '345876451
     content?: string | null
   } | null,
   style?: {
-    color?: string,
-    fontSize?: number,
-    fontFamily?: string,
-    textAlign?: left | center | right
+    color?: string | null,
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null
   } | null,
   position?: {
     x?: number | null,
