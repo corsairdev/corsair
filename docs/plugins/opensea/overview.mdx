@@ -22,8 +22,10 @@ Order lookups come in two shapes. `orders.get` wraps the result under `order`;
 `offers.best` returns the order bare. Both carry the Seaport `protocol_data`
 and the `order_hash` that identifies the order.
 
-Paged routes take a `next` cursor and return it back. Pass the previous
-response's `next` as this call's `next`; it is `null` on the last page.
+Most paged routes take a `next` cursor and return it back; pass the previous
+response's `next` as this call's `next`, which is `null` on the last page.
+Three routes differ: `collections.top`, `collections.trending` and
+`collections.holders` take `cursor` instead of `next`.
 
 `traits.list` answers the trait names on a collection and the type of each
 value, not the values themselves. To select NFTs by trait, pass

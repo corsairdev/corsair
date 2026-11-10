@@ -86,26 +86,26 @@ export function describeOpenseaError(
  * OpenSea publishes a rate limit but no numbers: the docs say only that "the
  * API is rate-limited". The live response carries the real contract in
  * headers, `x-ratelimit-limit: 120` and `x-ratelimit-reset` as a unix
- * timestamp, and `corsair/http` can only read `Retry-After` into an error, so
- * the reset time is converted to a wait here.
+ * timestamp. `corsair/http` reads `resetTime` itself and converts it into
+ * `retryAfter`, so a 429 with no `Retry-After` still waits until the window
+ * actually resets rather than retrying into the same exhausted window. Omitting
+ * `resetTime` here was a real defect: every retry fell back to one second.
+ *
+ * Note the precedence: when both headers are present `corsair/http` lets
+ * `resetTime` overwrite `Retry-After`, which is the safer of the two for a
+ * window-based limit.
  */
-function retryAfterFromReset(reset: string | null): number | undefined {
-	if (!reset) return undefined;
-	const seconds = Number(reset);
-	if (!Number.isFinite(seconds)) return undefined;
-	// The header is an absolute unix time, not a duration.
-	const waitMs = seconds * 1000 - Date.now();
-	return waitMs > 0 ? waitMs : undefined;
-}
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// records what the response said about waiting.
 const OPENSEA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	maxRetries: 0,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
 };
 
 export class OpenseaAPIError extends Error {
@@ -251,9 +251,4 @@ export async function makeOpenseaRequest(
 			method,
 		);
 	}
-}
-
-/** Reads the wait from `x-ratelimit-reset`, for a 429 without Retry-After. */
-export function rateLimitResetToMs(reset: string | null): number | undefined {
-	return retryAfterFromReset(reset);
 }

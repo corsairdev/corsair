@@ -180,6 +180,45 @@ describe('makeOpenseaRequest', () => {
 		expect(error.retryAfter).toBe(3000);
 	});
 
+	/**
+	 * The Greptile P1: retries must wait until the window resets. OpenSea sends
+	 * `x-ratelimit-reset` as a unix timestamp and no `Retry-After`, so with only
+	 * `retry-after` configured every retry waited the 1s fallback and burned the
+	 * budget inside the same exhausted window.
+	 */
+	it('turns x-ratelimit-reset into a wait when Retry-After is absent', async () => {
+		const resetSeconds = Math.floor(Date.now() / 1000) + 30;
+		respond({ errors: ['Too many requests'] }, 429, {
+			'x-ratelimit-reset': String(resetSeconds),
+			'x-ratelimit-remaining': '0',
+		});
+
+		const error = await failure(
+			makeOpenseaRequest(API_KEY, { method: 'GET', path: '/collections' }),
+		);
+
+		expect(error.kind).toBe('rate_limited');
+		expect(error.retryAfter).toBeDefined();
+		// About 30 seconds, not the 1s fallback and not 30 hours.
+		expect(error.retryAfter).toBeGreaterThan(25_000);
+		expect(error.retryAfter).toBeLessThanOrEqual(30_000);
+	});
+
+	it('lets the reset header win over Retry-After when both are present', async () => {
+		// `corsair/http` applies `resetTime` after `retryAfter`, so the window
+		// reset is what a caller gets. Pinned so a core change is visible here.
+		respond({ errors: ['Too many requests'] }, 429, {
+			'Retry-After': '2',
+			'x-ratelimit-reset': String(Math.floor(Date.now() / 1000) + 30),
+		});
+
+		const error = await failure(
+			makeOpenseaRequest(API_KEY, { method: 'GET', path: '/collections' }),
+		);
+
+		expect(error.retryAfter).toBeGreaterThan(25_000);
+	});
+
 	it('reports a 5xx as a server error', async () => {
 		respond('upstream died', 503);
 
