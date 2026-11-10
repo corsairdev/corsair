@@ -1,24 +1,35 @@
 import { z } from 'zod';
 
 // unknown: Klipfolio returns open-ended records whose nested fields the
-// provider does not fully document; the documented { data, meta }
-// envelope is validated and items stay extensible.
-const DadataRecordSchemaUnused = undefined;
+// provider does not fully document; records stay extensible while the
+// documented { data, meta } envelope is validated.
 const KlipfolioRecordSchema = z.object({}).passthrough();
-// Klipfolio success envelope for every operation.
-const KlipfolioEnvelopeOutputSchema = z.object({
-	// unknown: the data payload is provider-defined per operation
-	// (arrays for lists, objects for single resources).
-	data: z.unknown().optional(),
-	// unknown: meta carries status/success plus operation-specific keys
-	// such as the created-resource location.
-	meta: z.record(z.string(), z.unknown()).optional(),
+// unknown: meta carries the documented status/success flags plus
+// operation-specific keys such as the created-resource location; the known
+// fields are validated and passthrough lets the extras through.
+const KlipfolioMetaOutputSchema = z
+	.object({
+		status: z.number(),
+		success: z.boolean(),
+	})
+	.passthrough();
+// Klipfolio success envelope for list operations: data is a required array
+// of provider records.
+const KlipfolioListEnvelopeOutputSchema = z.object({
+	data: z.array(KlipfolioRecordSchema),
+	meta: KlipfolioMetaOutputSchema,
+});
+// Klipfolio success envelope for single-resource operations: data is a
+// required provider record.
+const KlipfolioSingleEnvelopeOutputSchema = z.object({
+	data: KlipfolioRecordSchema,
+	meta: KlipfolioMetaOutputSchema,
 });
 
 const ListClientsInputSchema = z
 	.object({
 		external_id: z.string().optional(),
-		status: z.string().optional(),
+		status: z.enum(['setup', 'trial', 'active', 'disabled']).optional(),
 	})
 	.passthrough();
 
@@ -34,7 +45,7 @@ const CreateClientInputSchema = z
 		name: z.string(),
 		description: z.string().optional(),
 		// unknown: one of 'setup', 'trial', 'active' or 'disabled'
-		status: z.string().optional(),
+		status: z.enum(['setup', 'trial', 'active', 'disabled']).optional(),
 		// unknown: optional
 		seats: z.number().optional(),
 		// unknown: optional
@@ -50,7 +61,7 @@ const UpdateClientInputSchema = z
 		// unknown: partial update supported - e.g. only status
 		name: z.string().optional(),
 		description: z.string().optional(),
-		status: z.string().optional(),
+		status: z.enum(['setup', 'trial', 'active', 'disabled']).optional(),
 		seats: z.number().optional(),
 		custom_theme: z.boolean().optional(),
 		external_id: z.string().optional(),
@@ -333,7 +344,7 @@ const UpdateDatasourceInstancesDataInputSchema = z
 		id: z.string().min(1),
 		client_id: z.string().optional(),
 		// unknown: raw data or a file, passed via -d "<filename>"; no structured body fields documented
-		'(raw data or file)': z.string(),
+		rawContent: z.string(),
 	})
 	.passthrough();
 
@@ -441,7 +452,7 @@ const AddGroupDefaultTabsInputSchema = z
 		tab_id: z.string().optional(),
 		can_edit: z.boolean().optional(),
 		// unknown: library | dashboard | permanent
-		visibility: z.string().optional(),
+		visibility: z.enum(['library', 'dashboard', 'permanent']).optional(),
 		index: z.number().optional(),
 	})
 	.passthrough();
@@ -452,7 +463,7 @@ const UpdateGroupDefaultTabInputSchema = z
 		id2: z.string().min(1),
 		client_id: z.string().optional(),
 		can_edit: z.boolean().optional(),
-		visibility: z.string().optional(),
+		visibility: z.enum(['library', 'dashboard', 'permanent']).optional(),
 		index: z.number().optional(),
 	})
 	.passthrough();
@@ -654,7 +665,7 @@ const CreateDashboardPublishedLinksInputSchema = z
 		// unknown: default false
 		isPublic: z.boolean().optional(),
 		// unknown: default 'light'; options: light, dark
-		theme: z.string().optional(),
+		theme: z.enum(['light', 'dark']).optional(),
 		logo: z.string().optional(),
 		// unknown: default false
 		social: z.boolean().optional(),
@@ -682,7 +693,7 @@ const UpdateDashboardPublishedLinksInputSchema = z
 		// unknown: default false
 		isPublic: z.boolean().optional(),
 		// unknown: default 'light'
-		theme: z.string().optional(),
+		theme: z.enum(['light', 'dark']).optional(),
 		logo: z.string().optional(),
 		// unknown: default false
 		social: z.boolean().optional(),
@@ -1010,8 +1021,9 @@ const UpdateUserPropertiesInputSchema = z
 	.object({
 		id: z.string().min(1),
 		client_id: z.string().optional(),
-		// unknown: example verbatim: {"properties": {"kfTestCountry": "Canada", "TestValue": "abc1234", "City": "Ottawa"}}
-		properties: z.string(),
+		// unknown: key/value object per the documented example:
+		// {"properties": {"kfTestCountry": "Canada", "TestValue": "abc1234", "City": "Ottawa"}}
+		properties: z.record(z.string(), z.unknown()),
 	})
 	.passthrough();
 
@@ -1204,131 +1216,131 @@ export const KlipfolioEndpointInputSchemas = {
 } as const;
 
 export const KlipfolioEndpointOutputSchemas = {
-	listClients: KlipfolioEnvelopeOutputSchema,
-	retrieveClient: KlipfolioEnvelopeOutputSchema,
-	createClient: KlipfolioEnvelopeOutputSchema,
-	updateClient: KlipfolioEnvelopeOutputSchema,
-	deleteClient: KlipfolioEnvelopeOutputSchema,
-	enableDirectBillingClient: KlipfolioEnvelopeOutputSchema,
-	extendTrialClient: KlipfolioEnvelopeOutputSchema,
-	retrieveClientFeatures: KlipfolioEnvelopeOutputSchema,
-	updateClientFeatures: KlipfolioEnvelopeOutputSchema,
-	retrieveClientProperties: KlipfolioEnvelopeOutputSchema,
-	updateClientProperties: KlipfolioEnvelopeOutputSchema,
-	deleteClientProperties: KlipfolioEnvelopeOutputSchema,
-	retrieveClientResources: KlipfolioEnvelopeOutputSchema,
-	updateClientResources: KlipfolioEnvelopeOutputSchema,
-	retrieveClientSettings: KlipfolioEnvelopeOutputSchema,
-	createClientSettings: KlipfolioEnvelopeOutputSchema,
-	retrieveClientShareRights: KlipfolioEnvelopeOutputSchema,
-	setClientShareRights: KlipfolioEnvelopeOutputSchema,
-	deleteClientShareRight: KlipfolioEnvelopeOutputSchema,
-	listDatasources: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasource: KlipfolioEnvelopeOutputSchema,
-	createDatasource: KlipfolioEnvelopeOutputSchema,
-	updateDatasource: KlipfolioEnvelopeOutputSchema,
-	deleteDatasource: KlipfolioEnvelopeOutputSchema,
-	enableDatasource: KlipfolioEnvelopeOutputSchema,
-	disableDatasource: KlipfolioEnvelopeOutputSchema,
-	importDatasource: KlipfolioEnvelopeOutputSchema,
-	deleteInstancesDatasource: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasourceProperties: KlipfolioEnvelopeOutputSchema,
-	updateDatasourceProperties: KlipfolioEnvelopeOutputSchema,
-	deleteDatasourceProperties: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasourceShareRights: KlipfolioEnvelopeOutputSchema,
-	setDatasourceShareRights: KlipfolioEnvelopeOutputSchema,
-	deleteDatasourceShareRight: KlipfolioEnvelopeOutputSchema,
-	listDatasourceInstances: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasourceInstances: KlipfolioEnvelopeOutputSchema,
-	createDatasourceInstances: KlipfolioEnvelopeOutputSchema,
-	deleteDatasourceInstances: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasourceInstancesData: KlipfolioEnvelopeOutputSchema,
-	updateDatasourceInstancesData: KlipfolioEnvelopeOutputSchema,
-	refreshDatasourceInstances: KlipfolioEnvelopeOutputSchema,
-	refreshDatasource: KlipfolioEnvelopeOutputSchema,
-	retrieveDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
-	updateDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
-	deleteDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
-	listGroups: KlipfolioEnvelopeOutputSchema,
-	retrieveGroup: KlipfolioEnvelopeOutputSchema,
-	createGroup: KlipfolioEnvelopeOutputSchema,
-	updateGroup: KlipfolioEnvelopeOutputSchema,
-	deleteGroup: KlipfolioEnvelopeOutputSchema,
-	retrieveGroupDefaultTabs: KlipfolioEnvelopeOutputSchema,
-	retrieveGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
-	addGroupDefaultTabs: KlipfolioEnvelopeOutputSchema,
-	updateGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
-	deleteGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
-	retrieveGroupUsers: KlipfolioEnvelopeOutputSchema,
-	updateGroupUser: KlipfolioEnvelopeOutputSchema,
-	deleteGroupUser: KlipfolioEnvelopeOutputSchema,
-	listKlips: KlipfolioEnvelopeOutputSchema,
-	retrieveKlip: KlipfolioEnvelopeOutputSchema,
-	retrieveKlipClientInstances: KlipfolioEnvelopeOutputSchema,
-	createKlip: KlipfolioEnvelopeOutputSchema,
-	updateKlip: KlipfolioEnvelopeOutputSchema,
-	deleteKlip: KlipfolioEnvelopeOutputSchema,
-	retrieveKlipAnnotations: KlipfolioEnvelopeOutputSchema,
-	retrieveKlipAnnotation: KlipfolioEnvelopeOutputSchema,
-	createKlipAnnotations: KlipfolioEnvelopeOutputSchema,
-	updateKlipAnnotation: KlipfolioEnvelopeOutputSchema,
-	deleteKlipAnnotation: KlipfolioEnvelopeOutputSchema,
-	updateFromParentKlip: KlipfolioEnvelopeOutputSchema,
-	retrieveKlipSchema: KlipfolioEnvelopeOutputSchema,
-	updateKlipSchema: KlipfolioEnvelopeOutputSchema,
-	retrieveKlipShareRights: KlipfolioEnvelopeOutputSchema,
-	setKlipShareRights: KlipfolioEnvelopeOutputSchema,
-	deleteKlipShareRights: KlipfolioEnvelopeOutputSchema,
-	importKlip: KlipfolioEnvelopeOutputSchema,
-	retrieveProfile: KlipfolioEnvelopeOutputSchema,
-	createDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
-	listDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
-	updateDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
-	deleteDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
-	listRoles: KlipfolioEnvelopeOutputSchema,
-	retrieveRole: KlipfolioEnvelopeOutputSchema,
-	updateRole: KlipfolioEnvelopeOutputSchema,
-	createRole: KlipfolioEnvelopeOutputSchema,
-	deleteRole: KlipfolioEnvelopeOutputSchema,
-	retrieveRoleUsers: KlipfolioEnvelopeOutputSchema,
-	updateRoleUser: KlipfolioEnvelopeOutputSchema,
-	deleteRoleUser: KlipfolioEnvelopeOutputSchema,
-	retrieveRolePermissions: KlipfolioEnvelopeOutputSchema,
-	updateRolePermissions: KlipfolioEnvelopeOutputSchema,
-	deleteRolePermissions: KlipfolioEnvelopeOutputSchema,
-	listTabs: KlipfolioEnvelopeOutputSchema,
-	retrieveTab: KlipfolioEnvelopeOutputSchema,
-	createTab: KlipfolioEnvelopeOutputSchema,
-	updateTab: KlipfolioEnvelopeOutputSchema,
-	deleteTab: KlipfolioEnvelopeOutputSchema,
-	retrieveTabKlipInstances: KlipfolioEnvelopeOutputSchema,
-	updateTabKlipInstances: KlipfolioEnvelopeOutputSchema,
-	deleteTabKlipInstance: KlipfolioEnvelopeOutputSchema,
-	retrieveTabLayout: KlipfolioEnvelopeOutputSchema,
-	updateTabLayout: KlipfolioEnvelopeOutputSchema,
-	retrieveTabShareRights: KlipfolioEnvelopeOutputSchema,
-	setTabShareRights: KlipfolioEnvelopeOutputSchema,
-	deleteTabShareRight: KlipfolioEnvelopeOutputSchema,
-	importTab: KlipfolioEnvelopeOutputSchema,
-	listUsers: KlipfolioEnvelopeOutputSchema,
-	retrieveUser: KlipfolioEnvelopeOutputSchema,
-	createUser: KlipfolioEnvelopeOutputSchema,
-	updateUser: KlipfolioEnvelopeOutputSchema,
-	deleteUser: KlipfolioEnvelopeOutputSchema,
-	retrieveUserGroups: KlipfolioEnvelopeOutputSchema,
-	updateUserGroup: KlipfolioEnvelopeOutputSchema,
-	deleteUserGroup: KlipfolioEnvelopeOutputSchema,
-	resendInviteUser: KlipfolioEnvelopeOutputSchema,
-	resetPasswordUser: KlipfolioEnvelopeOutputSchema,
-	retrieveUserProperties: KlipfolioEnvelopeOutputSchema,
-	updateUserProperties: KlipfolioEnvelopeOutputSchema,
-	deleteUserProperties: KlipfolioEnvelopeOutputSchema,
-	retrieveUserRoles: KlipfolioEnvelopeOutputSchema,
-	updateUserRole: KlipfolioEnvelopeOutputSchema,
-	deleteUserRole: KlipfolioEnvelopeOutputSchema,
-	retrieveUserTabInstances: KlipfolioEnvelopeOutputSchema,
-	updateUserTabInstances: KlipfolioEnvelopeOutputSchema,
-	deleteUserTabInstance: KlipfolioEnvelopeOutputSchema,
+	listClients: KlipfolioListEnvelopeOutputSchema,
+	retrieveClient: KlipfolioSingleEnvelopeOutputSchema,
+	createClient: KlipfolioSingleEnvelopeOutputSchema,
+	updateClient: KlipfolioSingleEnvelopeOutputSchema,
+	deleteClient: KlipfolioSingleEnvelopeOutputSchema,
+	enableDirectBillingClient: KlipfolioSingleEnvelopeOutputSchema,
+	extendTrialClient: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveClientFeatures: KlipfolioSingleEnvelopeOutputSchema,
+	updateClientFeatures: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveClientProperties: KlipfolioSingleEnvelopeOutputSchema,
+	updateClientProperties: KlipfolioSingleEnvelopeOutputSchema,
+	deleteClientProperties: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveClientResources: KlipfolioSingleEnvelopeOutputSchema,
+	updateClientResources: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveClientSettings: KlipfolioSingleEnvelopeOutputSchema,
+	createClientSettings: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveClientShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	setClientShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	deleteClientShareRight: KlipfolioSingleEnvelopeOutputSchema,
+	listDatasources: KlipfolioListEnvelopeOutputSchema,
+	retrieveDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	createDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	updateDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	enableDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	disableDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	importDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	deleteInstancesDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveDatasourceProperties: KlipfolioSingleEnvelopeOutputSchema,
+	updateDatasourceProperties: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDatasourceProperties: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveDatasourceShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	setDatasourceShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDatasourceShareRight: KlipfolioSingleEnvelopeOutputSchema,
+	listDatasourceInstances: KlipfolioListEnvelopeOutputSchema,
+	retrieveDatasourceInstances: KlipfolioSingleEnvelopeOutputSchema,
+	createDatasourceInstances: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDatasourceInstances: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveDatasourceInstancesData: KlipfolioSingleEnvelopeOutputSchema,
+	updateDatasourceInstancesData: KlipfolioSingleEnvelopeOutputSchema,
+	refreshDatasourceInstances: KlipfolioSingleEnvelopeOutputSchema,
+	refreshDatasource: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveDatasourceInstancesProperties: KlipfolioSingleEnvelopeOutputSchema,
+	updateDatasourceInstancesProperties: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDatasourceInstancesProperties: KlipfolioSingleEnvelopeOutputSchema,
+	listGroups: KlipfolioListEnvelopeOutputSchema,
+	retrieveGroup: KlipfolioSingleEnvelopeOutputSchema,
+	createGroup: KlipfolioSingleEnvelopeOutputSchema,
+	updateGroup: KlipfolioSingleEnvelopeOutputSchema,
+	deleteGroup: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveGroupDefaultTabs: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveGroupDefaultTab: KlipfolioSingleEnvelopeOutputSchema,
+	addGroupDefaultTabs: KlipfolioSingleEnvelopeOutputSchema,
+	updateGroupDefaultTab: KlipfolioSingleEnvelopeOutputSchema,
+	deleteGroupDefaultTab: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveGroupUsers: KlipfolioSingleEnvelopeOutputSchema,
+	updateGroupUser: KlipfolioSingleEnvelopeOutputSchema,
+	deleteGroupUser: KlipfolioSingleEnvelopeOutputSchema,
+	listKlips: KlipfolioListEnvelopeOutputSchema,
+	retrieveKlip: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveKlipClientInstances: KlipfolioSingleEnvelopeOutputSchema,
+	createKlip: KlipfolioSingleEnvelopeOutputSchema,
+	updateKlip: KlipfolioSingleEnvelopeOutputSchema,
+	deleteKlip: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveKlipAnnotations: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveKlipAnnotation: KlipfolioSingleEnvelopeOutputSchema,
+	createKlipAnnotations: KlipfolioSingleEnvelopeOutputSchema,
+	updateKlipAnnotation: KlipfolioSingleEnvelopeOutputSchema,
+	deleteKlipAnnotation: KlipfolioSingleEnvelopeOutputSchema,
+	updateFromParentKlip: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveKlipSchema: KlipfolioSingleEnvelopeOutputSchema,
+	updateKlipSchema: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveKlipShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	setKlipShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	deleteKlipShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	importKlip: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveProfile: KlipfolioSingleEnvelopeOutputSchema,
+	createDashboardPublishedLinks: KlipfolioSingleEnvelopeOutputSchema,
+	listDashboardPublishedLinks: KlipfolioListEnvelopeOutputSchema,
+	updateDashboardPublishedLinks: KlipfolioSingleEnvelopeOutputSchema,
+	deleteDashboardPublishedLinks: KlipfolioSingleEnvelopeOutputSchema,
+	listRoles: KlipfolioListEnvelopeOutputSchema,
+	retrieveRole: KlipfolioSingleEnvelopeOutputSchema,
+	updateRole: KlipfolioSingleEnvelopeOutputSchema,
+	createRole: KlipfolioSingleEnvelopeOutputSchema,
+	deleteRole: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveRoleUsers: KlipfolioSingleEnvelopeOutputSchema,
+	updateRoleUser: KlipfolioSingleEnvelopeOutputSchema,
+	deleteRoleUser: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveRolePermissions: KlipfolioSingleEnvelopeOutputSchema,
+	updateRolePermissions: KlipfolioSingleEnvelopeOutputSchema,
+	deleteRolePermissions: KlipfolioSingleEnvelopeOutputSchema,
+	listTabs: KlipfolioListEnvelopeOutputSchema,
+	retrieveTab: KlipfolioSingleEnvelopeOutputSchema,
+	createTab: KlipfolioSingleEnvelopeOutputSchema,
+	updateTab: KlipfolioSingleEnvelopeOutputSchema,
+	deleteTab: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveTabKlipInstances: KlipfolioSingleEnvelopeOutputSchema,
+	updateTabKlipInstances: KlipfolioSingleEnvelopeOutputSchema,
+	deleteTabKlipInstance: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveTabLayout: KlipfolioSingleEnvelopeOutputSchema,
+	updateTabLayout: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveTabShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	setTabShareRights: KlipfolioSingleEnvelopeOutputSchema,
+	deleteTabShareRight: KlipfolioSingleEnvelopeOutputSchema,
+	importTab: KlipfolioSingleEnvelopeOutputSchema,
+	listUsers: KlipfolioListEnvelopeOutputSchema,
+	retrieveUser: KlipfolioSingleEnvelopeOutputSchema,
+	createUser: KlipfolioSingleEnvelopeOutputSchema,
+	updateUser: KlipfolioSingleEnvelopeOutputSchema,
+	deleteUser: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveUserGroups: KlipfolioSingleEnvelopeOutputSchema,
+	updateUserGroup: KlipfolioSingleEnvelopeOutputSchema,
+	deleteUserGroup: KlipfolioSingleEnvelopeOutputSchema,
+	resendInviteUser: KlipfolioSingleEnvelopeOutputSchema,
+	resetPasswordUser: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveUserProperties: KlipfolioSingleEnvelopeOutputSchema,
+	updateUserProperties: KlipfolioSingleEnvelopeOutputSchema,
+	deleteUserProperties: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveUserRoles: KlipfolioSingleEnvelopeOutputSchema,
+	updateUserRole: KlipfolioSingleEnvelopeOutputSchema,
+	deleteUserRole: KlipfolioSingleEnvelopeOutputSchema,
+	retrieveUserTabInstances: KlipfolioSingleEnvelopeOutputSchema,
+	updateUserTabInstances: KlipfolioSingleEnvelopeOutputSchema,
+	deleteUserTabInstance: KlipfolioSingleEnvelopeOutputSchema,
 } as const;
 
 export type KlipfolioEndpointInputs = {
