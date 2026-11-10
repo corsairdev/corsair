@@ -116,6 +116,9 @@ describeLive('live Taggun campaign validation', () => {
 	});
 
 	it('creates, reads, and deletes a campaign', async () => {
+		// Set once the campaign exists, so a failed read or assertion below
+		// still deletes it rather than leaving it on the live account.
+		let created = false;
 		try {
 			await Campaigns.create(
 				ctx as never,
@@ -127,6 +130,7 @@ describeLive('live Taggun campaign validation', () => {
 					},
 				} as never,
 			);
+			created = true;
 
 			const stored = await Campaigns.get(
 				ctx as never,
@@ -137,19 +141,21 @@ describeLive('live Taggun campaign validation', () => {
 			expect(stored.merchantNames?.allowList).toEqual([
 				'Corsair Live Test Merchant',
 			]);
-
-			const deleted = await Campaigns.remove(
-				ctx as never,
-				{
-					campaignId,
-				} as never,
-			);
-			expect(deleted.statusCode ?? 200).toBeLessThan(400);
 		} catch (error) {
 			// See the note on the listing test above.
 			const failure = error instanceof Error ? error : new Error(String(error));
 			if (isFeatureUnavailable(failure)) return;
 			throw failure;
+		} finally {
+			if (created) {
+				const deleted = await Campaigns.remove(
+					ctx as never,
+					{
+						campaignId,
+					} as never,
+				);
+				expect(deleted.statusCode ?? 200).toBeLessThan(400);
+			}
 		}
 	});
 });
