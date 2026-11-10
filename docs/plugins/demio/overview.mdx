@@ -1,0 +1,138 @@
+---
+title: Overview
+description: "Webinar and event data from Demio - list events and their dates, register attendees, and read who attended each session."
+---
+
+Use **Demio** through Corsair: one client, typed API calls.
+
+Demio issues two credentials and every request carries both, so connect with the key and the secret together. An account Owner generates the pair under **Account Settings > API**; there is no other credential and no token exchange.
+
+- **One registration operation.** Demio accepts both `PUT` and `POST` on `/event/register` with identical behaviour. The plugin exposes one operation, `registrations.create`, sent as `POST`.
+- **Filtering events.** `events.list` takes `type`, one of `upcoming`, `past` or `automated`. Omit it to receive every event with its nearest date, ordered by date, ascending.
+- **Identifying the event.** `registrations.create` takes either `id` or `ref_url`, the event's public registration page link. Omit `date_id` to put the registrant on the event's next date, and pass one to choose a date.
+- **Registration is the only write.** It adds a person to an event and sends them a join link. Every other operation reads.
+- **On-demand dates.** Inside `events.get`, an on-demand date reports `status: 'on-demand'` with `timestamp`, `datetime` and `zone` all null. `events.getDate` describes the same date as `status: 'running'` with the current time as its `timestamp`.
+- **The participant status has two spellings.** Filter with `did-not-attend` and `left-early`; each participant comes back with `did not attend` and `left early`.
+- **Rate limits answer 417, not 429.** Each endpoint accepts 180 requests a minute, and accounts also carry a daily call allowance. A per-minute limit is retried with backoff; a spent daily allowance fails immediately, because no retry restores it.
+- **No paging.** The events and participants operations return the whole set with no page parameters and no cursor, so a large account receives every record in one answer.
+- **Webhooks.** The plugin does not receive webhooks; the Demio API offers no delivery or registration call.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/demio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/demio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/demio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/demio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { demio } from '@corsair-dev/demio';
+
+export const corsair = createCorsair({
+	plugins: [
+		demio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. Demio needs both an API key and an API secret from **Account Settings > API**; store the pair on the account before the first call, because a call with no saved pair throws `AuthMissingError` rather than reaching the API.
+
+```ts
+demio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'demio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Check the credential pair**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.demio.api.ping.check({});
+```
+
+
+**Register an attendee for the next date of an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.demio.api.registrations.create({ id: 86, name: 'Jane Doe', email: 'jane.doe@example.com' });
+```
+
+
+See the full list on the [API](/plugins/demio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/demio/api">
+    Every `demio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

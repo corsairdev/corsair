@@ -1,0 +1,288 @@
+---
+title: API
+description: "API reference for Demio: every `demio.api.*` operation with input and output types."
+---
+
+Every `demio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### get
+
+`events.get`
+
+Read one event with every date the filter allowed
+
+**Risk:** `read`
+
+```ts
+await corsair.demio.api.events.get({ id: 86, active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The event id from `events.list` or `events.get`. |
+| `active` | `boolean` | No | Receive only dates that are scheduled or running. Demio reads any value other than its own `false` as `true`, so this is sent only when set. |
+
+Send `active: true` to receive only dates that are scheduled or running. An event whose dates have all finished answers 404 under that filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `registrants_stay_registered` | `boolean \| null` | No | True when registering once covers the whole series. |
+| `registration_url` | `string` | Yes | — |
+| `automated` | `object \| null` | No | — |
+| `next_date_id` | `number \| null` | No | The first date that has not finished, if any. |
+| `dates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="automated full type">
+
+```ts
+{
+  ready?: boolean | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="dates full type">
+
+```ts
+{
+  date_id: number,
+  status: string,
+  timestamp?: number | null,
+  datetime?: string | null,
+  zone?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDate
+
+`events.getDate`
+
+Read one date of an event
+
+**Risk:** `read`
+
+```ts
+await corsair.demio.api.events.getDate({ id: 86, date_id: 1575 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The event id from `events.list` or `events.get`. |
+| `date_id` | `number` | Yes | The event date id from `events.get` or `events.getDate`. |
+
+An on-demand date reports `running` here and `on-demand` inside `events.get`. For an on-demand date, `datetime` is the stored start time while `timestamp` is the moment you asked.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_id` | `number` | Yes | — |
+| `status` | `string` | Yes | `scheduled`, `running` or `finished`. Unlike `events.get`, an on-demand date reports `running` here rather than `on-demand`. |
+| `timestamp` | `number` | Yes | When the date starts, as a Unix timestamp. For an on-demand date, the moment you asked. |
+| `datetime` | `string` | Yes | The date's stored start time, formatted in its zone. For an on-demand date this does not describe the same instant as `timestamp`. |
+| `zone` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List events, each collapsed to one representative date
+
+**Risk:** `read`
+
+```ts
+await corsair.demio.api.events.list({ type: 'upcoming' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `upcoming \| past \| automated` | No | Narrows the list. Omit it to receive every event with its nearest date. |
+
+Omit `type` to receive every event with its nearest date. The list is ordered by date, ascending.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  labeled_name?: string | null,
+  name: string,
+  description?: string | null,
+  date_id: number,
+  status: string,
+  timestamp: number,
+  zone?: string | null,
+  registration_url: string,
+  automated?: {
+    ready?: boolean | null,
+    duration?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Ping
+
+### check
+
+`ping.check`
+
+Check that the API key and secret are accepted
+
+**Risk:** `read`
+
+```ts
+await corsair.demio.api.ping.check({});
+```
+
+**Input:** _empty object_
+
+Confirms the key and secret pair are accepted. Use it after connecting before relying on any other operation.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pong` | `boolean` | Yes | True when the credentials are accepted. |
+| `sandbox` | `boolean` | No | Present and true only for a sandbox account. |
+
+
+
+---
+
+## Registrations
+
+### create
+
+`registrations.create`
+
+Register a person for an event date and return their join link
+
+**Risk:** `write`
+
+```ts
+await corsair.demio.api.registrations.create({ id: 86, name: 'Jane Doe', email: 'jane.doe@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | The event id. Give this or `ref_url`. |
+| `ref_url` | `string` | No | The event's registration page link. Give this or `id`. |
+| `date_id` | `number` | No | The event date to register for. Omit it to use the event's next date. |
+| `name` | `string` | Yes | The person's full name as one field. Demio rejects a name containing a URL. |
+| `email` | `string` | Yes | The email address to register. |
+
+Give either `id` or `ref_url`. Omit `date_id` to use the event's next date. The answer carries a `hash` and the `join_link` to hand the registrant.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hash` | `string` | Yes | The registrant's identifier for this event date. |
+| `join_link` | `string` | Yes | The link the person opens to join. |
+
+
+
+---
+
+## Reports
+
+### participants
+
+`reports.participants`
+
+List who registered for a date, whether they attended, and their custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.demio.api.reports.participants({ date_id: 1575 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_id` | `number` | Yes | The event date id from `events.get` or `events.getDate`. |
+| `status` | `attended \| did-not-attend \| completed \| left-early \| banned` | No | Narrows the list. Omit it to receive every registrant. |
+
+Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `participants` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  email: string,
+  name: string,
+  custom_fields: {
+    id: string,
+    name: string,
+    value: string
+  }[],
+  attended: boolean,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
