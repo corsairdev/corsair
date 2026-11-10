@@ -308,6 +308,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailcheck',
 	'mailchimp',
+	'mailsso',
 	'mailtrap',
 	'marketstack',
 	'mem0',
@@ -771,6 +772,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
+	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
 	mem0: 'Mem0',
@@ -1238,6 +1240,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
+	| 'mailsso'
 	| 'mailtrap'
 	| 'marketstack'
 	| 'mem0'
