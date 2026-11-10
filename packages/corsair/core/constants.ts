@@ -467,6 +467,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zenrows',
 	'zenserp',
 	'zohobigin',
 	'zohodesk',
@@ -930,6 +931,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zenrows: 'ZenRows',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
 	zohodesk: 'Zoho Desk',
@@ -1399,6 +1401,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zenrows'
 	| 'zenserp'
 	| 'zohobigin'
 	| 'zohodesk'

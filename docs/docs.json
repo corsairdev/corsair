@@ -3907,6 +3907,14 @@
                 ]
               },
               {
+                "group": "ZenRows",
+                "pages": [
+                  "plugins/zenrows/overview",
+                  "plugins/zenrows/api",
+                  "plugins/zenrows/database"
+                ]
+              },
+              {
                 "group": "Zenserp",
                 "pages": [
                   "plugins/zenserp/overview",
