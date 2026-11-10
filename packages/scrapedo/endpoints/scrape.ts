@@ -1,0 +1,155 @@
+import type { ScrapeDoEndpoints } from '..';
+import { parseJsonObject } from '../client';
+import { call, scrapeQuery } from './call';
+import {
+	ScrapeDoEndpointInputSchemas as Inputs,
+	ScrapeDoEndpointOutputSchemas as Outputs,
+} from './types';
+
+export const html: ScrapeDoEndpoints['scrapeHtml'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'scrape.html',
+			input: Inputs.scrapeHtml,
+			output: Outputs.scrapeHtml,
+		},
+		input,
+		(parsed) => ({
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: {
+				...scrapeQuery(parsed),
+				waitUntil: parsed.waitUntil,
+				customWait: parsed.customWait,
+				waitSelector: parsed.waitSelector,
+				output: parsed.output,
+			},
+		}),
+		{
+			// The body is the page itself, and its status is the target's status:
+			// a 404 target still returns its page and still costs a credit.
+			shape: (answer) => ({
+				html: answer.body,
+				status_code: answer.status,
+				content_type: answer.contentType,
+			}),
+			log: (parsed, result) => ({
+				url: parsed.url,
+				statusCode: result.status_code,
+				bytes: result.html.length,
+			}),
+		},
+	);
+
+export const markdown: ScrapeDoEndpoints['scrapeMarkdown'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'scrape.markdown',
+			input: Inputs.scrapeMarkdown,
+			output: Outputs.scrapeMarkdown,
+		},
+		input,
+		(parsed) => ({
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: { ...scrapeQuery(parsed), output: 'markdown' },
+		}),
+		{
+			shape: (answer) => ({
+				markdown: answer.body,
+				status_code: answer.status,
+			}),
+			log: (parsed, result) => ({
+				url: parsed.url,
+				statusCode: result.status_code,
+				chars: result.markdown.length,
+			}),
+		},
+	);
+
+export const json: ScrapeDoEndpoints['scrapeJson'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'scrape.json',
+			input: Inputs.scrapeJson,
+			output: Outputs.scrapeJson,
+		},
+		input,
+		(parsed) => ({
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: {
+				...scrapeQuery(parsed),
+				returnJSON: true,
+				showFrames: parsed.showFrames,
+				showWebsocketRequests: parsed.showWebsocketRequests,
+			},
+		}),
+		{
+			shape: (answer) => {
+				const body = parseJsonObject(answer.body);
+				return {
+					status_code: body.statusCode,
+					content: body.content,
+					network_requests: body.networkRequests,
+					websocket_requests: body.websocketRequests,
+				};
+			},
+			log: (parsed, result) => ({
+				url: parsed.url,
+				statusCode: result.status_code,
+				requests: result.network_requests.length,
+			}),
+		},
+	);
+
+export const screenshot: ScrapeDoEndpoints['scrapeScreenshot'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'scrape.screenshot',
+			input: Inputs.scrapeScreenshot,
+			output: Outputs.scrapeScreenshot,
+		},
+		input,
+		(parsed) => ({
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: {
+				...scrapeQuery(parsed),
+				// A screenshot is only returned inside the JSON answer, and the live
+				// API answers 400 for `screenShot` without `returnJSON`.
+				returnJSON: true,
+				// Only the flag the caller asked for is sent: `screenShot: false`
+				// beside `fullScreenShot: true` is accepted but is meaningless noise.
+				screenShot:
+					parsed.fullPage === true || parsed.area !== undefined
+						? undefined
+						: true,
+				fullScreenShot: parsed.fullPage === true ? true : undefined,
+				particularScreenShot:
+					parsed.area === undefined ? undefined : JSON.stringify(parsed.area),
+			},
+		}),
+		{
+			shape: (answer) => {
+				const body = parseJsonObject(answer.body);
+				return {
+					screenshots: body.screenShots,
+					status_code: body.statusCode,
+				};
+			},
+			log: (parsed, result) => ({
+				url: parsed.url,
+				statusCode: result.status_code,
+				images: result.screenshots.length,
+			}),
+		},
+	);
