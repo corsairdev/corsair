@@ -15,11 +15,22 @@
  * call. All calls are reads: nothing here writes a user, tracks an event or
  * deletes anything.
  */
-import { makeSatisMeterRequest, SATISMETER_API_V3 } from './client';
+import {
+	makeSatisMeterRequest,
+	parseJsonBody,
+	SATISMETER_API_V3,
+	SATISMETER_API_WRITE,
+} from './client';
 import { readEnvelope } from './endpoints/call';
 import { SatisMeterEndpointOutputSchemas as Outputs } from './endpoints/types';
 
 const API_KEY = process.env.SATISMETER_API_KEY;
+/**
+ * The users API refuses the browser write key, so a live write needs the API
+ * key. It is opt-in through its own variable: a read-only smoke run should not
+ * create or delete anything.
+ */
+const WRITE_API_KEY = process.env.SATISMETER_WRITE_API_KEY;
 const PROJECT_ID = process.env.SATISMETER_PROJECT_ID;
 
 const missing = [
@@ -34,6 +45,14 @@ if (missing.length > 0) {
 }
 
 const describeIfConfigured = missing.length === 0 ? describe : describe.skip;
+
+// Writing is opt-in, and says so rather than skipping silently.
+const describeIfWritable = WRITE_API_KEY ? describe : describe.skip;
+if (!WRITE_API_KEY && missing.length === 0) {
+	console.warn(
+		'satismeter live write smoke skipped: set SATISMETER_WRITE_API_KEY to run it',
+	);
+}
 
 describeIfConfigured('live SatisMeter API', () => {
 	const key = API_KEY ?? '';
@@ -100,5 +119,123 @@ describeIfConfigured('live SatisMeter API', () => {
 		);
 		const stats = Outputs.statisticsGet.parse(statsEnvelope.data);
 		expect(Array.isArray(stats.questions)).toBe(true);
+	});
+});
+
+describeIfWritable('live SatisMeter writes', () => {
+	const key = WRITE_API_KEY ?? '';
+	const projectId = PROJECT_ID ?? '';
+	// A name unlikely to collide with a real user in the project.
+	const userId = `corsair-smoke-${Date.now()}`;
+
+	it('upserts a user, lists it back, and deletes it', async () => {
+		const text = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'POST',
+			path: '/users',
+			body: {
+				userId,
+				project: projectId,
+				traits: { name: 'Corsair Smoke', plan: 'Gold' },
+			},
+		});
+		// Every successful write answers 204 No Content with no body.
+		expect(text).toBe('');
+
+		// Read it back: a 204 proves the request was accepted, not that the
+		// traits were stored.
+		const listedText = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'GET',
+			path: '/users',
+			query: { project: projectId, userId },
+		});
+		const listed = Outputs.usersList.parse(parseJsonBody(listedText));
+		expect(listed.users).toHaveLength(1);
+		expect(listed.users[0]?.traits).toMatchObject({ plan: 'Gold' });
+
+		const internalId = listed.users[0]?.id;
+		expect(internalId).toBeDefined();
+		if (!internalId) throw new Error('the created user had no id');
+
+		const removed = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'DELETE',
+			path: `/users/${internalId}`,
+		});
+		// The provider documents 204 and the live API answers it.
+		expect(removed).toBe('');
+
+		const afterText = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'GET',
+			path: '/users',
+			query: { project: projectId, userId },
+		});
+		const after = Outputs.usersList.parse(parseJsonBody(afterText));
+		expect(after.users).toHaveLength(0);
+	});
+
+	it('tracks an event and accepts it', async () => {
+		// Tracking needs a user to attach to, so one is created and removed here.
+		await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'POST',
+			path: '/users',
+			body: { userId, project: projectId },
+		});
+		const text = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'POST',
+			path: '/users',
+			body: {
+				type: 'track',
+				userId,
+				event: 'corsair-test-event',
+				project: projectId,
+			},
+		});
+		// 204: accepted. The event is NOT readable back through the users API,
+		// which was confirmed against the live project: `events` stays [] on both
+		// the list and the single-user read after a successful track. So this
+		// asserts acceptance, not persistence, and says so rather than pretending.
+		expect(text).toBe('');
+
+		const listedText = await makeSatisMeterRequest(key, {
+			base: SATISMETER_API_WRITE,
+			method: 'GET',
+			path: '/users',
+			query: { project: projectId, userId },
+		});
+		const listed = Outputs.usersList.parse(parseJsonBody(listedText));
+		// The schema still accepts an events array, because the field is sent.
+		expect(Array.isArray(listed.users[0]?.events ?? [])).toBe(true);
+
+		const internalId = listed.users[0]?.id;
+		if (internalId) {
+			await makeSatisMeterRequest(key, {
+				base: SATISMETER_API_WRITE,
+				method: 'DELETE',
+				path: `/users/${internalId}`,
+			});
+		}
+	});
+
+	it('rejects a track with no event name', async () => {
+		// The live API answers 400 "Event not specified", which is the one piece
+		// of evidence that the track path is really reached.
+		await expect(
+			makeSatisMeterRequest(key, {
+				base: SATISMETER_API_WRITE,
+				method: 'POST',
+				path: '/users',
+				body: {
+					type: 'track',
+					userId,
+					event: '',
+					project: projectId,
+				},
+			}),
+		).rejects.toMatchObject({ status: 400, title: 'Event not specified' });
 	});
 });

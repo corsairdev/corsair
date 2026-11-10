@@ -462,7 +462,8 @@ Every user in the project, or one user when `userId` is given: the API still ans
   unsubscribed?: boolean | null,
   created?: string | null,
   lastSeen?: string | null,
-  traits?: Record<string, unknown> | null
+  traits?: Record<string, unknown> | null,
+  events?: string[] | null
 }[]
 ```
 </Accordion>
@@ -490,7 +491,7 @@ await corsair.satismeter.api.users.remove({ userId: '5808e7031a943c7e564cdb17' }
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | The user's internal `id` from `users.list`, not the `userId` you supplied. Deleting anonymises the user's responses rather than removing them. |
 
-Takes the internal `id` from `users.list`, not your own `userId`. It deletes personal data and anonymises the user\u2019s responses rather than deleting them, and cannot be undone.
+Takes the internal `id` from `users.list`, not your own `userId`. It deletes personal data and anonymises the user\u2019s responses rather than deleting them, and cannot be undone. An unknown id answers 404 User not found.
 
 
 
@@ -525,7 +526,7 @@ await corsair.satismeter.api.users.track({ projectId: '61fce0adea447e24ec27d606'
 | `userId` | `string` | Yes | Your own ID for this user, matching the one sent to the browser snippet. |
 | `event` | `string` | Yes | A name you choose, such as `completed-checkout`. Survey targeting can match on it. |
 
-Records an event that survey targeting can match on. Each call counts as one event, so it is never retried automatically.
+Records an event that survey targeting can match on. Each call counts as one event, so it is never retried automatically. Returns 204 with no body, and the event cannot be read back through the users API, which reports an empty events array.
 
 
 

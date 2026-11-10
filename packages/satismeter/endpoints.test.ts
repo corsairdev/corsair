@@ -162,6 +162,14 @@ describe('users', () => {
 		expect(result.users[0]?.unsubscribed).toBe(false);
 	});
 
+	it('keeps the events array the live answer adds', () => {
+		// The provider's article example omits `events`; the live list includes it.
+		const result = parseAs<UsersListResponse>(Outputs.usersList, {
+			users: [{ id: 'a', events: ['completed-checkout'] }],
+		});
+		expect(result.users[0]?.events).toEqual(['completed-checkout']);
+	});
+
 	it('rejects a users answer without the users key', () => {
 		expect(() => parseAs(Outputs.usersList, {})).toThrow();
 	});

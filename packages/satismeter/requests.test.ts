@@ -242,7 +242,8 @@ describe('surveys.statistics', () => {
 
 describe('users.upsert', () => {
 	it('posts to the unversioned users base, not /v3', async () => {
-		respond('', 200);
+		// The live API answers 204 No Content.
+		respond('', 204);
 
 		await endpoints().users.upsert(makeCtx(), {
 			projectId: PROJECT,
@@ -259,7 +260,7 @@ describe('users.upsert', () => {
 	});
 
 	it('sends userId, project and traits under the provider names', async () => {
-		respond('', 200);
+		respond('', 204);
 
 		await endpoints().users.upsert(makeCtx(), {
 			projectId: PROJECT,
@@ -275,7 +276,7 @@ describe('users.upsert', () => {
 	});
 
 	it('sends surveyDate when the caller sets it', async () => {
-		respond('', 200);
+		respond('', 204);
 
 		await endpoints().users.upsert(makeCtx(), {
 			projectId: PROJECT,
@@ -289,7 +290,7 @@ describe('users.upsert', () => {
 	});
 
 	it('omits traits and surveyDate rather than sending them empty', async () => {
-		respond('', 200);
+		respond('', 204);
 
 		await endpoints().users.upsert(makeCtx(), {
 			projectId: PROJECT,
@@ -303,7 +304,7 @@ describe('users.upsert', () => {
 
 describe('users.track', () => {
 	it('posts a track event with type, userId, event and project', async () => {
-		respond('', 200);
+		respond('', 204);
 
 		const result = await endpoints().users.track(makeCtx(), {
 			projectId: PROJECT,
@@ -405,5 +406,49 @@ describe('one request per call', () => {
 		await endpoints().projects.get(makeCtx(), { projectId: PROJECT });
 
 		expect(fetchCallCount()).toBe(1);
+	});
+});
+
+describe('the write status the live API answers', () => {
+	it('accepts 204 for upsert, which is what the users API sends', async () => {
+		respond('', 204);
+
+		const result = await endpoints().users.upsert(makeCtx(), {
+			projectId: PROJECT,
+			userId: '007',
+		});
+
+		expect(result).toEqual({ userId: '007', accepted: true });
+	});
+
+	it('accepts 204 for track', async () => {
+		respond('', 204);
+
+		await expect(
+			endpoints().users.track(makeCtx(), {
+				projectId: PROJECT,
+				userId: '007',
+				event: 'checkout',
+			}),
+		).resolves.toMatchObject({ accepted: true });
+	});
+
+	it('accepts 204 for remove', async () => {
+		respond('', 204);
+
+		await expect(
+			endpoints().users.remove(makeCtx(), { userId: 'abc' }),
+		).resolves.toEqual({ userId: 'abc', removed: true });
+	});
+
+	it('fails a write the API refused', async () => {
+		respond({ errors: [{ title: 'No write key' }] }, 400);
+
+		await expect(
+			endpoints().users.upsert(makeCtx(), {
+				projectId: PROJECT,
+				userId: '007',
+			}),
+		).rejects.toMatchObject({ status: 400, title: 'No write key' });
 	});
 });

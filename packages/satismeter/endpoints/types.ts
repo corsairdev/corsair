@@ -407,8 +407,9 @@ const UsersUpsertInputSchema = z.object({
 export type UsersUpsertInput = z.input<typeof UsersUpsertInputSchema>;
 
 /**
- * The users API documents no response body. A write in Corsair has to report
- * something, so this echoes what was sent; it is not read back from the API.
+ * Every successful users write answers `204 No Content` with no body at all
+ * (captured live for both `upsert` and `remove`). A write in Corsair has to
+ * report something, so this echoes what was sent; nothing here is read back.
  */
 const WriteAckSchema = z.object({
 	userId: z.string(),
@@ -475,6 +476,12 @@ const SatisMeterUserSchema = z
 		created: z.string().nullish(),
 		lastSeen: z.string().nullish(),
 		traits: TraitsSchema.nullish(),
+		events: z
+			.array(z.string())
+			.nullish()
+			.describe(
+				"Event names recorded for this user. Present in the live answer although the provider's article example omits it.",
+			),
 	})
 	.loose();
 
