@@ -233,11 +233,16 @@ const financialRatioSchema = z
 	})
 	.catchall(jsonValue);
 
-const signalResponse = z.object({
+// Finage documents this body twice: "Forex Signal API" shows the bare object,
+// "Forex Technical Indicators" shows the same route with the object inside an
+// array. Accept both documented forms.
+const signalItem = z.object({
 	timestamp: text,
 	symbol: text,
-	signal: z.enum(['buy', 'sell', 'hold']),
-	confidence: z.number().min(0).max(1),
+	// A plain string and an unbounded number: a signal label or confidence scale
+	// Finage adds later must not fail the response.
+	signal: text,
+	confidence: z.number(),
 	indicators: z.object({
 		sma_20: z.number(),
 		sma_50: z.number(),
@@ -252,6 +257,7 @@ const signalResponse = z.object({
 	}),
 	price: z.number(),
 });
+const signalResponse = z.union([signalItem, z.array(signalItem)]);
 
 export const FinageFundamentalInputSchemas = {
 	getBalanceSheetStatements: z.object({
