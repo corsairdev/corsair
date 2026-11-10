@@ -93,7 +93,8 @@ async function contextDevIcon(domain: string): Promise<string> {
 }
 
 async function importIcon(id: string, source: string): Promise<string> {
-	if (!/^[a-z0-9]+$/.test(id)) throw new Error(`bad plugin id "${id}"`);
+	if (!/^[a-z0-9][a-z0-9_-]*$/.test(id))
+		throw new Error(`bad plugin id "${id}"`);
 	const from = source.startsWith('contextdev:')
 		? await contextDevIcon(source.slice('contextdev:'.length))
 		: source;

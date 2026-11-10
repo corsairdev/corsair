@@ -1,0 +1,120 @@
+name: Catalog bot
+
+# A merge that changes a plugin leaves explorer/ out of date until someone
+# rebuilds it. This rebuilds it and keeps one PR open on bot/catalog, with a
+# preview of each new plugin's icon for a person to check. Details:
+# scripts/catalog-bot.mjs.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - '!packages/**/*.md'
+      - '!packages/**/*.test.ts'
+      - '!packages/**/tests/**'
+      - 'explorer/src/**'
+      - 'scripts/build-explorer-catalog.ts'
+      - 'scripts/catalog-bot.mjs'
+      - '.github/workflows/catalog-bot.yml'
+  workflow_dispatch:
+  # Backstop in case a run failed and nothing has been merged since.
+  schedule:
+    - cron: '23 5 * * *'
+
+permissions:
+  contents: read
+
+# Each run rebuilds from the newest main, so a newer one replaces an older one.
+concurrency:
+  group: catalog-bot
+  cancel-in-progress: true
+
+jobs:
+  catalog:
+    # A release commit only moves versions, which the catalog doesn't hold.
+    if: >-
+      github.repository == 'corsairdev/corsair' &&
+      (github.event_name != 'push' ||
+       !(startsWith(github.event.head_commit.message, 'chore(release):') &&
+         github.event.head_commit.author.email == '353438335+corsair-releases[bot]@users.noreply.github.com'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # No credentials in the checkout: the build imports every plugin.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts --filter . --filter "./packages/**" --filter "./adapters/**"
+
+      - name: Rebuild the catalog
+        run: node scripts/catalog-bot.mjs build --out "$RUNNER_TEMP/catalog-plan.json"
+
+      # So a run keeps the icons a previous one found or a person replaced.
+      # bot/catalog-next only exists after a run stopped while replacing the branch.
+      # A branch that can't be read fails the run: carrying on as if it weren't
+      # there would rebuild the PR without the icons it holds.
+      - name: Fetch the bot branch
+        run: |
+          for branch in bot/catalog bot/catalog-next; do
+            if git ls-remote --exit-code --heads origin "refs/heads/$branch" > /dev/null; then
+              git fetch -q --depth=1 origin "+refs/heads/$branch:refs/remotes/origin/$branch"
+            else
+              status=$?
+              # 2 is ls-remote's "no such branch". Anything else is an error.
+              if [ "$status" -ne 2 ]; then
+                echo "::error::Could not check whether $branch exists (git ls-remote exited $status)."
+                exit "$status"
+              fi
+              echo "No $branch"
+            fi
+          done
+
+      - name: Get icons for new plugins
+        env:
+          CONTEXT_DEV_API_KEY: ${{ secrets.CONTEXT_DEV_API_KEY }}
+        run: node scripts/catalog-bot.mjs icons --plan "$RUNNER_TEMP/catalog-plan.json"
+
+      - name: Format the icon records
+        run: ./node_modules/.bin/biome format --write explorer/data scripts/plugin-icon-sources/SOURCES.json
+
+      - name: Check the release app credentials
+        env:
+          APP_ID: ${{ vars.RELEASE_APP_ID }}
+          KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$KEY" ]; then
+            echo "::error::RELEASE_APP_ID (variable) and RELEASE_APP_PRIVATE_KEY (secret) must both be set. They belong to the Corsair Releases GitHub App."
+            exit 1
+          fi
+
+      # GITHUB_TOKEN can't do this: a PR it opens starts no CI.
+      - name: Get a Corsair Releases token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Open or update the PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config user.name "corsair-releases[bot]"
+          git config user.email "353438335+corsair-releases[bot]@users.noreply.github.com"
+          gh auth setup-git
+          node scripts/catalog-bot.mjs publish --plan "$RUNNER_TEMP/catalog-plan.json"
