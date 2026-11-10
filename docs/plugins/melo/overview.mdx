@@ -23,7 +23,7 @@ Things to know before you call:
 - **Numbers stand for words.** `transactionType` is 0 for sale and 1 for rent. `propertyTypes` is 0 apartment, 1 house, 2 building, 3 parking, 4 office, 5 land, 6 shop. Inputs are strict, so a misspelled filter throws instead of silently returning unfiltered data.
 - **Paging.** `properties.list` and the other collections return the Hydra fields untouched plus a `nextPage` number, or `null` on the last page. Pass it back as `page`. `itemsPerPage` is capped at 30.
 - **Saved searches.** `searches.create` and `searches.update` need `title`, `transactionType` and `propertyTypes`. A webhook endpoint needs `notificationEnabled: true`, and an event endpoint also needs at least one `subscribedEvents`. `searches.delete` is irreversible.
-- **Webhook deliveries are not handled.** The plugin does not receive webhooks. `webhooks.simulate` is an API call: it asks Melo to send a test `match` (or the event in `eventType`) to an endpoint you give it, so it is a write with a side effect and is never repeated automatically.
+- **Webhook deliveries are not handled.** The plugin does not receive webhooks. `webhooks.simulate` is an API call: it asks Melo to send a test `match` (or the event in `eventType`) to an endpoint you give it, so it is a write with a side effect. It is not replayed after a 5xx or a transport failure; a 429 is retried, like every other operation.
 - **Content type.** Melo answers `application/ld+json` only when asked for it, so the plugin sends `Accept: application/ld+json` and decodes the body itself. A wrong key answers 401 with the plain text `Authentication failed`.
 
 **What you get:**
