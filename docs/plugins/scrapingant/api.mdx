@@ -1,0 +1,260 @@
+---
+title: API
+description: "API reference for ScrapingAnt: every `scrapingant.api.*` operation with input and output types."
+---
+
+Every `scrapingant.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### usage
+
+`account.usage`
+
+Read the active plan, its period and the credits left in it; costs nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapingant.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+Returns `plan_name`, the period start and end, `plan_total_credits` and `remained_credits`. The dates arrive without a time zone, so they are strings rather than parsed dates.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan_name` | `string` | Yes | Active subscription plan name. |
+| `start_date` | `string` | Yes | Start of the active period. The provider sends `2022-01-11T00:00:00`, without a time zone, so this stays a string. |
+| `end_date` | `string` | Yes | End of the active period, in the same form. |
+| `plan_total_credits` | `number` | Yes | Credits the active subscription holds. |
+| `remained_credits` | `number` | Yes | Credits left in the active period. |
+
+
+
+---
+
+## Extract
+
+### data
+
+`extract.data`
+
+Fetch a page and have an AI model extract the requested properties as a JSON object; spends the scrape cost plus 1 credit per 30 characters of page and output text
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapingant.api.extract.data({ url: 'https://example.com/product', extract_properties: 'product title, price(number), reviews(list: review title, review content)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to extract data from. |
+| `extract_properties` | `string` | Yes | What to extract, as a comma-separated list: `product title, price(number), full description`. Append a type in parentheses to steer the JSON value, and nest with `reviews(list: review title, review content)`. Property names in the answer come back camelCased from this text, and a property the model cannot find comes back null. |
+| `browser` | `boolean` | No | Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it. |
+| `return_page_source` | `boolean` | No | Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`. |
+| `cookies` | `string` | No | Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session. |
+| `js_snippet` | `string` | No | Base64-encoded JavaScript to run once the page has loaded. Needs `browser`. |
+| `proxy_type` | `datacenter \| residential` | No | Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter. |
+| `proxy_country` | `string` | No | Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change. |
+| `wait_for_selector` | `string` | No | CSS selector to wait for before answering. Needs `browser`. |
+| `block_resource` | `(document \| stylesheet \| image \| media \| font \| script \| texttrack \| xhr \| fetch \| eventsource \| websocket \| manifest \| other)[]` | No | Resource types the browser must not load, which speeds the request up. Needs `browser`. |
+| `timeout` | `number` | No | Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error. |
+
+`extract_properties` is a free-form description of the data, not a schema: append `(number)`, `(list: ...)` and so on to steer the JSON types. The cost is the scrape cost plus 1 credit per 30 characters of page and output text.
+
+
+
+**Output:** `Record<string, unknown>`
+
+An object keyed by the camelCased property names from `extract_properties`, for example `{ title: 'Example Domain', price: 19.99 }`. A property the model could not find is `null`. The object is open: the keys come from the request text, so no schema can list them.
+
+
+---
+
+## Scrape
+
+### extended
+
+`scrape.extended`
+
+Fetch a page and return HTML, text, cookies, headers, status code, XHRs and iframes as JSON; spends 1 to 125 credits
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapingant.api.scrape.extended({ url: 'https://example.com/', wait_for_selector: 'h1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to scrape. |
+| `browser` | `boolean` | No | Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it. |
+| `return_page_source` | `boolean` | No | Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`. |
+| `cookies` | `string` | No | Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session. |
+| `js_snippet` | `string` | No | Base64-encoded JavaScript to run once the page has loaded. Needs `browser`. |
+| `proxy_type` | `datacenter \| residential` | No | Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter. |
+| `proxy_country` | `string` | No | Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change. |
+| `wait_for_selector` | `string` | No | CSS selector to wait for before answering. Needs `browser`. |
+| `block_resource` | `(document \| stylesheet \| image \| media \| font \| script \| texttrack \| xhr \| fetch \| eventsource \| websocket \| manifest \| other)[]` | No | Resource types the browser must not load, which speeds the request up. Needs `browser`. |
+| `timeout` | `number` | No | Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error. |
+
+The only operation that returns the target status code as a JSON field (`status_code`), along with `cookies`, `headers`, `xhrs` and `iframes`. `xhrs` and `iframes` need the browser.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | Content from the scraped page. |
+| `text` | `string` | Yes | Text content from the scraped page. |
+| `cookies` | `string` | Yes | The page cookies, in `name=value;` form, ready to pass to another call as `cookies`. |
+| `status_code` | `number` | Yes | The target page's own HTTP status. The API answers 200 whatever the page did, so read this before trusting the content. |
+| `headers` | `object[] \| null` | No | Response headers from the scraped page. |
+| `xhrs` | `object[] \| null` | No | The XHR and fetch requests the page made. Empty or absent without the headless browser. |
+| `iframes` | `object[] \| null` | No | The page iframes with their own HTML. Empty or absent without the headless browser. |
+| `credits_cost` | `number \| null` | No | Credits spent on the request, from the `Ant-credits-cost` header. |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="xhrs full type">
+
+```ts
+{
+  url?: string | null,
+  status?: number | null,
+  method?: string | null,
+  headers?: {
+    name: string,
+    value: string
+  }[] | null,
+  request_body?: string | null,
+  body?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="iframes full type">
+
+```ts
+{
+  src?: string | null,
+  html?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### html
+
+`scrape.html`
+
+Fetch a page and return its HTML, with the target page status and credit cost; spends 1 to 125 credits depending on browser and proxy
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapingant.api.scrape.html({ url: 'https://example.com/', browser: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to scrape. |
+| `browser` | `boolean` | No | Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it. |
+| `return_page_source` | `boolean` | No | Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`. |
+| `cookies` | `string` | No | Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session. |
+| `js_snippet` | `string` | No | Base64-encoded JavaScript to run once the page has loaded. Needs `browser`. |
+| `proxy_type` | `datacenter \| residential` | No | Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter. |
+| `proxy_country` | `string` | No | Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change. |
+| `wait_for_selector` | `string` | No | CSS selector to wait for before answering. Needs `browser`. |
+| `block_resource` | `(document \| stylesheet \| image \| media \| font \| script \| texttrack \| xhr \| fetch \| eventsource \| websocket \| manifest \| other)[]` | No | Resource types the browser must not load, which speeds the request up. Needs `browser`. |
+| `timeout` | `number` | No | Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error. |
+
+Answers the page itself as text, plus `page_status` and `credits_cost` from the response headers. The published OpenAPI document labels this body `application/json`; the body is HTML.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | The page as returned: rendered HTML, or the raw source with `return_page_source`. |
+| `page_status` | `number \| null` | No | The target page's own HTTP status, from the `Ant-page-status-code` header. The API answers 200 even when the page was a 404, so read this before trusting the content. |
+| `credits_cost` | `number \| null` | No | Credits spent on the request, from the `Ant-credits-cost` header. |
+
+
+
+---
+
+### markdown
+
+`scrape.markdown`
+
+Fetch a page and return the whole thing as Markdown, ready for an LLM; spends 1 to 125 credits
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapingant.api.scrape.markdown({ url: 'https://example.com/', browser: true, proxy_country: 'DE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to scrape and convert. |
+| `browser` | `boolean` | No | Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it. |
+| `return_page_source` | `boolean` | No | Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`. |
+| `cookies` | `string` | No | Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session. |
+| `js_snippet` | `string` | No | Base64-encoded JavaScript to run once the page has loaded. Needs `browser`. |
+| `proxy_type` | `datacenter \| residential` | No | Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter. |
+| `proxy_country` | `string` | No | Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change. |
+| `wait_for_selector` | `string` | No | CSS selector to wait for before answering. Needs `browser`. |
+| `block_resource` | `(document \| stylesheet \| image \| media \| font \| script \| texttrack \| xhr \| fetch \| eventsource \| websocket \| manifest \| other)[]` | No | Resource types the browser must not load, which speeds the request up. Needs `browser`. |
+| `timeout` | `number` | No | Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error. |
+
+Converts the whole page with html2text: `script` and `noscript` are dropped and everything else, including navigation, footers, cookie banners and ads, stays in. To drop parts of a page, remove them with a base64 `js_snippet` before conversion.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL that was scraped. |
+| `markdown` | `string` | Yes | The whole page as Markdown, with `script` and `noscript` removed and no other element filtered: navigation, footers, cookie banners and ads all stay in. |
+| `credits_cost` | `number \| null` | No | Credits spent on the request, from the `Ant-credits-cost` header. |
+
+
+
+---
+
