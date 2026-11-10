@@ -107,7 +107,8 @@ await corsair.opensea.api.collection.nfts({});
   creator?: string | null,
   owners?: {
     address: string,
-    quantity?: number | null
+    quantity?: number | null,
+    quantity_string?: string | null
   }[] | null,
   traits?: {
     trait_type: string,
@@ -496,6 +497,7 @@ await corsair.opensea.api.events.list({});
 ```ts
 {
   event_type?: string | null,
+  transfer_type?: string | null,
   order_hash?: string | null,
   chain?: string | null,
   transaction?: string | null,
@@ -641,7 +643,8 @@ await corsair.opensea.api.nfts.get({});
   creator?: string | null,
   owners?: {
     address: string,
-    quantity?: number | null
+    quantity?: number | null,
+    quantity_string?: string | null
   }[] | null,
   traits?: {
     trait_type: string,

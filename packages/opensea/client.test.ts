@@ -197,6 +197,7 @@ describe('makeOpenseaRequest', () => {
 		const error = await makeOpenseaRequest(API_KEY, {
 			method: 'GET',
 			path: '/chains',
+			// unknown: a rejection can be any value until the instanceof check narrows it.
 		}).catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(OpenseaTransportError);

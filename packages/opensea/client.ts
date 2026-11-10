@@ -188,6 +188,8 @@ export async function makeOpenseaRequest(
 	apiKey: string,
 	{ method, path, query, body }: OpenseaRequest,
 ): Promise<unknown> {
+	// unknown: the response body is untyped; the endpoint's output schema is what
+	// validates it.
 	const config: OpenAPIConfig = {
 		BASE: OPENSEA_API_BASE,
 		VERSION: '2.0.0',

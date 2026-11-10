@@ -282,6 +282,8 @@ const OwnerSchema = z
 	.object({
 		address: z.string(),
 		quantity: z.number().nullish(),
+		// Observed live, and absent from the spec.
+		quantity_string: z.string().nullish(),
 	})
 	.loose();
 
@@ -386,6 +388,8 @@ export type NftGetResponse = z.infer<typeof NftResponseSchema>;
 const AssetEventSchema = z
 	.object({
 		event_type: z.string().nullish(),
+		// Observed live on transfer rows; the spec gives no field list for these.
+		transfer_type: z.string().nullish(),
 		order_hash: z.string().nullish(),
 		chain: z.string().nullish(),
 		transaction: z.string().nullish(),
@@ -393,7 +397,9 @@ const AssetEventSchema = z
 		from_address: z.string().nullish(),
 		to_address: z.string().nullish(),
 		quantity: z.number().nullish(),
+		// unknown: the payment payload varies by event type; the spec gives no shape.
 		payment: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: a nested NFT summary, whose fields differ per event type.
 		nft: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -458,9 +464,14 @@ export type SearchInput = z.input<typeof SearchInputSchema>;
 const SearchResultSchema = z
 	.object({
 		type: z.string(),
+		// unknown: one payload key per result type, shaped by the spec's own
+		// sub-schemas; the caller branches on `type` before reading it.
 		collection: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: a nested NFT summary, whose fields differ per event type.
 		nft: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: same reason as `collection` above.
 		account: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: same reason as `collection` above.
 		token: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -502,6 +513,7 @@ export type TraitsListResponse = z.infer<typeof TraitsResponseSchema>;
  */
 const OrderProtocolDataSchema = z
 	.object({
+		// unknown: a Seaport payload whose depth changes with the order type.
 		parameters: z.record(z.string(), z.unknown()).nullish(),
 		signature: z.string().nullish(),
 	})

@@ -45,6 +45,9 @@ function makeContext(logged: Logged) {
 			return 'account-1';
 		}),
 	} as const;
+	// unknown: only `key` and the log path's two members are read; the endpoint
+	// code never touches the rest. integration.test.ts runs the same endpoints
+	// against a real context.
 	return ctx as unknown as OpenseaContext;
 }
 

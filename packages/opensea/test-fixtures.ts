@@ -144,80 +144,205 @@ export const offersPageFixture = {
 	next: null,
 } as const;
 
-/** Follows the spec's `NftDetailed`; not captured, as the route needs a key. */
 export const nftFixture = {
 	nft: {
 		identifier: '1',
 		collection: 'boredapeyachtclub',
 		contract: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
 		token_standard: 'erc721',
-		name: 'Bored Ape #1',
-		description: null,
-		image_url: 'https://i2c.seadn.io/example.png',
-		display_image_url: 'https://i2c.seadn.io/example.png',
+		name: '',
+		description: '',
+		image_url:
+			'https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/399ac6f35935d93930b68fa64cd307/5d399ac6f35935d93930b68fa64cd307.png',
+		display_image_url:
+			'https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/399ac6f35935d93930b68fa64cd307/5d399ac6f35935d93930b68fa64cd307.png',
 		display_animation_url: null,
-		original_image_url: 'https://i2c.seadn.io/example.png',
+		original_image_url: 'ipfs://QmPbxeGcXhYQQNgsC6a36dDyYUcHgMLnGKnF8pVFmGsvqi',
 		original_animation_url: null,
 		animation_url: null,
-		metadata_url: 'ipfs://example',
-		opensea_url: 'https://opensea.io/assets/ethereum/0xbc4/1',
-		creator: '0x0000000000000000000000000000000000000000',
-		owners: [{ address: '0xowner', quantity: 1 }],
+		metadata_url:
+			'https://ipfs2.seadn.io/ipfs/QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/1',
+		opensea_url:
+			'https://opensea.io/assets/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1',
+		creator: '',
+		owners: [
+			{
+				address: '0x46efbaedc92067e6d60e84ed6395099723252496',
+				quantity: 1,
+				quantity_string: '1',
+			},
+		],
 		traits: [
+			{
+				trait_type: 'Fur',
+				display_type: null,
+				max_value: null,
+				value: 'Robot',
+			},
+			{
+				trait_type: 'Eyes',
+				display_type: null,
+				max_value: null,
+				value: 'Blue Beams',
+			},
+			{
+				trait_type: 'Mouth',
+				display_type: null,
+				max_value: null,
+				value: 'Grin',
+			},
+			{
+				trait_type: 'Clothes',
+				display_type: null,
+				max_value: null,
+				value: 'Vietnam Jacket',
+			},
 			{
 				trait_type: 'Background',
 				display_type: null,
 				max_value: null,
-				value: 'Blue',
+				value: 'Orange',
 			},
 		],
 		is_disabled: false,
 		is_nsfw: false,
 		is_suspicious: false,
-		updated_at: '2026-11-09T00:00:00.000000',
+		updated_at: '2026-11-10T02:27:13.518957',
 		decimals: null,
 		estimated_value_usd: null,
 	},
 } as const;
 
 export const nftsPageFixture = {
-	nfts: [nftFixture.nft],
-	next: null,
+	nfts: [
+		{
+			identifier: '9999',
+			collection: 'boredapeyachtclub',
+			contract: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+			token_standard: 'erc721',
+			name: '',
+			description: '',
+			image_url:
+				'https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/38a4a67da722f825e3911cb1f35701/0d38a4a67da722f825e3911cb1f35701.png',
+			display_image_url:
+				'https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/38a4a67da722f825e3911cb1f35701/0d38a4a67da722f825e3911cb1f35701.png',
+			display_animation_url: null,
+			metadata_url:
+				'https://ipfs2.seadn.io/ipfs/QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/9999',
+			opensea_url:
+				'https://opensea.io/assets/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/9999',
+			updated_at: '2026-11-10T02:27:15.525017',
+			is_disabled: false,
+			is_nsfw: false,
+			original_image_url:
+				'ipfs://QmejYePrutbfWEV8wA3ogTHi2cf2j6hoaPhZSc6vNE43nH',
+			original_animation_url: null,
+			traits: [
+				{
+					trait_type: 'Fur',
+					display_type: null,
+					max_value: null,
+					value: 'Gray',
+				},
+				{
+					trait_type: 'Hat',
+					display_type: null,
+					max_value: null,
+					value: 'Army Hat',
+				},
+				{
+					trait_type: 'Eyes',
+					display_type: null,
+					max_value: null,
+					value: 'Scumbag',
+				},
+				{
+					trait_type: 'Mouth',
+					display_type: null,
+					max_value: null,
+					value: 'Bored Unshaven',
+				},
+				{
+					trait_type: 'Earring',
+					display_type: null,
+					max_value: null,
+					value: 'Gold Hoop',
+				},
+				{
+					trait_type: 'Background',
+					display_type: null,
+					max_value: null,
+					value: 'Purple',
+				},
+			],
+			estimated_value_usd: null,
+			decimals: null,
+		},
+	],
+	next: 'WyIyMDIxLTA1LTAxVDA4OjM1OjE3WiIsOTk5OSwiNjg1M2RjZmQtNDEzMi0zNmI2LWFlMDQtMTQ2ODI1M2U3M2U5Il0',
 } as const;
 
-/** Follows the spec's `AssetEventsResponse`; the row shape is loose by design. */
 export const eventsPageFixture = {
 	asset_events: [
 		{
-			event_type: 'sale',
-			order_hash: '0xabc',
-			chain: 'ethereum',
-			transaction: '0xtx',
-			event_timestamp: 1794260807,
-			from_address: '0xfrom',
-			to_address: '0xto',
-			quantity: 1,
+			event_type: 'order',
+			event_timestamp: 1794277633,
+			order_hash:
+				'0xa66e4186cd226c101d739bb03a292ec5452df2a5f3404568d2a18cfea3153276',
+			protocol_address: '0x0000000000000068f116a894984e2db1123eb395',
+			chain: 'ape_chain',
 			payment: {
-				quantity: '1',
+				quantity: '499997286100000000000',
 				token_address: '0x0000000000000000000000000000000000000000',
+				decimals: 18,
+				symbol: 'APE',
 			},
-			nft: {
-				identifier: '1',
-				contract: '0xbc4',
-				collection: 'boredapeyachtclub',
+			order_type: 'listing',
+			start_date: 1794277633,
+			expiration_date: 1794278533,
+			asset: {
+				identifier: '261',
+				collection: 'paradox-blood-of-ape',
+				contract: '0x59b30ed9dd5838509980f39d503244567b11120e',
+				token_standard: 'erc721',
+				name: '#261 Sanatu The Deadly',
 			},
 		},
 	],
-	next: null,
+	next: 'WyIwMWExYzM0Ny1lZWUzLTdmZGMtYTEyOS0xY2UzMDYzZDMyOGUiXQ',
 } as const;
 
 export const searchFixture = {
 	results: [
 		{
-			type: 'collection',
-			collection: { collection: 'boredapeyachtclub', name: 'BAYC' },
+			type: 'token',
+			token: {
+				address: '0x4d224452801aced8b2f0aebe155379bb5d594381',
+				chain: 'ethereum',
+				name: 'ApeCoin',
+				symbol: 'APE',
+				image_url:
+					'https://i2c.seadn.io/ethereum/66f1372eb87f18045db374ec/19c2e64b826f71a5b770d03c3a937b/2119c2e64b826f71a5b770d03c3a937b.png',
+				usd_price: '0.1017850409',
+				decimals: 18,
+				opensea_url:
+					'https://opensea.io/token/ethereum/0x4d224452801aced8b2f0aebe155379bb5d594381',
+			},
 		},
-		{ type: 'nft', nft: { identifier: '1', collection: 'boredapeyachtclub' } },
+		{
+			type: 'token',
+			token: {
+				address: '0x0000000000000000000000000000000000000000',
+				chain: 'ape_chain',
+				name: 'Ape',
+				symbol: 'APE',
+				image_url: 'https://raw2.seadn.io/currency_logos/APE.svg',
+				usd_price: '0.101493',
+				decimals: 18,
+				opensea_url:
+					'https://opensea.io/token/ape_chain/0x0000000000000000000000000000000000000000',
+			},
+		},
 	],
 } as const;
 
