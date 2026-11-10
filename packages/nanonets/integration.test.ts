@@ -48,6 +48,15 @@ afterEach(() => {
 });
 
 describe('Nanonets plugin through createCorsair', () => {
+	// These tests are mocked: a call nobody queued a response for fails
+	// instead of reaching the network. The live smoke block below keeps the
+	// real fetch.
+	beforeEach(() => {
+		fetchMock.mockImplementation(() => {
+			throw new Error('unmocked fetch');
+		});
+	});
+
 	it('fails fast with AuthMissingError when no key is configured', async () => {
 		const { corsair, testDb } = await createClient({});
 		try {

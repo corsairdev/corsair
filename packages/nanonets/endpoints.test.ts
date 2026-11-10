@@ -90,7 +90,10 @@ async function rejectsWith(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		// No test may reach the network: a call nobody queued a response for fails.
+		throw new Error('unmocked fetch');
+	});
 	mockLog.mockClear();
 });
 
