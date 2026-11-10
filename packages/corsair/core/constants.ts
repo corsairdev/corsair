@@ -231,6 +231,7 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
@@ -685,6 +686,7 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
@@ -1143,6 +1145,7 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
