@@ -17,23 +17,8 @@ describe('Nutshell schema', () => {
 		expect(NutshellSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof NutshellSchema.entities).toBe('object');
-		expect(NutshellSchema.entities).not.toBeNull();
-		expect(Object.keys(NutshellSchema.entities)).toEqual([
-			'accounts',
-			'contacts',
-			'leads',
-			'activities',
-			'notes',
-			'tasks',
-			'products',
-			'quotes',
-			'invoices',
-		]);
-		for (const entity of Object.values(NutshellSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares no entities, because no endpoint writes local rows', () => {
+		expect(NutshellSchema.entities).toEqual({});
 	});
 
 	it('registers all 114 current documented REST operations exactly once', () => {

@@ -1,26 +1,7 @@
-import {
-	NutshellAccountEntitySchema,
-	NutshellActivityEntitySchema,
-	NutshellContactEntitySchema,
-	NutshellInvoiceEntitySchema,
-	NutshellLeadEntitySchema,
-	NutshellNoteEntitySchema,
-	NutshellProductEntitySchema,
-	NutshellQuoteEntitySchema,
-	NutshellTaskEntitySchema,
-} from './database';
-
+// The plugin returns live API data and stores nothing locally: no endpoint
+// writes an entity, so none is declared (a declared entity would offer a local
+// search that always comes back empty).
 export const NutshellSchema = {
 	version: '1.0.0',
-	entities: {
-		accounts: NutshellAccountEntitySchema,
-		contacts: NutshellContactEntitySchema,
-		leads: NutshellLeadEntitySchema,
-		activities: NutshellActivityEntitySchema,
-		notes: NutshellNoteEntitySchema,
-		tasks: NutshellTaskEntitySchema,
-		products: NutshellProductEntitySchema,
-		quotes: NutshellQuoteEntitySchema,
-		invoices: NutshellInvoiceEntitySchema,
-	},
+	entities: {},
 } as const;
