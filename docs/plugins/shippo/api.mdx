@@ -341,7 +341,101 @@ await corsair.shippo.api.batches.addShipments({ batch_id: '0f1e2d3c4b5a69788796a
 
 ```ts
 {
-  shipment: string,
+  shipment: string | {
+    address_from: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    address_to: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    address_return?: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    parcels: (
+      {
+        length: string,
+        width: string,
+        height: string,
+        distance_unit: cm | in | ft | m | mm | yd,
+        weight: string,
+        mass_unit: g | kg | lb | oz,
+        metadata?: string,
+        extra?: {
+          insurance?: {
+            amount?: string,
+            content?: string,
+            currency?: string,
+            provider?: FEDEX | UPS | ONTRAC
+          },
+          reference_1?: string,
+          reference_2?: string,
+          COD?: {
+            amount?: string,
+            currency?: string,
+            payment_method?: SECURED_FUNDS | CASH | ANY
+          }
+        }
+      } | string
+    )[],
+    async?: boolean,
+    carrier_accounts?: string[],
+    customs_declaration?: string | Record<string, any>,
+    shipment_date?: string,
+    metadata?: string,
+    extra?: {
+      insurance?: {
+        amount?: string,
+        currency?: string,
+        content?: string,
+        provider?: string
+      },
+      signature_confirmation?: STANDARD | ADULT | CERTIFIED | INDIRECT | CARRIER_CONFIRMATION | NO_SIGNATURE,
+      authority_to_leave?: boolean,
+      bypass_address_validation?: boolean,
+      saturday_delivery?: boolean,
+      use_insured_shipping?: boolean,
+      alcohol?: Record<string, any>
+    }
+  },
   carrier_account?: string,
   servicelevel_token?: string,
   metadata?: string
@@ -384,11 +478,11 @@ await corsair.shippo.api.batches.addShipments({ batch_id: '0f1e2d3c4b5a69788796a
     status?: string | null,
     carrier_account?: string | null,
     servicelevel_token?: string | null,
-    messages?: {
+    messages?: (string | {
       source?: string | null,
       code?: string | null,
       text?: string | null
-    }[] | null,
+    })[] | null,
     metadata?: string | null
   }[] | null
 } | null
@@ -440,7 +534,101 @@ Each shipment needs a carrier and a servicelevel, from the entry or the batch de
 
 ```ts
 {
-  shipment: string,
+  shipment: string | {
+    address_from: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    address_to: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    address_return?: {
+      name?: string,
+      company?: string,
+      street1?: string,
+      street2?: string,
+      street3?: string,
+      street_no?: string,
+      city?: string,
+      state?: string,
+      zip?: string,
+      country: string,
+      phone?: string,
+      email?: string,
+      is_residential?: boolean,
+      metadata?: string
+    } | string,
+    parcels: (
+      {
+        length: string,
+        width: string,
+        height: string,
+        distance_unit: cm | in | ft | m | mm | yd,
+        weight: string,
+        mass_unit: g | kg | lb | oz,
+        metadata?: string,
+        extra?: {
+          insurance?: {
+            amount?: string,
+            content?: string,
+            currency?: string,
+            provider?: FEDEX | UPS | ONTRAC
+          },
+          reference_1?: string,
+          reference_2?: string,
+          COD?: {
+            amount?: string,
+            currency?: string,
+            payment_method?: SECURED_FUNDS | CASH | ANY
+          }
+        }
+      } | string
+    )[],
+    async?: boolean,
+    carrier_accounts?: string[],
+    customs_declaration?: string | Record<string, any>,
+    shipment_date?: string,
+    metadata?: string,
+    extra?: {
+      insurance?: {
+        amount?: string,
+        currency?: string,
+        content?: string,
+        provider?: string
+      },
+      signature_confirmation?: STANDARD | ADULT | CERTIFIED | INDIRECT | CARRIER_CONFIRMATION | NO_SIGNATURE,
+      authority_to_leave?: boolean,
+      bypass_address_validation?: boolean,
+      saturday_delivery?: boolean,
+      use_insured_shipping?: boolean,
+      alcohol?: Record<string, any>
+    }
+  },
   carrier_account?: string,
   servicelevel_token?: string,
   metadata?: string
@@ -483,11 +671,11 @@ Each shipment needs a carrier and a servicelevel, from the entry or the batch de
     status?: string | null,
     carrier_account?: string | null,
     servicelevel_token?: string | null,
-    messages?: {
+    messages?: (string | {
       source?: string | null,
       code?: string | null,
       text?: string | null
-    }[] | null,
+    })[] | null,
     metadata?: string | null
   }[] | null
 } | null
@@ -526,6 +714,8 @@ await corsair.shippo.api.batches.get({ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `batch_id` | `string` | Yes | The batch `object_id`. |
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 
@@ -562,11 +752,11 @@ await corsair.shippo.api.batches.get({ batch_id: '0f1e2d3c4b5a69788796a5b4c3d2e1
     status?: string | null,
     carrier_account?: string | null,
     servicelevel_token?: string | null,
-    messages?: {
+    messages?: (string | {
       source?: string | null,
       code?: string | null,
       text?: string | null
-    }[] | null,
+    })[] | null,
     metadata?: string | null
   }[] | null
 } | null
@@ -643,11 +833,11 @@ Charges once per shipment and answers 202, so the merged label URLs arrive throu
     status?: string | null,
     carrier_account?: string | null,
     servicelevel_token?: string | null,
-    messages?: {
+    messages?: (string | {
       source?: string | null,
       code?: string | null,
       text?: string | null
-    }[] | null,
+    })[] | null,
     metadata?: string | null
   }[] | null
 } | null
@@ -723,11 +913,11 @@ await corsair.shippo.api.batches.removeShipments({ batch_id: '0f1e2d3c4b5a697887
     status?: string | null,
     carrier_account?: string | null,
     servicelevel_token?: string | null,
-    messages?: {
+    messages?: (string | {
       source?: string | null,
       code?: string | null,
       text?: string | null
-    }[] | null,
+    })[] | null,
     metadata?: string | null
   }[] | null
 } | null
@@ -760,7 +950,7 @@ Connect the caller’s own carrier account, with that carrier’s credential set
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.create({ carrier: 'usps', parameters: { account_number: '1234567890' } });
+await corsair.shippo.api.carrierAccounts.create({ carrier: 'fedex', account_id: '321123', parameters: { first_name: 'Shwan', last_name: 'Ippotle', phone_number: '5553419393', from_address_st: '215 Clayton St.', from_address_city: 'San Francisco', from_address_state: 'CA', from_address_zip: '94117', from_address_country_iso2: 'US' } });
 ```
 
 **Input**
@@ -768,6 +958,7 @@ await corsair.shippo.api.carrierAccounts.create({ carrier: 'usps', parameters: {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `carrier` | `string` | Yes | Carrier slug, e.g. `usps`, `fedex`, `ups`, `dhl_express`. |
+| `account_id` | `string` | Yes | Your account number or id with the carrier. Together with `carrier` it identifies the account. |
 | `parameters` | `Record<string, any>` | Yes | Carrier-specific credentials, e.g. `{ account_number: … }`. |
 | `active` | `boolean` | No | Defaults to true. |
 | `metadata` | `string` | No | — |
@@ -873,13 +1064,15 @@ List the carrier accounts on the account. Every call that asks for rates depends
 **Risk:** `read`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.list({ });
+await corsair.shippo.api.carrierAccounts.list({ results: 25 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 
@@ -1005,7 +1198,8 @@ await corsair.shippo.api.carrierAccounts.registrationStatus({ carrier: 'usps' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `carrier_account` | `string \| null` | No | — |
-| `registration_status` | `string \| null` | No | Whether the carrier has approved the account for live rates. |
+| `status` | `string \| null` | No | Registration state, e.g. `PENDING_TERMS`: whether the carrier has approved the account for live rates. |
+| `registration_status` | `string \| null` | No | — |
 | `registration_steps` | `any \| null` | No | — |
 
 
@@ -1021,7 +1215,7 @@ Change a carrier account’s credentials or switch it on or off
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.carrierAccounts.update({ carrier_account_id: '078870331023437cb917f5187429b093', active: false });
+await corsair.shippo.api.carrierAccounts.update({ carrier_account_id: '078870331023437cb917f5187429b093', account_id: '321123', carrier: 'fedex', active: false });
 ```
 
 **Input**
@@ -1029,6 +1223,8 @@ await corsair.shippo.api.carrierAccounts.update({ carrier_account_id: '078870331
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `carrier_account_id` | `string` | Yes | The carrier account to change. |
+| `account_id` | `string` | No | The account’s existing `account_id`. Shippo’s reference lists it as required on an update; it cannot be changed. |
+| `carrier` | `string` | No | The account’s existing carrier slug. Shippo’s reference lists it as required on an update; it cannot be changed. |
 | `parameters` | `Record<string, any>` | No | — |
 | `active` | `boolean` | No | — |
 | `metadata` | `string` | No | — |
@@ -1094,9 +1290,9 @@ await corsair.shippo.api.customsDeclarations.create({ contents_type: 'MERCHANDIS
 | `certify` | `true` | Yes | Must be true: the signer certifies the declaration is accurate. Shippo rejects false. |
 | `certify_signer` | `string` | Yes | — |
 | `items` | `object[]` | Yes | Items to declare, or the `object_id`s of existing customs items. |
-| `incoterm` | `DDP \| DDU` | No | Delivered duty paid or unpaid. |
-| `eel_pfc` | `NOEEI_30_37_a \| NOEEI_30_36 \| AES_ITN` | No | — |
-| `address_importer` | `string` | No | — |
+| `incoterm` | `DDP \| DDU \| FCA \| DAP \| eDAP` | No | `DDP` (duty paid) or `DDU` (duty unpaid); `FCA`, `DAP` and `eDAP` where the carrier supports them. |
+| `eel_pfc` | `NOEEI_30_37_a \| NOEEI_30_37_h \| NOEEI_30_37_f \| NOEEI_30_36 \| AES_ITN` | No | — |
+| `address_importer` | `object \| string` | No | The importer’s address, when it differs from the recipient. |
 | `metadata` | `string` | No | — |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
@@ -1124,6 +1320,28 @@ await corsair.shippo.api.customsDeclarations.create({ contents_type: 'MERCHANDIS
 )[]
 ```
 </Accordion>
+
+<Accordion title="address_importer full type">
+
+```ts
+{
+  name?: string,
+  company?: string,
+  street1?: string,
+  street2?: string,
+  street3?: string,
+  street_no?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  phone?: string,
+  email?: string,
+  is_residential?: boolean,
+  metadata?: string
+} | string
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -1144,8 +1362,8 @@ await corsair.shippo.api.customsDeclarations.create({ contents_type: 'MERCHANDIS
 | `certify_signer` | `string \| null` | No | — |
 | `incoterm` | `string \| null` | No | — |
 | `eel_pfc` | `string \| null` | No | — |
-| `items` | `object[] \| null` | No | — |
-| `address_importer` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | The customs items’ `object_id`s. Read one with `customsItems.get`. |
+| `address_importer` | `string \| null` | No | The importer address `object_id`. |
 | `metadata` | `string \| null` | No | — |
 | `test` | `boolean \| null` | No | — |
 
@@ -1153,7 +1371,7 @@ await corsair.shippo.api.customsDeclarations.create({ contents_type: 'MERCHANDIS
 <Accordion title="items full type">
 
 ```ts
-{
+(string | {
   object_id?: string | null,
   object_owner?: string | null,
   object_created?: string | null,
@@ -1174,7 +1392,7 @@ await corsair.shippo.api.customsDeclarations.create({ contents_type: 'MERCHANDIS
   manufacturer_standard_code?: string | null,
   metadata?: string | null,
   test?: boolean | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1220,8 +1438,8 @@ await corsair.shippo.api.customsDeclarations.get({ customs_declaration_id: 'b3d1
 | `certify_signer` | `string \| null` | No | — |
 | `incoterm` | `string \| null` | No | — |
 | `eel_pfc` | `string \| null` | No | — |
-| `items` | `object[] \| null` | No | — |
-| `address_importer` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | The customs items’ `object_id`s. Read one with `customsItems.get`. |
+| `address_importer` | `string \| null` | No | The importer address `object_id`. |
 | `metadata` | `string \| null` | No | — |
 | `test` | `boolean \| null` | No | — |
 
@@ -1229,7 +1447,7 @@ await corsair.shippo.api.customsDeclarations.get({ customs_declaration_id: 'b3d1
 <Accordion title="items full type">
 
 ```ts
-{
+(string | {
   object_id?: string | null,
   object_owner?: string | null,
   object_created?: string | null,
@@ -1250,7 +1468,7 @@ await corsair.shippo.api.customsDeclarations.get({ customs_declaration_id: 'b3d1
   manufacturer_standard_code?: string | null,
   metadata?: string | null,
   test?: boolean | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1306,7 +1524,7 @@ await corsair.shippo.api.customsDeclarations.list({ results: 10 });
   certify_signer?: string | null,
   incoterm?: string | null,
   eel_pfc?: string | null,
-  items?: {
+  items?: (string | {
     object_id?: string | null,
     object_owner?: string | null,
     object_created?: string | null,
@@ -1327,7 +1545,7 @@ await corsair.shippo.api.customsDeclarations.list({ results: 10 });
     manufacturer_standard_code?: string | null,
     metadata?: string | null,
     test?: boolean | null
-  }[] | null,
+  })[] | null,
   address_importer?: string | null,
   metadata?: string | null,
   test?: boolean | null
@@ -1565,11 +1783,11 @@ await corsair.shippo.api.manifests.create({ carrier_account: '078870331023437cb9
 <Accordion title="errors full type">
 
 ```ts
-{
+(string | {
   source?: string | null,
   code?: string | null,
   text?: string | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1619,11 +1837,11 @@ await corsair.shippo.api.manifests.get({ manifest_id: 'c4e5f60718293a4b5c6d7e8f9
 <Accordion title="errors full type">
 
 ```ts
-{
+(string | {
   source?: string | null,
   code?: string | null,
   text?: string | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1677,11 +1895,11 @@ await corsair.shippo.api.manifests.list({ results: 10 });
   transactions?: string[] | null,
   address_from?: string | null,
   documents?: string[] | null,
-  errors?: {
+  errors?: (string | {
     source?: string | null,
     code?: string | null,
     text?: string | null
-  }[] | null
+  })[] | null
 }[]
 ```
 </Accordion>
@@ -1920,7 +2138,17 @@ await corsair.shippo.api.orders.create({ order_number: '#1068', placed_at: '2026
   object_updated?: string | null,
   object_state?: string | null,
   status?: string | null,
-  rate?: string | null,
+  rate?: string | {
+    object_id?: string | null,
+    amount?: string | null,
+    currency?: string | null,
+    amount_local?: string | null,
+    currency_local?: string | null,
+    provider?: string | null,
+    carrier_account?: string | null,
+    servicelevel_name?: string | null,
+    servicelevel_token?: string | null
+  } | null,
   parcel?: string | null,
   label_url?: string | null,
   commercial_invoice_url?: string | null,
@@ -2105,7 +2333,17 @@ await corsair.shippo.api.orders.get({ order_id: 'adcfdddf8ec64b84ad22772bce3ea37
   object_updated?: string | null,
   object_state?: string | null,
   status?: string | null,
-  rate?: string | null,
+  rate?: string | {
+    object_id?: string | null,
+    amount?: string | null,
+    currency?: string | null,
+    amount_local?: string | null,
+    currency_local?: string | null,
+    provider?: string | null,
+    carrier_account?: string | null,
+    servicelevel_name?: string | null,
+    servicelevel_token?: string | null
+  } | null,
   parcel?: string | null,
   label_url?: string | null,
   commercial_invoice_url?: string | null,
@@ -2155,7 +2393,7 @@ await corsair.shippo.api.orders.list({ results: 10 });
 | `end_date` | `string` | No | Only orders placed at or before this instant. Filtered on `placed_at`. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
-The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing.
+The status filter is sent as one `order_status[]` query parameter per status. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing.
 
 
 
@@ -2278,7 +2516,17 @@ The status filter is sent as `order_status[]`, which Shippo takes as a comma-sep
     object_updated?: string | null,
     object_state?: string | null,
     status?: string | null,
-    rate?: string | null,
+    rate?: string | {
+      object_id?: string | null,
+      amount?: string | null,
+      currency?: string | null,
+      amount_local?: string | null,
+      currency_local?: string | null,
+      provider?: string | null,
+      carrier_account?: string | null,
+      servicelevel_name?: string | null,
+      servicelevel_token?: string | null
+    } | null,
     parcel?: string | null,
     label_url?: string | null,
     commercial_invoice_url?: string | null,
@@ -2390,14 +2638,14 @@ Weight and dimensions are decimal strings, not numbers. Up to four decimal place
     amount?: string | null,
     content?: string | null,
     currency?: string | null,
-    provider?: FEDEX | UPS | ONTRAC | null
+    provider?: string | null
   } | null,
   reference_1?: string | null,
   reference_2?: string | null,
   COD?: {
     amount?: string | null,
     currency?: string | null,
-    payment_method?: SECURED_FUNDS | CASH | ANY | null
+    payment_method?: string | null
   } | null
 } | null
 ```
@@ -2458,14 +2706,14 @@ await corsair.shippo.api.parcels.get({ parcel_id: 'adcfdddf8ec64b84ad22772bce3ea
     amount?: string | null,
     content?: string | null,
     currency?: string | null,
-    provider?: FEDEX | UPS | ONTRAC | null
+    provider?: string | null
   } | null,
   reference_1?: string | null,
   reference_2?: string | null,
   COD?: {
     amount?: string | null,
     currency?: string | null,
-    payment_method?: SECURED_FUNDS | CASH | ANY | null
+    payment_method?: string | null
   } | null
 } | null
 ```
@@ -2528,14 +2776,14 @@ await corsair.shippo.api.parcels.list({ results: 10 });
       amount?: string | null,
       content?: string | null,
       currency?: string | null,
-      provider?: FEDEX | UPS | ONTRAC | null
+      provider?: string | null
     } | null,
     reference_1?: string | null,
     reference_2?: string | null,
     COD?: {
       amount?: string | null,
       currency?: string | null,
-      payment_method?: SECURED_FUNDS | CASH | ANY | null
+      payment_method?: string | null
     } | null
   } | null,
   metadata?: string | null,
@@ -2955,7 +3203,7 @@ Ask a carrier to collect parcels, naming the transactions it covers and a pickup
 **Risk:** `write`
 
 ```ts
-await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917f5187429b093', location: { object_id: 'd799c2679e644279b59fe661ac8fa488' }, transactions: ['915d94940ea54c3a80cbfa328722f5a1'], requested_start_time: '2026-07-21T12:00:00Z', requested_end_time: '2026-07-21T18:00:00Z' });
+await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917f5187429b093', location: { address: { name: 'Shwan Ippotle', street1: '215 Clayton St.', city: 'San Francisco', state: 'CA', zip: '94117', country: 'US' }, building_location_type: 'Front Door' }, transactions: ['915d94940ea54c3a80cbfa328722f5a1'], requested_start_time: '2026-07-21T12:00:00Z', requested_end_time: '2026-07-21T18:00:00Z' });
 ```
 
 **Input**
@@ -2963,11 +3211,10 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `carrier_account` | `string` | Yes | A carrier account allowed to collect; Shippo rejects one that cannot. |
-| `location` | `object` | Yes | — |
+| `location` | `object` | Yes | The pickup location. |
 | `transactions` | `string[]` | Yes | Transactions the pickup covers; Shippo groups them by carrier. |
-| `requested_start_time` | `string` | Yes | ISO 8601; must fall inside the carrier’s pickup window. |
+| `requested_start_time` | `string` | Yes | ISO 8601 with an offset or `Z`; must fall inside the carrier’s pickup window. The request takes no timezone field: the response reports the timezone it used. |
 | `requested_end_time` | `string` | Yes | — |
-| `timezone` | `string` | No | Olson name for the requested times, e.g. `America/New_York`. |
 | `metadata` | `string` | No | — |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
@@ -2976,8 +3223,25 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 
 ```ts
 {
-  object_id: string,
-  building_location_type?: apartment | building | floor | room | suite
+  address: {
+    name: string,
+    company?: string,
+    street1: string,
+    street2?: string,
+    street3?: string,
+    street_no?: string,
+    city: string,
+    state: string,
+    zip: string,
+    country: string,
+    phone?: string,
+    email?: string,
+    is_residential?: boolean,
+    metadata?: string
+  },
+  building_location_type: Back Door | Ring Bell | Security Deck | Shipping Dock | Front Door | Knock on Door | In/At Mailbox | Mail Room | Office | Other | Reception | Side Door,
+  building_type?: apartment | building | department | floor | room | suite,
+  instructions?: string
 }
 ```
 </Accordion>
@@ -2992,7 +3256,7 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 | `object_id` | `string \| null` | No | — |
 | `object_created` | `string \| null` | No | — |
 | `object_updated` | `string \| null` | No | — |
-| `status` | `string \| null` | No | `PENDING`, `CONFIRMED` or `ERROR`. |
+| `status` | `string \| null` | No | `PENDING`, `CONFIRMED`, `ERROR` or `CANCELLED`. |
 | `carrier_account` | `string \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `transactions` | `string[] \| null` | No | — |
@@ -3002,7 +3266,7 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 | `confirmed_end_time` | `string \| null` | No | — |
 | `cancel_by_time` | `string \| null` | No | — |
 | `confirmation_code` | `string \| null` | No | — |
-| `timezone` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | The timezone the requested and confirmed times are in. |
 | `messages` | `object[] \| null` | No | — |
 | `metadata` | `string \| null` | No | — |
 | `is_test` | `boolean \| null` | No | — |
@@ -3012,12 +3276,42 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 
 ```ts
 {
-  object_id?: string | null,
-  city?: string | null,
-  state?: string | null,
-  zip?: string | null,
-  country?: string | null,
-  building_location_type?: string | null
+  address?: {
+    object_id?: string | null,
+    object_owner?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    name?: string | null,
+    company?: string | null,
+    street_no?: string | null,
+    street1?: string | null,
+    street2?: string | null,
+    street3?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null,
+    phone?: string | null,
+    email?: string | null,
+    is_residential?: boolean | null,
+    is_complete?: boolean | null,
+    metadata?: string | null,
+    latitude?: number | string | null,
+    longitude?: number | string | null,
+    validation_results?: {
+      is_valid?: boolean | null,
+      messages?: {
+        source?: string | null,
+        code?: string | null,
+        text?: string | null,
+        type?: string | null
+      }[] | null
+    } | null,
+    test?: boolean | null
+  } | null,
+  building_location_type?: string | null,
+  building_type?: string | null,
+  instructions?: string | null
 } | null
 ```
 </Accordion>
@@ -3025,11 +3319,11 @@ await corsair.shippo.api.pickups.create({ carrier_account: '078870331023437cb917
 <Accordion title="messages full type">
 
 ```ts
-{
+(string | {
   source?: string | null,
   code?: string | null,
   text?: string | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3395,7 +3689,7 @@ Shippo defaults `async` to true, returning before rates exist. Pass `async: fals
     content?: string,
     provider?: string
   },
-  signature_confirmation?: STANDARD | ADULT | INDIRECT | CARRIER_CONFIRMATION | NO_SIGNATURE,
+  signature_confirmation?: STANDARD | ADULT | CERTIFIED | INDIRECT | CARRIER_CONFIRMATION | NO_SIGNATURE,
   authority_to_leave?: boolean,
   bypass_address_validation?: boolean,
   saturday_delivery?: boolean,
@@ -3567,14 +3861,14 @@ Shippo defaults `async` to true, returning before rates exist. Pass `async: fals
       amount?: string | null,
       content?: string | null,
       currency?: string | null,
-      provider?: FEDEX | UPS | ONTRAC | null
+      provider?: string | null
     } | null,
     reference_1?: string | null,
     reference_2?: string | null,
     COD?: {
       amount?: string | null,
       currency?: string | null,
-      payment_method?: SECURED_FUNDS | CASH | ANY | null
+      payment_method?: string | null
     } | null
   } | null,
   metadata?: string | null,
@@ -3823,14 +4117,14 @@ await corsair.shippo.api.shipments.get({ shipment_id: 'adcfdddf8ec64b84ad22772bc
       amount?: string | null,
       content?: string | null,
       currency?: string | null,
-      provider?: FEDEX | UPS | ONTRAC | null
+      provider?: string | null
     } | null,
     reference_1?: string | null,
     reference_2?: string | null,
     COD?: {
       amount?: string | null,
       currency?: string | null,
-      payment_method?: SECURED_FUNDS | CASH | ANY | null
+      payment_method?: string | null
     } | null
   } | null,
   metadata?: string | null,
@@ -4061,14 +4355,14 @@ await corsair.shippo.api.shipments.list({ results: 10 });
         amount?: string | null,
         content?: string | null,
         currency?: string | null,
-        provider?: FEDEX | UPS | ONTRAC | null
+        provider?: string | null
       } | null,
       reference_1?: string | null,
       reference_2?: string | null,
       COD?: {
         amount?: string | null,
         currency?: string | null,
-        payment_method?: SECURED_FUNDS | CASH | ANY | null
+        payment_method?: string | null
       } | null
     } | null,
     metadata?: string | null,
@@ -4147,6 +4441,8 @@ await corsair.shippo.api.shipments.rates({ shipment_id: 'adcfdddf8ec64b84ad22772
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `shipment_id` | `string` | Yes | The shipment `object_id`. |
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 Call this after an async create returned `status: QUEUED` with no rates.
@@ -4229,6 +4525,8 @@ await corsair.shippo.api.shipments.ratesInCurrency({ shipment_id: 'adcfdddf8ec64
 |------|------|----------|-------------|
 | `shipment_id` | `string` | Yes | The shipment `object_id`. |
 | `currency_code` | `string` | Yes | ISO 4217 code to express the amounts in, e.g. `EUR`. |
+| `page` | `number` | No | Page number, starting at 1. Defaults to 1. |
+| `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
 
@@ -4607,7 +4905,7 @@ Spends money on the account's carrier. Pass `async: false` to wait for `label_ur
 | `object_updated` | `string \| null` | No | — |
 | `object_state` | `string \| null` | No | — |
 | `status` | `string \| null` | No | `WAITING`, `QUEUED`, `SUCCESS`, `ERROR`, or a refund state. Only `SUCCESS` carries a `label_url`. |
-| `rate` | `string \| null` | No | The rate `object_id` this label was bought from, not the rate object. Read it with `rates.get`. |
+| `rate` | `string \| object \| null` | No | The rate `object_id` this label was bought from; read it with `rates.get`. A label bought in one call from a shipment carries a short rate object here instead. |
 | `parcel` | `string \| null` | No | — |
 | `label_url` | `string \| null` | No | A signed URL that expires; its `Expires` query parameter is a Unix timestamp. Re-read the transaction rather than retrying an expired link. |
 | `commercial_invoice_url` | `string \| null` | No | — |
@@ -4622,6 +4920,23 @@ Spends money on the account's carrier. Pass `async: false` to wait for `label_ur
 | `test` | `boolean \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="rate full type">
+
+```ts
+string | {
+  object_id?: string | null,
+  amount?: string | null,
+  currency?: string | null,
+  amount_local?: string | null,
+  currency_local?: string | null,
+  provider?: string | null,
+  carrier_account?: string | null,
+  servicelevel_name?: string | null,
+  servicelevel_token?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="messages full type">
 
 ```ts
@@ -4671,7 +4986,7 @@ await corsair.shippo.api.transactions.get({ transaction_id: '915d94940ea54c3a80c
 | `object_updated` | `string \| null` | No | — |
 | `object_state` | `string \| null` | No | — |
 | `status` | `string \| null` | No | `WAITING`, `QUEUED`, `SUCCESS`, `ERROR`, or a refund state. Only `SUCCESS` carries a `label_url`. |
-| `rate` | `string \| null` | No | The rate `object_id` this label was bought from, not the rate object. Read it with `rates.get`. |
+| `rate` | `string \| object \| null` | No | The rate `object_id` this label was bought from; read it with `rates.get`. A label bought in one call from a shipment carries a short rate object here instead. |
 | `parcel` | `string \| null` | No | — |
 | `label_url` | `string \| null` | No | A signed URL that expires; its `Expires` query parameter is a Unix timestamp. Re-read the transaction rather than retrying an expired link. |
 | `commercial_invoice_url` | `string \| null` | No | — |
@@ -4686,6 +5001,23 @@ await corsair.shippo.api.transactions.get({ transaction_id: '915d94940ea54c3a80c
 | `test` | `boolean \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="rate full type">
+
+```ts
+string | {
+  object_id?: string | null,
+  amount?: string | null,
+  currency?: string | null,
+  amount_local?: string | null,
+  currency_local?: string | null,
+  provider?: string | null,
+  carrier_account?: string | null,
+  servicelevel_name?: string | null,
+  servicelevel_token?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="messages full type">
 
 ```ts
@@ -4750,7 +5082,17 @@ await corsair.shippo.api.transactions.list({ results: 10 });
   object_updated?: string | null,
   object_state?: string | null,
   status?: string | null,
-  rate?: string | null,
+  rate?: string | {
+    object_id?: string | null,
+    amount?: string | null,
+    currency?: string | null,
+    amount_local?: string | null,
+    currency_local?: string | null,
+    provider?: string | null,
+    carrier_account?: string | null,
+    servicelevel_name?: string | null,
+    servicelevel_token?: string | null
+  } | null,
   parcel?: string | null,
   label_url?: string | null,
   commercial_invoice_url?: string | null,

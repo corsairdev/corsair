@@ -141,7 +141,17 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
   object_updated?: string | null,
   object_state?: string | null,
   status?: string | null,
-  rate?: string | null,
+  rate?: string | {
+    object_id?: string | null,
+    amount?: string | null,
+    currency?: string | null,
+    amount_local?: string | null,
+    currency_local?: string | null,
+    provider?: string | null,
+    carrier_account?: string | null,
+    servicelevel_name?: string | null,
+    servicelevel_token?: string | null
+  } | null,
   parcel?: string | null,
   label_url?: string | null,
   commercial_invoice_url?: string | null,
@@ -179,11 +189,11 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
       status?: string | null,
       carrier_account?: string | null,
       servicelevel_token?: string | null,
-      messages?: {
+      messages?: (string | {
         source?: string | null,
         code?: string | null,
         text?: string | null
-      }[] | null,
+      })[] | null,
       metadata?: string | null
     }[] | null
   } | null,
@@ -282,7 +292,17 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
     object_updated?: string | null,
     object_state?: string | null,
     status?: string | null,
-    rate?: string | null,
+    rate?: string | {
+      object_id?: string | null,
+      amount?: string | null,
+      currency?: string | null,
+      amount_local?: string | null,
+      currency_local?: string | null,
+      provider?: string | null,
+      carrier_account?: string | null,
+      servicelevel_name?: string | null,
+      servicelevel_token?: string | null
+    } | null,
     parcel?: string | null,
     label_url?: string | null,
     commercial_invoice_url?: string | null,
@@ -320,11 +340,11 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
         status?: string | null,
         carrier_account?: string | null,
         servicelevel_token?: string | null,
-        messages?: {
+        messages?: (string | {
           source?: string | null,
           code?: string | null,
           text?: string | null
-        }[] | null,
+        })[] | null,
         metadata?: string | null
       }[] | null
     } | null,
