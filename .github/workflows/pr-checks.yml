@@ -122,6 +122,7 @@ jobs:
       - name: Test review scripts
         run: >-
           node --experimental-strip-types --test
+          scripts/catalog-bot.test.mjs
           scripts/pr-review/gate.test.ts
           scripts/pr-review/loop.test.ts
           scripts/release-changelog.test.mjs
