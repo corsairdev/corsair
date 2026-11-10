@@ -1,0 +1,151 @@
+---
+title: Overview
+description: "Read collections, NFTs, listings, offers and marketplace events, and search OpenSea's catalogue."
+---
+
+Use **OpenSea** through Corsair: one client, typed API calls.
+
+OpenSea uses an `x-api-key` header. Create a key at
+[docs.opensea.io](https://docs.opensea.io/reference/api-keys) from a signed-in
+account, then save it for the `opensea` integration. Every marketplace route
+requires it: a request with no key answers 401 and
+`{"errors":["Missing an API Key, ..."]}`.
+
+Every `chain` argument takes a slug from `chains.list`, such as `ethereum` or
+`base`. The set is closed, so a value outside it is refused before the request
+is sent.
+
+`collections.list` also accepts a `chain` filter, but the generator renders an
+enum unquoted, so that one is named here rather than in the example.
+
+Paged routes take a `next` cursor and return it back. Pass the previous
+response's `next` as this call's `next`; it is `null` on the last page.
+
+`traits.list` answers the trait names on a collection and the type of each
+value, not the values themselves. To select NFTs by trait, pass
+`collection.nfts` a `traits` filter as `trait_type:value`, with several joined
+by commas.
+
+Prices arrive as base-unit strings. An 18-decimal wei amount such as
+`"5900000000000000000"` does not fit a JavaScript number, so the value stays a
+string and `decimals` tells you where to put the point.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/opensea better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/opensea better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/opensea better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/opensea better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { opensea } from '@corsair-dev/opensea';
+
+export const corsair = createCorsair({
+	plugins: [
+		opensea(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required up front. Store the key for the account before the first call: a request with no saved key throws `AuthMissingError` rather than prompting, and the error carries a `connectUrl` when a Connect link can be minted.
+
+```ts
+opensea()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'opensea',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read one collection**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.opensea.api.collections.get({ slug: 'boredapeyachtclub' });
+```
+
+
+**List collections, ten at a time**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.opensea.api.collections.list({ limit: 10 });
+```
+
+
+See the full list on the [API](/plugins/opensea/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/opensea/api">
+    Every `opensea.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

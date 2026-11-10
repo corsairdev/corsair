@@ -1,0 +1,43 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "OpenSea"
+description: "Read collections, NFTs, listings, offers and marketplace events, and search OpenSea's catalogue."
+domain: "opensea.io"
+recommendedAuth: "api_key"
+overviewNote: |-
+  OpenSea uses an `x-api-key` header. Create a key at
+  [docs.opensea.io](https://docs.opensea.io/reference/api-keys) from a signed-in
+  account, then save it for the `opensea` integration. Every marketplace route
+  requires it: a request with no key answers 401 and
+  `{"errors":["Missing an API Key, ..."]}`.
+
+  Every `chain` argument takes a slug from `chains.list`, such as `ethereum` or
+  `base`. The set is closed, so a value outside it is refused before the request
+  is sent.
+
+  `collections.list` also accepts a `chain` filter, but the generator renders an
+  enum unquoted, so that one is named here rather than in the example.
+
+  Paged routes take a `next` cursor and return it back. Pass the previous
+  response's `next` as this call's `next`; it is `null` on the last page.
+
+  `traits.list` answers the trait names on a collection and the type of each
+  value, not the values themselves. To select NFTs by trait, pass
+  `collection.nfts` a `traits` filter as `trait_type:value`, with several joined
+  by commas.
+
+  Prices arrive as base-unit strings. An 18-decimal wei amount such as
+  `"5900000000000000000"` does not fit a JavaScript number, so the value stays a
+  string and `decimals` tells you where to put the point.
+examples:
+  read:
+    path: collections.get
+    title: Read one collection
+    args:
+      slug: "boredapeyachtclub"
+  write:
+    path: collections.list
+    title: List collections, ten at a time
+    args:
+      limit: 10
+apiNotes:
+  search.search: "Each result carries a `type` and one payload key. Branch on `type` before reading the rest."
