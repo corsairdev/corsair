@@ -10,9 +10,8 @@
  * actually receives, so a field typed wrongly would pass here and throw for a
  * user on a successful call.
  *
- * The calls are kept to three reads: the free plan allows one request at a time
- * and a small monthly allowance, and each scrape spends credits (10 for the
- * documented defaults).
+ * Each call sends `browser: false`, which costs 1 credit instead of 10, and the
+ * five operations together spend about 15 credits.
  */
 import { makeScrapingAntRequest, parseJsonObject } from './client';
 import { ScrapingAntEndpointOutputSchemas as Outputs } from './endpoints/types';
@@ -25,6 +24,11 @@ if (!API_KEY) {
 		'scrapingant live smoke skipped: set SCRAPINGANT_API_KEY to run it',
 	);
 }
+
+// example.com has been reduced to a single paragraph with no heading, so the
+// assertions below check for its actual text rather than a Markdown heading.
+const PAGE = 'https://example.com/';
+const PAGE_TEXT = 'This domain is for use in documentation examples';
 
 describeIfKey('live ScrapingAnt API', () => {
 	const key = API_KEY ?? '';
@@ -39,9 +43,9 @@ describeIfKey('live ScrapingAnt API', () => {
 		expect(result.start_date).toMatch(/^\d{4}-\d{2}-\d{2}T/);
 	});
 
-	it('scrapes a page as HTML with its target status', async () => {
+	it('scrapes a page as HTML with its target status and cost', async () => {
 		const raw = await makeScrapingAntRequest(key, '/v2/general', {
-			query: { url: 'https://example.com/', browser: false },
+			query: { url: PAGE, browser: false },
 		});
 		const result = Outputs.scrapeHtml.parse({
 			html: raw.body,
@@ -49,22 +53,59 @@ describeIfKey('live ScrapingAnt API', () => {
 			credits_cost: raw.creditsCost,
 		});
 
-		expect(result.html).toContain('Example Domain');
+		expect(result.html).toContain(PAGE_TEXT);
 		expect(result.page_status).toBe(200);
+		// A plain fetch with no browser is the documented 1-credit case.
+		expect(result.credits_cost).toBe(1);
 	});
 
 	it('scrapes a page as Markdown', async () => {
 		const raw = await makeScrapingAntRequest(key, '/v2/markdown', {
-			query: { url: 'https://example.com/', browser: false },
+			query: { url: PAGE, browser: false },
 		});
-		// parseJsonObject narrows the body to the object the envelope is before
-		// the output schema types each field.
 		const result = Outputs.scrapeMarkdown.parse({
 			...parseJsonObject(raw),
 			credits_cost: raw.creditsCost,
 		});
 
-		expect(result.markdown).toContain('#');
+		expect(result.markdown).toContain(PAGE_TEXT);
 		expect(result.url).toContain('example.com');
+	});
+
+	it('reads the extended envelope with the target status in its body', async () => {
+		const raw = await makeScrapingAntRequest(key, '/v2/extended', {
+			query: { url: PAGE, browser: false },
+		});
+		const result = Outputs.scrapeExtended.parse({
+			...parseJsonObject(raw),
+			credits_cost: raw.creditsCost,
+		});
+
+		expect(result.html).toContain(PAGE_TEXT);
+		expect(result.text).toContain(PAGE_TEXT);
+		// The status is a JSON field here; this route sends no
+		// Ant-page-status-code header, which is why the schema reads the body.
+		expect(result.status_code).toBe(200);
+		expect(Array.isArray(result.headers)).toBe(true);
+		// cookies is an empty string for a page that sets none, not null.
+		expect(typeof result.cookies).toBe('string');
+		// Without the browser both arrays arrive empty rather than absent.
+		expect(result.xhrs).toEqual([]);
+		expect(result.iframes).toEqual([]);
+	});
+
+	it('extracts requested properties as a JSON object', async () => {
+		const raw = await makeScrapingAntRequest(key, '/v2/extract', {
+			query: {
+				url: PAGE,
+				extract_properties: 'content',
+				browser: false,
+			},
+		});
+		const result = Outputs.extractData.parse(parseJsonObject(raw));
+
+		// The key is the requested property name, and the value is its text.
+		expect(typeof result.content).toBe('string');
+		expect(String(result.content)).toContain(PAGE_TEXT);
 	});
 });
