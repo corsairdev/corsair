@@ -26,8 +26,15 @@ permissions:
   contents: read
 
 # Each run rebuilds from the newest main, so a newer one replaces an older one.
+# A release commit's run is skipped by the job's `if` below, so it gets a group
+# of its own: in the shared group it cancelled the plugin merge's run before it
+# and then built nothing, leaving that merge out of the catalog.
 concurrency:
-  group: catalog-bot
+  group: >-
+    ${{ github.event_name == 'push' &&
+    startsWith(github.event.head_commit.message, 'chore(release):') &&
+    github.event.head_commit.author.email == '353438335+corsair-releases[bot]@users.noreply.github.com' &&
+    format('catalog-bot-release-{0}', github.sha) || 'catalog-bot' }}
   cancel-in-progress: true
 
 jobs:

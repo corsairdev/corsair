@@ -1,0 +1,2258 @@
+{
+  "id": "taggun",
+  "displayName": "Taggun",
+  "description": "Scan receipts and invoices into structured data with Taggun's OCR API, and validate them against campaign rules or rules sent with the request.",
+  "npmPackageName": "@corsair-dev/taggun",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "taggun.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Store a new set of validation rules under a campaign ID you choose; rejected if that ID already exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ date?: { start: string, end: string }, merchantNames?: { skip?: boolean, allowList?: string[], blockList?: string[], list?: string[], returnFromTheList?: boolean }, productCodes?: { skip?: boolean, description?: string | null, list?: string[] }, productLineItems?: { skip?: boolean, names?: string[], totalPrice?: { min?: number, max?: number }, quantity?: { min?: number, max?: number }, shouldMatchAbbreviations?: boolean }, balanceOwing?: { skip?: boolean, max: number }, fraudDetection?: { skip?: boolean, allowSimilarityCheck?: boolean, allowTamperDetection?: boolean, allowDigitalDetection?: boolean, allowHandwritingDetection?: boolean }, smartValidate?: { prompts: { question: string, example: Record<string, boolean>, skip?: boolean }[] } }",
+            "description": "Validation rules for the campaign. At least one section should be present: a campaign with no sections checks nothing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Remove a campaign's validation rules permanently; later submissions against that campaign cannot evaluate them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one campaign's stored validation rules; sections with no rules may be omitted from the answer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ start: string, end: string }",
+            "description": "Receipt date window; both bounds are required when supplied."
+          },
+          {
+            "key": "merchantNames",
+            "optional": true,
+            "type": "{ skip?: boolean, allowList?: string[], blockList?: string[], list?: string[], returnFromTheList?: boolean }"
+          },
+          {
+            "key": "productCodes",
+            "optional": true,
+            "type": "{ skip?: boolean, description?: string | null, list?: string[] }"
+          },
+          {
+            "key": "productLineItems",
+            "optional": true,
+            "type": "{ skip?: boolean, names?: string[], totalPrice?: { min?: number, max?: number }, quantity?: { min?: number, max?: number }, shouldMatchAbbreviations?: boolean }"
+          },
+          {
+            "key": "balanceOwing",
+            "optional": true,
+            "type": "{ skip?: boolean, max: number }"
+          },
+          {
+            "key": "fraudDetection",
+            "optional": true,
+            "type": "{ skip?: boolean, allowSimilarityCheck?: boolean, allowTamperDetection?: boolean, allowDigitalDetection?: boolean, allowHandwritingDetection?: boolean }"
+          },
+          {
+            "key": "smartValidate",
+            "optional": true,
+            "type": "{ prompts: { question: string, example: Record<string, boolean>, skip?: boolean }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List the campaign IDs that have validation settings stored on the account; needs the Campaign Validation feature",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Replace a campaign's stored validation rules wholesale: every section left out is removed, so re-send the response from `campaigns.get` with your changes",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ date?: { start: string, end: string }, merchantNames?: { skip?: boolean, allowList?: string[], blockList?: string[], list?: string[], returnFromTheList?: boolean }, productCodes?: { skip?: boolean, description?: string | null, list?: string[] }, productLineItems?: { skip?: boolean, names?: string[], totalPrice?: { min?: number, max?: number }, quantity?: { min?: number, max?: number }, shouldMatchAbbreviations?: boolean }, balanceOwing?: { skip?: boolean, max: number }, fraudDetection?: { skip?: boolean, allowSimilarityCheck?: boolean, allowTamperDetection?: boolean, allowDigitalDetection?: boolean, allowHandwritingDetection?: boolean }, smartValidate?: { prompts: { question: string, example: Record<string, boolean>, skip?: boolean }[] } }",
+            "description": "Replaces the stored settings wholesale: every section left out is removed from the campaign."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.validateFile",
+      "shortPath": "campaigns.validateFile",
+      "description": "Check an uploaded receipt against a campaign's stored rules and return pass/fail per rule; a failed rule is a successful call reporting `successful: false`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom",
+            "description": "The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean",
+            "description": "True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error."
+          },
+          {
+            "key": "failedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that failed."
+          },
+          {
+            "key": "passedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that passed."
+          },
+          {
+            "key": "productLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | { data?: { name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "matchedProductLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[]",
+            "description": "Items matched by the campaign rules."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "productCodes",
+            "optional": true,
+            "type": "string[] | { data?: string[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "balanceAmount",
+            "optional": true,
+            "type": "number | { data?: number | null, valid?: boolean, expected?: any, confidenceLevel?: number } | null",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "smartValidate",
+            "optional": true,
+            "type": "Record<string, boolean | { data?: boolean | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Boolean answer per configured SmartValidate prompt."
+          },
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiptNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoiceNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "purchaseOrderNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "similarReceipts",
+            "optional": true,
+            "type": "{ referenceId?: string | null, userId?: string | null, trackingId?: string, similarityScore?: number }[]"
+          },
+          {
+            "key": "tamperDetection",
+            "optional": true,
+            "type": "{ isTampered?: boolean, tamperedScore?: number }"
+          },
+          {
+            "key": "digitalDetection",
+            "optional": true,
+            "type": "{ data?: { isDigital?: boolean, digitalScore?: number } }"
+          },
+          {
+            "key": "fraudDetection",
+            "optional": true,
+            "type": "Record<string, any | { data?: any | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.campaigns.validateUrl",
+      "shortPath": "campaigns.validateUrl",
+      "description": "Check a receipt at an HTTPS URL against a campaign's stored rules; a failed rule is a successful call reporting `successful: false`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign ID, your choice, maximum 50 characters."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers to forward when fetching a protected HTTPS URL the document is hosted at."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean",
+            "description": "True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error."
+          },
+          {
+            "key": "failedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that failed."
+          },
+          {
+            "key": "passedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that passed."
+          },
+          {
+            "key": "productLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | { data?: { name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "matchedProductLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[]",
+            "description": "Items matched by the campaign rules."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "productCodes",
+            "optional": true,
+            "type": "string[] | { data?: string[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "balanceAmount",
+            "optional": true,
+            "type": "number | { data?: number | null, valid?: boolean, expected?: any, confidenceLevel?: number } | null",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "smartValidate",
+            "optional": true,
+            "type": "Record<string, boolean | { data?: boolean | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Boolean answer per configured SmartValidate prompt."
+          },
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiptNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoiceNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "purchaseOrderNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "similarReceipts",
+            "optional": true,
+            "type": "{ referenceId?: string | null, userId?: string | null, trackingId?: string, similarityScore?: number }[]"
+          },
+          {
+            "key": "tamperDetection",
+            "optional": true,
+            "type": "{ isTampered?: boolean, tamperedScore?: number }"
+          },
+          {
+            "key": "digitalDetection",
+            "optional": true,
+            "type": "{ data?: { isDigital?: boolean, digitalScore?: number } }"
+          },
+          {
+            "key": "fraudDetection",
+            "optional": true,
+            "type": "Record<string, any | { data?: any | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.receiptValidation.file",
+      "shortPath": "receiptValidation.file",
+      "description": "Check an uploaded receipt against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom",
+            "description": "The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`."
+          },
+          {
+            "key": "validation",
+            "optional": false,
+            "type": "{ date?: { start: string, end: string, required?: boolean }, merchantName?: { allowed?: string[], blocked?: string[], returnFromTheList?: boolean, required?: boolean }, merchantAddress?: { value: string, confidenceThreshold?: number, required?: boolean }, productCodes?: { description?: string, allowed?: string[], required?: boolean }, serialNumber?: { value: string, required?: boolean }, balanceOwing?: { max: number, required?: boolean }, productLineItems?: { products: { names?: string[], sku?: { allowed: string[] }, modelNumber?: { allowed: string[] }, unitPrice?: { min?: number, max?: number }, totalPrice?: { min?: number, max?: number }, quantity?: { min?: number, max?: number }, shouldMatchAbbreviations?: boolean }[], required?: boolean }, fraudDetection?: { similarityCheck?: { enabled: boolean, required?: boolean }, tamperDetection?: { enabled: boolean, required?: boolean }, handwritingDetection?: { enabled: boolean, required?: boolean }, digitalDetection?: { enabled: boolean, required?: boolean } }, smartValidate?: { prompts: { question: string, example: Record<string, boolean>, skip?: boolean }[] } }",
+            "description": "Rules for this request; nothing is stored."
+          },
+          {
+            "key": "additionalExtractionFields",
+            "optional": true,
+            "type": "modelNumber[]",
+            "description": "Extra fields to expose on extracted objects. Only `modelNumber` is supported."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of the account. Up to 100 characters on receipt-validation requests."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean",
+            "description": "True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error."
+          },
+          {
+            "key": "failedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that failed."
+          },
+          {
+            "key": "passedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that passed."
+          },
+          {
+            "key": "productLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | { data?: { name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "matchedProductLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[]",
+            "description": "Items matched by the campaign rules."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "productCodes",
+            "optional": true,
+            "type": "string[] | { data?: string[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "balanceAmount",
+            "optional": true,
+            "type": "number | { data?: number | null, valid?: boolean, expected?: any, confidenceLevel?: number } | null",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "smartValidate",
+            "optional": true,
+            "type": "Record<string, boolean | { data?: boolean | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Boolean answer per configured SmartValidate prompt."
+          },
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiptNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoiceNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "purchaseOrderNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "similarReceipts",
+            "optional": true,
+            "type": "{ referenceId?: string | null, userId?: string | null, trackingId?: string, similarityScore?: number }[]"
+          },
+          {
+            "key": "tamperDetection",
+            "optional": true,
+            "type": "{ isTampered?: boolean, tamperedScore?: number }"
+          },
+          {
+            "key": "digitalDetection",
+            "optional": true,
+            "type": "{ data?: { isDigital?: boolean, digitalScore?: number } }"
+          },
+          {
+            "key": "fraudDetection",
+            "optional": true,
+            "type": "Record<string, any | { data?: any | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.receiptValidation.url",
+      "shortPath": "receiptValidation.url",
+      "description": "Check a receipt at an HTTPS URL against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers to forward when fetching a protected HTTPS URL the document is hosted at."
+          },
+          {
+            "key": "validation",
+            "optional": false,
+            "type": "{ date?: { start: string, end: string, required?: boolean }, merchantName?: { allowed?: string[], blocked?: string[], returnFromTheList?: boolean, required?: boolean }, merchantAddress?: { value: string, confidenceThreshold?: number, required?: boolean }, productCodes?: { description?: string, allowed?: string[], required?: boolean }, serialNumber?: { value: string, required?: boolean }, balanceOwing?: { max: number, required?: boolean }, productLineItems?: { products: { names?: string[], sku?: { allowed: string[] }, modelNumber?: { allowed: string[] }, unitPrice?: { min?: number, max?: number }, totalPrice?: { min?: number, max?: number }, quantity?: { min?: number, max?: number }, shouldMatchAbbreviations?: boolean }[], required?: boolean }, fraudDetection?: { similarityCheck?: { enabled: boolean, required?: boolean }, tamperDetection?: { enabled: boolean, required?: boolean }, handwritingDetection?: { enabled: boolean, required?: boolean }, digitalDetection?: { enabled: boolean, required?: boolean } }, smartValidate?: { prompts: { question: string, example: Record<string, boolean>, skip?: boolean }[] } }",
+            "description": "Rules for this request; nothing is stored."
+          },
+          {
+            "key": "additionalExtractionFields",
+            "optional": true,
+            "type": "modelNumber[]",
+            "description": "Extra fields to expose on extracted objects. Only `modelNumber` is supported."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "Caller-supplied identifier, maximum 50 characters."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of the account. Up to 100 characters on receipt-validation requests."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successful",
+            "optional": false,
+            "type": "boolean",
+            "description": "True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error."
+          },
+          {
+            "key": "failedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that failed."
+          },
+          {
+            "key": "passedValidations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Validation keys that passed."
+          },
+          {
+            "key": "productLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | { data?: { name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "matchedProductLineItems",
+            "optional": true,
+            "type": "{ name?: string, unitPrice?: number, totalPrice?: number, quantity?: number }[]",
+            "description": "Items matched by the campaign rules."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "productCodes",
+            "optional": true,
+            "type": "string[] | { data?: string[] | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | { data?: string | null, valid?: boolean, expected?: any, confidenceLevel?: number }",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "balanceAmount",
+            "optional": true,
+            "type": "number | { data?: number | null, valid?: boolean, expected?: any, confidenceLevel?: number } | null",
+            "description": "The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict."
+          },
+          {
+            "key": "smartValidate",
+            "optional": true,
+            "type": "Record<string, boolean | { data?: boolean | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Boolean answer per configured SmartValidate prompt."
+          },
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiptNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoiceNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "purchaseOrderNumber",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "similarReceipts",
+            "optional": true,
+            "type": "{ referenceId?: string | null, userId?: string | null, trackingId?: string, similarityScore?: number }[]"
+          },
+          {
+            "key": "tamperDetection",
+            "optional": true,
+            "type": "{ isTampered?: boolean, tamperedScore?: number }"
+          },
+          {
+            "key": "digitalDetection",
+            "optional": true,
+            "type": "{ data?: { isDigital?: boolean, digitalScore?: number } }"
+          },
+          {
+            "key": "fraudDetection",
+            "optional": true,
+            "type": "Record<string, any | { data?: any | null, valid?: boolean, expected?: any, confidenceLevel?: number }>",
+            "description": "Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.simple.encoded",
+      "shortPath": "simple.encoded",
+      "description": "Scan a base64-encoded receipt or invoice and return the four core fields; each call is one billable scan",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded file content. The field is named `image` for legacy reasons but accepts any supported type, including PDF."
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "File name, used to tell Taggun the document type."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "File content type, for example `image/jpeg` or `application/pdf`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.simple.file",
+      "shortPath": "simple.file",
+      "description": "Scan an uploaded receipt or invoice file and return the four core fields; each call is one billable scan",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom",
+            "description": "The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.simple.url",
+      "shortPath": "simple.url",
+      "description": "Scan a receipt at an HTTPS URL and return the four core fields with confidence levels; each call is one billable scan and the receipt is stored unless `incognito` is set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers to forward when fetching a protected HTTPS URL the document is hosted at."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.verbose.encoded",
+      "shortPath": "verbose.encoded",
+      "description": "Scan a base64-encoded receipt or invoice and return the full extraction, including product line items unless `extractLineItems` is false",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded file content. The field is named `image` for legacy reasons but accepts any supported type, including PDF."
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "File name, used to tell Taggun the document type."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "File content type, for example `image/jpeg` or `application/pdf`."
+          },
+          {
+            "key": "extractLineItems",
+            "optional": true,
+            "type": "boolean",
+            "description": "Extract product line items; Taggun defaults this to true."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paidAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paymentType",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTaxId",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ text?: string, regions?: { x: number, y: number }[] | { x: number, y: number }[][] }"
+          },
+          {
+            "key": "amounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "lineAmounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "numbers",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ productLineItems?: { data?: { quantity?: { data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, unitPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, totalPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, name?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, sku?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, itemNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, discountAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number, regions?: { x: number, y: number }[][] }[], multiTaxLineItems?: { data?: { taxAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, netAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, grossAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxRate?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number }[], invoiceNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, receiptNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, purchaseOrderNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, last4?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, masterCategory?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, expenseType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, merchantVerification?: { verificationId?: string, countryCode?: string, vatNo?: string, vies?: { valid?: boolean, name?: string, address?: string } }, qrCodeData?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "{ data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string",
+            "description": "Taggun tracking ID; quote it in support requests."
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elapsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ city?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, continent?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, registered_country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, subdivisions?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }[], postal?: { code?: string }, location?: { accuracy_radius?: number, latitude?: number, longitude?: number, time_zone?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.verbose.file",
+      "shortPath": "verbose.file",
+      "description": "Scan an uploaded receipt or invoice file and return the full extraction, including product line items unless `extractLineItems` is false",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom",
+            "description": "The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`."
+          },
+          {
+            "key": "extractLineItems",
+            "optional": true,
+            "type": "boolean",
+            "description": "Extract product line items; Taggun defaults this to true."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paidAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paymentType",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTaxId",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ text?: string, regions?: { x: number, y: number }[] | { x: number, y: number }[][] }"
+          },
+          {
+            "key": "amounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "lineAmounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "numbers",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ productLineItems?: { data?: { quantity?: { data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, unitPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, totalPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, name?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, sku?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, itemNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, discountAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number, regions?: { x: number, y: number }[][] }[], multiTaxLineItems?: { data?: { taxAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, netAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, grossAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxRate?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number }[], invoiceNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, receiptNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, purchaseOrderNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, last4?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, masterCategory?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, expenseType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, merchantVerification?: { verificationId?: string, countryCode?: string, vatNo?: string, vies?: { valid?: boolean, name?: string, address?: string } }, qrCodeData?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "{ data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string",
+            "description": "Taggun tracking ID; quote it in support requests."
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elapsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ city?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, continent?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, registered_country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, subdivisions?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }[], postal?: { code?: string }, location?: { accuracy_radius?: number, latitude?: number, longitude?: number, time_zone?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taggun.api.verbose.url",
+      "shortPath": "verbose.url",
+      "description": "Scan a receipt at an HTTPS URL and return the full extraction: line items, text, helper arrays, per-field confidence and enabled feature blocks",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Headers to forward when fetching a protected HTTPS URL the document is hosted at."
+          },
+          {
+            "key": "extractLineItems",
+            "optional": true,
+            "type": "boolean",
+            "description": "Extract product line items. Taggun defaults this to true; false is faster and omits `entities.productLineItems`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on."
+          },
+          {
+            "key": "near",
+            "optional": true,
+            "type": "string",
+            "description": "A location to help merchant search, typically city, state, country."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "End user IP address, used for a GeoIP lookup."
+          },
+          {
+            "key": "ignoreMerchantName",
+            "optional": true,
+            "type": "string",
+            "description": "Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force reprocessing when the receipt is already stored. Costs a scan either way."
+          },
+          {
+            "key": "incognito",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not store the receipt: Taggun's per-request storage opt-out."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "End-user identifier; duplicate checks compare across users with this."
+          },
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide."
+          },
+          {
+            "key": "subAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "Attribute usage to a subdivision of your account for reporting."
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this submission, used by similarity checks and feedback."
+          },
+          {
+            "key": "extractTime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "confidenceLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantName",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantAddress",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCity",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantState",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantCountryCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantPostalCode",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTypes",
+            "optional": true,
+            "type": "{ data?: string[], confidenceLevel?: number }"
+          },
+          {
+            "key": "discountAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paidAmount",
+            "optional": true,
+            "type": "{ data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "paymentType",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "merchantTaxId",
+            "optional": true,
+            "type": "{ data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ text?: string, regions?: { x: number, y: number }[] | { x: number, y: number }[][] }"
+          },
+          {
+            "key": "amounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "lineAmounts",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "numbers",
+            "optional": true,
+            "type": "{ data?: number, text?: string, index?: number, classifyResult?: string, regions?: { x: number, y: number }[][] }[]"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ productLineItems?: { data?: { quantity?: { data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, unitPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, totalPrice?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, name?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, sku?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, itemNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, discountAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number, regions?: { x: number, y: number }[][] }[], multiTaxLineItems?: { data?: { taxAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, netAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, grossAmount?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxRate?: { data?: number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, taxType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }, confidenceLevel?: number, text?: string, index?: number }[], invoiceNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, receiptNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, purchaseOrderNumber?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, last4?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, category?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, masterCategory?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, expenseType?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }, merchantVerification?: { verificationId?: string, countryCode?: string, vatNo?: string, vies?: { valid?: boolean, name?: string, address?: string } }, qrCodeData?: { data?: string, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] } }"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "{ data?: string | number, confidenceLevel?: number, text?: string, index?: number, keyword?: string, currencyCode?: string, regions?: { x: number, y: number }[][] }"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string",
+            "description": "Taggun tracking ID; quote it in support requests."
+          },
+          {
+            "key": "targetRotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elapsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ city?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, continent?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, registered_country?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }, subdivisions?: { geoname_id?: number, iso_code?: string, code?: string, names?: Record<string, string> }[], postal?: { code?: string }, location?: { accuracy_radius?: number, latitude?: number, longitude?: number, time_zone?: string } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
