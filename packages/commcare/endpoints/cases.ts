@@ -1,10 +1,32 @@
+import { asRecord } from 'corsair/core';
 import type { CommCareEndpoints } from '..';
-import { segment } from '../client';
+import { COMMCARE_API_BASE, segment } from '../client';
 import { call } from './call';
 import {
 	CommCareEndpointInputSchemas as Inputs,
 	CommCareEndpointOutputSchemas as Outputs,
 } from './types';
+
+// The v2 list pages by cursor: `next` is a full URL whose `cursor` value is
+// base64 and URL-encoded. Hand the decoded value back as `nextCursor` so a
+// caller passes it straight to `cursor` instead of re-encoding the link text.
+// unknown: the raw body is untyped until the output schema validates it.
+function withNextCursor(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record) return raw;
+	const next = typeof record.next === 'string' ? record.next : undefined;
+	let nextCursor: string | undefined;
+	if (next) {
+		try {
+			nextCursor =
+				new URL(next, COMMCARE_API_BASE).searchParams.get('cursor') ??
+				undefined;
+		} catch {
+			nextCursor = undefined;
+		}
+	}
+	return { ...record, nextCursor };
+}
 
 export const list: CommCareEndpoints['casesList'] = (ctx, input) =>
 	call(
@@ -45,6 +67,7 @@ export const list: CommCareEndpoints['casesList'] = (ctx, input) =>
 			replaySafe: true,
 		}),
 		{
+			shape: withNextCursor,
 			log: (_, result) => ({
 				count: result.cases.length,
 				matchingRecords: result.matching_records ?? undefined,

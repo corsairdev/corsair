@@ -97,6 +97,9 @@ export const CommCareCaseListSchema = z
 		cases: z.array(CommCareCaseSchema),
 		// Follow-next cursor link for the next page of results.
 		next: z.string().nullish(),
+		// cases.list only: the `cursor` value from `next`, decoded; pass it as
+		// `cursor` for the next page. Absent on the last page.
+		nextCursor: z.string().nullish(),
 	})
 	.loose();
 
@@ -363,7 +366,7 @@ const CasesListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			"Cursor from the previous page's `next` link; omit for the oldest page.",
+			"`nextCursor` from the previous page; omit for the oldest page. The cursor carries the first page's filters, so filters sent with it are ignored.",
 		),
 	limit: z
 		.number()

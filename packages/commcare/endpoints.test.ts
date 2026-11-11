@@ -191,6 +191,29 @@ describe('cases', () => {
 		expect(sent.query.cursor).toBe('abc');
 	});
 
+	it('hands back the decoded cursor from the next link', async () => {
+		// HQ's cursor is base64, so the next link carries it URL-encoded
+		// (%3D for the padding). Copying that text into `cursor` would
+		// encode it twice.
+		const cursor = 'aW5kZXhlZF9vbi5ndGU9MjAyMQ==';
+		respond({
+			...caseList,
+			next: `https://www.commcarehq.org/a/${DOMAIN}/api/case/v2/?cursor=${encodeURIComponent(cursor)}`,
+		});
+		const page = await invoke<{ nextCursor?: string | null }>(Cases.list, {
+			domain: DOMAIN,
+		});
+		expect(page.nextCursor).toBe(cursor);
+
+		respond({ matching_records: 1, cases: [] });
+		const last = await invoke<{ nextCursor?: string | null }>(Cases.list, {
+			domain: DOMAIN,
+			cursor: page.nextCursor!,
+		});
+		expect(lastRequest().query.cursor).toBe(cursor);
+		expect(last.nextCursor ?? undefined).toBeUndefined();
+	});
+
 	it('reads one case with properties', async () => {
 		const onlyCase = caseList.cases[0]!;
 		respond(onlyCase);
