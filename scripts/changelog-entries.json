@@ -2738,5 +2738,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/craftmypdf",
+    "dir": "packages/craftmypdf",
+    "name": "CraftMyPDF",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/databox",
+    "dir": "packages/databox",
+    "name": "Databox",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/memberspot",
+    "dir": "packages/memberspot",
+    "name": "MemberSpot",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
