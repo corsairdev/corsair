@@ -125,6 +125,22 @@ describe('pdf generation', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it.each([
+		['pdf.create', Pdf.create],
+		['pdf.createImage', Pdf.createImage],
+	] as const)('%s rejects a load_data_from that is not an http(s) URL', async (_, endpoint) => {
+		for (const load_data_from of [
+			'not-a-url',
+			'{"invoice_number":"INV38379"}',
+			'ftp://example.com/data.json',
+		]) {
+			await expect(
+				invoke(endpoint, { template_id: 'abc', load_data_from }),
+			).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('pdf.create requires a password when password_protected is set', async () => {
 		await expect(
 			invoke(Pdf.create, {

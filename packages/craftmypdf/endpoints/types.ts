@@ -142,6 +142,9 @@ const CreateSharedShape = {
 	...PostActionSchema,
 };
 
+/** CraftMyPDF fetches the template JSON from this address itself. */
+const DataUrlSchema = z.url({ protocol: /^https?$/ }).optional();
+
 const PagingSchema = z
 	.enum(['continuous', 'reset'])
 	.optional()
@@ -192,13 +195,9 @@ const PdfCreateInputSchema = z
 				'Template to generate from. Several comma-separated IDs generate one PDF per template.',
 			),
 		data: TemplateDataSchema.optional(),
-		load_data_from: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'URL to fetch the template JSON from. CraftMyPDF overwrites data with this content, so data can be omitted.',
-			),
+		load_data_from: DataUrlSchema.describe(
+			'URL to fetch the template JSON from. CraftMyPDF overwrites data with this content, so data can be omitted.',
+		),
 		...CreateSharedShape,
 		password_protected: z
 			.boolean()
@@ -290,11 +289,9 @@ const PdfCreateImageInputSchema = z
 	.object({
 		template_id: z.string().min(1).describe('Template to render.'),
 		data: TemplateDataSchema.optional(),
-		load_data_from: z
-			.string()
-			.min(1)
-			.optional()
-			.describe('URL to fetch the template JSON from.'),
+		load_data_from: DataUrlSchema.describe(
+			'URL to fetch the template JSON from.',
+		),
 		version: VersionSchema.optional(),
 		expiration: ExpirationSchema,
 		output_file: z
