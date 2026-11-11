@@ -15,15 +15,15 @@ pnpm add @corsair-dev/imagekit
 | `cache.getPurgeStatus` | `imagekit.api.cache.getPurgeStatus` | `read` | Where a cache purge stands; status Pending or Completed |
 | `cache.purge` | `imagekit.api.cache.purge` | `write` | Purge the CDN cache of one delivered file URL; follow with cache.getPurgeStatus until status is Completed |
 | `files.addTags` | `imagekit.api.files.addTags` | `write` | Add tags to up to 50 files at once; the answer splits successes from per-file errors |
-| `files.bulkDelete` | `imagekit.api.files.bulkDelete` | `destructive` | Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors |
+| `files.bulkDelete` | `imagekit.api.files.bulkDelete` | `destructive` | Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors. The CDN keeps serving cached copies until cache.purge clears them |
 | `files.copy` | `imagekit.api.files.copy` | `write` | Copy a file to another folder, optionally with all of its versions |
-| `files.delete` | `imagekit.api.files.delete` | `destructive` | Permanently delete a file and all of its versions; there is no trash and no restore |
+| `files.delete` | `imagekit.api.files.delete` | `destructive` | Permanently delete a file and all of its versions; there is no trash and no restore. The CDN keeps serving cached copies until cache.purge clears them |
 | `files.getDetails` | `imagekit.api.files.getDetails` | `read` | Read one file by ID: path, URL, tags, AI tags, size, versions and custom metadata |
 | `files.list` | `imagekit.api.files.list` | `read` | List and search files and folders with paging (limit and skip), a folder path filter, file type and a searchQuery expression |
 | `files.move` | `imagekit.api.files.move` | `write` | Move a file to another folder |
 | `files.removeAITags` | `imagekit.api.files.removeAITags` | `write` | Remove AI-generated tags from up to 50 files at once |
 | `files.removeTags` | `imagekit.api.files.removeTags` | `write` | Remove tags from up to 50 files at once |
-| `files.rename` | `imagekit.api.files.rename` | `write` | Rename a file in place; with purgeCache the old URL stops resolving from CDN cache, reported by purgeRequestId |
+| `files.rename` | `imagekit.api.files.rename` | `write` | Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId |
 | `files.updateDetails` | `imagekit.api.files.updateDetails` | `write` | Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags (names or all), or publish or unpublish it (that call alone) |
 | `files.upload` | `imagekit.api.files.upload` | `write` | Upload a file from an https URL or base64 content into the media library, optionally into a folder and with tags |
 | `fileVersions.delete` | `imagekit.api.fileVersions.delete` | `destructive` | Permanently delete one non-current version of a file; the current version cannot be deleted |

@@ -14,7 +14,7 @@ Create a private API key in the ImageKit dashboard under Developer options, API 
 - **Folder operations run as jobs.** `folders.copy`, `folders.move` and `folders.rename` answer a `jobId` at once; poll `folders.getJobStatus` until status is `Completed`. `cache.purge` does the same with a `requestId` and `cache.getPurgeStatus`.
 - **Rate limits.** Every endpoint except upload is rate limited per account; a 429 carries `X-RateLimit-Reset` in milliseconds. The plugin retries 429s up to three times with backoff starting at one second.
 - **Paging.** `files.list` pages with `limit` (up to 1000) and `skip`; there is no cursor, so pages past a concurrent change can overlap.
-- **Search.** `files.list` narrows with a `searchQuery` expression over name, tags, type, size and createdAt, e.g. `name = "summer" AND type = "image"`.
+- **Search.** `files.list` narrows with a `searchQuery` expression over name, tags, type, size and createdAt, e.g. `name = "summer" AND tags IN ["sale"]`. In a query, `type` is `file`, `file-version` or `folder`; to keep only images, also pass `fileType: 'image'`.
 
 **What you get:**
 

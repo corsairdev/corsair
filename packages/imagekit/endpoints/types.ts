@@ -225,7 +225,9 @@ const FilesUploadInputSchema = z.object({
 	isPrivateFile: z
 		.boolean()
 		.optional()
-		.describe('Serve the file only through signed URLs.'),
+		.describe(
+			'Mark the file private; it is then served only through a signed URL or a named transformation.',
+		),
 	isPublished: z.boolean().optional().describe('Publish the file immediately.'),
 	useUniqueFileName: z
 		.boolean()
@@ -238,15 +240,21 @@ const FilesUploadInputSchema = z.object({
 	overwriteTags: z
 		.boolean()
 		.optional()
-		.describe('Replace existing tags instead of merging.'),
+		.describe(
+			'When overwriting a file and no tags are sent, true (the default) removes its existing tags and false keeps them. Sent tags always replace them.',
+		),
 	overwriteAITags: z
 		.boolean()
 		.optional()
-		.describe('Replace existing AI tags instead of merging.'),
+		.describe(
+			'When overwriting a file, true (the default) removes its AI tags and false keeps them.',
+		),
 	overwriteCustomMetadata: z
 		.boolean()
 		.optional()
-		.describe('Replace existing custom metadata instead of merging.'),
+		.describe(
+			'When overwriting a file and no customMetadata is sent, true (the default) removes its existing custom metadata and false keeps it. Sent customMetadata always replaces it.',
+		),
 	customMetadata: CustomMetadataSchema.optional(),
 	description: z
 		.string()
@@ -436,7 +444,7 @@ const FilesRenameInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Also purge the CDN cache for the file; adds purgeRequestId to the answer.',
+			'Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer.',
 		),
 });
 

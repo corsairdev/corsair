@@ -120,7 +120,7 @@ await corsair.imagekit.api.files.addTags({ fileIds: ['598821f949c0a938d57563bd']
 
 `files.bulkDelete`
 
-Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors
+Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors. The CDN keeps serving cached copies until cache.purge clears them
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -190,7 +190,7 @@ await corsair.imagekit.api.files.copy({ sourceFilePath: '/products/photo.jpg', d
 
 `files.delete`
 
-Permanently delete a file and all of its versions; there is no trash and no restore
+Permanently delete a file and all of its versions; there is no trash and no restore. The CDN keeps serving cached copies until cache.purge clears them
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -483,7 +483,7 @@ await corsair.imagekit.api.files.removeTags({ fileIds: ['598821f949c0a938d57563b
 
 `files.rename`
 
-Rename a file in place; with purgeCache the old URL stops resolving from CDN cache, reported by purgeRequestId
+Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId
 
 **Risk:** `write`
 
@@ -497,7 +497,7 @@ await corsair.imagekit.api.files.rename({ filePath: '/products/old.jpg', newFile
 |------|------|----------|-------------|
 | `filePath` | `string` | Yes | Path of the file to rename. |
 | `newFileName` | `string` | Yes | New file name, without the folder. |
-| `purgeCache` | `boolean` | No | Also purge the CDN cache for the file; adds purgeRequestId to the answer. |
+| `purgeCache` | `boolean` | No | Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer. |
 
 
 
@@ -612,14 +612,14 @@ await corsair.imagekit.api.files.upload({ file: 'https://example.com/photo.jpg',
 | `file` | `string` | Yes | The file to upload: an https URL ImageKit can fetch, or base64-encoded content. |
 | `fileName` | `string` | Yes | Name the file gets in the media library, e.g. photo.jpg. |
 | `folder` | `string` | No | Destination folder path, e.g. `/products/`. |
-| `tags` | `string[]` | No | Tags to attach to the uploaded file. |
-| `isPrivateFile` | `boolean` | No | Serve the file only through signed URLs. |
+| `tags` | `string[]` | No | Tags to attach to the uploaded file; no commas inside a tag. |
+| `isPrivateFile` | `boolean` | No | Mark the file private; it is then served only through a signed URL or a named transformation. |
 | `isPublished` | `boolean` | No | Publish the file immediately. |
 | `useUniqueFileName` | `boolean` | No | Add a random suffix to fileName when true (the default). |
 | `overwriteFile` | `boolean` | No | Replace an existing file at the same path. |
-| `overwriteTags` | `boolean` | No | Replace existing tags instead of merging. |
-| `overwriteAITags` | `boolean` | No | Replace existing AI tags instead of merging. |
-| `overwriteCustomMetadata` | `boolean` | No | Replace existing custom metadata instead of merging. |
+| `overwriteTags` | `boolean` | No | When overwriting a file and no tags are sent, true (the default) removes its existing tags and false keeps them. Sent tags always replace them. |
+| `overwriteAITags` | `boolean` | No | When overwriting a file, true (the default) removes its AI tags and false keeps them. |
+| `overwriteCustomMetadata` | `boolean` | No | When overwriting a file and no customMetadata is sent, true (the default) removes its existing custom metadata and false keeps it. Sent customMetadata always replaces it. |
 | `customMetadata` | `Record<string, any>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
 | `description` | `string` | No | Short human-readable description stored with the file. |
 

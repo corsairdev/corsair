@@ -279,13 +279,13 @@ const imageKitEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Permanently delete a file and all of its versions; there is no trash and no restore',
+			'Permanently delete a file and all of its versions; there is no trash and no restore. The CDN keeps serving cached copies until cache.purge clears them',
 	},
 	'files.bulkDelete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors',
+			'Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors. The CDN keeps serving cached copies until cache.purge clears them',
 	},
 	'files.copy': {
 		riskLevel: 'write',
@@ -299,7 +299,7 @@ const imageKitEndpointMeta = {
 	'files.rename': {
 		riskLevel: 'write',
 		description:
-			'Rename a file in place; with purgeCache the old URL stops resolving from CDN cache, reported by purgeRequestId',
+			'Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId',
 	},
 	'files.addTags': {
 		riskLevel: 'write',
