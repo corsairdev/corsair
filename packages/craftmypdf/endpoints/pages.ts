@@ -9,7 +9,15 @@ import { CraftmypdfAPIError } from '../client';
 // unknown: the transport returns an untyped body; the endpoint's output
 // schema is what actually validates it.
 export function readList(raw: unknown, key: string): unknown[] {
-	const items = asRecord(raw)?.[key];
+	const record = asRecord(raw);
+	// A body that is not an object (an HTML error page, a bare array) is not an
+	// empty last page: reading it as one would end a caller's pagination early.
+	if (!record) {
+		throw new CraftmypdfAPIError(
+			`Expected an object with ${key} in the CraftMyPDF response.`,
+		);
+	}
+	const items = record[key];
 	if (items === undefined) return [];
 	if (!Array.isArray(items)) {
 		throw new CraftmypdfAPIError(

@@ -479,6 +479,22 @@ describe('templates', () => {
 		);
 	});
 
+	it('templates.list throws on a body that is not an object instead of reporting an empty last page', async () => {
+		respond('<html>Service Unavailable</html>');
+
+		await expect(invoke(Templates.list, {})).rejects.toThrow(
+			/Expected an object/,
+		);
+	});
+
+	it('transactions.list throws on a body that is not an object', async () => {
+		respond(['not', 'an', 'envelope']);
+
+		await expect(invoke(Account.list, {})).rejects.toThrow(
+			/Expected an object/,
+		);
+	});
+
 	it('templates.get sends the template id and version', async () => {
 		respond(templateDetail);
 
