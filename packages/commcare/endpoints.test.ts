@@ -296,6 +296,36 @@ describe('users', () => {
 		expect(lastRequest().method).toBe('DELETE');
 	});
 
+	it('accepts the empty text/html 202 that a worker delete answers', async () => {
+		// Django's HttpAccepted() carries no body and a text/html type, so
+		// core hands back an empty string, not undefined.
+		fetchMock.mockResolvedValueOnce(
+			new Response('', {
+				status: 202,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+			}),
+		);
+		await expect(
+			invoke(Users.delete, { domain: DOMAIN, userId: user.id! }),
+		).resolves.toEqual({});
+	});
+
+	it('addresses one worker with the trailing slash the detail route needs', async () => {
+		respond(user);
+		await invoke(Users.get, { domain: DOMAIN, userId: 'u1' });
+		expect(lastRequest().path).toBe(`/a/${DOMAIN}/api/user/v1/u1/`);
+		respond(user);
+		await invoke(Users.update, {
+			domain: DOMAIN,
+			userId: 'u1',
+			firstName: 'A',
+		});
+		expect(lastRequest().path).toBe(`/a/${DOMAIN}/api/user/v1/u1/`);
+		respondEmpty(204);
+		await invoke(Users.delete, { domain: DOMAIN, userId: 'u1' });
+		expect(lastRequest().path).toBe(`/a/${DOMAIN}/api/user/v1/u1/`);
+	});
+
 	it('sends a password reset and parses the empty 202', async () => {
 		respondEmpty(202);
 		await invoke(Users.sendPasswordReset, { domain: DOMAIN, userId: user.id! });

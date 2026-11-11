@@ -245,7 +245,7 @@ export const CommCareDetExportSchema = z
 export type CommCareDetExport = z.infer<typeof CommCareDetExportSchema>;
 
 // Bodyless answers: password reset answers 202 with an empty body, user
-// delete answers 204, and several actions answer an empty object.
+// delete answers an empty 202, and several actions answer an empty object.
 const EmptyObjectSchema = z.object({}).loose();
 
 // ── forms.list ────────────────────────────────────────────────────────────

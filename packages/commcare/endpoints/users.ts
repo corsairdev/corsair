@@ -59,7 +59,7 @@ export const get: CommCareEndpoints['usersGet'] = (ctx, input) =>
 		input,
 		(domain, { userId }) => ({
 			method: 'GET',
-			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}`,
+			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}/`,
 			replaySafe: true,
 		}),
 	);
@@ -121,7 +121,7 @@ export const update: CommCareEndpoints['usersUpdate'] = (ctx, input) =>
 			{ userId, firstName, lastName, email, phoneNumber, userData },
 		) => ({
 			method: 'PUT',
-			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}`,
+			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}/`,
 			body: {
 				...(firstName !== undefined ? { first_name: firstName } : {}),
 				...(lastName !== undefined ? { last_name: lastName } : {}),
@@ -148,11 +148,12 @@ export const remove: CommCareEndpoints['usersDelete'] = (ctx, input) =>
 		input,
 		(domain, { userId }) => ({
 			method: 'DELETE',
-			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}`,
+			path: `/a/${segment(domain)}/api/user/v1/${segment(userId)}/`,
 		}),
 		{
-			// The deletion carries no body.
-			shape: (raw) => raw ?? {},
+			// The deletion answers 202 with no body (an empty text/html
+			// string by the time core hands it back).
+			shape: (raw) => (raw && typeof raw === 'object' ? raw : {}),
 			log: ({ userId }) => ({ userId }),
 		},
 	);
@@ -175,7 +176,7 @@ export const sendPasswordReset: CommCareEndpoints['usersSendPasswordReset'] = (
 		}),
 		{
 			// The reset answers 202 with an empty body.
-			shape: (raw) => raw ?? {},
+			shape: (raw) => (raw && typeof raw === 'object' ? raw : {}),
 			log: ({ userId }) => ({ userId }),
 		},
 	);
