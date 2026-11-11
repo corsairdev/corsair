@@ -20,7 +20,7 @@ Read one discovered company with its enriched firmographics (Intelligence API)
 **Risk:** `read`
 
 ```ts
-await corsair.happyscribe.api.companies.get({ companyId: 1 });
+await corsair.happyscribe.api.companies.get({ companyId: 1, organizationId: 123 });
 ```
 
 **Input**
@@ -28,6 +28,7 @@ await corsair.happyscribe.api.companies.get({ companyId: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `companyId` | `number` | Yes | Company ID to retrieve. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 
 
 
@@ -283,7 +284,6 @@ await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl:
 | `botName` | `string` | No | Display name of the notetaker bot. |
 | `recordingMode` | `audio_only \| audio_and_video` | No | What the notetaker records. |
 | `summaryTemplate` | `string` | No | Summary template slug, e.g. `sales_call`. |
-| `accessLevel` | `public \| organization \| organization_participants \| private` | No | Who can open the resulting transcript. |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -416,11 +416,13 @@ await corsair.happyscribe.api.memberships.add({ organizationId: 123, email: 'new
 ```ts
 {
   id: number,
-  organizationId?: number | null,
-  organizationName?: string | null,
+  organization_id?: string | number | null,
+  organization_name?: string | null,
   email?: string | null,
   name?: string | null,
-  role?: string | null
+  role?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 } | null
 ```
 </Accordion>
@@ -474,11 +476,13 @@ await corsair.happyscribe.api.memberships.list({ organizationId: 123 });
 ```ts
 {
   id: number,
-  organizationId?: number | null,
-  organizationName?: string | null,
+  organization_id?: string | number | null,
+  organization_name?: string | null,
   email?: string | null,
   name?: string | null,
-  role?: string | null
+  role?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -546,11 +550,13 @@ await corsair.happyscribe.api.memberships.updateRole({ membershipId: 9002, role:
 ```ts
 {
   id: number,
-  organizationId?: number | null,
-  organizationName?: string | null,
+  organization_id?: string | number | null,
+  organization_name?: string | null,
   email?: string | null,
   name?: string | null,
-  role?: string | null
+  role?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
 } | null
 ```
 </Accordion>
@@ -743,15 +749,16 @@ await corsair.happyscribe.api.organizations.list({});
   id: string | number,
   name?: string | null,
   role?: string | null,
-  createdAt?: string | null,
-  updatedAt?: string | null,
-  ownerEmail?: string | null,
-  membersCount?: number | null,
-  isHumanTranscriptionAllowed?: boolean | null,
-  isHumanTranslationAllowed?: boolean | null,
-  emailDomains?: string[] | null,
-  idpCompanyNames?: string[] | null,
-  currency?: string | null
+  created_at?: string | null,
+  updated_at?: string | null,
+  owner_email?: string | null,
+  members_count?: number | null,
+  is_human_transcription_allowed?: boolean | null,
+  is_human_translation_allowed?: boolean | null,
+  email_domains?: string[] | null,
+  idp_company_names?: string[] | null,
+  currency?: string | null,
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -772,7 +779,7 @@ Read one discovered contact with company linkage (Intelligence API)
 **Risk:** `read`
 
 ```ts
-await corsair.happyscribe.api.people.get({ personId: 1 });
+await corsair.happyscribe.api.people.get({ personId: 1, organizationId: 123 });
 ```
 
 **Input**
@@ -780,6 +787,7 @@ await corsair.happyscribe.api.people.get({ personId: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `personId` | `number` | Yes | Person ID to retrieve. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 
 
 
@@ -968,20 +976,22 @@ await corsair.happyscribe.api.transcriptions.create({ organizationId: 123, name:
 | `id` | `string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `folder` | `object \| null` | No | — |
-| `createdAt` | `string \| null` | No | — |
-| `updatedAt` | `string \| null` | No | — |
-| `sharingEnabled` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `sharing_enabled` | `boolean \| null` | No | — |
+| `share_code` | `string \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `failureReason` | `string \| null` | No | — |
+| `failure_reason` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
-| `publicUrl` | `string \| null` | No | — |
-| `audioLengthInSeconds` | `number \| null` | No | — |
-| `costInCents` | `number \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `audio_length_in_seconds` | `number \| null` | No | — |
+| `cost_in_cents` | `number \| null` | No | — |
 | `refunded` | `boolean \| null` | No | — |
-| `soundwaveUrl` | `string \| null` | No | — |
-| `audioUrl` | `string \| null` | No | — |
-| `videoUrl` | `string \| null` | No | — |
+| `soundwave_url` | `string \| null` | No | — |
+| `audio_url` | `string \| null` | No | — |
+| `video_url` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
+| `meeting` | `Record<string, any> \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
 | `links` | `Record<string, any> \| null` | No | — |
@@ -1082,20 +1092,22 @@ await corsair.happyscribe.api.transcriptions.getDetails({ fileId: '9josdjdfo09j3
 | `id` | `string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `folder` | `object \| null` | No | — |
-| `createdAt` | `string \| null` | No | — |
-| `updatedAt` | `string \| null` | No | — |
-| `sharingEnabled` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `sharing_enabled` | `boolean \| null` | No | — |
+| `share_code` | `string \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `failureReason` | `string \| null` | No | — |
+| `failure_reason` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
-| `publicUrl` | `string \| null` | No | — |
-| `audioLengthInSeconds` | `number \| null` | No | — |
-| `costInCents` | `number \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `audio_length_in_seconds` | `number \| null` | No | — |
+| `cost_in_cents` | `number \| null` | No | — |
 | `refunded` | `boolean \| null` | No | — |
-| `soundwaveUrl` | `string \| null` | No | — |
-| `audioUrl` | `string \| null` | No | — |
-| `videoUrl` | `string \| null` | No | — |
+| `soundwave_url` | `string \| null` | No | — |
+| `audio_url` | `string \| null` | No | — |
+| `video_url` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
+| `meeting` | `Record<string, any> \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
 | `links` | `Record<string, any> \| null` | No | — |
@@ -1218,20 +1230,22 @@ await corsair.happyscribe.api.transcriptions.list({ organizationId: 123, page: 0
     id?: number | null,
     name?: string | null
   } | null,
-  createdAt?: string | null,
-  updatedAt?: string | null,
-  sharingEnabled?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  sharing_enabled?: boolean | null,
+  share_code?: string | null,
   state?: string | null,
-  failureReason?: string | null,
+  failure_reason?: string | null,
   language?: string | null,
-  publicUrl?: string | null,
-  audioLengthInSeconds?: number | null,
-  costInCents?: number | null,
+  public_url?: string | null,
+  audio_length_in_seconds?: number | null,
+  cost_in_cents?: number | null,
   refunded?: boolean | null,
-  soundwaveUrl?: string | null,
-  audioUrl?: string | null,
-  videoUrl?: string | null,
+  soundwave_url?: string | null,
+  audio_url?: string | null,
+  video_url?: string | null,
   tags?: string[] | null,
+  meeting?: Record<string, any> | null,
   people?: {
     id: number,
     name?: string | null,
@@ -1288,20 +1302,22 @@ await corsair.happyscribe.api.transcriptions.updateDetails({ fileId: '9josdjdfo0
 | `id` | `string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `folder` | `object \| null` | No | — |
-| `createdAt` | `string \| null` | No | — |
-| `updatedAt` | `string \| null` | No | — |
-| `sharingEnabled` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `sharing_enabled` | `boolean \| null` | No | — |
+| `share_code` | `string \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `failureReason` | `string \| null` | No | — |
+| `failure_reason` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
-| `publicUrl` | `string \| null` | No | — |
-| `audioLengthInSeconds` | `number \| null` | No | — |
-| `costInCents` | `number \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `audio_length_in_seconds` | `number \| null` | No | — |
+| `cost_in_cents` | `number \| null` | No | — |
 | `refunded` | `boolean \| null` | No | — |
-| `soundwaveUrl` | `string \| null` | No | — |
-| `audioUrl` | `string \| null` | No | — |
-| `videoUrl` | `string \| null` | No | — |
+| `soundwave_url` | `string \| null` | No | — |
+| `audio_url` | `string \| null` | No | — |
+| `video_url` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
+| `meeting` | `Record<string, any> \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
 | `links` | `Record<string, any> \| null` | No | — |
