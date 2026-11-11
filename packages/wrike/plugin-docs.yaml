@@ -1,0 +1,75 @@
+displayName: Wrike
+description: Work management with Wrike - search and manage tasks, work with folders and projects, log and read time entries, comment on tasks, and read contacts and account settings.
+domain: wrike.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a permanent access token in Wrike under **Apps & Integrations → API**, or use an OAuth 2.0 token. It goes in `Authorization: bearer`, lowercase as Wrike's own docs write it, against `/api/v4`.
+
+  - **Three regional hosts.** Wrike runs the same v4 API on `www.wrike.com`, `app-eu.wrike.com` and `app-us2.wrike.com`, and an account lives on exactly one. Nothing in a token says which, so pass `host: 'eu'` or `'us2'`; the default is `www`. A test asserts the routing.
+  - **Both auth failures are a 401 `not_authorized`.** The `errorDescription` is what separates them: `Authorization method unknown` means no header was sent at all, and `Access token is unknown or invalid` means one was sent and is wrong. Both are auth errors, but the distinction tells you whether a credential was configured.
+  - **There is no account-level task create.** A task always lives in a folder, so `tasks.create` takes a `folderId` and posts to `/folders/{folderId}/tasks`. For the account root, use the `rootFolderId` that `account.get` returns — it is a virtual folder, which is why reading the account once is worth doing.
+  - **Every response is `{ kind, data: [...] }`.** Even a single task comes back inside an array, so the output schemas unwrap by index rather than pretending a get returns one object.
+  - **Ids carry a prefix.** `IEAA…` is a task, `IEA…` a folder, `KU…` a contact, `TL…` a timelog. The prefix is part of the id and is never stripped or rewritten.
+  - **Filters are comma-joined, not repeated.** `status`, `responsibles` and `authors` take one comma-separated value, so the plugin joins an array rather than sending the key twice.
+  - **A task delete is recoverable.** Wrike moves it to the recycle bin, and `tasks.update` with `restore: true` brings it back — which is why it is destructive but undoable, unlike a folder delete with `recursive`.
+  - **A folder delete is refused when it is not empty.** `recursive` deletes the contents with it, so the plugin does not default it: the safe call is the one that fails on a folder with anything in it.
+  - **`trackedDate` and `hours` are both required on a timelog.** The date is the day the work belongs to, not when it was entered, and `hours` is what every report totals.
+  - **Webhooks are configured in the app.** Wrike has no REST route for creating one, so the plugin is REST-only rather than pretending to manage them.
+examples:
+  read:
+    path: tasks.list
+    title: Page through active tasks
+    args:
+      pageSize: 25
+  write:
+    path: tasks.create
+    title: Create a task in a folder
+    args:
+      folderId: IEAABCDEF12345
+      title: Ship the new checkout
+apiExamples:
+  tasks.list:
+    call: "{ status: ['Active', 'Completed'], importance: 'High', pageSize: 50 }"
+  tasks.get:
+    call: "{ id: 'IEAAABCDEF12345' }"
+  tasks.create:
+    call: "{ folderId: 'IEAABCDEF12345', title: 'Ship the new checkout', importance: 'High' }"
+  tasks.update:
+    call: "{ id: 'IEAAABCDEF12345', status: 'Completed' }"
+  tasks.delete:
+    call: "{ id: 'IEAAABCDEF12345' }"
+  folders.list:
+    call: "{ pageSize: 100 }"
+  folders.get:
+    call: "{ id: 'IEAABCDEF12345' }"
+  folders.create:
+    call: "{ parentId: 'IEAABCDEF12345', title: 'Checkout revamp' }"
+  folders.tasks:
+    call: "{ id: 'IEAABCDEF12345', descendants: true }"
+  folders.update:
+    call: "{ id: 'IEAABCDEF12345', title: 'Renamed' }"
+  folders.delete:
+    call: "{ id: 'IEAABCDEF12345', recursive: true }"
+  timelogs.list:
+    call: "{ taskId: 'IEAAABCDEF12345', trackedDate: '2024-06-01' }"
+  timelogs.task:
+    call: "{ taskId: 'IEAAABCDEF12345' }"
+  timelogs.create:
+    call: "{ taskId: 'IEAAABCDEF12345', hours: 6.5, trackedDate: '2024-06-01', comment: 'Built the cart' }"
+  timelogs.delete:
+    call: "{ id: 'TLABCDEF12345' }"
+  comments.list:
+    call: "{ pageSize: 100 }"
+  comments.task:
+    call: "{ taskId: 'IEAAABCDEF12345' }"
+  comments.create:
+    call: "{ taskId: 'IEAAABCDEF12345', text: 'Looks good to me.' }"
+  comments.update:
+    call: "{ id: 'CMABCDEF12345', text: 'Edited.' }"
+  comments.delete:
+    call: "{ id: 'CMABCDEF12345' }"
+  contacts.list:
+    call: "{ active: true }"
+  contacts.get:
+    call: "{ id: 'me' }"
+  account.get: {}
