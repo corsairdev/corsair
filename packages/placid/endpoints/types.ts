@@ -137,8 +137,10 @@ const PassthroughSchema = z
 const GenerateResultSchema = z
 	.object({
 		id: z.number(),
+		// A status Placid adds later must not fail a render that already ran.
 		status: z
 			.enum(['queued', 'finished', 'error'])
+			.or(z.string())
 			.describe(
 				'`queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`.',
 			),
@@ -314,10 +316,10 @@ const VideoClipSchema = z.object({
 	layers: LayersSchema.optional(),
 	audio: z.string().optional().describe('An mp3 URL for this clip.'),
 	audio_duration: z
-		.literal('auto')
+		.enum(['auto', 'full'])
 		.optional()
 		.describe(
-			'`auto` trims the audio to the clip length; omitted keeps it whole.',
+			'`auto` trims the audio to the clip length; `full` (the default) keeps it whole.',
 		),
 	audio_trim_start: z
 		.string()

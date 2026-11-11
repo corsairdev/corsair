@@ -147,3 +147,29 @@ describe('endpoint schemas', () => {
 		).toBe(false);
 	});
 });
+
+describe('values Placid documents or may add', () => {
+	// Placid documents queued, finished and error. A status it adds later must
+	// not turn a render that already happened into a thrown parse error.
+	it('accepts a render status it does not know yet', () => {
+		for (const schema of [
+			PlacidEndpointOutputSchemas.imagesGet,
+			PlacidEndpointOutputSchemas.pdfsGet,
+			PlacidEndpointOutputSchemas.videosGet,
+		]) {
+			const result = schema.safeParse({ id: 1, status: 'processing' });
+			expect(result.success).toBe(true);
+		}
+	});
+
+	// https://placid.app/docs/2.0/rest/videos: audio_duration is `auto`, or
+	// `full` (the default) to keep the whole track.
+	it('accepts both documented audio_duration values', () => {
+		for (const audio_duration of ['auto', 'full'] as const) {
+			const result = PlacidEndpointInputSchemas.videosCreate.safeParse({
+				clips: [{ template_uuid: 'abc', audio_duration }],
+			});
+			expect(result.success).toBe(true);
+		}
+	});
+});
