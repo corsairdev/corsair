@@ -1,0 +1,54 @@
+{
+  "name": "@corsair-dev/vectorshift",
+  "version": "0.1.0",
+  "description": "VectorShift plugin for Corsair - run and create pipelines in bulk, create and query knowledge bases, run chatbots, and execute transformations in VectorShift's sandbox",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "CORSAIR_LIVE_TESTS=1 jest --runInBand"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "vectorshift",
+    "ai-pipelines",
+    "knowledge-base",
+    "chatbot",
+    "plugin"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/vectorshift"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/vectorshift",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ]
+}
