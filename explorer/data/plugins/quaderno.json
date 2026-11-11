@@ -1,0 +1,2250 @@
+{
+  "id": "quaderno",
+  "displayName": "Quaderno",
+  "description": "Calculate tax, issue invoices and credit notes, and manage customers, products and webhooks.",
+  "npmPackageName": "@corsair-dev/quaderno",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 48,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_name"]
+    }
+  ],
+  "api": [
+    {
+      "path": "quaderno.api.authorization",
+      "shortPath": "authorization",
+      "description": "Which account this key belongs to: `identity.href` is that account’s base URL, so this is how a caller finds the subdomain to pass as `account`. Also returns the default API version.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, email?: string | null, publishable_key?: string | null, href?: string | null, default_api_version?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Adds a customer. `first_name` is required, and holds the company name for a `company`. Give an `email` if documents will be delivered to this contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "person | company",
+            "description": "`person` or `company`. Defaults to `person` in the dashboard."
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string",
+            "description": "The first name of a person, or the company name when `kind` is `company`. Required."
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Contact email address. Quaderno delivers documents to it, so a contact without one cannot be emailed."
+          },
+          {
+            "key": "phone_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_line_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_line_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO country code, such as `US`."
+          },
+          {
+            "key": "tax_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "string | number",
+            "description": "Default discount percentage for this contact."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number, kind?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, contact_person?: string | null, department?: string | null, email?: string | null, phone_1?: string | null, web?: string | null, street_line_1?: string | null, street_line_2?: string | null, city?: string | null, postal_code?: string | null, region?: string | null, country?: string | null, tax_id?: string | null, tax_status?: string | null, notes?: string | null, discount?: string | number | null, language?: string | null, processor?: string | null, processor_id?: string | null, permalink?: string | null, created_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Removes a customer. Quaderno refuses with 422 while the contact still has documents attached, so invoices must be voided first. Answers 204 with no body.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The contact to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "One customer by id. An unknown id answers **401**, not 404, with “Unauthorized access or contact does not exist”; the plugin reports it as `not_found_or_denied`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The contact id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number, kind?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, contact_person?: string | null, department?: string | null, email?: string | null, phone_1?: string | null, web?: string | null, street_line_1?: string | null, street_line_2?: string | null, city?: string | null, postal_code?: string | null, region?: string | null, country?: string | null, tax_id?: string | null, tax_status?: string | null, notes?: string | null, discount?: string | number | null, language?: string | null, processor?: string | null, processor_id?: string | null, permalink?: string | null, created_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Customers, newest first, answered as a bare array. Search with `q` and page with `created_before`; `next_created_before` carries the next cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, kind?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, contact_person?: string | null, department?: string | null, email?: string | null, phone_1?: string | null, web?: string | null, street_line_1?: string | null, street_line_2?: string | null, city?: string | null, postal_code?: string | null, region?: string | null, country?: string | null, tax_id?: string | null, tax_status?: string | null, notes?: string | null, discount?: string | number | null, language?: string | null, processor?: string | null, processor_id?: string | null, permalink?: string | null, created_at?: number | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Changes a customer. Fields left out are left unchanged by the API, not cleared.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "person | company",
+            "description": "`person` or `company`. Defaults to `person` in the dashboard."
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Contact email address."
+          },
+          {
+            "key": "phone_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_line_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street_line_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO country code, such as `US`."
+          },
+          {
+            "key": "tax_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "string | number",
+            "description": "Default discount percentage for this contact."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter language code."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The contact to update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number, kind?: string | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, contact_person?: string | null, department?: string | null, email?: string | null, phone_1?: string | null, web?: string | null, street_line_1?: string | null, street_line_2?: string | null, city?: string | null, postal_code?: string | null, region?: string | null, country?: string | null, tax_id?: string | null, tax_status?: string | null, notes?: string | null, discount?: string | number | null, language?: string | null, processor?: string | null, processor_id?: string | null, permalink?: string | null, created_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.create",
+      "shortPath": "credits.create",
+      "description": "Issues a credit note against an existing invoice, by `invoice_id`, and records the refund. It credits the whole invoice unless `credited_amount` is given. It consumes a document number and cannot be deleted, only voided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number",
+            "description": "The invoice being credited."
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | other",
+            "description": "How the credited amount is refunded."
+          },
+          {
+            "key": "credited_amount",
+            "optional": true,
+            "type": "number",
+            "description": "Amount to credit in major units, at most the invoice total. Only works for an invoice with a single line. Defaults to the full invoice total."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.deliver",
+      "shortPath": "credits.deliver",
+      "description": "Emails the credit note to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The credit note to email to its contact."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivered",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "One credit note by id, with its lines, payments and the document it credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.list",
+      "shortPath": "credits.list",
+      "description": "Credit notes, newest first, as a bare array. A voided invoice leaves one of these beside it.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.update",
+      "shortPath": "credits.update",
+      "description": "Changes the administrative fields of a credit note: `notes`, `payment_details` and `tag_list`. Amounts, lines and the customer are immutable once it is issued.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.credits.void",
+      "shortPath": "credits.void",
+      "description": "Voids a credit note. `void_reason` is required, exactly as for an invoice.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "void_reason",
+            "optional": false,
+            "type": "string",
+            "description": "Why the credit note is being voided."
+          },
+          {
+            "key": "void_description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Issues an invoice and **allocates a document number**, which is not recoverable: invoices cannot be deleted, only voided. Passing `payment_method` records a full payment immediately and marks it paid. Needs a `contact` id and at least one line item.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number }",
+            "description": "The contact being billed, by id. Create one with contacts.create first."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ description: string, quantity?: number, unit_price: string | number, discount_rate?: string | number, product_code?: string, tax_1_name?: string, tax_1_rate?: number, tax_1_country?: string, tax_1_region?: string }[]",
+            "description": "Line items. Quaderno caps a document at 200 lines."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date, such as `2026-11-10`. Defaults to today."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | offset | other",
+            "description": "If set, a payment for the full amount is recorded on creation, marking the invoice paid immediately."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.deliver",
+      "shortPath": "invoices.deliver",
+      "description": "Sends the invoice by email to the address on file for its contact, using the account template. A **GET that mutates**, so it is a write here and never replayed: delivering twice emails twice. The contact needs a valid email. Answers no document, only `delivered: true`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The invoice to email to its contact."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivered",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "One invoice with its lines, taxes and payments. An unknown id answers 401 rather than 404.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "Invoices, newest first, as a bare array. Filter by date, state, contact or processor id, search with `q`, and page with `created_before`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search by invoice number, customer name or PO number."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Only this state. Quaderno documents `outstanding`, `late`, `uncollectible` and `paid`."
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "number",
+            "description": "Only this contact."
+          },
+          {
+            "key": "processor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.markUncollectible",
+      "shortPath": "invoices.markUncollectible",
+      "description": "Marks an unpaid invoice as bad debt. Reversible by recording a payment later, unlike a void.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.recordPayment",
+      "shortPath": "invoices.recordPayment",
+      "description": "Records a payment against an invoice; reaching the total marks it paid. This creates a real financial record, not a note.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "ISO payment date, such as `2026-11-10`."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string | number",
+            "description": "Amount in major units. Reaching the total marks the invoice paid."
+          },
+          {
+            "key": "payment_method",
+            "optional": false,
+            "type": "credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | offset | other"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment",
+            "optional": false,
+            "type": "{ id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Changes an invoice. Only the fields you send are changed. An issued invoice is legally immutable: Quaderno then accepts only `notes`, `payment_details` and `tag_list`, so correct anything else by voiding it and issuing a new one.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id: number }",
+            "description": "The contact being billed, by id. Create one with contacts.create first."
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ description: string, quantity?: number, unit_price: string | number, discount_rate?: string | number, product_code?: string, tax_1_name?: string, tax_1_rate?: number, tax_1_country?: string, tax_1_region?: string }[]",
+            "description": "Line items. Quaderno caps a document at 200 lines."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date, such as `2026-11-10`. Defaults to today."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.invoices.void",
+      "shortPath": "invoices.void",
+      "description": "Reverses an invoice the way tax law requires. It cannot be deleted: voiding records an `offset` payment for the full amount and issues a credit note beside it. `void_reason` is required and the API answers 422 without it.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "void_reason",
+            "optional": false,
+            "type": "string",
+            "description": "Why the invoice is being voided. Required: the API answers 422 `void_reason is required` without it."
+          },
+          {
+            "key": "void_description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.jurisdictions.get",
+      "shortPath": "jurisdictions.get",
+      "description": "One tax jurisdiction by id, naming the country and any region whose tax rules apply.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The jurisdiction id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jurisdiction",
+            "optional": false,
+            "type": "{ id?: number | null, country?: string | null, name?: string | null, region?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.jurisdictions.list",
+      "shortPath": "jurisdictions.list",
+      "description": "Every tax jurisdiction Quaderno knows, about 290 rows, as a bare array. Verified live: this route ignores `limit` and always returns the full list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Only this country."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jurisdictions",
+            "optional": false,
+            "type": "{ id?: number | null, country?: string | null, name?: string | null, region?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.ping",
+      "shortPath": "ping",
+      "description": "Checks that the key and account name are valid. The docs say it does not consume an API call. Answers `{\"status\":\"OK\"}`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.products.create",
+      "shortPath": "products.create",
+      "description": "Adds a product. `name`, `code` and `unit_cost` are required, and `kind` is `one_off` or `subscription`, not the value the spec’s example suggests.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Product name."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Your own SKU or code."
+          },
+          {
+            "key": "unit_cost",
+            "optional": false,
+            "type": "string | number",
+            "description": "Price in major units, such as `10.00` or `10`."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "Three-letter ISO currency code. Defaults to the account currency."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "good | service",
+            "description": "`good` for a tangible item, `service` otherwise. Defaults to `service`."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "one_off | subscription",
+            "description": "`one_off` or `subscription`. Defaults to `one_off`."
+          },
+          {
+            "key": "tax_class",
+            "optional": true,
+            "type": "consulting | eservice | ebook | saas | standard | reduced"
+          },
+          {
+            "key": "tax_type",
+            "optional": true,
+            "type": "included | excluded",
+            "description": "Whether `unit_cost` includes tax. Defaults to `included`."
+          },
+          {
+            "key": "tax_based_on",
+            "optional": true,
+            "type": "customer_country | country"
+          },
+          {
+            "key": "stock",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, code?: string | null, description?: string | null, unit_cost?: string | null, currency?: string | null, product_type?: string | null, kind?: string | null, tax_class?: string | null, tax_type?: string | null, tax_based_on?: string | null, country?: string | null, stock?: string | number | null, url?: string | null, created_at?: number | null, paypal_interval_duration?: number | null, paypal_interval_frequency?: number | null, paypal_interval_unit?: string | null, stripe_plan_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Removes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.products.get",
+      "shortPath": "products.get",
+      "description": "One product by id, with its price, tax class and the currency it is sold in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, code?: string | null, description?: string | null, unit_cost?: string | null, currency?: string | null, product_type?: string | null, kind?: string | null, tax_class?: string | null, tax_type?: string | null, tax_based_on?: string | null, country?: string | null, stock?: string | number | null, url?: string | null, created_at?: number | null, paypal_interval_duration?: number | null, paypal_interval_frequency?: number | null, paypal_interval_unit?: string | null, stripe_plan_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.products.list",
+      "shortPath": "products.list",
+      "description": "Your product catalogue, newest first, from the `/items` route. A bare array; page with `created_before`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, code?: string | null, description?: string | null, unit_cost?: string | null, currency?: string | null, product_type?: string | null, kind?: string | null, tax_class?: string | null, tax_type?: string | null, tax_based_on?: string | null, country?: string | null, stock?: string | number | null, url?: string | null, created_at?: number | null, paypal_interval_duration?: number | null, paypal_interval_frequency?: number | null, paypal_interval_unit?: string | null, stripe_plan_id?: string | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.products.update",
+      "shortPath": "products.update",
+      "description": "Changes a product. Existing documents keep the line they were issued with, so past invoices are unaffected.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Product name."
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Your own SKU or code."
+          },
+          {
+            "key": "unit_cost",
+            "optional": true,
+            "type": "string | number",
+            "description": "Price in major units, such as `10.00` or `10`."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "Three-letter ISO currency code. Defaults to the account currency."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "good | service",
+            "description": "`good` for a tangible item, `service` otherwise. Defaults to `service`."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "one_off | subscription",
+            "description": "`one_off` or `subscription`. Defaults to `one_off`."
+          },
+          {
+            "key": "tax_class",
+            "optional": true,
+            "type": "consulting | eservice | ebook | saas | standard | reduced"
+          },
+          {
+            "key": "tax_type",
+            "optional": true,
+            "type": "included | excluded",
+            "description": "Whether `unit_cost` includes tax. Defaults to `included`."
+          },
+          {
+            "key": "tax_based_on",
+            "optional": true,
+            "type": "customer_country | country"
+          },
+          {
+            "key": "stock",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, code?: string | null, description?: string | null, unit_cost?: string | null, currency?: string | null, product_type?: string | null, kind?: string | null, tax_class?: string | null, tax_type?: string | null, tax_based_on?: string | null, country?: string | null, stock?: string | number | null, url?: string | null, created_at?: number | null, paypal_interval_duration?: number | null, paypal_interval_frequency?: number | null, paypal_interval_unit?: string | null, stripe_plan_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.accept",
+      "shortPath": "proformas.accept",
+      "description": "Marks a proforma accepted. A state change the customer would normally trigger; reversible with `proformas.revert`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The proforma to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.convert",
+      "shortPath": "proformas.convert",
+      "description": "Converts an accepted proforma into a real invoice, which **consumes an invoice number and cannot be undone**. Only a proforma in the accepted state can be converted. Returns the new invoice under `invoice`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The proforma to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.create",
+      "shortPath": "proformas.create",
+      "description": "Creates a proforma. Unlike an invoice this is not a tax document, so it does not consume an invoice number.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number }",
+            "description": "The contact being billed, by id. Create one with contacts.create first."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ description: string, quantity?: number, unit_price: string | number, discount_rate?: string | number, product_code?: string, tax_1_name?: string, tax_1_rate?: number, tax_1_country?: string, tax_1_region?: string }[]",
+            "description": "Line items. Quaderno caps a document at 200 lines."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date, such as `2026-11-10`. Defaults to today."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.decline",
+      "shortPath": "proformas.decline",
+      "description": "Marks a proforma declined. Reversible with `proformas.revert`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The proforma to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.deliver",
+      "shortPath": "proformas.deliver",
+      "description": "Emails the proforma to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The proforma to email to its contact."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivered",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.get",
+      "shortPath": "proformas.get",
+      "description": "One proforma by id, with its lines and the state it was accepted or declined in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.list",
+      "shortPath": "proformas.list",
+      "description": "Proforma invoices, newest first, as a bare array. A proforma is not a tax document, so it carries no invoice number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proformas",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.revert",
+      "shortPath": "proformas.revert",
+      "description": "Puts an accepted or declined proforma back to its open state.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The proforma to act on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.proformas.update",
+      "shortPath": "proformas.update",
+      "description": "Changes a proforma. Only the id is required. An accepted or invoiced proforma cannot be changed. It stays a proforma until `proformas.convert` issues a real invoice.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id: number }",
+            "description": "The contact being billed, by id. Create one with contacts.create first."
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ description: string, quantity?: number, unit_price: string | number, discount_rate?: string | number, product_code?: string, tax_1_name?: string, tax_1_rate?: number, tax_1_country?: string, tax_1_region?: string }[]",
+            "description": "Line items. Quaderno caps a document at 200 lines."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date, such as `2026-11-10`. Defaults to today."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proforma",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.receipts.create",
+      "shortPath": "receipts.create",
+      "description": "Issues a receipt for a sale that is already paid, so `payment_method` is required. Like an invoice, it consumes a document number and cannot be deleted or updated, only voided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: number }",
+            "description": "The contact being billed, by id. Create one with contacts.create first."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ description: string, quantity?: number, unit_price: string | number, discount_rate?: string | number, product_code?: string, tax_1_name?: string, tax_1_rate?: number, tax_1_country?: string, tax_1_region?: string }[]",
+            "description": "Line items. Quaderno caps a document at 200 lines."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date, such as `2026-11-10`. Defaults to today."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "payment_method",
+            "optional": false,
+            "type": "credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | offset | other",
+            "description": "How the customer paid. Required on a receipt."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.receipts.deliver",
+      "shortPath": "receipts.deliver",
+      "description": "Emails the receipt to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The receipt to email to its contact."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivered",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.receipts.get",
+      "shortPath": "receipts.get",
+      "description": "One receipt by id, with its lines, payments and the invoice it settles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.receipts.list",
+      "shortPath": "receipts.list",
+      "description": "Receipts, newest first, as a bare array. Filter by a `date` range or `contact`, and page with `created_before`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Issue-date range as two ISO dates joined by a comma, such as `2026-01-01,2026-12-31`. A range is required; a single date is not accepted."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Defaults to 25, maximum 100."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number",
+            "description": "Return records created before this object id, newest first. Pass the previous page’s last `id`; the response’s `next_created_before` carries it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipts",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_created_before",
+            "optional": false,
+            "type": "number | null",
+            "description": "The id to pass as `created_before` for the next page, or null when this is the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.receipts.void",
+      "shortPath": "receipts.void",
+      "description": "Voids a receipt. `void_reason` is required, as for an invoice.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "void_reason",
+            "optional": false,
+            "type": "string",
+            "description": "Why the receipt is being voided."
+          },
+          {
+            "key": "void_description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.taxCodes.get",
+      "shortPath": "taxCodes.get",
+      "description": "One tax code by its identifier, such as `standard`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The tax code identifier, such as `standard`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax_code",
+            "optional": false,
+            "type": "{ id: string, code?: string | null, name?: string | null, description?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.taxCodes.list",
+      "shortPath": "taxCodes.list",
+      "description": "The tax codes available on the account, as a bare array. This route honours `limit`, unlike `jurisdictions.list`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Quaderno caps this list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax_codes",
+            "optional": false,
+            "type": "{ id: string, code?: string | null, name?: string | null, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.taxIds.validate",
+      "shortPath": "taxIds.validate",
+      "description": "Checks a VAT or tax number against the country’s registry. `valid` is true or false, or null when the registry could not be reached, which does not mean the number is invalid.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax_id",
+            "optional": false,
+            "type": "string",
+            "description": "The VAT or tax number to validate."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "Two-letter ISO country code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "`true` or `false`, or `null` when the registry could not be reached."
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.taxRates.calculate",
+      "shortPath": "taxRates.calculate",
+      "description": "The tax rate Quaderno would charge for a customer country and tax code, with the resulting total. `tax_code` and `amount` are required from API version 20210316, which this plugin targets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to_country",
+            "optional": false,
+            "type": "string",
+            "description": "Two-letter ISO country code of the customer."
+          },
+          {
+            "key": "to_postal_code",
+            "optional": true,
+            "type": "string",
+            "description": "Customer postal code, needed in countries that tax by region."
+          },
+          {
+            "key": "to_region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_code",
+            "optional": false,
+            "type": "string",
+            "description": "The tax code for the product, such as `standard`."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string | number",
+            "description": "Amount to compute tax on, in major units."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tax_behavior",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tax_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subtotal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "import",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "taxable_part",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.transactions.create",
+      "shortPath": "transactions.create",
+      "description": "Records a sale or a refund in one call: it creates the document and its payment together, which is what distinguishes it from `invoices.create`. The body is not an invoice body: the buyer is `customer`, each line carries its total as `amount`, and `payment.method` is required. A real financial record.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sale | refund",
+            "description": "`sale` or `refund`. Quaderno treats it as a sale when omitted."
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id: number }",
+            "description": "The customer, by contact id."
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ description?: string, product_code?: string, quantity?: number, amount: number, discount_rate?: number }[]"
+          },
+          {
+            "key": "payment",
+            "optional": false,
+            "type": "{ method: credit_card | cash | wire_transfer | direct_debit | check | iou | paypal | other, processor?: string, processor_id?: string }",
+            "description": "The payment for the transaction. Required."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date of the transaction. Defaults to today."
+          },
+          {
+            "key": "processor",
+            "optional": true,
+            "type": "string",
+            "description": "The platform that processed the sale, such as `shopify`."
+          },
+          {
+            "key": "processor_id",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the sale in that platform. Use the same id on a refund to link it to its sale."
+          },
+          {
+            "key": "po_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Tags as one comma-separated string, such as `a,b`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, issue_date?: string | null, due_date?: string | null, currency?: string | null, state?: string | null, blocked?: boolean | null, delivery_state?: string | null, contact?: Record<string, any> | null, items?: { id?: number | null, description?: string | null, quantity?: number | null, unit_price?: string | number | null, discount_rate?: string | number | null, product_code?: string | null, total_amount?: string | number | null, subtotal_cents?: number | null, discount_cents?: number | null, tax_1_name?: string | null, tax_1_rate?: number | null, tax_1_country?: string | null, tax_1_region?: string | null }[] | null, payments?: { id?: number | null, date?: string | null, amount?: string | number | null, amount_cents?: number | null, payment_method?: string | null, processor?: string | null, processor_id?: string | null, created_at?: number | null }[] | null, taxes?: Record<string, any>[] | null, subtotal_cents?: number | null, discount_cents?: number | null, total_cents?: number | null, processor_fee_cents?: number | null, notes?: string | null, payment_details?: string | null, subject?: string | null, po_number?: string | null, tag_list?: string[] | null, secure_id?: string | null, verification_code?: string | null, verification_permalink?: string | null, permalink?: string | null, pdf?: string | null, url?: string | null, created_at?: number | null, custom_metadata?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "quaderno.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "The webhook subscriptions on the account, with the events each one receives. Read only here: this plugin registers no inbound handler. The signing secret (`auth_key`) is left out of the result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id?: number | null, url?: string | null, events_types?: string[] | null, events_sent?: number | null, last_sent_at?: string | null, last_error?: string | null, last_error_at?: string | null, created_at?: string | number | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

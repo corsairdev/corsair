@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Project and issue tracking with Leiga - list projects and issues, read issue detail by id or number, and pull sprints, workflow steps, tags and project members."
+---
+
+Use **Leiga** through Corsair: one client, typed API calls.
+
+Leiga authenticates in two steps. Create a client pair under **Settings, OpenAPI** in Leiga (https://guide.leiga.com/settings/openapi), then store its Client ID as `client_id` and its Secret Key as `api_key`. The plugin exchanges the pair for an access token, sends it in an `accessToken` header and keeps it until it expires, so you never handle the token yourself. A token is only used with the pair that created it: store a different pair and the next call exchanges it for a new token.
+
+Things to know before you call:
+
+- **Every error is HTTP 200.** Leiga reports failures as `{ "code": "...", "msg": "..." }` with a 200 status. A `code` other than `"0"` is a failure, and the plugin throws a `LeigaAPIError` carrying that code rather than returning an empty result. `15` means Leiga refused the access token, `18` a rejected client id, `100` a missing required field. On a `15` the plugin exchanges the pair for a new token and repeats the call once before it throws.
+- **Ids are numbers, timestamps are epoch milliseconds.** `createTime` and `updateTime` are milliseconds since 1970, not ISO strings, and a project id is a number rather than a string.
+- **Some lists are POSTs.** `issues.list`, `sprints.list`, `workflows.list`, `workflows.nextStates` and `tags.list` take their filter or project id in a JSON body, not a query string.
+- **`issues.list` is the only paged operation.** It takes `pageNumber` and `pageSize` and returns `{ issues, total }`. Every other list returns all of its records at once under a named key, such as `{ projects }`, `{ sprints }` or `{ tags }`.
+- **Status types.** `statusTypes` on `issues.list` filters by phase rather than by step name: `2` not started, `3` in progress, `4` done.
+
+**What you get:**
+
+- 15 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/leiga better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/leiga better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/leiga better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/leiga better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { leiga } from '@corsair-dev/leiga';
+
+export const corsair = createCorsair({
+	plugins: [
+		leiga(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+leiga()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'leiga',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Query the open issues in a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.leiga.api.issues.list({
+	projectId: 123456,
+	statusTypes: [2, 3],
+});
+```
+
+
+**Read one project by id**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.leiga.api.projects.get({ projectId: 123456 });
+```
+
+
+See the full list on the [API](/plugins/leiga/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/leiga/api">
+    Every `leiga.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

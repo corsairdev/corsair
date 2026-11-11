@@ -1,0 +1,1613 @@
+{
+  "id": "sanity",
+  "displayName": "Sanity",
+  "description": "Sanity's Content Lake from an agent. Query documents with GROQ, create and edit drafts, publish, upload images and files, read history, run Sanity's AI Agent Actions, manage datasets and webhooks, and receive signed document webhooks.",
+  "npmPackageName": "@corsair-dev/sanity",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "project_id", "dataset"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sanity.api.agentActions.generate",
+      "shortPath": "agentActions.generate",
+      "description": "Have Sanity's AI write content into a document's fields from an instruction, following the schema. Writes to the draft unless forcePublishedWrite; noWrite returns it without saving. Costs one Sanity AI credit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'."
+          },
+          {
+            "key": "noWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the result without saving anything. Not with async."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Start the action and return the target document id at once; the write lands later. For long generations."
+          },
+          {
+            "key": "forcePublishedWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Write to the published document instead of its draft, so the change is live at once. Default false."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localeSettings",
+            "optional": true,
+            "type": "{ locale: string, timeZone: string }",
+            "description": "Needed for the action to write date and datetime fields: { locale: 'en-US', timeZone: 'Europe/Oslo' }."
+          },
+          {
+            "key": "conditionalPaths",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          },
+          {
+            "key": "instruction",
+            "optional": false,
+            "type": "string",
+            "description": "What to write, for example \"Write an SEO description of $title under 160 characters\"."
+          },
+          {
+            "key": "instructionParams",
+            "optional": true,
+            "type": "Record<string, string | Record<string, any>>",
+            "description": "Values for $names in the instruction: a string, { type: 'constant', value }, { type: 'field', path, documentId? }, { type: 'document', documentId? } or { type: 'groq', query, params? }."
+          },
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string",
+            "description": "An existing document to write into. Or give targetDocument."
+          },
+          {
+            "key": "targetDocument",
+            "optional": true,
+            "type": "{ operation: edit | create | createIfNotExists | createOrReplace, _id?: string, _type?: string, initialValues?: Record<string, any> }",
+            "description": "Where the result goes: { operation: 'create', _type: 'post' } writes a new document, { operation: 'edit', _id } an existing one. Writes go to the draft unless forcePublishedWrite."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "Record<string, any> | Record<string, any>[]",
+            "description": "Which fields to write, for example { path: 'title' } or [{ path: ['body'] }, { path: 'description', operation: 'set' }]. Left out, every field the action can write."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ _id: string, _type?: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null }",
+            "description": "The document as the action left it; with async, only its _id, since the write happens later."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.agentActions.prompt",
+      "shortPath": "agentActions.prompt",
+      "description": "Ask Sanity's AI a question, optionally about documents passed as params, and get text or JSON back. Writes nothing. Costs one Sanity AI credit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instruction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructionParams",
+            "optional": true,
+            "type": "Record<string, string | Record<string, any>>",
+            "description": "Values for $names in the instruction: a string, { type: 'constant', value }, { type: 'field', path, documentId? }, { type: 'document', documentId? } or { type: 'groq', query, params? }."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | json",
+            "description": "string (default): text. json: a JSON value, and the instruction must contain the word 'json'."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null",
+            "description": "The answer, when format is 'string'."
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "any",
+            "description": "The answer, when format is 'json'."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.agentActions.transform",
+      "shortPath": "agentActions.transform",
+      "description": "Have Sanity's AI rewrite a document's existing content by an instruction (tone, length, style), in place or into another document. Costs one Sanity AI credit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'."
+          },
+          {
+            "key": "noWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the result without saving anything. Not with async."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Start the action and return the target document id at once; the write lands later. For long generations."
+          },
+          {
+            "key": "forcePublishedWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Write to the published document instead of its draft, so the change is live at once. Default false."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localeSettings",
+            "optional": true,
+            "type": "{ locale: string, timeZone: string }",
+            "description": "Needed for the action to write date and datetime fields: { locale: 'en-US', timeZone: 'Europe/Oslo' }."
+          },
+          {
+            "key": "conditionalPaths",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          },
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "The source document."
+          },
+          {
+            "key": "instruction",
+            "optional": false,
+            "type": "string",
+            "description": "How to change it, for example \"Rewrite in plain British English\". 2,000 characters at most once params are filled in."
+          },
+          {
+            "key": "instructionParams",
+            "optional": true,
+            "type": "Record<string, string | Record<string, any>>",
+            "description": "Values for $names in the instruction: a string, { type: 'constant', value }, { type: 'field', path, documentId? }, { type: 'document', documentId? } or { type: 'groq', query, params? }."
+          },
+          {
+            "key": "targetDocument",
+            "optional": true,
+            "type": "{ operation: edit | create | createIfNotExists | createOrReplace, _id?: string, _type?: string, initialValues?: Record<string, any> }",
+            "description": "Write the result to another document instead of the source."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "Record<string, any> | Record<string, any>[]",
+            "description": "Which fields to write, for example { path: 'title' } or [{ path: ['body'] }, { path: 'description', operation: 'set' }]. Left out, every field the action can write."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ _id: string, _type?: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null }",
+            "description": "The document as the action left it; with async, only its _id, since the write happens later."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.agentActions.translate",
+      "shortPath": "agentActions.translate",
+      "description": "Have Sanity's AI translate a document into another language, usually into a new document. Costs one Sanity AI credit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The deployed schema the action reads, for example _.schemas.default. List them with schemas.list; a project deploys one with 'sanity schema deploy'."
+          },
+          {
+            "key": "noWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the result without saving anything. Not with async."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Start the action and return the target document id at once; the write lands later. For long generations."
+          },
+          {
+            "key": "forcePublishedWrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Write to the published document instead of its draft, so the change is live at once. Default false."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localeSettings",
+            "optional": true,
+            "type": "{ locale: string, timeZone: string }",
+            "description": "Needed for the action to write date and datetime fields: { locale: 'en-US', timeZone: 'Europe/Oslo' }."
+          },
+          {
+            "key": "conditionalPaths",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          },
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "The source document."
+          },
+          {
+            "key": "toLanguage",
+            "optional": false,
+            "type": "{ id: string, title?: string }"
+          },
+          {
+            "key": "fromLanguage",
+            "optional": true,
+            "type": "{ id: string, title?: string }"
+          },
+          {
+            "key": "styleGuide",
+            "optional": true,
+            "type": "string",
+            "description": "How to translate: tone, terms to keep. 2,000 characters at most."
+          },
+          {
+            "key": "protectedPhrases",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words to leave untranslated, such as product names."
+          },
+          {
+            "key": "languageFieldPath",
+            "optional": true,
+            "type": "string",
+            "description": "A field to set to toLanguage.id, for document-level localization."
+          },
+          {
+            "key": "targetDocument",
+            "optional": true,
+            "type": "{ operation: edit | create | createIfNotExists | createOrReplace, _id?: string, _type?: string, initialValues?: Record<string, any> }",
+            "description": "Write the translation to another document, usually { operation: 'create' }, instead of over the source."
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "Record<string, any> | Record<string, any>[]",
+            "description": "Which fields to write, for example { path: 'title' } or [{ path: ['body'] }, { path: 'description', operation: 'set' }]. Left out, every field the action can write."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ _id: string, _type?: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null }",
+            "description": "The document as the action left it; with async, only its _id, since the write happens later."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.assets.upload",
+      "shortPath": "assets.upload",
+      "description": "Upload an image or file (base64, up to 25 MB) as a Sanity asset and get its asset document and CDN URL, ready to reference from a document.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "image | file",
+            "description": "image: a picture Sanity can crop and resize (JPEG, PNG, WebP, GIF, SVG, AVIF, TIFF). file: anything else (PDF, audio, video...)."
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file as base64, up to 25 MB decoded."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The MIME type, for example image/png or application/pdf."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageMetadata",
+            "optional": true,
+            "type": "(exif | location | lqip | palette | blurhash)[]",
+            "description": "Images only: metadata to extract. Sanity always extracts dimensions; lqip, palette and blurhash are on by default."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset",
+            "optional": false,
+            "type": "{ _id: string, _type: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null, url?: string | null, originalFilename?: string | null, mimeType?: string | null, size?: number | null, sha1hash?: string | null }",
+            "description": "The asset document. Reference it from a document: { _type: 'image', asset: { _type: 'reference', _ref: asset._id } }. Uploading the same bytes again returns the existing asset."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.datasets.create",
+      "shortPath": "datasets.create",
+      "description": "Create an empty dataset in the project. Needs an administrator token.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The dataset name."
+          },
+          {
+            "key": "aclMode",
+            "optional": true,
+            "type": "public | private",
+            "description": "public: published documents can be read without a token. private: reading needs a token; Sanity's free plan refuses it. Left out, Sanity's default (public) applies."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aclMode",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Delete a dataset with every document and asset in it, for good. Needs the name twice and an administrator token.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The dataset name."
+          },
+          {
+            "key": "confirmName",
+            "optional": false,
+            "type": "string",
+            "description": "The dataset name typed again. Must equal name: deleting a dataset deletes every document and asset in it for good."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "The project's datasets and whether each is public.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasets",
+            "optional": false,
+            "type": "{ name: string, aclMode?: string | null, createdAt?: string | null, datasetProfile?: string | null, tags?: any[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.create",
+      "shortPath": "documents.create",
+      "description": "Create a document as a draft (default) or, with publish: true, publish it at once. Returns its id and draft id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ _type: string, _id?: string }",
+            "description": "The new document's fields: { _type: 'post', title: '...', slug: { _type: 'slug', current: '...' } }. Objects in arrays need a unique _key. Read the dataset's schema or an existing document of the type for its fields."
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "false (default): the document is created as a draft, which nothing reading published content sees until documents.publish. true: created and published at once."
+          },
+          {
+            "key": "ifExists",
+            "optional": true,
+            "type": "fail | ignore",
+            "description": "When a draft with this id already exists: fail (default) errors, ignore leaves it and returns. Only the draft is checked: with an _id of a published document, a new draft is made over it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Check the change without making it."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The published id. Pass it to documents.publish, documents.edit and the rest."
+          },
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string",
+            "description": "The draft, drafts.<id>."
+          },
+          {
+            "key": "published",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the change was also published in this call."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.delete",
+      "shortPath": "documents.delete",
+      "description": "Delete up to 100 documents, published and draft together. Documents that reference them must drop the references first. With purge, they also leave the history.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Documents to delete, up to 100, published and draft together."
+          },
+          {
+            "key": "purge",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also remove it from the document history. Default false, so documents.history can still read it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.discardDraft",
+      "shortPath": "documents.discardDraft",
+      "description": "Throw away a document's unpublished changes (its draft). The published version stays. With purge, the draft also leaves the history.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id."
+          },
+          {
+            "key": "purge",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also remove it from the document history. Default false, so documents.history can still read it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.edit",
+      "shortPath": "documents.edit",
+      "description": "Change a document the way the Studio does: the patch goes to its draft, made from the published version if needed, and nothing goes live until documents.publish (or publish: true).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id."
+          },
+          {
+            "key": "set",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Fields to set, by path: { title: 'New title', 'seo.description': '...', 'body[_key==\"a1\"].text': '...' }."
+          },
+          {
+            "key": "setIfMissing",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Fields to set only where they have no value yet. Use it before inserting into an array that may not exist: { tags: [] }."
+          },
+          {
+            "key": "unset",
+            "optional": true,
+            "type": "string[]",
+            "description": "Paths to remove, for example ['subtitle', 'tags[0]']."
+          },
+          {
+            "key": "inc",
+            "optional": true,
+            "type": "Record<string, number>",
+            "description": "Numbers to add to, by path."
+          },
+          {
+            "key": "dec",
+            "optional": true,
+            "type": "Record<string, number>",
+            "description": "Numbers to subtract from, by path."
+          },
+          {
+            "key": "insert",
+            "optional": true,
+            "type": "{ before?: string, after?: string, replace?: string, items: any[] }",
+            "description": "Insert items into an array at a path: { after: 'tags[-1]', items: ['news'] } appends. Objects in an array need a unique _key."
+          },
+          {
+            "key": "diffMatchPatch",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "diff-match-patch strings to apply to text fields, by path."
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "false (default): the edit stays in the draft until documents.publish. true: published in the same transaction."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The published id. Pass it to documents.publish, documents.edit and the rest."
+          },
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string",
+            "description": "The draft, drafts.<id>."
+          },
+          {
+            "key": "published",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the change was also published in this call."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Fetch up to 100 documents by exact id (drafts.<id> for a draft). Ids that are missing or unreadable come back in omitted.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Exact document ids, up to 100. A draft is drafts.<id>, a release version versions.<release>.<id>."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ _id: string, _type: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null }[]"
+          },
+          {
+            "key": "omitted",
+            "optional": true,
+            "type": "{ id: string, reason: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.history",
+      "shortPath": "documents.history",
+      "description": "A document as it stood at a revision or a point in time. How far back depends on the plan's history retention.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The exact document id, drafts.<id> for a draft."
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "string",
+            "description": "A _rev, from a document or documents.transactions."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO time: the document as it stood then."
+          },
+          {
+            "key": "lastRevision",
+            "optional": true,
+            "type": "boolean",
+            "description": "The last version it had, including just before it was deleted. The way to recover a deleted document."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ _id: string, _type: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null } | null",
+            "description": "The document at that point, or null when it didn't exist then or the history has been purged. How far back history reaches depends on the plan."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.mutate",
+      "shortPath": "documents.mutate",
+      "description": "Apply raw Sanity mutations (create, createOrReplace, createIfNotExists, patch, delete, by id or by query) in one transaction. For anything documents.create, edit, patch and delete can't express.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mutations",
+            "optional": false,
+            "type": "Record<string, any>[]",
+            "description": "Sanity mutations, applied in one transaction: { create: {...} }, { createOrReplace: {...} }, { createIfNotExists: {...} }, { patch: { id, set, ... , ifRevisionID } } or { delete: { id } }. A patch or delete can take query + params instead of id to hit every match. They write the exact ids given: a published id is live at once."
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id for the transaction. Sending one already used is refused, so a retry cannot apply twice."
+          },
+          {
+            "key": "returnDocuments",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return each changed document. Default false: ids only."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "sync | async | deferred",
+            "description": "sync (default): answer once queries see the change. async: answer on commit. deferred: fastest, for bulk imports."
+          },
+          {
+            "key": "autoGenerateArrayKeys",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add a _key to array objects that have none."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, operation?: string | null, document?: { _id: string, _type: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.patch",
+      "shortPath": "documents.patch",
+      "description": "Patch one exact document id directly and get it back. A published id changes the live document at once; use documents.edit to go through a draft. ifRevisionId guards against overwriting someone else's change.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The exact document to patch: a published id changes the live document at once, drafts.<id> the draft."
+          },
+          {
+            "key": "set",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Fields to set, by path: { title: 'New title', 'seo.description': '...', 'body[_key==\"a1\"].text': '...' }."
+          },
+          {
+            "key": "setIfMissing",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Fields to set only where they have no value yet. Use it before inserting into an array that may not exist: { tags: [] }."
+          },
+          {
+            "key": "unset",
+            "optional": true,
+            "type": "string[]",
+            "description": "Paths to remove, for example ['subtitle', 'tags[0]']."
+          },
+          {
+            "key": "inc",
+            "optional": true,
+            "type": "Record<string, number>",
+            "description": "Numbers to add to, by path."
+          },
+          {
+            "key": "dec",
+            "optional": true,
+            "type": "Record<string, number>",
+            "description": "Numbers to subtract from, by path."
+          },
+          {
+            "key": "insert",
+            "optional": true,
+            "type": "{ before?: string, after?: string, replace?: string, items: any[] }",
+            "description": "Insert items into an array at a path: { after: 'tags[-1]', items: ['news'] } appends. Objects in an array need a unique _key."
+          },
+          {
+            "key": "diffMatchPatch",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "diff-match-patch strings to apply to text fields, by path."
+          },
+          {
+            "key": "ifRevisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Apply only if the document's _rev is still this; otherwise Sanity answers 409 and nothing changes."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "document",
+            "optional": true,
+            "type": "{ _id: string, _type: string, _rev?: string | null, _createdAt?: string | null, _updatedAt?: string | null } | null",
+            "description": "The document after the patch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.publish",
+      "shortPath": "documents.publish",
+      "description": "Publish a document's draft: the draft replaces the published version and goes away. Fails when there is no draft.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id."
+          },
+          {
+            "key": "ifDraftRevisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Publish only if the draft's _rev is still this."
+          },
+          {
+            "key": "ifPublishedRevisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Publish only if the published document's _rev is still this."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.query",
+      "shortPath": "documents.query",
+      "description": "Run a GROQ query against a dataset and get its result. Reads published documents unless perspective says otherwise. Pass user input as params.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A GROQ query, for example *[_type == 'post' && defined(slug.current)] | order(publishedAt desc)[0...10]{ _id, title, 'slug': slug.current }. Project only the fields you need and slice the results: answers above 1 MB can be cut off on Corsair's cloud."
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Values for $parameters in the query, without the $: { type: 'post' } for $type. Pass user input this way, never by building it into the query."
+          },
+          {
+            "key": "perspective",
+            "optional": true,
+            "type": "published | drafts | raw | string[]",
+            "description": "Which version of each document the query sees. published (default): live documents only. drafts: drafts where they exist, else published. raw: everything, drafts and release versions under their own ids. A list of release names reads those releases stacked over published, for example ['rSummerLaunch', 'drafts']."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "any",
+            "description": "The query's result: any JSON value."
+          },
+          {
+            "key": "ms",
+            "optional": true,
+            "type": "number | null",
+            "description": "Server time in milliseconds."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.transactions",
+      "shortPath": "documents.transactions",
+      "description": "The transactions that changed some documents: when, by whom and which revisions, optionally with each mutation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "fromTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toTransaction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many transactions, default 20, at most 100. Sanity merges quick successive edits by one author into one entry."
+          },
+          {
+            "key": "reverse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Newest first."
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only transactions by these user or token ids."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "{ id: string, timestamp: string, author?: string | null, mutations?: Record<string, any>[] | null, documentIDs?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.documents.unpublish",
+      "shortPath": "documents.unpublish",
+      "description": "Take a published document off the published perspective; its content stays as a draft.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id. A drafts. prefix is accepted and dropped: drafts and the published document share this id."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The transaction that made the change. Missing when there was nothing to change."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.schemas.list",
+      "shortPath": "schemas.list",
+      "description": "The schemas deployed to a dataset: their ids (the schemaId Agent Actions take) and each type's fields. Pass type for one type's full definition. Read this before writing documents of a type you don't know.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "A type name, for example 'post': its full definition comes back as definition, with every field's options and validation."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to use. Left out: the connection's dataset, else production."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemas",
+            "optional": false,
+            "type": "{ schemaId: string, workspace?: string | null, title?: string | null, deployedAt?: string | null, types: { name: string, type?: string | null, title?: string | null, fields?: { name: string, type?: string | null, title?: string | null, of?: any[] | null, to?: any[] | null }[] | null }[], definition?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.webhooks.attempts",
+      "shortPath": "webhooks.attempts",
+      "description": "Recent delivery attempts of a webhook with the status your endpoint answered, to debug failing deliveries.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "success | failure",
+            "description": "Only successful or only failed attempts."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default 25."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attempts",
+            "optional": false,
+            "type": "{ id: string, isFailure?: boolean | null, failureReason?: string | null, resultCode?: number | null, resultBody?: string | null, duration?: number | null, createdAt?: string | null, messageId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook that POSTs to a URL when documents matching a GROQ filter are created, updated or deleted. Set a secret so deliveries can be verified.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Where Sanity sends deliveries. For a Corsair app, its webhook endpoint (add ?tenantId= when several tenants share one Sanity project)."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to watch, or '*' for all. Left out: the connection's dataset."
+          },
+          {
+            "key": "on",
+            "optional": false,
+            "type": "(create | update | delete)[]",
+            "description": "Which changes fire it. Unpublishing fires delete."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A GROQ filter, for example _type == 'post'. Left out: every document."
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "string",
+            "description": "The body to send, as a GROQ projection, for example { _id, title, 'slug': slug.current }. Left out: the whole document."
+          },
+          {
+            "key": "includeDrafts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fire on drafts too. Default false: published documents only."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "Signs every delivery. Store the same value with keys.set_webhook_signature: deliveries without a valid signature are refused."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, url?: string | null, dataset?: string | null, httpMethod?: string | null, apiVersion?: string | null, rule?: Record<string, any> | null, includeDrafts?: boolean | null, isDisabled?: boolean | null, isDisabledByUser?: boolean | null, createdAt?: string | null, hasSecret: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook; deliveries stop at once.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "The project's GROQ-powered webhooks: url, dataset, filter, projection and whether each is signed (never the secret).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, url?: string | null, dataset?: string | null, httpMethod?: string | null, apiVersion?: string | null, rule?: Record<string, any> | null, includeDrafts?: boolean | null, isDisabled?: boolean | null, isDisabledByUser?: boolean | null, createdAt?: string | null, hasSecret: boolean }[]",
+            "description": "The project's webhooks."
+          }
+        ]
+      }
+    },
+    {
+      "path": "sanity.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook's url, filter, projection, events or secret, or pause and resume it with disabled.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Where Sanity sends deliveries. For a Corsair app, its webhook endpoint (add ?tenantId= when several tenants share one Sanity project)."
+          },
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset to watch, or '*' for all. Left out: the connection's dataset."
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "(create | update | delete)[]",
+            "description": "Which changes fire it. Unpublishing fires delete."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A GROQ filter, for example _type == 'post'. Left out: every document."
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "string",
+            "description": "The body to send, as a GROQ projection, for example { _id, title, 'slug': slug.current }. Left out: the whole document."
+          },
+          {
+            "key": "includeDrafts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fire on drafts too. Default false: published documents only."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "Signs every delivery. Store the same value with keys.set_webhook_signature: deliveries without a valid signature are refused."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "true pauses deliveries, false resumes them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, url?: string | null, dataset?: string | null, httpMethod?: string | null, apiVersion?: string | null, rule?: Record<string, any> | null, includeDrafts?: boolean | null, isDisabled?: boolean | null, isDisabledByUser?: boolean | null, createdAt?: string | null, hasSecret: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "sanity.webhooks.documents.changed",
+      "shortPath": "documents.changed",
+      "description": "A GROQ-powered webhook fired: a document matching its filter was created, updated or deleted. The body is the webhook's projection; the operation, document id and dataset come from its headers. Only signed deliveries are accepted.",
+      "payload": {
+        "kind": "inline",
+        "type": "any"
+      },
+      "responseType": "{ operation?: create | update | delete | string | null, documentId?: string | null, projectId?: string | null, dataset?: string | null, webhookId?: string | null, transactionId?: string | null, transactionTime?: string | null, idempotencyKey?: string | null, body: any }",
+      "usageExample": "sanity({\n    webhookHooks: {\n        documents: {\n            changed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
