@@ -12,7 +12,8 @@ the `mapbox` integration. A call with no saved token throws `AuthMissingError`.
 The plugin never copies the token into an error. Mapbox has a free tier
 (see its pricing page for the allowance per API), so the plugin is cheap to
 try. Mapbox's terms allow geocoding responses to be used only together with a
-Mapbox map.
+Mapbox map, and the plugin uses temporary geocoding, whose results must not
+be cached or stored for later use.
 
 Every operation is a read. Things to know:
 
@@ -106,7 +107,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no saved token throws `AuthMissingError`, which may carry a `connectUrl` where the tenant enters their token; or store it with `tenant.mapbox.keys.set_api_key(token)`, or pass it as `mapbox({ key })`.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 mapbox()
