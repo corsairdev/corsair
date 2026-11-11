@@ -449,6 +449,7 @@ export const BaseProviders = [
 	'vercel',
 	'veriphone',
 	'vestaboard',
+	'virustotal',
 	'waboxapp',
 	'wakatime',
 	'webflow',
@@ -919,6 +920,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
+	virustotal: 'VirusTotal',
 	waboxapp: 'Waboxapp',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
@@ -1396,6 +1398,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
+	| 'virustotal'
 	| 'waboxapp'
 	| 'wakatime'
 	| 'webflow'
