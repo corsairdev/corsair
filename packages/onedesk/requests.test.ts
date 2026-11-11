@@ -501,10 +501,21 @@ describe('projects and portfolios', () => {
 	it('portfolios.create does not log the submitted name', async () => {
 		respond(createdRecord);
 
-		await invoke(Records.portfoliosCreate, { name: 'Client X portfolio' });
+		await invoke(Records.portfoliosCreate, {
+			name: 'Client X portfolio',
+			type: 'Portfolio',
+		});
 
 		const saved = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
 		expect(saved).not.toContain('Client X portfolio');
+	});
+
+	it('portfolios.create needs a type: OneDesk fails a create without one', async () => {
+		// Live: POST /portfolios/ with only a name answers ERROR_SERVICE_UNAVAILABLE.
+		await expect(
+			invoke(Records.portfoliosCreate, { name: 'corsair-plugin-test' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('portfolios.create posts the parent ids', async () => {
@@ -512,6 +523,7 @@ describe('projects and portfolios', () => {
 
 		await invoke(Records.portfoliosCreate, {
 			name: '2024',
+			type: 'Portfolio',
 			parentPortfolioExternalIds: ['pf-0'],
 		});
 

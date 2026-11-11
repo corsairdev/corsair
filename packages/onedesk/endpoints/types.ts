@@ -792,7 +792,14 @@ const PortfolioResultSchema = z
 const PortfoliosCreateInputSchema = z.object({
 	name: z.string().min(1).describe('Name of the portfolio.'),
 	description: z.string().optional(),
-	type: z.string().min(1).optional(),
+	// The spec marks it optional, but a create without it answers
+	// ERROR_SERVICE_UNAVAILABLE (live, 11-11).
+	type: z
+		.string()
+		.min(1)
+		.describe(
+			"Portfolio type label, for example 'Portfolio'. Read the labels with organization.containerTypes (isPortfolio: true).",
+		),
 	parentPortfolioExternalIds: z.array(z.string()).optional(),
 	attachmentExternalIds: z.array(z.string()).optional(),
 });
