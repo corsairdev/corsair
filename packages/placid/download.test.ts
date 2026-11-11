@@ -164,6 +164,17 @@ describe('resolvePublicUrl', () => {
 		).rejects.toThrow(/Could not resolve/);
 	});
 
+	it('gives up on a lookup that outlasts the deadline', async () => {
+		const controller = new AbortController();
+		const pending = resolvePublicUrl(
+			'https://slow.example/a.jpg',
+			{ resolve: () => new Promise<string[]>(() => {}) },
+			controller.signal,
+		);
+		controller.abort(new Error('deadline'));
+		await expect(pending).rejects.toThrow('deadline');
+	}, 5_000);
+
 	it('rejects a relative string that is not a URL', async () => {
 		await expect(
 			resolvePublicUrl('/a.jpg', { resolve: resolveTo(['1.1.1.1']) }),
@@ -583,4 +594,121 @@ describe('downloadAsFile', () => {
 			}),
 		).rejects.toThrow('socket hang up');
 	}, 5_000);
+
+	// Stored (level 0) gzip is slightly larger than its content, so this body
+	// decodes to just under the cap while its encoded bytes go over it.
+	it('caps the encoded bytes as well as the decoded ones', async () => {
+		const encoded = new Uint8Array(
+			zlib.gzipSync(Buffer.alloc(DOWNLOAD_MAX_BYTES - 100), { level: 0 }),
+		);
+		expect(encoded.byteLength).toBeGreaterThan(DOWNLOAD_MAX_BYTES);
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'gzip' },
+				body: (async function* () {
+					for (let i = 0; i < encoded.byteLength; i += 1024 * 1024) {
+						yield encoded.subarray(i, i + 1024 * 1024);
+					}
+				})(),
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+				resolve: publicResolve,
+				transport,
+			}),
+		).rejects.toThrow(/larger than/);
+	}, 20_000);
+
+	describe('shared deadline', () => {
+		afterEach(() => jest.restoreAllMocks());
+
+		it('applies to the first lookup', async () => {
+			const controller = new AbortController();
+			jest.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+			const pending = downloadAsFile('https://slow.example/a.png', 'a', 'f', {
+				resolve: () => new Promise<string[]>(() => {}),
+				transport: asTransport(jest.fn()),
+			});
+			controller.abort(new Error('deadline'));
+			await expect(pending).rejects.toThrow('deadline');
+		}, 5_000);
+
+		it('applies to the lookup for a redirect hop', async () => {
+			const controller = new AbortController();
+			jest.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+			const transport = asTransport(
+				jest.fn(async () => {
+					// The redirect's lookup hangs; the deadline fires while it waits.
+					setImmediate(() => controller.abort(new Error('deadline')));
+					return {
+						status: 302,
+						headers: { location: 'https://slow.example/b.png' },
+						body: body(),
+					};
+				}),
+			);
+			await expect(
+				downloadAsFile('https://example.com/a.png', 'a', 'f', {
+					resolve: async (hostname) =>
+						hostname === 'slow.example'
+							? new Promise<string[]>(() => {})
+							: ['93.184.216.34'],
+					transport,
+				}),
+			).rejects.toThrow('deadline');
+		}, 5_000);
+	});
+
+	describe('releases responses it does not read', () => {
+		function respond(
+			status: number,
+			headers: Record<string, string>,
+			cancel: jest.Mock,
+		) {
+			return { status, headers, body: body(new Uint8Array([1])), cancel };
+		}
+
+		it('on a redirect', async () => {
+			const first = jest.fn();
+			let call = 0;
+			const transport = asTransport(
+				jest.fn(async () => {
+					call += 1;
+					return call === 1
+						? respond(302, { location: 'https://cdn.example/b.png' }, first)
+						: respond(200, {}, jest.fn());
+				}),
+			);
+			await downloadAsFile('https://example.com/a.png', 'a', 'f', {
+				resolve: publicResolve,
+				transport,
+			});
+			expect(first).toHaveBeenCalled();
+		});
+
+		it.each([
+			['a failed status', 403, {}],
+			[
+				'a declared length over the cap',
+				200,
+				{ 'content-length': String(DOWNLOAD_MAX_BYTES + 1) },
+			],
+			['an unsupported encoding', 200, { 'content-encoding': 'compress' }],
+		])('on %s', async (_label, status, headers) => {
+			const cancel = jest.fn();
+			const transport = asTransport(
+				jest.fn(async () => respond(status, headers, cancel)),
+			);
+			await expect(
+				downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+					resolve: publicResolve,
+					transport,
+				}),
+			).rejects.toThrow();
+			expect(cancel).toHaveBeenCalled();
+		});
+	});
 });

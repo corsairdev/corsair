@@ -192,6 +192,8 @@ export type TransportResponse = {
 	status: number;
 	headers: Record<string, string | string[] | undefined>;
 	body: AsyncIterable<Uint8Array>;
+	/** Frees the connection when the body will not be read. */
+	cancel?: () => void;
 };
 
 export type DownloadDeps = {
@@ -295,6 +297,7 @@ const httpTransport: NonNullable<DownloadDeps['transport']> = (
 				status: response.statusCode ?? 0,
 				headers: response.headers,
 				body: response as AsyncIterable<Uint8Array>,
+				cancel: () => response.destroy(),
 			});
 		});
 		request.on('error', reject);
@@ -305,13 +308,41 @@ const httpTransport: NonNullable<DownloadDeps['transport']> = (
 export type ResolvedUrl = { url: URL; addresses: string[] };
 
 /**
+ * Settles with `promise`, or rejects with the signal's reason once it aborts.
+ * `dns.lookup` takes no signal, so this is how a lookup stays inside the
+ * download's deadline.
+ */
+function untilAborted<T>(
+	promise: Promise<T>,
+	signal?: AbortSignal,
+): Promise<T> {
+	if (!signal) return promise;
+	if (signal.aborted) return Promise.reject(signal.reason);
+	return new Promise<T>((resolve, reject) => {
+		const onAbort = () => reject(signal.reason);
+		signal.addEventListener('abort', onAbort, { once: true });
+		promise.then(
+			(value) => {
+				signal.removeEventListener('abort', onAbort);
+				resolve(value);
+			},
+			(error) => {
+				signal.removeEventListener('abort', onAbort);
+				reject(error);
+			},
+		);
+	});
+}
+
+/**
  * Rejects a URL unless it is http(s) and every address its host resolves to is
  * public, and returns those addresses so the connection can be pinned to one.
- * A literal IP is checked directly.
+ * A literal IP is checked directly. The lookup gives up when `signal` aborts.
  */
 export async function resolvePublicUrl(
 	raw: string,
 	deps: DownloadDeps = {},
+	signal?: AbortSignal,
 ): Promise<ResolvedUrl> {
 	let url: URL;
 	try {
@@ -331,9 +362,12 @@ export async function resolvePublicUrl(
 	const literal = hostname.includes(':') || toV4(hostname) !== undefined;
 	const addresses = literal
 		? [hostname]
-		: await (deps.resolve ?? defaultResolve)(hostname).catch(() => {
-				throw new UnsafeUrlError(`Could not resolve ${hostname}.`);
-			});
+		: await untilAborted(
+				(deps.resolve ?? defaultResolve)(hostname).catch(() => {
+					throw new UnsafeUrlError(`Could not resolve ${hostname}.`);
+				}),
+				signal,
+			);
 
 	if (addresses.length === 0) {
 		throw new UnsafeUrlError(`Could not resolve ${hostname}.`);
@@ -368,6 +402,25 @@ function headerValue(
 	return value;
 }
 
+function tooLarge(maxBytes: number): UnsafeUrlError {
+	return new UnsafeUrlError(
+		`file_url is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
+	);
+}
+
+/** Passes chunks through, failing once more than `maxBytes` have gone by. */
+async function* capped(
+	body: AsyncIterable<Uint8Array>,
+	maxBytes: number,
+): AsyncIterable<Uint8Array> {
+	let total = 0;
+	for await (const chunk of body) {
+		total += chunk.byteLength;
+		if (total > maxBytes) throw tooLarge(maxBytes);
+		yield chunk;
+	}
+}
+
 async function readCapped(
 	body: AsyncIterable<Uint8Array>,
 	maxBytes: number,
@@ -376,11 +429,7 @@ async function readCapped(
 	let total = 0;
 	for await (const chunk of body) {
 		total += chunk.byteLength;
-		if (total > maxBytes) {
-			throw new UnsafeUrlError(
-				`file_url is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
-			);
-		}
+		if (total > maxBytes) throw tooLarge(maxBytes);
 		chunks.push(chunk);
 	}
 	const bytes = new Uint8Array(total);
@@ -430,9 +479,15 @@ async function decodeBody(
 	// connection or the deadline firing mid-body would surface as an unhandled
 	// 'error' event and the read below would never settle. pipeline destroys
 	// the decoder with the error, which rejects the caller's read.
-	pipeline(Readable.from(body), decoder, (error) => {
-		if (error) decoder.destroy(error);
-	});
+	// The encoded bytes are capped before the decoder sees them; the caller
+	// caps what comes out.
+	pipeline(
+		Readable.from(capped(body, DOWNLOAD_MAX_BYTES)),
+		decoder,
+		(error) => {
+			if (error) decoder.destroy(error);
+		},
+	);
 	return decoder as AsyncIterable<Uint8Array>;
 }
 
@@ -451,47 +506,55 @@ export async function downloadAsFile(
 	const transport = deps.transport ?? httpTransport;
 	const signal = AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS);
 
-	let current = await resolvePublicUrl(fileUrl, deps);
+	let current = await resolvePublicUrl(fileUrl, deps, signal);
 	for (let hop = 0; ; hop++) {
 		const response = await transport(current.url, current.addresses, signal);
 
-		const location = headerValue(response.headers, 'location');
-		if (response.status >= 300 && response.status < 400 && location) {
-			if (hop >= MAX_REDIRECTS) {
-				throw new UnsafeUrlError(
-					`file_url redirected more than ${MAX_REDIRECTS} times.`,
+		let bytes: Uint8Array;
+		try {
+			const location = headerValue(response.headers, 'location');
+			if (response.status >= 300 && response.status < 400 && location) {
+				// A redirect's body is never read; free its connection now.
+				response.cancel?.();
+				if (hop >= MAX_REDIRECTS) {
+					throw new UnsafeUrlError(
+						`file_url redirected more than ${MAX_REDIRECTS} times.`,
+					);
+				}
+				// Resolve relative to the hop that sent it, then vet the new host.
+				current = await resolvePublicUrl(
+					new URL(location, current.url).toString(),
+					deps,
+					signal,
+				);
+				continue;
+			}
+
+			if (response.status < 200 || response.status >= 300) {
+				throw new Error(
+					`Could not download file_url (${response.status}). It must be publicly reachable.`,
 				);
 			}
-			// Resolve relative to the hop that sent it, then vet the new host.
-			current = await resolvePublicUrl(
-				new URL(location, current.url).toString(),
-				deps,
-			);
-			continue;
-		}
 
-		if (response.status < 200 || response.status >= 300) {
-			throw new Error(
-				`Could not download file_url (${response.status}). It must be publicly reachable.`,
-			);
-		}
+			// A declared length over the cap needs no reading at all. It is only
+			// a hint, so the streaming cap below still applies.
+			const declared = Number(headerValue(response.headers, 'content-length'));
+			if (Number.isFinite(declared) && declared > DOWNLOAD_MAX_BYTES) {
+				throw tooLarge(DOWNLOAD_MAX_BYTES);
+			}
 
-		// A declared length over the cap needs no reading at all. It is only a
-		// hint, so the streaming cap below still applies.
-		const declared = Number(headerValue(response.headers, 'content-length'));
-		if (Number.isFinite(declared) && declared > DOWNLOAD_MAX_BYTES) {
-			throw new UnsafeUrlError(
-				`file_url is larger than the ${Math.round(DOWNLOAD_MAX_BYTES / (1024 * 1024))} MB limit.`,
+			bytes = await readCapped(
+				await decodeBody(
+					response.body,
+					headerValue(response.headers, 'content-encoding'),
+				),
+				DOWNLOAD_MAX_BYTES,
 			);
+		} catch (error) {
+			// Any exit before the body is fully read leaves the socket open.
+			response.cancel?.();
+			throw error;
 		}
-
-		const bytes = await readCapped(
-			await decodeBody(
-				response.body,
-				headerValue(response.headers, 'content-encoding'),
-			),
-			DOWNLOAD_MAX_BYTES,
-		);
 		const mime =
 			headerValue(response.headers, 'content-type')?.split(';')[0] ||
 			'application/octet-stream';
