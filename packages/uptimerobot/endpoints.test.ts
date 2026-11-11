@@ -722,3 +722,90 @@ describe('account', () => {
 		expect(result).toEqual(healthyMonitor);
 	});
 });
+
+describe('review fixes', () => {
+	it('accepts an opaque incident cursor and sends it back verbatim', async () => {
+		respond(fetchMock, { data: [], nextLink: null });
+
+		// The v3 cursor is a string, not a number.
+		await invoke(Incidents.list, { cursor: 'MTc4OTA0' });
+
+		expect(lastRequest(fetchMock).query.cursor).toBe('MTc4OTA0');
+	});
+
+	it('accepts an empty monitor selection, which shows no monitors', async () => {
+		respond(fetchMock, { id: 9, friendlyName: 'Status' });
+
+		await invoke(StatusPages.create, {
+			friendlyName: 'Status',
+			monitorIds: [],
+			autoAddMonitors: true,
+		});
+
+		const sent = lastRequest(fetchMock).body as { monitorIds?: number[] };
+		expect(sent.monitorIds).toEqual([]);
+	});
+
+	it('publishes an announcement immediately when no start date is given', async () => {
+		respond(fetchMock, announcement);
+
+		await invoke(StatusPages.createAnnouncement, {
+			pspId: 42,
+			title: 'All clear',
+			content: 'Everything is back to normal.',
+			status: 'Published',
+			type: 'Info',
+		});
+
+		const sent = lastRequest(fetchMock).body as Record<string, unknown>;
+		expect(sent.startDate).toBeUndefined();
+	});
+
+	it('sends a JSON body on a monitor action so the content type is set', async () => {
+		respond(fetchMock, monitor);
+
+		await invoke(Monitors.pause, { id: 778_001 });
+
+		const request = lastRequest(fetchMock);
+		expect(request.method).toBe('POST');
+		// The body is present so the transport sets a JSON content type, which
+		// UptimeRobot requires on these actions.
+		expect(request.body).toEqual({});
+		expect(
+			request.headers['content-type'] ?? request.headers['Content-Type'],
+		).toContain('application/json');
+	});
+
+	it('passes monitor config and HTTP settings through instead of dropping them', async () => {
+		respond(fetchMock, monitor);
+
+		await invoke(Monitors.create, {
+			friendlyName: 'Acme API',
+			type: 'API',
+			interval: 60,
+			url: 'https://api.acme.example/health',
+			config: { apiAssertions: { assertions: [] } },
+			httpMethodType: 'POST',
+			customHttpHeaders: { 'X-Token': 'abc' },
+		});
+
+		const body = lastRequest(fetchMock).body as Record<string, unknown>;
+		expect(body.config).toEqual({ apiAssertions: { assertions: [] } });
+		expect(body.httpMethodType).toBe('POST');
+		expect(body.customHttpHeaders).toEqual({ 'X-Token': 'abc' });
+	});
+
+	it('creates a third-party service monitor from a provider id alone', async () => {
+		respond(fetchMock, monitor);
+
+		await invoke(Monitors.create, {
+			type: 'THIRD_PARTY_SERVICE',
+			config: { thirdPartyService: { providerId: 4317 } },
+		});
+
+		const body = lastRequest(fetchMock).body as Record<string, unknown>;
+		expect(body.type).toBe('THIRD_PARTY_SERVICE');
+		expect(body.url).toBeUndefined();
+		expect(body.friendlyName).toBeUndefined();
+	});
+});

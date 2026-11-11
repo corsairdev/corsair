@@ -88,7 +88,7 @@ await corsair.uptimerobot.api.incidents.addComment({ id: 'inc_778001', content: 
 | `id` | `number \| null` | No | — |
 | `comment` | `string \| null` | No | — |
 | `publishOnStatusPage` | `boolean \| null` | No | — |
-| `created` | `any \| null` | No | — |
+| `created` | `string \| null` | No | — |
 | `user` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -125,7 +125,7 @@ await corsair.uptimerobot.api.incidents.comments({ id: 'inc_778001' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 
 
 
@@ -144,7 +144,7 @@ await corsair.uptimerobot.api.incidents.comments({ id: 'inc_778001' });
   id?: number | null,
   comment?: string | null,
   publishOnStatusPage?: boolean | null,
-  created?: any | null,
+  created?: string | null,
   user?: {
     id?: number | null,
     fullName?: string | null
@@ -183,15 +183,24 @@ await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | — |
-| `status` | `any \| null` | No | — |
+| `status` | `object \| null` | No | — |
 | `cause` | `number \| null` | No | — |
 | `reason` | `string \| null` | No | — |
 | `duration` | `number \| null` | No | — |
-| `startedAt` | `any \| null` | No | — |
-| `resolvedAt` | `any \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `resolvedAt` | `string \| null` | No | — |
 | `rootCause` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code?: string | null
+} | null
+```
+</Accordion>
+
 <Accordion title="rootCause full type">
 
 ```ts
@@ -199,8 +208,8 @@ await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
   url?: string | null,
   httpResponseCode?: number | null,
   responseDownloadUrl?: string | null,
-  requestHeaders?: Record<string, any> | null,
-  responseHeaders?: Record<string, any> | null
+  requestHeaders?: Record<string, string> | null,
+  responseHeaders?: Record<string, string> | null
 } | null
 ```
 </Accordion>
@@ -227,7 +236,7 @@ await corsair.uptimerobot.api.incidents.list({ status: 'open', type: 'Downtime',
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 | `monitor_id` | `number` | No | — |
 | `monitor_name` | `string` | No | A partial, case-insensitive match on the monitor name. |
 | `started_after` | `string` | No | ISO 8601. |
@@ -251,12 +260,14 @@ await corsair.uptimerobot.api.incidents.list({ status: 'open', type: 'Downtime',
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
   duration?: number | null,
-  startedAt?: any | null,
-  resolvedAt?: any | null
+  startedAt?: string | null,
+  resolvedAt?: string | null
 }[] | null
 ```
 </Accordion>
@@ -309,7 +320,7 @@ await corsair.uptimerobot.api.maintenanceWindows.create({ name: 'Sunday release 
 | `monitorIds` | `number[] \| null` | No | — |
 | `autoAddMonitors` | `boolean \| null` | No | — |
 | `status` | `active \| paused \| null` | No | — |
-| `created` | `any \| null` | No | — |
+| `created` | `string \| null` | No | — |
 
 
 
@@ -363,7 +374,7 @@ await corsair.uptimerobot.api.maintenanceWindows.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 
 
 
@@ -389,7 +400,7 @@ await corsair.uptimerobot.api.maintenanceWindows.list({});
   monitorIds?: number[] | null,
   autoAddMonitors?: boolean | null,
   status?: active | paused | null,
-  created?: any | null
+  created?: string | null
 }[] | null
 ```
 </Accordion>
@@ -441,7 +452,7 @@ await corsair.uptimerobot.api.maintenanceWindows.update({ id: 3317, status: 'pau
 | `monitorIds` | `number[] \| null` | No | — |
 | `autoAddMonitors` | `boolean \| null` | No | — |
 | `status` | `active \| paused \| null` | No | — |
-| `created` | `any \| null` | No | — |
+| `created` | `string \| null` | No | — |
 
 
 
@@ -532,7 +543,7 @@ await corsair.uptimerobot.api.monitorGroups.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 
 
 
@@ -579,9 +590,9 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `friendlyName` | `string` | Yes | — |
+| `friendlyName` | `string` | No | — |
 | `type` | `HTTP \| KEYWORD \| PING \| PORT \| HEARTBEAT \| DNS \| API \| UDP \| VISUAL_COMPARISON \| THIRD_PARTY_SERVICE` | Yes | — |
-| `interval` | `number` | Yes | Seconds between checks. The free plan allows no less than 300. |
+| `interval` | `number` | No | Seconds between checks. The free plan allows no less than 300. |
 | `url` | `string` | No | The URL, hostname or IP to check; for DNS the resolver. Omitted only for HEARTBEAT. |
 | `port` | `number` | No | Required for PORT and UDP monitors, rejected otherwise. |
 | `portAlertCondition` | `CLOSED \| OPEN` | No | PORT only. Whether a closed port or an open one is the alert. |
@@ -596,6 +607,10 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 | `assignedAlertContacts` | `object[]` | No | Who is alerted. Threshold and recurrence are paid-plan only. |
 | `customFields` | `Record<string, string>` | No | Up to 20 key/value pairs. Paid plans only. |
 | `responseTimeThreshold` | `number` | No | — |
+| `config` | `Record<string, any>` | No | Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`. |
+| `httpMethodType` | `GET \| POST \| PUT \| PATCH \| DELETE \| HEAD \| OPTIONS` | No | HTTP monitors only. |
+| `authType` | `string` | No | HTTP monitors only. The authentication scheme the check uses. |
+| `customHttpHeaders` | `Record<string, string>` | No | HTTP monitors only. Headers sent with the check. |
 
 <AccordionGroup>
 <Accordion title="assignedAlertContacts full type">
@@ -664,10 +679,12 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
-  startedAt?: any | null,
+  startedAt?: string | null,
   duration?: number | null
 } | null
 ```
@@ -781,10 +798,12 @@ await corsair.uptimerobot.api.monitors.get({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
-  startedAt?: any | null,
+  startedAt?: string | null,
   duration?: number | null
 } | null
 ```
@@ -812,7 +831,7 @@ await corsair.uptimerobot.api.monitors.list({ status: ['UP', 'DOWN'], tags: ['pr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 | `name` | `string` | No | A case-insensitive substring of the monitor name. |
 | `url` | `string` | No | A case-insensitive substring of the monitor URL. |
 | `status` | `(PAUSED \| STARTED \| UP \| LOOKS_DOWN \| DOWN)[]` | No | Only monitors in any of these states. |
@@ -862,10 +881,12 @@ await corsair.uptimerobot.api.monitors.list({ status: ['UP', 'DOWN'], tags: ['pr
   }[] | null,
   lastIncident?: {
     id?: string | null,
-    status?: any | null,
+    status?: {
+      code?: string | null
+    } | null,
     cause?: number | null,
     reason?: string | null,
-    startedAt?: any | null,
+    startedAt?: string | null,
     duration?: number | null
   } | null
 }[] | null
@@ -949,10 +970,12 @@ await corsair.uptimerobot.api.monitors.pause({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
-  startedAt?: any | null,
+  startedAt?: string | null,
   duration?: number | null
 } | null
 ```
@@ -1066,10 +1089,12 @@ await corsair.uptimerobot.api.monitors.start({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
-  startedAt?: any | null,
+  startedAt?: string | null,
   duration?: number | null
 } | null
 ```
@@ -1168,10 +1193,12 @@ await corsair.uptimerobot.api.monitors.update({ id: 778001, friendlyName: 'Store
 ```ts
 {
   id?: string | null,
-  status?: any | null,
+  status?: {
+    code?: string | null
+  } | null,
   cause?: number | null,
   reason?: string | null,
-  startedAt?: any | null,
+  startedAt?: string | null,
   duration?: number | null
 } | null
 ```
@@ -1321,7 +1348,7 @@ await corsair.uptimerobot.api.stats.uptime({ timeFrame: 'DAYS_30', logLimit: 100
 ```ts
 {
   type?: DOWNTIME | SLOW_RESPONSE | null,
-  datetime?: any | null,
+  datetime?: string | null,
   duration?: number | null
 }[] | null
 ```
@@ -1352,7 +1379,7 @@ await corsair.uptimerobot.api.statusPages.announcements({ pspId: 2214, status: '
 |------|------|----------|-------------|
 | `pspId` | `number` | Yes | — |
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 | `status` | `OFFLINE \| PENDING \| PUBLISHED \| ARCHIVED` | No | OFFLINE is a draft, PENDING is scheduled, PUBLISHED is live, ARCHIVED is history. |
 
 
@@ -1373,13 +1400,13 @@ await corsair.uptimerobot.api.statusPages.announcements({ pspId: 2214, status: '
   pspId?: number | null,
   title?: string | null,
   content?: string | null,
-  status?: any | null,
-  type?: any | null,
-  deliveryStatus?: any | null,
-  startDate?: any | null,
-  endDate?: any | null,
-  creationDate?: any | null,
-  submitDate?: any | null,
+  status?: string | null,
+  type?: string | null,
+  deliveryStatus?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  creationDate?: string | null,
+  submitDate?: string | null,
   sentCount?: number | null
 }[] | null
 ```
@@ -1431,7 +1458,18 @@ await corsair.uptimerobot.api.statusPages.create({ friendlyName: 'Acme status', 
 | `tagIds` | `number[] \| null` | No | — |
 | `monitorsCount` | `number \| null` | No | — |
 | `pinnedAnnouncementId` | `number \| null` | No | — |
-| `status` | `any \| null` | No | — |
+| `status` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1458,7 +1496,7 @@ await corsair.uptimerobot.api.statusPages.createAnnouncement({ pspId: 2214, titl
 | `content` | `string` | Yes | — |
 | `status` | `Offline \| Pending \| Published \| Archived` | Yes | Offline is a draft, Pending is scheduled, Published is visible now, Archived is history. |
 | `type` | `Info \| Maintenance \| Issue` | Yes | — |
-| `startDate` | `string` | Yes | ISO 8601. |
+| `startDate` | `string` | No | ISO 8601. Omit it on a Published announcement to publish immediately. |
 | `endDate` | `string` | No | ISO 8601, after startDate. |
 
 
@@ -1471,13 +1509,13 @@ await corsair.uptimerobot.api.statusPages.createAnnouncement({ pspId: 2214, titl
 | `pspId` | `number \| null` | No | — |
 | `title` | `string \| null` | No | — |
 | `content` | `string \| null` | No | — |
-| `status` | `any \| null` | No | — |
-| `type` | `any \| null` | No | — |
-| `deliveryStatus` | `any \| null` | No | — |
-| `startDate` | `any \| null` | No | — |
-| `endDate` | `any \| null` | No | — |
-| `creationDate` | `any \| null` | No | — |
-| `submitDate` | `any \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `deliveryStatus` | `string \| null` | No | CantSend, InQueue or Sent. |
+| `startDate` | `string \| null` | No | — |
+| `endDate` | `string \| null` | No | — |
+| `creationDate` | `string \| null` | No | — |
+| `submitDate` | `string \| null` | No | — |
 | `sentCount` | `number \| null` | No | — |
 
 
@@ -1548,7 +1586,18 @@ await corsair.uptimerobot.api.statusPages.get({ id: 2214 });
 | `tagIds` | `number[] \| null` | No | — |
 | `monitorsCount` | `number \| null` | No | — |
 | `pinnedAnnouncementId` | `number \| null` | No | — |
-| `status` | `any \| null` | No | — |
+| `status` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1571,7 +1620,7 @@ await corsair.uptimerobot.api.statusPages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
 
 
 
@@ -1596,7 +1645,9 @@ await corsair.uptimerobot.api.statusPages.list({});
   tagIds?: number[] | null,
   monitorsCount?: number | null,
   pinnedAnnouncementId?: number | null,
-  status?: any | null
+  status?: {
+    code?: string | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -1656,7 +1707,7 @@ await corsair.uptimerobot.api.tags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
-| `cursor` | `number` | No | Where to resume. Take it from the previous page, which returns `nextLink`. |
+| `cursor` | `number` | No | Where to resume. Take it from the previous page's `nextCursorId`. |
 
 
 

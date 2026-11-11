@@ -54,10 +54,10 @@ const PagingSchema = {
 		.optional()
 		.describe('Items per page, 1 to 200. UptimeRobot defaults to 50.'),
 	cursor: z
-		.number()
+		.string()
 		.optional()
 		.describe(
-			'Where to resume. Take it from the previous page, which returns `nextLink`.',
+			"Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`.",
 		),
 };
 
@@ -110,10 +110,12 @@ const MonitorSchema = z
 		lastIncident: z
 			.object({
 				id: z.string().nullish(),
-				status: z.unknown().nullish(),
+				// An object such as `{code: 'RESOLVED'}`. The spec leaves it untyped
+				// (`status: {}`), so the code is modelled and the rest passed through.
+				status: z.object({ code: z.string().nullish() }).loose().nullish(),
 				cause: z.number().nullish(),
 				reason: z.string().nullish(),
-				startedAt: z.unknown().nullish(),
+				startedAt: z.string().nullish(),
 				duration: z.number().nullish(),
 			})
 			.loose()
@@ -195,9 +197,11 @@ export type MonitorsGetResponse = z.infer<typeof MonitorsGetResponseSchema>;
  */
 const MonitorsCreateInputSchema = z
 	.object({
-		friendlyName: z.string().min(1).max(250),
+		// Optional because a THIRD_PARTY_SERVICE monitor is created from a provider id
+		// alone; every other type still requires both, which the refine below checks.
+		friendlyName: z.string().min(1).max(250).optional(),
 		type: MonitorTypeSchema,
-		interval: IntervalSchema,
+		interval: IntervalSchema.optional(),
 		url: z
 			.string()
 			.min(1)
@@ -270,8 +274,59 @@ const MonitorsCreateInputSchema = z
 			.optional()
 			.describe('Up to 20 key/value pairs. Paid plans only.'),
 		responseTimeThreshold: z.number().int().min(0).max(60_000).optional(),
+		// The spec types this per monitor type and the shape belongs to UptimeRobot,
+		// so it is passed through rather than modelled. API monitors need
+		// `config.apiAssertions`; THIRD_PARTY_SERVICE needs `config.thirdPartyService`.
+		config: z
+			.record(z.string(), z.unknown())
+			.optional()
+			.describe(
+				'Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`.',
+			),
+		httpMethodType: z
+			.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'])
+			.optional()
+			.describe('HTTP monitors only.'),
+		authType: z
+			.string()
+			.optional()
+			.describe(
+				'HTTP monitors only. The authentication scheme the check uses.',
+			),
+		customHttpHeaders: z
+			.record(z.string(), z.string())
+			.optional()
+			.describe('HTTP monitors only. Headers sent with the check.'),
 	})
 	.superRefine((value, ctx) => {
+		// A third-party service monitor is created from a provider id and nothing
+		// else: the spec's DTO requires only `type` and `config.thirdPartyService`,
+		// so the url, name and interval rules do not apply to it.
+		if (value.type === 'THIRD_PARTY_SERVICE') {
+			if (value.config === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['config'],
+					message:
+						'A THIRD_PARTY_SERVICE monitor needs config.thirdPartyService.providerId.',
+				});
+			}
+			return;
+		}
+		if (value.friendlyName === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['friendlyName'],
+				message: `A ${value.type} monitor needs a friendlyName.`,
+			});
+		}
+		if (value.interval === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['interval'],
+				message: `A ${value.type} monitor needs an interval.`,
+			});
+		}
 		const needsUrl = value.type !== 'HEARTBEAT';
 		if (needsUrl && value.url === undefined) {
 			ctx.addIssue({
@@ -469,7 +524,7 @@ const StatsUptimeResponseSchema = z
 				z
 					.object({
 						type: z.enum(['DOWNTIME', 'SLOW_RESPONSE']).nullish(),
-						datetime: z.unknown().nullish(),
+						datetime: z.string().nullish(),
 						duration: z.number().nullish(),
 					})
 					.loose(),
@@ -599,12 +654,12 @@ export type IncidentsListInput = z.infer<typeof IncidentsListInputSchema>;
 const IncidentSummarySchema = z
 	.object({
 		id: z.string().nullish(),
-		status: z.unknown().nullish(),
+		status: z.object({ code: z.string().nullish() }).loose().nullish(),
 		cause: z.number().nullish(),
 		reason: z.string().nullish(),
 		duration: z.number().nullish(),
-		startedAt: z.unknown().nullish(),
-		resolvedAt: z.unknown().nullish(),
+		startedAt: z.string().nullish(),
+		resolvedAt: z.string().nullish(),
 	})
 	.loose();
 
@@ -627,8 +682,8 @@ const IncidentsGetResponseSchema = IncidentSummarySchema.extend({
 			url: z.string().nullish(),
 			httpResponseCode: z.number().nullish(),
 			responseDownloadUrl: z.string().nullish(),
-			requestHeaders: z.record(z.string(), z.unknown()).nullish(),
-			responseHeaders: z.record(z.string(), z.unknown()).nullish(),
+			requestHeaders: z.record(z.string(), z.string()).nullish(),
+			responseHeaders: z.record(z.string(), z.string()).nullish(),
 		})
 		.loose()
 		.nullish(),
@@ -648,7 +703,7 @@ const IncidentCommentSchema = z
 		id: z.number().nullish(),
 		comment: z.string().nullish(),
 		publishOnStatusPage: z.boolean().nullish(),
-		created: z.unknown().nullish(),
+		created: z.string().nullish(),
 		user: z
 			.object({
 				id: z.number().nullish(),
@@ -703,7 +758,7 @@ const StatusPageSchema = z
 		tagIds: z.array(z.number()).nullish(),
 		monitorsCount: z.number().nullish(),
 		pinnedAnnouncementId: z.number().nullish(),
-		status: z.unknown().nullish(),
+		status: z.object({ code: z.string().nullish() }).loose().nullish(),
 	})
 	.loose();
 
@@ -729,7 +784,6 @@ const StatusPagesCreateInputSchema = z.object({
 	friendlyName: z.string().min(1).max(255),
 	monitorIds: z
 		.array(z.number().int().min(0))
-		.min(1)
 		.optional()
 		.describe(
 			'The monitors to show. `[0]` alone means every monitor in the account; an empty array shows none.',
@@ -811,13 +865,13 @@ const AnnouncementSchema = z
 		pspId: z.number().nullish(),
 		title: z.string().nullish(),
 		content: z.string().nullish(),
-		status: z.unknown().nullish(),
-		type: z.unknown().nullish(),
-		deliveryStatus: z.unknown().nullish(),
-		startDate: z.unknown().nullish(),
-		endDate: z.unknown().nullish(),
-		creationDate: z.unknown().nullish(),
-		submitDate: z.unknown().nullish(),
+		status: z.string().nullish(),
+		type: z.string().nullish(),
+		deliveryStatus: z.string().nullish().describe('CantSend, InQueue or Sent.'),
+		startDate: z.string().nullish(),
+		endDate: z.string().nullish(),
+		creationDate: z.string().nullish(),
+		submitDate: z.string().nullish(),
 		sentCount: z.number().nullish(),
 	})
 	.loose();
@@ -840,7 +894,12 @@ const StatusPagesCreateAnnouncementInputSchema = z.object({
 			'Offline is a draft, Pending is scheduled, Published is visible now, Archived is history.',
 		),
 	type: z.enum(['Info', 'Maintenance', 'Issue']),
-	startDate: z.string().describe('ISO 8601.'),
+	startDate: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601. Omit it on a Published announcement to publish immediately.',
+		),
 	endDate: z.string().optional().describe('ISO 8601, after startDate.'),
 });
 
@@ -875,7 +934,7 @@ const MaintenanceWindowSchema = z
 		monitorIds: z.array(z.number()).nullish(),
 		autoAddMonitors: z.boolean().nullish(),
 		status: z.enum(['active', 'paused']).nullish(),
-		created: z.unknown().nullish(),
+		created: z.string().nullish(),
 	})
 	.loose();
 
@@ -1048,7 +1107,19 @@ export type MonitorGroupsDeleteResponse = z.infer<
 
 // ── tags ──────────────────────────────────────────────────────────────────
 
-const TagsListInputSchema = z.object({ ...PagingSchema });
+/**
+ * Tags page by a numeric `nextCursorId`, not by the `nextLink` every other list
+ * returns, so the cursor here is a number and comes from that field.
+ */
+const TagsListInputSchema = z.object({
+	limit: PagingSchema.limit,
+	cursor: z
+		.number()
+		.optional()
+		.describe(
+			"Where to resume. Take it from the previous page's `nextCursorId`.",
+		),
+});
 
 export type TagsListInput = z.infer<typeof TagsListInputSchema>;
 

@@ -122,6 +122,10 @@ function act(
 		({ id }) => ({
 			method: 'POST',
 			path: `/monitors/${segment(id)}/${action}`,
+			// UptimeRobot requires a JSON content type on these actions, and the
+			// transport only sets one when a body is present, so an empty object is
+			// sent rather than nothing.
+			body: {},
 		}),
 		{
 			log: (_, result) => ({
