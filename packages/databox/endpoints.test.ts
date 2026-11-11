@@ -10,6 +10,7 @@ import {
 	datasetData,
 	dataset as datasetFixture,
 	datasetList,
+	idempotencyKeyRejected,
 	ingestionDetail,
 	ingestQueued,
 	metricData,
@@ -284,11 +285,13 @@ describe('dataSources.create', () => {
 
 		await invoke(DataSources.create, {
 			name: 'Sales',
-			idempotencyKey: 'key-1',
+			idempotencyKey: '3f1c9a52-7d4e-4b8a-9c21-5e6f7a8b9c0d',
 		});
 
 		expect(lastRequest().body).toEqual({ name: 'Sales' });
-		expect(lastRequest().headers.get('idempotency-key')).toBe('key-1');
+		expect(lastRequest().headers.get('idempotency-key')).toBe(
+			'3f1c9a52-7d4e-4b8a-9c21-5e6f7a8b9c0d',
+		);
 	});
 
 	it('is not replay-safe: a 5xx must not be replayed', async () => {
@@ -556,7 +559,7 @@ describe('datasets.ingestData', () => {
 		const result = await invoke(Datasets.ingestData, {
 			id: 2345678,
 			records,
-			idempotencyKey: 'ingest-1',
+			idempotencyKey: '8b2d4f60-1a3c-4e5f-a7b9-0c1d2e3f4a5b',
 		});
 
 		expectAuthenticated();
@@ -565,7 +568,9 @@ describe('datasets.ingestData', () => {
 			path: '/v2/datasets/2345678/data',
 			body: { records },
 		});
-		expect(lastRequest().headers.get('idempotency-key')).toBe('ingest-1');
+		expect(lastRequest().headers.get('idempotency-key')).toBe(
+			'8b2d4f60-1a3c-4e5f-a7b9-0c1d2e3f4a5b',
+		);
 		expect(result).toEqual({
 			ingestionId: 'a4283796-bfde-42cf-aa65-1830d6692966',
 			status: 'queued',
@@ -581,6 +586,19 @@ describe('datasets.ingestData', () => {
 			},
 			'completed',
 		);
+	});
+
+	it('rejects an idempotency key that is not a UUID before calling, as Databox answers 400', async () => {
+		respond(idempotencyKeyRejected, 400);
+
+		const error = await invoke(Datasets.ingestData, {
+			id: 2345678,
+			records,
+			idempotencyKey: 'corsair-plugin-test-1',
+		}).catch((e: unknown) => e);
+
+		expect(error).not.toBeInstanceOf(DataboxAPIError);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('never logs record contents', async () => {

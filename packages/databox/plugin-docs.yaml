@@ -9,7 +9,7 @@ overviewNote: |
   - **A primary key changes re-ingestion.** With `primaryKey` set, re-ingesting a matching record overwrites it instead of appending a duplicate. Without one, every ingest appends.
   - **Deleting a data source cascades.** `dataSources.delete` permanently removes the data source, all of its datasets and all of their records, and cannot be undone.
   - **Metrics can trigger a sync.** `metrics.getData` may wait for a due or first sync, up to about two minutes, so the plugin raises that call's timeout; `syncInfo.status` says whether it synced, and `inProgress` or `neverSynced` mean call again shortly. It is rate limited to 30 calls per minute per account.
-  - **Retry behavior.** A 429 and a 409 `modification_in_progress` both carry `Retry-After` and are retried, because Databox did not process the request; a 409 `modification_failed` is final and is not. Failed writes are never replayed on a 5xx, since they may have been applied. `idempotencyKey` inputs send Databox's `Idempotency-Key` header, which dedupes creation and ingestion calls for 24 hours.
+  - **Retry behavior.** A 429 and a 409 `modification_in_progress` both carry `Retry-After` and are retried, because Databox did not process the request; a 409 `modification_failed` is final and is not. Failed writes are never replayed on a 5xx, since they may have been applied. `idempotencyKey` inputs (a UUID) send Databox's `Idempotency-Key` header, which dedupes creation and ingestion calls for 24 hours.
   - **Accounts.** Organizations with accounts enabled can pass `accountId` on an operation to act on one account instead of the organization tied to the key.
 examples:
   read:
@@ -37,7 +37,7 @@ apiExamples:
   dataSources.list:
     call: "{ page: 0, pageSize: 50 }"
   dataSources.create:
-    call: "{ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' }"
+    call: "{ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: '3f1c9a52-7d4e-4b8a-9c21-5e6f7a8b9c0d' }"
   dataSources.get:
     call: "{ id: 1234567 }"
   dataSources.delete:

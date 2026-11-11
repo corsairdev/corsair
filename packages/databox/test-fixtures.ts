@@ -241,3 +241,17 @@ export const numericFilterValueRejected = {
 		},
 	],
 };
+
+// Live 400 (11-11) for datasets.ingestData with a non-UUID Idempotency-Key.
+export const idempotencyKeyRejected = {
+	status: 'error',
+	requestId,
+	errors: [
+		{
+			code: 'invalid_input',
+			message: 'Idempotency-Key must be a valid UUID',
+			field: 'Idempotency-Key',
+			type: 'validation',
+		},
+	],
+};

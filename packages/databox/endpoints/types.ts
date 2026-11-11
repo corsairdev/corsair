@@ -18,9 +18,9 @@ const AccountIdSchema = z
 
 const IdempotencyKeySchema = z
 	.string()
-	.min(1)
+	.uuid()
 	.describe(
-		'Sent as Idempotency-Key; Databox returns the original response for the same key within 24 hours.',
+		'A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours.',
 	);
 
 const PageSchema = z.number().int().min(0).describe('Zero-based page number.');
