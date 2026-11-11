@@ -15,13 +15,44 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 	);
 }, 'Route identifiers must be safe path segments');
 
+// Some documented nested API values have no stable field contract; preserve them without
+// making the documented resource envelope itself untyped.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
 const CampaignType = z.enum(['general', 'collect', 'fundraise', 'event']);
 const DiscountCodeType = z.enum(['percentage', 'fixed']);
 
 const CampaignSettings = z
+	// Givebutter documents setting values without a value schema, so this remains opaque.
 	.object({ name: z.string(), value: z.unknown().optional() })
+	.loose();
+
+const CampaignResource = z
+	.object({
+		id: z.string(),
+		code: z.string(),
+		account_id: z.string(),
+		event_id: z.string(),
+		type: z.string(),
+		title: z.string(),
+		subtitle: z.string(),
+		description: z.string(),
+		slug: z.string(),
+		url: z.string(),
+		goal: z.number().int().nullable(),
+		raised: z.number(),
+		donors: z.number().int(),
+		currency: z.string(),
+		cover: z.string(),
+		status: z.string(),
+		timezone: z.string(),
+		end_at: z.string(),
+		settings: z.array(JsonObject),
+		created_at: z.string(),
+		updated_at: z.string(),
+	})
+	.partial()
+	.extend({ id: z.string() })
 	.loose();
 
 const CampaignFields = {
@@ -173,10 +204,10 @@ export const GivebutterEndpointInputSchemas = {
 } as const;
 
 export const GivebutterEndpointOutputSchemas = {
-	listCampaigns: CampaignPageSchema,
-	createCampaign: JsonObject,
-	getCampaign: JsonObject,
-	updateCampaign: JsonObject,
+	listCampaigns: CampaignPageSchema.extend({ data: z.array(CampaignResource) }),
+	createCampaign: CampaignResource,
+	getCampaign: CampaignResource,
+	updateCampaign: CampaignResource,
 	deleteCampaign: z.void(),
 	listDiscountCodes: PageSchema,
 	createDiscountCode: JsonObject,

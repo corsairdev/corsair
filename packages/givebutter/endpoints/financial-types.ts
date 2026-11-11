@@ -8,6 +8,7 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 }, 'Route identifiers must be safe path segments');
 
 const NullableString = z.string().nullable();
+// Nested financial payloads include provider-defined values whose fields vary by method.
 const JsonObject = z.object({}).loose();
 const WebhookEvent = z.enum([
 	'campaign.created',
@@ -41,6 +42,47 @@ const PaymentMethod = z.enum([
 	'none',
 ]);
 const DedicationType = z.enum(['in_memory_of', 'in_honor_of']);
+
+const TransactionResource = z
+	.object({
+		id: z.string(),
+		amount: z.number().optional(),
+		currency: z.string().optional(),
+		status: z.string().optional(),
+		method: z.string().optional(),
+		transacted_at: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.loose();
+const MessageResource = z
+	.object({
+		id: z.string(),
+		status: z.string().optional(),
+		channel: z.string().optional(),
+	})
+	.loose();
+const PayoutResource = z
+	.object({
+		id: z.string(),
+		amount: z.number().optional(),
+		status: z.string().optional(),
+	})
+	.loose();
+const PledgeResource = z
+	.object({
+		id: z.string(),
+		status: z.string().optional(),
+		amount: z.string().optional(),
+	})
+	.loose();
+const WebhookResource = z
+	.object({
+		id: z.string(),
+		url: z.string().optional(),
+		enabled: z.boolean().optional(),
+	})
+	.loose();
 
 const PageSchema = z.object({
 	data: z.array(JsonObject),
@@ -204,24 +246,25 @@ export const GivebutterFinancialEndpointInputSchemas = {
 } as const;
 
 export const GivebutterFinancialEndpointOutputSchemas = {
-	listMessages: PageSchema,
-	getMessage: JsonObject,
-	listPayouts: PageSchema,
-	getPayout: JsonObject,
-	listPledges: PageSchema,
-	getPledge: JsonObject,
+	listMessages: PageSchema.extend({ data: z.array(MessageResource) }),
+	getMessage: MessageResource,
+	listPayouts: PageSchema.extend({ data: z.array(PayoutResource) }),
+	getPayout: PayoutResource,
+	listPledges: PageSchema.extend({ data: z.array(PledgeResource) }),
+	getPledge: PledgeResource,
 	listPlans: PageSchema,
 	getPlan: JsonObject,
 	listTransactions: PageSchema.extend({
+		data: z.array(TransactionResource),
 		meta: PageSchema.shape.meta.extend({ unfiltered_total: z.number().int() }),
 	}),
-	createTransaction: JsonObject,
-	getTransaction: JsonObject,
-	updateTransaction: JsonObject,
-	listWebhooks: PageSchema,
-	createWebhook: JsonObject,
-	getWebhook: JsonObject,
-	updateWebhook: JsonObject,
+	createTransaction: TransactionResource,
+	getTransaction: TransactionResource,
+	updateTransaction: TransactionResource,
+	listWebhooks: PageSchema.extend({ data: z.array(WebhookResource) }),
+	createWebhook: WebhookResource,
+	getWebhook: WebhookResource,
+	updateWebhook: WebhookResource,
 	deleteWebhook: z.void(),
 	listWebhookActivities: PageSchema,
 	getWebhookActivity: JsonObject,

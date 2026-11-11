@@ -18,6 +18,7 @@ type Operation<T extends EndpointName> = {
 	query?: (
 		input: GivebutterEndpointInputs[T],
 	) => Record<string, string | number | boolean | undefined>;
+	// Bodies vary by endpoint; each concrete input schema validates its known provider fields.
 	body?: (input: GivebutterEndpointInputs[T]) => Record<string, unknown>;
 	void?: boolean;
 };
@@ -29,7 +30,7 @@ const omit = <T extends Record<string, unknown>>(
 ) =>
 	Object.fromEntries(
 		Object.entries(input).filter(([key]) => !keys.includes(key)),
-	);
+	) as Record<string, unknown>; // Removing path fields leaves the schema-validated JSON request body.
 
 function define<T extends EndpointName>(
 	name: T,
@@ -40,6 +41,8 @@ function define<T extends EndpointName>(
 	GivebutterEndpointOutputs[T]
 > {
 	return async (ctx, rawInput) => {
+		// The indexed schema and indexed endpoint input are correlated by `name`, but TypeScript
+		// cannot preserve that relationship through a generic indexed lookup.
 		const input = GivebutterEndpointInputSchemas[name].parse(
 			rawInput,
 		) as GivebutterEndpointInputs[T];
@@ -61,6 +64,7 @@ function define<T extends EndpointName>(
 			{ operation: name },
 			'completed',
 		);
+		// The same indexed-schema limitation applies after the output schema has parsed the response.
 		return result as GivebutterEndpointOutputs[T];
 	};
 }

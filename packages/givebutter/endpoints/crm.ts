@@ -18,6 +18,7 @@ type Operation<T extends EndpointName> = {
 	query?: (
 		input: GivebutterCrmEndpointInputs[T],
 	) => Record<string, string | number | boolean | undefined>;
+	// Bodies vary by endpoint; each concrete input schema validates its known provider fields.
 	body?: (input: GivebutterCrmEndpointInputs[T]) => Record<string, unknown>;
 	void?: boolean;
 };
@@ -29,7 +30,7 @@ const omit = <T extends Record<string, unknown>>(
 ) =>
 	Object.fromEntries(
 		Object.entries(input).filter(([key]) => !keys.includes(key)),
-	);
+	) as Record<string, unknown>; // Removing path fields leaves the schema-validated JSON request body.
 
 function define<T extends EndpointName>(
 	name: T,
@@ -40,6 +41,7 @@ function define<T extends EndpointName>(
 	GivebutterCrmEndpointOutputs[T]
 > {
 	return async (ctx, rawInput) => {
+		// TypeScript cannot retain the generic key/schema correlation across this indexed lookup.
 		const input = GivebutterCrmEndpointInputSchemas[name].parse(
 			rawInput,
 		) as GivebutterCrmEndpointInputs[T];
@@ -59,6 +61,7 @@ function define<T extends EndpointName>(
 			{ operation: name },
 			'completed',
 		);
+		// The parsed output has the matching runtime schema; this assertion restores that key relation.
 		return result as GivebutterCrmEndpointOutputs[T];
 	};
 }

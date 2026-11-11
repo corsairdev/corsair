@@ -35,6 +35,8 @@ const campaignPage = { ...page, meta: { ...page.meta, unfiltered_total: '0' } };
 
 let fetchMock: jest.SpyInstance;
 
+// Test responses intentionally accept arbitrary JSON so cases can exercise documented
+// malformed/no-content transport behavior before endpoint output parsing.
 function response(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(body === undefined ? null : JSON.stringify(body), {
@@ -111,7 +113,11 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 	const cases: Array<{
 		name: string;
 		invoke: () => Promise<unknown>;
+		// Each fixture is intentionally untyped JSON because the public endpoint parses it.
 		body: unknown;
+		method: string;
+		path: string;
+		requestBody?: unknown;
 	}> = [
 		{
 			name: 'campaigns.create',
@@ -120,22 +126,31 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 					type: 'general',
 					title: 'Spring fund',
 				}),
-			body: {},
+			body: { id: 'campaign_1' },
+			method: 'POST',
+			path: '/v1/campaigns',
+			requestBody: { type: 'general', title: 'Spring fund' },
 		},
 		{
 			name: 'campaigns.get',
 			invoke: () => Campaigns.get(ctx as never, { campaign: 1 }),
-			body: {},
+			body: { id: 'campaign_1' },
+			method: 'GET',
+			path: '/v1/campaigns/1',
 		},
 		{
 			name: 'campaigns.delete',
 			invoke: () => Campaigns.delete(ctx as never, { campaign: 1 }),
 			body: undefined,
+			method: 'DELETE',
+			path: '/v1/campaigns/1',
 		},
 		{
 			name: 'discountCodes.list',
 			invoke: () => DiscountCodes.list(ctx as never, { campaign: 1 }),
 			body: page,
+			method: 'GET',
+			path: '/v1/campaigns/1/discount-codes',
 		},
 		{
 			name: 'discountCodes.create',
@@ -148,12 +163,17 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 					code: 'SAVE',
 				}),
 			body: {},
+			method: 'POST',
+			path: '/v1/campaigns/1/discount-codes',
+			requestBody: { type: 'fixed', active: true, amount: 5, code: 'SAVE' },
 		},
 		{
 			name: 'discountCodes.get',
 			invoke: () =>
 				DiscountCodes.get(ctx as never, { campaign: 1, discountCode: 2 }),
 			body: {},
+			method: 'GET',
+			path: '/v1/campaigns/1/discount-codes/2',
 		},
 		{
 			name: 'discountCodes.update',
@@ -164,41 +184,58 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 					amount: 6,
 				}),
 			body: {},
+			method: 'PUT',
+			path: '/v1/campaigns/1/discount-codes/2',
+			requestBody: { amount: 6 },
 		},
 		{
 			name: 'members.list',
 			invoke: () => Members.list(ctx as never, { campaign: 1 }),
 			body: page,
+			method: 'GET',
+			path: '/v1/campaigns/1/members',
 		},
 		{
 			name: 'members.get',
 			invoke: () => Members.get(ctx as never, { campaign: 1, member: 2 }),
 			body: {},
+			method: 'GET',
+			path: '/v1/campaigns/1/members/2',
 		},
 		{
 			name: 'members.delete',
 			invoke: () => Members.delete(ctx as never, { campaign: 1, member: 2 }),
 			body: undefined,
+			method: 'DELETE',
+			path: '/v1/campaigns/1/members/2',
 		},
 		{
 			name: 'teams.list',
 			invoke: () => Teams.list(ctx as never, { campaign: 1 }),
 			body: page,
+			method: 'GET',
+			path: '/v1/campaigns/1/teams',
 		},
 		{
 			name: 'teams.get',
 			invoke: () => Teams.get(ctx as never, { campaign: 1, team: 2 }),
 			body: {},
+			method: 'GET',
+			path: '/v1/campaigns/1/teams/2',
 		},
 		{
 			name: 'teams.delete',
 			invoke: () => Teams.delete(ctx as never, { campaign: 1, team: 2 }),
 			body: undefined,
+			method: 'DELETE',
+			path: '/v1/campaigns/1/teams/2',
 		},
 		{
 			name: 'ticketItems.list',
 			invoke: () => TicketItems.list(ctx as never, { campaign: 1 }),
 			body: page,
+			method: 'GET',
+			path: '/v1/campaigns/1/items/tickets',
 		},
 		{
 			name: 'ticketItems.create',
@@ -209,42 +246,59 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 					price: 20,
 				}),
 			body: {},
+			method: 'POST',
+			path: '/v1/campaigns/1/items/tickets',
+			requestBody: { name: 'Entry', price: 20 },
 		},
 		{
 			name: 'ticketItems.get',
 			invoke: () => TicketItems.get(ctx as never, { campaign: 1, ticketId: 2 }),
 			body: {},
+			method: 'GET',
+			path: '/v1/campaigns/1/items/tickets/2',
 		},
 		{
 			name: 'tickets.list',
 			invoke: () => Tickets.list(ctx as never, {}),
 			body: page,
+			method: 'GET',
+			path: '/v1/tickets',
 		},
 		{
 			name: 'tickets.get',
 			invoke: () => Tickets.get(ctx as never, { ticket: 'ticket_1' }),
 			body: {},
+			method: 'GET',
+			path: '/v1/tickets/ticket_1',
 		},
 		{
 			name: 'sso.account',
 			invoke: () => Sso.account(ctx as never, {}),
 			body: {},
+			method: 'GET',
+			path: '/sso/v1/account',
 		},
 		{
 			name: 'sso.campaign',
 			invoke: () => Sso.campaign(ctx as never, { campaign: 1 }),
 			body: {},
+			method: 'GET',
+			path: '/sso/v1/campaigns/1',
 		},
 	];
 
 	it.each(cases)(
 		'$name reaches the documented HTTP seam',
-		async ({ invoke, body }) => {
+		async ({ invoke, body, method, path, requestBody }) => {
 			response(body, body === undefined ? 204 : 200);
 			await expect(invoke()).resolves.toEqual(
 				body === undefined ? undefined : expect.anything(),
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+			const request = lastRequest();
+			expect(request.url).toBe(`https://api.givebutter.com${path}`);
+			expect(request.method).toBe(method);
+			expect(request.body).toEqual(requestBody);
 		},
 	);
 });

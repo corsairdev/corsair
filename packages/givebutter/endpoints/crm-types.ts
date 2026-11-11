@@ -7,6 +7,8 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 	);
 }, 'Route identifiers must be safe path segments');
 
+// The provider leaves several nested CRM value shapes open; retain those values while
+// validating the documented top-level resource fields below.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
 const ContactType = z.enum(['individual', 'company']);
@@ -20,6 +22,34 @@ const ActivityType = z.enum([
 	'completed_task',
 	'volunteer_activity',
 ]);
+
+const ContactResource = z
+	.object({
+		id: z.string(),
+		external_id: z.string().optional(),
+		type: ContactType.optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		primary_email: z.string().optional(),
+		primary_phone: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.loose();
+
+const ActivityResource = z
+	.object({
+		id: z.string(),
+		type: ActivityType.optional(),
+		created_at: z.string().optional(),
+	})
+	.loose();
+const FundResource = z
+	.object({ id: z.string(), name: z.string().optional() })
+	.loose();
+const HouseholdResource = z
+	.object({ id: z.string(), name: z.string().optional() })
+	.loose();
 
 const PageSchema = z.object({
 	data: z.array(JsonObject),
@@ -204,7 +234,9 @@ export const GivebutterCrmEndpointInputSchemas = {
 		query: z.string().optional(),
 		sortBy: z.string().optional(),
 		sortByDesc: z.string().optional(),
-		page: z.string().optional(),
+		// `page` is the only pagination query parameter documented by Givebutter's
+		// OpenAPI contract; the other paginated responses expose navigation links only.
+		page: z.number().int().min(1).optional(),
 	}),
 	createHousehold: z.object({
 		name: z.string().max(255),
@@ -231,29 +263,29 @@ export const GivebutterCrmEndpointInputSchemas = {
 } as const;
 
 export const GivebutterCrmEndpointOutputSchemas = {
-	listContacts: PageSchema,
-	createContact: JsonObject,
-	getContact: JsonObject,
-	updateContact: JsonObject,
+	listContacts: PageSchema.extend({ data: z.array(ContactResource) }),
+	createContact: ContactResource,
+	getContact: ContactResource,
+	updateContact: ContactResource,
 	deleteContact: z.void(),
-	restoreContact: JsonObject,
-	listActivities: PageSchema,
-	createActivity: JsonObject,
-	getActivity: JsonObject,
-	updateActivity: JsonObject,
+	restoreContact: ContactResource,
+	listActivities: PageSchema.extend({ data: z.array(ActivityResource) }),
+	createActivity: ActivityResource,
+	getActivity: ActivityResource,
+	updateActivity: ActivityResource,
 	deleteActivity: z.void(),
 	addTags: JsonObject,
 	removeTags: JsonObject,
 	syncTags: JsonObject,
-	listFunds: PageSchema,
-	createFund: JsonObject,
-	getFund: JsonObject,
-	updateFund: JsonObject,
+	listFunds: PageSchema.extend({ data: z.array(FundResource) }),
+	createFund: FundResource,
+	getFund: FundResource,
+	updateFund: FundResource,
 	deleteFund: z.void(),
-	listHouseholds: z.array(JsonObject),
-	createHousehold: JsonObject,
-	getHousehold: JsonObject,
-	updateHousehold: JsonObject,
+	listHouseholds: z.array(HouseholdResource),
+	createHousehold: HouseholdResource,
+	getHousehold: HouseholdResource,
+	updateHousehold: HouseholdResource,
 	deleteHousehold: z.void(),
 	listHouseholdContacts: PageSchema,
 	addHouseholdContact: JsonObject,

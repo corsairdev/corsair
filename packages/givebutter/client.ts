@@ -17,6 +17,8 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export class GivebutterAPIError extends Error {
 	readonly status?: number;
+	// ApiError.body is provider-controlled JSON, so it cannot safely be narrowed before
+	// Givebutter publishes a stable error payload schema.
 	readonly body?: unknown;
 	readonly retryAfter?: number;
 
@@ -33,6 +35,7 @@ export class GivebutterAPIError extends Error {
 
 type RequestOptions = {
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	// Endpoint schemas accept provider-specific JSON objects with varying documented fields.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 };

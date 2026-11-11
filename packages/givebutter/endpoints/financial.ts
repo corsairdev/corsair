@@ -18,6 +18,7 @@ type Operation<T extends EndpointName> = {
 	query?: (
 		input: GivebutterFinancialEndpointInputs[T],
 	) => Record<string, string | number | boolean | undefined>;
+	// Bodies vary by endpoint; each concrete input schema validates its known provider fields.
 	body?: (
 		input: GivebutterFinancialEndpointInputs[T],
 	) => Record<string, unknown>;
@@ -31,10 +32,11 @@ const omit = <T extends Record<string, unknown>>(
 ) =>
 	Object.fromEntries(
 		Object.entries(input).filter(([key]) => !keys.includes(key)),
-	);
+	) as Record<string, unknown>; // Removing path fields leaves the schema-validated JSON request body.
 const toQuery = <T extends object>(input: T) =>
 	Object.fromEntries(
 		Object.entries(input).map(([key, value]) => [key, value ?? undefined]),
+		// Object.entries loses property value unions; the schema-limited inputs guarantee query scalars.
 	) as Record<string, string | number | boolean | undefined>;
 
 function define<T extends EndpointName>(
@@ -46,6 +48,7 @@ function define<T extends EndpointName>(
 	GivebutterFinancialEndpointOutputs[T]
 > {
 	return async (ctx, rawInput) => {
+		// TypeScript cannot retain the generic key/schema correlation across this indexed lookup.
 		const input = GivebutterFinancialEndpointInputSchemas[name].parse(
 			rawInput,
 		) as GivebutterFinancialEndpointInputs[T];
@@ -65,6 +68,7 @@ function define<T extends EndpointName>(
 			{ operation: name },
 			'completed',
 		);
+		// The parsed output has the matching runtime schema; this assertion restores that key relation.
 		return result as GivebutterFinancialEndpointOutputs[T];
 	};
 }

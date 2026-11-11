@@ -34,9 +34,11 @@ const page = {
 		total: 0,
 	},
 };
+const resource = { id: 'resource_1' };
 
 let fetchMock: jest.SpyInstance;
 
+// Test responses remain arbitrary JSON so public endpoint schemas validate the boundary.
 function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(body === undefined ? null : JSON.stringify(body), {
@@ -51,6 +53,14 @@ beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
 		throw new Error('unmocked fetch');
 	});
+});
+
+it('forwards Givebutter’s documented household page query', async () => {
+	respond([]);
+	await Households.list(ctx as never, { page: 2 });
+	const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+	expect(url).toBe('https://api.givebutter.com/v1/households?page=2');
+	expect(init.method).toBe('GET');
 });
 afterEach(() => fetchMock.mockRestore());
 
@@ -72,14 +82,14 @@ describe('Givebutter CRM and financial operation seams', () => {
 		{
 			name: 'contacts.create',
 			call: () => Contacts.create(ctx as never, { first_name: 'Ada' }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/contacts',
 		},
 		{
 			name: 'contacts.get',
 			call: () => Contacts.get(ctx as never, { contact: 1 }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/contacts/1',
 		},
@@ -87,7 +97,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'contacts.update',
 			call: () =>
 				Contacts.update(ctx as never, { contact: 1, first_name: 'Ada' }),
-			result: {},
+			result: resource,
 			method: 'PUT',
 			path: '/v1/contacts/1',
 		},
@@ -101,7 +111,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 		{
 			name: 'contacts.restore',
 			call: () => Contacts.restore(ctx as never, { contact: 1 }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/contacts/1/restore',
 		},
@@ -115,21 +125,21 @@ describe('Givebutter CRM and financial operation seams', () => {
 		{
 			name: 'activities.create',
 			call: () => Activities.create(ctx as never, { contact: 1, type: 'note' }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/contacts/1/activities',
 		},
 		{
 			name: 'activities.get',
 			call: () => Activities.get(ctx as never, { contact: 1, activity: 2 }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/contacts/1/activities/2',
 		},
 		{
 			name: 'activities.update',
 			call: () => Activities.update(ctx as never, { contact: 1, activity: 2 }),
-			result: {},
+			result: resource,
 			method: 'PUT',
 			path: '/v1/contacts/1/activities/2',
 		},
@@ -144,7 +154,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: `contactTags.${action}`,
 			call: () =>
 				ContactTags[action](ctx as never, { contact: 1, tags: ['donor'] }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: `/v1/contacts/1/tags/${action}`,
 		})),
@@ -164,7 +174,8 @@ describe('Givebutter CRM and financial operation seams', () => {
 											name: 'Updated',
 										})
 									: Funds.delete(ctx as never, { fund: 'general' }),
-				result: action === 'list' ? page : action === 'delete' ? undefined : {},
+				result:
+					action === 'list' ? page : action === 'delete' ? undefined : resource,
 				method:
 					action === 'list' || action === 'get'
 						? 'GET'
@@ -195,7 +206,8 @@ describe('Givebutter CRM and financial operation seams', () => {
 											name: 'Home',
 										})
 									: Households.delete(ctx as never, { household: 1 }),
-				result: action === 'list' ? [] : action === 'delete' ? undefined : {},
+				result:
+					action === 'list' ? [] : action === 'delete' ? undefined : resource,
 				method:
 					action === 'list' || action === 'get'
 						? 'GET'
@@ -221,7 +233,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'householdContacts.add',
 			call: () =>
 				HouseholdContacts.add(ctx as never, { household: 1, contact_id: 2 }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/households/1/contacts',
 		},
@@ -229,7 +241,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'householdContacts.get',
 			call: () =>
 				HouseholdContacts.get(ctx as never, { household: 1, contact: 2 }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/households/1/contacts/2',
 		},
@@ -237,7 +249,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'householdContacts.remove',
 			call: () =>
 				HouseholdContacts.remove(ctx as never, { household: 1, contact: 2 }),
-			result: {},
+			result: resource,
 			method: 'DELETE',
 			path: '/v1/households/1/contacts/2',
 		},
@@ -259,7 +271,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 				name: `${name}.get`,
 				call: () =>
 					group.get(ctx as never, { [name.slice(0, -1)]: '1' } as never),
-				result: {},
+				result: resource,
 				method: 'GET',
 				path: `/v1/${name}/1`,
 			},
@@ -274,7 +286,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 		{
 			name: 'plans.get',
 			call: () => Plans.get(ctx as never, { plan: 'plan_1' }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/plans/plan_1',
 		},
@@ -293,21 +305,21 @@ describe('Givebutter CRM and financial operation seams', () => {
 					transacted_at: '2026-01-01',
 					amount: '10.00',
 				}),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/transactions',
 		},
 		{
 			name: 'transactions.get',
 			call: () => Transactions.get(ctx as never, { transaction: 'txn_1' }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/transactions/txn_1',
 		},
 		{
 			name: 'transactions.update',
 			call: () => Transactions.update(ctx as never, { transaction: 'txn_1' }),
-			result: {},
+			result: resource,
 			method: 'PUT',
 			path: '/v1/transactions/txn_1',
 		},
@@ -322,14 +334,14 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'webhooks.create',
 			call: () =>
 				Webhooks.create(ctx as never, { url: 'https://example.com/hook' }),
-			result: {},
+			result: resource,
 			method: 'POST',
 			path: '/v1/webhooks',
 		},
 		{
 			name: 'webhooks.get',
 			call: () => Webhooks.get(ctx as never, { webhook: 'hook_1' }),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/webhooks/hook_1',
 		},
@@ -341,7 +353,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 					url: 'https://example.com/hook',
 					events: ['contact.created'],
 				}),
-			result: {},
+			result: resource,
 			method: 'PUT',
 			path: '/v1/webhooks/hook_1',
 		},
@@ -366,7 +378,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 					webhook: 'hook_1',
 					activity: 'event_1',
 				}),
-			result: {},
+			result: resource,
 			method: 'GET',
 			path: '/v1/webhooks/hook_1/activities/event_1',
 		},
