@@ -179,11 +179,12 @@ export const messageTemplate = {
 	updatedAt: '2026-09-01T08:00:00.000Z',
 	name: 'order_update',
 	type: 'whatsapp',
-	status: 'approved',
+	status: 'active',
 	vendorId: 'tpl-vendor-1',
 	channelId: 'ch-1',
 	messageContent: { body: 'Your order {{1}} is on its way.' },
-	variables: [{ name: '1' }],
+	// The spec types variables as an array of strings.
+	variables: ['1'],
 	vendorDetails: { language: 'en_US' },
 };
 

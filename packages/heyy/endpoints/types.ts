@@ -658,10 +658,13 @@ const MessageTemplateSchema = z
 		status: z.string().nullish(),
 		vendorId: z.string().nullish(),
 		channelId: z.string().nullish(),
-		// unknown: the spec types messageContent, variables and vendorDetails as
-		// unconstrained objects that differ per channel.
+		// unknown: the spec types messageContent and vendorDetails as objects that
+		// differ per channel.
 		messageContent: VendorPayloadSchema.nullish(),
-		variables: z.array(VendorPayloadSchema).nullish(),
+		variables: z
+			.array(z.string())
+			.nullish()
+			.describe('The template variable names, such as "1" for {{1}}.'),
 		vendorDetails: VendorPayloadSchema.nullish(),
 	})
 	.loose();

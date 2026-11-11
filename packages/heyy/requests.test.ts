@@ -660,8 +660,10 @@ describe('messageTemplates.search', () => {
 		expectAuthenticated('/message_templates/search', 'POST');
 		expect(result.messageTemplates[0]).toMatchObject({
 			name: 'order_update',
-			status: 'approved',
+			status: 'active',
 			channelId: 'ch-1',
+			messageContent: { body: 'Your order {{1}} is on its way.' },
+			variables: ['1'],
 		});
 	});
 });
