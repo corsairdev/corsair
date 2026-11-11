@@ -317,6 +317,10 @@
   "salesforce": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/salesforce.svg"
   },
+  "sanity": {
+    "from": "https://media.brand.dev/00f48af6-8647-4b4a-ad48-e0d91f131165.svg",
+    "note": "found with the context.dev Brand API for sanity.io"
+  },
   "sapsuccessfactors": {
     "from": "https://commons.wikimedia.org/wiki/File:SAP_2011_logo.svg",
     "note": "stylesheet inlined"

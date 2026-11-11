@@ -14,12 +14,7 @@
     {
       "authType": "api_key",
       "integrationFields": [],
-      "accountFields": [
-        "api_key",
-        "webhook_signature",
-        "webhook_signature",
-        "tenant_external_id"
-      ]
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
     }
   ],
   "api": [
