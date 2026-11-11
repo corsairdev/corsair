@@ -20,6 +20,7 @@ import {
 	otaRestoreXml,
 	reportData,
 	reportList,
+	submissionErrorXml,
 	submissionResponseXml,
 	user,
 	userList,
@@ -568,6 +569,28 @@ describe('device', () => {
 		// HQ's receiver rejects an instance file whose name has no `.xml`
 		// extension, and a bare Blob goes out named `blob`.
 		expect((part as File).name).toBe('submission.xml');
+	});
+
+	it('returns the response nature with the message', async () => {
+		respond(submissionResponseXml, 201);
+		const result = await invoke<{ nature?: string }>(Device.submit, {
+			domain: DOMAIN,
+			appId: 'app-1',
+			xml: '<xform></xform>',
+		});
+		expect(result.nature).toBe('submit_success');
+	});
+
+	it('rejects a 201 whose nature is submit_error', async () => {
+		respond(submissionErrorXml, 201);
+		await expect(
+			invoke(Device.submit, {
+				domain: DOMAIN,
+				appId: 'app-1',
+				xml: '<xform></xform>',
+			}),
+		).rejects.toThrow(/submit_error.*InvalidCaseIndex/);
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
 

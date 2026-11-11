@@ -439,7 +439,7 @@ const commCareEndpointMeta = {
 	'submissions.submit': {
 		riskLevel: 'write',
 		description:
-			'Submit a complete XForm XML document to the OpenRosa receiver; 201 means received, and the message field says whether it processed',
+			'Submit a complete XForm XML document to the OpenRosa receiver. Fails when HQ received the form but did not process it (nature submit_error or processing_failure); otherwise answers the message and its nature',
 	},
 	'detExports.list': {
 		riskLevel: 'read',

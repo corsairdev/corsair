@@ -172,6 +172,9 @@ export const bulkActionComplete = {
 export const otaRestoreXml =
 	"<?xml version='1.0' encoding='UTF-8'?><OpenRosaResponse xmlns=\"http://openrosa.org/http/response\"><message>Successfully restored account danny!</message></OpenRosaResponse>";
 
+export const submissionErrorXml =
+	'<OpenRosaResponse xmlns="http://openrosa.org/http/response"><message nature="submit_error">InvalidCaseIndex: case c9 does not exist</message></OpenRosaResponse>';
+
 export const submissionResponseXml =
 	'<OpenRosaResponse xmlns="http://openrosa.org/http/response"><message nature="submit_success">Form successfully submitted.</message></OpenRosaResponse>';
 

@@ -1,5 +1,5 @@
 import type { CommCareEndpoints } from '..';
-import { segment } from '../client';
+import { CommCareAPIError, segment } from '../client';
 import { call } from './call';
 import {
 	CommCareEndpointInputSchemas as Inputs,
@@ -33,9 +33,13 @@ export const restore: CommCareEndpoints['otaRestore'] = (ctx, input) =>
 		},
 	);
 
-// The OpenRosa receiver answers 201 for both submit_success and
-// submit_error; the response XML's `message` says which, so the endpoint
-// surfaces it instead of the caller parsing XML.
+// HQ answers 201 for both submit_success and submit_error (and older
+// clients get processing_failure the same way); the `nature` attribute on
+// the response's `message` says which. A form HQ received but did not
+// process is an error for the caller, so those natures reject with HQ's
+// message instead of resolving like a success.
+const UNPROCESSED_NATURES = new Set(['submit_error', 'processing_failure']);
+
 export const submit: CommCareEndpoints['submissionsSubmit'] = (ctx, input) =>
 	call(
 		ctx,
@@ -61,8 +65,16 @@ export const submit: CommCareEndpoints['submissionsSubmit'] = (ctx, input) =>
 			// unknown: the body is an OpenRosa XML payload until narrowed.
 			shape: (raw) => {
 				const text = typeof raw === 'string' ? raw : String(raw ?? '');
-				const message = /<message[^>]*>([\s\S]*?)<\/message>/.exec(text)?.[1];
-				return { raw: text, message: message ?? undefined };
+				const match = /<message([^>]*)>([\s\S]*?)<\/message>/.exec(text);
+				const nature = /\bnature="([^"]*)"/.exec(match?.[1] ?? '')?.[1];
+				const message = match?.[2];
+				if (nature !== undefined && UNPROCESSED_NATURES.has(nature)) {
+					throw new CommCareAPIError(
+						`CommCare received the form but did not process it (${nature}): ${message?.trim() || 'no message'}`,
+						{ status: 201, body: text },
+					);
+				}
+				return { raw: text, message: message ?? undefined, nature };
 			},
 			log: (parsed) => ({ appId: parsed.appId, bytes: parsed.xml.length }),
 		},

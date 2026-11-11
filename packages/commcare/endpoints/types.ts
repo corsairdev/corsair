@@ -896,9 +896,19 @@ export type SubmissionsSubmitInput = z.input<
 >;
 
 // The receiver answers 201 with an OpenRosa XML payload; 201 with a
-// submit_error nature means the form arrived but could not be processed.
+// submit_error nature means the form arrived but could not be processed,
+// and the endpoint rejects that instead of returning it.
 const SubmissionsSubmitResponseSchema = z
-	.object({ raw: z.string(), message: z.string().nullish() })
+	.object({
+		raw: z.string(),
+		message: z.string().nullish(),
+		nature: z
+			.string()
+			.nullish()
+			.describe(
+				'OpenRosa response nature, e.g. `submit_success` or `post_processing_failure` (the form was saved but a later step failed).',
+			),
+	})
 	.loose();
 
 // ── detExports.list ───────────────────────────────────────────────────────

@@ -1191,7 +1191,7 @@ await corsair.commcare.api.reports.list({ username: 'jdoe@my-project.commcarehq.
 
 `submissions.submit`
 
-Submit a complete XForm XML document to the OpenRosa receiver; 201 means received, and the message field says whether it processed
+Submit a complete XForm XML document to the OpenRosa receiver. Fails when HQ received the form but did not process it (nature submit_error or processing_failure); otherwise answers the message and its nature
 
 **Risk:** `write`
 
@@ -1216,6 +1216,7 @@ await corsair.commcare.api.submissions.submit({ username: 'jdoe@my-project.commc
 |------|------|----------|-------------|
 | `raw` | `string` | Yes | — |
 | `message` | `string \| null` | No | — |
+| `nature` | `string \| null` | No | OpenRosa response nature, e.g. `submit_success` or `post_processing_failure` (the form was saved but a later step failed). |
 
 
 

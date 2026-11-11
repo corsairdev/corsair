@@ -36,7 +36,7 @@ pnpm add @corsair-dev/commcare
 | `ota.restore` | `commcare.api.ota.restore` | `read` | Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key |
 | `reports.getData` | `commcare.api.reports.getData` | `read` | Run a configurable report and read its rows, with offset, limit (max 50) and the report filter parameters |
 | `reports.list` | `commcare.api.reports.list` | `read` | List the configurable reports defined in the project, with their ids |
-| `submissions.submit` | `commcare.api.submissions.submit` | `write` | Submit a complete XForm XML document to the OpenRosa receiver; 201 means received, and the message field says whether it processed |
+| `submissions.submit` | `commcare.api.submissions.submit` | `write` | Submit a complete XForm XML document to the OpenRosa receiver. Fails when HQ received the form but did not process it (nature submit_error or processing_failure); otherwise answers the message and its nature |
 | `users.create` | `commcare.api.users.create` | `write` | Create a mobile worker account with an initial password |
 | `users.delete` | `commcare.api.users.delete` | `destructive` | Permanently delete a mobile worker account |
 | `users.get` | `commcare.api.users.get` | `read` | Read one mobile worker: username, names, email, phones and user data |
