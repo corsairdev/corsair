@@ -1,0 +1,154 @@
+---
+title: Overview
+description: "Customer messaging with Userlist - push users, companies, relationships and events, send transactional email and in-app messages, and receive webhooks for user, company, relationship, form and message activity."
+---
+
+Use **Userlist** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Get the **Push API Key** from the Push Settings in Userlist. It goes in the `Authorization` header with the `Push` scheme, and the webhook secret is a separate value from the Webhooks Integration settings.
+
+- **The scheme is `Push`, not `Bearer`.** `Authorization: Push <key>` is the credential, so a Bearer token is refused with a 401. That is the single most common way a first call fails.
+- **Writes go to a different host.** The Push API lives at `push.userlist.com`, not `api.userlist.com`, and every operation is a write. There is no way to read a user or a company back through this API.
+- **Everything is queued.** Every call answers `202 Accepted` with an empty body: the payload has been accepted for processing, not applied. So each operation here resolves to an acknowledgement saying what was queued, not to the stored object.
+- **Deletes carry a body.** Removing a user, company or relationship is a `DELETE` with the identifier in a JSON body, which is how the Push API names what to remove.
+- **A failure is `{ status, code, errors: [...] }`.** Note the array: the plugin keeps every message, so a `422` tells you each field that failed rather than only the first.
+- **Rate and size limits.** 1,000 requests a minute per account, and 100 KB per request body. A `429` was refused before the write and is retried up to three times; a `413` cannot be fixed by retrying, so it is not.
+- **A 5xx is never replayed.** Since success only means "queued", a server error may mean the write landed and the response was lost. Nothing is retried that could duplicate a user, event or message.
+- **Matching is by identifier or email.** `users.upsert` needs at least one, and uses the `identifier` when both are given. Topic preferences only change the topics sent; the rest keep their values.
+- **Messages follow two sets of rules.** With a `template` the subject and body come from it; without one, both are required inline. Email goes to a `user` or a `to` address; a web message needs a `user` and must not carry `to`, since it is shown in-app.
+- **Webhooks are verified with the webhook secret, not the Push key.** Userlist sends `X-Userlist-Signature: t=<timestamp>,v1=<hex hmac>`, signing `"<timestamp>.<raw body>"` with HMAC-SHA256. The plugin compares in constant time and rejects anything older than five minutes, so a captured request cannot be replayed.
+- **Delivery is at-least-once and unordered.** Userlist retries a failed delivery up to ten times with backoff, and does not guarantee order — so a `user_updated` can arrive before the `user_created` for the same person.
+
+**What you get:**
+
+- 8 typed API operations
+- 14 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/userlist better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/userlist better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/userlist better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/userlist better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { userlist } from '@corsair-dev/userlist';
+
+export const corsair = createCorsair({
+	plugins: [
+		userlist(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+userlist()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'userlist',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Record a subscription event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.userlist.api.events.create({ name: 'subscription_activated', user: 'user-123' });
+```
+
+
+**Push a user with a company**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.userlist.api.users.upsert({
+	identifier: 'user-123',
+	email: 'user-123@example.com',
+	properties: { first_name: 'Delaney' },
+});
+```
+
+
+See the full list on the [API](/plugins/userlist/api) page.
+
+## Webhooks
+
+This plugin registers **14** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/userlist/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/userlist/api">
+    Every `userlist.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/userlist/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,353 @@
+---
+title: API
+description: "API reference for Userlist: every `userlist.api.*` operation with input and output types."
+---
+
+Every `userlist.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### delete
+
+`companies.delete`
+
+Delete a company, leaving its users in place; only the relationships go
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userlist.api.companies.delete({ identifier: 'company-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`companies.upsert`
+
+Create or update a company by identifier, with a name and custom properties
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.companies.upsert({ identifier: 'company-42', name: 'Acme Inc.', properties: { plan: 'plus' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `signed_up_at` | `string` | No | RFC 3339 / ISO 8601, e.g. 2024-01-15T10:30:00Z. No zone means UTC. |
+| `properties` | `Record<string, any>` | No | Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Record an event against a user, a company or both, with properties and an optional past timestamp
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.events.create({ name: 'subscription_activated', user: 'user-123', properties: { plan: 'plus' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event name, such as `subscription_activated`. |
+| `user` | `string \| number \| Record<string, any>` | No | Required unless a company is given. |
+| `company` | `string \| number \| Record<string, any>` | No | Required unless a user is given. |
+| `occurred_at` | `string` | No | When it happened, for importing historic events. Defaults to now. |
+| `properties` | `Record<string, any>` | No | Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### send
+
+`messages.send`
+
+Queue a transactional email or in-app message, from a template or with an inline subject and body
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.messages.send({ template: 'welcome_email', user: 'user-123', properties: { first_name: 'Delaney' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | No | The template identifier. When set, subject, body and channel come from it. |
+| `user` | `string \| number \| Record<string, any>` | No | Required unless `to` is given. Always required for a web message. |
+| `company` | `string \| number \| Record<string, any>` | No | A company identifier, or an embedded company object. |
+| `properties` | `Record<string, any>` | No | Available in the template as `{{ event.<key> }}`. |
+| `channel` | `email \| web` | No | Defaults to email. A web message requires `user` and forbids `to`. |
+| `to` | `string` | No | The recipient address. Only for email; required unless `user` is set. |
+| `from` | `string` | No | The sender address. Email only. |
+| `reply_to` | `string` | No | The reply-to address. Email only. |
+| `subject` | `string` | No | Required when not using a template. Supports Liquid. |
+| `preheader` | `string` | No | Email preheader text. |
+| `body` | `object` | No | Required when not using a template. |
+| `sender` | `string` | No | A sender identifier from the account. |
+| `theme` | `string \| false` | No | A theme identifier, or false to disable theming. |
+| `topic` | `string` | No | A topic identifier from the account. |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: html | text | multipart,
+  content: string | {
+    type: string,
+    content: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+## Relationships
+
+### delete
+
+`relationships.delete`
+
+Unlink one user from one company, leaving both objects in place
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.relationships.delete({ user: 'user-123', company: 'company-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number \| Record<string, any>` | Yes | A user identifier, or an embedded user object. |
+| `company` | `string \| number \| Record<string, any>` | Yes | A company identifier, or an embedded company object. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`relationships.upsert`
+
+Tie a user to a company, with properties on the relationship such as a role
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.relationships.upsert({ user: 'user-123', company: 'company-42', properties: { role: 'admin' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number \| Record<string, any>` | Yes | A user identifier, or an embedded user object. |
+| `company` | `string \| number \| Record<string, any>` | Yes | A company identifier, or an embedded company object. |
+| `properties` | `Record<string, any>` | No | Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Delete a user along with their relationships and events; queued, and not reversible
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userlist.api.users.delete({ identifier: 'user-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`users.upsert`
+
+Create or update a user by identifier or email, with properties, companies, relationships and topic preferences; queued, not applied at once
+
+**Risk:** `write`
+
+```ts
+await corsair.userlist.api.users.upsert({ identifier: 'user-123', email: 'user-123@example.com', properties: { first_name: 'Delaney' }, companies: ['company-42'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | No | Your id for the user. Required unless email is given. |
+| `email` | `string` | No | The address. Required unless identifier is given. |
+| `signed_up_at` | `string` | No | RFC 3339 / ISO 8601, e.g. 2024-01-15T10:30:00Z. No zone means UTC. |
+| `properties` | `Record<string, any>` | No | Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps. |
+| `company` | `string \| number \| Record<string, any>` | No | A single company, as a shortcut for one relationship. |
+| `companies` | `(string \| number \| Record<string, any>)[]` | No | Several companies, as a shortcut for relationships without properties. |
+| `relationships` | `object[]` | No | Relationships to companies, which can each hold their own properties. |
+| `preferences` | `object[]` | No | Subscription preferences. Only the topics sent are changed; the rest keep their value. |
+
+<AccordionGroup>
+<Accordion title="relationships full type">
+
+```ts
+{
+  company: string | number | Record<string, any>,
+  properties?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="preferences full type">
+
+```ts
+{
+  topic: string,
+  subscribed: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `true` | Yes | — |
+| `operation` | `string` | Yes | — |
+| `identifier` | `string` | No | — |
+| `queuedAt` | `string` | Yes | — |
+
+
+
+---
+

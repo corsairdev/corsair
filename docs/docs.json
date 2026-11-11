@@ -3716,6 +3716,15 @@
                 ]
               },
               {
+                "group": "Userlist",
+                "pages": [
+                  "plugins/userlist/overview",
+                  "plugins/userlist/api",
+                  "plugins/userlist/database",
+                  "plugins/userlist/webhooks"
+                ]
+              },
+              {
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
