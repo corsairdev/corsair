@@ -840,6 +840,19 @@ const MarkdownGetInputSchema = z
 			.describe(
 				'Retry a failed fetch with a stronger proxy tier. v3.0 default: true.',
 			),
+		max_retries: z
+			.number()
+			.int()
+			.min(1)
+			.max(4)
+			.optional()
+			.describe('Attempts before giving up, 1 to 4. Default 4.'),
+		retry_escalate: z
+			.boolean()
+			.optional()
+			.describe(
+				'Move each retry up a proxy tier (default true). false keeps retries on the tier you chose, which avoids the costlier tiers.',
+			),
 	})
 	// OpenGraph.io caps the overlap at half the chunk size (default 2000).
 	.refine(

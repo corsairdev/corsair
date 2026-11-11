@@ -334,6 +334,8 @@ await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/W
 | `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
 | `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
 | `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+| `max_retries` | `number` | No | Attempts before giving up, 1 to 4. Default 4. |
+| `retry_escalate` | `boolean` | No | Move each retry up a proxy tier (default true). false keeps retries on the tier you chose, which avoids the costlier tiers. |
 
 
 

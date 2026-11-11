@@ -463,6 +463,30 @@ describe('markdown.get', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('sends the retry controls', async () => {
+		respond(markdownResponse);
+
+		await invoke(Markdown.get, {
+			url: 'https://example.com',
+			retry: true,
+			max_retries: 2,
+			retry_escalate: false,
+		});
+
+		expect(lastRequest().query).toMatchObject({
+			retry: 'true',
+			max_retries: '2',
+			retry_escalate: 'false',
+		});
+	});
+
+	it('rejects max_retries outside 1-4', async () => {
+		await expect(
+			invoke(Markdown.get, { url: 'https://example.com', max_retries: 5 }),
+		).rejects.toBeInstanceOf(Error);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('accepts an overlap of exactly half the default chunk size', async () => {
 		respond(markdownChunkedResponse);
 
