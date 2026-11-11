@@ -2,7 +2,7 @@ import { lookup } from 'node:dns/promises';
 import * as http from 'node:http';
 import * as https from 'node:https';
 import type { LookupFunction } from 'node:net';
-import { Readable } from 'node:stream';
+import { pipeline, Readable } from 'node:stream';
 import * as zlib from 'node:zlib';
 
 /**
@@ -421,8 +421,14 @@ async function decodeBody(
 		);
 	}
 
-	const source = Readable.from(body);
-	return source.pipe(decoder) as AsyncIterable<Uint8Array>;
+	// pipeline, not pipe: pipe() does not forward a source error, so a dropped
+	// connection or the deadline firing mid-body would surface as an unhandled
+	// 'error' event and the read below would never settle. pipeline destroys
+	// the decoder with the error, which rejects the caller's read.
+	pipeline(Readable.from(body), decoder, (error) => {
+		if (error) decoder.destroy(error);
+	});
+	return decoder as AsyncIterable<Uint8Array>;
 }
 
 /**

@@ -548,4 +548,30 @@ describe('downloadAsFile', () => {
 		).rejects.toThrow(/larger than/);
 		expect(pulled).toBe(false);
 	});
+
+	// A compressed body whose connection drops mid-transfer, or whose 30 second
+	// deadline fires, errors on the source stream. That error has to reach the
+	// caller as a rejection; left unhandled it is an uncaught 'error' event.
+	it('rejects when a compressed body fails mid-transfer', async () => {
+		const compressed = new Uint8Array(
+			zlib.gzipSync(Buffer.from('x'.repeat(4096))),
+		);
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'gzip' },
+				body: (async function* () {
+					yield compressed.slice(0, 10);
+					throw new Error('socket hang up');
+				})(),
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+				resolve: publicResolve,
+				transport,
+			}),
+		).rejects.toThrow('socket hang up');
+	}, 5_000);
 });
