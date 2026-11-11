@@ -673,7 +673,10 @@ export const quotesGet: OnedeskEndpoints['quotesGet'] = (ctx, input) =>
 						method: 'GET',
 						path: `/quotes/externalId/${encodeURIComponent(parsed.externalId)}`,
 					}
-				: { method: 'GET', path: `/quotes/id/${encodeURIComponent(String(parsed.id))}` },
+				: {
+						method: 'GET',
+						path: `/quotes/id/${encodeURIComponent(String(parsed.id))}`,
+					},
 	);
 
 export const quotesUpdate: OnedeskEndpoints['quotesUpdate'] = (ctx, input) =>

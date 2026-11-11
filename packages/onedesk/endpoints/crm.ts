@@ -288,7 +288,10 @@ export const timesheetsGet: OnedeskEndpoints['timesheetsGet'] = (ctx, input) =>
 						method: 'GET',
 						path: `/timesheets/externalId/${encodeURIComponent(parsed.externalId)}`,
 					}
-				: { method: 'GET', path: `/timesheets/id/${encodeURIComponent(String(parsed.id))}` },
+				: {
+						method: 'GET',
+						path: `/timesheets/id/${encodeURIComponent(String(parsed.id))}`,
+					},
 	);
 
 export const timesheetsCreate: OnedeskEndpoints['timesheetsCreate'] = (
