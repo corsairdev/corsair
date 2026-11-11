@@ -1181,7 +1181,11 @@ export type TimesheetsFilterDetailsResponse = z.infer<
 const TimesheetsGetInputSchema = z
 	.object({
 		externalId: z.string().min(1).optional(),
-		id: z.number().int().optional(),
+		id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("The timesheet's id as OneDesk sends it, for example '5-1'."),
 	})
 	.superRefine((value, ctx) => {
 		if (value.externalId === undefined && value.id === undefined) {
@@ -1230,7 +1234,11 @@ export const ONEDESK_TIMESHEET_STATUSES = [
 const TimesheetsUpdateInputSchema = z
 	.object({
 		externalId: z.string().min(1).optional(),
-		id: z.number().int().optional(),
+		id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("The timesheet's id as OneDesk sends it, for example '5-1'."),
 		works: z.number().min(0).optional(),
 		billable: z.boolean().optional(),
 		note: z.string().optional(),
@@ -1551,7 +1559,11 @@ export type QuotesFilterDetailsResponse = z.infer<
 const QuotesGetInputSchema = z
 	.object({
 		externalId: z.string().min(1).optional(),
-		id: z.number().int().optional(),
+		id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("The quote's id as OneDesk sends it, for example 'Q-1'."),
 	})
 	.superRefine((value, ctx) => {
 		if (value.externalId === undefined && value.id === undefined) {
@@ -1572,7 +1584,11 @@ const QuoteResultSchema = z
 const QuotesUpdateInputSchema = z
 	.object({
 		externalId: z.string().min(1).optional(),
-		id: z.number().int().optional(),
+		id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("The quote's id as OneDesk sends it, for example 'Q-1'."),
 		displayNumber: z.string().optional(),
 		status: z.enum(ONEDESK_QUOTE_STATUSES).optional(),
 		expirationDate: z.string().optional(),

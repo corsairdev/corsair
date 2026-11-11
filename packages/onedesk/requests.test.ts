@@ -690,12 +690,21 @@ describe('invoices and quotes', () => {
 		expect(result.data[0]?.quoteStatus).toBe('Sent');
 	});
 
-	it('quotes.get reads by numeric id', async () => {
+	it('quotes.get reads by the id OneDesk sends, such as Q-1', async () => {
 		respond({ code: 'SUCCESS', data: quote });
 
-		await invoke(Records.quotesGet, { id: 71 });
+		await invoke(Records.quotesGet, { id: 'Q-1' });
 
-		expect(lastRequest().path).toBe('/rest/public/quotes/id/71');
+		expect(lastRequest().path).toBe('/rest/public/quotes/id/Q-1');
+	});
+
+	it('quotes.update posts to the quote id path', async () => {
+		respond(updateCodeString);
+
+		await invoke(Records.quotesUpdate, { id: 'Q-1', displayNumber: 'Q-1' });
+
+		expect(lastRequest().path).toBe('/rest/public/quotes/id/Q-1');
+		expect(lastRequest().body).toEqual({ displayNumber: 'Q-1' });
 	});
 
 	it('quotes.update rejects a call with no target identifier', async () => {
@@ -864,6 +873,23 @@ describe('timesheets and timers', () => {
 		expect(result.data[0]?.id).toBe('8-1');
 		expect(result.data[0]?.work).toBe(timesheet.work);
 		expect(result.data[0]?.billable).toBe('true');
+	});
+
+	it('timesheets.get reads by the id OneDesk sends, such as 5-1', async () => {
+		respond({ code: 'SUCCESS', data: timesheet });
+
+		await invoke(Crm.timesheetsGet, { id: '5-1' });
+
+		expect(lastRequest().path).toBe('/rest/public/timesheets/id/5-1');
+	});
+
+	it('timesheets.update posts to the timesheet id path', async () => {
+		respond(updateCodeString);
+
+		await invoke(Crm.timesheetsUpdate, { id: '5-1', works: 0.25 });
+
+		expect(lastRequest().path).toBe('/rest/public/timesheets/id/5-1');
+		expect(lastRequest().body).toEqual({ works: 0.25 });
 	});
 
 	it('timesheets.get reads by external id', async () => {
