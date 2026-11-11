@@ -45,10 +45,12 @@ describe('makeMistralAiRequest', () => {
 		};
 		fetchMock.mockResolvedValueOnce(jsonResponse(body, 422));
 
-		const error = await makeMistralAiRequest('/v1/chat/completions', 'k', {
+		const request = makeMistralAiRequest('/v1/chat/completions', 'k', {
 			method: 'POST',
 			body: {},
-		}).catch((e: unknown) => e);
+		});
+		// unknown: a rejection can carry any value; the checks below narrow it.
+		const error = await request.catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(MistralAiAPIError);
 		expect(error).toMatchObject({ status: 422, method: 'POST', body });

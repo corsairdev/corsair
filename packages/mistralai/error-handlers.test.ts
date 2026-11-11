@@ -102,6 +102,7 @@ describe('Mistral AI error handling through createCorsair', () => {
 					model: 'mistral-small-latest',
 					messages: [{ role: 'user', content: 'hi' }],
 				})
+				// unknown: a rejection can carry any value; the checks below narrow it.
 				.catch((e: unknown) => e);
 
 			expect(error).toBeInstanceOf(MistralAiAPIError);
@@ -159,6 +160,42 @@ describe('Mistral AI error handling through createCorsair', () => {
 			).rejects.toMatchObject({ status: 408 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		});
+	});
+
+	it("keeps the caller's DEFAULT last even when it comes first in their object", async () => {
+		const fallback = jest.fn(async () => ({
+			maxRetries: 0,
+			retryStrategy: 'linear_1s' as const,
+		}));
+		const notFound = jest.fn(async () => ({
+			maxRetries: 1,
+			retryStrategy: 'linear_1s' as const,
+		}));
+		await withClient(
+			async ({ corsair }) => {
+				jest.useFakeTimers();
+				fetchMock
+					.mockResolvedValueOnce(jsonResponse({ message: 'not yet' }, 404))
+					.mockResolvedValueOnce(jsonResponse(modelList));
+
+				const pending = corsair.mistralai.api.models.list({});
+				await jest.advanceTimersByTimeAsync(1_000);
+				await expect(pending).resolves.toEqual(modelList);
+				expect(notFound).toHaveBeenCalled();
+				expect(fallback).not.toHaveBeenCalled();
+			},
+			{
+				// Key order matters: core takes the first handler that matches.
+				errorHandlers: {
+					DEFAULT: { match: () => true, handler: fallback },
+					NOT_FOUND_ERROR: {
+						match: (error: Error) =>
+							error instanceof MistralAiAPIError && error.status === 404,
+						handler: notFound,
+					},
+				},
+			},
+		);
 	});
 
 	it('runs a handler the caller adds under a new name, ahead of DEFAULT', async () => {

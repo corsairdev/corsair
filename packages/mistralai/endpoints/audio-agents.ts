@@ -71,6 +71,7 @@ export const remove: MistralAiEndpoints['audioAgentsDelete'] = async (
 	return callMistralAiNoContent(ctx, '/v1/audio/agents/{agent_id}', {
 		method: 'DELETE',
 		path: { agent_id: input.agent_id },
+		output: MistralAiEndpointOutputSchemas.audioAgentsDelete,
 		event: 'audioAgents.delete',
 		logged: { agent_id: input.agent_id },
 	});

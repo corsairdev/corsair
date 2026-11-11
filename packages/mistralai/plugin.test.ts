@@ -5,6 +5,7 @@ import {
 	mistralai,
 } from './index';
 
+// unknown: only the function's existence is checked, not what it returns.
 type Leaf = (...args: never[]) => unknown;
 
 /** Dot paths of every function in the endpoint tree. */

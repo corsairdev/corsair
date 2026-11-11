@@ -84,6 +84,7 @@ export const remove: MistralAiEndpoints['agentsDelete'] = async (
 	return callMistralAiNoContent(ctx, '/v1/agents/{agent_id}', {
 		method: 'DELETE',
 		path: { agent_id: input.agent_id },
+		output: MistralAiEndpointOutputSchemas.agentsDelete,
 		event: 'agents.delete',
 		logged: { agent_id: input.agent_id },
 	});
@@ -173,6 +174,7 @@ export const deleteAlias: MistralAiEndpoints['agentsDeleteAlias'] = async (
 		method: 'DELETE',
 		path: { agent_id: input.agent_id },
 		query: { alias: input.alias },
+		output: MistralAiEndpointOutputSchemas.agentsDeleteAlias,
 		event: 'agents.deleteAlias',
 		logged: { agent_id: input.agent_id, alias: input.alias },
 	});

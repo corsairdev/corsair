@@ -5,7 +5,7 @@ description: "Mistral AI's model API. Run chat, fill-in-the-middle and agent com
 
 Use **Mistral AI** through Corsair: one client, typed API calls.
 
-Each operation returns one JSON result: streaming is off for completions, responses, speech and transcription. Files and audio go in as base64 (`content_base64` with a `filename`); `files.getSignedUrl` gives a download link for a file's content, such as a batch job's results.
+Each operation returns one JSON result: streaming is off for completions, responses, speech and transcription. Files and audio go in as base64; the fields differ per operation: `files.upload` takes `content_base64` and `filename`; `audio.transcribe` takes `content_base64` with `filename`, or `file_url` or `file_id` instead; `voices.create` takes `sample_audio` and an optional `sample_filename`; `ocr.process` takes no base64: pass a `document` URL, an image URL or the `file_id` of an uploaded file. `files.getSignedUrl` gives a download link for a file's content, such as a batch job's results.
 
 A batch job runs on Mistral after `batch.create` returns. Follow it with `batch.get({ job_id })` until `status` is SUCCESS (read `output_file` with `files.getSignedUrl`), or FAILED, TIMEOUT_EXCEEDED or CANCELLED. QUEUED, RUNNING and CANCELLATION_REQUESTED mean it is still going.
 

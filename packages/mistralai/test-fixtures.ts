@@ -53,6 +53,13 @@ export const FT_MODEL_ID = 'ft:open-mistral-7b:587a6b29:20240514:7e773925';
 const CREATED = 1762819200;
 const STAMP = '2026-11-11T00:00:00Z';
 
+/** The answer message in `completion`, as Mistral returns it. */
+export const answerMessage = {
+	role: 'assistant' as const,
+	content: 'Paris.',
+	tool_calls: null,
+};
+
 export const completion = {
 	id: 'cmpl-e5cc70bb28c444948073e77776eb30ef',
 	object: 'chat.completion',
@@ -62,7 +69,7 @@ export const completion = {
 	choices: [
 		{
 			index: 0,
-			message: { role: 'assistant', content: 'Paris.', tool_calls: null },
+			message: answerMessage,
 			finish_reason: 'stop',
 		},
 	],

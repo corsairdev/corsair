@@ -29,16 +29,21 @@ export async function callMistralAi<S extends z.ZodType>(
 	return result;
 }
 
-/** For operations Mistral answers with 204 No Content. */
-export async function callMistralAiNoContent(
+/**
+ * For operations Mistral answers with 204 No Content: the result is
+ * `{ success: true }`, parsed with the operation's `output` schema like any
+ * other answer.
+ */
+export async function callMistralAiNoContent<S extends z.ZodType>(
 	ctx: MistralAiContext,
 	endpoint: string,
-	{ event, logged = {}, ...request }: Omit<CallOptions<z.ZodType>, 'output'>,
-): Promise<{ success: true }> {
+	{ output, event, logged = {}, ...request }: CallOptions<S>,
+): Promise<z.output<S>> {
 	// unknown: a 204 has no body to read.
 	await makeMistralAiRequest<unknown>(endpoint, ctx.key, request);
+	const result = output.parse({ success: true });
 	await logEventFromContext(ctx, `mistralai.${event}`, logged, 'completed');
-	return { success: true };
+	return result;
 }
 
 /**

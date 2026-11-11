@@ -561,17 +561,20 @@ export type ExternalMistralAiPlugin<T extends MistralAiPluginOptions> =
 
 /**
  * The plugin's handlers with the caller's merged in. Core uses the first
- * handler that matches, and DEFAULT matches everything, so DEFAULT stays last
- * whatever names the caller adds.
+ * handler that matches, and DEFAULT matches everything, so DEFAULT is taken
+ * out of both and added last: built-in specific handlers, then the caller's,
+ * then the caller's DEFAULT or the built-in one. Re-assigning DEFAULT after
+ * spreading the caller's object would keep its key where the caller put it.
  */
 function mergeErrorHandlers(
 	custom: CorsairErrorHandler | undefined,
 ): CorsairErrorHandler {
-	const { DEFAULT, ...specific } = errorHandlers;
+	const { DEFAULT: builtInDefault, ...builtIn } = errorHandlers;
+	const { DEFAULT: customDefault, ...customSpecific } = custom ?? {};
 	return {
-		...specific,
-		...custom,
-		DEFAULT: custom?.DEFAULT ?? DEFAULT,
+		...builtIn,
+		...customSpecific,
+		DEFAULT: customDefault ?? builtInDefault,
 	};
 }
 

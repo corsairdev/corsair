@@ -1,10 +1,12 @@
-import { mistralAiEndpointMeta } from './index';
+import type { MistralAiEndpointInputs } from './index';
+import { MistralAiEndpointOutputSchemas, mistralAiEndpointMeta } from './index';
 import {
 	AGENT_ID,
 	API_KEY,
 	AUDIO_AGENT_ID,
 	agent,
 	alias,
+	answerMessage,
 	audioAgent,
 	BASE,
 	batchJob,
@@ -30,11 +32,13 @@ type Api = Client['corsair']['mistralai']['api'];
 type Case = {
 	/** The operation, as endpointMeta names it. */
 	op: string;
+	// unknown: each operation returns its own type; `expected` holds the value.
 	call: (api: Api) => Promise<unknown>;
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: Array<[string, string]>;
 	/** Expected JSON body. */
+	// unknown: request bodies differ per operation.
 	json?: Record<string, unknown>;
 	/** Expected multipart fields, file parts as `{ name, text }`. */
 	form?: Record<string, string | string[] | { name: string; text: string }>;
@@ -847,4 +851,111 @@ describe('Mistral AI input checks', () => {
 		});
 		expect(out).toMatchObject({ brand_new_field: { nested: 1 } });
 	});
+});
+
+type History = MistralAiEndpointInputs['chatComplete']['messages'];
+
+describe('Mistral AI answers sent back as history', () => {
+	const toolAnswer = {
+		role: 'assistant' as const,
+		content: null,
+		tool_calls: [
+			{
+				id: 'call_1',
+				type: 'function' as const,
+				function: { name: 'get_weather', arguments: '{"city":"Paris"}' },
+				index: 0,
+			},
+		],
+		prefix: null,
+	};
+	const toolResult = {
+		role: 'tool' as const,
+		content: '18°C',
+		tool_call_id: null,
+		name: null,
+	};
+
+	it.each([
+		[
+			'chat.complete',
+			(api: Api, history: History) =>
+				api.chat.complete({ model: 'mistral-small-latest', messages: history }),
+		],
+		[
+			'agents.complete',
+			(api: Api, history: History) =>
+				api.agents.complete({ agent_id: AGENT_ID, messages: history }),
+		],
+	] as const)(
+		'%s accepts its own answer as the next turn',
+		async (_op, call) => {
+			fetchMock.mockResolvedValueOnce(jsonResponse(completion));
+			// The fixture's answer, exactly as Mistral returned it, then a new turn.
+			const history: History = [
+				...messages,
+				answerMessage,
+				{ role: 'user', content: 'And of Italy?' },
+			];
+
+			await call(client.corsair.mistralai.api, history);
+
+			const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+			expect(JSON.parse(String(init.body)).messages).toEqual(history);
+		},
+	);
+
+	it('accepts a tool-call answer and a tool result with the nulls Mistral allows', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse(completion));
+
+		await client.corsair.mistralai.api.chat.complete({
+			model: 'mistral-small-latest',
+			messages: [...messages, toolAnswer, toolResult],
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		// prefix is a plain boolean in Mistral's spec, so a null one is left out.
+		const { prefix: _prefix, ...sentAnswer } = toolAnswer;
+		expect(JSON.parse(String(init.body)).messages).toEqual([
+			...messages,
+			sentAnswer,
+			toolResult,
+		]);
+	});
+});
+
+describe('Mistral AI operations answered with 204 No Content', () => {
+	it.each([
+		[
+			'agents.delete',
+			'agentsDelete',
+			(api: Api) => api.agents.delete({ agent_id: AGENT_ID }),
+		],
+		[
+			'agents.deleteAlias',
+			'agentsDeleteAlias',
+			(api: Api) =>
+				api.agents.deleteAlias({ agent_id: AGENT_ID, alias: 'production' }),
+		],
+		[
+			'audioAgents.delete',
+			'audioAgentsDelete',
+			(api: Api) => api.audioAgents.delete({ agent_id: AUDIO_AGENT_ID }),
+		],
+	] as const)(
+		'%s checks its result against the output schema',
+		async (_op, key, call) => {
+			fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+			const parse = jest
+				.spyOn(MistralAiEndpointOutputSchemas[key], 'parse')
+				.mockImplementation(() => {
+					throw new Error('output schema mismatch');
+				});
+
+			await expect(call(client.corsair.mistralai.api)).rejects.toThrow(
+				'output schema mismatch',
+			);
+			expect(parse).toHaveBeenCalledWith({ success: true });
+		},
+	);
 });

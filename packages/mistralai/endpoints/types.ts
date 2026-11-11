@@ -109,23 +109,31 @@ const ToolCallSchema = z
 	})
 	.loose();
 
+// An answer from chat.complete or agents.complete can go straight back in as
+// the next turn's history, so the assistant and tool messages accept every
+// null the answer schema below accepts.
 const MessageSchema = z.discriminatedUnion('role', [
 	z.object({ role: z.literal('system'), content: ContentSchema }),
 	z.object({ role: z.literal('user'), content: ContentSchema.nullable() }),
 	z.object({
 		role: z.literal('assistant'),
 		content: ContentSchema.nullish(),
-		tool_calls: z.array(ToolCallSchema).optional(),
+		tool_calls: z.array(ToolCallSchema).nullish(),
+		// Mistral's spec types prefix as a plain boolean, so a null one (as an
+		// answer may carry) is left out of the request.
 		prefix: z
 			.boolean()
+			.nullish()
+			.transform((prefix) => prefix ?? undefined)
+			// Outside the transform, so docs and JSON Schema still show it optional.
 			.optional()
 			.describe('True on a last assistant message the answer must start with.'),
 	}),
 	z.object({
 		role: z.literal('tool'),
 		content: ContentSchema.nullable(),
-		tool_call_id: z.string().optional(),
-		name: z.string().optional(),
+		tool_call_id: z.string().nullish(),
+		name: z.string().nullish(),
 	}),
 ]);
 
@@ -1048,6 +1056,7 @@ const AgentsDeleteAliasInputSchema = z.object({
 });
 
 /** What an operation returns when Mistral answers 204 No Content. */
+// What a 204 No Content operation returns once Mistral has answered.
 const NoContentSchema = z.object({ success: z.literal(true) });
 
 // ── Audio ───────────────────────────────────────────────────────────────────

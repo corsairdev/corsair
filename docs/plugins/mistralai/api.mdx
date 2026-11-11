@@ -143,8 +143,8 @@ await corsair.mistralai.api.agents.complete({ agent_id: '<agent id>', messages: 
         arguments: string | Record<string, any>
       },
       index?: number
-    }[],
-    prefix?: boolean
+    }[] | null,
+    prefix?: boolean | null
   } | {
     role: tool,
     content: string | (
@@ -171,8 +171,8 @@ await corsair.mistralai.api.agents.complete({ agent_id: '<agent id>', messages: 
         type: string
       }
     )[] | null,
-    tool_call_id?: string,
-    name?: string
+    tool_call_id?: string | null,
+    name?: string | null
   }
 )[]
 ```
@@ -1955,8 +1955,8 @@ await corsair.mistralai.api.chat.complete({ model: 'mistral-small-latest', messa
         arguments: string | Record<string, any>
       },
       index?: number
-    }[],
-    prefix?: boolean
+    }[] | null,
+    prefix?: boolean | null
   } | {
     role: tool,
     content: string | (
@@ -1983,8 +1983,8 @@ await corsair.mistralai.api.chat.complete({ model: 'mistral-small-latest', messa
         type: string
       }
     )[] | null,
-    tool_call_id?: string,
-    name?: string
+    tool_call_id?: string | null,
+    name?: string | null
   }
 )[]
 ```
@@ -2293,8 +2293,8 @@ await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned class
           arguments: string | Record<string, any>
         },
         index?: number
-      }[],
-      prefix?: boolean
+      }[] | null,
+      prefix?: boolean | null
     } | {
       role: tool,
       content: string | (
@@ -2321,8 +2321,8 @@ await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned class
           type: string
         }
       )[] | null,
-      tool_call_id?: string,
-      name?: string
+      tool_call_id?: string | null,
+      name?: string | null
     }
   )[]
 } | {
@@ -2413,8 +2413,8 @@ await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned class
           arguments: string | Record<string, any>
         },
         index?: number
-      }[],
-      prefix?: boolean
+      }[] | null,
+      prefix?: boolean | null
     } | {
       role: tool,
       content: string | (
@@ -2441,8 +2441,8 @@ await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned class
           type: string
         }
       )[] | null,
-      tool_call_id?: string,
-      name?: string
+      tool_call_id?: string | null,
+      name?: string | null
     }
   )[]
 }[]
@@ -2631,8 +2631,8 @@ await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderatio
         arguments: string | Record<string, any>
       },
       index?: number
-    }[],
-    prefix?: boolean
+    }[] | null,
+    prefix?: boolean | null
   } | {
     role: tool,
     content: string | (
@@ -2659,8 +2659,8 @@ await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderatio
         type: string
       }
     )[] | null,
-    tool_call_id?: string,
-    name?: string
+    tool_call_id?: string | null,
+    name?: string | null
   }
 )[] | (
   {
@@ -2749,8 +2749,8 @@ await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderatio
         arguments: string | Record<string, any>
       },
       index?: number
-    }[],
-    prefix?: boolean
+    }[] | null,
+    prefix?: boolean | null
   } | {
     role: tool,
     content: string | (
@@ -2777,8 +2777,8 @@ await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderatio
         type: string
       }
     )[] | null,
-    tool_call_id?: string,
-    name?: string
+    tool_call_id?: string | null,
+    name?: string | null
   }
 )[][]
 ```
