@@ -2711,5 +2711,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/commcare",
+    "dir": "packages/commcare",
+    "name": "CommCare",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/happyscribe",
+    "dir": "packages/happyscribe",
+    "name": "Happy Scribe",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/imagekit",
+    "dir": "packages/imagekit",
+    "name": "ImageKit",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
