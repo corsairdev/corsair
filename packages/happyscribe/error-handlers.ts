@@ -12,8 +12,9 @@ function replaySafeOf(error: Error): boolean {
 // Status codes: https://dev.happyscribe.com/sections/general/#errors
 export const errorHandlers = {
 	// 429 carries `retry_in_seconds` in the body (per-user, 200 req/hour on
-	// transcription creation). Wait exactly what the API asked for; the field
-	// is absent on any other 429 shape, where the backoff takes over.
+	// transcription creation) or, on the Meeting API, a `Retry-After` header.
+	// Wait exactly what the API asked for; with neither, the backoff takes
+	// over.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof HappyScribeAPIError && error.isRateLimit,

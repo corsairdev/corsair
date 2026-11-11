@@ -81,6 +81,29 @@ describe('HappyScribe 429 retries through the bound client', () => {
 		}
 	});
 
+	it('waits the Retry-After header when the 429 body has no hint', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// The Meeting API answers its creation limit this way.
+			respond({ errors: ['Meeting creation limit reached'] }, 429, {
+				'Retry-After': '60',
+			});
+			respond(transcriptionList);
+
+			const pending = corsair.happyscribe.api.transcriptions.list({
+				organizationId: 123,
+			});
+			await jest.advanceTimersByTimeAsync(59_999);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			await jest.advanceTimersByTimeAsync(1);
+			await pending;
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('gives up after the third rate-limited retry', async () => {
 		const { corsair, testDb } = await createClient();
 		try {

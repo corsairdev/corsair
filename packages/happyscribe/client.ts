@@ -9,14 +9,15 @@ import { ApiError, request } from 'corsair/http';
 export const HAPPYSCRIBE_API_BASE = 'https://www.happyscribe.com/api/v1';
 
 // error-handlers.ts owns retries, so the transport makes one attempt.
-// headerNames stay empty: HappyScribe signals its rate limit through a
-// `retry_in_seconds` field in the 429 body, not a header.
+// Transcription creation signals its rate limit through `retry_in_seconds`
+// in the 429 body; the Meeting API sends a `Retry-After` header instead,
+// which the transport reads onto the ApiError.
 const HAPPYSCRIBE_NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
-	headerNames: {},
+	headerNames: { retryAfter: 'retry-after' },
 };
 
 /**
@@ -31,7 +32,7 @@ export class HappyScribeAPIError extends Error {
 	readonly body?: unknown;
 	/**
 	 * Seconds to wait before retrying, from `retry_in_seconds` on the 429
-	 * body. Undefined on every other error.
+	 * body, else the `Retry-After` header. Undefined on every other error.
 	 */
 	readonly retryInSeconds?: number;
 	/** True when retrying the failed request cannot repeat its effect. */
@@ -54,7 +55,9 @@ export class HappyScribeAPIError extends Error {
 		this.status = options.status ?? cause?.status;
 		this.body = options.body ?? cause?.body;
 		this.retryInSeconds =
-			options.retryInSeconds ?? readRetryInSeconds(asRecord(this.body));
+			options.retryInSeconds ??
+			readRetryInSeconds(asRecord(this.body)) ??
+			retryAfterSeconds(cause);
 		this.replaySafe = options.replaySafe ?? false;
 	}
 
@@ -62,6 +65,12 @@ export class HappyScribeAPIError extends Error {
 	get isRateLimit(): boolean {
 		return this.status === 429;
 	}
+}
+
+// The transport turns a `Retry-After` header into milliseconds.
+function retryAfterSeconds(cause: ApiError | undefined): number | undefined {
+	const ms = cause?.retryAfter;
+	return typeof ms === 'number' && ms >= 0 ? ms / 1000 : undefined;
 }
 
 // unknown: the body is an untyped error body until asRecord narrows it.

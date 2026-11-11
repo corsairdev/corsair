@@ -105,6 +105,35 @@ describe('makeHappyScribeRequest', () => {
 		expect(error.retryInSeconds).toBe(30);
 	});
 
+	it('reads the Retry-After header on a meeting 429 with no body hint', async () => {
+		respond({ errors: ['Meeting creation limit reached'] }, 429, {
+			'Retry-After': '120',
+		});
+
+		const error = await failure(
+			makeHappyScribeRequest(API_KEY, {
+				method: 'POST',
+				path: '/meetings',
+				body: { meeting_url: 'https://zoom.us/j/1' },
+			}),
+		);
+		expect(error.isRateLimit).toBe(true);
+		expect(error.retryInSeconds).toBe(120);
+	});
+
+	it('keeps the body hint when a 429 has both the body and the header', async () => {
+		respond(rateLimited, 429, { 'Retry-After': '120' });
+
+		const error = await failure(
+			makeHappyScribeRequest(API_KEY, {
+				method: 'POST',
+				path: '/transcriptions',
+				body: { transcription: { name: 'x' } },
+			}),
+		);
+		expect(error.retryInSeconds).toBe(30);
+	});
+
 	it('reads message and status from an error body', async () => {
 		respond(badKey, 401);
 
