@@ -262,7 +262,8 @@ const kalshiEndpointMeta = {
 	},
 	'portfolio.positions': {
 		riskLevel: 'read',
-		description: 'List open market and event positions',
+		description:
+			'List market and event positions. Includes closed markets awaiting settlement and fully exited positions, so not every row is open exposure',
 	},
 	'portfolio.fills': {
 		riskLevel: 'read',
@@ -342,10 +343,15 @@ export function kalshi<const T extends KalshiPluginOptions>(
 		endpointSchemas: kalshiEndpointSchemas,
 		webhookSchemas: {} as const,
 		pluginWebhookMatcher: undefined,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		// Keep DEFAULT last: it always matches, so any handler after it never runs.
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...options.errorHandlers,
+				DEFAULT: options.errorHandlers?.DEFAULT ?? defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: KalshiKeyBuilderContext, source) => {
 			if (source !== 'endpoint') {
 				throw new AuthMissingError('kalshi', 'api_key');

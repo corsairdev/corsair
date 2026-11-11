@@ -28,7 +28,7 @@ pnpm add @corsair-dev/kalshi
 | `orders.list` | `kalshi.api.orders.list` | `read` | List orders, optionally filtered by status or market |
 | `portfolio.balance` | `kalshi.api.portfolio.balance` | `read` | Get the account balance and portfolio value |
 | `portfolio.fills` | `kalshi.api.portfolio.fills` | `read` | List order fills for the account |
-| `portfolio.positions` | `kalshi.api.portfolio.positions` | `read` | List open market and event positions |
+| `portfolio.positions` | `kalshi.api.portfolio.positions` | `read` | List market and event positions. Includes closed markets awaiting settlement and fully exited positions, so not every row is open exposure |
 | `portfolio.settlements` | `kalshi.api.portfolio.settlements` | `read` | List settled positions for the account |
 | `series.get` | `kalshi.api.series.get` | `read` | Get a series by ticker |
 | `series.list` | `kalshi.api.series.list` | `read` | List event series, optionally by category or tags |
@@ -36,6 +36,8 @@ pnpm add @corsair-dev/kalshi
 ## Auth
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
+
+Kalshi needs two credentials: an API key ID and the matching PEM private key (RSA or Ed25519). `kalshi()` defaults to the production environment, where orders spend real money; pass `kalshi({ environment: 'demo' })` with demo credentials to try it safely.
 
 ## Webhooks
 

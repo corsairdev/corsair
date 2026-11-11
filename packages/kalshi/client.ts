@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 import { buildSignedString, signRequest } from './signing';
@@ -16,6 +20,8 @@ export const KALSHI_SIGNED_PATH_PREFIX = '/trade-api/v2';
 export class KalshiAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// `unknown` because this is whatever JSON Kalshi returned on an error, and its
+	// shape varies by status code; callers narrow it before use.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -58,6 +64,7 @@ export function serializeKalshiCredentials(
 export function parseKalshiCredentials(
 	credentialsString: string,
 ): KalshiCredentials {
+	// `unknown` because this is untrusted JSON, narrowed by the Zod schema below.
 	let raw: unknown;
 	try {
 		raw = JSON.parse(credentialsString);
@@ -79,11 +86,27 @@ export function parseKalshiCredentials(
 	};
 }
 
+/**
+ * Turns off the HTTP client's own 429 retries. Those would resend the same
+ * signed headers (a stale timestamp and signature) and stack on top of the
+ * plugin's retries, so the endpoint binder owns retrying and every attempt is
+ * signed afresh.
+ */
+const NO_HTTP_RETRIES: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {},
+};
+
 export async function makeKalshiRequest<T>(
 	endpoint: string,
 	credentialsString: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` values because each endpoint's Zod input schema has already
+		// validated the body; this layer only serialises it.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -91,8 +114,9 @@ export async function makeKalshiRequest<T>(
 	const { method = 'GET', body, query } = options;
 	const credentials = parseKalshiCredentials(credentialsString);
 
-	// A fresh timestamp per call: Kalshi rejects stale ones, and a retry after a
-	// 429 re-enters this function, so it is re-signed automatically.
+	// A fresh timestamp per call: Kalshi rejects stale ones. The HTTP client's
+	// own retries are off (see NO_HTTP_RETRIES), so a retry after a 429 re-enters
+	// this function and is re-signed.
 	const timestamp = Date.now().toString();
 	const signature = signRequest(
 		buildSignedString(
@@ -128,7 +152,9 @@ export async function makeKalshiRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: NO_HTTP_RETRIES,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new KalshiAPIError(error.message, String(error.status), {

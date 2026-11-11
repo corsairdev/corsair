@@ -71,6 +71,17 @@ describe('makeKalshiRequest', () => {
 		mockRequest.mockResolvedValue({ ok: true });
 	});
 
+	it('turns off the HTTP client retries so every attempt is re-signed', async () => {
+		await makeKalshiRequest('/exchange/status', credentials());
+
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: expect.objectContaining({
+				enabled: false,
+				maxRetries: 0,
+			}),
+		});
+	});
+
 	it('sends the three Kalshi auth headers', async () => {
 		await makeKalshiRequest('/exchange/status', credentials());
 

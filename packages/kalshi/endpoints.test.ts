@@ -39,8 +39,29 @@ const key = serializeKalshiCredentials({
 		.toString(),
 	environment: 'demo',
 });
-const ctx = { key } as unknown as KalshiContext;
-const noKeyCtx = { key: '' } as unknown as KalshiContext;
+/** A fully typed context; the endpoints only read `key`, the rest is inert. */
+function makeContext(contextKey: string): KalshiContext {
+	return {
+		key: contextKey,
+		endpoints: {},
+		$getAccountId: async () => 'test-account',
+		options: {},
+		db: {},
+		keys: {
+			get_dek: async () => 'test-dek',
+			issue_new_dek: async () => 'test-dek',
+			get_api_key: async () => null,
+			set_api_key: async () => {},
+			get_webhook_signature: async () => null,
+			set_webhook_signature: async () => {},
+			get_private_key: async () => null,
+			set_private_key: async () => {},
+		},
+	};
+}
+
+const ctx = makeContext(key);
+const noKeyCtx = makeContext('');
 
 function sent() {
 	const call = mockRequest.mock.calls[0];
@@ -259,6 +280,11 @@ describe('Kalshi endpoints', () => {
 				query: { limit: 10, cursor: 'c1' },
 			});
 			expect(result.cursor).toBe('c2');
+		});
+
+		it("list rejects a limit above Kalshi's 200 cap", async () => {
+			await expect(Events.list(ctx, { limit: 201 })).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
 		});
 
 		it('get calls GET /events/:ticker', async () => {
@@ -480,13 +506,25 @@ describe('Kalshi endpoints', () => {
 				ts_ms: 1731330000789,
 			});
 
-			const result = await Orders.cancel(ctx, { order_id: 'ord-1' });
+			const result = await Orders.cancel(ctx, {
+				order_id: 'ord-1',
+				market_ticker: 'KXHIGHNY-26NOV12-T60',
+			});
 
 			expect(sent()).toMatchObject({
 				method: 'DELETE',
 				url: '/portfolio/events/orders/ord-1',
+				query: { market_ticker: 'KXHIGHNY-26NOV12-T60' },
 			});
 			expect(result.reduced_by).toBe('10.00');
+		});
+
+		it('cancel requires market_ticker so it cannot default to shard 0', async () => {
+			await expect(
+				// Deliberately omits the required field to prove it is rejected.
+				Orders.cancel(ctx, { order_id: 'ord-1' } as never),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
 		});
 
 		it('batchCreate POSTs every order and logs only the count', async () => {
@@ -510,6 +548,7 @@ describe('Kalshi endpoints', () => {
 				method: 'POST',
 				url: '/portfolio/events/orders/batched',
 			});
+			// `unknown` elements: only the count matters here, not each order's shape.
 			expect((sent().body as { orders: unknown[] }).orders).toHaveLength(2);
 			expect(result.orders[1]?.error).toBeDefined();
 			expect(mockLog).toHaveBeenCalledWith(

@@ -20,7 +20,7 @@ Get an event by ticker
 **Risk:** `read`
 
 ```ts
-await corsair.kalshi.api.events.get({});
+await corsair.kalshi.api.events.get({ event_ticker: 'KXHIGHNY-26NOV12' });
 ```
 
 **Input**
@@ -277,7 +277,7 @@ Get a market by ticker, including its price ranges
 **Risk:** `read`
 
 ```ts
-await corsair.kalshi.api.markets.get({});
+await corsair.kalshi.api.markets.get({ ticker: 'KXHIGHNY-26NOV12-T60' });
 ```
 
 **Input**
@@ -414,7 +414,7 @@ Get the order book for a market
 **Risk:** `read`
 
 ```ts
-await corsair.kalshi.api.markets.orderbook({});
+await corsair.kalshi.api.markets.orderbook({ ticker: 'KXHIGHNY-26NOV12-T60', depth: 10 });
 ```
 
 **Input**
@@ -511,7 +511,7 @@ Change an existing order's price or size
 **Risk:** `write`
 
 ```ts
-await corsair.kalshi.api.orders.amend({});
+await corsair.kalshi.api.orders.amend({ order_id: '<order-id>', ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', price: '0.5800', count: '10.00' });
 ```
 
 **Input**
@@ -555,7 +555,7 @@ Place several orders in one request. Spends real money when the environment is p
 **Risk:** `write`
 
 ```ts
-await corsair.kalshi.api.orders.batchCreate({});
+await corsair.kalshi.api.orders.batchCreate({ orders: [{ ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', count: '10.00', price: '0.5600', time_in_force: 'good_till_canceled' }] });
 ```
 
 **Input**
@@ -623,7 +623,7 @@ Cancel a resting order's remaining contracts
 **Risk:** `write`
 
 ```ts
-await corsair.kalshi.api.orders.cancel({});
+await corsair.kalshi.api.orders.cancel({ order_id: '<order-id>', market_ticker: 'KXHIGHNY-26NOV12-T60' });
 ```
 
 **Input**
@@ -632,7 +632,7 @@ await corsair.kalshi.api.orders.cancel({});
 |------|------|----------|-------------|
 | `order_id` | `string` | Yes | — |
 | `subaccount` | `number` | No | — |
-| `market_ticker` | `string` | No | — |
+| `market_ticker` | `string` | Yes | — |
 
 
 
@@ -658,7 +658,7 @@ Place an order. Spends real money when the environment is production
 **Risk:** `write`
 
 ```ts
-await corsair.kalshi.api.orders.create({});
+await corsair.kalshi.api.orders.create({ ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', count: '10.00', price: '0.5600', time_in_force: 'good_till_canceled' });
 ```
 
 **Input**
@@ -705,7 +705,7 @@ Get a single order by ID
 **Risk:** `read`
 
 ```ts
-await corsair.kalshi.api.orders.get({});
+await corsair.kalshi.api.orders.get({ order_id: '<order-id>' });
 ```
 
 **Input**
@@ -904,7 +904,7 @@ await corsair.kalshi.api.portfolio.fills({});
 
 `portfolio.positions`
 
-List open market and event positions
+List market and event positions. Includes closed markets awaiting settlement and fully exited positions, so not every row is open exposure
 
 **Risk:** `read`
 
@@ -1027,7 +1027,7 @@ Get a series by ticker
 **Risk:** `read`
 
 ```ts
-await corsair.kalshi.api.series.get({});
+await corsair.kalshi.api.series.get({ series_ticker: 'KXHIGHNY' });
 ```
 
 **Input**

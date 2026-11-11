@@ -5,6 +5,8 @@ description: "A regulated prediction-market exchange. Read markets, events and y
 
 Use **Kalshi** through Corsair: one client, typed API calls.
 
+Kalshi needs **two credentials**: an API key ID and the matching PEM private key (RSA or Ed25519). Generate them together in your Kalshi account settings; the private key is shown only once. Demo and production use separate accounts and separate keys.
+
 **What you get:**
 
 - 20 typed API operations
@@ -43,7 +45,9 @@ import { kalshi } from '@corsair-dev/kalshi';
 
 export const corsair = createCorsair({
 	plugins: [
-		kalshi(),
+		kalshi({
+			environment: 'demo',
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -65,8 +69,12 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 
 No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
+`kalshi()` defaults to the **production** environment, where order writes spend real money. Start with `environment: 'demo'` and demo credentials, then switch to production deliberately.
+
 ```ts
-kalshi()
+kalshi({
+	environment: 'demo',
+})
 ```
 
 More: [API Key](/concepts/api-key)
@@ -93,19 +101,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`events.get`**
+**Get a market**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kalshi.api.events.get({});
+await tenant.kalshi.api.markets.get({ ticker: 'KXHIGHNY-26NOV12-T60' });
 ```
 
 
-**`orders.amend`**
+**Cancel a resting order (demo environment)**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kalshi.api.orders.amend({});
+await tenant.kalshi.api.orders.cancel({ order_id: '<order-id>', market_ticker: 'KXHIGHNY-26NOV12-T60' });
 ```
 
 

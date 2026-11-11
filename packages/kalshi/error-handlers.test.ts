@@ -1,6 +1,7 @@
 import { ApiError } from 'corsair/http';
 import { KalshiAPIError } from './client';
 import { errorHandlers } from './error-handlers';
+import { kalshi } from './index';
 
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
@@ -110,6 +111,21 @@ describe('Kalshi error handlers', () => {
 		it('matches anything and does not retry', async () => {
 			expect(errorHandlers.DEFAULT.match()).toBe(true);
 			expect((await errorHandlers.DEFAULT.handler()).maxRetries).toBe(0);
+		});
+	});
+
+	describe('plugin merge order', () => {
+		it('keeps DEFAULT last so a custom handler can still match', () => {
+			const custom = {
+				match: () => true,
+				handler: async () => ({ maxRetries: 2 }),
+			};
+			const names = Object.keys(
+				kalshi({ errorHandlers: { CUSTOM: custom } }).errorHandlers ?? {},
+			);
+
+			expect(names).toContain('CUSTOM');
+			expect(names[names.length - 1]).toBe('DEFAULT');
 		});
 	});
 });

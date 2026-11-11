@@ -17,6 +17,8 @@ const CountInput = z
 
 const BookSide = z.enum(['bid', 'ask']);
 const Limit = z.number().int().positive().optional();
+/** Kalshi caps the events list at 200 results per page. */
+const EventsLimit = z.number().int().positive().max(200).optional();
 const Cursor = z.string().optional();
 const Subaccount = z.number().int().nonnegative().optional();
 
@@ -242,7 +244,7 @@ export type MarketsTradesResponse = z.infer<typeof MarketsTradesResponseSchema>;
 // ── events ──────────────────────────────────────────────────────────────────
 
 const EventsListInputSchema = z.object({
-	limit: Limit,
+	limit: EventsLimit,
 	cursor: Cursor,
 	with_nested_markets: z.boolean().optional(),
 	status: z.string().optional(),
@@ -425,7 +427,11 @@ export type OrdersAmendResponse = z.infer<typeof OrdersAmendResponseSchema>;
 const OrdersCancelInputSchema = z.object({
 	order_id: z.string().min(1),
 	subaccount: Subaccount,
-	market_ticker: z.string().optional(),
+	/**
+	 * Required: an order ID alone cannot identify its exchange shard, so Kalshi
+	 * would default to shard 0 and leave an order on another shard resting.
+	 */
+	market_ticker: z.string().min(1),
 });
 export type OrdersCancelInput = z.infer<typeof OrdersCancelInputSchema>;
 const OrdersCancelResponseSchema = z.looseObject({
@@ -450,6 +456,8 @@ const OrdersBatchCreateResponseSchema = z.object({
 			fill_count: z.string().optional(),
 			remaining_count: z.string().optional(),
 			ts_ms: z.number().nullable().optional(),
+			// `unknown` because Kalshi returns a per-order error object whose shape
+			// is not documented; it is passed through untouched.
 			error: z.unknown().optional(),
 		}),
 	),
