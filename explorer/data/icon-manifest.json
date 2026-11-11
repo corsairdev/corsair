@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T20:29:08.585Z",
+  "generatedAt": "2026-11-11T02:03:29.907Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -847,7 +847,7 @@
     "sendgrid": "twenty-icons",
     "sentry": "curated",
     "serpapi": "curated",
-    "servicenow": "twenty-icons",
+    "servicenow": "url-override",
     "sharepoint": "curated",
     "shippo": "twenty-icons",
     "slack": "curated",
