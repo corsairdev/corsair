@@ -28,12 +28,28 @@ export const errorHandlers = {
 			error.name === 'ZodError' || apiError(error)?.isValidationError === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429 here is the monthly link allowance, not a request rate, and U301 documents
-	// that an oversized bulk create answers it without creating anything. Waiting
-	// does not add allowance, so it is never retried.
+	// The monthly link allowance is spent, matched by its documented code rather
+	// than by the status, which it shares with a temporary rate limit. Waiting does
+	// not add allowance, so it is never retried. It comes before RATE_LIMIT_ERROR
+	// because both can match the same 429 and core takes the first key that matches.
 	QUOTA_ERROR: {
 		match: (error: Error) => apiError(error)?.isQuotaError === true,
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	// A 429 that is only a throughput limit: the request was refused before it ran,
+	// so a replayable call can be resent after Retry-After. Writes are not replayed.
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => apiError(error)?.isRateLimited === true,
+		handler: async (error: Error) => {
+			const info = apiError(error);
+			return info?.replayable
+				? {
+						maxRetries: 3,
+						headersRetryAfterMs: info.retryAfter,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 };
+		},
 	},
 	// 5xx, and only for an operation that declared itself replayable. A create or a
 	// delete is never resent.

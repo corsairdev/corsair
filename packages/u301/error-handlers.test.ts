@@ -20,8 +20,12 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: the handler's real return type is `RetryDecision` from `corsair/core`,
+// which is not exported; the tests only await it and assert on the retry count, so
+// the widened type is what they need.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
+	// unknown: same widened return as above, applied to the Partial handler type.
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
 		error,
 		context,
@@ -88,11 +92,30 @@ describe('U301 error handlers', () => {
 		await expect(run('QUOTA_ERROR', error)).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('does not route a 429 through a retrying handler', async () => {
-		const error = apiError({ status: 429 });
+	it('treats the documented monthly-limit code as a quota, never retried', async () => {
+		const error = apiError({ status: 429, code: 'MONTHLY_LINK_LIMIT_REACHED' });
 
 		expect(await matches(error)).toBe('QUOTA_ERROR');
 		await expect(run('QUOTA_ERROR', error)).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('retries a bare 429 with Retry-After when the call is replayable', async () => {
+		const error = apiError({ status: 429, replayable: true, retryAfter: 5000 });
+
+		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toMatchObject({
+			maxRetries: 3,
+			headersRetryAfterMs: 5000,
+		});
+	});
+
+	it('does not retry a bare 429 on a write', async () => {
+		const error = apiError({ status: 429, replayable: false });
+
+		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('retries a 5xx only when the operation declared itself replayable', async () => {

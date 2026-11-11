@@ -1,4 +1,6 @@
+import { asRecord } from 'corsair/core';
 import type { U301Endpoints } from '..';
+import { U301APIError } from '../client';
 import { call, shortLinkSegment } from './call';
 import {
 	U301EndpointInputSchemas as Inputs,
@@ -31,9 +33,31 @@ export const create: U301Endpoints['linkCreate'] = (ctx, input) =>
 			replayable: false,
 		}),
 		{
-			// unknown: the bulk route answers an array even for one link, so the single
-			// result is unwrapped here before the output schema validates it.
-			shape: (raw) => (Array.isArray(raw) ? (raw[0] ?? {}) : raw),
+			// The bulk route answers 200 with an array even for one link, and an item
+			// in that array can carry `error` while the HTTP call succeeded. The SDK
+			// throws for that item, so it is rejected here before the output schema
+			// can accept it as a created link.
+			// unknown: the body is provider JSON until unwrapped below.
+			shape: (raw) => {
+				if (!Array.isArray(raw) || raw.length === 0) {
+					throw new U301APIError(
+						'U301 accepted the bulk request but returned no link.',
+						{ replayable: false },
+					);
+				}
+				const first = asRecord(raw[0]);
+				const itemError = first?.error;
+				if (typeof itemError === 'string' && itemError.length > 0) {
+					const reason =
+						typeof first?.message === 'string' && first.message.length > 0
+							? first.message
+							: itemError;
+					throw new U301APIError(`U301 did not create the link: ${reason}`, {
+						replayable: false,
+					});
+				}
+				return raw[0];
+			},
 			log: (_, result) => ({
 				slug: result.slug ?? undefined,
 				reused: result.isReused ?? false,
@@ -143,9 +167,10 @@ export const domainCreate: U301Endpoints['domainCreate'] = (ctx, input) =>
 			method: 'PUT',
 			path: '/shorten/domains',
 			body: { domain, shortCodeLength },
-			// Adding the same domain twice is a conflict rather than a second domain,
-			// but the first call is what has to have happened.
-			replayable: true,
+			// A 5xx may mean the domain was added and the answer was lost; a resend
+			// then conflicts on a domain that already exists, which reports failure for
+			// a change that did happen. Not replayable.
+			replayable: false,
 		}),
 		{
 			log: (parsed, result) => ({
@@ -194,7 +219,9 @@ export const domainActive: U301Endpoints['domainActive'] = (ctx, input) =>
 		},
 		input,
 		({ domain }) => ({
-			method: 'GET',
+			// The SDK sends PATCH here even though the check only reads, so the
+			// documented method is used rather than the method the semantics suggest.
+			method: 'PATCH',
 			path: `/shorten/domains/active/${encodeURIComponent(domain)}`,
 			replayable: true,
 		}),
@@ -334,7 +361,7 @@ export const clicks: U301Endpoints['clicks'] = (ctx, input) =>
 				range: parsed.range,
 				buckets: result.data?.length ?? 0,
 				clicks:
-					result.data?.reduce((sum, row) => sum + (row.clicks ?? 0), 0) ?? 0,
+					result.data?.reduce((sum, row) => sum + (row.click ?? 0), 0) ?? 0,
 			}),
 		},
 	);
@@ -363,7 +390,7 @@ export const audience: U301Endpoints['audience'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				dimension: parsed.dimension,
-				rows: result.length,
+				rows: result.data?.length ?? 0,
 			}),
 		},
 	);

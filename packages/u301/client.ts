@@ -23,6 +23,9 @@ export const U301_API_BASE = 'https://api.u301.com/v3';
  */
 export const U301_KEY_SEPARATOR = '\n';
 
+/** The code U301 documents for an exhausted monthly link allowance. */
+export const U301_MONTHLY_LIMIT_CODE = 'MONTHLY_LINK_LIMIT_REACHED';
+
 /** A refusal is `{message, code?, requestId?, errors?}`; live it is just a message. */
 export class U301APIError extends Error {
 	readonly status?: number;
@@ -90,12 +93,19 @@ export class U301APIError extends Error {
 	}
 
 	/**
-	 * The monthly link allowance is spent. Newly created links count toward it and
-	 * an oversized bulk request answers **429** without creating anything, so this
-	 * is a quota rather than a rate limit even though the status looks like one.
+	 * The monthly link allowance is spent. Only `MONTHLY_LINK_LIMIT_REACHED` means
+	 * that; a bare 429 is a temporary request rate and must stay retryable, so the
+	 * two are kept apart rather than folded into one flag.
 	 */
 	get isQuotaError(): boolean {
-		return this.code === 'RATE_LIMITED' || this.status === 429;
+		return (
+			this.code === U301_MONTHLY_LIMIT_CODE || this.code === 'RATE_LIMITED'
+		);
+	}
+
+	/** A 429 that is only a throughput limit, so waiting and resending can work. */
+	get isRateLimited(): boolean {
+		return this.status === 429 && !this.isQuotaError;
 	}
 }
 
@@ -111,6 +121,9 @@ function failure(body: unknown): {
 } {
 	const record = asRecord(body);
 	const message = record?.message;
+	// The monthly-quota body names its reason in `error`, not `message`, so both
+	// are read and `message` wins when a body carries both.
+	const errorText = record?.error;
 	const code = record?.code;
 	const requestId = record?.requestId;
 	const rawErrors = record?.errors;
@@ -126,7 +139,11 @@ function failure(body: unknown): {
 		: undefined;
 	return {
 		message:
-			typeof message === 'string' && message.length > 0 ? message : undefined,
+			typeof message === 'string' && message.length > 0
+				? message
+				: typeof errorText === 'string' && errorText.length > 0
+					? errorText
+					: undefined,
 		code: typeof code === 'string' && code.length > 0 ? code : undefined,
 		requestId:
 			typeof requestId === 'string' && requestId.length > 0

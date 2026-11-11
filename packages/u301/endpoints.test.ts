@@ -15,6 +15,7 @@ import {
 	LINK_REUSED,
 	LINKS,
 	QUOTA,
+	SETTINGS_OK,
 } from './test-fixtures';
 import { invoke, lastRequest, respond } from './test-support';
 
@@ -209,6 +210,26 @@ describe('links.get', () => {
 	it('rejects an empty short link', async () => {
 		await expect(invoke(Api.get, { shortlink: '' })).rejects.toThrow();
 	});
+
+	it('refuses a short link that names the domain route', async () => {
+		// `domains/go.example.com` would build DELETE /shorten/domains/go.example.com,
+		// which is the domain-delete route on a call authorised only as links.delete.
+		await expect(
+			invoke(Api.get, { shortlink: 'domains/go.example.com' }),
+		).rejects.toThrow(/reserved route/);
+	});
+
+	it('refuses a short link with more than one separator', async () => {
+		await expect(
+			invoke(Api.get, { shortlink: 'u301.co/abc/def' }),
+		).rejects.toThrow(/one host and one slug/);
+	});
+
+	it('refuses a bare host with no slug', async () => {
+		await expect(invoke(Api.get, { shortlink: 'u301.co' })).rejects.toThrow(
+			/one host and one slug/,
+		);
+	});
 });
 
 describe('links.delete', () => {
@@ -321,7 +342,7 @@ describe('domains', () => {
 
 describe('domain settings', () => {
 	it('sets the random slug length with one PATCH field', async () => {
-		respond(fetchMock, DOMAIN_DETAIL);
+		respond(fetchMock, SETTINGS_OK);
 
 		await invoke(Api.domainPathLength, {
 			domain: 'go.example.com',
@@ -335,7 +356,7 @@ describe('domain settings', () => {
 	});
 
 	it('sets the home redirect with only that field', async () => {
-		respond(fetchMock, DOMAIN_DETAIL);
+		respond(fetchMock, SETTINGS_OK);
 
 		await invoke(Api.domainHomeRedirect, {
 			domain: 'go.example.com',
@@ -348,7 +369,7 @@ describe('domain settings', () => {
 	});
 
 	it('sets the not-found redirect with only that field', async () => {
-		respond(fetchMock, DOMAIN_DETAIL);
+		respond(fetchMock, SETTINGS_OK);
 
 		await invoke(Api.domainNotFoundRedirect, {
 			domain: 'go.example.com',
@@ -368,13 +389,13 @@ describe('analytics', () => {
 		const result = (await invoke(Api.clicks, {
 			range: '7d',
 			granularity: 'day',
-		})) as { data?: { date?: string; clicks?: number }[] };
+		})) as { data?: { date?: string; click?: number }[] };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v3/shorten/analytics/clicks');
 		expect(request.query).toMatchObject({ range: '7d', granularity: 'day' });
 		expect(result.data).toHaveLength(3);
-		expect(result.data?.[1]?.clicks).toBe(30);
+		expect(result.data?.[1]?.click).toBe(30);
 	});
 
 	it('passes the timezone', async () => {
@@ -382,7 +403,7 @@ describe('analytics', () => {
 
 		await invoke(Api.clicks, {
 			range: '30d',
-			granularity: 'week',
+			granularity: 'hour',
 			timezone: 'Asia/Kolkata',
 		});
 
@@ -408,22 +429,23 @@ describe('analytics', () => {
 		const result = (await invoke(Api.audience, {
 			dimension: 'countries',
 			range: '30d',
-		})) as { name?: string; clicks?: number }[];
+		})) as { data?: { label?: string; click?: number }[] };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v3/shorten/analytics/top-countries');
 		expect(request.query.range).toBe('30d');
-		expect(result[0]?.name).toBe('United States');
+		expect(result.data?.[0]?.label).toBe('United States');
+		expect(result.data?.[0]?.click).toBe(210);
 	});
 
 	it('accepts each documented dimension', async () => {
 		for (const dimension of [
 			'countries',
 			'cities',
-			'referrers',
+			'referers',
 			'browsers',
-			'os',
-			'devices',
+			'operating-systems',
+			'device-types',
 		] as const) {
 			respond(fetchMock, AUDIENCE);
 			await invoke(Api.audience, { dimension, range: '7d' });

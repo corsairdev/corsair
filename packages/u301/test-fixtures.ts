@@ -88,6 +88,9 @@ export const DOMAIN_DETAIL = {
 };
 
 /** The field is spelled `actived` by the API, which the model keeps. */
+// The three per-domain settings routes answer { success: true }, not the domain.
+export const SETTINGS_OK = { success: true };
+
 export const DOMAIN_ACTIVE = { actived: true, message: 'Domain is active' };
 
 export const DOMAIN_NOT_READY = {
@@ -99,16 +102,20 @@ export const CLICKS = {
 	start: '2026-05-01T00:00:00.000Z',
 	end: '2026-05-08T00:00:00.000Z',
 	data: [
-		{ date: '2026-05-01', clicks: 12 },
-		{ date: '2026-05-02', clicks: 30 },
-		{ date: '2026-05-03', clicks: 8 },
+		{ date: '2026-05-01', click: 12 },
+		{ date: '2026-05-02', click: 30 },
+		{ date: '2026-05-03', click: 8 },
 	],
 };
 
-export const AUDIENCE = [
-	{ name: 'United States', clicks: 210 },
-	{ name: 'Germany', clicks: 44 },
-];
+export const AUDIENCE = {
+	datetimeRange: ['2026-05-01T00:00:00.000Z', '2026-05-08T00:00:00.000Z'],
+	range: '7d',
+	data: [
+		{ label: 'United States', click: 210 },
+		{ label: 'Germany', click: 44 },
+	],
+};
 
 // Live: a wrong key, and every route answers it the same way.
 export const UNAUTHORIZED = { message: 'Unauthorized' };

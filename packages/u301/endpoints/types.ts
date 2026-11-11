@@ -18,23 +18,36 @@ import { z } from 'zod';
 /** The default domain a short link gets when none is given. */
 export const U301_DEFAULT_DOMAIN = 'u301.co';
 
-/** The analytics time ranges the click routes accept. */
-export const U301_RANGES = ['1d', '7d', '30d', '90d', '1y'] as const;
+/**
+ * The analytics time ranges the click routes accept, taken from the SDK's own
+ * `ranges` list. `1m` is a month and `90d`/`1y` are not accepted at all.
+ */
+export const U301_RANGES = [
+	'24h',
+	'1d',
+	'3d',
+	'7d',
+	'14d',
+	'30d',
+	'60d',
+	'1m',
+] as const;
 
-/** The click aggregation granularities. */
-export const U301_GRANULARITIES = ['hour', 'day', 'week', 'month'] as const;
+/** The click aggregation granularities: the SDK accepts only these two. */
+export const U301_GRANULARITIES = ['day', 'hour'] as const;
 
 /**
- * The two audience breakdowns the `top-*` route serves. It is one route with the
- * dimension in the path, which is why it is one operation with a parameter.
+ * The audience breakdowns the `top-*` route serves. The values are the provider's
+ * own path suffixes, which differ from the words a caller would guess for three of
+ * them: `referers` (one r), `operating-systems` and `device-types`.
  */
 export const U301_TOP_DIMENSIONS = [
 	'countries',
 	'cities',
-	'referrers',
+	'referers',
 	'browsers',
-	'os',
-	'devices',
+	'operating-systems',
+	'device-types',
 ] as const;
 
 const SlugSchema = z
@@ -239,6 +252,21 @@ const DomainRefInputSchema = z.object({
 
 export type DomainRefInput = z.infer<typeof DomainRefInputSchema>;
 
+/**
+ * The DNS records to create for a custom domain. `cnameValue` is the target the
+ * CNAME must point at, which is the field the setup flow actually needs.
+ */
+const DnsSettingsSchema = z
+	.object({
+		cnameName: z.string().nullish(),
+		cnameValue: z.string().nullish(),
+		aName: z.string().nullish(),
+		aValue: z.string().nullish(),
+		txtName: z.string().nullish(),
+		txtValue: z.string().nullish(),
+	})
+	.loose();
+
 const DomainDetailSchema = z
 	.object({
 		domain: z.string().nullish(),
@@ -252,6 +280,7 @@ const DomainDetailSchema = z
 		createdAt: z.string().nullish(),
 		updatedAt: z.string().nullish(),
 		isPrimary: z.boolean().nullish(),
+		dnsSettings: DnsSettingsSchema.nullish(),
 	})
 	.loose();
 
@@ -321,8 +350,16 @@ export type DomainNotFoundRedirectInput = z.infer<
 	typeof DomainNotFoundRedirectInputSchema
 >;
 
-/** The three settings routes answer the updated domain, like the detail route. */
-const DomainSettingsResponseSchema = DomainDetailSchema;
+/**
+ * The three settings routes answer `{ success: true }`, not the updated domain, so
+ * aliasing `DomainDetailSchema` accepted `{ success: false }` and any other object.
+ * Requiring `success: true` is what makes a rejected update fail the parse.
+ */
+const DomainSettingsResponseSchema = z
+	.object({
+		success: z.literal(true),
+	})
+	.loose();
 
 export type DomainSettingsResponse = z.infer<
 	typeof DomainSettingsResponseSchema
@@ -349,7 +386,9 @@ const ClickPointSchema = z
 			.string()
 			.nullish()
 			.describe('The bucket, formatted to match the granularity.'),
-		clicks: z.number().nullish(),
+		// The API sends `click`, singular. Declaring `clicks` let every real response
+		// pass through loose while the typed field stayed undefined.
+		click: z.number().nullish(),
 	})
 	.loose();
 
@@ -378,16 +417,27 @@ const AudienceInputSchema = z.object({
 
 export type AudienceInput = z.infer<typeof AudienceInputSchema>;
 
-/** One row of a breakdown: a label and its click count. */
+/**
+ * One row of a breakdown. The SDK's schema calls the label `label` and the count
+ * `click`, singular.
+ */
 const AudienceRowSchema = z
 	.object({
-		name: z.string().nullish(),
-		clicks: z.number().nullish(),
+		label: z.string().nullish(),
+		click: z.number().nullish(),
+		// A free-form map the API sometimes attaches; it is passed through untouched.
+		meta: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
 
-/** The route answers a bare array, and the row's label field is not documented. */
-const AudienceResponseSchema = z.array(AudienceRowSchema);
+/** The route answers an envelope, not a bare array. */
+const AudienceResponseSchema = z
+	.object({
+		datetimeRange: z.array(z.string()).nullish(),
+		range: z.enum(U301_RANGES).nullish(),
+		data: z.array(AudienceRowSchema).nullish(),
+	})
+	.loose();
 
 export type AudienceResponse = z.infer<typeof AudienceResponseSchema>;
 

@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { composeU301Key } from './client';
+import { composeU301Key, U301_KEY_SEPARATOR } from './client';
 import * as Links from './endpoints';
 import type {
 	U301EndpointInputs,
@@ -274,7 +274,14 @@ export function u301<const T extends U301PluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				// A stored key may be a bare key when the workspace came from the
+				// plugin options, so it is composed here. A stored composite key
+				// already carries its own workspace and passes through untouched.
+				if (res) {
+					return res.includes(U301_KEY_SEPARATOR) || !options.workspaceId
+						? res
+						: composeU301Key(res, options.workspaceId);
+				}
 			}
 
 			throw new AuthMissingError('u301', ctx.authType ?? 'api_key');
