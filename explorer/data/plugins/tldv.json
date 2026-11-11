@@ -1,0 +1,497 @@
+{
+  "id": "tldv",
+  "displayName": "tl;dv",
+  "description": "Meeting intelligence with tl;dv - list and read recorded meetings, pull transcripts and AI notes, import a recording from a URL, and search folders.",
+  "npmPackageName": "@corsair-dev/tldv",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 2,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "tldv.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "Search the folders a user can see, with their meeting ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Folder name to search for"
+          },
+          {
+            "key": "meetingIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Folders must contain these meeting ids"
+          },
+          {
+            "key": "meetingIdsOp",
+            "optional": true,
+            "type": "and | or",
+            "description": "Whether a folder must contain every id or any"
+          },
+          {
+            "key": "space",
+            "optional": true,
+            "type": "all | personal | team | organization",
+            "description": "Which folder scopes to search"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number",
+            "description": "Current page number"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "number",
+            "description": "Total pages available"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Total results available"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Results per page"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, meetingIds: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tldv.api.meetings.get",
+      "shortPath": "meetings.get",
+      "description": "Get one meeting by id, including the phone number and metadata an import attached",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "happenedAt",
+            "optional": false,
+            "type": "string",
+            "description": "When the meeting happened"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Console URL for the meeting"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number",
+            "description": "Length in seconds"
+          },
+          {
+            "key": "organizer",
+            "optional": false,
+            "type": "{ name?: string | null, email: string }"
+          },
+          {
+            "key": "invitees",
+            "optional": false,
+            "type": "{ name?: string | null, email: string }[]"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id?: string | null, label?: string | null } | null"
+          },
+          {
+            "key": "extraProperties",
+            "optional": true,
+            "type": "{ conferenceId?: string | null } | null"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "Only on a single-meeting read, not the list"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Only on a single-meeting read, not the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tldv.api.meetings.import",
+      "shortPath": "meetings.import",
+      "description": "Import a meeting from a public media URL, which starts a processing job and spends recording minutes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly reachable media URL. Supported: .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name for the new meeting"
+          },
+          {
+            "key": "happenedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Meeting date, ISO 8601 with milliseconds"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "string[]",
+            "description": "Emails of the invited participants"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Flat key/value map with your own identifiers: up to 20 keys, values are strings, numbers or booleans"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the import job"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tldv.api.meetings.list",
+      "shortPath": "meetings.list",
+      "description": "List meetings with paging, date bounds and folder or type filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Search text"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, max 100"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest date, as a date or date-time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Latest date, as a date or date-time"
+          },
+          {
+            "key": "onlyParticipated",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only meetings the user took part in"
+          },
+          {
+            "key": "meetingType",
+            "optional": true,
+            "type": "internal | external",
+            "description": "internal means only participants from the org"
+          },
+          {
+            "key": "folderIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Folders to include"
+          },
+          {
+            "key": "folderIdsOp",
+            "optional": true,
+            "type": "and | or",
+            "description": "Whether a meeting must be in every folder or any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number",
+            "description": "Current page number"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "number",
+            "description": "Total pages available"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Total results available"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Results per page"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, happenedAt: string, url: string, duration: number, organizer: { name?: string | null, email: string }, invitees: { name?: string | null, email: string }[], template?: { id?: string | null, label?: string | null } | null, extraProperties?: { conferenceId?: string | null } | null, phoneNumber?: string | null, metadata?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tldv.api.meetings.notes",
+      "shortPath": "meetings.notes",
+      "description": "Get the AI notes and topics generated for one meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structuredNotes",
+            "optional": false,
+            "type": "{ segmentId: string, timestamp: number, text: string, topicId: string }[]"
+          },
+          {
+            "key": "markdownContent",
+            "optional": false,
+            "type": "string",
+            "description": "The notes rendered as markdown"
+          },
+          {
+            "key": "topics",
+            "optional": false,
+            "type": "{ id: string, order: number, title: string, summary: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tldv.api.meetings.transcript",
+      "shortPath": "meetings.transcript",
+      "description": "Get the transcript of one meeting, sentence by sentence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ speaker: string, text: string, startTime: number, endTime: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "tldv.webhooks.meetings.meetingReady",
+      "shortPath": "meetings.meetingReady",
+      "description": "A meeting finished processing. Carries its notes when they exist, and its transcript when the subscription includes one",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook delivery id"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "MeetingReady"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, happenedAt: string, url: string, duration: number, organizer: { name?: string | null, email: string }, invitees: { name?: string | null, email: string }[], template?: { id?: string | null, label?: string | null } | null, extraProperties?: { conferenceId?: string | null } | null, phoneNumber?: string | null, metadata?: Record<string, any> | null, notes?: { markdownContent?: string | null, structuredNotes?: { segmentId?: string | null, timestamp: number, text?: string | null, topicId?: string | null }[] | null, topics?: { id: string, order: number, title: string, summary?: string | null }[] | null } | null, transcript?: { id: string, meetingId: string, data: { speaker: string, text: string, startTime: number, endTime: number }[] } | null }"
+          },
+          {
+            "key": "executedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event: MeetingReady, data: { id: string, name: string, happenedAt: string, url: string, duration: number, organizer: { name?: string | null, email: string }, invitees: { name?: string | null, email: string }[], template?: { id?: string | null, label?: string | null } | null, extraProperties?: { conferenceId?: string | null } | null, phoneNumber?: string | null, metadata?: Record<string, any> | null, notes?: { markdownContent?: string | null, structuredNotes?: { segmentId?: string | null, timestamp: number, text?: string | null, topicId?: string | null }[] | null, topics?: { id: string, order: number, title: string, summary?: string | null }[] | null } | null, transcript?: { id: string, meetingId: string, data: { speaker: string, text: string, startTime: number, endTime: number }[] } | null }, executedAt?: string | null }",
+      "usageExample": "tldv({\n    webhookHooks: {\n        meetings: {\n            meetingReady: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "tldv.webhooks.transcripts.transcriptReady",
+      "shortPath": "transcripts.transcriptReady",
+      "description": "A meeting transcript has been generated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook delivery id"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "TranscriptReady"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, meetingId: string, data: { speaker: string, text: string, startTime: number, endTime: number }[] }"
+          },
+          {
+            "key": "executedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event: TranscriptReady, data: { id: string, meetingId: string, data: { speaker: string, text: string, startTime: number, endTime: number }[] }, executedAt?: string | null }",
+      "usageExample": "tldv({\n    webhookHooks: {\n        transcripts: {\n            transcriptReady: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
