@@ -58,6 +58,25 @@ function elementProperties(properties: {
 	});
 }
 
+/**
+ * Google reads a missing scale as 0, which collapses the element. In RELATIVE
+ * mode the transform multiplies into the existing one, so an omitted scale has
+ * to mean "leave the size alone" and is filled with 1. In ABSOLUTE mode the
+ * transform replaces the matrix outright, so the caller's values are sent as
+ * given and a partial matrix stays partial.
+ */
+export function transformForApplyMode(
+	transform: ProviderJson,
+	applyMode: 'RELATIVE' | 'ABSOLUTE',
+): ProviderJson {
+	if (applyMode === 'ABSOLUTE') return transform;
+	return {
+		...transform,
+		scaleX: transform.scaleX ?? 1,
+		scaleY: transform.scaleY ?? 1,
+	};
+}
+
 export const elementsCreateShape: GoogleSlidesEndpoints['elementsCreateShape'] =
 	async (ctx, input) =>
 		call(
@@ -128,15 +147,17 @@ export const elementsCreateTable: GoogleSlidesEndpoints['elementsCreateTable'] =
 			},
 			input,
 			async (parsed) => {
-				// A table transform must be unscaled and unsheared. Sending the
-				// caller's scale would fail the whole batch, so it is dropped here
-				// and the position is kept.
+				// A table transform must have a scale of 1 and no shear, which Google
+				// documents; sending the caller's scale fails the whole batch. Scale
+				// is therefore pinned to 1 and shear removed, while the position is
+				// kept, so a caller wanting a different size sets elementProperties
+				// .size instead.
 				const properties = elementProperties(parsed.elementProperties);
 				if (properties.transform) {
 					const { scaleX, scaleY, shearX, shearY, ...rest } =
-						// unknown: an AffineTransform; only scale and shear are removed.
+						// unknown: an AffineTransform; scale and shear are replaced below.
 						properties.transform as ProviderJson;
-					properties.transform = rest;
+					properties.transform = { ...rest, scaleX: 1, scaleY: 1 };
 				}
 
 				const response = await runBatchUpdate(ctx, parsed.presentationId, [
@@ -200,15 +221,16 @@ export const elementsUpdateTransform: GoogleSlidesEndpoints['elementsUpdateTrans
 			},
 			input,
 			async (parsed) => {
+				const applyMode = parsed.applyMode ?? 'RELATIVE';
 				const response = await runBatchUpdate(ctx, parsed.presentationId, [
 					{
 						updatePageElementTransform: {
 							objectId: parsed.objectId,
-							transform: parsed.transform,
-							// ABSOLUTE is the only mode in which the transform replaces
-							// the existing one. RELATIVE is the provider default, stated
-							// here so the intent is visible in the request.
-							applyMode: parsed.applyMode ?? 'RELATIVE',
+							transform: transformForApplyMode(parsed.transform, applyMode),
+							// ABSOLUTE replaces the existing transform; RELATIVE multiplies
+							// into it, which is the provider default and stated here so the
+							// intent is visible in the request.
+							applyMode,
 						},
 					},
 				]);

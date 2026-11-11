@@ -481,3 +481,112 @@ describe('persistence keeps what a list row cannot carry', () => {
 		expect(warn).toHaveBeenCalled();
 	});
 });
+
+describe('review fixes', () => {
+	it('converts a point dimension to EMU', async () => {
+		mockRequest.mockResolvedValue({
+			presentationId: 'deck-1',
+			slides: [],
+			// 720 PT by 405 PT is the default 10 by 5.63 inch widescreen page.
+			pageSize: {
+				width: { magnitude: 720, unit: 'PT' },
+				height: { magnitude: 405, unit: 'PT' },
+			},
+		});
+
+		const result = await PresentationsEndpoints.get(ctx, {
+			presentationId: 'deck-1',
+		});
+
+		// A point is 12,700 EMU; passing 720 through would report a page 12,700x
+		// too small.
+		expect(result.pageWidthEmu).toBe(720 * 12_700);
+		expect(result.pageHeightEmu).toBe(405 * 12_700);
+	});
+
+	it('passes an EMU dimension through unchanged', async () => {
+		mockRequest.mockResolvedValue({
+			presentationId: 'deck-1',
+			slides: [],
+			pageSize: {
+				width: { magnitude: 9144000, unit: 'EMU' },
+				height: { magnitude: 5143500, unit: 'EMU' },
+			},
+		});
+
+		const result = await PresentationsEndpoints.get(ctx, {
+			presentationId: 'deck-1',
+		});
+		expect(result.pageWidthEmu).toBe(9144000);
+	});
+
+	it('returns comment threads when the caller asked for them', async () => {
+		mockRequest.mockResolvedValue({
+			presentationId: 'deck-1',
+			slides: [],
+			comments: [{ commentId: 'c1', content: 'Tighten slide 3' }],
+		});
+
+		const result = await PresentationsEndpoints.get(ctx, {
+			presentationId: 'deck-1',
+			commentsViewMode: 'COMMENTS_VIEW_MODE_INCLUDED',
+		});
+
+		expect(result.comments).toEqual([
+			{ commentId: 'c1', content: 'Tighten slide 3' },
+		]);
+	});
+
+	it('omits comments when the reply had none', async () => {
+		mockRequest.mockResolvedValue({ presentationId: 'deck-1', slides: [] });
+
+		const result = await PresentationsEndpoints.get(ctx, {
+			presentationId: 'deck-1',
+		});
+		expect(result).not.toHaveProperty('comments');
+	});
+
+	it('stores the Drive timestamps a list row carries', async () => {
+		const presentations = makeStore();
+		const storeCtx = makeContext({ db: { presentations } });
+		mockRequest.mockResolvedValue({
+			files: [
+				{
+					id: 'deck-1',
+					name: 'Deck',
+					createdTime: '2026-01-01T00:00:00.000Z',
+					modifiedTime: '2026-02-01T00:00:00.000Z',
+				},
+			],
+		});
+
+		await PresentationsEndpoints.list(storeCtx, {});
+
+		const writeCall = presentations.upsertByEntityId.mock.calls[0];
+		expect(writeCall).toBeDefined();
+		// unknown: the stored row, asserted field by field.
+		const stored = (writeCall as [string, Record<string, unknown>])[1];
+		expect(stored.createdTime).toBe('2026-01-01T00:00:00.000Z');
+		expect(stored.modifiedTime).toBe('2026-02-01T00:00:00.000Z');
+	});
+
+	it('still returns the copy when the follow-up read fails', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ id: 'deck-copy' })
+			.mockResolvedValueOnce({ error: { message: 'unavailable' } });
+		// The second call is a 200 carrying an error envelope; the schema rejects
+		// it, which is what a failed read looks like here.
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+
+		const result = await PresentationsEndpoints.copy(ctx, {
+			presentationId: 'deck-1',
+			name: 'Copy',
+		});
+
+		expect(result.presentationId).toBe('deck-copy');
+		expect(result.title).toBe('Copy');
+		expect(warn).toHaveBeenCalled();
+	});
+});

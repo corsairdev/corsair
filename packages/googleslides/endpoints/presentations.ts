@@ -5,7 +5,7 @@ import {
 	makeSlidesRequest,
 	markReplaySafe,
 } from '../client';
-import type { Presentation, ProviderJson } from '../types';
+import type { Dimension, Presentation, ProviderJson } from '../types';
 import { call, compact, compactQuery } from './shared';
 import {
 	GoogleSlidesEndpointInputSchemas,
@@ -33,14 +33,23 @@ const LIST_FIELDS =
  * A missing presentationId means the body is not a presentation at all, so
  * throwing beats reporting zero slides for a real deck.
  */
+/**
+ * Converts a page dimension to EMU. Google returns the unit alongside the
+ * magnitude, and a point is 12,700 EMU, so a PT value passed through unchanged
+ * would report a page 12,700 times too small.
+ */
+export function toEmu(dimension: Dimension | undefined): number | undefined {
+	if (dimension?.magnitude === undefined) return undefined;
+	if (dimension.unit === 'PT') return Math.round(dimension.magnitude * 12_700);
+	return dimension.magnitude;
+}
+
 export function summarizePresentation(presentation: Presentation) {
 	if (!presentation.presentationId) {
 		throw new Error(
 			`Google Slides reply has no presentationId: ${JSON.stringify(presentation).slice(0, 200)}`,
 		);
 	}
-	const width = presentation.pageSize?.width?.magnitude;
-	const height = presentation.pageSize?.height?.magnitude;
 
 	return {
 		presentationId: presentation.presentationId,
@@ -51,8 +60,13 @@ export function summarizePresentation(presentation: Presentation) {
 		slideCount: presentation.slides?.length ?? 0,
 		layoutCount: presentation.layouts?.length ?? 0,
 		masterCount: presentation.masters?.length ?? 0,
-		pageWidthEmu: width,
-		pageHeightEmu: height,
+		pageWidthEmu: toEmu(presentation.pageSize?.width),
+		pageHeightEmu: toEmu(presentation.pageSize?.height),
+		// Present only when the request asked for comments; Google omits it
+		// otherwise, so the field is copied rather than defaulted to an empty list.
+		...(presentation.comments === undefined
+			? {}
+			: { comments: presentation.comments }),
 	};
 }
 
@@ -72,6 +86,9 @@ type PresentationSummaryFields = {
 	slideCount?: number;
 	layoutCount?: number;
 	masterCount?: number;
+	/** RFC 3339 from Drive, which a read does not return. */
+	createdTime?: string;
+	modifiedTime?: string;
 };
 
 /**
@@ -117,6 +134,12 @@ async function persistPresentation(
 			...(summary.masterCount === undefined
 				? {}
 				: { masterCount: summary.masterCount }),
+			...(summary.createdTime === undefined
+				? {}
+				: { createdTime: summary.createdTime }),
+			...(summary.modifiedTime === undefined
+				? {}
+				: { modifiedTime: summary.modifiedTime }),
 			lastSyncedAt: new Date(),
 			createdAt: (priorData?.createdAt as Date | undefined) ?? new Date(),
 		});
@@ -276,6 +299,16 @@ export const presentationsList: GoogleSlidesEndpoints['presentationsList'] =
 						presentationId: file.presentationId,
 						title: typeof file.name === 'string' ? file.name : undefined,
 						url: `https://docs.google.com/presentation/d/${file.presentationId}/edit`,
+						// Drive is the only source of these two, so a row created by a
+						// read has none and a list refresh fills them in.
+						createdTime:
+							typeof file.createdTime === 'string'
+								? file.createdTime
+								: undefined,
+						modifiedTime:
+							typeof file.modifiedTime === 'string'
+								? file.modifiedTime
+								: undefined,
 					});
 				}
 
@@ -297,27 +330,49 @@ export const presentationsCopy: GoogleSlidesEndpoints['presentationsCopy'] =
 			},
 			input,
 			async (parsed) => {
-				// Marked replay-safe: a failure here means the copy was never made,
-				// so repeating the endpoint cannot leave two copies. The read back
-				// below stays unmarked, because a replay would copy again.
-				const file = await markReplaySafe(
-					makeDriveRequest<{ id?: string }>(
-						`/files/${encodeURIComponent(parsed.presentationId)}/copy`,
-						ctx,
-						{
-							method: 'POST',
-							body: compact({ name: parsed.name, parents: parsed.parents }),
-							query: { fields: 'id' },
-						},
-					),
+				// Not marked replay-safe: a 5xx does not prove Drive left the copy
+				// unmade, so a whole-endpoint retry could leave two copies.
+				const file = await makeDriveRequest<{ id?: string }>(
+					`/files/${encodeURIComponent(parsed.presentationId)}/copy`,
+					ctx,
+					{
+						method: 'POST',
+						body: compact({ name: parsed.name, parents: parsed.parents }),
+						query: { fields: 'id' },
+					},
 				);
 				if (!file.id) {
 					throw new Error('Drive copy returned no file id');
 				}
 				// A copy is a full deck, so the caller gets the same summary as a read.
-				const summary = summarizePresentation(
-					await getPresentation(ctx, file.id),
-				);
+				// Best effort: the copy exists now, so a failed read-back must not
+				// report the copy as failed and invite a retry that copies again.
+				// The summary is built inside the guard because a reply that is not a
+				// presentation throws there, not in the request.
+				const summary = await getPresentation(ctx, file.id)
+					.then((presentation) => summarizePresentation(presentation))
+					.catch(
+						// unknown: the read failed; the copy's id came from Drive.
+						(error: unknown) => {
+							console.warn(
+								`Copied to ${file.id} but could not read it back:`,
+								error,
+							);
+							return undefined;
+						},
+					);
+				if (!summary) {
+					// The id is known and the copy succeeded, so report what is known
+					// rather than throwing over a read that can be redone.
+					return {
+						presentationId: file.id,
+						title: parsed.name,
+						url: `https://docs.google.com/presentation/d/${file.id}/edit`,
+						slideCount: 0,
+						layoutCount: 0,
+						masterCount: 0,
+					};
+				}
 				await persistPresentation(ctx, summary);
 				return summary;
 			},

@@ -1,5 +1,5 @@
 import { request } from 'corsair/http';
-import { notesText, SlidesEndpoints } from './endpoints';
+import { ElementsEndpoints, notesText, SlidesEndpoints } from './endpoints';
 import type { GoogleSlidesContext } from './index';
 import type { SentBody } from './test-helpers';
 import { makeContext } from './test-helpers';
@@ -226,9 +226,12 @@ describe('slides.create', () => {
 
 describe('slides.duplicate', () => {
 	it('duplicates by object id and returns the copy id', async () => {
-		mockRequest.mockResolvedValue({
-			replies: [{ duplicateObject: { objectId: 'slide-copy' } }],
-		});
+		// The page-type check reads the slide first.
+		mockRequest
+			.mockResolvedValueOnce({ objectId: 'slide-1', pageType: 'SLIDE' })
+			.mockResolvedValueOnce({
+				replies: [{ duplicateObject: { objectId: 'slide-copy' } }],
+			});
 
 		const result = await SlidesEndpoints.duplicate(ctx, {
 			presentationId: 'deck-1',
@@ -236,7 +239,7 @@ describe('slides.duplicate', () => {
 			objectIds: { 'slide-1': 'slide-copy' },
 		});
 
-		expect(calledOptions().body).toEqual({
+		expect(calledOptions(1).body).toEqual({
 			requests: [
 				{
 					duplicateObject: {
@@ -252,14 +255,16 @@ describe('slides.duplicate', () => {
 
 describe('slides.remove', () => {
 	it('deletes the object and reports it removed', async () => {
-		mockRequest.mockResolvedValue({ replies: [{}] });
+		mockRequest
+			.mockResolvedValueOnce({ objectId: 'slide-1', pageType: 'SLIDE' })
+			.mockResolvedValueOnce({ replies: [{}] });
 
 		const result = await SlidesEndpoints.remove(ctx, {
 			presentationId: 'deck-1',
 			slideObjectId: 'slide-1',
 		});
 
-		expect(calledOptions().body).toEqual({
+		expect(calledOptions(1).body).toEqual({
 			requests: [{ deleteObject: { objectId: 'slide-1' } }],
 		});
 		expect(result).toEqual({
@@ -521,6 +526,7 @@ describe('slides.setNotes', () => {
 describe('notesText', () => {
 	it('ignores a non-text placeholder on the notes page', () => {
 		const text = notesText({
+			notesProperties: { speakerNotesObjectId: 'body' },
 			pageElements: [
 				{ objectId: 'image', shape: { placeholder: { type: 'SLIDE_IMAGE' } } },
 				{
@@ -584,28 +590,118 @@ describe('notes that hold only blank lines', () => {
 	});
 
 	it('removes only the single newline Google appends', () => {
-		expect(
-			notesText({
-				pageElements: [
-					{
-						shape: {
-							text: { textElements: [{ textRun: { content: 'line\n' } }] },
-						},
-					},
-				],
-			}),
-		).toBe('line');
+		const page = (content: string) => ({
+			notesProperties: { speakerNotesObjectId: 'body' },
+			pageElements: [
+				{
+					objectId: 'body',
+					shape: { text: { textElements: [{ textRun: { content } }] } },
+				},
+			],
+		});
+
+		expect(notesText(page('line\n'))).toBe('line');
 		// A newline the user typed as the last character survives one round trip.
-		expect(
-			notesText({
-				pageElements: [
-					{
-						shape: {
-							text: { textElements: [{ textRun: { content: 'line\n\n' } }] },
-						},
-					},
-				],
+		expect(notesText(page('line\n\n'))).toBe('line\n');
+	});
+});
+
+describe('slide-only operations verify the page type', () => {
+	it('refuses to remove a shape through the slide delete', async () => {
+		// A shape shares the id namespace with a slide, so the only difference the
+		// guard can see is the page type Google reports for it.
+		mockRequest.mockResolvedValueOnce({ objectId: 'shape-1' });
+
+		await expect(
+			SlidesEndpoints.remove(ctx, {
+				presentationId: 'deck-1',
+				slideObjectId: 'shape-1',
 			}),
-		).toBe('line\n');
+		).rejects.toThrow(/not a slide/i);
+		// Only the type check went out; no delete was sent.
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+
+	it('refuses to duplicate a shape', async () => {
+		mockRequest.mockResolvedValueOnce({
+			objectId: 'shape-1',
+			pageType: 'NOTES',
+		});
+
+		await expect(
+			SlidesEndpoints.duplicate(ctx, {
+				presentationId: 'deck-1',
+				slideObjectId: 'shape-1',
+			}),
+		).rejects.toThrow(/NOTES, not a slide/);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+
+	it('proceeds when the page really is a slide', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ objectId: 'slide-1', pageType: 'SLIDE' })
+			.mockResolvedValueOnce({ replies: [{}] });
+
+		const result = await SlidesEndpoints.remove(ctx, {
+			presentationId: 'deck-1',
+			slideObjectId: 'slide-1',
+		});
+		expect(result.removed).toBe(true);
+	});
+});
+
+describe('size rules per element kind', () => {
+	it('still requires both dimensions for a shape', async () => {
+		await expect(
+			ElementsEndpoints.createShape(ctx, {
+				presentationId: 'deck-1',
+				shapeType: 'TEXT_BOX',
+				elementProperties: { pageObjectId: 'slide-1' },
+			}),
+		).rejects.toThrow(/both width and height/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts an image with no size, which Google defaults', async () => {
+		mockRequest.mockResolvedValue({
+			replies: [{ createImage: { objectId: 'image-1' } }],
+		});
+
+		const result = await ElementsEndpoints.createImage(ctx, {
+			presentationId: 'deck-1',
+			url: 'https://example.test/logo.png',
+			elementProperties: { pageObjectId: 'slide-1' },
+		});
+
+		expect(result.objectId).toBe('image-1');
+	});
+
+	it('accepts a table with no size, which Google auto-sizes', async () => {
+		mockRequest.mockResolvedValue({
+			replies: [{ createTable: { objectId: 'table-1' } }],
+		});
+
+		const result = await ElementsEndpoints.createTable(ctx, {
+			presentationId: 'deck-1',
+			rows: 2,
+			columns: 2,
+			elementProperties: { pageObjectId: 'slide-1' },
+		});
+
+		expect(result.objectId).toBe('table-1');
+	});
+
+	it('rejects a half-specified size on an image', async () => {
+		await expect(
+			ElementsEndpoints.createImage(ctx, {
+				presentationId: 'deck-1',
+				url: 'https://example.test/logo.png',
+				elementProperties: {
+					pageObjectId: 'slide-1',
+					size: { width: { magnitude: 100 } },
+				},
+			}),
+		).rejects.toThrow(/both width and height, or neither/);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

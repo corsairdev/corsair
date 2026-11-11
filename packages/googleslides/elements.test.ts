@@ -196,7 +196,15 @@ describe('elements.createTable', () => {
 							width: { magnitude: 3000000 },
 							height: { magnitude: 1500000 },
 						},
-						transform: { translateX: 100, translateY: 200, unit: 'EMU' },
+						// A table keeps its position, but scale is pinned to 1 and shear
+						// removed because Google rejects anything else.
+						transform: {
+							translateX: 100,
+							translateY: 200,
+							unit: 'EMU',
+							scaleX: 1,
+							scaleY: 1,
+						},
 					},
 				},
 			},
@@ -254,7 +262,9 @@ describe('elements.updateTransform', () => {
 			{
 				updatePageElementTransform: {
 					objectId: 'shape-1',
-					transform: { translateX: 100, translateY: 200 },
+					// RELATIVE multiplies into the existing transform, so an omitted
+					// scale is filled with 1 to leave the size alone.
+					transform: { translateX: 100, translateY: 200, scaleX: 1, scaleY: 1 },
 					applyMode: 'RELATIVE',
 				},
 			},

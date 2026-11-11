@@ -31,6 +31,11 @@ export async function call<Input, Output>(
 	} = {},
 ): Promise<Output> {
 	const parsed = operation.input.parse(rawInput ?? {});
+	// Checked before the request, not after: logEventFromContext seals the
+	// payload with the account key when encryption at rest is on, and it throws
+	// when the key is missing. Raised after a write, that failure would report a
+	// completed write as a failure and invite a retry that repeats it.
+	assertEncryptionConfigured(ctx);
 	const raw = await run(parsed);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
@@ -43,6 +48,21 @@ export async function call<Input, Output>(
 		'completed',
 	);
 	return result;
+}
+
+/**
+ * Refuses a request that would succeed at Google and then fail while logging.
+ * `logEventFromContext` throws `encryptDataAtRest requires kek` when encryption
+ * is on and no key is set, so the check runs before the request leaves.
+ */
+function assertEncryptionConfigured(ctx: GoogleSlidesContext): void {
+	const encrypting = (ctx as { encryptDataAtRest?: boolean }).encryptDataAtRest;
+	const kek = (ctx as { kek?: string }).kek;
+	if (encrypting === true && !kek) {
+		throw new Error(
+			'encryptDataAtRest is enabled but no kek is configured, so the request would succeed and the event log would fail. Set a kek before calling this endpoint.',
+		);
+	}
 }
 
 /**

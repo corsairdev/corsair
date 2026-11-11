@@ -280,7 +280,7 @@ const googleSlidesEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a presentation from Drive [DESTRUCTIVE · IRREVERSIBLE]',
+			'Permanently delete a presentation from Drive, without using the trash [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'slides.list': {
 		riskLevel: 'read',

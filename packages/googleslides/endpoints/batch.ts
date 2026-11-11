@@ -74,6 +74,11 @@ export const batchUpdate: GoogleSlidesEndpoints['batchUpdate'] = async (
 			return {
 				presentationId: parsed.presentationId,
 				replies: response.replies ?? [],
+				// The applied revision, which a caller passes as the
+				// requiredRevisionId of a later batch to detect interference.
+				writeControl: response.writeControl
+					? { requiredRevisionId: response.writeControl.requiredRevisionId }
+					: undefined,
 			};
 		},
 		(parsed) => ({ requestCount: parsed.requests.length }),

@@ -217,6 +217,8 @@ export async function fetchDriveBytes(
 			Number.isFinite(retryAfterSeconds)
 				? (retryAfterSeconds as number) * 1000
 				: undefined,
+			// The body names an exhausted daily quota, which no retry can clear.
+			/exceeded\s+your\s+daily\s+limit|dailyLimitExceeded/i.test(body),
 		);
 	}
 
@@ -245,6 +247,8 @@ export class GoogleSlidesExportError extends Error {
 		public readonly status?: number,
 		/** Milliseconds from Retry-After, when the provider sent one. */
 		public readonly retryAfter?: number,
+		/** True when the body says the daily quota is spent and no wait clears it. */
+		public readonly quotaExhausted?: boolean,
 	) {
 		super(message);
 		this.name = 'GoogleSlidesExportError';

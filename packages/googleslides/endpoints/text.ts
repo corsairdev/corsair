@@ -12,13 +12,20 @@ import {
  * list, and only replaceAllText reports a count, so the shared shape reports
  * the reply count and the count when the provider sent one.
  */
-function summarizeWrite(response: BatchUpdateResponse, index = 0) {
+function summarizeWrite(
+	response: BatchUpdateResponse,
+	presentationId: string,
+	index = 0,
+) {
 	const reply = replyAt(response.replies, index);
 	const occurrences = reply?.replaceAllText as
 		| { occurrencesChanged?: number }
 		| undefined;
 	return {
-		presentationId: response.presentationId ?? '',
+		// Google omits presentationId on some batch replies. The id the caller
+		// asked for is correct either way, and an empty string would fail the
+		// output schema after the write had already been applied.
+		presentationId: response.presentationId ?? presentationId,
 		replyCount: response.replies?.length ?? 0,
 		occurrencesChanged: occurrences?.occurrencesChanged,
 	};
@@ -47,7 +54,7 @@ export const textInsert: GoogleSlidesEndpoints['textInsert'] = async (
 					}),
 				},
 			]);
-			return summarizeWrite(response);
+			return summarizeWrite(response, parsed.presentationId);
 		},
 		(parsed) => ({
 			objectId: parsed.objectId,
@@ -81,7 +88,7 @@ export const textReplaceAll: GoogleSlidesEndpoints['textReplaceAll'] = async (
 					}),
 				},
 			]);
-			const summary = summarizeWrite(response);
+			const summary = summarizeWrite(response, parsed.presentationId);
 			return { ...summary, presentationId: parsed.presentationId };
 		},
 		// Lengths, not the strings: the search and replacement text are deck
@@ -116,7 +123,7 @@ export const textDelete: GoogleSlidesEndpoints['textDelete'] = async (
 					}),
 				},
 			]);
-			const summary = summarizeWrite(response);
+			const summary = summarizeWrite(response, parsed.presentationId);
 			return { ...summary, presentationId: parsed.presentationId };
 		},
 		(parsed) => ({
@@ -151,7 +158,7 @@ export const textUpdateStyle: GoogleSlidesEndpoints['textUpdateStyle'] = async (
 					}),
 				},
 			]);
-			const summary = summarizeWrite(response);
+			const summary = summarizeWrite(response, parsed.presentationId);
 			return { ...summary, presentationId: parsed.presentationId };
 		},
 		(parsed) => ({
@@ -183,7 +190,7 @@ export const textCreateBullets: GoogleSlidesEndpoints['textCreateBullets'] =
 						}),
 					},
 				]);
-				const summary = summarizeWrite(response);
+				const summary = summarizeWrite(response, parsed.presentationId);
 				return { ...summary, presentationId: parsed.presentationId };
 			},
 			(parsed) => ({
@@ -212,7 +219,7 @@ export const textRemoveBullets: GoogleSlidesEndpoints['textRemoveBullets'] =
 						}),
 					},
 				]);
-				const summary = summarizeWrite(response);
+				const summary = summarizeWrite(response, parsed.presentationId);
 				return { ...summary, presentationId: parsed.presentationId };
 			},
 			(parsed) => ({ objectId: parsed.objectId }),

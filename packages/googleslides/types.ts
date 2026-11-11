@@ -186,6 +186,8 @@ export type Page = {
 
 export type Presentation = {
 	presentationId?: string;
+	/** Present only when the read asked for comments to be included. */
+	comments?: ProviderJson[];
 	title?: string;
 	locale?: string;
 	revisionId?: string;

@@ -53,10 +53,18 @@ export function isNotesPlaceholder(type: string | undefined): boolean {
  * appends to every shape. Callers that decide whether anything needs deleting
  * use this: a page holding only blank lines is non-empty, and `notesText` would
  * hide that.
+ *
+ * Only the speaker-notes shape counts. The same page carries a `SLIDE_IMAGE`
+ * placeholder and can carry other shapes, and only the shape named by
+ * `notesProperties.speakerNotesObjectId` holds notes.
  */
 export function notesRawText(page: Page): string {
+	const speakerNotesId = page.notesProperties?.speakerNotesObjectId;
 	const parts: string[] = [];
 	for (const element of page.pageElements ?? []) {
+		// Without a speaker-notes id the page names no shape to read, so nothing
+		// can be attributed to the notes.
+		if (!speakerNotesId || element.objectId !== speakerNotesId) continue;
 		for (const run of element.shape?.text?.textElements ?? []) {
 			const content = run.textRun?.content;
 			if (content) parts.push(content);
@@ -74,6 +82,26 @@ export function notesText(page: Page): string {
 	// One trailing newline is Google's, not the user's; keeping it would make
 	// every round trip grow the notes by a line.
 	return notesRawText(page).replace(/\n$/, '');
+}
+
+/**
+ * Rejects an id that is not a slide before a slide-only write runs. A page id
+ * and a page-element id share one namespace, so nothing else distinguishes them
+ * locally, and Google's error for the wrong kind is a 400 after the fact.
+ */
+async function assertIsSlide(
+	ctx: Parameters<GoogleSlidesEndpoints['slidesGet']>[0],
+	presentationId: string,
+	pageObjectId: string,
+): Promise<void> {
+	const page = await markReplaySafe(
+		readSlide(ctx, presentationId, pageObjectId),
+	);
+	if (page.pageType !== 'SLIDE') {
+		throw new Error(
+			`${pageObjectId} is a ${page.pageType ?? 'page without a type'}, not a slide. Use the elements group for page elements.`,
+		);
+	}
 }
 
 export const slidesList: GoogleSlidesEndpoints['slidesList'] = async (
@@ -164,12 +192,11 @@ export const slidesCreate: GoogleSlidesEndpoints['slidesCreate'] = async (
 				slideLayoutReference,
 			});
 
-			// Marked replay-safe: a failure here means the slide was never created,
-			// so repeating the endpoint cannot add a second one. Everything after
-			// this point stays unmarked, because a replay would POST again.
-			const response = await markReplaySafe(
-				runBatchUpdate(ctx, parsed.presentationId, [{ createSlide }]),
-			);
+			// Not marked replay-safe: a 5xx does not prove Google left the slide
+			// uncreated, so a whole-endpoint retry could add a second one.
+			const response = await runBatchUpdate(ctx, parsed.presentationId, [
+				{ createSlide },
+			]);
 			const created = replyAt(response.replies, 0)?.createSlide as
 				| { objectId?: string }
 				| undefined;
@@ -182,16 +209,27 @@ export const slidesCreate: GoogleSlidesEndpoints['slidesCreate'] = async (
 			// The reply carries only the id. Reading the slide back names the
 			// layout that was actually applied, which differs from the request when
 			// the named layout is missing from the current master.
+			//
+			// Best effort: the slide exists at this point, so failing the call
+			// because the follow-up read did not complete would report a creation
+			// as a failure and invite a retry that adds a second slide.
 			const slide = await readSlide(
 				ctx,
 				parsed.presentationId,
 				created.objectId,
-			);
+			).catch((error: unknown) => {
+				// unknown: the read failed; the id came from the create reply.
+				console.warn(
+					`Created slide ${created.objectId} but could not read it back:`,
+					error,
+				);
+				return undefined;
+			});
 			return {
 				presentationId: parsed.presentationId,
 				slideObjectId: created.objectId,
 				insertionIndex: parsed.insertionIndex,
-				layoutObjectId: slide.slideProperties?.layoutObjectId,
+				layoutObjectId: slide?.slideProperties?.layoutObjectId,
 			};
 		},
 		(parsed) => ({
@@ -213,6 +251,7 @@ export const slidesDuplicate: GoogleSlidesEndpoints['slidesDuplicate'] = async (
 		},
 		input,
 		async (parsed) => {
+			await assertIsSlide(ctx, parsed.presentationId, parsed.slideObjectId);
 			const response = await runBatchUpdate(ctx, parsed.presentationId, [
 				{
 					duplicateObject: compact({
@@ -250,8 +289,10 @@ export const slidesRemove: GoogleSlidesEndpoints['slidesRemove'] = async (
 		},
 		input,
 		async (parsed) => {
-			// deleteObject also deletes page elements, so this is a slide delete
-			// only because the caller passes a slide id.
+			// deleteObject deletes page elements too, so the id is checked first:
+			// deleting a shape through an endpoint declared as a slide delete would
+			// destroy content under the wrong approval.
+			await assertIsSlide(ctx, parsed.presentationId, parsed.slideObjectId);
 			await runBatchUpdate(ctx, parsed.presentationId, [
 				{ deleteObject: { objectId: parsed.slideObjectId } },
 			]);
@@ -341,19 +382,22 @@ export const slidesThumbnail: GoogleSlidesEndpoints['slidesThumbnail'] = async (
 		async (parsed) => {
 			// Dotted keys stay flat strings: corsair/http renders a nested object
 			// as key[sub], which Google ignores and answers with a default size.
-			const thumbnail = await makeSlidesRequest<{
-				contentUrl?: string;
-				width?: number;
-				height?: number;
-			}>(
-				`/presentations/${encodeURIComponent(parsed.presentationId)}/pages/${encodeURIComponent(parsed.slideObjectId)}/thumbnail`,
-				ctx,
-				{
-					query: compactQuery({
-						'thumbnailProperties.thumbnailSize': parsed.size,
-						'thumbnailProperties.mimeType': 'PNG',
-					}),
-				},
+			// Marked replay-safe: this endpoint only reads.
+			const thumbnail = await markReplaySafe(
+				makeSlidesRequest<{
+					contentUrl?: string;
+					width?: number;
+					height?: number;
+				}>(
+					`/presentations/${encodeURIComponent(parsed.presentationId)}/pages/${encodeURIComponent(parsed.slideObjectId)}/thumbnail`,
+					ctx,
+					{
+						query: compactQuery({
+							'thumbnailProperties.thumbnailSize': parsed.size,
+							'thumbnailProperties.mimeType': 'PNG',
+						}),
+					},
+				),
 			);
 			if (!thumbnail.contentUrl) {
 				throw new Error(
@@ -388,11 +432,10 @@ export const slidesGetNotes: GoogleSlidesEndpoints['slidesGetNotes'] = async (
 			output: GoogleSlidesEndpointOutputSchemas.slidesGetNotes,
 		},
 		input,
+		// Marked replay-safe: this endpoint only reads.
 		async (parsed) => {
-			const slide = await readSlide(
-				ctx,
-				parsed.presentationId,
-				parsed.slideObjectId,
+			const slide = await markReplaySafe(
+				readSlide(ctx, parsed.presentationId, parsed.slideObjectId),
 			);
 			const notesPage = slide.slideProperties?.notesPage;
 			return {

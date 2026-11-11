@@ -217,17 +217,23 @@ describe('text.updateStyle', () => {
 		]);
 	});
 
-	it('rejects a field that names a property absent from style', async () => {
-		await expect(
-			TextEndpoints.updateStyle(ctx, {
-				presentationId: 'deck-1',
-				objectId: 'shape-1',
-				textRange: { type: 'ALL' },
-				style: { bold: true },
-				fields: ['bold', 'italic'],
-			}),
-		).rejects.toThrow(/italic is listed in fields but absent from style/);
-		expect(mockRequest).not.toHaveBeenCalled();
+	it('treats a field named in the mask but absent from style as a reset', async () => {
+		// Google documents this: naming the field and leaving it unset resets the
+		// property to its default, so the request must reach the API.
+		await TextEndpoints.updateStyle(ctx, {
+			presentationId: 'deck-1',
+			objectId: 'shape-1',
+			textRange: { type: 'ALL' },
+			style: { bold: true },
+			fields: ['bold', 'italic'],
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const body = mockRequest.mock.calls[0][1].body as {
+			requests: { updateTextStyle: { fields: string; style: unknown } }[];
+		};
+		expect(body.requests[0]?.updateTextStyle.fields).toBe('bold,italic');
+		expect(body.requests[0]?.updateTextStyle.style).toEqual({ bold: true });
 	});
 
 	it('rejects an empty field mask', async () => {

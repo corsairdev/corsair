@@ -62,6 +62,7 @@ Accepts any of the 49 `batchUpdate` request types except the deletions. `deleteO
 |------|------|----------|-------------|
 | `presentationId` | `string` | Yes | — |
 | `replies` | `object[]` | Yes | — |
+| `writeControl` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="replies full type">
@@ -69,6 +70,15 @@ Accepts any of the 49 `batchUpdate` request types except the deletions. `deleteO
 ```ts
 Record<string, {
 }>[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -493,6 +503,17 @@ await corsair.googleslides.api.presentations.copy({ presentationId: '1AbCdEfGhIj
 | `masterCount` | `number` | Yes | — |
 | `pageWidthEmu` | `number \| null` | No | — |
 | `pageHeightEmu` | `number \| null` | No | — |
+| `comments` | `object[] \| null` | No | Comment threads, when comment viewing was requested |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -533,6 +554,17 @@ await corsair.googleslides.api.presentations.create({ title: 'Quarterly review' 
 | `masterCount` | `number` | Yes | — |
 | `pageWidthEmu` | `number \| null` | No | — |
 | `pageHeightEmu` | `number \| null` | No | — |
+| `comments` | `object[] \| null` | No | Comment threads, when comment viewing was requested |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -542,7 +574,7 @@ await corsair.googleslides.api.presentations.create({ title: 'Quarterly review' 
 
 `presentations.delete`
 
-Delete a presentation from Drive [DESTRUCTIVE · IRREVERSIBLE]
+Permanently delete a presentation from Drive, without using the trash [DESTRUCTIVE · IRREVERSIBLE]
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -554,7 +586,7 @@ await corsair.googleslides.api.presentations.delete({ presentationId: '1AbCdEfGh
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `presentationId` | `string` | Yes | Moved to the Drive trash, then purged |
+| `presentationId` | `string` | Yes | Drive files.delete removes the file permanently; it does not move it to the trash |
 
 
 
@@ -641,6 +673,17 @@ await corsair.googleslides.api.presentations.get({ presentationId: '1AbCdEfGhIjK
 | `masterCount` | `number` | Yes | — |
 | `pageWidthEmu` | `number \| null` | No | — |
 | `pageHeightEmu` | `number \| null` | No | — |
+| `comments` | `object[] \| null` | No | Comment threads, when comment viewing was requested |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 

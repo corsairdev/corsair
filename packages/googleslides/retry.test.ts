@@ -61,9 +61,11 @@ async function withFakeTimers<T>(run: Promise<T>): Promise<T> {
 	const tracked = run.finally(() => {
 		settled = true;
 	});
-	for (let step = 0; step < 10 && !settled; step++) {
+	// The no-header rate-limit fallback is 60s per attempt, so each step has to
+	// clear one whole attempt for the give-up case to settle.
+	for (let step = 0; step < 12 && !settled; step++) {
 		await Promise.resolve();
-		await jest.advanceTimersByTimeAsync(10_000);
+		await jest.advanceTimersByTimeAsync(61_000);
 	}
 	return tracked;
 }
@@ -103,9 +105,8 @@ describe('retry behaviour through the bound client', () => {
 			const error = await withFakeTimers(
 				corsair.googleslides.api.presentations
 					.get({ presentationId: 'deck-1' })
-					// unknown: a rejection can be any value; the assertion narrows it.
-					// unknown: rejection reason; narrowed by the assertion below.
-					.catch((caught: unknown) => caught), // unknown: rejection reason, narrowed below.
+					// unknown: rejection reason, narrowed by the assertion below.
+					.catch((caught: unknown) => caught),
 			);
 
 			expect(error).toMatchObject({ status: 429 });
@@ -194,7 +195,7 @@ describe('retry behaviour through the bound client', () => {
 		}
 	});
 
-	it('uses the four second fallback when a 429 carries no Retry-After', async () => {
+	it('waits a full per-minute window when a 429 carries no Retry-After', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
@@ -206,11 +207,12 @@ describe('retry behaviour through the bound client', () => {
 			});
 			await Promise.resolve();
 			await Promise.resolve();
-			// Under four seconds it has not retried yet.
-			await jest.advanceTimersByTimeAsync(3_000);
+			// Four seconds would land inside the same exhausted minute, so the
+			// fallback waits for the next window instead.
+			await jest.advanceTimersByTimeAsync(4_000);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
-			await jest.advanceTimersByTimeAsync(1_500);
+			await jest.advanceTimersByTimeAsync(57_000);
 			await pending;
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
@@ -220,8 +222,11 @@ describe('retry behaviour through the bound client', () => {
 });
 
 describe('a write followed by a read is not replayed', () => {
-	it('does not repeat slides.create when the read-back fails', async () => {
+	it('returns the created slide when the read-back fails, without retrying', async () => {
 		const { corsair, testDb } = await createClient();
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
 		try {
 			// The createSlide batch succeeds.
 			respondJson({
@@ -231,16 +236,19 @@ describe('a write followed by a read is not replayed', () => {
 			// The read-back that names the layout fails with a 503.
 			respondJson({ error: { message: 'backend error' } }, 503);
 
-			await expect(
-				corsair.googleslides.api.slides.create({
-					presentationId: 'deck-1',
-					layout: 'BLANK',
-				}),
-			).rejects.toMatchObject({ status: 503 });
+			const result = await corsair.googleslides.api.slides.create({
+				presentationId: 'deck-1',
+				layout: 'BLANK',
+			});
 
+			// The slide exists, so the call reports it rather than failing over a
+			// read that can be redone. The layout is the one thing the read was for.
+			expect(result.slideObjectId).toBe('slide-1');
+			expect(result.layoutObjectId).toBeUndefined();
 			// Exactly two requests: the batch and the failed read. A replay would
-			// send the createSlide batch a second time and add a second slide.
+			// add a second slide.
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(warn).toHaveBeenCalled();
 		} finally {
 			testDb.cleanup();
 		}

@@ -154,6 +154,11 @@ const ElementPropertiesSchema = z.object({
 	transform: AffineTransformSchema.optional(),
 });
 
+/**
+ * Shapes need an explicit size. Images and tables do not: Google documents "the
+ * default size of the image is used" and "the table will be automatically
+ * sized", so requiring both there would reject a request the API accepts.
+ */
 function requireElementSize(
 	value: {
 		elementProperties?: {
@@ -171,7 +176,31 @@ function requireElementSize(
 			code: 'custom',
 			path: ['elementProperties', 'size'],
 			message:
-				'Google Slides requires both width and height to place an element',
+				'A shape needs both width and height. Omit elementProperties to let Google size an image or table.',
+		});
+	}
+}
+
+/** Images and tables take an optional size, but a half-specified one is a mistake. */
+function requireCompleteSize(
+	value: {
+		elementProperties?: {
+			size?: {
+				width?: unknown; // unknown: presence only; either both or neither.
+				height?: unknown; // unknown: presence only; either both or neither.
+			};
+		};
+	},
+	ctx: z.RefinementCtx,
+) {
+	const size = value.elementProperties?.size;
+	if (!size) return;
+	if (Boolean(size.width) !== Boolean(size.height)) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['elementProperties', 'size'],
+			message:
+				'Size needs both width and height, or neither to use the default',
 		});
 	}
 }
@@ -236,7 +265,9 @@ const PresentationsExportInputSchema = z.object({
 });
 
 const PresentationsDeleteInputSchema = z.object({
-	presentationId: id.describe('Moved to the Drive trash, then purged'),
+	presentationId: id.describe(
+		'Drive files.delete removes the file permanently; it does not move it to the trash',
+	),
 });
 
 // ── slides ─────────────────────────────────────────────────────────────────
@@ -426,31 +457,20 @@ const TEXT_STYLE_FIELDS = [
 	'baselineOffset',
 ] as const;
 
-const TextUpdateStyleInputSchema = z
-	.object({
-		presentationId: id,
-		objectId: id,
-		textRange: RangeSchema,
-		style: TextStyleSchema,
-		fields: z
-			.array(z.enum(TEXT_STYLE_FIELDS))
-			.min(1)
-			.describe('Properties the write applies; others are left untouched'),
-		cellLocation: TableCellLocationSchema.optional(),
-	})
-	.superRefine((value, ctx) => {
-		// Google refuses the whole batch when fields names a property absent
-		// from style, so both sides have to agree before the request is sent.
-		for (const field of value.fields) {
-			if (value.style[field] === undefined) {
-				ctx.addIssue({
-					code: 'custom',
-					path: ['fields'],
-					message: `${field} is listed in fields but absent from style`,
-				});
-			}
-		}
-	});
+const TextUpdateStyleInputSchema = z.object({
+	presentationId: id,
+	objectId: id,
+	textRange: RangeSchema,
+	style: TextStyleSchema,
+	fields: z
+		.array(z.enum(TEXT_STYLE_FIELDS))
+		.min(1)
+		.describe('Properties the write applies; others are left untouched'),
+	cellLocation: TableCellLocationSchema.optional(),
+});
+// No cross-field check on purpose: Google documents that naming a field in
+// the mask while leaving it unset resets that property to its default, so a
+// field absent from `style` is a reset, not a mistake.
 
 const TextBulletsInputSchema = z.object({
 	presentationId: id,
@@ -525,7 +545,7 @@ const ElementsCreateImageInputSchema = z
 		elementProperties: ElementPropertiesSchema,
 		objectId: objectId.optional(),
 	})
-	.superRefine(requireElementSize);
+	.superRefine(requireCompleteSize);
 
 const ElementsCreateTableInputSchema = z
 	.object({
@@ -535,7 +555,7 @@ const ElementsCreateTableInputSchema = z
 		elementProperties: ElementPropertiesSchema,
 		objectId: objectId.optional(),
 	})
-	.superRefine(requireElementSize);
+	.superRefine(requireCompleteSize);
 
 const ElementsSetAltTextInputSchema = z.object({
 	presentationId: id,
@@ -662,6 +682,14 @@ const PresentationSummarySchema = z
 		masterCount: z.number().int().min(0),
 		pageWidthEmu: z.number().nullish(),
 		pageHeightEmu: z.number().nullish(),
+		// Only populated when the caller asked for commentsViewMode
+		// COMMENTS_VIEW_MODE_INCLUDED, which needs comment access. A thread holds
+		// ids, timestamps, author names and nested replies, so it stays a loose
+		// object rather than a record of declared fields.
+		comments: z
+			.array(z.looseObject({}))
+			.nullish()
+			.describe('Comment threads, when comment viewing was requested'),
 	})
 	.loose();
 
@@ -823,6 +851,17 @@ const BatchUpdateResponseSchema = z
 		// Keys depend on the request each slot answered, so the value is an
 		// object with no declared fields rather than `any`.
 		replies: z.array(z.record(z.string(), z.object({}).loose())),
+		// Google returns the write control it applied, which a caller uses as the
+		// requiredRevisionId of a later batch.
+		writeControl: z
+			.object({
+				requiredRevisionId: z
+					.string()
+					.nullish()
+					.describe('Revision the batch was applied to'),
+			})
+			.loose()
+			.nullish(),
 	})
 	.loose();
 
