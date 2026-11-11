@@ -20,7 +20,7 @@ pnpm add @corsair-dev/heyy
 | `attributes.remove` | `heyy.api.attributes.remove` | `destructive` | Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored |
 | `attributes.search` | `heyy.api.attributes.search` | `read` | Search the custom contact attributes defined on the workspace, with their type, options and where they appear in Heyy |
 | `automations.search` | `heyy.api.automations.search` | `read` | List the automation workflows on the workspace with their status: draft, active or paused |
-| `channels.search` | `heyy.api.channels.search` | `read` | List the connected channels, such as WhatsApp, email or Instagram, with their type and connection status |
+| `channels.search` | `heyy.api.channels.search` | `read` | List the connected channels (WhatsApp, Instagram, Messenger, SMS or live chat) with their type and connection status |
 | `contacts.create` | `heyy.api.contacts.create` | `write` | Create a contact with a name, phone number or email, attach labels by id and set custom attribute values |
 | `contacts.search` | `heyy.api.contacts.search` | `read` | Search contacts with a structured filter, free-text search, sorting and paging; returns the matched contacts with their labels and attribute values |
 | `labels.create` | `heyy.api.labels.create` | `write` | Create a label with a name and a hex colour |

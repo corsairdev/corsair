@@ -242,7 +242,7 @@ const heyyEndpointMeta = {
 	'channels.search': {
 		riskLevel: 'read',
 		description:
-			'List the connected channels, such as WhatsApp, email or Instagram, with their type and connection status',
+			'List the connected channels (WhatsApp, Instagram, Messenger, SMS or live chat) with their type and connection status',
 	},
 	'automations.search': {
 		riskLevel: 'read',

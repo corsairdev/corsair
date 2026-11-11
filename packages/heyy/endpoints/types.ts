@@ -615,7 +615,11 @@ const ChannelSchema = z
 		createdAt: TimestampSchema,
 		updatedAt: TimestampSchema,
 		name: z.string(),
-		type: z.string().describe('The channel kind, such as whatsapp or email.'),
+		type: z
+			.string()
+			.describe(
+				'The channel kind: whatsapp, instagram, messenger, sms or live_chat.',
+			),
 		status: z.string(),
 		vendor: z.string().nullish(),
 		vendorId: z.string().nullish(),

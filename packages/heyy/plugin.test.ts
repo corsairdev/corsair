@@ -91,6 +91,12 @@ describe('heyy plugin', () => {
 		expect(flatten(endpoints)).toEqual([...OPERATIONS]);
 	});
 
+	it('names only the channel types the v3 spec has', () => {
+		// openapi-v3.json: whatsapp, instagram, sms, messenger, live_chat. No email.
+		expect(meta['channels.search']?.description).not.toMatch(/email/i);
+		expect(meta['channels.search']?.description).toMatch(/Messenger/);
+	});
+
 	it('declares the risk each operation really carries', () => {
 		expect(meta['contacts.search']?.riskLevel).toBe('read');
 		expect(meta['contacts.create']?.riskLevel).toBe('write');
