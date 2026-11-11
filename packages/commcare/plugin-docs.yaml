@@ -5,7 +5,7 @@ recommendedAuth: api_key
 overviewNote: |
   Generate an API key in CommCare HQ under Account Settings, API Keys (the key belongs to your CommCare username). Because ApiKey auth is user-scoped, every operation takes the project `domain` and that `username` as inputs. Things to know before you call:
 
-  - **API access needs a plan.** The CommCare APIs require a Standard plan or above.
+  - **API access needs a plan.** The JSON APIs require a Standard plan or above; on a free project they answer 401 "Your current subscription does not have access to this feature" (or 403). `ota.restore` is the exception: it works on a free project.
   - **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`. There is no plugin-level `domain` or `username` option: pass both on every call.
   - **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` pages oldest-to-newest by cursor: pass the `nextCursor` it answers as `cursor` until `nextCursor` is absent.
   - **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete` or `failed`. `complete` does not mean every form succeeded: compare `succeeded` with `requested` and read `skipped`. A form must be archived before it can be deleted.
