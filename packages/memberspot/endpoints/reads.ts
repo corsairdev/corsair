@@ -324,7 +324,7 @@ function setOfferState(
 	operation: {
 		event: string;
 		action: string;
-		// Either variant: both are objects with offerId and an optional active flag.
+		// Either variant: both are objects with offerId and an active flag.
 		schema:
 			| typeof Inputs.usersSetOfferState
 			| typeof Inputs.usersSetOfferStateByUid;
@@ -346,7 +346,8 @@ function setOfferState(
 				email: 'email' in parsed ? parsed.email : undefined,
 				uid: 'uid' in parsed ? parsed.uid : undefined,
 				offerId: parsed.offerId,
-				active: parsed.active,
+				// null means delete, which MemberSpot reads from a missing field.
+				active: parsed.active ?? undefined,
 			}),
 			// Setting an absolute state is idempotent by definition.
 			replaySafe: true,
@@ -404,7 +405,8 @@ function setOrderState(
 				email: 'email' in parsed ? parsed.email : undefined,
 				uid: 'uid' in parsed ? parsed.uid : undefined,
 				orderId: parsed.orderId,
-				active: parsed.active,
+				// null means delete, which MemberSpot reads from a missing field.
+				active: parsed.active ?? undefined,
 			}),
 			replaySafe: true,
 		}),

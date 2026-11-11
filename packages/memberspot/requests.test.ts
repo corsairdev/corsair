@@ -251,18 +251,24 @@ describe('request shape per operation', () => {
 		await api.users.setOfferStateByUid(makeCtx(), {
 			uid: 'uid-1',
 			offerId: 'offer-1',
+			active: true,
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-offer-state-by-uid');
-		expect(bodyOf()).toEqual({ uid: 'uid-1', offerId: 'offer-1' });
+		expect(bodyOf()).toEqual({
+			uid: 'uid-1',
+			offerId: 'offer-1',
+			active: true,
+		});
 	});
 
-	it('users.setOrderState posts the email and order id, which is the whole DTO', async () => {
+	it('users.setOrderState posts the email, order id and state, which is the whole DTO', async () => {
 		respondJson({ success: true });
 
 		await api.users.setOrderState(makeCtx(), {
 			email: 'jordan@acme.example',
 			orderId: 'order-9',
+			active: true,
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-order-state');
@@ -270,6 +276,7 @@ describe('request shape per operation', () => {
 		expect(bodyOf()).toEqual({
 			email: 'jordan@acme.example',
 			orderId: 'order-9',
+			active: true,
 		});
 	});
 
@@ -279,22 +286,27 @@ describe('request shape per operation', () => {
 		await api.users.setOrderStateByUid(makeCtx(), {
 			uid: 'uid-1',
 			orderId: 'order-9',
+			active: false,
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-order-state-by-uid');
 		expect(bodyOf()).toEqual({
 			uid: 'uid-1',
 			orderId: 'order-9',
+			active: false,
 		});
 	});
 
-	it('users.setOrderStateByOrderId sends only the order id', async () => {
+	it('users.setOrderStateByOrderId sends the order id and state', async () => {
 		respondJson({ success: true });
 
-		await api.users.setOrderStateByOrderId(makeCtx(), { orderId: 'order-9' });
+		await api.users.setOrderStateByOrderId(makeCtx(), {
+			orderId: 'order-9',
+			active: false,
+		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-order-state-by-order-id');
-		expect(bodyOf()).toEqual({ orderId: 'order-9' });
+		expect(bodyOf()).toEqual({ orderId: 'order-9', active: false });
 	});
 
 	it('users.setOfferExpires uses PATCH with a nullable expiry', async () => {
@@ -513,6 +525,65 @@ describe('request shape per operation', () => {
 });
 
 describe('input validation before sending', () => {
+	// MemberSpot deletes the grant when `active` is not sent, so leaving the field
+	// out must not be enough to remove access.
+	it('rejects a grant-state write with no active value before sending', async () => {
+		const ctx = makeCtx();
+		// The types already require `active`; the cast lets the test send the
+		// call an untyped caller (an agent's JSON) could still make.
+		const withoutActive = (input: Record<string, string>) => input as never;
+		const calls = [
+			() =>
+				api.users.setOfferState(
+					ctx,
+					withoutActive({ email: 'a@acme.example', offerId: 'offer-1' }),
+				),
+			() =>
+				api.users.setOfferStateByUid(
+					ctx,
+					withoutActive({ uid: 'uid-1', offerId: 'offer-1' }),
+				),
+			() =>
+				api.users.setOrderState(
+					ctx,
+					withoutActive({ email: 'a@acme.example', orderId: 'order-9' }),
+				),
+			() =>
+				api.users.setOrderStateByUid(
+					ctx,
+					withoutActive({ uid: 'uid-1', orderId: 'order-9' }),
+				),
+			() =>
+				api.users.setOrderStateByOrderId(
+					ctx,
+					withoutActive({ orderId: 'order-9' }),
+				),
+		];
+		for (const send of calls) {
+			await expect(send()).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('active: null removes the grant by leaving active out of the body', async () => {
+		respondJson({ orderId: 'order-9' });
+		await api.users.setOrderStateByOrderId(makeCtx(), {
+			orderId: 'order-9',
+			active: null,
+		});
+		expect(bodyOf()).toEqual({ orderId: 'order-9' });
+	});
+
+	it('active: null on set-offer-state also leaves the field out', async () => {
+		respondJson({ uid: 'uid-1', offerId: 'offer-1' });
+		await api.users.setOfferStateByUid(makeCtx(), {
+			uid: 'uid-1',
+			offerId: 'offer-1',
+			active: null,
+		});
+		expect(bodyOf()).toEqual({ uid: 'uid-1', offerId: 'offer-1' });
+	});
+
 	it('keeps an email or uid property id inside the array, so it cannot retarget the write', async () => {
 		respondJson({ success: true });
 		await api.users.setCustomProperties(makeCtx(), {

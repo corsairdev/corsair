@@ -357,16 +357,28 @@ const UserCreatedResponseSchema = z
 
 export type UserCreatedResponse = z.infer<typeof UserCreatedResponseSchema>;
 
+/**
+ * MemberSpot deletes the grant when `active` is not sent. The field is required
+ * here so a call that leaves it out fails instead of removing access; deleting
+ * the grant takes an explicit `null`, which the plugin sends as an omitted field.
+ */
+const GrantStateSchema = z
+	.boolean()
+	.nullable()
+	.describe(
+		'True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice.',
+	);
+
 const SetOfferStateInputSchema = z.object({
 	email: EmailSchema,
 	offerId: z.string().min(1),
-	active: z.boolean().optional().describe('True grants, false revokes.'),
+	active: GrantStateSchema,
 });
 
 const SetOfferStateByUidInputSchema = z.object({
 	uid: UidSchema,
 	offerId: z.string().min(1),
-	active: z.boolean().optional(),
+	active: GrantStateSchema,
 });
 
 export type SetOfferStateInput = z.input<typeof SetOfferStateInputSchema>;
@@ -378,18 +390,21 @@ export type SetOfferStateByUidInput = z.input<
 const SetOrderStateInputSchema = z.object({
 	email: EmailSchema,
 	orderId: z.string().min(1),
-	active: z.boolean().optional(),
+	active: GrantStateSchema,
 });
 
 const SetOrderStateByUidInputSchema = z.object({
 	uid: UidSchema,
 	orderId: z.string().min(1),
-	active: z.boolean().optional(),
+	active: GrantStateSchema,
 });
 
 const SetOrderStateByOrderIdInputSchema = z.object({
-	orderId: z.string().min(1),
-	active: z.boolean().optional(),
+	orderId: z
+		.string()
+		.min(1)
+		.describe('Every member holding a grant with this order id is affected.'),
+	active: GrantStateSchema,
 });
 
 export type SetOrderStateInput = z.input<typeof SetOrderStateInputSchema>;

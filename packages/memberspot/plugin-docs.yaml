@@ -66,9 +66,9 @@ apiExamples:
   users.setOfferStateByUid:
     call: "{ uid: 'uid-1', offerId: 'offer-1', active: true }"
   users.setOrderState:
-    call: "{ email: 'jordan@acme.example', orderId: 'order-9' }"
+    call: "{ email: 'jordan@acme.example', orderId: 'order-9', active: true }"
   users.setOrderStateByUid:
-    call: "{ uid: 'uid-1', orderId: 'order-9' }"
+    call: "{ uid: 'uid-1', orderId: 'order-9', active: true }"
   users.setOrderStateByOrderId:
     call: "{ orderId: 'order-9', active: false }"
   users.setOfferExpires:
