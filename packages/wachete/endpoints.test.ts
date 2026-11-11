@@ -454,3 +454,46 @@ describe('folders', () => {
 		);
 	});
 });
+
+describe('review fixes', () => {
+	it('rejects a self-move anywhere in a batch', async () => {
+		await expect(
+			invoke(Folders.move, { folderId: 'a', folderIds: ['b', 'a'] }),
+		).rejects.toThrow(/cannot be moved into itself/);
+	});
+
+	it('accepts an empty notification endpoint list, which means the defaults', async () => {
+		respond(fetchMock, task);
+
+		await invoke(Tasks.upsert, {
+			id: 'task-1',
+			name: 'Docs',
+			url: 'https://example.com',
+			recurrenceInSeconds: 3600,
+			notificationEndpoints: [],
+		});
+
+		const body = lastRequest(fetchMock).body as Record<string, unknown>;
+		expect(body.notificationEndpoints).toEqual([]);
+	});
+
+	it('accepts a null url filter list on readback', async () => {
+		respond(fetchMock, {
+			...portalTask,
+			urlFilter: { include: [], exclude: null },
+		});
+
+		const result = await invoke(Tasks.get, { id: 'task-2' });
+
+		expect(result).toBeDefined();
+	});
+
+	it('rejects a numeric messaging type outside the documented flags', async () => {
+		await expect(
+			invoke(Tasks.upsert, {
+				id: 'task-1',
+				notificationEndpoints: [{ type: 999, value: 'x' }],
+			}),
+		).rejects.toThrow();
+	});
+});

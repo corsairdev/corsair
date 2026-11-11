@@ -94,7 +94,7 @@ export const search: WacheteEndpoints['tasksSearch'] = (ctx, input) =>
 			query: { query },
 		}),
 		{
-			log: (_, result) => ({ count: result.tasks?.length ?? 0 }),
+			log: (_, result) => ({ count: result.length }),
 		},
 	);
 
@@ -113,6 +113,6 @@ export const pages: WacheteEndpoints['tasksPages'] = (ctx, input) =>
 			path: `/thirdparty/v1/task/${segment(id)}/pages`,
 		}),
 		{
-			log: (_, result) => ({ count: result.pages?.length ?? 0 }),
+			log: (_, result) => ({ count: result.length }),
 		},
 	);

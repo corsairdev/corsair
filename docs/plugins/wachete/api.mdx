@@ -174,7 +174,7 @@ await corsair.wachete.api.folders.list({ parentId: '576b3f7e-e126-4e92-9b95-f72a
     diff?: any[] | null
   } | null,
   notificationEndpoints?: {
-    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | number,
+    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
     value: string
   }[] | null,
   proxies?: {
@@ -192,11 +192,11 @@ await corsair.wachete.api.folders.list({ parentId: '576b3f7e-e126-4e92-9b95-f72a
     include?: {
       filter: string,
       type: Contains | Regex | number
-    }[],
+    }[] | null,
     exclude?: {
       filter: string,
       type: Contains | Regex | number
-    }[]
+    }[] | null
   } | null,
   crawlPagesFromAllDomains?: boolean | null,
   note?: string | null
@@ -512,7 +512,7 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 
 ```ts
 {
-  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | number,
+  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
   value: string
 }[] | null
 ```
@@ -534,11 +534,11 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
   include?: {
     filter: string,
     type: Contains | Regex | number
-  }[],
+  }[] | null,
   exclude?: {
     filter: string,
     type: Contains | Regex | number
-  }[]
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -568,12 +568,7 @@ await corsair.wachete.api.tasks.pages({ id: 'c0a1b2c3-1111-2222-3333-44445555666
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `pages` | `Record<string, any>[] \| null` | No | — |
-
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -598,14 +593,10 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `tasks` | `object[] \| null` | No | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="tasks full type">
+<Accordion title="Output full type">
 
 ```ts
 {
@@ -639,7 +630,7 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
     diff?: any[] | null
   } | null,
   notificationEndpoints?: {
-    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | number,
+    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
     value: string
   }[] | null,
   proxies?: {
@@ -657,19 +648,18 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
     include?: {
       filter: string,
       type: Contains | Regex | number
-    }[],
+    }[] | null,
     exclude?: {
       filter: string,
       type: Contains | Regex | number
-    }[]
+    }[] | null
   } | null,
   crawlPagesFromAllDomains?: boolean | null,
   note?: string | null
-}[] | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -702,7 +692,7 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 | `alerts` | `object[]` | No | — |
 | `recurrenceInSeconds` | `number` | Yes | How often to check, in seconds. 86400 is daily. |
 | `folderId` | `string` | No | — |
-| `notificationEndpoints` | `object[]` | No | Who to tell. Omit to notify every endpoint on the account. |
+| `notificationEndpoints` | `object[]` | No | Who to tell. An empty list uses the default email recipients; omit it to notify every endpoint on the account. |
 | `proxies` | `object[]` | No | — |
 | `location` | `us \| gb \| number` | No | The location to check from. The docs name us and gb. |
 | `dynamicContent` | `boolean` | No | Set when the watched content is rendered by JavaScript. |
@@ -745,7 +735,7 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | number,
+  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
   value: string
 }[]
 ```
@@ -767,11 +757,11 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
   include?: {
     filter: string,
     type: Contains | Regex | number
-  }[],
+  }[] | null,
   exclude?: {
     filter: string,
     type: Contains | Regex | number
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -852,7 +842,7 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | number,
+  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
   value: string
 }[] | null
 ```
@@ -874,11 +864,11 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
   include?: {
     filter: string,
     type: Contains | Regex | number
-  }[],
+  }[] | null,
   exclude?: {
     filter: string,
     type: Contains | Regex | number
-  }[]
+  }[] | null
 } | null
 ```
 </Accordion>

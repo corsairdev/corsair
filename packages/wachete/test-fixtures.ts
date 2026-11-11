@@ -150,14 +150,14 @@ export const folderContent = {
 	continuationToken: null,
 };
 
-export const searchResults = { tasks: [task, portalTask] };
+// GET /task/search answers a bare array, not an object wrapping it.
+export const searchResults = [task, portalTask];
 
-export const pages = {
-	pages: [
-		{ id: 'page-1', name: '/', url: 'http://www.mypage.com' },
-		{ id: 'page-2', name: '/about', url: 'http://www.mypage.com/about' },
-	],
-};
+// GET /task/{id}/pages also answers a bare array.
+export const pages = [
+	{ id: 'page-1', name: '/', url: 'http://www.mypage.com' },
+	{ id: 'page-2', name: '/about', url: 'http://www.mypage.com/about' },
+];
 
 /** The login answer, which is the only place a token comes from. */
 export const loginResponse = {

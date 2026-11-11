@@ -159,6 +159,12 @@ export async function makeWacheteRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// A rejected token is dropped so the next call logs in again rather than
+			// resending it until the recorded expiry, which Wachete may ignore when it
+			// revokes early.
+			if (error.status === 401 && parseWacheteKey(token)) {
+				evictWacheteToken(token);
+			}
 			throw new WacheteAPIError(
 				describeWacheteError(error.status, error.body, error.message),
 				{ cause: error },
@@ -254,6 +260,37 @@ export function parseWacheteKey(
 const tokenCache = new Map<string, { token: string; expiresAt: number }>();
 
 /**
+ * Logins in flight, keyed by packed key. Two requests that miss the same entry
+ * would otherwise both call `login()`, so the second waits on the first.
+ */
+const inFlightLogins = new Map<string, Promise<string>>();
+
+/** Removes cache entries that are past their lifetime, and caps the cache size. */
+const MAX_CACHED_TOKENS = 500;
+
+function pruneTokenCache(nowMs: number): void {
+	for (const [key, entry] of tokenCache) {
+		if (entry.expiresAt <= nowMs) tokenCache.delete(key);
+	}
+	// A long-running server with many rotated keys would otherwise keep every entry
+	// for the life of the process; the oldest go first.
+	while (tokenCache.size > MAX_CACHED_TOKENS) {
+		const oldest = tokenCache.keys().next().value;
+		if (oldest === undefined) break;
+		tokenCache.delete(oldest);
+	}
+}
+
+/**
+ * Forgets a cached token. Called when Wachete rejects one before its stated
+ * expiry, so the next request logs in again instead of resending it until the
+ * clock runs out.
+ */
+export function evictWacheteToken(key: string): void {
+	tokenCache.delete(key);
+}
+
+/**
  * The token for a key slot. A key holding `userId\napiKey` logs in once and
  * reuses the token; anything else is taken as a token already.
  *
@@ -270,15 +307,28 @@ export async function resolveWacheteToken(
 	const cached = tokenCache.get(key);
 	if (cached && cached.expiresAt > now()) return cached.token;
 
-	const result = await login(pair.userId, pair.apiKey);
-	// A token with no stated lifetime is cached for an hour, which is the
-	// shortest lifetime Wachete documents.
-	const lifetimeMs = (result.expiresInSec ?? 3600) * 1000;
-	tokenCache.set(key, {
-		token: result.token,
-		expiresAt: now() + lifetimeMs,
-	});
-	return result.token;
+	const pending = inFlightLogins.get(key);
+	if (pending) return pending;
+
+	const loginOnce = (async () => {
+		try {
+			const result = await login(pair.userId, pair.apiKey);
+			// A token with no stated lifetime is cached for an hour, which is the
+			// shortest lifetime Wachete documents.
+			const lifetimeMs = (result.expiresInSec ?? 3600) * 1000;
+			pruneTokenCache(now());
+			tokenCache.set(key, {
+				token: result.token,
+				expiresAt: now() + lifetimeMs,
+			});
+			return result.token;
+		} finally {
+			inFlightLogins.delete(key);
+		}
+	})();
+
+	inFlightLogins.set(key, loginOnce);
+	return loginOnce;
 }
 
 /** Clears the cache, so a test starts from a clean login. */

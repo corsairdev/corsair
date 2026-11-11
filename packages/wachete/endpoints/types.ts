@@ -66,11 +66,18 @@ export const WACHETE_MESSAGING_TYPES = [
 const MessagingTypeSchema = z
 	.union([
 		z.enum(WACHETE_MESSAGING_TYPES),
-		// The declared set is 0, 1, 4, 8, 16, 32, 64 and 92 — flags, not a
-		// sequence, so any of them is passed through.
-		z
-			.number()
-			.int(),
+		// The declared set is 0, 1, 4, 8, 16, 32, 64 and 92: flags, not a sequence,
+		// so each is listed rather than accepting any integer.
+		z.union([
+			z.literal(0),
+			z.literal(1),
+			z.literal(4),
+			z.literal(8),
+			z.literal(16),
+			z.literal(32),
+			z.literal(64),
+			z.literal(92),
+		]),
 	])
 	.describe('How to notify: a name such as Webhook, or its numeric value.');
 
@@ -123,10 +130,15 @@ const UrlFilterValueSchema = z
 	})
 	.loose();
 
+/**
+ * Portal only: which crawled URLs to keep or skip. Wachete documents both lists as
+ * nullable and allows them to be empty, so neither is rejected here; an empty list
+ * is a valid answer and a valid request.
+ */
 const UrlFilterSchema = z
 	.object({
-		include: z.array(UrlFilterValueSchema).min(1).optional(),
-		exclude: z.array(UrlFilterValueSchema).min(1).optional(),
+		include: z.array(UrlFilterValueSchema).nullish(),
+		exclude: z.array(UrlFilterValueSchema).nullish(),
 	})
 	.describe('Portal only: which crawled URLs to keep or skip.');
 
@@ -211,9 +223,10 @@ const TasksUpsertInputSchema = z
 		folderId: z.string().optional(),
 		notificationEndpoints: z
 			.array(NotificationEndpointSchema)
-			.min(1)
 			.optional()
-			.describe('Who to tell. Omit to notify every endpoint on the account.'),
+			.describe(
+				'Who to tell. An empty list uses the default email recipients; omit it to notify every endpoint on the account.',
+			),
 		proxies: z
 			.array(z.object({ location: z.string() }).loose())
 			.min(1)
@@ -289,12 +302,11 @@ const TasksSearchInputSchema = z.object({
 
 export type TasksSearchInput = z.infer<typeof TasksSearchInputSchema>;
 
-/** Search caps at 500 monitors and is not paged. */
-const TasksSearchResponseSchema = z
-	.object({
-		tasks: z.array(ClientTaskSchema).nullish(),
-	})
-	.loose();
+/**
+ * Search caps at 500 monitors and is not paged. The documented answer is a bare
+ * array of tasks, not an object wrapping them.
+ */
+const TasksSearchResponseSchema = z.array(ClientTaskSchema);
 
 export type TasksSearchResponse = z.infer<typeof TasksSearchResponseSchema>;
 
@@ -304,11 +316,11 @@ const TasksPagesInputSchema = z.object({
 
 export type TasksPagesInput = z.infer<typeof TasksPagesInputSchema>;
 
-const PagesResponseSchema = z
-	.object({
-		pages: z.array(z.record(z.string(), z.unknown())).nullish(),
-	})
-	.loose();
+/**
+ * The pages of one monitor, as a bare array. Each page is a free-form record: the
+ * fields depend on the monitor type, so the shape belongs to Wachete.
+ */
+const PagesResponseSchema = z.array(z.record(z.string(), z.unknown()));
 
 export type PagesResponse = z.infer<typeof PagesResponseSchema>;
 
@@ -504,10 +516,9 @@ const FolderMoveInputSchema = z
 				message: 'A move needs at least one taskId or folderId.',
 			});
 		}
-		if (
-			value.folderIds?.length === 1 &&
-			value.folderIds[0] === value.folderId
-		) {
+		// Any position, not just a single-element batch: one self-move in a batch is
+		// the same invalid request.
+		if (value.folderIds?.includes(value.folderId)) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['folderIds'],
