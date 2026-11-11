@@ -81,6 +81,19 @@ function readString(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: the body is an untyped error body until asRecord narrows it.
+// Meeting and membership errors answer `{ errors: ["..."] }`.
+function readErrors(
+	record: Record<string, unknown> | null | undefined,
+): string | undefined {
+	const value = record?.errors;
+	if (!Array.isArray(value)) return undefined;
+	const messages = value.filter(
+		(item): item is string => typeof item === 'string' && item.length > 0,
+	);
+	return messages.length > 0 ? messages.join('; ') : undefined;
+}
+
 export function describeHappyScribeError(
 	status: number | undefined,
 	body: unknown,
@@ -88,7 +101,10 @@ export function describeHappyScribeError(
 ): string {
 	const record = asRecord(body);
 	const text =
-		readString(record, 'message') ?? readString(record, 'error') ?? fallback;
+		readString(record, 'message') ??
+		readString(record, 'error') ??
+		readErrors(record) ??
+		fallback;
 	const label = status === undefined ? '' : `HappyScribe ${status}`;
 	const summary = label ? `${label}: ${text}` : text;
 	const retry = readRetryInSeconds(record);

@@ -154,6 +154,17 @@ describe('makeHappyScribeRequest', () => {
 		);
 	});
 
+	it('describes a 422 by its errors array', () => {
+		// Shape from the Create a Meeting error reference.
+		expect(
+			describeHappyScribeError(
+				422,
+				{ errors: ['Meeting url must be a valid URL'] },
+				'Unprocessable Entity',
+			),
+		).toBe('HappyScribe 422: Meeting url must be a valid URL');
+	});
+
 	it('percent-encodes path segments', () => {
 		expect(segment('a b/c')).toBe('a%20b%2Fc');
 	});
