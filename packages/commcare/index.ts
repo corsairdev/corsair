@@ -434,7 +434,7 @@ const commCareEndpointMeta = {
 	'ota.restore': {
 		riskLevel: 'read',
 		description:
-			'Pull the full OTA restore XML for the domain (user registration plus case blocks); large payloads. Happy-path auth is worker Basic credentials, which this plugin does not hold',
+			'Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key',
 	},
 	'submissions.submit': {
 		riskLevel: 'write',

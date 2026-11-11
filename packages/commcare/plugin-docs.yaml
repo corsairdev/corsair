@@ -11,7 +11,7 @@ overviewNote: |
   - **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete` or `failed`. `complete` does not mean every form succeeded: compare `succeeded` with `requested` and read `skipped`. A form must be archived before it can be deleted.
   - **Writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
   - **Delete is permanent.** `users.delete` removes a worker account, and `forms.bulkAction` with action `delete` permanently removes forms.
-  - **OTA restore auth.** `ota.restore` pulls the full case-restore XML; the docs authenticate that endpoint with the worker's Basic credentials, which the plugin does not hold, so it may answer 401 with an API key.
+  - **OTA restore auth.** `ota.restore` pulls the full case-restore XML. The docs show worker Basic credentials, but HQ also accepts the ApiKey header and restores the account that owns the key, so a web user's key returns that user's restore, not a mobile worker's.
 examples:
   read:
     path: cases.list

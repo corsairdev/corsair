@@ -33,7 +33,7 @@ pnpm add @corsair-dev/commcare
 | `locationTypes.list` | `commcare.api.locationTypes.list` | `read` | List the location types defined in the project |
 | `lookupTables.get` | `commcare.api.lookupTables.get` | `read` | Read one lookup table with its field definitions |
 | `lookupTables.list` | `commcare.api.lookupTables.list` | `read` | List the lookup tables defined in the project |
-| `ota.restore` | `commcare.api.ota.restore` | `read` | Pull the full OTA restore XML for the domain (user registration plus case blocks); large payloads. Happy-path auth is worker Basic credentials, which this plugin does not hold |
+| `ota.restore` | `commcare.api.ota.restore` | `read` | Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key |
 | `reports.getData` | `commcare.api.reports.getData` | `read` | Run a configurable report and read its rows, with offset, limit (max 50) and the report filter parameters |
 | `reports.list` | `commcare.api.reports.list` | `read` | List the configurable reports defined in the project, with their ids |
 | `submissions.submit` | `commcare.api.submissions.submit` | `write` | Submit a complete XForm XML document to the OpenRosa receiver; 201 means received, and the message field says whether it processed |

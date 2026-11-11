@@ -7,8 +7,9 @@ import {
 } from './types';
 
 // The OTA restore answers a full OpenRosa XML payload (Content-Type XML, so
-// core hands back the text). The docs authenticate it with the worker's
-// Basic credentials; CommCare's API key scheme may or may not be accepted.
+// core hands back the text). The docs show the worker's Basic credentials,
+// but HQ accepts the ApiKey header too (checked live) and restores the
+// account that owns the key.
 export const restore: CommCareEndpoints['otaRestore'] = (ctx, input) =>
 	call(
 		ctx,
