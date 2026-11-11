@@ -1,0 +1,1077 @@
+---
+title: API
+description: "API reference for WATI: every `wati.api.*` operation with input and output types."
+---
+
+Every `wati.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### credits
+
+`account.credits`
+
+Read the workspace messaging credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.account.credits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+
+
+
+---
+
+## Broadcasts
+
+### get
+
+`broadcasts.get`
+
+Read one campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.broadcasts.get({ broadcast_id: 'bc-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `broadcast_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `template_name` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `scheduled` | `string \| null` | No | — |
+| `sent` | `number \| null` | No | — |
+| `delivered` | `number \| null` | No | — |
+| `read` | `number \| null` | No | — |
+| `failed` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`broadcasts.list`
+
+List campaigns with their delivery counts
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.broadcasts.list({ page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcasts` | `object[] \| null` | No | — |
+| `broadcast_list` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="broadcasts full type">
+
+```ts
+{
+  id?: string | null,
+  broadcast_id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  template_name?: string | null,
+  created?: string | null,
+  scheduled?: string | null,
+  sent?: number | null,
+  delivered?: number | null,
+  read?: number | null,
+  failed?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="broadcast_list full type">
+
+```ts
+{
+  id?: string | null,
+  broadcast_id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  template_name?: string | null,
+  created?: string | null,
+  scheduled?: string | null,
+  sent?: number | null,
+  delivered?: number | null,
+  read?: number | null,
+  failed?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recipients
+
+`broadcasts.recipients`
+
+Read per-recipient delivery outcomes for a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.broadcasts.recipients({ broadcast_id: 'bc-1', page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `string` | Yes | — |
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `object[] \| null` | No | — |
+| `recipient_list` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  wa_id?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  status?: string | null,
+  sent?: string | null,
+  delivered?: string | null,
+  read?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recipient_list full type">
+
+```ts
+{
+  wa_id?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  status?: string | null,
+  sent?: string | null,
+  delivered?: string | null,
+  read?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### list
+
+`channels.list`
+
+List the channels connected to the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.channels.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  id?: string | null,
+  channel_id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  phone_number?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### count
+
+`contacts.count`
+
+Count the contacts on the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.contacts.count({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+
+
+---
+
+### create
+
+`contacts.create`
+
+Add a contact by WhatsApp number, with a name and custom attributes as name/value pairs
+
+**Risk:** `write`
+
+```ts
+await corsair.wati.api.contacts.create({ whatsapp_number: '1234567890', name: 'John Doe', custom_params: [{ name: 'age', value: '30' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `whatsapp_number` | `string` | Yes | The number in international form, without a leading +. |
+| `name` | `string` | Yes | — |
+| `custom_params` | `object[]` | No | Custom attributes, as name/value pairs. |
+
+<AccordionGroup>
+<Accordion title="custom_params full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact and their conversation history; this cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wati.api.contacts.delete({ target: '+1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by wa_id or phone number, including custom attributes and opt-in state
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.contacts.get({ target: '+1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | The contact wa_id or phone number. A leading + is allowed. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`contacts.list`
+
+Page through contacts, 100 per page at most
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.contacts.list({ page_number: 1, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact_list full type">
+
+```ts
+{
+  id?: string | null,
+  wa_id?: string | null,
+  name?: string | null,
+  phone?: string | null,
+  photo?: string | null,
+  created?: string | null,
+  last_updated?: string | null,
+  contact_status?: string | null,
+  source?: string | null,
+  channel_id?: string | null,
+  opted_in?: boolean | null,
+  allow_broadcast?: boolean | null,
+  allow_sms?: boolean | null,
+  teams?: string[] | null,
+  custom_params?: {
+    name: string,
+    value: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### list
+
+`conversations.list`
+
+List conversations newest first, filtered by channel type or channel
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.conversations.list({ page_number: 1, channel_type: 'whatsapp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+| `channel_type` | `string` | No | Filter by channel type, case-insensitive, such as whatsapp. |
+| `channel_id` | `string` | No | Filter by connected channel ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_list` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversation_list full type">
+
+```ts
+{
+  id?: string | null,
+  conversation_id?: string | null,
+  wa_id?: string | null,
+  contact_name?: string | null,
+  phone?: string | null,
+  channel_id?: string | null,
+  channel_type?: string | null,
+  last_message?: string | null,
+  last_message_timestamp?: string | null,
+  unread_count?: number | null,
+  status?: string | null,
+  assigned_operator?: string | null,
+  assigned_team?: string | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### messages
+
+`conversations.messages`
+
+Read the messages in one conversation; the target is a wa_id, phone number or conversation ID, not a bare contact ID
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.conversations.messages({ target: 'conv-1', page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | The conversation target: a contact wa_id, a phone number, or a conversation ID. Do not pass a bare contact ID, which is a different value. |
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_list` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message_list full type">
+
+```ts
+{
+  id?: string | null,
+  message_id?: string | null,
+  conversation_id?: string | null,
+  wa_id?: string | null,
+  message_type?: string | null,
+  text?: string | null,
+  content?: any | null,
+  status?: string | null,
+  timestamp?: string | null,
+  created?: string | null,
+  from_me?: boolean | null,
+  operator?: string | null,
+  template_name?: string | null,
+  media_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### sendFile
+
+`messages.sendFile`
+
+Send a file from a public URL, with an optional caption
+
+**Risk:** `write`
+
+```ts
+await corsair.wati.api.messages.sendFile({ target: 'conv-1', url: 'https://acme.example/invoice.pdf', caption: 'Your invoice' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | — |
+| `url` | `string` | Yes | A publicly reachable media URL. |
+| `caption` | `string` | No | — |
+| `filename` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `local_message_id` | `string \| null` | No | — |
+
+
+
+---
+
+### sendTemplate
+
+`messages.sendTemplate`
+
+Send an approved template with bound placeholders, optionally as a named campaign; the only route outside the service window
+
+**Risk:** `write`
+
+```ts
+await corsair.wati.api.messages.sendTemplate({ whatsapp_number: '1234567890', template_name: 'order_update', parameters: [{ name: '1', value: 'Jordan' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `whatsapp_number` | `string` | Yes | The recipient number, without a leading +. |
+| `template_name` | `string` | Yes | — |
+| `broadcast_name` | `string` | No | Groups the send as a campaign under this name. |
+| `parameters` | `object[]` | No | The values bound to the template placeholders, in order. |
+| `local_message_id` | `string` | No | Your own id, which WATI echoes back for correlation. |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `local_message_id` | `string \| null` | No | — |
+
+
+
+---
+
+### sendText
+
+`messages.sendText`
+
+Send a free-text message, which only works inside the 24-hour service window
+
+**Risk:** `write`
+
+```ts
+await corsair.wati.api.messages.sendText({ target: 'conv-1', text: 'Your order shipped.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | The contact wa_id or phone number. |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `local_message_id` | `string \| null` | No | — |
+
+
+
+---
+
+## Segments
+
+### evaluate
+
+`segments.evaluate`
+
+Evaluate a segment to see how many contacts match, without saving anything
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.segments.evaluate({ segmentId: 'seg-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  wa_id?: string | null,
+  name?: string | null,
+  phone?: string | null,
+  photo?: string | null,
+  created?: string | null,
+  last_updated?: string | null,
+  contact_status?: string | null,
+  source?: string | null,
+  channel_id?: string | null,
+  opted_in?: boolean | null,
+  allow_broadcast?: boolean | null,
+  allow_sms?: boolean | null,
+  teams?: string[] | null,
+  custom_params?: {
+    name: string,
+    value: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Read one saved segment
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.segments.get({ segmentId: 'seg-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `segmentId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `contact_count` | `number \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List saved segments
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.segments.list({ page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  id?: string | null,
+  segmentId?: string | null,
+  name?: string | null,
+  contact_count?: number | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Read one message template and its components
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.templates.get({ template_id: 'tpl-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `status` | `string \| null` | No | APPROVED, PENDING, REJECTED and so on. |
+| `category` | `string \| null` | No | — |
+| `components` | `any[] \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the message templates with their approval status
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageTemplates` | `object[] \| null` | No | — |
+| `message_templates` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messageTemplates full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  language?: string | null,
+  status?: string | null,
+  category?: string | null,
+  components?: any[] | null,
+  created?: string | null,
+  updated?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="message_templates full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  language?: string | null,
+  status?: string | null,
+  category?: string | null,
+  components?: any[] | null,
+  created?: string | null,
+  updated?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription, which stops delivery to that URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wati.api.webhooks.delete({ id: 'wh-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook subscription and its event list
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.webhooks.get({ id: 'wh-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions; creating one still needs the V2 route, which this plugin does not wrap
+
+**Risk:** `read`
+
+```ts
+await corsair.wati.api.webhooks.list({ page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. |
+| `page_size` | `number` | No | Items per page, up to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  name?: string | null,
+  events?: string[] | null,
+  status?: string | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
