@@ -40,7 +40,7 @@ await corsair.opengraph.api.brand.analyze({ url: 'https://asana.com', sections: 
 {
   key: string,
   question: string,
-  type?: 'string' | 'boolean' | 'number' | 'string[]' | 'object'
+  type?: string | boolean | number | string[] | object
 }[]
 ```
 </Accordion>
@@ -236,7 +236,7 @@ await corsair.opengraph.api.extract.run({ site: 'https://example.com', selectors
 | `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
 | `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
 | `ai_sanitize` | `boolean` | No | Scan the extracted text for prompt injection (1 extra credit). |
-| `ai_sanitize_mode` | `'sanitize' \| 'warn' \| 'block'` | No | What to do on detected injection risk. Default sanitize. |
+| `ai_sanitize_mode` | `sanitize \| warn \| block` | No | What to do on detected injection risk. Default sanitize. |
 
 <AccordionGroup>
 <Accordion title="selectors full type">
@@ -245,7 +245,7 @@ await corsair.opengraph.api.extract.run({ site: 'https://example.com', selectors
 Record<string, {
   selector: string,
   multiple?: boolean,
-  type?: 'text' | 'attr',
+  type?: text | attr,
   attr?: string
 }>
 ```
@@ -271,7 +271,7 @@ Record<string, {
   risk_score?: number | null,
   risk_level?: string | null,
   action_taken?: string | null,
-  signals?: Record<string, unknown> | string[] | null,
+  signals?: Record<string, any> | string[] | null,
   recommendation?: string | null
 } | null
 ```
@@ -320,7 +320,7 @@ await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/W
 | `include_links` | `boolean` | No | Return every link from the main content as an absolute URL. Default false. |
 | `include_images` | `boolean` | No | Return every image with its source and alt text. Default false. |
 | `ai_sanitize` | `boolean` | No | Scan the page for prompt injection (1 extra credit). |
-| `ai_sanitize_mode` | `'sanitize' \| 'warn' \| 'block'` | No | What to do on detected injection risk. Default sanitize. |
+| `ai_sanitize_mode` | `sanitize \| warn \| block` | No | What to do on detected injection risk. Default sanitize. |
 | `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
 | `max_cache_age` | `number` | No | Maximum age of an acceptable cached result, in milliseconds. |
 | `full_render` | `boolean` | No | Always render in a browser first. Adds 5-10 seconds and is billed. |
@@ -462,7 +462,7 @@ await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/W
   risk_score?: number | null,
   risk_level?: string | null,
   action_taken?: string | null,
-  signals?: Record<string, unknown> | string[] | null,
+  signals?: Record<string, any> | string[] | null,
   recommendation?: string | null
 } | null
 ```
@@ -492,12 +492,12 @@ await corsair.opengraph.api.oembed.get({ url: 'https://www.youtube.com/watch?v=d
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
-| `orientation` | `'vertical' \| 'horizontal'` | No | Fallback frame orientation: vertical 800x600 (default) or horizontal 400x150. |
+| `orientation` | `vertical \| horizontal` | No | Fallback frame orientation: vertical 800x600 (default) or horizontal 400x150. |
 | `always_og_frame` | `boolean` | No | Force a hosted OpenGraph.io card even when a native embed exists. |
 | `maxwidth` | `number` | No | Maximum embed width in pixels. |
 | `maxheight` | `number` | No | Maximum embed height in pixels. |
-| `theme` | `'light' \| 'dark' \| 'auto'` | No | Color scheme for hosted fallback cards. Default auto. |
-| `template` | `'default' \| 'compact' \| 'horizontal'` | No | Layout preset for fallback cards; overrides orientation when set. |
+| `theme` | `light \| dark \| auto` | No | Color scheme for hosted fallback cards. Default auto. |
+| `template` | `default \| compact \| horizontal` | No | Layout preset for fallback cards; overrides orientation when set. |
 | `cache_ok` | `boolean` | No | Allow cached page metadata for fallback cards. Default true. |
 | `max_cache_age` | `number` | No | Maximum age of acceptable cached metadata, in milliseconds. Default 432000000. |
 | `full_render` | `boolean` | No | Render the target page before reading metadata for a fallback card. |
@@ -550,7 +550,7 @@ await corsair.opengraph.api.query.run({ url: 'https://example.com', query: 'What
 | `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
 | `query` | `string` | Yes | The question to answer from the page. |
 | `responseStructure` | `Record<string, any>` | No | Shape the answer should take, e.g. &#123; products: ["string"] &#125;. |
-| `modelSize` | `'nano' \| 'mini'` | No | AI model size. nano (default) costs 100 credits, mini 200; a cached answer costs 1. |
+| `modelSize` | `nano \| mini` | No | AI model size. nano (default) costs 100 credits, mini 200; a cached answer costs 1. |
 | `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
 | `full_render` | `boolean` | No | Render the page in a headless browser before answering. |
 | `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
@@ -662,10 +662,10 @@ await corsair.opengraph.api.screenshot.capture({ url: 'https://example.com', ful
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
-| `format` | `'jpeg' \| 'png' \| 'webp'` | No | Image format. Default jpeg. |
+| `format` | `jpeg \| png \| webp` | No | Image format. Default jpeg. |
 | `quality` | `number` | No | Image quality, rounded to the nearest 10. Default 80. |
 | `full_page` | `boolean` | No | Capture the entire scrollable page instead of the viewport. |
-| `dimensions` | `'xs' \| 'sm' \| 'md' \| 'lg'` | No | Viewport size: xs 375x812, sm 1024x768, md 1366x768 (default), lg 1920x1080. |
+| `dimensions` | `xs \| sm \| md \| lg` | No | Viewport size: xs 375x812, sm 1024x768, md 1366x768 (default), lg 1920x1080. |
 | `selector` | `string` | No | CSS selector to capture only that element. |
 | `exclude_selectors` | `string` | No | Comma-separated CSS selectors to hide, e.g. .header,.footer. |
 | `block_cookie_banner` | `boolean` | No | Auto-block known cookie consent banners. Default true. |

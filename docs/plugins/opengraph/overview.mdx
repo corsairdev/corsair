@@ -26,16 +26,20 @@ Create an App ID at dashboard.opengraph.io after signing up; free accounts get 1
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/opengraph
+npm install corsair @corsair-dev/opengraph better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/opengraph
+yarn add corsair @corsair-dev/opengraph better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/opengraph
+pnpm install corsair @corsair-dev/opengraph better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/opengraph
+bun add corsair @corsair-dev/opengraph better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -69,7 +73,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no saved key throws an `AuthMissingError`, which may carry a `connectUrl` to send the tenant to so they can add their App ID.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 opengraph()
