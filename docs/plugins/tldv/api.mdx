@@ -1,0 +1,375 @@
+---
+title: API
+description: "API reference for tl;dv: every `tldv.api.*` operation with input and output types."
+---
+
+Every `tldv.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Folders
+
+### list
+
+`folders.list`
+
+Search the folders a user can see, with their meeting ids
+
+**Risk:** `read`
+
+```ts
+await corsair.tldv.api.folders.list({ query: 'Q3 renewals', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Folder name to search for |
+| `meetingIds` | `string[]` | No | Folders must contain these meeting ids |
+| `meetingIdsOp` | `and \| or` | No | Whether a folder must contain every id or any |
+| `space` | `all \| personal \| team \| organization` | No | Which folder scopes to search |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+Answers `{ page, pages, total, pageSize, results }`, where each folder carries its `meetingIds`. `space` narrows the search to personal, team or organization folders.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | Current page number |
+| `pages` | `number` | Yes | Total pages available |
+| `total` | `number` | Yes | Total results available |
+| `pageSize` | `number` | Yes | Results per page |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  meetingIds: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meetings
+
+### get
+
+`meetings.get`
+
+Get one meeting by id, including the phone number and metadata an import attached
+
+**Risk:** `read`
+
+```ts
+await corsair.tldv.api.meetings.get({ meetingId: 'meeting-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+`phoneNumber` and `metadata` are populated here and are absent from the list endpoint; both are set when the meeting was imported or uploaded.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `happenedAt` | `string` | Yes | When the meeting happened |
+| `url` | `string` | Yes | Console URL for the meeting |
+| `duration` | `number` | Yes | Length in seconds |
+| `organizer` | `object` | Yes | — |
+| `invitees` | `object[]` | Yes | — |
+| `template` | `object \| null` | No | — |
+| `extraProperties` | `object \| null` | No | — |
+| `phoneNumber` | `string \| null` | No | Only on a single-meeting read, not the list |
+| `metadata` | `Record<string, any> \| null` | No | Only on a single-meeting read, not the list |
+
+<AccordionGroup>
+<Accordion title="organizer full type">
+
+```ts
+{
+  name?: string | null,
+  email: string
+}
+```
+</Accordion>
+
+<Accordion title="invitees full type">
+
+```ts
+{
+  name?: string | null,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string | null,
+  label?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="extraProperties full type">
+
+```ts
+{
+  conferenceId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`meetings.import`
+
+Import a meeting from a public media URL, which starts a processing job and spends recording minutes
+
+**Risk:** `write`
+
+```ts
+await corsair.tldv.api.meetings.import({ url: 'https://example.org/call-recording.mp4', name: 'Discovery call', participants: ['jordan@example.org'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Publicly reachable media URL. Supported: .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac |
+| `name` | `string` | Yes | Name for the new meeting |
+| `happenedAt` | `string` | No | Meeting date, ISO 8601 with milliseconds |
+| `participants` | `string[]` | No | Emails of the invited participants |
+| `phoneNumber` | `string` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean>` | No | Flat key/value map with your own identifiers: up to 20 keys, values are strings, numbers or booleans |
+
+Starts a processing job and answers `{ success, jobId, message }`. `url` and `name` are both required. The URL must be publicly reachable and the media must be one of .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac. `metadata` is returned verbatim on the meeting and in the MeetingReady webhook, which is how you correlate your own record ids. It takes up to 20 keys, and each value is a string of up to 256 characters, a number or a boolean.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `jobId` | `string` | Yes | Id of the import job |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`meetings.list`
+
+List meetings with paging, date bounds and folder or type filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tldv.api.meetings.list({ limit: 10, meetingType: 'external' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Search text |
+| `page` | `number` | No | Page number, from 1 |
+| `limit` | `number` | No | Results per page, max 100 |
+| `from` | `string` | No | Earliest date, as a date or date-time |
+| `to` | `string` | No | Latest date, as a date or date-time |
+| `onlyParticipated` | `boolean` | No | Only meetings the user took part in |
+| `meetingType` | `internal \| external` | No | internal means only participants from the org |
+| `folderIds` | `string[]` | No | Folders to include |
+| `folderIdsOp` | `and \| or` | No | Whether a meeting must be in every folder or any |
+
+Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meetingType: 'internal'` keeps only meetings whose participants are all in your organization; `'external'` keeps the rest. `from` and `to` accept a date or a date-time. The input schema rejects a `meetingType` other than these two before any request is sent. `query` matches whole words: a meeting named `weekly-sync` is found by `weekly sync`, but not by `weekly-sync`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | Current page number |
+| `pages` | `number` | Yes | Total pages available |
+| `total` | `number` | Yes | Total results available |
+| `pageSize` | `number` | Yes | Results per page |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  happenedAt: string,
+  url: string,
+  duration: number,
+  organizer: {
+    name?: string | null,
+    email: string
+  },
+  invitees: {
+    name?: string | null,
+    email: string
+  }[],
+  template?: {
+    id?: string | null,
+    label?: string | null
+  } | null,
+  extraProperties?: {
+    conferenceId?: string | null
+  } | null,
+  phoneNumber?: string | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### notes
+
+`meetings.notes`
+
+Get the AI notes and topics generated for one meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.tldv.api.meetings.notes({ meetingId: 'meeting-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+Answers `structuredNotes`, `markdownContent` and `topics`. A note carries a `segmentId`, a `timestamp` in seconds and a `topicId` that matches a topic's `id`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structuredNotes` | `object[]` | Yes | — |
+| `markdownContent` | `string` | Yes | The notes rendered as markdown |
+| `topics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="structuredNotes full type">
+
+```ts
+{
+  segmentId: string,
+  timestamp: number,
+  text: string,
+  topicId: string
+}[]
+```
+</Accordion>
+
+<Accordion title="topics full type">
+
+```ts
+{
+  id: string,
+  order: number,
+  title: string,
+  summary: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transcript
+
+`meetings.transcript`
+
+Get the transcript of one meeting, sentence by sentence
+
+**Risk:** `read`
+
+```ts
+await corsair.tldv.api.meetings.transcript({ meetingId: 'meeting-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+Each entry in `data` is one sentence with a `speaker`, `text`, `startTime` and `endTime`, with the offsets in seconds. This is the same object a `TranscriptReady` webhook carries.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meetingId` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  speaker: string,
+  text: string,
+  startTime: number,
+  endTime: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

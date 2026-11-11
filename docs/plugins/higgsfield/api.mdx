@@ -1,0 +1,562 @@
+---
+title: API
+description: "API reference for Higgsfield: every `higgsfield.api.*` operation with input and output types."
+---
+
+Every `higgsfield.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### createUploadUrl
+
+`files.createUploadUrl`
+
+Get a presigned URL to PUT an input file to yourself, and the public URL it will have. For most uses files.upload does both steps.
+
+**Risk:** `write`
+
+```ts
+await corsair.higgsfield.api.files.createUploadUrl({ contentType: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `image/png \| image/jpeg \| image/jpg \| image/gif \| image/webp \| audio/x-wav \| audio/wav \| audio/mpeg \| audio/mp3 \| audio/mp4 \| audio/x-m4a \| audio/aac \| audio/ogg \| audio/flac \| audio/x-flac \| audio/webm \| video/mp4` | Yes | The type of the file you will upload; the PUT must use the same one. |
+
+The upload URL is good for one hour. PUT the file there with every `upload_headers` entry and no Higgsfield credentials.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public_url` | `string` | Yes | Pass this as a model input (image_url, video_url, audio_url) once the file is uploaded. |
+| `upload_url` | `string` | Yes | A presigned storage URL, good for one hour. PUT the file here with every upload_headers entry and no Higgsfield credentials. |
+| `content_type` | `string \| null` | No | — |
+| `upload_headers` | `Record<string, string> \| null` | No | — |
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload an image, audio or video file from base64 and get the public URL to pass as a model input. A file already at a public https URL needs no upload: pass that URL to the model.
+
+**Risk:** `write`
+
+```ts
+await corsair.higgsfield.api.files.upload({ contentBase64: '<base64 bytes>', contentType: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | Yes | The file’s bytes, base64 encoded (a data: URL prefix is fine). Up to 100 MB. |
+| `contentType` | `image/png \| image/jpeg \| image/jpg \| image/gif \| image/webp \| audio/x-wav \| audio/wav \| audio/mpeg \| audio/mp3 \| audio/mp4 \| audio/x-m4a \| audio/aac \| audio/ogg \| audio/flac \| audio/x-flac \| audio/webm \| video/mp4` | Yes | The file’s type. |
+
+Up to 100 MB, as base64. A file already at a public https URL needs no upload, since model inputs take public URLs. Uploaded files are deleted within seven days.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public_url` | `string` | Yes | Pass this as a model input (image_url, video_url, audio_url). Uploaded files are deleted within seven days, so upload again rather than keeping the URL for later. |
+| `content_type` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+---
+
+## Generations
+
+### estimate
+
+`generations.estimate`
+
+What a generation with these inputs would cost, in US dollars and credits. Free; nothing runs.
+
+**Risk:** `read`
+
+```ts
+await corsair.higgsfield.api.generations.estimate({ modelPath: 'higgsfield-ai/soul/v2/standard', input: { prompt: 'A paper boat on a calm pond' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPath` | `string` | Yes | The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list. |
+| `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a quiet alpine lake at sunrise' &#125;. Each model has its own; read them with models.get(&#123; modelPath &#125;). |
+
+Free. Takes the same `input` as a generation, so the price reflects the duration, resolution and batch size you ask for.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| null` | No | — |
+| `credits` | `string \| null` | No | — |
+| `usd` | `string \| null` | No | The estimated price in US dollars, as a decimal string. |
+| `discount` | `any` | No | — |
+
+
+
+---
+
+### run
+
+`generations.run`
+
+Generate and wait up to waitSeconds (default 10, at most 15) for the output; spends account balance when it completes. Answers like requests.status: queued or in_progress is a job to follow with requests.status, and video usually takes longer than the wait. Outputs expire after 7 days by default.
+
+**Risk:** `write`
+
+```ts
+await corsair.higgsfield.api.generations.run({ modelPath: 'higgsfield-ai/soul/v2/standard', input: { prompt: 'A paper boat on a calm pond' }, waitSeconds: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPath` | `string` | Yes | The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list. |
+| `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a quiet alpine lake at sunrise' &#125;. Each model has its own; read them with models.get(&#123; modelPath &#125;). |
+| `webhookUrl` | `string` | No | An https URL Higgsfield POSTs the result to when the request finishes (see the requests.completed webhook). |
+| `idempotencyKey` | `string` | No | Identifies this one generation. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422. Left out, one is generated for this call and its retries and returned as idempotency_key. A caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts. |
+| `expiresAfter` | `number` | No | Seconds to keep the outputs after the request finishes, at least 3600. Default and most accounts’ maximum: 604800 (7 days). |
+| `waitSeconds` | `number` | No | How long the call waits, counted from the start of the submit: default 10 and at most 15 seconds. A request still going then comes back as it stands. |
+
+Spends account balance when the request completes. The wait counts from the start of the submit. Once Higgsfield has accepted the request, this never throws. A status read that fails or runs late answers the request as it last stood. As with `generations.submit`, a caller that replays a step or starts a new script must pass its own `idempotencyKey` to be safe across attempts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `queued \| in_progress \| completed \| failed \| nsfw \| canceled \| string` | Yes | queued and in_progress: still running (a queued request can still be canceled). completed: the outputs are in images, video or audio. failed: see error, not charged. nsfw: moderation rejected the input or output, not charged. canceled: canceled while queued, refunded. |
+| `request_id` | `string` | Yes | — |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `error` | `string \| Record<string, any> \| null` | No | — |
+| `expires_at` | `string \| null` | No | When the output files are deleted and their URLs stop working: 7 days after the request finished by default. Copy anything you want to keep before then. |
+| `images` | `object[] \| null` | No | — |
+| `video` | `object \| null` | No | — |
+| `audio` | `object \| null` | No | — |
+| `audios` | `object[] \| null` | No | — |
+| `expires_after` | `number \| null` | No | Seconds the outputs are kept after the request finishes. |
+| `idempotency_key` | `string` | Yes | Repeat the call with this key and no second charge is made. |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="video full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audio full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audios full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`generations.submit`
+
+Queue a generation (image, video…) and get a request id back at once; spends account balance when it completes. Follow it with requests.status until it is completed, failed, nsfw or canceled, or pass webhookUrl. Outputs expire after 7 days by default. Repeating with the returned idempotency_key is never charged twice.
+
+**Risk:** `write`
+
+```ts
+await corsair.higgsfield.api.generations.submit({ modelPath: 'kling-video/v2.5-turbo/pro/text-to-video', input: { prompt: 'A red kite over a beach at sunset', duration: 5 }, webhookUrl: 'https://example.com/webhooks/higgsfield' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPath` | `string` | Yes | The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list. |
+| `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a quiet alpine lake at sunrise' &#125;. Each model has its own; read them with models.get(&#123; modelPath &#125;). |
+| `webhookUrl` | `string` | No | An https URL Higgsfield POSTs the result to when the request finishes (see the requests.completed webhook). |
+| `idempotencyKey` | `string` | No | Identifies this one generation. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422. Left out, one is generated for this call and its retries and returned as idempotency_key. A caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts. |
+| `expiresAfter` | `number` | No | Seconds to keep the outputs after the request finishes, at least 3600. Default and most accounts’ maximum: 604800 (7 days). |
+
+Spends account balance when the request completes. `status` here is an acceptance receipt, and a repeat with the same key can say `queued` for a request that has since finished, so read `requests.status` for where it stands. Reusing a key with a different `modelPath`, `input`, `webhookUrl` or `expiresAfter` is a 422. A workflow step that can replay, or a script that can start again, must pass its own `idempotencyKey`, because a generated key only covers retries inside one call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | An acceptance receipt, not the current status: a repeat with the same key can say queued for a request that has since finished. Read requests.status. |
+| `request_id` | `string` | Yes | Pass to requests.status as requestId. |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `expires_after` | `number \| null` | No | Seconds the outputs are kept after the request finishes. |
+| `idempotency_key` | `string` | Yes | Repeat the call with this key and no second charge is made. |
+
+
+
+---
+
+## Models
+
+### get
+
+`models.get`
+
+One model by its path, with its input fields (input_schema). Read this before a generation: every model takes its own fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.higgsfield.api.models.get({ modelPath: 'higgsfield-ai/soul/v2/standard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPath` | `string` | Yes | The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list. |
+
+Fetches the whole list with schemas, since the route has no single-model form.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The model path to pass as modelPath, except where a model’s docs page names another endpoint. |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `operation_type` | `string[] \| null` | No | For example text2image, image2video, text2video. |
+| `output_type` | `string \| null` | No | For example image or video. |
+| `base_credits` | `string \| null` | No | Not a price (most models say 0.0000). Use generations.estimate. |
+| `is_workflow` | `boolean \| null` | No | — |
+| `input_schema` | `Record<string, any> \| null` | No | JSON Schema of the model’s input fields. It drives the Console’s playground, so its defaults can differ from what the API applies when a field is left out: pass the fields you care about. |
+
+
+
+---
+
+### list
+
+`models.list`
+
+Find Higgsfield models by text, output type or operation; includeSchema adds their input fields
+
+**Risk:** `read`
+
+```ts
+await corsair.higgsfield.api.models.list({ search: 'kling', outputType: 'video' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Free text, for example soul or kling. |
+| `outputType` | `string` | No | For example image or video. |
+| `operationType` | `string` | No | For example text2image, image_edit, text2video, image2video or video2video. |
+| `includeSchema` | `boolean` | No | Include each model's input_schema (its input fields). All of them come to about 110 KB, so prefer models.get for one model. |
+
+Reads `GET /models`, which answers with the API key but isn't in Higgsfield's docs. `search` is free text. A model on Higgsfield's docs site can still answer even if it isn't listed, and the other way round.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  slug: string,
+  title?: string | null,
+  description?: string | null,
+  operation_type?: string[] | null,
+  output_type?: string | null,
+  base_credits?: string | null,
+  is_workflow?: boolean | null,
+  input_schema?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Requests
+
+### cancel
+
+`requests.cancel`
+
+Cancel a request that is still queued and refund it. Once it has started it cannot be canceled, and this errors.
+
+**Risk:** `write`
+
+```ts
+await corsair.higgsfield.api.requests.cancel({ requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | The request_id generations.submit or generations.run returned. |
+
+Only works while the request is queued, and a canceled request is refunded. Once it has started, or after it has finished, Higgsfield answers 400 and this throws.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `canceled` | Yes | The request was still queued. It will not run and is refunded. |
+
+
+
+---
+
+### delete
+
+`requests.delete`
+
+Delete a finished request's files, prompt and parameters now. Billing records stay. A request still running gets a 409.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.higgsfield.api.requests.delete({ requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | The request_id generations.submit or generations.run returned. |
+
+Deletes the request's files, prompt and parameters for good, and billing records stay. A request still queued or running gets a 409. Deleting one that is already gone still answers `deleted`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `string` | Yes | deleted, also when the request was already deleted. |
+
+
+
+---
+
+### status
+
+`requests.status`
+
+Where a request stands, with its output URLs once completed. Output URLs stop working at expires_at, 7 days after it finished by default.
+
+**Risk:** `read`
+
+```ts
+await corsair.higgsfield.api.requests.status({ requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | The request_id generations.submit or generations.run returned. |
+
+A request ended by moderation says `nsfw`, not `failed`. Some video and 3D operations add artifacts such as `zip`, `mov`, `jsx`, `fbx` or `ply`, which come through as extra fields.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `queued \| in_progress \| completed \| failed \| nsfw \| canceled \| string` | Yes | queued and in_progress: still running (a queued request can still be canceled). completed: the outputs are in images, video or audio. failed: see error, not charged. nsfw: moderation rejected the input or output, not charged. canceled: canceled while queued, refunded. |
+| `request_id` | `string` | Yes | — |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `error` | `string \| Record<string, any> \| null` | No | — |
+| `expires_at` | `string \| null` | No | When the output files are deleted and their URLs stop working: 7 days after the request finished by default. Copy anything you want to keep before then. |
+| `images` | `object[] \| null` | No | — |
+| `video` | `object \| null` | No | — |
+| `audio` | `object \| null` | No | — |
+| `audios` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="video full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audio full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audios full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Completed generations and their estimated cost by model and time bucket. For monitoring: it can lag and is not a billing record.
+
+**Risk:** `read`
+
+```ts
+await corsair.higgsfield.api.usage.get({ start: '2026-11-01T00:00:00Z', end: '2026-11-08T00:00:00Z', timeframe: 'day' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | ISO 8601 time, for example 2026-11-01T00:00:00Z. Default: 24 hours ago. The range is at most 31 days. |
+| `end` | `string` | No | ISO 8601 time. Default: now. |
+| `timeframe` | `hour \| day \| week \| month` | No | Bucket size, default hour. |
+| `boundToTimeframe` | `boolean` | No | Align start and end to bucket boundaries. Default true. |
+| `models` | `string[]` | No | Only these model paths. |
+| `byApiKey` | `boolean` | No | Break the results down by API key id (auth_method). |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | Buckets per page, default 50 and at most 100. |
+
+Estimated cost of completed generations, grouped by time bucket and model. Data can lag and may not include every request, so it is not a billing record. The range is at most 31 days.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_series` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="time_series full type">
+
+```ts
+{
+  bucket: string,
+  results: {
+    model?: string | null,
+    unit?: string | null,
+    quantity?: string | null,
+    unit_price?: string | null,
+    cost?: string | null,
+    currency?: string | null,
+    auth_method?: string | null
+  }[]
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

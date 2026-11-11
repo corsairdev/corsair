@@ -1,0 +1,1910 @@
+{
+  "id": "klaviyo",
+  "displayName": "Klaviyo",
+  "description": "Email and SMS marketing from Klaviyo - manage profiles, marketing lists, segments, events and metrics, and configure the webhooks that deliver them.",
+  "npmPackageName": "@corsair-dev/klaviyo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 39,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "klaviyo.api.events.create",
+      "shortPath": "events.create",
+      "description": "Record an event against a profile by metric name; Klaviyo creates the metric on first use, and the event can trigger flows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "string",
+            "description": "The metric name, such as \"Placed Order\". Klaviyo creates the metric if it is new."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "The profile the event belongs to. Pass this or `email`."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "The profile email, when the id is not known."
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Event properties, such as a cart total. Required by the spec."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number",
+            "description": "A monetary value for the event."
+          },
+          {
+            "key": "valueCurrency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 UTC timestamp. Defaults to now; Klaviyo rejects a time in the future or older than its retention window."
+          },
+          {
+            "key": "uniqueId",
+            "optional": true,
+            "type": "string",
+            "description": "A caller idempotency id, deduplicating a repeated send."
+          },
+          {
+            "key": "backfill",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the event as historical rather than live."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.events.get",
+      "shortPath": "events.get",
+      "description": "Read one event by id, with its properties and timestamp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: event, id: string, attributes?: { timestamp?: number | null, event_properties?: Record<string, JsonValue> | null, datetime?: string | null, uuid?: string | null } | null, relationships?: Record<string, JsonValue> | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.events.list",
+      "shortPath": "events.list",
+      "description": "Page the events recorded for the account, filtered by metric, profile or time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort field, prefixed with `-` for descending, such as `-created`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields, as a sparse fieldset."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(profile | metric)[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 1000. Defaults to 200."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: event, id: string, attributes?: { timestamp?: number | null, event_properties?: Record<string, JsonValue> | null, datetime?: string | null, uuid?: string | null } | null, relationships?: Record<string, JsonValue> | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.addProfiles",
+      "shortPath": "lists.addProfiles",
+      "description": "Add up to 1000 profiles to a list by id; adding does not change their subscription consent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The list id."
+          },
+          {
+            "key": "profileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Profile ids to add, up to 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create an empty marketing list with a name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The list name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: list, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Read one marketing list by id, with its name and timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: list, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the marketing lists on the account, filtered and cursor-paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort field, prefixed with `-` for descending, such as `-created`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields, as a sparse fieldset."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 10. Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: list, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.profiles",
+      "shortPath": "lists.profiles",
+      "description": "Page the profiles that belong to a list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The list id."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.remove",
+      "shortPath": "lists.remove",
+      "description": "Delete a list; the profiles on it stay on the account but lose that membership, and the list cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The list to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.removeProfiles",
+      "shortPath": "lists.removeProfiles",
+      "description": "Remove up to 1000 profiles from a list; their submission or consent elsewhere is untouched",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profileIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Rename an existing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The new list name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: list, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.metrics.aggregate",
+      "shortPath": "metrics.aggregate",
+      "description": "Aggregate a metric into time buckets, such as a daily count over a date range, optionally grouped by a dimension",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metricId",
+            "optional": false,
+            "type": "string",
+            "description": "The metric to aggregate."
+          },
+          {
+            "key": "measurements",
+            "optional": false,
+            "type": "string[]",
+            "description": "What to compute, such as [\"count\"] or [\"sum_value\", \"count\"]."
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "hour | day | week | month",
+            "description": "The bucket size."
+          },
+          {
+            "key": "pageCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "by",
+            "optional": true,
+            "type": "string[]",
+            "description": "Group by these dimensions, such as [\"$attributed_message\"]."
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "string[]",
+            "description": "Filter expressions in Klaviyo filter syntax. A date range is required, such as [\"greater-or-equal(datetime,2026-01-01T00:00:00)\", \"less-than(datetime,2026-02-01T00:00:00)\"]."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, attributes?: { dates?: string[] | null, data?: { dimensions?: string[] | null, measurements?: Record<string, JsonValue> | null }[] | null } | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.metrics.get",
+      "shortPath": "metrics.get",
+      "description": "Read one metric by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: metric, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, integration?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.metrics.list",
+      "shortPath": "metrics.list",
+      "description": "List the metrics defined on the account, such as Placed Order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields, as a sparse fieldset."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: metric, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, integration?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.profiles.create",
+      "shortPath": "profiles.create",
+      "description": "Create a profile from an email, phone number or external id, with names, location and custom properties; Klaviyo merges a duplicate onto the existing profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null }"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom properties, stored as sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Read one profile by id, optionally including its conversations or push tokens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(conversations | push-tokens)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "Search profiles with a Klaviyo filter expression, sorted and cursor-paged; returns each profile with its attributes and subscription state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort field, prefixed with `-` for descending, such as `-created`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these profile fields."
+          },
+          {
+            "key": "additionalFields",
+            "optional": true,
+            "type": "(subscriptions | predictive_analytics | hashed_email | hashed_phone_number)[]",
+            "description": "Extra fields to include beyond the default set."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(conversations | push-tokens)[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.profiles.subscribe",
+      "shortPath": "profiles.subscribe",
+      "description": "Subscribe a profile to a list over email or SMS; this grants marketing consent through a queued bulk job, so it confirms the request was accepted rather than returning the profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string",
+            "description": "The list to subscribe the profile to."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "(email | sms)[]",
+            "description": "Which channels to subscribe. Defaults to email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.profiles.update",
+      "shortPath": "profiles.update",
+      "description": "Change a profile name, location, custom properties or identifiers by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null }"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The segment name."
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The segment definition, a JSON:API condition group such as { condition_groups: [...] }. Klaviyo evaluates it server-side."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: segment, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, is_active?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Read one segment by id, with its active flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: segment, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, is_active?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List the segments on the account, filtered and cursor-paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort field, prefixed with `-` for descending, such as `-created`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields, as a sparse fieldset."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 10. Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: segment, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, is_active?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.profiles",
+      "shortPath": "segments.profiles",
+      "description": "Page the profiles that currently match a segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: profile, id: string, attributes?: { email?: string | null, phone_number?: string | null, external_id?: string | null, first_name?: string | null, last_name?: string | null, organization?: string | null, locale?: string | null, title?: string | null, image?: string | null, location?: { address1?: string | null, address2?: string | null, city?: string | null, country?: string | null, latitude?: string | number | null, longitude?: string | number | null, region?: string | null, zip?: string | null, timezone?: string | null } | null, properties?: Record<string, JsonValue> | null, created?: string | null, updated?: string | null, last_event_date?: string | null, subscriptions?: Record<string, JsonValue> | null, predictive_analytics?: Record<string, JsonValue> | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.remove",
+      "shortPath": "segments.remove",
+      "description": "Delete a segment; its definition is lost and cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Change a segment name or its condition group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: segment, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null, is_active?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tagGroups.create",
+      "shortPath": "tagGroups.create",
+      "description": "Create a tag group, optionally exclusive so only one of its tags applies",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The tag group name."
+          },
+          {
+            "key": "exclusive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only one tag from this group may apply to an object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: tag-group, id: string, attributes?: { name?: string | null, exclusive?: boolean | null, default?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tagGroups.list",
+      "shortPath": "tagGroups.list",
+      "description": "List the tag groups, which namespace tags and can allow only one tag each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 25. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: tag-group, id: string, attributes?: { name?: string | null, exclusive?: boolean | null, default?: boolean | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tagGroups.remove",
+      "shortPath": "tagGroups.remove",
+      "description": "Delete a tag group; the tags inside it go with it and cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag with a name, unique within its tag group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The tag name, unique within its group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: tag, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Read one tag by id, with its name and timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: tag, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags on the account, filtered and cursor-paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter expression such as \"equals(email,\\\"a@b.com\\\")\", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, 1 to 50. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: tag, id: string, attributes?: { name?: string | null, created?: string | null, updated?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tags.remove",
+      "shortPath": "tags.remove",
+      "description": "Delete a tag; it detaches from every campaign, flow, list and segment that carried it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag; its group and attachments stay as they are",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook with an endpoint URL, a shared secret and one or more topics; Klaviyo signs each delivery with that secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A name for the webhook."
+          },
+          {
+            "key": "endpointUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Where Klaviyo POSTs the events."
+          },
+          {
+            "key": "secretKey",
+            "optional": false,
+            "type": "string",
+            "description": "The shared secret Klaviyo signs deliveries with; the spec marks it required. Use a long random value and verify the signature on your side."
+          },
+          {
+            "key": "topicIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "The webhook topic ids to subscribe to, from webhookTopics.list."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: webhook, id: string, attributes?: { name?: string | null, description?: string | null, endpoint_url?: string | null, enabled?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: webhook, id: string, attributes?: { name?: string | null, description?: string | null, endpoint_url?: string | null, enabled?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks configured on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: webhook, id: string, attributes?: { name?: string | null, description?: string | null, endpoint_url?: string | null, enabled?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhooks.remove",
+      "shortPath": "webhooks.remove",
+      "description": "Delete a webhook; deliveries stop immediately and it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook name, description, endpoint URL or enabled flag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpointUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: webhook, id: string, attributes?: { name?: string | null, description?: string | null, endpoint_url?: string | null, enabled?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klaviyo.api.webhookTopics.list",
+      "shortPath": "webhookTopics.list",
+      "description": "List the topics a webhook can subscribe to, such as Placed Order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: webhook-topic, id: string, attributes?: { name?: string | null, description?: string | null } | null, links?: { self?: string | null, next?: string | null, prev?: string | null } | null }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ type: string, id: string, attributes?: Record<string, JsonValue> | null, relationships?: Record<string, JsonValue> | null, links?: Record<string, JsonValue> | null }[] | null",
+            "description": "Related resources requested through `include`."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; absent on the last one."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

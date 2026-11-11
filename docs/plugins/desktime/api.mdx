@@ -1,0 +1,495 @@
+---
+title: API
+description: "API reference for DeskTime: every `desktime.api.*` operation with input and output types."
+---
+
+Every `desktime.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### get
+
+`company.get`
+
+Read the account's name, work hours, tracking window and timezone
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.company.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `work_starts` | `string \| null` | No | — |
+| `work_ends` | `string \| null` | No | — |
+| `work_duration` | `string \| number \| null` | No | — |
+| `working_days` | `number \| null` | No | — |
+| `work_start_tracking` | `string \| null` | No | — |
+| `work_stop_tracking` | `string \| null` | No | — |
+| `timezone_identifier` | `string \| null` | No | — |
+| `__request_time` | `string \| null` | No | — |
+
+
+
+---
+
+## Employee
+
+### apps
+
+`employee.apps`
+
+Read the apps one employee used on a day, grouped as unrated, neutral and productive
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.employee.apps({ id: 789760 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | The employee to read. Omit it to read the key owner, which is the account the API key belongs to. |
+| `date` | `string` | No | A day in YYYY-MM-DD form. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `group` | `string \| null` | No | — |
+| `profileUrl` | `string \| null` | No | — |
+| `isOnline` | `boolean \| null` | No | — |
+| `arrived` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `left` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `late` | `boolean \| null` | No | — |
+| `onlineTime` | `number \| null` | No | — |
+| `offlineTime` | `number \| null` | No | — |
+| `desktimeTime` | `number \| null` | No | — |
+| `atWorkTime` | `number \| null` | No | — |
+| `afterWorkTime` | `number \| null` | No | — |
+| `beforeWorkTime` | `number \| null` | No | — |
+| `productiveTime` | `number \| null` | No | — |
+| `productivity` | `number \| null` | No | — |
+| `efficiency` | `number \| null` | No | — |
+| `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `notes` | `Record<string, any>[] \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
+| `apps` | `object \| null` | No | Tracked apps keyed by productivity class, where `-1` is unrated, `0` neutral and `1` productive. |
+| `apps_by_productivity` | `object` | No | The same apps relabelled from the numeric productivity keys to `unrated`, `neutral` and `productive`. |
+
+<AccordionGroup>
+<Accordion title="activeProject full type">
+
+```ts
+{
+  project?: string | null,
+  task?: string | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="apps full type">
+
+```ts
+Record<string, {
+  app?: string | null,
+  title?: string | null,
+  time?: number | null
+}[]> | null
+```
+</Accordion>
+
+<Accordion title="apps_by_productivity full type">
+
+```ts
+{
+  unrated?: {
+    app?: string | null,
+    title?: string | null,
+    time?: number | null
+  }[],
+  neutral?: {
+    app?: string | null,
+    title?: string | null,
+    time?: number | null
+  }[],
+  productive?: {
+    app?: string | null,
+    title?: string | null,
+    time?: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### basic
+
+`employee.basic`
+
+Read one employee's arrival, departure, tracked time and productivity for a day, defaulting to the key owner and today
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.employee.basic({ id: 789760, date: '2026-11-08' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | The employee to read. Omit it to read the key owner, which is the account the API key belongs to. |
+| `date` | `string` | No | A day in YYYY-MM-DD form. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `group` | `string \| null` | No | — |
+| `profileUrl` | `string \| null` | No | — |
+| `isOnline` | `boolean \| null` | No | — |
+| `arrived` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `left` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `late` | `boolean \| null` | No | — |
+| `onlineTime` | `number \| null` | No | — |
+| `offlineTime` | `number \| null` | No | — |
+| `desktimeTime` | `number \| null` | No | — |
+| `atWorkTime` | `number \| null` | No | — |
+| `afterWorkTime` | `number \| null` | No | — |
+| `beforeWorkTime` | `number \| null` | No | — |
+| `productiveTime` | `number \| null` | No | — |
+| `productivity` | `number \| null` | No | — |
+| `efficiency` | `number \| null` | No | — |
+| `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `notes` | `Record<string, any>[] \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="activeProject full type">
+
+```ts
+{
+  project?: string | null,
+  task?: string | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projects
+
+`employee.projects`
+
+Read the projects one employee tracked time against on a day
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.employee.projects({ id: 789760, date: '2026-11-08' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | The employee to read. Omit it to read the key owner, which is the account the API key belongs to. |
+| `date` | `string` | No | A day in YYYY-MM-DD form. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `group` | `string \| null` | No | — |
+| `profileUrl` | `string \| null` | No | — |
+| `isOnline` | `boolean \| null` | No | — |
+| `arrived` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `left` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `late` | `boolean \| null` | No | — |
+| `onlineTime` | `number \| null` | No | — |
+| `offlineTime` | `number \| null` | No | — |
+| `desktimeTime` | `number \| null` | No | — |
+| `atWorkTime` | `number \| null` | No | — |
+| `afterWorkTime` | `number \| null` | No | — |
+| `beforeWorkTime` | `number \| null` | No | — |
+| `productiveTime` | `number \| null` | No | — |
+| `productivity` | `number \| null` | No | — |
+| `efficiency` | `number \| null` | No | — |
+| `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
+| `notes` | `Record<string, any>[] \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
+| `projects` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="activeProject full type">
+
+```ts
+{
+  project?: string | null,
+  task?: string | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="projects full type">
+
+```ts
+{
+  project?: string | null,
+  task?: string | null,
+  time?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Employees
+
+### list
+
+`employees.list`
+
+List every employee for a day, week or month with their arrival, tracked time and productivity, nested by date then employee id
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.employees.list({ date: '2026-11-02', period: 'week' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | A day in YYYY-MM-DD form. |
+| `period` | `day \| week \| month` | No | The window to return, starting at `date` or today. `day` returns one bucket, `week` seven, `month` the calendar month. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object` | Yes | — |
+| `buckets` | `object[]` | Yes | The same employees flattened out of the two-level map, newest date first, with the date kept on each entry so a multi-day response stays unambiguous. |
+| `__request_time` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+Record<string, Record<string, {
+  id: number,
+  name?: string | null,
+  email?: string | null,
+  groupId?: number | null,
+  group?: string | null,
+  profileUrl?: string | null,
+  isOnline?: boolean | null,
+  arrived?: string | false | null,
+  left?: string | false | null,
+  late?: boolean | null,
+  onlineTime?: number | null,
+  offlineTime?: number | null,
+  desktimeTime?: number | null,
+  atWorkTime?: number | null,
+  afterWorkTime?: number | null,
+  beforeWorkTime?: number | null,
+  productiveTime?: number | null,
+  productivity?: number | null,
+  efficiency?: number | null,
+  work_starts?: string | false | null,
+  work_ends?: string | false | null,
+  notes?: Record<string, any>[] | null,
+  timezone?: string | null,
+  activeProject?: {
+    project?: string | null,
+    task?: string | null
+  }[] | {
+    project?: string | null,
+    task?: string | null
+  } | null
+}>>
+```
+</Accordion>
+
+<Accordion title="buckets full type">
+
+```ts
+{
+  date: string,
+  employees: {
+    id: number,
+    name?: string | null,
+    email?: string | null,
+    groupId?: number | null,
+    group?: string | null,
+    profileUrl?: string | null,
+    isOnline?: boolean | null,
+    arrived?: string | false | null,
+    left?: string | false | null,
+    late?: boolean | null,
+    onlineTime?: number | null,
+    offlineTime?: number | null,
+    desktimeTime?: number | null,
+    atWorkTime?: number | null,
+    afterWorkTime?: number | null,
+    beforeWorkTime?: number | null,
+    productiveTime?: number | null,
+    productivity?: number | null,
+    efficiency?: number | null,
+    work_starts?: string | false | null,
+    work_ends?: string | false | null,
+    notes?: Record<string, any>[] | null,
+    timezone?: string | null,
+    activeProject?: {
+      project?: string | null,
+      task?: string | null
+    }[] | {
+      project?: string | null,
+      task?: string | null
+    } | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ping
+
+### get
+
+`ping.get`
+
+Check that the DeskTime API answers. A configured key is still required, because the runtime resolves the account key before any endpoint runs
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.ping.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pong` | `string` | Yes | — |
+| `__request_time` | `string \| null` | No | — |
+
+
+
+---
+
+## Projects
+
+### list
+
+`projects.list`
+
+List the account's active projects with their tasks. Archived projects are left out
+
+**Risk:** `read`
+
+```ts
+await corsair.desktime.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `__request_time` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  created_at?: string | number | null,
+  created_at_iso?: string | null,
+  tasks?: {
+    id?: number | null,
+    name?: string | null,
+    created_at?: string | number | null,
+    created_at_iso?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Barcode scanning and data capture with CodeREADr - search and delete scan records, manage validation services, databases and app users, and read the scan uploads and API limits."
+---
+
+Use **CodeREADr** through Corsair: one client, typed API calls.
+
+Find your API key in CodeREADr under Account Settings, API Keys (https://secure.codereadr.com/account/api/key). A paid plan is required for production use; testing works on a free account.
+
+Things to know before you call:
+
+- **Failures come back as HTTP 200.** CodeREADr reports a failed call in the body as `<status>0</status>` with an `<error code="…">` node, not with an HTTP status. This plugin checks that status and throws a `CodereadrAPIError` carrying the numeric `code`, so a wrong key or a rejected variable never looks like a successful call.
+- **The API key travels in the POST body.** GET requests are disabled by default and the docs advise against putting a key in a URL, so every call is a form-encoded POST to `https://api.codereadr.com/api/`.
+- **Scans are the records you retrieve.** `scans.list` searches by date range, service, device, user, validation status, barcode value and stored properties, and pages with `limit`/`offset`. It returns `next_offset` while a page comes back full.
+- **Nothing is mirrored locally.** The plugin reads the live API and stores no entities, so a retrieved scan always reflects the account as it is now.
+- **Deletes cannot be undone.** `scans.delete`, `services.delete`, `databases.delete`, `databases.clear` and `users.delete` are marked destructive and irreversible. `services.delete` and `users.delete` also accept `all`, which removes every service or every app user except the account owner.
+- **Rate limits.** The API allows a fixed number of calls per minute and per day, and answers error code 111 or 113 when exceeded. The two windows reset differently: the per-minute counter at the start of each minute, the per-day counter at midnight. The plugin retries the per-minute limit, waiting whatever `Retry-After` the server sends and one minute when it sends none. The daily limit is not retried, because it cannot clear before midnight: the call fails at once with code 113. Check `limits.retrieve` before a long run. Code 2, CodeREADr's own transient failure, is retried only for the calls named in the next point; every other error code is a rejected request and is not retried.
+- **Writes are not replayed on server errors.** Only reads, and the database upserts, which are idempotent, are repeated after a transient failure.
+- **No webhooks.** CodeREADr can post scan data to your own URL (Postback URL or Direct Scan URL), which is configured on the service rather than received by the plugin.
+
+**What you get:**
+
+- 24 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/codereadr better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/codereadr better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/codereadr better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/codereadr better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { codereadr } from '@corsair-dev/codereadr';
+
+export const corsair = createCorsair({
+	plugins: [
+		codereadr(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+codereadr()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'codereadr',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List valid scans for a service since a fixed date**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.codereadr.api.scans.list({
+	service_id: [927],
+	status: ['1'],
+	start_date: '2026-11-08',
+	limit: 50,
+});
+```
+
+
+**Add a barcode to a validation database**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.codereadr.api.databases.upsertValue({ database_id: 120, value: 'A1B2C3D', response: 'Admitted to Hall 2' });
+```
+
+
+See the full list on the [API](/plugins/codereadr/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/codereadr/api">
+    Every `codereadr.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
