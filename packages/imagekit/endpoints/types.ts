@@ -215,7 +215,13 @@ const FilesUploadInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Destination folder path, e.g. `/products/`.'),
-	tags: TagsSchema.optional().describe('Tags to attach to the uploaded file.'),
+	// Upload sends tags as one comma-joined multipart field, so a comma inside
+	// a tag would split it in two.
+	tags: TagsSchema.refine((tags) => tags.every((tag) => !tag.includes(',')), {
+		message: 'Upload tags cannot contain a comma',
+	})
+		.optional()
+		.describe('Tags to attach to the uploaded file; no commas inside a tag.'),
 	isPrivateFile: z
 		.boolean()
 		.optional()

@@ -127,6 +127,17 @@ describe('files.upload', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects an upload tag with a comma, which the joined field would split in two', async () => {
+		await expect(
+			invoke(Files.upload, {
+				file: 'https://example.com/photo.jpg',
+				fileName: 'photo.jpg',
+				tags: ['east,west'],
+			}),
+		).rejects.toThrow(/comma/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an upload without a fileName', async () => {
 		await expect(
 			invoke(Files.upload, { file: 'https://example.com/photo.jpg' }),
