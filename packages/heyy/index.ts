@@ -201,7 +201,7 @@ const heyyEndpointMeta = {
 	'attributes.remove': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored',
+			'Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored. An id that does not exist fails with 404 attribute_not_found',
 		irreversible: true,
 	},
 	'labels.search': {

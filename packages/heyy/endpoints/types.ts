@@ -706,7 +706,10 @@ const MessageTemplateSchema = z
 		updatedAt: TimestampSchema,
 		name: z.string(),
 		type: z.string().nullish(),
-		status: z.string().nullish(),
+		status: z
+			.string()
+			.nullish()
+			.describe('`in_review`, `active`, `rejected` or `unavailable`.'),
 		vendorId: z.string().nullish(),
 		channelId: z.string().nullish(),
 		// unknown: the spec types messageContent and vendorDetails as objects that

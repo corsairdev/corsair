@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { HeyyAPIError } from './client';
 import {
 	apiWebhooksCreate,
 	apiWebhooksRemove,
@@ -19,6 +20,7 @@ import {
 import type { ContactsSearchResponse } from './endpoints/types';
 import { HeyyEndpointInputSchemas } from './endpoints/types';
 import {
+	attributeNotFoundResponse,
 	attributesCreateResponse,
 	attributesSearchResponse,
 	automationsSearchResponse,
@@ -420,15 +422,22 @@ describe('attributes.remove', () => {
 		expect(result.result.deletedIds).toEqual(['lbl-1']);
 	});
 
-	it('reports a missing id through notFoundIds, not an error', async () => {
-		respond(deletedNothingResponse);
+	it('surfaces an unknown id as a 404, unlike the label and webhook deletes', async () => {
+		// Live run 11-11: DELETE /attributes/{unknown uuid} answers 404
+		// attribute_not_found, where /labels and /api_webhooks answer 200 with
+		// the id in notFoundIds.
+		respond(attributeNotFoundResponse, 404);
 
-		const result = (await invoke(attributesRemove, {
+		const failure = await invoke(attributesRemove, {
 			attributeId: ATTRIBUTE_ID,
-		})) as { result: { deletedIds: string[]; notFoundIds: string[] } };
+		}).catch((caught: unknown) => caught); // unknown: narrowed below.
 
-		expect(result.result.deletedIds).toEqual([]);
-		expect(result.result.notFoundIds).toEqual(['lbl-missing']);
+		expect(failure).toBeInstanceOf(HeyyAPIError);
+		expect(failure).toMatchObject({
+			status: 404,
+			messageKey: 'attribute_not_found',
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
 
@@ -480,6 +489,17 @@ describe('labels.remove', () => {
 		await invoke(labelsRemove, { labelId: LABEL_ID });
 
 		expectAuthenticated(`/labels/${LABEL_ID}`, 'DELETE');
+	});
+
+	it('reports a missing id through notFoundIds, not an error', async () => {
+		respond(deletedNothingResponse);
+
+		const result = (await invoke(labelsRemove, { labelId: LABEL_ID })) as {
+			result: { deletedIds: string[]; notFoundIds: string[] };
+		};
+
+		expect(result.result.deletedIds).toEqual([]);
+		expect(result.result.notFoundIds).toEqual(['lbl-missing']);
 	});
 });
 

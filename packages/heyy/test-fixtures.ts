@@ -138,6 +138,15 @@ export const deletedNothingResponse = {
 };
 
 /**
+ * DELETE /attributes/{id} for an id that does not exist: a 404, not the 200
+ * with `notFoundIds` the label and webhook deletes give. Live call, 11-11.
+ */
+export const attributeNotFoundResponse = {
+	success: false,
+	error: { messageKey: 'attribute_not_found', message: 'Attribute not found' },
+};
+
+/**
  * What Heyy answers, with a 500, to a DELETE or PUT whose path id is not a
  * UUID. Taken from a live call on 11-11.
  */

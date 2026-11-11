@@ -79,6 +79,11 @@ describe('heyy plugin', () => {
 		// unknown: optional on the plugin type.
 		candidate.keyBuilder as KeyBuilder; // unknown: optional on the plugin type.
 
+	it('says attributes.remove fails on an unknown id instead of listing it', () => {
+		// Live run 11-11: only the attribute delete answers 404 for a missing id.
+		expect(meta['attributes.remove']?.description).toMatch(/404/);
+	});
+
 	it('has the id the constants file registers', () => {
 		expect(plugin.id).toBe('heyy');
 	});
