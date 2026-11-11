@@ -176,6 +176,10 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	classmarker:
 		'https://media.brand.dev/90bbd6a6-80a8-44fc-ba31-fbad0b3a875f.png',
 	waboxapp: 'https://media.brand.dev/c94b6487-73cb-4185-8ed1-27d6a2e0c3b0.png',
+	// twenty-icons only has a 32px favicon, and servicenow.com refuses the
+	// fetcher (403); the context.dev Brand API has the same mark at 144px.
+	servicenow:
+		'https://media.brand.dev/9337827e-7757-4546-8838-111605ed1bce.png',
 	// linguapop.eu only has a 32px favicon; the context.dev Brand API has the
 	// same boxed "L" at 128px.
 	linguapop: 'https://media.brand.dev/696c8734-772f-402c-8de8-fc9fbcdfd9c8.png',
