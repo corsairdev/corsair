@@ -953,13 +953,23 @@ export type MarkdownGetResponse = z.infer<typeof MarkdownGetResponseSchema>;
 
 // ── brand.analyze ──────────────────────────────────────────────────────────
 
+const RESERVED_QUESTION_KEYS = new Set([
+	'__proto__',
+	'constructor',
+	'prototype',
+]);
+
 const BrandQuestionSchema = z.object({
 	key: z
 		.string()
 		.min(1)
 		.max(64)
 		.regex(/^[A-Za-z0-9_]+$/)
-		.describe('The answer is returned under this key.'),
+		// OpenGraph.io reserves these three names.
+		.refine((key) => !RESERVED_QUESTION_KEYS.has(key), {
+			message: '__proto__, constructor and prototype are reserved keys',
+		})
+		.describe('The answer is returned under this key. Unique per request.'),
 	question: z.string().min(1).max(500).describe('The question to answer.'),
 	type: z
 		.enum(['string', 'boolean', 'number', 'string[]', 'object'])
@@ -977,6 +987,12 @@ const BrandAnalyzeInputSchema = z.object({
 	questions: z
 		.array(BrandQuestionSchema)
 		.max(3)
+		// Each answer comes back under its key, so keys must be unique.
+		.refine(
+			(questions) =>
+				new Set(questions.map((q) => q.key)).size === questions.length,
+			{ message: 'question keys must be unique' },
+		)
 		.optional()
 		.describe(
 			'Up to 3 custom questions; answers come back under custom.<key>.',

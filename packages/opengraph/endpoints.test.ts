@@ -555,6 +555,25 @@ describe('brand.analyze', () => {
 		expect(result.products).toEqual([]);
 	});
 
+	it.each([
+		[
+			'a repeated key',
+			[
+				{ key: 'pricing', question: 'What does it cost?' },
+				{ key: 'pricing', question: 'Is there a free plan?' },
+			],
+		],
+		...['__proto__', 'constructor', 'prototype'].map((key) => [
+			`the reserved key ${key}`,
+			[{ key, question: 'Anything?' }],
+		]),
+	])('rejects %s in questions', async (_label, questions) => {
+		await expect(
+			invoke(Brand.analyze, { url: 'https://asana.com', questions }),
+		).rejects.toBeInstanceOf(Error);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects more than three questions', async () => {
 		await expect(
 			invoke(Brand.analyze, {
