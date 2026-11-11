@@ -1,5 +1,5 @@
 import type { CommandActionData } from '../../index.types';
-import { runOutlookSubscribe } from '../../lib/microsoft/subscribe-microsoft';
+import { runWebhookSubscription } from '../../utils/subscription';
 import BaseCommand from '../base.command';
 
 export default class OutlookCommand extends BaseCommand {
@@ -12,6 +12,6 @@ export default class OutlookCommand extends BaseCommand {
 	}
 
 	async action({}: CommandActionData) {
-		await runOutlookSubscribe({ cwd: process.cwd() });
+		await runWebhookSubscription(process.cwd(), 'outlook');
 	}
 }
