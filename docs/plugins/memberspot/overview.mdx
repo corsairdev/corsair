@@ -14,12 +14,13 @@ Things to know before you call:
 - **`auth.check` returns `schoolId`, not `id`.** The spec documents that route with no response body, so its shape was taken from the live API. It is the cheapest way to confirm a key works.
 - **`name` means last name.** MemberSpot splits a member into `firstname` and `name`, and this plugin keeps those names exactly. `created` and the other dates are ISO date-times.
 - **Paging uses two different names.** A page request takes `lastLoadedId` and the response returns `nextPage`; the course-progress list calls the inbound cursor `lastLoadedCourseId`. Pass `nextPage` straight back as `lastLoadedId`.
-- **Many operations come in email and uid pairs.** Every write that targets a member exists twice, once keyed by email and once by uid. The uid form needs no email lookup, so prefer it when you already have the uid.
+- **Many operations come in email and uid pairs.** Most writes that target a member exist twice, once keyed by email and once by uid; prefer the uid form when you already have the uid. `users.setOfferExpires`, `users.setCourseStartDate`, `users.loginToken` and `users.offers` take a uid only, so look the uid up with `users.findByEmail` first.
 - **Deletes are capped at 10 members per call.** The schema enforces the cap locally, because the API rejects an 11th rather than batching it.
 - **Members are deleted, not deactivated.** `users.delete` and `users.deleteByUid` remove the account and its progress. To keep the record and remove access, use `users.setOfferState` with `active: false` instead.
 - **`users.loginToken` mints a credential.** It returns a signed token and URL that sign in as the member, valid for an hour. It is marked as a write, so a read-only caller cannot create one, but treat the result as a secret and never log it.
 - **A member that does not exist is not `null`.** `users.findByEmail` answers 400 `USER_NOT_FOUND`, and `users.findByUid` answers 200 with an empty body that fails the output schema. Catch the error rather than testing for a null result.
-- **Custom property keys cannot be `email` or `uid`.** MemberSpot spreads the property map into the same body as the member selector, so those keys would retarget the write; the input schema rejects them before sending.
+- **Custom properties are keyed by id.** `users.setCustomProperties` takes a map of property id (the `id` from `customProperties.list`) to value and sends it as the `[{ id, value }]` array the API expects.
+- **Chapter access needs the course.** `chapters.enableAccess` takes the `courseId` as well as the `chapterId`.
 - **Rate limits.** Several write routes document a 429 with no `Retry-After`. The plugin retries twice, after the header when present and after one minute otherwise. Every other 4xx is a rejected request and is not retried.
 - **No webhooks.** MemberSpot sends none, so the plugin declares no webhook surface.
 
@@ -81,15 +82,10 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup needed up front. A call made with no saved key throws `AuthMissingError`, which may carry a `connectUrl` where the key can be entered. You can also supply the key yourself, either when the plugin is registered or once per tenant:
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
-// At registration: pass the key into the factory inside the plugins array.
-plugins: [memberspot({ key: process.env.MEMBERSPOT_API_KEY })],
-
-// Or per tenant, scoped through withTenant since multiTenancy is on above.
-const tenant = corsair.withTenant('acme');
-await tenant.memberspot.keys.set_api_key('the-key');
+memberspot()
 ```
 
 More: [API Key](/concepts/api-key)
