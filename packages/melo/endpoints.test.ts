@@ -150,6 +150,31 @@ describe('output parsing', () => {
 		expect(result.nextPage).toBe(2);
 	});
 
+	it('parses an advert event whose old and new values are booleans, as on an expiry', async () => {
+		// Real event from a live similar-properties answer (11-11): an advert
+		// going from not expired to expired carries booleans, not strings.
+		const expiredEvent = {
+			createdAt: '2026-11-05T07:03:37+01:00',
+			fieldName: 'expired',
+			fieldNewValue: true,
+			fieldOldValue: false,
+			percentVariation: null,
+		};
+		const [advert] = propertyResponse.adverts;
+		respondLd(fetchMock, {
+			...propertyResponse,
+			adverts: [{ ...advert, events: [expiredEvent] }],
+		});
+
+		const result = await endpoints.properties.get(ctx, { id: PROPERTY_ID });
+
+		expect(result.adverts?.[0]?.events?.[0]).toMatchObject({
+			fieldName: 'expired',
+			fieldNewValue: true,
+			fieldOldValue: false,
+		});
+	});
+
 	it('indicators.pricePerMeter parses average, median and the series', async () => {
 		respondLd(
 			fetchMock,

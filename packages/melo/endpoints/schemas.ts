@@ -69,12 +69,16 @@ const ContactSchema = z
 	})
 	.loose();
 
+// The spec types the values as strings, but a live `expired` event carries
+// booleans (`false` -> `true`); price events carry numeric strings.
+const AdvertEventValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 const AdvertEventSchema = z
 	.object({
 		createdAt: z.string().nullish(),
 		fieldName: z.string().nullish(),
-		fieldNewValue: z.string().nullish(),
-		fieldOldValue: z.string().nullish(),
+		fieldNewValue: AdvertEventValueSchema.nullish(),
+		fieldOldValue: AdvertEventValueSchema.nullish(),
 		percentVariation: z.number().nullish(),
 	})
 	.loose();
