@@ -1,0 +1,150 @@
+---
+title: API
+description: "API reference for Yandex Translate: every `yandex.api.*` operation with input and output types."
+---
+
+Every `yandex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Detect Languages
+
+### run
+
+`detectLanguages.run`
+
+Detect the language of each passage, one result per entry and in order
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.detectLanguages.run({ texts: ['Hello', 'Guten Tag'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `texts` | `string[]` | Yes | — |
+| `folderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `detections` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="detections full type">
+
+```ts
+{
+  languageCode?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## List Languages
+
+### run
+
+`listLanguages.run`
+
+List the supported languages, with their codes and display names
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.listLanguages.run({ ui: 'en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ui` | `string` | No | Return the display names in this language, e.g. `en`. |
+| `hints` | `string[]` | No | Codes to include in the list even if not usually returned. |
+| `folderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  code?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Translate
+
+### text
+
+`translate.text`
+
+Translate up to 1,000 passages into a target language, detecting the source per passage when it is not given
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.translate.text({ targetLanguageCode: 'ru', texts: ['Hello'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetLanguageCode` | `string` | Yes | The language to translate into, such as `ru` or `en`. |
+| `texts` | `string[]` | Yes | The passages to translate. Each is translated separately. |
+| `sourceLanguageCode` | `string` | No | The source language. Omit to detect it. |
+| `format` | `PLAIN_TEXT \| HTML` | No | How the text is interpreted. Defaults to PLAIN_TEXT. |
+| `speller` | `boolean` | No | Correct spelling in the result. |
+| `folderId` | `string` | No | The folder the key belongs to. Only needed when the key is an IAM token covering several. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="translations full type">
+
+```ts
+{
+  text?: string | null,
+  detectedLanguageCode?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

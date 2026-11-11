@@ -3932,6 +3932,14 @@
                 ]
               },
               {
+                "group": "Yandex Translate",
+                "pages": [
+                  "plugins/yandex/overview",
+                  "plugins/yandex/api",
+                  "plugins/yandex/database"
+                ]
+              },
+              {
                 "group": "You.com",
                 "pages": [
                   "plugins/youcom/overview",

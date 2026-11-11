@@ -1,0 +1,142 @@
+---
+title: Overview
+description: "Translation with Yandex Cloud - translate passages between languages, detect the language of text, and list the supported languages."
+---
+
+Use **Yandex Translate** through Corsair: one client, typed API calls.
+
+This plugin wraps **Yandex Translate**, part of Yandex Cloud. Create a service account with the `ai.translate.user` role, then make an API key for it; the key goes in `Authorization: Api-Key`.
+
+- **"Yandex" is a family, and this is the Translate API.** Yandex publishes many unrelated APIs (Metrica, Search, Cloud); this plugin covers the translator, at `https://translate.api.cloud.yandex.net`. The other services have their own credentials and contracts and are not part of this package.
+- **Two credential kinds are accepted.** A service-account **API key** is sent as `Authorization: Api-Key <key>` and is long-lived, which is what a server integration wants. An **IAM token** is sent as `Bearer` and expires, so the plugin passes through a key that already names its scheme — write `Bearer …` explicitly to use one.
+- **A folder scopes a cloud resource.** An API key already implies its folder, so the folder header is only needed when an IAM token spans several. Pass `folderId` per call and the plugin sends it as `x-folder-id`, not as a body field.
+- **Every call is a POST, including the reads.** `translate`, `detect` and `languages` all take a JSON body, which is unusual but what the gRPC-to-JSON mapping produces.
+- **Errors are gRPC statuses, not HTTP ones.** The body is `{ code, message, details }` where `code` is a gRPC status — 3 is an invalid argument, 5 not found, 7 permission denied, 8 resource exhausted, 16 unauthenticated. The **HTTP status is usually 400 whatever the gRPC code says**, so the plugin reads `code` to separate a bad key from a bad field rather than trusting the status. A bad key answers `16` with `Unknown api key '****'`.
+- **The `requestId` is kept.** It sits inside the `details` array, and it is what Yandex support asks for.
+- **10,000 characters per call, across 1,000 passages.** The plugin checks the total before sending, because the API's own refusal is a `3` that does not say which limit was hit.
+- **Omitting `sourceLanguageCode` asks for detection.** Sending it empty would be an unknown language code, so the plugin leaves it out entirely when it is not set.
+- **`format: HTML` preserves markup.** The default is `PLAIN_TEXT`, which treats tags as text to translate.
+- **Text is never logged.** Only the character count and the language codes reach the event log, since the passage is the caller's own content.
+
+**What you get:**
+
+- 3 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/yandex better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/yandex better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/yandex better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/yandex better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { yandex } from '@corsair-dev/yandex';
+
+export const corsair = createCorsair({
+	plugins: [
+		yandex(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+yandex()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'yandex',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the supported languages**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.yandex.api.listLanguages.run({});
+```
+
+
+**Translate into Russian**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.yandex.api.translate.text({
+	targetLanguageCode: 'ru',
+	texts: ['Hello'],
+});
+```
+
+
+See the full list on the [API](/plugins/yandex/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/yandex/api">
+    Every `yandex.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
