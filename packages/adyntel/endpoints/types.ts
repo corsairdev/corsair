@@ -234,7 +234,10 @@ const MetaAdsInputSchema = z
 				'One code, or up to 20 for one job per country. The array form needs `webhook_url` and costs one credit per country.',
 			)
 			.optional(),
-		media_type: z.enum(META_MEDIA_TYPES).optional(),
+		media_type: z
+			.enum(META_MEDIA_TYPES)
+			.describe('Filter to one creative format. `check_ugc` needs `video`.')
+			.optional(),
 		active_status: z
 			.enum(META_ACTIVE_STATUSES)
 			.describe('Left out, the call returns active ads only.')
@@ -463,7 +466,12 @@ const GoogleAdsInputSchema = z
 			)
 			.optional(),
 		webhook_url: WebhookUrlSchema.optional(),
-		data_provider: z.enum(GOOGLE_DATA_PROVIDERS).optional(),
+		data_provider: z
+			.enum(GOOGLE_DATA_PROVIDERS)
+			.describe(
+				"Which scraping backend runs the call. Leave it unset to use Adyntel's default.",
+			)
+			.optional(),
 	})
 	.refine((value) => !value.all_ads || Boolean(value.webhook_url), {
 		message: '`webhook_url` is required with `all_ads: true`.',
@@ -723,7 +731,12 @@ const LinkedInAdsInputSchema = z
 			.optional(),
 		continuation_token: ContinuationTokenSchema.optional(),
 		webhook_url: WebhookUrlSchema.optional(),
-		data_provider: z.enum(LINKEDIN_DATA_PROVIDERS).optional(),
+		data_provider: z
+			.enum(LINKEDIN_DATA_PROVIDERS)
+			.describe(
+				"Which scraping backend runs the call. Leave it unset to use Adyntel's default.",
+			)
+			.optional(),
 	})
 	.refine(
 		(value) =>
