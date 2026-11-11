@@ -1,0 +1,272 @@
+---
+title: Webhooks
+description: "tl;dv incoming webhooks: event paths, payloads, and response data."
+---
+
+The tl;dv plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/tldv/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `meetings`
+  - `meetingReady` (`meetings.meetingReady`)
+- `transcripts`
+  - `transcriptReady` (`transcripts.transcriptReady`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Meetings
+
+### Meeting Ready
+
+`meetings.meetingReady`
+
+A meeting finished processing. Carries its notes when they exist, and its transcript when the subscription includes one
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook delivery id |
+| `event` | `MeetingReady` | Yes | — |
+| `data` | `object` | Yes | — |
+| `executedAt` | `string \| null` | No | ISO 8601 timestamp |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  happenedAt: string,
+  url: string,
+  duration: number,
+  organizer: {
+    name?: string | null,
+    email: string
+  },
+  invitees: {
+    name?: string | null,
+    email: string
+  }[],
+  template?: {
+    id?: string | null,
+    label?: string | null
+  } | null,
+  extraProperties?: {
+    conferenceId?: string | null
+  } | null,
+  phoneNumber?: string | null,
+  metadata?: Record<string, any> | null,
+  notes?: {
+    markdownContent?: string | null,
+    structuredNotes?: {
+      segmentId?: string | null,
+      timestamp: number,
+      text?: string | null,
+      topicId?: string | null
+    }[] | null,
+    topics?: {
+      id: string,
+      order: number,
+      title: string,
+      summary?: string | null
+    }[] | null
+  } | null,
+  transcript?: {
+    id: string,
+    meetingId: string,
+    data: {
+      speaker: string,
+      text: string,
+      startTime: number,
+      endTime: number
+    }[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event: MeetingReady,
+  data: {
+    id: string,
+    name: string,
+    happenedAt: string,
+    url: string,
+    duration: number,
+    organizer: {
+      name?: string | null,
+      email: string
+    },
+    invitees: {
+      name?: string | null,
+      email: string
+    }[],
+    template?: {
+      id?: string | null,
+      label?: string | null
+    } | null,
+    extraProperties?: {
+      conferenceId?: string | null
+    } | null,
+    phoneNumber?: string | null,
+    metadata?: Record<string, any> | null,
+    notes?: {
+      markdownContent?: string | null,
+      structuredNotes?: {
+        segmentId?: string | null,
+        timestamp: number,
+        text?: string | null,
+        topicId?: string | null
+      }[] | null,
+      topics?: {
+        id: string,
+        order: number,
+        title: string,
+        summary?: string | null
+      }[] | null
+    } | null,
+    transcript?: {
+      id: string,
+      meetingId: string,
+      data: {
+        speaker: string,
+        text: string,
+        startTime: number,
+        endTime: number
+      }[]
+    } | null
+  },
+  executedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tldv({
+    webhookHooks: {
+        meetings: {
+            meetingReady: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Transcripts
+
+### Transcript Ready
+
+`transcripts.transcriptReady`
+
+A meeting transcript has been generated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook delivery id |
+| `event` | `TranscriptReady` | Yes | — |
+| `data` | `object` | Yes | — |
+| `executedAt` | `string \| null` | No | ISO 8601 timestamp |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  meetingId: string,
+  data: {
+    speaker: string,
+    text: string,
+    startTime: number,
+    endTime: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event: TranscriptReady,
+  data: {
+    id: string,
+    meetingId: string,
+    data: {
+      speaker: string,
+      text: string,
+      startTime: number,
+      endTime: number
+    }[]
+  },
+  executedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tldv({
+    webhookHooks: {
+        transcripts: {
+            transcriptReady: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

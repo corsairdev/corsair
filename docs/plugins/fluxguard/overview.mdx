@@ -1,0 +1,162 @@
+---
+title: Overview
+description: "Website change monitoring with Fluxguard - add and delete monitored pages, start crawls, read captured page data, and manage the webhooks and site categories that deliver change alerts."
+---
+
+Use **Fluxguard** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create a key in Fluxguard under Account Settings (https://app.fluxguard.com/settings) and send it as the `x-api-key` header. The API is in beta, and the key stops working as soon as it is removed there.
+
+Things to know before you send:
+
+- **Adding a page writes to your account.** `monitoring.addPage` adds a URL to monitoring and returns the `siteId`, `sessionId` and `pageId`. Pass `siteId` and `sessionId` together to add the page to an existing site. When you do, Fluxguard rejects `siteNickname` and every category option with 400 ("Site settings (categories, nickname) cannot be specified as the site already exists"), so the plugin refuses that combination before sending. Omit both to create a new site, optionally with `siteNickname` and a category.
+- **Crawls run in the background and spend credits.** `monitoring.startCrawl` answers 204 as soon as the crawl is queued. Read the capture with `monitoring.getPage`; the trigger response repeats the ids it accepted.
+- **Deletes cannot be undone.** `monitoring.deletePage` drops the page and every version captured for it, and `monitoring.deleteSite` drops the site with all of its sessions, pages and versions. Both answer 204. A deleted page still answers `monitoring.getPage`, with `status: 'ignore'`, so the id keeps resolving.
+- **Webhooks fire on every change.** `webhooks.create` takes a URL and returns an `id`; from then on every detected change is POSTed there, which is a lot of data on an active account. Only `url` is honoured: `siteCategories` and `categories` are accepted and silently ignored, so assign categories in the console. `webhooks.delete` takes the `id` in the request body, and `webhooks.sample` returns an array of example changes from your own account.
+- **`categories.create` makes site categories only.** Site and page categories are stored separately and each row carries a `for` field saying which. `categories.list` restores the id Fluxguard keeps only as the map key. Pages report their categories as arrays of names, not ids.
+- **Rate limits and errors.** Fluxguard does not document a limit or a `Retry-After` header, and fifteen parallel requests all answered 200, so no limit was observed. The plugin retries a 429 up to three times with backoff if one appears, and never retries a 403: that status covers a bad key (`Forbidden`) and a route that does not exist (`Missing Authentication Token`). Every error body is `{ message }`.
+- **Inbound webhooks.** Fluxguard signs each delivery with the webhook's own secret key: `fluxguard-signature: t=<unix seconds>,v1=<hex HMAC-SHA256>` over `<t>.<raw body>`. Set `webhookSecret`, or store the key with `keys.set_webhook_signature`. Verification needs the untouched request body, so mount the webhook route without a JSON parser. With `multiTenancy`, your own route chooses the tenant: register each tenant's webhook URL with `?tenantId=<id>` and pass that to `processWebhook`, or the delivery is checked against the `default` tenant. Corsair Hub looks the tenant up by the delivery's `orgId` instead, and only after you store it with `corsair.withTenant(id).fluxguard.keys.set_tenant_external_id(orgId)` (the `id` that `account.get` returns).
+
+**What you get:**
+
+- 12 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fluxguard better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/fluxguard better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fluxguard better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/fluxguard better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fluxguard } from '@corsair-dev/fluxguard';
+
+export const corsair = createCorsair({
+	plugins: [
+		fluxguard(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`; store the key (Account Settings, https://app.fluxguard.com/settings) with `keys.set_api_key(key)` or pass it as `fluxguard({ key })`.
+
+```ts
+fluxguard()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fluxguard',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a monitored page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fluxguard.api.monitoring.getPage({ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg', pageId: '0123jdu8r4724' });
+```
+
+
+**Monitor a new URL**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fluxguard.api.monitoring.addPage({ url: 'https://example.org/pricing', siteNickname: 'Pricing' });
+```
+
+
+See the full list on the [API](/plugins/fluxguard/api) page.
+
+## Webhooks
+
+React to a detected change the moment Fluxguard captures it.
+
+```ts
+fluxguard({
+    webhookHooks: {
+        change: {
+            detected: {
+                after: async (ctx, result) => {
+                    console.log('Change on', result.data?.url, 'flagged', result.data?.aiFlagged);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/fluxguard/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fluxguard/api">
+    Every `fluxguard.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/fluxguard/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,163 @@
+---
+title: Overview
+description: "Generative media API with image and video models from Higgsfield, Kling, Seedance, Wan, MiniMax and others; find models, price and run generations, follow or cancel requests, upload input files and read usage."
+---
+
+Use **Higgsfield** through Corsair: one client, typed API calls, and incoming webhooks.
+
+The key is one string, `<key id>:<key secret>`, from the API keys page of the [Higgsfield Console](https://console.higgsfield.ai).
+
+Every model takes its own input fields. Find a model with `models.list({ search: 'kling' })`, read its fields with `models.get({ modelPath })`, and price the exact call with `generations.estimate` before spending anything. `input_schema` drives the Console's playground, so its defaults can differ from what the API applies when a field is left out; pass the fields you care about. `models.list` and `models.get` read an API route Higgsfield's docs don't cover yet, and the model pages at [docs.higgsfield.ai](https://docs.higgsfield.ai/docs/models) stay the reference for each model's behaviour.
+
+Generations run in the background and often outlast the wait: when measured, a soul/v2 image took about 18 seconds and a two-second video about seven minutes. After submitting, `generations.run` waits up to 10 seconds (at most 15) and answers with the same fields as `requests.status`. `completed`, `failed`, `nsfw` and `canceled` are final; `queued` or `in_progress` is a request to follow with `requests.status({ requestId })` or a `webhookUrl`, and `queued` also covers a read that failed, so the request may have moved on. On Corsair's cloud, `get_job` and the job card do the following for you. `failed` and `nsfw` requests are not charged.
+
+Every submit carries an `Idempotency-Key`, and repeating a request with the same key returns the original with no second charge. Pass your own as `idempotencyKey`, or the plugin generates one for that call and its retries. Either way it comes back as `idempotency_key`, and a failed submit carries it on the error. A generated key only covers retries inside one call: a caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts. Pass a new key, or none, when you do want another generation.
+
+Output URLs stop working at `expires_at`, 7 days after the request finished unless you set `expiresAfter`. Copy anything you want to keep.
+
+**What you get:**
+
+- 11 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/higgsfield better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/higgsfield better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/higgsfield better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/higgsfield better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { higgsfield } from '@corsair-dev/higgsfield';
+
+export const corsair = createCorsair({
+	plugins: [
+		higgsfield(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+higgsfield()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'higgsfield',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a model's input fields**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.higgsfield.api.models.get({ modelPath: 'higgsfield-ai/soul/v2/standard' });
+```
+
+
+**Generate an image**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.higgsfield.api.generations.run({
+	modelPath: 'higgsfield-ai/soul/v2/standard',
+	input: { prompt: 'A quiet alpine lake at sunrise, editorial photography' },
+});
+```
+
+
+See the full list on the [API](/plugins/higgsfield/api) page.
+
+## Webhooks
+
+Pass `webhookUrl` to `generations.submit` and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw. Only signed deliveries are accepted. Higgsfield signs for an account only once its secret has been revealed under Settings in the Higgsfield Console, and sends unsigned deliveries until then, so reveal it and store it with `keys.set_webhook_signature` (or `higgsfield({ webhookSecret })`) before relying on webhooks. Hand `processWebhook` the raw body text (`await request.text()`): a parsed body cannot verify. A delivery that fails verification makes `processWebhook` report a failure, so an HTTP handler that answers 5xx gets it retried for up to two hours. Higgsfield treats a 4xx as final and doesn't retry it. Duplicates are possible, so deduplicate by `webhook_id`. Nothing in a delivery names the account, so a multi-tenant app passes `?tenantId=` on the webhookUrl and its HTTP handler passes `Object.fromEntries(new URL(request.url).searchParams)` to `processWebhook` as the fourth argument. The signature covers the body but not the URL, so `?tenantId=` only picks which tenant's secret checks a delivery. When tenants share a secret, because they use one Higgsfield account or the `webhookSecret` option, anyone holding a signed delivery under 5 minutes old can resend it with another `tenantId`, and that tenant's hooks run on it. Higgsfield signs with one secret per account, so tenants on one account must all store that account's secret. Give each tenant its own Higgsfield account, or check in an `after` hook that the `request_id` is one that tenant submitted before acting on it. By then the plugin has logged the event under that tenant. A `before` hook runs ahead of the signature check, so it can receive an unsigned or forged delivery. Keep side effects in `after`.
+
+```ts
+higgsfield({
+    webhookHooks: {
+        requests: {
+            completed: {
+                after: async (ctx, result) => {
+                    if (result.data?.status === 'completed') console.log(result.data.request_id, result.data.payload);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/higgsfield/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/higgsfield/api">
+    Every `higgsfield.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/higgsfield/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
