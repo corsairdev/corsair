@@ -93,7 +93,9 @@ export const create: CommCareEndpoints['usersCreate'] = (ctx, input) =>
 				first_name: firstName,
 				last_name: lastName,
 				...(email !== undefined ? { email } : {}),
-				...(phoneNumber !== undefined ? { phone_number: phoneNumber } : {}),
+				...(phoneNumber !== undefined
+					? { default_phone_number: phoneNumber }
+					: {}),
 				...(userData !== undefined ? { user_data: userData } : {}),
 			},
 		}),
@@ -124,7 +126,9 @@ export const update: CommCareEndpoints['usersUpdate'] = (ctx, input) =>
 				...(firstName !== undefined ? { first_name: firstName } : {}),
 				...(lastName !== undefined ? { last_name: lastName } : {}),
 				...(email !== undefined ? { email } : {}),
-				...(phoneNumber !== undefined ? { phone_number: phoneNumber } : {}),
+				...(phoneNumber !== undefined
+					? { default_phone_number: phoneNumber }
+					: {}),
 				...(userData !== undefined ? { user_data: userData } : {}),
 			},
 		}),

@@ -264,13 +264,16 @@ describe('users', () => {
 			password: 'pw',
 			firstName: 'Jo',
 			lastName: 'Lee',
+			phoneNumber: '+15551234567',
 		});
 		expect(result.id).toBe(user.id);
 		expect(lastRequest().body).toMatchObject({
 			username: 'new@my-project.commcarehq.org',
 			first_name: 'Jo',
 			last_name: 'Lee',
+			default_phone_number: '+15551234567',
 		});
+		expect(lastRequest().body).not.toHaveProperty('phone_number');
 	});
 
 	it('updates a worker', async () => {
@@ -280,8 +283,10 @@ describe('users', () => {
 			userId: user.id!,
 			phoneNumber: '+15551234567',
 		});
+		// CommCare's user updater knows default_phone_number and
+		// phone_numbers; phone_number is "unknown or non-editable" (400).
 		expect(lastRequest().body).toEqual({
-			phone_number: '+15551234567',
+			default_phone_number: '+15551234567',
 		});
 	});
 

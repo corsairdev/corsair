@@ -501,7 +501,9 @@ const UsersCreateInputSchema = z.object({
 	phoneNumber: z
 		.string()
 		.optional()
-		.describe('Primary phone number of the worker.'),
+		.describe(
+			"Phone number to make the worker's default; sent as `default_phone_number` and added to their numbers.",
+		),
 	// unknown: free-form per-project user data.
 	userData: z
 		.record(z.string(), z.unknown())
@@ -523,12 +525,16 @@ const UsersUpdateInputSchema = z.object({
 	phoneNumber: z
 		.string()
 		.optional()
-		.describe('Primary phone number of the worker.'),
+		.describe(
+			"Phone number to make the worker's default; sent as `default_phone_number` and added to their numbers.",
+		),
 	// unknown: free-form per-project user data.
 	userData: z
 		.record(z.string(), z.unknown())
 		.optional()
-		.describe('Custom user data fields the application defines.'),
+		.describe(
+			"Custom user data. Replaces all of the worker's existing user data, including system fields, so read the worker first and send the merged object.",
+		),
 });
 
 export type UsersUpdateInput = z.input<typeof UsersUpdateInputSchema>;
