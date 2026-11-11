@@ -158,6 +158,20 @@ describe('items', () => {
 		).rejects.toThrow(/no data array but reports 12 rows/);
 	});
 
+	it('items.filter reads a page past the end with no data array as empty', async () => {
+		// Asking for offset 12 of 12 rows: nothing is left, so a missing array
+		// is the end of the data rather than a broken page.
+		respond({ code: 'SUCCESS', totalNum: 12 });
+
+		const result = (await invoke(Records.itemsFilter, {
+			itemType: ['Ticket'],
+			offset: 12,
+		})) as { data: string[]; nextOffset: number | null };
+
+		expect(result.data).toEqual([]);
+		expect(result.nextOffset).toBeNull();
+	});
+
 	it('items.get uses the external id path when given one', async () => {
 		respond(itemResult);
 

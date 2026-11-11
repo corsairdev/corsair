@@ -28,8 +28,13 @@ export function withNextOffset(
 	const total = record.totalNum;
 	const totalCount = typeof total === 'number' ? total : null;
 	// A missing list with records still to come is a broken page, not an empty
-	// one: returning `[]` would look like the end of the data.
-	if (items === undefined && totalCount !== null && totalCount > 0) {
+	// one: returning `[]` would look like the end of the data. At or past the
+	// end (offset >= totalNum) there is nothing to return, so it is empty.
+	if (
+		items === undefined &&
+		totalCount !== null &&
+		totalCount > (offset ?? 0)
+	) {
 		throw new OnedeskAPIError(
 			`The OneDesk response has no ${key} array but reports ${totalCount} rows.`,
 		);
