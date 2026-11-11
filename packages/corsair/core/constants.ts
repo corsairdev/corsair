@@ -322,6 +322,7 @@ export const BaseProviders = [
 	'mailtrap',
 	'mapbox',
 	'marketstack',
+	'melo',
 	'mem0',
 	'memberspot',
 	'merriamwebsterdict',
@@ -806,6 +807,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	mapbox: 'Mapbox',
 	marketstack: 'Marketstack',
+	melo: 'Melo',
 	mem0: 'Mem0',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
@@ -1297,6 +1299,7 @@ export type AllProviders =
 	| 'mailtrap'
 	| 'mapbox'
 	| 'marketstack'
+	| 'melo'
 	| 'mem0'
 	| 'memberspot'
 	| 'merriamwebsterdict'

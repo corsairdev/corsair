@@ -2711,6 +2711,14 @@
                 ]
               },
               {
+                "group": "Melo",
+                "pages": [
+                  "plugins/melo/overview",
+                  "plugins/melo/api",
+                  "plugins/melo/database"
+                ]
+              },
+              {
                 "group": "Mem0",
                 "pages": [
                   "plugins/mem0/overview",
