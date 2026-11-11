@@ -423,6 +423,27 @@ function yamlDoubleQuotedScalar(s: string): string {
 	);
 }
 
+/** Search results cut a description near 160 characters. */
+const META_DESCRIPTION_MAX = 160;
+
+/**
+ * The fuller description when it fits a search result, otherwise the shorter
+ * one. A long plugin name or id can push the fuller text past the limit.
+ */
+function fitDescription(full: string, short: string): string {
+	return full.length <= META_DESCRIPTION_MAX ? full : short;
+}
+
+/**
+ * Frontmatter title lines for a plugin page. Every plugin has the same set of
+ * pages, so a bare "API" or "Overview" gives hundreds of pages the same
+ * browser and search title. The title names the plugin; `sidebarTitle` keeps
+ * the short label in the navigation.
+ */
+function pageTitleFrontmatter(title: string, sidebarTitle: string): string {
+	return `title: ${yamlDoubleQuotedScalar(title)}\nsidebarTitle: ${yamlDoubleQuotedScalar(sidebarTitle)}`;
+}
+
 function sortAuthTypesForTabs(
 	types: string[],
 	preferred: string | undefined,
@@ -1251,7 +1272,7 @@ See [Webhooks](${base}/webhooks) for every event path and payload shape, and [We
 	}
 
 	return `---
-title: Overview
+${pageTitleFrontmatter(`${title} plugin`, 'Overview')}
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
@@ -1638,9 +1659,13 @@ function buildApiMdx(
 		}
 	}
 
-	const apiDescription = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescriptionShort = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescription = fitDescription(
+		`API reference for the ${title} plugin in Corsair: every \`${pluginId}.api.*\` operation with its input and output types, taken from the plugin's Zod schemas.`,
+		apiDescriptionShort,
+	);
 	return `---
-title: API
+${pageTitleFrontmatter(`${title} API reference`, 'API')}
 description: ${yamlDoubleQuotedScalar(apiDescription)}
 ---
 
@@ -1663,9 +1688,12 @@ function buildDbMdx(
 	// instead of pointing readers at `.db.<entity>.search()` paths that do not
 	// exist.
 	if (data.db.length === 0) {
-		const description = `${title} returns live API data and stores no local entities.`;
+		const description = fitDescription(
+			`The ${title} plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally. Use its API operations.`,
+			`${title} returns live API data and stores no local entities.`,
+		);
 		return `---
-title: Database
+${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(description)}
 ---
 
@@ -1715,9 +1743,12 @@ The ${title} plugin returns live API data and does not sync or store entities lo
 		);
 	}
 
-	const dbDescription = `${title} local sync: searchable entities, \`.search()\` filters, and operators.`;
+	const dbDescription = fitDescription(
+		`${title} local sync in Corsair: the entities stored in your database, the \`.search()\` filters each one accepts, and the filter operators.`,
+		`${title} local sync: searchable entities, \`.search()\` filters, and operators.`,
+	);
 	return `---
-title: Database
+${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
@@ -1822,9 +1853,12 @@ function buildWebhooksMdx(
 		}
 	}
 
-	const whDescription = `${title} incoming webhooks: event paths, payloads, and response data.`;
+	const whDescription = fitDescription(
+		`${title} incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data.`,
+		`${title} incoming webhooks: event paths, payloads, and response data.`,
+	);
 	return `---
-title: Webhooks
+${pageTitleFrontmatter(`${title} webhooks`, 'Webhooks')}
 description: ${yamlDoubleQuotedScalar(whDescription)}
 ---
 
