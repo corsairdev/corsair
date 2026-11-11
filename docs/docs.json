@@ -1457,6 +1457,14 @@
                 ]
               },
               {
+                "group": "CompanyEnrich",
+                "pages": [
+                  "plugins/companyenrich/overview",
+                  "plugins/companyenrich/api",
+                  "plugins/companyenrich/database"
+                ]
+              },
+              {
                 "group": "Composio",
                 "pages": [
                   "plugins/composio/overview",
