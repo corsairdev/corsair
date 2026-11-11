@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Sanity incoming webhooks: event paths, payloads, and response data."
+title: "Sanity webhooks"
+sidebarTitle: "Webhooks"
+description: "Sanity incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Sanity plugin handles Sanity's GROQ-powered document webhooks. Create one with `webhooks.create`, or under **API > Webhooks** at [sanity.io/manage](https://www.sanity.io/manage), point its URL at your Corsair HTTP handler, and give it a secret. Each Sanity webhook has its own secret. Store the same value with `corsair.sanity.keys.set_webhook_signature(secret)`. Corsair keeps one secret per tenant, so all of one tenant's webhooks must share it, and different tenants should use different secrets. `sanity({ webhookSecret })` covers accounts with no stored secret, and a stored one takes precedence. Use that option only in a single-tenant app. Every tenant without a stored secret falls back to it, and then a delivery signed for one tenant also verifies under another's `tenantId`.
