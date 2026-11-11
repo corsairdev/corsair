@@ -3,6 +3,7 @@ import {
 	fetchDriveBytes,
 	makeDriveRequest,
 	makeSlidesRequest,
+	markReplaySafe,
 } from '../client';
 import type { Presentation, ProviderJson } from '../types';
 import { call, compact, compactQuery } from './shared';
@@ -58,41 +59,86 @@ export function summarizePresentation(presentation: Presentation) {
 type SlidesCtx = Parameters<GoogleSlidesEndpoints['presentationsGet']>[0];
 
 /**
+ * The fields a caller actually knows at the call site. A list row carries no
+ * slide counts, so those are left absent rather than written as zero:
+ * `upsertByEntityId` replaces the stored document, so a zero here would erase a
+ * count an earlier read had saved.
+ */
+type PresentationSummaryFields = {
+	presentationId: string;
+	title?: string | null;
+	url: string;
+	revisionId?: string | null;
+	slideCount?: number;
+	layoutCount?: number;
+	masterCount?: number;
+};
+
+/**
  * Stores the presentation summary so `db.presentations.search` has something to
- * search. Merges with the prior row: a later list only carries id, name and
- * timestamps, and a full replace would wipe the slide and layout counts an
- * earlier read wrote.
+ * search. Reads the prior row and merges, because `upsertByEntityId` replaces
+ * the whole document: without this, a list call would wipe the counts, revision
+ * and timestamps an earlier read had written.
  */
 async function persistPresentation(
 	ctx: SlidesCtx,
-	summary: {
-		presentationId: string;
-		title?: string | null;
-		url: string;
-		revisionId?: string | null;
-		slideCount: number;
-		layoutCount: number;
-		masterCount: number;
-	},
+	summary: PresentationSummaryFields,
 ) {
 	if (!ctx.db.presentations?.upsertByEntityId) return;
 	try {
+		const prior = ctx.db.presentations.findByEntityId
+			? await ctx.db.presentations.findByEntityId(summary.presentationId)
+			: undefined;
+		// The stored row wraps the data; `data` holds what this function wrote.
+		// unknown: the stored row's payload, whose fields vary by what wrote it.
+		const priorData = (prior as { data?: ProviderJson } | undefined)?.data;
+
 		await ctx.db.presentations.upsertByEntityId(summary.presentationId, {
-			createdAt: new Date(),
+			...priorData,
 			id: summary.presentationId,
 			presentationId: summary.presentationId,
-			title: summary.title ?? undefined,
 			url: summary.url,
-			revisionId: summary.revisionId ?? undefined,
-			slideCount: summary.slideCount,
-			layoutCount: summary.layoutCount,
-			masterCount: summary.masterCount,
+			// Every optional field is omitted rather than set to undefined: the
+			// spread above restores the prior value, and an explicit undefined here
+			// would overwrite it. A list row carries no title or revision, and
+			// writing undefined would erase what a read had saved.
+			...(summary.title === undefined || summary.title === null
+				? {}
+				: { title: summary.title }),
+			...(summary.revisionId === undefined || summary.revisionId === null
+				? {}
+				: { revisionId: summary.revisionId }),
+			...(summary.slideCount === undefined
+				? {}
+				: { slideCount: summary.slideCount }),
+			...(summary.layoutCount === undefined
+				? {}
+				: { layoutCount: summary.layoutCount }),
+			...(summary.masterCount === undefined
+				? {}
+				: { masterCount: summary.masterCount }),
 			lastSyncedAt: new Date(),
+			createdAt: (priorData?.createdAt as Date | undefined) ?? new Date(),
 		});
 	} catch (error) {
 		// A failed write must not fail a read that already succeeded: the caller
 		// asked for the presentation, not for a database row.
 		console.warn('Failed to save presentation to database:', error);
+	}
+}
+
+/**
+ * Removes the cached row once Google has confirmed the deck is gone, so a deleted
+ * presentation stops appearing in local searches. Kept apart from the delete
+ * itself: the remote deletion already succeeded, and a storage failure must not
+ * report it as failed.
+ */
+async function forgetPresentation(ctx: SlidesCtx, presentationId: string) {
+	if (!ctx.db.presentations?.deleteByEntityId) return;
+	try {
+		await ctx.db.presentations.deleteByEntityId(presentationId);
+	} catch (error) {
+		console.warn('Failed to remove presentation from database:', error);
 	}
 }
 
@@ -149,15 +195,21 @@ export const presentationsGet: GoogleSlidesEndpoints['presentationsGet'] =
 			},
 			input,
 			async (parsed) => {
-				const presentation = await makeSlidesRequest<Presentation>(
-					`/presentations/${encodeURIComponent(parsed.presentationId)}`,
-					ctx,
-					{
-						query: compactQuery({ commentsViewMode: parsed.commentsViewMode }),
-						// A deck with hundreds of slides and images is far slower than
-						// the 20s default before the full reply arrives.
-						timeout: 60_000,
-					},
+				// Marked replay-safe: the request only reads, and the local write
+				// after it is an upsert of the same values, so a retry is harmless.
+				const presentation = await markReplaySafe(
+					makeSlidesRequest<Presentation>(
+						`/presentations/${encodeURIComponent(parsed.presentationId)}`,
+						ctx,
+						{
+							query: compactQuery({
+								commentsViewMode: parsed.commentsViewMode,
+							}),
+							// A deck with hundreds of slides and images is far slower
+							// than the 20s default before the full reply arrives.
+							timeout: 60_000,
+						},
+					),
 				);
 				const summary = summarizePresentation(presentation);
 				await persistPresentation(ctx, summary);
@@ -185,18 +237,21 @@ export const presentationsList: GoogleSlidesEndpoints['presentationsList'] =
 					? `(${parsed.query}) and ${constraint}`
 					: constraint;
 
-				const page = await makeDriveRequest<{
-					files?: ProviderJson[];
-					nextPageToken?: string;
-				}>('/files', ctx, {
-					query: compactQuery({
-						q,
-						pageSize: parsed.pageSize,
-						pageToken: parsed.pageToken,
-						orderBy: parsed.orderBy,
-						fields: LIST_FIELDS,
+				// Marked replay-safe: a read, followed only by idempotent upserts.
+				const page = await markReplaySafe(
+					makeDriveRequest<{
+						files?: ProviderJson[];
+						nextPageToken?: string;
+					}>('/files', ctx, {
+						query: compactQuery({
+							q,
+							pageSize: parsed.pageSize,
+							pageToken: parsed.pageToken,
+							orderBy: parsed.orderBy,
+							fields: LIST_FIELDS,
+						}),
 					}),
-				});
+				);
 
 				// Drive always names an id. A row without one would parse as a
 				// presentation the caller cannot open, so fail instead of passing it on.
@@ -212,18 +267,15 @@ export const presentationsList: GoogleSlidesEndpoints['presentationsList'] =
 					},
 				);
 
-				// List rows feed the entity too. A list row carries no slide counts,
-				// so the counts are left to a read and only the name and times are
-				// refreshed here.
+				// List rows feed the entity too. A Drive row carries no slide counts,
+				// so those fields are left out and persistPresentation keeps whatever
+				// a read saved for them.
 				for (const file of shaped) {
 					if (!ctx.db.presentations?.upsertByEntityId) break;
 					await persistPresentation(ctx, {
 						presentationId: file.presentationId,
 						title: typeof file.name === 'string' ? file.name : undefined,
 						url: `https://docs.google.com/presentation/d/${file.presentationId}/edit`,
-						slideCount: 0,
-						layoutCount: 0,
-						masterCount: 0,
 					});
 				}
 
@@ -245,19 +297,23 @@ export const presentationsCopy: GoogleSlidesEndpoints['presentationsCopy'] =
 			},
 			input,
 			async (parsed) => {
-				const file = await makeDriveRequest<{ id?: string }>(
-					`/files/${encodeURIComponent(parsed.presentationId)}/copy`,
-					ctx,
-					{
-						method: 'POST',
-						body: compact({ name: parsed.name, parents: parsed.parents }),
-						query: { fields: 'id' },
-					},
+				// Marked replay-safe: a failure here means the copy was never made,
+				// so repeating the endpoint cannot leave two copies. The read back
+				// below stays unmarked, because a replay would copy again.
+				const file = await markReplaySafe(
+					makeDriveRequest<{ id?: string }>(
+						`/files/${encodeURIComponent(parsed.presentationId)}/copy`,
+						ctx,
+						{
+							method: 'POST',
+							body: compact({ name: parsed.name, parents: parsed.parents }),
+							query: { fields: 'id' },
+						},
+					),
 				);
 				if (!file.id) {
 					throw new Error('Drive copy returned no file id');
 				}
-				// A copy is a full deck, so the caller gets the same summary as a read.
 				// A copy is a full deck, so the caller gets the same summary as a read.
 				const summary = summarizePresentation(
 					await getPresentation(ctx, file.id),
@@ -321,6 +377,8 @@ export const presentationsRemove: GoogleSlidesEndpoints['presentationsDelete'] =
 					ctx,
 					{ method: 'DELETE', query: { supportsAllDrives: true } },
 				);
+				// Google confirmed the deletion, so the cached row is stale now.
+				await forgetPresentation(ctx, parsed.presentationId);
 				return {
 					presentationId: parsed.presentationId,
 					deleted: true as const,

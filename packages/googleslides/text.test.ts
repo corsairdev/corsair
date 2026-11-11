@@ -323,3 +323,37 @@ describe('text.removeBullets', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('event log does not carry deck text', () => {
+	it('logs lengths instead of the searched and replacement strings', async () => {
+		// The logger writes whatever the callback returns into corsair_events, as
+		// plain JSON when encryption at rest is off.
+		const logged: Record<string, unknown>[] = []; // unknown: captured event payloads.
+		const logSpy = jest
+			.spyOn(await import('corsair/core'), 'logEventFromContext')
+			.mockImplementation(async (_ctx, _event, payload) => {
+				logged.push(payload as Record<string, unknown>); // unknown: event payload shape.
+				return null;
+			});
+
+		mockRequest.mockResolvedValue({
+			presentationId: 'deck-1',
+			replies: [{ replaceAllText: { occurrencesChanged: 2 } }],
+		});
+
+		await TextEndpoints.replaceAll(ctx, {
+			presentationId: 'deck-1',
+			find: 'salary band 120k',
+			replace: 'salary band 130k',
+		});
+
+		const payload = logged[logged.length - 1] as Record<string, unknown>; // unknown: asserted below.
+		const serialised = JSON.stringify(payload);
+		expect(serialised).not.toContain('salary band');
+		expect(payload.findLength).toBe('salary band 120k'.length);
+		expect(payload.replaceLength).toBe('salary band 130k'.length);
+		expect(payload.occurrencesChanged).toBe(2);
+
+		logSpy.mockRestore();
+	});
+});

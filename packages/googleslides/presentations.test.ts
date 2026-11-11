@@ -401,3 +401,83 @@ describe('presentation persistence', () => {
 		expect(result.presentationId).toBe('deck-1');
 	});
 });
+
+describe('persistence keeps what a list row cannot carry', () => {
+	it('keeps the saved counts and revision when a list refreshes the row', async () => {
+		const presentations = makeStore();
+		const storeCtx = makeContext({ db: { presentations } });
+		// A row an earlier read wrote with real counts.
+		presentations.findByEntityId.mockResolvedValue({
+			data: {
+				presentationId: 'deck-1',
+				slideCount: 12,
+				layoutCount: 3,
+				masterCount: 2,
+				revisionId: 'rev-7',
+				createdAt: new Date('2026-01-01T00:00:00Z'),
+			},
+		});
+		mockRequest.mockResolvedValue({
+			files: [{ id: 'deck-1', name: 'Renamed' }],
+		});
+
+		await PresentationsEndpoints.list(storeCtx, {});
+
+		const writeCall = presentations.upsertByEntityId.mock.calls[0];
+		expect(writeCall).toBeDefined();
+		const stored = (writeCall as [string, Record<string, unknown>])[1]; // unknown: asserted below.
+		// Drive returns no counts, so a zero here would erase the read's numbers.
+		expect(stored.slideCount).toBe(12);
+		expect(stored.layoutCount).toBe(3);
+		expect(stored.masterCount).toBe(2);
+		expect(stored.revisionId).toBe('rev-7');
+		expect(stored.title).toBe('Renamed');
+		// The original creation time survives rather than being reset.
+		expect(stored.createdAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+	});
+
+	it('does not invent counts for a deck seen only in a list', async () => {
+		const presentations = makeStore();
+		const storeCtx = makeContext({ db: { presentations } });
+		presentations.findByEntityId.mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ files: [{ id: 'deck-new', name: 'New' }] });
+
+		await PresentationsEndpoints.list(storeCtx, {});
+
+		const writeCall = presentations.upsertByEntityId.mock.calls[0];
+		expect(writeCall).toBeDefined();
+		const stored = (writeCall as [string, Record<string, unknown>])[1]; // unknown: asserted below.
+		expect(stored).not.toHaveProperty('slideCount');
+		expect(stored).not.toHaveProperty('layoutCount');
+	});
+
+	it('removes the cached row once the deck is deleted', async () => {
+		const presentations = makeStore();
+		const storeCtx = makeContext({ db: { presentations } });
+		mockRequest.mockResolvedValue(undefined);
+
+		await PresentationsEndpoints.delete(storeCtx, {
+			presentationId: 'deck-1',
+		});
+
+		expect(presentations.deleteByEntityId).toHaveBeenCalledWith('deck-1');
+	});
+
+	it('does not report a failed delete when only the row removal fails', async () => {
+		const presentations = makeStore();
+		presentations.deleteByEntityId.mockRejectedValue(new Error('db down'));
+		const storeCtx = makeContext({ db: { presentations } });
+		mockRequest.mockResolvedValue(undefined);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+
+		const result = await PresentationsEndpoints.delete(storeCtx, {
+			presentationId: 'deck-1',
+		});
+
+		// The remote deletion succeeded, so the call still reports success.
+		expect(result.deleted).toBe(true);
+		expect(warn).toHaveBeenCalled();
+	});
+});

@@ -15,9 +15,9 @@ Every `googleslides.api.*` operation is listed below with parameter shapes and r
 
 `batch.update`
 
-Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint
+Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint. Deletions are refused; use the typed operation.
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.googleslides.api.batch.update({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', requests: [{ mergeTableCells: { objectId: 'table_1', tableRange: { location: { rowIndex: 0, columnIndex: 0 }, rowSpan: 2, columnSpan: 2 } } }] });
@@ -31,7 +31,7 @@ await corsair.googleslides.api.batch.update({ presentationId: '1AbCdEfGhIjKlMnOp
 | `requests` | `object[]` | Yes | Raw Slides batchUpdate requests, applied atomically. Use the typed groups where they exist. |
 | `writeControl` | `object` | No | Fails the batch when the presentation moved past this revision |
 
-Accepts any of the 49 `batchUpdate` request types. Google validates every request before applying any, so an invalid entry fails the whole batch.
+Accepts any of the 49 `batchUpdate` request types except the deletions. `deleteObject`, `deleteText`, `deleteTableRow`, `deleteTableColumn`, `deleteParagraphBullets`, `deleteComment` and `deleteCommentReply` are refused before the request is sent, because this endpoint cannot attribute them to the destructive approval that `slides.remove` and `text.delete` carry. Google validates every request before applying any, so an invalid entry fails the whole batch.
 
 <AccordionGroup>
 <Accordion title="requests full type">

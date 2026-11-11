@@ -91,7 +91,7 @@ describe('googleslides plugin definition', () => {
 		}
 	});
 
-	it('marks the three destructive operations and nothing else', () => {
+	it('marks deletion operations destructive, including the raw batch path', () => {
 		const plugin = googleslides();
 		const meta = plugin.endpointMeta as Record<
 			string,
@@ -102,7 +102,10 @@ describe('googleslides plugin definition', () => {
 			.map(([path]) => path)
 			.sort();
 
+		// batch.update is destructive because it can reach request types with no
+		// typed endpoint; its handler refuses the irreversible ones it can carry.
 		expect(destructive).toEqual([
+			'batch.update',
 			'presentations.delete',
 			'slides.remove',
 			'text.delete',

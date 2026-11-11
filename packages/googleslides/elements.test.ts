@@ -413,3 +413,40 @@ describe('batch.update', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('batch.update refusal of irreversible requests', () => {
+	it('refuses deleteObject and names the typed operation to use instead', async () => {
+		await expect(
+			BatchEndpoints.update(ctx, {
+				presentationId: 'deck-1',
+				requests: [{ deleteObject: { objectId: 'slide-1' } }],
+			}),
+		).rejects.toThrow(/deleteObject.*typed operation/s);
+		// Nothing was sent, so no deletion can happen under a write-level approval.
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('refuses a batch that mixes a safe edit with a deletion', async () => {
+		await expect(
+			BatchEndpoints.update(ctx, {
+				presentationId: 'deck-1',
+				requests: [
+					{ insertText: { objectId: 'shape-1', text: 'hi' } },
+					{ deleteText: { objectId: 'shape-1', textRange: { type: 'ALL' } } },
+				],
+			}),
+		).rejects.toThrow(/deleteText/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('still forwards a batch with no deletion in it', async () => {
+		mockRequest.mockResolvedValue({ replies: [{}] });
+
+		await BatchEndpoints.update(ctx, {
+			presentationId: 'deck-1',
+			requests: [{ mergeTableCells: { objectId: 'table-1', tableRange: {} } }],
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+});

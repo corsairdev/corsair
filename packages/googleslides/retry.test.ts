@@ -218,3 +218,51 @@ describe('retry behaviour through the bound client', () => {
 		}
 	});
 });
+
+describe('a write followed by a read is not replayed', () => {
+	it('does not repeat slides.create when the read-back fails', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// The createSlide batch succeeds.
+			respondJson({
+				presentationId: 'deck-1',
+				replies: [{ createSlide: { objectId: 'slide-1' } }],
+			});
+			// The read-back that names the layout fails with a 503.
+			respondJson({ error: { message: 'backend error' } }, 503);
+
+			await expect(
+				corsair.googleslides.api.slides.create({
+					presentationId: 'deck-1',
+					layout: 'BLANK',
+				}),
+			).rejects.toMatchObject({ status: 503 });
+
+			// Exactly two requests: the batch and the failed read. A replay would
+			// send the createSlide batch a second time and add a second slide.
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does repeat presentations.get, which only reads', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient();
+		try {
+			respondJson({ error: { message: 'backend error' } }, 503);
+			respondJson(presentationReply);
+
+			const result = await withFakeTimers(
+				corsair.googleslides.api.presentations.get({
+					presentationId: 'deck-1',
+				}),
+			);
+
+			expect(result.presentationId).toBe('deck-1');
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});

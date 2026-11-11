@@ -381,9 +381,13 @@ const googleSlidesEndpointMeta = {
 		description: 'Ungroup previously grouped page elements',
 	},
 	'batch.update': {
-		riskLevel: 'write',
+		// Destructive because the raw path reaches request types with no typed
+		// endpoint. The handler refuses the irreversible ones outright, so this
+		// declaration is what makes a cautious caller approve the rest.
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint',
+			'Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint. Deletions are refused; use the typed operation.',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleSlidesEndpointsNested>;
 

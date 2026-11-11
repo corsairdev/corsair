@@ -12,7 +12,7 @@ pnpm add @corsair-dev/googleslides
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `batch.update` | `googleslides.api.batch.update` | `write` | Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint |
+| `batch.update` | `googleslides.api.batch.update` | `destructive` | Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint. Deletions are refused; use the typed operation. |
 | `elements.createImage` | `googleslides.api.elements.createImage` | `write` | Add an image to a slide from a public URL |
 | `elements.createShape` | `googleslides.api.elements.createShape` | `write` | Add a shape or text box to a slide |
 | `elements.createTable` | `googleslides.api.elements.createTable` | `write` | Add an empty table to a slide |

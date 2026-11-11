@@ -538,3 +538,74 @@ describe('notesText', () => {
 		expect(notesText({})).toBe('');
 	});
 });
+
+describe('notes that hold only blank lines', () => {
+	const blankNotesPage = {
+		objectId: 'slide-1',
+		slideProperties: {
+			notesPage: {
+				notesProperties: { speakerNotesObjectId: 'notes-shape-1' },
+				pageElements: [
+					{
+						objectId: 'notes-shape-1',
+						shape: {
+							text: { textElements: [{ textRun: { content: '\n\n' } }] },
+						},
+					},
+				],
+			},
+		},
+	};
+
+	it('reads blank-line notes as an empty string', () => {
+		expect(notesText(blankNotesPage.slideProperties.notesPage)).toBe('\n');
+	});
+
+	it('still clears them, because the shape holds content', async () => {
+		mockRequest
+			.mockResolvedValueOnce(blankNotesPage)
+			.mockResolvedValueOnce({ replies: [{}] });
+
+		await SlidesEndpoints.setNotes(ctx, {
+			presentationId: 'deck-1',
+			slideObjectId: 'slide-1',
+			notes: '',
+		});
+
+		// Stripping every trailing newline would make this look empty and skip the
+		// delete, leaving the blank lines in the deck.
+		expect(calledOptions(1).body).toEqual({
+			requests: [
+				{
+					deleteText: { objectId: 'notes-shape-1', textRange: { type: 'ALL' } },
+				},
+			],
+		});
+	});
+
+	it('removes only the single newline Google appends', () => {
+		expect(
+			notesText({
+				pageElements: [
+					{
+						shape: {
+							text: { textElements: [{ textRun: { content: 'line\n' } }] },
+						},
+					},
+				],
+			}),
+		).toBe('line');
+		// A newline the user typed as the last character survives one round trip.
+		expect(
+			notesText({
+				pageElements: [
+					{
+						shape: {
+							text: { textElements: [{ textRun: { content: 'line\n\n' } }] },
+						},
+					},
+				],
+			}),
+		).toBe('line\n');
+	});
+});

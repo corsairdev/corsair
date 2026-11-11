@@ -59,6 +59,7 @@ describeIfToken('googleslides live smoke', () => {
 				.delete({ presentationId })
 				.catch((error: unknown) => {
 					// unknown: cleanup failure, logged only.
+					// unknown: cleanup failure, logged only.
 					console.warn('Could not delete the smoke-test deck:', error);
 				});
 		}

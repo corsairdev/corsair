@@ -1,5 +1,5 @@
 import type { GoogleSlidesEndpoints } from '..';
-import { makeSlidesRequest, runBatchUpdate } from '../client';
+import { makeSlidesRequest, markReplaySafe, runBatchUpdate } from '../client';
 import type { Page, Presentation, ProviderJson } from '../types';
 import { call, compact, compactQuery, replyAt } from './shared';
 import {
@@ -12,10 +12,13 @@ async function readPresentation(
 	ctx: Parameters<GoogleSlidesEndpoints['slidesList']>[0],
 	presentationId: string,
 ): Promise<Presentation> {
-	return makeSlidesRequest<Presentation>(
-		`/presentations/${encodeURIComponent(presentationId)}`,
-		ctx,
-		{ timeout: 60_000 },
+	// Marked replay-safe: a pure read, and the merge write after it is idempotent.
+	return markReplaySafe(
+		makeSlidesRequest<Presentation>(
+			`/presentations/${encodeURIComponent(presentationId)}`,
+			ctx,
+			{ timeout: 60_000 },
+		),
 	);
 }
 
@@ -30,6 +33,8 @@ async function readSlide(
 	presentationId: string,
 	slideObjectId: string,
 ): Promise<Page> {
+	// Deliberately unmarked: this same helper is the read-back after a create, and
+	// a retry there would replay the write. Callers that only read mark it.
 	return makeSlidesRequest<Page>(
 		`/presentations/${encodeURIComponent(presentationId)}/pages/${encodeURIComponent(slideObjectId)}`,
 		ctx,
@@ -44,11 +49,12 @@ export function isNotesPlaceholder(type: string | undefined): boolean {
 }
 
 /**
- * Joins the text runs on a page into the string a caller reads. The notes page
- * also holds a `SLIDE_IMAGE` placeholder with no text, so only elements that
- * carry text contribute.
+ * The notes page's text exactly as Google returned it, including the newline it
+ * appends to every shape. Callers that decide whether anything needs deleting
+ * use this: a page holding only blank lines is non-empty, and `notesText` would
+ * hide that.
  */
-export function notesText(page: Page): string {
+export function notesRawText(page: Page): string {
 	const parts: string[] = [];
 	for (const element of page.pageElements ?? []) {
 		for (const run of element.shape?.text?.textElements ?? []) {
@@ -56,8 +62,18 @@ export function notesText(page: Page): string {
 			if (content) parts.push(content);
 		}
 	}
-	// Google terminates a shape's text with a newline the user did not type.
-	return parts.join('').replace(/\n+$/, '');
+	return parts.join('');
+}
+
+/**
+ * Joins the text runs on a page into the string a caller reads. The notes page
+ * also holds a `SLIDE_IMAGE` placeholder with no text, so only elements that
+ * carry text contribute.
+ */
+export function notesText(page: Page): string {
+	// One trailing newline is Google's, not the user's; keeping it would make
+	// every round trip grow the notes by a line.
+	return notesRawText(page).replace(/\n$/, '');
 }
 
 export const slidesList: GoogleSlidesEndpoints['slidesList'] = async (
@@ -114,8 +130,11 @@ export const slidesGet: GoogleSlidesEndpoints['slidesGet'] = async (
 			output: GoogleSlidesEndpointOutputSchemas.slidesGet,
 		},
 		input,
+		// Marked replay-safe: this endpoint only reads.
 		async (parsed) =>
-			readSlide(ctx, parsed.presentationId, parsed.slideObjectId),
+			markReplaySafe(
+				readSlide(ctx, parsed.presentationId, parsed.slideObjectId),
+			),
 		(parsed) => ({ slideObjectId: parsed.slideObjectId }),
 	);
 
@@ -145,9 +164,12 @@ export const slidesCreate: GoogleSlidesEndpoints['slidesCreate'] = async (
 				slideLayoutReference,
 			});
 
-			const response = await runBatchUpdate(ctx, parsed.presentationId, [
-				{ createSlide },
-			]);
+			// Marked replay-safe: a failure here means the slide was never created,
+			// so repeating the endpoint cannot add a second one. Everything after
+			// this point stays unmarked, because a replay would POST again.
+			const response = await markReplaySafe(
+				runBatchUpdate(ctx, parsed.presentationId, [{ createSlide }]),
+			);
 			const created = replyAt(response.replies, 0)?.createSlide as
 				| { objectId?: string }
 				| undefined;
@@ -410,10 +432,13 @@ export const slidesSetNotes: GoogleSlidesEndpoints['slidesSetNotes'] = async (
 			}
 
 			// Existing notes have to go first: insertText appends at the end, so a
-			// set over non-empty notes would concatenate instead of replace.
-			const current = notesText(slide.slideProperties?.notesPage ?? {});
+			// set over non-empty notes would concatenate instead of replace. The
+			// raw text decides this, because a shape holding only blank lines still
+			// has content that an empty write would leave behind.
+			const hasExistingNotes =
+				notesRawText(slide.slideProperties?.notesPage ?? {}).length > 0;
 			const requests: ProviderJson[] = [];
-			if (current.length > 0) {
+			if (hasExistingNotes) {
 				requests.push({
 					deleteText: {
 						objectId: notesObjectId,

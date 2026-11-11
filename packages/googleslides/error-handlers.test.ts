@@ -169,23 +169,57 @@ describe('error handler matching', () => {
 		});
 	});
 
-	it('replays a read after a 5xx', async () => {
+	it('replays a 5xx only when the code marked it safe to repeat', async () => {
 		const error = apiError({ status: 503, method: 'GET' });
 
 		expect(
 			errorHandlers.SERVER_ERROR?.match(error, errorContext as never),
 		).toBe(true);
+		// A GET alone is not proof: core retries the whole endpoint, so an endpoint
+		// that wrote before reading would repeat its write.
+		await expect(runHandler('SERVER_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
+		});
+
+		(error as { replaySafe?: boolean }).replaySafe = true;
 		await expect(runHandler('SERVER_ERROR', error)).resolves.toEqual({
 			maxRetries: 2,
 		});
 	});
 
-	it('does not replay a write after a 5xx, which would double the edit', async () => {
+	it('does not replay a 5xx on an endpoint that already wrote', async () => {
 		const error = apiError({ status: 503, method: 'POST' });
 
 		await expect(runHandler('SERVER_ERROR', error)).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('retries a rate-limited export, which is not an ApiError', async () => {
+		const error = Object.assign(new Error('Drive export failed with 429'), {
+			name: 'GoogleSlidesExportError',
+			status: 429,
+			retryAfter: 2500,
+		});
+
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(error, errorContext as never),
+		).toBe(true);
+		await expect(runHandler('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 4,
+			headersRetryAfterMs: 2500,
+		});
+	});
+
+	it('does not treat a failed export as a rate limit when it is not one', async () => {
+		const error = Object.assign(new Error('Drive export failed with 404'), {
+			name: 'GoogleSlidesExportError',
+			status: 404,
+		});
+
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(error, errorContext as never),
+		).toBe(false);
 	});
 
 	it('keeps DEFAULT last and matching everything', () => {

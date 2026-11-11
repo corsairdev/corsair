@@ -87,17 +87,26 @@ const RATE_LIMIT_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 			const reason = errorReason(error);
 			return RATE_LIMIT_REASONS.some((entry) => reason.includes(entry));
 		}
+		// Export streams bytes through fetch, so its failures are an export error
+		// rather than an ApiError. Without this branch a 429 on export reaches
+		// EXPORT_ERROR and gets no retry, though Drive rate-limits it the same way.
+		if (error.name === 'GoogleSlidesExportError') {
+			const status = (error as { status?: number }).status;
+			return status === 429 || status === 403;
+		}
 		if (errorStatus(error) === 'resource_exhausted') return true;
 		const message = error.message.toLowerCase();
 		return message.includes('rate limit') || message.includes('quota exceeded');
 	},
-	handler: async (error: Error) => ({
-		maxRetries: 4,
-		headersRetryAfterMs:
-			isApiError(error) && error.retryAfter !== undefined
-				? error.retryAfter
-				: RATE_LIMIT_FALLBACK_MS,
-	}),
+	handler: async (error: Error) => {
+		// Both error shapes carry Retry-After in milliseconds under this name.
+		const retryAfter = (error as { retryAfter?: number }).retryAfter;
+		return {
+			maxRetries: 4,
+			headersRetryAfterMs:
+				retryAfter !== undefined ? retryAfter : RATE_LIMIT_FALLBACK_MS,
+		};
+	},
 };
 
 const AUTH_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
@@ -151,16 +160,19 @@ const EXPORT_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 
 const SERVER_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 	/**
-	 * 5xx is retried only for reads. A batchUpdate that timed out after Google
-	 * applied it would double the edit on replay, so the request method decides
-	 * whether a retry is safe; ApiError carries the request it was built from.
+	 * A 5xx is retried only when replaying the endpoint cannot duplicate work.
+	 * Core retries the whole endpoint, not the failed request, so the failed
+	 * method alone is not enough: `slides.create` POSTs a slide and then GETs it
+	 * back, and a 503 on that GET would replay the POST and add a second slide.
+	 * `replaySafe` on the error decides; a transport failure never reached Google
+	 * and is marked safe by the client, while a completed write is marked unsafe.
 	 */
 	match: (error: Error) => isApiError(error) && error.status >= 500,
 	handler: async (error: Error) => {
-		if (isApiError(error) && error.request?.method !== 'GET') {
-			return { maxRetries: 0 };
-		}
-		return { maxRetries: 2 };
+		// ApiError.request.method reflects only the last request, so a read-only
+		// method is not proof the endpoint is safe to repeat.
+		const replaySafe = (error as { replaySafe?: boolean }).replaySafe === true;
+		return { maxRetries: replaySafe ? 2 : 0 };
 	},
 };
 

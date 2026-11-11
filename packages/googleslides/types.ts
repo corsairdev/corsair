@@ -9,11 +9,8 @@
  * A provider payload this plugin forwards without reading it. The Slides
  * schemas describe 155 response types, so a passthrough field (shape fills,
  * outlines, shadows, chart specs) keeps its JSON rather than re-declaring it.
- *
- * unknown: the JSON a provider sent for a field whose inner shape this plugin
- * does not interpret; callers that need it read the documented sub-fields.
  */
-export type ProviderJson = Record<string, unknown>;
+export type ProviderJson = Record<string, unknown>; // unknown: forwarded provider JSON.
 
 export type Dimension = {
 	magnitude?: number;

@@ -106,4 +106,4 @@ apiNotes:
   slides.setNotes: 'Replaces the notes rather than appending. The slide is read first for the notes shape id; without one, the call throws and explains that the shape does not exist yet.'
   text.updateStyle: 'Google rejects the whole batch when `fields` names a property absent from `style`, so the schema rejects that combination before the request is sent.'
   text.delete: 'Deleting across a paragraph boundary can change paragraph styles and lists, because the two paragraphs merge.'
-  batch.update: 'Accepts any of the 49 `batchUpdate` request types. Google validates every request before applying any, so an invalid entry fails the whole batch.'
+  batch.update: 'Accepts any of the 49 `batchUpdate` request types except the deletions. `deleteObject`, `deleteText`, `deleteTableRow`, `deleteTableColumn`, `deleteParagraphBullets`, `deleteComment` and `deleteCommentReply` are refused before the request is sent, because this endpoint cannot attribute them to the destructive approval that `slides.remove` and `text.delete` carry. Google validates every request before applying any, so an invalid entry fails the whole batch.'

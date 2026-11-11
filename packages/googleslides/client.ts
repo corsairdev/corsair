@@ -84,10 +84,17 @@ function isUnauthorizedError(error: Error): boolean {
 
 type AuthContext = { key: string; _refreshAuth?: () => Promise<string> };
 
+/** An error the retry layer may repeat safely, tagged by the code that threw it. */
+type Replayable = Error & { replaySafe?: boolean };
+
 /**
  * One-shot 401 retry. Google access tokens live for an hour, and a batch job
  * that starts before expiry can hit 401 mid-run; the keyBuilder attaches
  * `_refreshAuth` so the retry can mint a fresh token instead of failing.
+ *
+ * A 401 means Google rejected the request before acting on it, so repeating it
+ * cannot duplicate anything, and the error is marked replayable for the layer
+ * above.
  */
 async function withAuthRetry<T>(
 	ctx: AuthContext,
@@ -106,6 +113,23 @@ async function withAuthRetry<T>(
 		}
 		throw error;
 	}
+}
+
+/**
+ * Core retries the whole endpoint, so a read that follows a completed write must
+ * not be retried: repeating the endpoint would repeat the write. A GET is only
+ * replayable when the endpoint has written nothing yet, which the endpoint knows
+ * and the client does not. Marking here keeps that decision with the caller
+ * rather than inferring it from the last request's method.
+ */
+export function markReplaySafe<T>(promise: Promise<T>): Promise<T> {
+	return promise.catch((error: unknown) => {
+		// unknown: rejections carry any value.
+		if (error instanceof Error) {
+			(error as Replayable).replaySafe = true;
+		}
+		throw error;
+	});
 }
 
 export async function makeSlidesRequest<T>(
@@ -182,9 +206,17 @@ export async function fetchDriveBytes(
 
 	if (!response.ok) {
 		const body = await response.text().catch(() => '');
+		// Retry-After is read here because a plain Response has no other way to
+		// carry it, and RATE_LIMIT_ERROR needs it to honour the provider's wait.
+		const retryAfterHeader = response.headers.get('retry-after');
+		const retryAfterSeconds =
+			retryAfterHeader === null ? undefined : Number(retryAfterHeader);
 		throw new GoogleSlidesExportError(
 			`Drive export failed with ${response.status}: ${body}`,
 			response.status,
+			Number.isFinite(retryAfterSeconds)
+				? (retryAfterSeconds as number) * 1000
+				: undefined,
 		);
 	}
 
@@ -202,10 +234,17 @@ export async function fetchDriveBytes(
 	};
 }
 
+/**
+ * A non-JSON Drive failure. The status and Retry-After are copied onto the error
+ * because a plain Response cannot be handed to the error handlers, and both are
+ * needed to decide whether a retry can help.
+ */
 export class GoogleSlidesExportError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		/** Milliseconds from Retry-After, when the provider sent one. */
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'GoogleSlidesExportError';

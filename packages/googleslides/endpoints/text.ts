@@ -84,7 +84,14 @@ export const textReplaceAll: GoogleSlidesEndpoints['textReplaceAll'] = async (
 			const summary = summarizeWrite(response);
 			return { ...summary, presentationId: parsed.presentationId };
 		},
-		(parsed) => ({ find: parsed.find, replace: parsed.replace }),
+		// Lengths, not the strings: the search and replacement text are deck
+		// content and can hold anything, and the event log stores payloads as
+		// plain JSON when encryption at rest is off.
+		(parsed, result) => ({
+			findLength: parsed.find.length,
+			replaceLength: parsed.replace.length,
+			occurrencesChanged: result.occurrencesChanged ?? undefined,
+		}),
 	);
 
 export const textDelete: GoogleSlidesEndpoints['textDelete'] = async (
