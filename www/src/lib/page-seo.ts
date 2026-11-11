@@ -36,6 +36,10 @@ export function contributorDisplayName(
 	return trimmed ? trimmed : githubUsername;
 }
 
+/**
+ * Title, description and index flag for a contributor page under /oss/u.
+ * A profile with nothing claimed is kept out of the index.
+ */
 export function contributorSeoText({
 	name,
 	githubUsername,
@@ -59,6 +63,10 @@ export function contributorSeoText({
 	return { title, description, indexable: integrationCount > 0 };
 }
 
+/**
+ * Title and description for an /oss/<slug> page. The title talks about
+ * contributing so it does not compete with /integrations/<slug> in search.
+ */
 export function ossIntegrationSeoText(integrationName: string): {
 	title: string;
 	description: string;
