@@ -858,8 +858,10 @@ export type CompaniesListInput = z.input<typeof CompaniesListInputSchema>;
 
 const CompaniesListResponseSchema = HappyScribeCompanyListSchema;
 
+// The API answers 400 without organization_id, even on a read by id.
 const CompaniesGetInputSchema = z.object({
 	companyId: z.number().int().describe('Company ID to retrieve.'),
+	organizationId: OrganizationIdSchema,
 });
 
 export type CompaniesGetInput = z.input<typeof CompaniesGetInputSchema>;
@@ -893,6 +895,7 @@ const PeopleListResponseSchema = HappyScribePersonListSchema;
 
 const PeopleGetInputSchema = z.object({
 	personId: z.number().int().describe('Person ID to retrieve.'),
+	organizationId: OrganizationIdSchema,
 });
 
 export type PeopleGetInput = z.input<typeof PeopleGetInputSchema>;

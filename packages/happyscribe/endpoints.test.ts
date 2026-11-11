@@ -464,15 +464,22 @@ describe('intelligence', () => {
 		respond(company);
 		const got = await invoke<{ industry?: string }>(Intelligence.getCompany, {
 			companyId: 1,
+			organizationId: 123,
 		});
 		expect(got.industry).toBe('Technology');
+		// Live: without organization_id the API answers 400 "Parameter
+		// missing: workspace_id".
+		expect(lastRequest().path).toBe('/api/v1/companies/1');
+		expect(lastRequest().query.organization_id).toBe('123');
 
 		respond(person);
 		const personResult = await invoke<{ primaryEmail?: string }>(
 			Intelligence.getPerson,
-			{ personId: 1 },
+			{ personId: 1, organizationId: 123 },
 		);
 		expect(personResult.primaryEmail).toBe('jane@acme.com');
+		expect(lastRequest().path).toBe('/api/v1/people/1');
+		expect(lastRequest().query.organization_id).toBe('123');
 	});
 
 	it('lists people filtered by email', async () => {

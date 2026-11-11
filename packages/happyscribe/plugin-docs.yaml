@@ -81,8 +81,8 @@ apiExamples:
   companies.list:
     call: "{ organizationId: 123, domain: 'acme.com' }"
   companies.get:
-    call: "{ companyId: 1 }"
+    call: "{ companyId: 1, organizationId: 123 }"
   people.list:
     call: "{ organizationId: 123, search: 'Jane' }"
   people.get:
-    call: "{ personId: 1 }"
+    call: "{ personId: 1, organizationId: 123 }"

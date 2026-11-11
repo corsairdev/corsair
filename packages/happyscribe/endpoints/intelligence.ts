@@ -63,9 +63,10 @@ export const getCompany: HappyScribeEndpoints['companiesGet'] = (ctx, input) =>
 			output: Outputs.companiesGet,
 		},
 		input,
-		({ companyId }) => ({
+		({ companyId, organizationId }) => ({
 			method: 'GET',
 			path: `/companies/${segment(companyId)}`,
+			query: { organization_id: organizationId },
 			replaySafe: true,
 		}),
 	);
@@ -110,9 +111,10 @@ export const getPerson: HappyScribeEndpoints['peopleGet'] = (ctx, input) =>
 			output: Outputs.peopleGet,
 		},
 		input,
-		({ personId }) => ({
+		({ personId, organizationId }) => ({
 			method: 'GET',
 			path: `/people/${segment(personId)}`,
+			query: { organization_id: organizationId },
 			replaySafe: true,
 		}),
 	);
