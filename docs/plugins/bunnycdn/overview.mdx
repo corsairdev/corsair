@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "bunny.net plugin"
+sidebarTitle: "Overview"
 description: "Edge platform API for managing pull zones, storage zones, DNS zones, Shield security, and Magic Containers, purging cache, and reading statistics and billing."
 ---
 
@@ -16,16 +17,20 @@ Use **bunny.net** through Corsair: one client, typed API calls.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/bunnycdn
+npm install corsair @corsair-dev/bunnycdn better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/bunnycdn
+yarn add corsair @corsair-dev/bunnycdn better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/bunnycdn
+pnpm install corsair @corsair-dev/bunnycdn better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/bunnycdn
+bun add corsair @corsair-dev/bunnycdn better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
