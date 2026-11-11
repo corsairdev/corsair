@@ -28,7 +28,7 @@ Corsair has three parts:
 
 ## Pricing
 
-Hosted plans at hub.corsair.dev. Tool calls are unlimited on every plan.
+Hosted plans at hub.corsair.dev. Tool calls are unlimited on every plan, with one exception: apps that run on Corsair's own account with nothing to sign in to, such as Firecrawl, Exa, Reducto and TinyFish. Each call to those is billed to your organization's Corsair credits, and calls stop when the credits run out or a spend limit is reached. See [Corsair credits](https://docs.corsair.dev/cloud/mcp#corsair-credits).
 
 - **Hobby, $0 a month:** 50 connections, 100k webhook events, up to 3 team members, Corsair-branded consent screen, Discord community support.
 - **Pro, $200 a month:** unlimited connections and webhook events, unlimited team members, custom-branded consent screen, Slack support, custom integrations built by the Corsair team.
