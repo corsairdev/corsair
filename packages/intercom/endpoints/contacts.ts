@@ -220,12 +220,11 @@ export const listSubscriptions: IntercomEndpoints['contactsListSubscriptions'] =
 
 export const attachToCompany: IntercomEndpoints['contactsAttachToCompany'] =
 	async (ctx, input) => {
-		const { contact_id, ...body } = input;
 		const result = await makeIntercomRequest<
 			IntercomEndpointOutputs['contactsAttachToCompany']
-		>(`contacts/${contact_id}/companies`, ctx.key, {
+		>(`contacts/${input.contact_id}/companies`, ctx.key, {
 			method: 'POST',
-			body,
+			body: { id: input.company_id },
 		});
 
 		if (result && ctx.db.companies) {
