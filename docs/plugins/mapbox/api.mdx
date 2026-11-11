@@ -410,7 +410,7 @@ Up to 25 coordinates, or 10 for mapbox/driving-traffic. A null cell means no rou
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string` | Yes | — |
+| `code` | `string \| null` | Yes | Ok, or null when some pairs are unroutable (those cells are null). |
 | `durations` | `(number \| null)[][] \| null` | No | Seconds from each source (row) to each destination (column); null where no route exists. |
 | `distances` | `(number \| null)[][] \| null` | No | Meters from each source (row) to each destination (column); null where no route exists. Only present when annotations includes distance. |
 | `sources` | `object[]` | Yes | — |

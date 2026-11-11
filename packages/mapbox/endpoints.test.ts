@@ -160,6 +160,28 @@ describe('output parsing', () => {
 		]);
 	});
 
+	it('matrix.calculate returns a mixed answer whose code is null', async () => {
+		// The Matrix errors table lists a 200 with code null when some pairs are
+		// routable and some are not; the unroutable cells are null.
+		respond(fetchMock, {
+			...matrixDurations,
+			code: null,
+			durations: [
+				[0, null],
+				[null, 0],
+			],
+		});
+		const { ctx } = makeContext();
+
+		const result = await endpoints.matrix.calculate(ctx, {
+			profile: 'mapbox/driving',
+			coordinates: [PARIS, NEARBY],
+		});
+
+		expect(result.code).toBeNull();
+		expect(result.durations?.[0]).toEqual([0, null]);
+	});
+
 	it('isochrone.get reads polygon contours, largest first as Mapbox sends them', async () => {
 		respond(fetchMock, isochronePolygons);
 		const { ctx } = makeContext();

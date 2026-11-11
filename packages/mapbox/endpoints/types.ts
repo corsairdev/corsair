@@ -561,7 +561,14 @@ const MatrixTableSchema = z.array(z.array(z.number().nullable()));
 
 const MatrixResponseSchema = z
 	.object({
-		code: z.string(),
+		// Mapbox's Matrix errors table lists a 200 with code null when the
+		// request mixes routable and unroutable pairs.
+		code: z
+			.string()
+			.nullable()
+			.describe(
+				'Ok, or null when some pairs are unroutable (those cells are null).',
+			),
 		durations: MatrixTableSchema.nullish().describe(
 			'Seconds from each source (row) to each destination (column); null where no route exists.',
 		),
