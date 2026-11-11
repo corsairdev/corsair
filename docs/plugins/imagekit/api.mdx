@@ -133,7 +133,7 @@ await corsair.imagekit.api.files.bulkDelete({ fileIds: ['598821f949c0a938d57563b
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileIds` | `string[]` | Yes | File IDs to delete permanently; a 207 answer reports per-file failures. |
+| `fileIds` | `string[]` | Yes | Up to 100 file IDs to delete permanently; a 207 answer reports per-file failures. |
 
 
 
@@ -253,9 +253,9 @@ await corsair.imagekit.api.files.getDetails({ fileId: '598821f949c0a938d57563bd'
 | `isPublished` | `boolean \| null` | No | — |
 | `customCoordinates` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
-| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `customMetadata` | `Record<string, any> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, any> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, any> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 
@@ -302,11 +302,11 @@ await corsair.imagekit.api.files.list({ path: '/products/', limit: 25, skip: 25 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `string` | No | Only `file` returns files; the default also returns folders. |
+| `type` | `file \| file-version \| folder \| all` | No | Asset kind to list; the default `file` lists only files. |
 | `path` | `string` | No | Only assets inside this folder path, e.g. `/products/`. |
 | `searchQuery` | `string` | No | Search filter expression over name, tags, type, size and createdAt, e.g. `name = "summer"`. |
-| `fileType` | `'all' \| 'image' \| 'non-image'` | No | All files, images only, or non-image files (video and others). |
-| `sort` | `'ASC_NAME' \| 'DESC_NAME' \| 'ASC_CREATED' \| 'DESC_CREATED' \| 'ASC_UPDATED' \| 'DESC_UPDATED' \| 'ASC_HEIGHT' \| 'DESC_HEIGHT' \| 'ASC_WIDTH' \| 'DESC_WIDTH' \| 'ASC_SIZE' \| 'DESC_SIZE' \| 'ASC_RELEVANCE' \| 'DESC_RELEVANCE'` | No | Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE. |
+| `fileType` | `all \| image \| non-image` | No | All files, images only, or non-image files (video and others). |
+| `sort` | `ASC_NAME \| DESC_NAME \| ASC_CREATED \| DESC_CREATED \| ASC_UPDATED \| DESC_UPDATED \| ASC_HEIGHT \| DESC_HEIGHT \| ASC_WIDTH \| DESC_WIDTH \| ASC_SIZE \| DESC_SIZE \| ASC_RELEVANCE \| DESC_RELEVANCE` | No | Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE. |
 | `limit` | `number` | No | Page size, 1-1000; the default is 1000. |
 | `skip` | `number` | No | Assets to skip before this page; combine with limit to page. |
 
@@ -344,9 +344,9 @@ await corsair.imagekit.api.files.list({ path: '/products/', limit: 25, skip: 25 
     isPublished?: boolean | null,
     customCoordinates?: string | null,
     description?: string | null,
-    customMetadata?: Record<string, unknown> | null,
-    extensionStatus?: Record<string, unknown> | null,
-    embeddedMetadata?: Record<string, unknown> | null,
+    customMetadata?: Record<string, any> | null,
+    extensionStatus?: Record<string, any> | null,
+    embeddedMetadata?: Record<string, any> | null,
     createdAt?: string | null,
     updatedAt?: string | null
   } | {
@@ -354,7 +354,7 @@ await corsair.imagekit.api.files.list({ path: '/products/', limit: 25, skip: 25 
     folderId: string,
     name?: string | null,
     folderPath?: string | null,
-    customMetadata?: Record<string, unknown> | null,
+    customMetadata?: Record<string, any> | null,
     createdAt?: string | null,
     updatedAt?: string | null
   }
@@ -518,7 +518,7 @@ await corsair.imagekit.api.files.rename({ filePath: '/products/old.jpg', newFile
 
 `files.updateDetails`
 
-Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags, or publish or unpublish it
+Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags (names or all), or publish or unpublish it (that call alone)
 
 **Risk:** `write`
 
@@ -531,11 +531,11 @@ await corsair.imagekit.api.files.updateDetails({ fileId: '598821f949c0a938d57563
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | Unique identifier of the asset. |
-| `tags` | `string[]` | No | Full replacement tag list for the file. |
+| `tags` | `string[]` | No | Full replacement tag list; an empty array clears every tag. |
 | `customCoordinates` | `string` | No | Custom coordinates string, e.g. `10,10,100,100`. |
-| `customMetadata` | `Record<string, unknown>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `customMetadata` | `Record<string, any>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
 | `description` | `string` | No | Short human-readable description stored with the file. |
-| `removeAITags` | `string[] \| 'all'` | No | AI tag names to remove, or the string `all` to remove every AI tag. |
+| `removeAITags` | `string[] \| all` | No | AI tag names to remove, or the string `all` to remove every AI tag. |
 | `isPublished` | `boolean` | No | Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields. |
 
 
@@ -561,9 +561,9 @@ await corsair.imagekit.api.files.updateDetails({ fileId: '598821f949c0a938d57563
 | `isPublished` | `boolean \| null` | No | — |
 | `customCoordinates` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
-| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `customMetadata` | `Record<string, any> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, any> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, any> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 
@@ -621,7 +621,7 @@ await corsair.imagekit.api.files.upload({ file: 'https://example.com/photo.jpg',
 | `overwriteTags` | `boolean` | No | Replace existing tags instead of merging. |
 | `overwriteAITags` | `boolean` | No | Replace existing AI tags instead of merging. |
 | `overwriteCustomMetadata` | `boolean` | No | Replace existing custom metadata instead of merging. |
-| `customMetadata` | `Record<string, unknown>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `customMetadata` | `Record<string, any>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
 | `description` | `string` | No | Short human-readable description stored with the file. |
 
 
@@ -650,8 +650,8 @@ await corsair.imagekit.api.files.upload({ file: 'https://example.com/photo.jpg',
 | `isPublished` | `boolean \| null` | No | — |
 | `customCoordinates` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `customMetadata` | `Record<string, any> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="AITags full type">
@@ -750,9 +750,9 @@ await corsair.imagekit.api.fileVersions.getDetails({ fileId: '598821f949c0a938d5
 | `isPublished` | `boolean \| null` | No | — |
 | `customCoordinates` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
-| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `customMetadata` | `Record<string, any> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, any> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, any> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 
@@ -834,9 +834,9 @@ await corsair.imagekit.api.fileVersions.list({ fileId: '598821f949c0a938d57563bd
   isPublished?: boolean | null,
   customCoordinates?: string | null,
   description?: string | null,
-  customMetadata?: Record<string, unknown> | null,
-  extensionStatus?: Record<string, unknown> | null,
-  embeddedMetadata?: Record<string, unknown> | null,
+  customMetadata?: Record<string, any> | null,
+  extensionStatus?: Record<string, any> | null,
+  embeddedMetadata?: Record<string, any> | null,
   createdAt?: string | null,
   updatedAt?: string | null
 }[]
@@ -889,9 +889,9 @@ await corsair.imagekit.api.fileVersions.restore({ fileId: '598821f949c0a938d5756
 | `isPublished` | `boolean \| null` | No | — |
 | `customCoordinates` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
-| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `customMetadata` | `Record<string, any> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, any> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, any> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 
@@ -1142,7 +1142,7 @@ await corsair.imagekit.api.metadata.getByFileId({ fileId: '598821f949c0a938d5756
 | `duration` | `number \| null` | No | — |
 | `audioCodec` | `string \| null` | No | — |
 | `videoCodec` | `string \| null` | No | — |
-| `exif` | `Record<string, unknown> \| null` | No | — |
+| `exif` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -1185,7 +1185,7 @@ await corsair.imagekit.api.metadata.getByUrl({ url: 'https://ik.imagekit.io/your
 | `duration` | `number \| null` | No | — |
 | `audioCodec` | `string \| null` | No | — |
 | `videoCodec` | `string \| null` | No | — |
-| `exif` | `Record<string, unknown> \| null` | No | — |
+| `exif` | `Record<string, any> \| null` | No | — |
 
 
 
