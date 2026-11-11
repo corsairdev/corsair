@@ -1,0 +1,68 @@
+displayName: U301
+description: Create and manage branded short links, configure custom domains and their redirects, and read click analytics with U301.
+domain: u301.com
+recommendedAuth: api_key
+overviewNote: |
+  U301 needs **two** credentials on every call: an API key in `Authorization: Bearer`, and a **workspace ID** that goes in the `workspaceId` query parameter. Find both in your U301 dashboard.
+
+  There is one key slot, so set the key to both values with a newline between them:
+
+  ```text
+  <api key>
+  <workspace id>
+  ```
+
+  Or pass them as the `apiKey` and `workspaceId` options, which is clearer. A key without a workspace is reported as a configuration error before any request goes out, rather than as a `401` that looks like a bad key.
+
+  Things worth knowing before you rely on an answer:
+
+  - **A new link spends one slot of the monthly allowance**, and free accounts get 100 a month. Reusing a link does not: pass `reuseExisting` to return the existing link for a URL instead of making a second one, and check `isReused` on the answer. An oversized bulk request answers `429` **without creating anything**, so a `429` here is the allowance, not a request rate — the plugin never retries it.
+  - **A link looks different on create than on read.** A create answers `shortLink`, `url` and `isReused`; a read answers `shortUrl`, `originalUrl` and `statsClicks`. The two shapes are modelled as they are rather than merged.
+  - **Links and domains are addressed by their own name, not an internal id.** `links.get` takes the short form, `u301.co/abc123`, and it is sent as a path with its slash rather than an encoded `%2F`. A `https://` prefix is stripped for you.
+  - **A custom domain is not live when it is created.** `domains.create` adds it, then you add the DNS CNAME and poll `domains.active` until `actived` is true — that is U301's own spelling of the field. A domain that is still verifying answers `actived: false` with a message such as "Challenge not ready".
+  - **The three domain settings share one PATCH** but are separate operations, so each sends exactly one field: `domains.pathLength` (`randomCodeLength`, 3 to 10), `domains.homeRedirect` and `domains.notFoundRedirect`.
+  - **Analytics separate range from granularity.** `range` is how far back (`1d`, `7d`, `30d`, `90d`, `1y`) and `granularity` is how the buckets are cut (`hour`, `day`, `week`, `month`); a year at hourly granularity is a very large answer. Give `timezone` when the day boundary matters.
+  - **The audience breakdown puts the dimension in the path.** `analytics.audience` takes `countries`, `cities`, `referrers`, `browsers`, `os` or `devices` and calls the matching `top-<dimension>` route.
+examples:
+  read:
+    path: links.list
+    title: List short links with their click counts
+    args:
+      page: 1
+      perPage: 20
+  write:
+    path: links.create
+    title: Shorten a URL on your own domain
+    args:
+      url: https://example.com/spring-sale
+      domain: go.example.com
+      slug: spring
+      reuseExisting: true
+apiExamples:
+  links.create:
+    call: "{ url: 'https://example.com/spring-sale', slug: 'spring', comment: 'spring campaign' }"
+  links.list:
+    call: "{ page: 1, perPage: 20 }"
+  links.get:
+    call: "{ shortlink: 'u301.co/jtyZ' }"
+  links.delete:
+    call: "{ shortlink: 'u301.co/jtyZ' }"
+  domains.list: {}
+  domains.create:
+    call: "{ domain: 'go.example.com', shortCodeLength: 5 }"
+  domains.get:
+    call: "{ domain: 'go.example.com' }"
+  domains.active:
+    call: "{ domain: 'go.example.com' }"
+  domains.delete:
+    call: "{ domain: 'go.example.com' }"
+  domains.pathLength:
+    call: "{ domain: 'go.example.com', randomCodeLength: 8 }"
+  domains.homeRedirect:
+    call: "{ domain: 'go.example.com', homePageRedirectUrl: 'https://example.com' }"
+  domains.notFoundRedirect:
+    call: "{ domain: 'go.example.com', notFoundPageRedirectUrl: 'https://example.com/404' }"
+  analytics.clicks:
+    call: "{ range: '7d', granularity: 'day', timezone: 'UTC' }"
+  analytics.audience:
+    call: "{ dimension: 'countries', range: '30d' }"
