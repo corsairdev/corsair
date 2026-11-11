@@ -122,8 +122,14 @@ describe('CommCare plugin through createCorsair', () => {
 	});
 });
 
-// Live smoke: read-only calls against the real API when a key is present.
-const describeIfKey = process.env.COMMCARE_API_KEY ? describe : describe.skip;
+// Live smoke: read-only calls against the real API. ApiKey auth needs the
+// key, its owner's username and the project, so all three must be set.
+const describeIfKey =
+	process.env.COMMCARE_API_KEY &&
+	process.env.COMMCARE_USERNAME &&
+	process.env.COMMCARE_DOMAIN
+		? describe
+		: describe.skip;
 
 describeIfKey('live CommCare', () => {
 	const key = process.env.COMMCARE_API_KEY as string;
@@ -137,7 +143,8 @@ describeIfKey('live CommCare', () => {
 				domain,
 				username,
 			});
-			expect(result.objects.length).toBeGreaterThan(0);
+			// A new project can have no mobile workers yet.
+			expect(Array.isArray(result.objects)).toBe(true);
 		} finally {
 			testDb.cleanup();
 		}
