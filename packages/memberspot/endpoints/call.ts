@@ -36,6 +36,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	},
 	options: {
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
+		/**
+		 * Reshapes a reply the output schema cannot take as sent, for routes whose
+		 * live answer differs from the spec. Kept out of the schema so the
+		 * generated reference still shows the output fields.
+		 */
+		// unknown: the raw body, before the output schema has checked it.
+		normalize?: (raw: unknown) => unknown;
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
@@ -51,8 +58,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// which the request layer returns as ''; a reply with no content type comes
 	// back as undefined. An empty object lets both parse; a read that needs fields
 	// still fails, which is how find-by-uid reports an unknown uid.
+	const reply = options.normalize ? options.normalize(raw) : raw;
 	const result = operation.output.parse(
-		raw === undefined || raw === '' ? {} : raw,
+		reply === undefined || reply === '' ? {} : reply,
 	);
 
 	await logEventFromContext(

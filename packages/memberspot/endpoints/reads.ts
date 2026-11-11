@@ -728,8 +728,24 @@ function chapterAccess(
 			// Enabling access that is already enabled is the same state.
 			replaySafe: true,
 		}),
-		{ log: (parsed) => ({ chapterId: parsed.chapterId }) },
+		{
+			log: (parsed) => ({ chapterId: parsed.chapterId }),
+			normalize: chapterAccessReply,
+		},
 	);
+}
+
+/**
+ * The spec says both chapter-access routes echo the request DTO, but live
+ * (11-11) they answer 201 with the bare body `true`, as text/html. The request
+ * layer hands that over as the string 'true' (a boolean, if it ever comes as
+ * JSON), so it is mapped onto the `{ success }` shape the other writes return.
+ */
+// unknown: the raw body, before the output schema has checked it.
+function chapterAccessReply(raw: unknown): unknown {
+	if (raw === true || raw === 'true') return { success: true };
+	if (raw === false || raw === 'false') return { success: false };
+	return raw;
 }
 
 export const chaptersEnableAccess: MemberSpotEndpoints['chaptersEnableAccess'] =

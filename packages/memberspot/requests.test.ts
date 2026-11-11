@@ -699,3 +699,40 @@ describe('write routes the spec documents with no response body', () => {
 		).rejects.toThrow();
 	});
 });
+
+describe('chapter access replies', () => {
+	/**
+	 * Live (11-11), both chapter-access routes answer 201 with the bare body
+	 * `true`, not the DTO echo the spec documents.
+	 */
+	function respondBareTrue(contentType: string) {
+		fetchMock.mockResolvedValueOnce(
+			new Response('true', {
+				status: 201,
+				headers: { 'Content-Type': contentType },
+			}),
+		);
+	}
+
+	it('chapters.enableAccess resolves the bare `true` reply as success', async () => {
+		respondBareTrue('text/html');
+		await expect(
+			api.chapters.enableAccess(makeCtx(), {
+				email: 'jordan@acme.example',
+				courseId: 'course-1',
+				chapterId: 'chapter-1',
+			}),
+		).resolves.toEqual({ success: true });
+	});
+
+	it('chapters.enableAccessByUid resolves `true` sent as JSON too', async () => {
+		respondBareTrue('application/json');
+		await expect(
+			api.chapters.enableAccessByUid(makeCtx(), {
+				uid: 'uid-1',
+				courseId: 'course-1',
+				chapterId: 'chapter-1',
+			}),
+		).resolves.toEqual({ success: true });
+	});
+});
