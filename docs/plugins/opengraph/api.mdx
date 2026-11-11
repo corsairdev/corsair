@@ -306,7 +306,7 @@ await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/W
 | `max_chars` | `number` | No | Cap the Markdown at this many characters. |
 | `chunking` | `boolean` | No | Split the document into chunks sized for embedding. Default false. |
 | `chunk_size` | `number` | No | Target chunk size in characters. Default 2000. |
-| `chunk_overlap` | `number` | No | Characters repeated from the end of the previous chunk. Default 0. |
+| `chunk_overlap` | `number` | No | Characters repeated from the end of the previous chunk, at most half of chunk_size. Default 0. |
 | `heading_aware` | `boolean` | No | Start a new chunk at each section heading. Default true. |
 | `heading_aware_level` | `number` | No | Which heading level starts a new chunk. Default 2. |
 | `max_chunks` | `number` | No | Most chunks to return. Default 500. |
