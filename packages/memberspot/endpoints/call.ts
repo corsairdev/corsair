@@ -47,10 +47,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		replaySafe,
 	});
 	// Several write routes (delete-users, set-offer-expires, set-course-start-date)
-	// answer 200 with no body, which the request layer returns as undefined. An
-	// empty object lets those parse; a read that needs fields still fails, which
-	// is how find-by-uid reports an unknown uid.
-	const result = operation.output.parse(raw === undefined ? {} : raw);
+	// answer with no body. Live, that is `content-type: text/html` with length 0,
+	// which the request layer returns as ''; a reply with no content type comes
+	// back as undefined. An empty object lets both parse; a read that needs fields
+	// still fails, which is how find-by-uid reports an unknown uid.
+	const result = operation.output.parse(
+		raw === undefined || raw === '' ? {} : raw,
+	);
 
 	await logEventFromContext(
 		ctx,

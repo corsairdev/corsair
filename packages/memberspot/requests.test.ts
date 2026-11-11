@@ -650,4 +650,52 @@ describe('write routes the spec documents with no response body', () => {
 			api.users.findByUid(makeCtx(), { uid: 'missing' }),
 		).rejects.toThrow();
 	});
+
+	/**
+	 * What the live API sends (11-11): `content-type: text/html` with
+	 * `content-length: 0`, 200 on the PATCH routes and 201 on the delete routes.
+	 * The request layer reads a non-JSON body as text, so the endpoint sees ''.
+	 */
+	function respondEmptyText(status: number) {
+		fetchMock.mockResolvedValueOnce(
+			new Response('', {
+				status,
+				headers: { 'Content-Type': 'text/html', 'Content-Length': '0' },
+			}),
+		);
+	}
+
+	it('resolves the empty text/html reply the live write routes send', async () => {
+		respondEmptyText(200);
+		await expect(
+			api.users.setOfferExpires(makeCtx(), {
+				uid: 'uid-1',
+				offerId: 'offer-1',
+				expiresAt: '2026-12-11T00:00:00.000Z',
+			}),
+		).resolves.toEqual({});
+		respondEmptyText(200);
+		await expect(
+			api.users.setCourseStartDate(makeCtx(), {
+				uid: 'uid-1',
+				courseId: 'course-1',
+				startDate: '2026-12-01T00:00:00.000Z',
+			}),
+		).resolves.toEqual({});
+		respondEmptyText(201);
+		await expect(
+			api.users.deleteByUid(makeCtx(), { uids: ['uid-1'] }),
+		).resolves.toEqual({});
+		respondEmptyText(201);
+		await expect(
+			api.users.delete(makeCtx(), { emails: ['a@acme.example'] }),
+		).resolves.toEqual({});
+	});
+
+	it('still rejects the empty text/html reply find-by-uid sends for an unknown uid', async () => {
+		respondEmptyText(200);
+		await expect(
+			api.users.findByUid(makeCtx(), { uid: 'missing' }),
+		).rejects.toThrow();
+	});
 });
