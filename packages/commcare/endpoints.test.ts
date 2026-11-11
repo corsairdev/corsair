@@ -210,8 +210,12 @@ describe('cases', () => {
 		});
 		expect(result.cases).toHaveLength(1);
 		const sent = lastRequest();
+		// The bulk-fetch view reads the ids from a JSON POST body; a GET
+		// with query ids answers 400 "Payload must be valid JSON".
+		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe(`/a/${DOMAIN}/api/case/v2/bulk-fetch/`);
-		expect(sent.query.case_ids).toBe('a,b');
+		expect(sent.body).toEqual({ case_ids: ['a', 'b'] });
+		expect(sent.query.case_ids).toBeUndefined();
 		expect(sent.query.fields).toBe('case_id');
 	});
 

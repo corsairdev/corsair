@@ -77,11 +77,13 @@ export const bulkFetch: CommCareEndpoints['casesBulkFetch'] = (ctx, input) =>
 			output: Outputs.casesBulkFetch,
 		},
 		input,
+		// The ids go in a JSON POST body; only the field filters ride on the
+		// query string. A read, so a 5xx can be replayed.
 		(domain, { caseIds, fields, fieldsProperties }) => ({
-			method: 'GET',
+			method: 'POST',
 			path: `/a/${segment(domain)}/api/case/v2/bulk-fetch/`,
+			body: { case_ids: caseIds },
 			query: {
-				case_ids: caseIds.join(','),
 				...(fields?.length ? { fields: fields.join(',') } : {}),
 				...(fieldsProperties?.length
 					? { 'fields.properties': fieldsProperties.join(',') }

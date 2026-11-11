@@ -91,6 +91,9 @@ export type CommCareCase = z.infer<typeof CommCareCaseSchema>;
 export const CommCareCaseListSchema = z
 	.object({
 		matching_records: z.number().nullish(),
+		// bulk-fetch only: ids it did not find come back in `cases` as stubs
+		// carrying `error: "not found"`, and are counted here.
+		missing_records: z.number().nullish(),
 		cases: z.array(CommCareCaseSchema),
 		// Follow-next cursor link for the next page of results.
 		next: z.string().nullish(),
@@ -413,7 +416,9 @@ const CasesBulkFetchInputSchema = z.object({
 	caseIds: z
 		.array(CaseIdSchema)
 		.min(1)
-		.describe('Case IDs to fetch in one call.'),
+		.describe(
+			'Case IDs to fetch in one call; an id that is not found comes back as a stub with `error: "not found"`.',
+		),
 	fields: z
 		.array(z.string())
 		.optional()
