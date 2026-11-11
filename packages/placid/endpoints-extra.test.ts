@@ -45,6 +45,9 @@ jest.mock('node:https', () => ({
 				{
 					statusCode: nextDownload.status,
 					headers: nextDownload.headers,
+					// IncomingMessage has destroy(); the download calls it on
+					// responses it does not read.
+					destroy: () => {},
 				},
 			);
 			// Deliver on the next tick so the listener is attached first.
