@@ -1375,6 +1375,14 @@
                 ]
               },
               {
+                "group": "Cloudlayer",
+                "pages": [
+                  "plugins/cloudlayer/overview",
+                  "plugins/cloudlayer/api",
+                  "plugins/cloudlayer/database"
+                ]
+              },
+              {
                 "group": "Coassemble",
                 "pages": [
                   "plugins/coassemble/overview",
