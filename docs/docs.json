@@ -1349,6 +1349,14 @@
                 ]
               },
               {
+                "group": "CloudConvert",
+                "pages": [
+                  "plugins/cloudconvert/overview",
+                  "plugins/cloudconvert/api",
+                  "plugins/cloudconvert/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",

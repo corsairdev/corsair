@@ -1,0 +1,110 @@
+displayName: CloudConvert
+description: >-
+  Create, wait for, inspect, list and delete CloudConvert jobs and tasks; cancel
+  or retry tasks; create GCS/S3 export jobs; discover operations and formats; and
+  view account credits with API-key authentication. Job-level webhook fields are
+  not exposed. See https://cloudconvert.com/docs/api-reference/jobs and
+  https://cloudconvert.com/docs/api-reference/tasks.
+recommendedAuth: api_key
+overviewNote: >-
+  CloudConvert warns that its synchronous endpoints can time out for long-running
+  jobs and tasks. Prefer async jobs plus status reads for long work. The
+  provider's `redirect=true` returns raw export-file content; this JSON plugin
+  rejects that option. Job-level `webhook_url` is not exposed.
+examples:
+  read:
+    path: jobs.list
+    title: List recent jobs
+    args:
+      perPage: 10
+  write:
+    path: jobs.create
+    title: Create a conversion job
+    args:
+      tasks:
+        import_file:
+          operation: import/url
+          url: https://example.test/input.docx
+        convert:
+          operation: convert
+          input: import_file
+          output_format: pdf
+      tag: request-123
+apiExamples:
+  jobs.create:
+    tasks:
+      import_file:
+        operation: import/url
+        url: https://example.test/input.docx
+      convert:
+        operation: convert
+        input: import_file
+        output_format: pdf
+    tag: request-123
+  jobs.createAndWait:
+    tasks:
+      import_file:
+        operation: import/url
+        url: https://example.test/input.docx
+      convert:
+        operation: convert
+        input: import_file
+        output_format: pdf
+  jobs.get:
+    jobId: job-id
+  jobs.wait:
+    jobId: job-id
+  jobs.list:
+    include:
+      - tasks
+    perPage: 10
+  jobs.remove:
+    jobId: job-id
+  tasks.createExportGoogleCloudStorage:
+    exportTaskName: export
+    sourceTasks:
+      imported:
+        operation: import/url
+        url: https://example.test/input.pdf
+    input: imported
+    projectId: project-id
+    bucket: bucket-name
+    clientEmail: service-account@example.test
+    privateKey: <service-account-private-key>
+  tasks.createExportS3:
+    exportTaskName: export
+    sourceTasks:
+      imported:
+        operation: import/url
+        url: https://example.test/input.pdf
+    input: imported
+    bucket: bucket-name
+    region: us-east-1
+    accessKeyId: <access-key-id>
+    secretAccessKey: <secret-access-key>
+  tasks.list:
+    include:
+      - retries
+      - depends_on_tasks
+    perPage: 10
+  tasks.get:
+    taskId: task-id
+    include:
+      - retries
+      - depends_on_tasks
+      - payload
+      - job
+  tasks.wait:
+    taskId: task-id
+  tasks.cancel:
+    taskId: task-id
+  tasks.retry:
+    taskId: task-id
+  tasks.remove:
+    taskId: task-id
+  operations.list:
+    operation: convert
+    inputFormat: docx
+    outputFormat: pdf
+  formats.listSupported: {}
+  users.show: {}
