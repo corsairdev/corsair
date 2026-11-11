@@ -8,6 +8,10 @@ import {
 	DataboxEndpointOutputSchemas as Outputs,
 } from './types';
 
+// syncInfo statuses that can come without values: inProgress and neverSynced
+// mean call again shortly, failed means the last sync failed.
+const PENDING_SYNC_STATUSES = new Set(['inProgress', 'neverSynced', 'failed']);
+
 export const list: DataboxEndpoints['metricsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -59,11 +63,19 @@ export const getData: DataboxEndpoints['metricsGetData'] = (ctx, input) =>
 		{
 			shape: (raw) => {
 				const data = envelopeData(raw);
+				const syncStatus = asRecord(data?.syncInfo)?.status;
+				// While a first sync runs, or after one failed, Databox may
+				// answer with syncInfo alone; the caller needs that status to
+				// decide whether to call again.
+				const waiting =
+					typeof syncStatus === 'string' &&
+					PENDING_SYNC_STATUSES.has(syncStatus);
 				return {
-					metric: asRecord(data?.metric),
-					// dataPoints passes through unchecked so a body without it
-					// fails the output parse instead of reading as no data.
-					dataPoints: data?.dataPoints,
+					metric: asRecord(data?.metric) ?? (waiting ? null : undefined),
+					// Otherwise dataPoints passes through unchecked so a body
+					// without it fails the output parse instead of reading as no
+					// data.
+					dataPoints: data?.dataPoints ?? (waiting ? [] : undefined),
 					syncInfo: data?.syncInfo,
 				};
 			},

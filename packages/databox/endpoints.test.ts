@@ -807,6 +807,42 @@ describe('metrics.getData', () => {
 		expect(error).toMatchObject({ status: 502, replaySafe: true });
 	});
 
+	it.each(['inProgress', 'neverSynced', 'failed'])(
+		'keeps syncInfo when a %s sync returns no metric or dataPoints',
+		async (status) => {
+			respond({
+				requestId: 'r',
+				status: 'success',
+				data: {
+					syncInfo: {
+						status,
+						lastSyncedAt: null,
+						message: 'No sync has completed yet, so call again shortly.',
+					},
+				},
+			});
+
+			const result = await invoke(Metrics.getData, {
+				id: 'GoogleAnalytics4@sessions',
+				dateRange: {
+					from: '2026-06-01',
+					to: '2026-06-30',
+					granularity: 'daily',
+				},
+			});
+
+			expect(result).toEqual({
+				metric: null,
+				dataPoints: [],
+				syncInfo: {
+					status,
+					lastSyncedAt: null,
+					message: 'No sync has completed yet, so call again shortly.',
+				},
+			});
+		},
+	);
+
 	it('rejects a body without dataPoints rather than reading as no data', async () => {
 		respond({
 			requestId: 'r',

@@ -606,7 +606,9 @@ const GetMetricDataResponseSchema = z.object({
 			name: z.string().nullish(),
 			sourceId: z.number().nullish(),
 		})
-		.loose(),
+		.loose()
+		// Null only when syncInfo says a sync is pending or failed.
+		.nullable(),
 	dataPoints: z.array(MetricDataPointSchema),
 	syncInfo: z
 		.object({

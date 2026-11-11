@@ -120,7 +120,7 @@ await corsair.databox.api.datasets.create({ name: 'Transactions', dataSourceId: 
 ```ts
 {
   id: string,
-  dataType: 'datetime' | 'number' | 'string'
+  dataType: datetime | number | string
 }[]
 ```
 </Accordion>
@@ -301,7 +301,7 @@ await corsair.databox.api.datasets.getIngestion({ id: 2345678, ingestionId: 'a42
       size?: number | null
     } | null
   } | null,
-  errors?: Record<string, unknown>[] | null
+  errors?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -363,7 +363,7 @@ await corsair.databox.api.datasets.list({ dataSourceId: 1234567, type: 'dataset'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dataSourceId` | `number` | No | Only datasets in this data source. |
-| `type` | `'dataset' \| 'mergedDataset'` | No | dataset is API-created; mergedDataset combines several. |
+| `type` | `dataset \| mergedDataset` | No | dataset is API-created; mergedDataset combines several. |
 | `search` | `string` | No | Search term. |
 | `sortBy` | `string` | No | Field to sort by. |
 | `sortOrder` | `string` | No | Sort direction, such as asc or desc. |
@@ -741,7 +741,7 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
 {
   from: string,
   to: string,
-  granularity: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'allTime'
+  granularity: daily | weekly | monthly | quarterly | yearly | allTime
 }
 ```
 </Accordion>
@@ -750,11 +750,11 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
 
 ```ts
 {
-  logicalOperator?: 'and' | 'or',
+  logicalOperator?: and | or,
   conditions: {
-    type?: 'dimension' | 'unit',
+    type?: dimension | unit,
     field: string,
-    operator: 'ANY_OF' | 'NONE_OF' | 'EQ' | 'NEQ' | 'CONTAINS' | 'NOT_CONTAINS',
+    operator: ANY_OF | NONE_OF | EQ | NEQ | CONTAINS | NOT_CONTAINS,
     values?: (string | number)[]
   }[]
 }
@@ -768,7 +768,7 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metric` | `object` | Yes | — |
+| `metric` | `object \| null` | Yes | — |
 | `dataPoints` | `object[]` | Yes | — |
 | `syncInfo` | `object \| null` | No | — |
 
@@ -780,7 +780,7 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
   id?: string | null,
   name?: string | null,
   sourceId?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -790,7 +790,7 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
 {
   date?: string | null,
   value: number | null,
-  dimensions?: Record<string, unknown> | null
+  dimensions?: Record<string, any> | null
 }[]
 ```
 </Accordion>
