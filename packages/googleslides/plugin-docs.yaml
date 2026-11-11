@@ -1,0 +1,109 @@
+displayName: Google Slides
+domain: slides.google.com
+description: Presentation editor for building and sharing slide decks, with slides, text, shapes, images, tables and speaker notes.
+recommendedAuth: oauth_2
+overviewNote: |
+  Google Slides exposes presentation creation, slide creation and ordering, text editing and styling, bullet lists, speaker notes, shapes, images, tables, element transforms and grouping, plus PDF or PPTX export.
+
+  Scopes. The plugin requests `presentations` for slide content and `drive` for listing, copying, exporting and deleting a file, which are Drive calls.
+
+  Ids. `presentations.list` returns `presentationId` per file. `slides.list` returns each slide's `objectId`, and `slides.get` returns its `pageElements`. Text and element writes take the `objectId` of a shape or table, not a slide.
+
+  Placeholders. A slide created from a layout has placeholder shapes whose ids Google generates. Read the slide back to get them, or pass `placeholderIdMappings` through `batch.update` to choose ids up front.
+
+  Speaker notes. `slides.setNotes` reads the slide first to find the notes shape, deletes the existing text, then inserts the new text. A slide whose notes shape has never been created has no id for Google to write to, so the call explains that instead of guessing.
+
+  Text ranges. A range takes `type: 'ALL'`, `FROM_START_INDEX` with `startIndex`, or `FIXED_RANGE` with both indexes. Indexes are Unicode code units counted from the start of the shape's text, and Google appends a newline the caller did not type.
+
+  Destructive operations. `presentations.delete`, `slides.remove` and `text.delete` are marked destructive for Corsair permissions. `text.updateStyle` requires every name in `fields` to appear in `style`, because Google rejects the whole batch otherwise.
+
+  Rate limits. Google answers a quota burst with 429, or with a 403 whose body says `rateLimitExceeded`. Both are retried up to four times, waiting for `Retry-After` when present and four seconds otherwise. An exhausted daily quota is not retried, because no wait inside the request can clear it.
+
+  Raw requests. `batch.update` takes any of the 49 `batchUpdate` request types, for operations without a typed endpoint such as `mergeTableCells` or `updateParagraphStyle`.
+
+  Webhooks. Google Slides sends no push notifications, so the plugin has none.
+examples:
+  read:
+    path: slides.list
+    title: List the slides in a presentation
+    args:
+      presentationId: 1AbCdEfGhIjKlMnOpQrStUvWxYz
+  write:
+    path: text.insert
+    title: Fill a shape with text
+    args:
+      presentationId: 1AbCdEfGhIjKlMnOpQrStUvWxYz
+      objectId: title_box
+      text: Quarterly review
+apiExamples:
+  presentations.create:
+    call: "{ title: 'Quarterly review' }"
+  presentations.get:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' }"
+  presentations.list:
+    call: "{ pageSize: 20, orderBy: 'modifiedTime desc' }"
+  presentations.copy:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', name: 'Copy of Quarterly review' }"
+  presentations.exportPdf:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', format: 'pdf' }"
+  presentations.delete:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' }"
+  slides.list:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' }"
+  slides.get:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' }"
+  slides.create:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', layout: 'TITLE_AND_BODY', insertionIndex: 1 }"
+  slides.duplicate:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' }"
+  slides.remove:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' }"
+  slides.move:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectIds: ['slide_3'], insertionIndex: 0 }"
+  slides.setSkipped:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', isSkipped: true }"
+  slides.getThumbnail:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', size: 'LARGE' }"
+  slides.getNotes:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' }"
+  slides.setNotes:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', notes: 'Open with the retention number.' }"
+  text.insert:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'title_box', text: 'Quarterly review' }"
+  text.replaceAll:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', find: 'Q3', replace: 'Q4' }"
+  text.delete:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } }"
+  text.updateStyle:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'title_box', textRange: { type: 'ALL' }, style: { bold: true, fontSize: { magnitude: 32, unit: 'PT' } }, fields: ['bold', 'fontSize'] }"
+  text.createBullets:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } }"
+  text.removeBullets:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } }"
+  elements.createShape:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', shapeType: 'TEXT_BOX', elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 3000000 }, height: { magnitude: 1500000 } } } }"
+  elements.createImage:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', url: 'https://example.com/logo.png', elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 2000000 }, height: { magnitude: 1000000 } } } }"
+  elements.createTable:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', rows: 3, columns: 4, elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 5000000 }, height: { magnitude: 2000000 } } } }"
+  elements.setAltText:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'image_1', title: 'Revenue chart', description: 'Revenue rising 12% year over year' }"
+  elements.updateTransform:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { translateX: 914400, translateY: 457200 }, applyMode: 'ABSOLUTE' }"
+  elements.zOrder:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['shape_1'], operation: 'BRING_TO_FRONT' }"
+  elements.group:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['shape_1', 'shape_2'] }"
+  elements.ungroup:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['group_1'] }"
+  batch.update:
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', requests: [{ mergeTableCells: { objectId: 'table_1', tableRange: { location: { rowIndex: 0, columnIndex: 0 }, rowSpan: 2, columnSpan: 2 } } }] }"
+apiNotes:
+  presentations.list: 'The Drive query is a conjunction. Your filter is wrapped in parentheses and joined with a presentation MIME-type constraint and `trashed = false`, so an `or` filter cannot widen the result past presentations.'
+  presentations.exportPdf: 'Export returns base64 file bytes. A large deck takes longer than the default request timeout, so this call allows three minutes.'
+  slides.create: '`layoutId` wins over `layout` when both are given. The reply reports the layout Google actually applied, which differs from the request when the named layout is missing from the current master.'
+  slides.getNotes: 'The text comes from the notes page. Google terminates every shape with a newline, and that trailing newline is removed.'
+  slides.setNotes: 'Replaces the notes rather than appending. The slide is read first for the notes shape id; without one, the call throws and explains that the shape does not exist yet.'
+  text.updateStyle: 'Google rejects the whole batch when `fields` names a property absent from `style`, so the schema rejects that combination before the request is sent.'
+  text.delete: 'Deleting across a paragraph boundary can change paragraph styles and lists, because the two paragraphs merge.'
+  batch.update: 'Accepts any of the 49 `batchUpdate` request types. Google validates every request before applying any, so an invalid entry fails the whole batch.'
