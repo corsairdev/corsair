@@ -2518,5 +2518,21 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/tldv",
+    "dir": "packages/tldv",
+    "name": "tl;dv",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2210,
+        "title": "List webhook_signature once in the account fields"
+      }
+    ]
   }
 ]
