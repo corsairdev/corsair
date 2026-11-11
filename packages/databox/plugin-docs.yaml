@@ -23,15 +23,11 @@ examples:
       id: 2345678
       records:
         - transaction_id: T-10024
-          transaction_date: 2026-09-18T09:12:00+00:00
-          product_name: Standing Desk
-          quantity: 2
-          unit_price: 249
+          amount: 498
+          occurred_at: 2026-09-18T09:12:00+00:00
         - transaction_id: T-10025
-          transaction_date: 2026-09-18T10:03:00+00:00
-          product_name: Desk Lamp
-          quantity: 1
-          unit_price: 59
+          amount: 59
+          occurred_at: 2026-09-18T10:03:00+00:00
 apiExamples:
   auth.validateKey: {}
   dataSources.list:
