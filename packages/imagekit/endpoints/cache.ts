@@ -21,7 +21,12 @@ export const purge: ImageKitEndpoints['cachePurge'] = (ctx, input) =>
 			body: { url },
 		}),
 		{
-			log: ({ url }, result) => ({ url, requestId: result.requestId }),
+			// The query can hold a signed URL's ik-s signature, which grants
+			// access to a private file until it expires; keep it out of events.
+			log: ({ url }, result) => ({
+				url: withoutQuery(url),
+				requestId: result.requestId,
+			}),
 		},
 	);
 
@@ -43,3 +48,8 @@ export const getPurgeStatus: ImageKitEndpoints['cacheGetPurgeStatus'] = (
 			replaySafe: true,
 		}),
 	);
+
+function withoutQuery(url: string): string {
+	const cut = url.search(/[?#]/);
+	return cut === -1 ? url : url.slice(0, cut);
+}

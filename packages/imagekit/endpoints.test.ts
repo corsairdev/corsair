@@ -631,6 +631,28 @@ describe('cache', () => {
 		});
 	});
 
+	it('logs a purged URL without its query, which can carry a signature', async () => {
+		respond(purgeAccepted, 201);
+
+		await invoke(Cache.purge, {
+			url: 'https://ik.imagekit.io/your_imagekit_id/private.jpg?ik-t=1700000000&ik-s=abc123',
+		});
+
+		expect(lastRequest().body).toEqual({
+			url: 'https://ik.imagekit.io/your_imagekit_id/private.jpg?ik-t=1700000000&ik-s=abc123',
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('ik-s');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'imagekit.cache.purge',
+			{
+				url: 'https://ik.imagekit.io/your_imagekit_id/private.jpg',
+				requestId: purgeAccepted.requestId,
+			},
+			'completed',
+		);
+	});
+
 	it('reads the purge status', async () => {
 		respond(purgeCompleted);
 
