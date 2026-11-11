@@ -3768,6 +3768,14 @@
                 ]
               },
               {
+                "group": "WaiverFile",
+                "pages": [
+                  "plugins/waiverfile/overview",
+                  "plugins/waiverfile/api",
+                  "plugins/waiverfile/database"
+                ]
+              },
+              {
                 "group": "WakaTime",
                 "pages": [
                   "plugins/wakatime/overview",

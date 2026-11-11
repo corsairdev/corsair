@@ -1,0 +1,146 @@
+---
+title: Overview
+description: "Electronic waivers and booking with WaiverFile - read signed waivers and their PDFs, search and page through waiver data, manage events and event categories, list waiver forms, and subscribe URLs to the triggers WaiverFile posts to."
+---
+
+Use **WaiverFile** through Corsair: one client, typed API calls.
+
+Create the key in the WaiverFile admin under **Settings > API Keys**. Every call needs that key **and the site ID it belongs to**, so store the pair in the key slot as `<apiKey>\n<siteID>` — the plugin splits it and reports a configuration error before any request if it is malformed.
+
+- **Credentials travel in the query string, not a header.** Every route takes `apiKey` and `siteID` as query parameters; there is no bearer token. The plugin adds both to every call, so a bare key is rejected up front rather than failing with an obscure 404.
+- **`InsertEvent` is the exception.** It carries the credentials in the **body** as `APIKey` and `SiteID`, which the plugin fills in from the same packed key. The query still holds them, but the body's copy is what the route reads.
+- **A bad key is a 400, not a 401.** WaiverFile answers `{"Message":"Invalid…"}` with HTTP 400 for a wrong key or a site the key does not belong to — the same status as a genuine validation failure. The plugin reads the message to tell them apart, so a credential problem is reported as an auth error and a real 400 stays a validation error.
+- **Errors have no code.** The body is `{"Message": "..."}` with a capital M. There is nothing else to branch on, which is why the handlers rely on the status plus that one message.
+- **A missing route is also a 404.** Because everything is addressed by query parameter, a 404 means the *path* is wrong rather than the object missing — a misspelled endpoint reads exactly like a deleted waiver.
+- **`pageIndex` conventions differ.** The waiver lists (`waivers.list`, `waivers.listLite`) are **zero-based** and cap `pageSize` at 500. `waivers.data` is **one-based** and allows up to 1000. Getting this wrong silently returns the wrong page, so each schema documents and enforces its own.
+- **`consolidateParticipants` is reserved.** The API accepts it and ignores it; rows still come back one per participant.
+- **Two deletes are not `DELETE`.** `events.delete` is a `GET /DeleteEvent` and `eventCategories.delete` is a `POST /DeleteEventCategory` — so neither is safe to replay on a timeout, despite one looking like a read.
+- **`/task`-style PascalCase is the norm.** Responses use `WaiverID`, `DateSigned`, `SignedName`, and participants are spelled `Particpants` — WaiverFile's own typo, kept as-is so a caller reading the docs finds the field.
+- **The webhook triggers are path segments.** Subscribing is `POST /subscribe/<trigger>?targetUrl=…` and unsubscribing is `DELETE /deletesubscribe/<trigger>` with the same URL, one route per trigger. The twelve triggers are `newwaiver`, `newevent`, `newcheckin`, `newqrscan`, `newbookingcheckin`, `bookingcheckinundone`, `bookingcheckedin`, `newmembercheckin`, `membercheckinundone`, `editwaiver`, `editevent` and `editcheckin`. There is no signing secret, so the receiving host verifies by its own means.
+- **A waiver PDF is a file, not JSON.** `waivers.pdf` returns the document itself, so the plugin reports the waiver id and the byte length rather than pretending to parse it.
+- **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log — only counts and flags.
+
+**What you get:**
+
+- 32 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/waiverfile better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/waiverfile better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/waiverfile better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/waiverfile better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { waiverfile } from '@corsair-dev/waiverfile';
+
+export const corsair = createCorsair({
+	plugins: [
+		waiverfile(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+waiverfile()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'waiverfile',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a signed waiver**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.waiverfile.api.waivers.get({ waiverID: '4e5c5176-1238-45a3-8a87-35435baecaa2' });
+```
+
+
+**Create an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.waiverfile.api.events.create({
+	eventName: 'Saturday open jump',
+	dateStart: '2024-06-02T09:00:00Z',
+	dateEnd: '2024-06-02T17:00:00Z',
+	isAllDay: false,
+});
+```
+
+
+See the full list on the [API](/plugins/waiverfile/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/waiverfile/api">
+    Every `waiverfile.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
