@@ -204,6 +204,35 @@ function sanitizeApiError(error: ApiError): Error {
 	return sanitized;
 }
 
+const REDACTED = '[redacted]';
+
+/**
+ * A 422 echoes the request in each `detail[].input`, and for a missing field
+ * that input is the whole body, key and email included. Every copy of either
+ * credential is replaced, wherever it sits, so the kept body still carries the
+ * rest of the provider's answer (field paths, messages, other inputs).
+ */
+// unknown: the error body is arbitrary JSON, walked without narrowing its shape.
+function redactCredentials(value: unknown, secrets: string[]): unknown {
+	if (typeof value === 'string') {
+		return secrets.reduce(
+			(text, secret) => (secret ? text.split(secret).join(REDACTED) : text),
+			value,
+		);
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => redactCredentials(item, secrets));
+	}
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, item]) => [
+			key,
+			redactCredentials(item, secrets),
+		]),
+	);
+}
+
 // unknown: the response body has not been parsed by the output schema yet, and
 // the same openness covers the `request` call inside.
 export async function makeAdyntelRequest(
@@ -271,11 +300,14 @@ export async function makeAdyntelRequest(
 					status: error.status,
 					retryAfter: error.retryAfter,
 					method: 'POST',
-					// The response body is the API's own error payload, not the
-					// request, so it carries no credential and a caller needs it for
-					// structured validation errors the message cannot express.
-					// unknown: this is that raw payload, as sent by Adyntel.
-					body: error.body,
+					// A caller needs the provider's payload for structured validation
+					// errors the message cannot express, but a 422 echoes the request
+					// body, so both credentials are redacted from the kept copy.
+					// unknown: this is that payload, as sent by Adyntel.
+					body: redactCredentials(error.body, [
+						credentials.apiKey,
+						credentials.email,
+					]),
 					cause: sanitizeApiError(error),
 					operation,
 				},

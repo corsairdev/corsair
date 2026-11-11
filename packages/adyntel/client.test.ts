@@ -313,8 +313,7 @@ describe('makeAdyntelRequest', () => {
 		);
 
 		expect(error.body).toEqual(structured);
-		// The body is the API's response, not the request, so it holds neither
-		// credential.
+		// Nothing in this response echoes the request, so it is kept as sent.
 		expect(JSON.stringify(error.body)).not.toContain(CREDENTIALS.apiKey);
 		expect(JSON.stringify(error.body)).not.toContain(CREDENTIALS.email);
 	});
@@ -391,6 +390,13 @@ describe('describeAdyntelError', () => {
 		);
 		expect(error.message).not.toContain(CREDENTIALS.apiKey);
 		expect(error.message).not.toContain(CREDENTIALS.email);
+
+		// The 422 echoes the request body in `input`, so the kept body must not.
+		const serializedBody = JSON.stringify(error.body);
+		expect(serializedBody).not.toContain(CREDENTIALS.apiKey);
+		expect(serializedBody).not.toContain(CREDENTIALS.email);
+		expect(serializedBody).toContain('Klingon');
+		expect(serializedBody).toContain('company_domain');
 	});
 
 	it('falls back when the body has no error text', () => {
