@@ -407,6 +407,8 @@ describe('chatbots', () => {
 
 		await invoke(Chatbots.run, { id: 'cb_1a2b3c', text: 'Hello' });
 
+		// unknown: the log payload is a free-form record; only the two keys below are
+		// asserted on, and a stricter type would have to restate every log field.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('output_message');
 		expect(logged.replied).toBe(true);

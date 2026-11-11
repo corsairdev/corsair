@@ -9,6 +9,10 @@ Every `vectorshift.api.*` operation is listed below with parameter shapes and re
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+<Warning>
+A run that fails is **thrown** as `VectorshiftRunFailedError`, not returned with `status: 'failed'`. Wrap a run in `try`/`catch`; checking `result.status` alone will miss it.
+</Warning>
+
 ## Chatbots
 
 ### create
@@ -20,7 +24,7 @@ Create a chatbot over a pipeline, naming the input and output nodes its messages
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.chatbots.create({ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' });
+await corsair.withTenant('acme').vectorshift.api.chatbots.create({ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' });
 ```
 
 **Input**
@@ -76,7 +80,7 @@ Send a text or audio message to a chatbot and read its reply, continuing a conve
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.chatbots.run({ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' });
+await corsair.withTenant('acme').vectorshift.api.chatbots.run({ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' });
 ```
 
 **Input**
@@ -114,7 +118,7 @@ Create a knowledge base, choosing the file parser, chunk size and overlap
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.knowledgeBases.create({ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 });
+await corsair.withTenant('acme').vectorshift.api.knowledgeBases.create({ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 });
 ```
 
 **Input**
@@ -151,7 +155,7 @@ Read one knowledge base by id, or by name with an optional owner
 **Risk:** `read`
 
 ```ts
-await corsair.vectorshift.api.knowledgeBases.get({ id: 'kb_4d2f9a' });
+await corsair.withTenant('acme').vectorshift.api.knowledgeBases.get({ id: 'kb_4d2f9a' });
 ```
 
 **Input**
@@ -185,7 +189,7 @@ Ask one or more questions of a knowledge base, with retrieval, reranking and ans
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.knowledgeBases.query({ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } });
+await corsair.withTenant('acme').vectorshift.api.knowledgeBases.query({ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } });
 ```
 
 **Input**
@@ -271,7 +275,7 @@ Run one pipeline once per entry in parallel, with separate inputs and a run id e
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] });
+await corsair.withTenant('acme').vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] });
 ```
 
 **Input**
@@ -326,7 +330,7 @@ Create a pipeline from a builder graph, passed through unchanged
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.pipelines.create({ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } });
+await corsair.withTenant('acme').vectorshift.api.pipelines.create({ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } });
 ```
 
 **Input**
@@ -359,7 +363,7 @@ List pipeline ids, optionally including shared pipelines and the full objects
 **Risk:** `read`
 
 ```ts
-await corsair.vectorshift.api.pipelines.list({ include_shared: true, verbose: true });
+await corsair.withTenant('acme').vectorshift.api.pipelines.list({ include_shared: true, verbose: true });
 ```
 
 **Input**
@@ -392,7 +396,7 @@ Run a pipeline with the given inputs and read back every output node value
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.pipelines.run({ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } });
+await corsair.withTenant('acme').vectorshift.api.pipelines.run({ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } });
 ```
 
 **Input**
@@ -427,7 +431,7 @@ Create a transformation from a Python function and its input and output schemas
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.transformations.create({ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } });
+await corsair.withTenant('acme').vectorshift.api.transformations.create({ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } });
 ```
 
 **Input**
@@ -463,7 +467,7 @@ Run a transformation in VectorShift's sandbox with the given arguments
 **Risk:** `write`
 
 ```ts
-await corsair.vectorshift.api.transformations.run({ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } });
+await corsair.withTenant('acme').vectorshift.api.transformations.run({ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } });
 ```
 
 **Input**

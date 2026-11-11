@@ -26,7 +26,7 @@ pnpm add @corsair-dev/vectorshift
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key. A call with no saved key throws `AuthMissingError`; Corsair does not prompt for one. Store a key for the tenant, connect through Hub, or pass `vectorshift({ key })`.
 
 ## Webhooks
 

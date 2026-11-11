@@ -64,6 +64,8 @@ describe('makeVectorshiftRequest', () => {
 		const error = (await makeVectorshiftRequest(API_KEY, {
 			method: 'GET',
 			path: '/pipelines',
+			// unknown: a promise can reject with any value; the cast below narrows it to
+			// the plugin's error type, which the assertions rely on.
 		}).catch((thrown: unknown) => thrown)) as VectorshiftAPIError;
 
 		expect(error).toBeInstanceOf(VectorshiftAPIError);
@@ -80,6 +82,8 @@ describe('makeVectorshiftRequest', () => {
 		const error = (await makeVectorshiftRequest(API_KEY, {
 			method: 'POST',
 			path: '/pipeline/abc/run',
+			// unknown: a promise can reject with any value; the cast below narrows it to
+			// the plugin's error type, which the assertions rely on.
 		}).catch((thrown: unknown) => thrown)) as VectorshiftAPIError;
 
 		expect(error.message).toBe('fetch failed');
