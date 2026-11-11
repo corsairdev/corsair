@@ -8,14 +8,17 @@ import { ApiError, request } from 'corsair/http';
 
 export const COMMCARE_API_BASE = 'https://www.commcarehq.org';
 
-// No rate limits or 429s are documented for the CommCare APIs, so there is
-// no rate-limit strategy to encode here.
-const COMMCARE_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+// HQ throttles its APIs with 429 and a Retry-After in seconds (documented
+// on the bulk form action; the case API and Tastypie resources use the same
+// throttle). A 429 means the request was not processed, so the transport
+// retries it for reads and writes alike. Other failures are left to
+// error-handlers.ts.
+const COMMCARE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: {},
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
 };
 
 /** Connection details every request needs; the key comes from the key builder. */
@@ -144,7 +147,7 @@ export async function makeCommCareRequest(
 
 	try {
 		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: COMMCARE_NO_TRANSPORT_RETRIES,
+			rateLimitConfig: COMMCARE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		// Rethrow first: the generic catch below would otherwise re-wrap

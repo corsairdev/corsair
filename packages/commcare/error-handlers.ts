@@ -10,8 +10,10 @@ function replaySafeOf(error: Error): boolean {
 }
 
 // Documented error codes: 400 bad request, 401 bad credentials, 403
-// forbidden, 404 unknown resource, 410 gone, 422 unprocessable, 5xx server
-// errors. No rate-limit behavior is documented.
+// forbidden, 404 unknown resource, 410 gone, 422 unprocessable, 429
+// throttled, 5xx server errors. 429s are retried in the transport
+// (client.ts) using Retry-After, so they reach these handlers only once
+// those retries run out.
 export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,

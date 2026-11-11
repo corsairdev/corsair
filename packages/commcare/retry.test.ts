@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { commcare } from './index';
-import { caseList, serverError } from './test-fixtures';
+import { bulkActionAccepted, caseList, serverError } from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
 
@@ -77,6 +77,31 @@ describe('CommCare 5xx retries through the bound client', () => {
 				}),
 			).rejects.toMatchObject({ status: 503 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+describe('CommCare 429 handling', () => {
+	it('waits out Retry-After and retries, even a write, since a 429 was not processed', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// The bulk form action documents 429 with an empty body and a
+			// Retry-After in seconds; HQ's other APIs throttle the same way.
+			fetchMock.mockResolvedValueOnce(
+				new Response(null, { status: 429, headers: { 'Retry-After': '1' } }),
+			);
+			respond(bulkActionAccepted, 202);
+
+			const result = await corsair.commcare.api.forms.bulkAction({
+				domain: 'my-project',
+				username: USERNAME,
+				action: 'archive',
+				formIds: ['f1'],
+			});
+			expect(result.id).toBe(bulkActionAccepted.id);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}
