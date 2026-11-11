@@ -131,8 +131,8 @@ const PassthroughSchema = z
 
 /**
  * The async envelope every generated file starts in. Placid queues the render
- * and the first reply is usually `queued`; poll `polling_url` or set
- * `webhook_success` to learn when it is `finished`.
+ * and the first reply is usually `queued`; poll the matching `get` with `id`
+ * or set `webhook_success` to learn when it is `finished`.
  */
 const GenerateResultSchema = z
 	.object({
@@ -142,7 +142,7 @@ const GenerateResultSchema = z
 			.enum(['queued', 'finished', 'error'])
 			.or(z.string())
 			.describe(
-				'`queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`.',
+				'`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`.',
 			),
 		polling_url: z
 			.string()

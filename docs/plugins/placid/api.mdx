@@ -437,7 +437,7 @@ await corsair.placid.api.fonts.update({ uuid: 'f1abc123def456', title: 'Helvetic
 
 `images.create`
 
-Render a template to an image. The reply is usually `queued`: poll `polling_url` or set `webhook_success` to get the finished URL. One image costs one credit.
+Render a template to an image. The reply is usually `queued`: poll `images.get` with its `id` or set `webhook_success` to get the finished URL. One image costs one credit.
 
 **Risk:** `write`
 
@@ -534,7 +534,7 @@ Record<string, {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -614,7 +614,7 @@ await corsair.placid.api.images.get({ id: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -788,7 +788,7 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -867,7 +867,7 @@ await corsair.placid.api.pdfs.get({ id: 2 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -937,7 +937,7 @@ await corsair.placid.api.pdfs.merge({ urls: ['https://example.com/a.pdf', 'https
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -1343,7 +1343,7 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
@@ -1422,7 +1422,7 @@ await corsair.placid.api.videos.get({ id: 3 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |

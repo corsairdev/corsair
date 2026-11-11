@@ -241,7 +241,7 @@ const placidEndpointMeta = {
 	'images.create': {
 		riskLevel: 'write',
 		description:
-			'Render a template to an image. The reply is usually `queued`: poll `polling_url` or set `webhook_success` to get the finished URL. One image costs one credit.',
+			'Render a template to an image. The reply is usually `queued`: poll `images.get` with its `id` or set `webhook_success` to get the finished URL. One image costs one credit.',
 	},
 	'images.get': {
 		riskLevel: 'read',

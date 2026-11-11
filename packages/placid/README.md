@@ -22,14 +22,20 @@ const corsair = createCorsair({
 
 await corsair.placid.keys.set_api_key(process.env.PLACID_API_KEY);
 
-// Renders are queued: poll the polling_url until status is `finished`.
+// Renders are queued: read the image by id until it leaves `queued`.
 const started = await corsair.placid.api.images.create({
 	template_uuid: 'ospo24ysn',
 	layers: { title: { text: 'Meet Singh' } },
 });
 
-const image = await corsair.placid.api.images.get({ id: started.id });
+let image = started;
+for (let attempt = 0; attempt < 20 && image.status === 'queued'; attempt++) {
+	await new Promise((resolve) => setTimeout(resolve, 2000));
+	image = await corsair.placid.api.images.get({ id: started.id });
+}
 if (image.status === 'finished') console.log(image.image_url);
+else if (image.status === 'error') console.error(image.error_code);
+else console.error('Render not finished:', image.status);
 ```
 
 Five things catch callers out, each checked against the live API:
@@ -59,7 +65,7 @@ has a 30 second deadline and a 25 MB cap.
 | `fonts.get` | `placid.api.fonts.get` | `read` | Read one custom font by its `uuid` |
 | `fonts.list` | `placid.api.fonts.list` | `read` | List the custom fonts in the project, optionally including legacy account-wide fonts |
 | `fonts.update` | `placid.api.fonts.update` | `write` | Rename a custom font. The file itself cannot be replaced: upload a new font instead |
-| `images.create` | `placid.api.images.create` | `write` | Render a template to an image. The reply is usually `queued`: poll `polling_url` or set `webhook_success` to get the finished URL. One image costs one credit. |
+| `images.create` | `placid.api.images.create` | `write` | Render a template to an image. The reply is usually `queued`: poll `images.get` with its `id` or set `webhook_success` to get the finished URL. One image costs one credit. |
 | `images.delete` | `placid.api.images.delete` | `destructive` | Permanently delete an image. Placid only keeps generated files for a limited time, so store them yourself if you need them |
 | `images.get` | `placid.api.images.get` | `read` | Read an image by id, including `image_url` once `status` is `finished` and the render error fields when it is `error` |
 | `media.upload` | `placid.api.media.upload` | `write` | Upload a file from a public URL to Placid storage and get a URL back for a picture layer. Placid keeps it for a limited time |
