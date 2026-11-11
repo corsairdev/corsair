@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Mailtrap plugin"
+sidebarTitle: "Overview"
 description: "Email testing and delivery platform for safe staging inboxes and transactional sending."
 ---
 
@@ -17,16 +18,20 @@ Use **Mailtrap** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/mailtrap
+npm install corsair @corsair-dev/mailtrap better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/mailtrap
+yarn add corsair @corsair-dev/mailtrap better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/mailtrap
+pnpm install corsair @corsair-dev/mailtrap better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/mailtrap
+bun add corsair @corsair-dev/mailtrap better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
