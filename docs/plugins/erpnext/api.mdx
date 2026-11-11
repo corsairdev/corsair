@@ -1317,6 +1317,7 @@ await corsair.erpnext.api.people.listEmployees({});
 |------|------|----------|-------------|
 | `fields` | `string` | No | JSON array string of field names to return, for example ["name","employee_name","department"], passed verbatim to Frappe |
 | `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["status","=","Active"]], passed verbatim |
+| `order_by` | `string` | No | — |
 | `limit_start` | `number` | No | — |
 | `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every employee |
 
@@ -1350,6 +1351,7 @@ await corsair.erpnext.api.people.listProjects({});
 |------|------|----------|-------------|
 | `fields` | `string` | No | JSON array string of field names to return, for example ["name","project_name","status"], passed verbatim to Frappe |
 | `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["status","=","Open"]], passed verbatim |
+| `order_by` | `string` | No | — |
 | `limit_start` | `number` | No | — |
 | `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every project |
 
@@ -1658,6 +1660,7 @@ await corsair.erpnext.api.timesheets.list({});
 |------|------|----------|-------------|
 | `fields` | `string` | No | JSON array string of field names to return, for example ["name","employee","total_hours"], passed verbatim to Frappe |
 | `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["docstatus","=",0]], passed verbatim |
+| `order_by` | `string` | No | — |
 | `limit_start` | `number` | No | — |
 | `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every timesheet |
 

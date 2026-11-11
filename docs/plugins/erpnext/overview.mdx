@@ -5,7 +5,7 @@ description: "Open-source ERP integration for documents, DocTypes, workflows, st
 
 Use **ERPNext** through Corsair: one client, typed API calls, local DB sync.
 
-Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own tenant, so the plugin takes a `baseUrl` option (the site origin, for example `https://yourcompany.frappe.cloud`).
+Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own site, so a token only works on the site that issued it: pass `baseUrl` to pin one site for every account, or leave it out and store `base_url` per account. Credentials and their site always come from the same source.
 
 This plugin implements the requested 51 operations over the generic Frappe REST surface. Inbound webhooks are not included.
 
@@ -48,10 +48,9 @@ import { erpnext } from '@corsair-dev/erpnext';
 
 export const corsair = createCorsair({
 	plugins: [
-		// Every ERPNext deployment is its own host, so baseUrl is required:
-		// set it to your site origin (per tenant when using multi-tenancy,
-		// stored alongside that tenant's credentials).
-		erpnext({ baseUrl: 'https://yourcompany.frappe.cloud' }),
+		erpnext({
+			baseUrl: 'https://yourcompany.frappe.cloud',
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -73,8 +72,12 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 
 No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
+Pass `baseUrl` to pin one site for every account, or leave it out and store `base_url` per account.
+
 ```ts
-erpnext()
+erpnext({
+	baseUrl: 'https://yourcompany.frappe.cloud',
+})
 ```
 
 More: [API Key](/concepts/api-key)
