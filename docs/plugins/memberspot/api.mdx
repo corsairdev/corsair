@@ -29,7 +29,7 @@ await corsair.memberspot.api.auth.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schoolId` | `string \| null` | No | The school the key belongs to. |
+| `schoolId` | `string` | Yes | The school the key belongs to. |
 | `name` | `string \| null` | No | The school name. |
 
 
@@ -490,12 +490,12 @@ await corsair.memberspot.api.users.courseProgressDetail({ courseId: 'course-1', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uid` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `firstname` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | Last name. |
 | `active` | `boolean \| null` | No | — |
-| `courseId` | `string \| null` | No | — |
+| `courseId` | `string` | Yes | — |
 | `activePosts` | `number \| null` | No | — |
 | `completedPosts` | `number \| null` | No | — |
 | `grantedAt` | `string \| null` | No | — |
@@ -531,12 +531,12 @@ await corsair.memberspot.api.users.courseProgressDetailByUid({ courseId: 'course
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uid` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `firstname` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | Last name. |
 | `active` | `boolean \| null` | No | — |
-| `courseId` | `string \| null` | No | — |
+| `courseId` | `string` | Yes | — |
 | `activePosts` | `number \| null` | No | — |
 | `completedPosts` | `number \| null` | No | — |
 | `grantedAt` | `string \| null` | No | — |
@@ -837,6 +837,7 @@ await corsair.memberspot.api.users.list({ pageLength: 25, courseId: 'course-1' }
 |------|------|----------|-------------|
 | `lastLoadedId` | `string` | No | Cursor to continue from. Pass the `nextPage` value from the previous response. |
 | `pageLength` | `number` | No | Page size, 1 to 100. MemberSpot defaults to 10. |
+| `active` | `boolean` | No | True returns only active members, false only inactive ones. Leave it out for all members. |
 | `offerId` | `string` | No | Only users holding this offer. |
 | `courseId` | `string` | No | Only users with this course. Also populates each user’s `progress` with that course alone. |
 
@@ -1012,8 +1013,30 @@ await corsair.memberspot.api.users.setCustomProperties({ email: 'jordan@acme.exa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1044,8 +1067,30 @@ await corsair.memberspot.api.users.setCustomPropertiesByUid({ uid: 'uid-1', prop
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1077,8 +1122,30 @@ await corsair.memberspot.api.users.setCustomProperty({ email: 'jordan@acme.examp
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1110,8 +1177,30 @@ await corsair.memberspot.api.users.setCustomPropertyByUid({ uid: 'uid-1', key: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1168,7 +1257,7 @@ await corsair.memberspot.api.users.setOfferState({ email: 'jordan@acme.example',
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
 | `offerId` | `string` | Yes | — |
-| `active` | `boolean` | No | True grants, false revokes. |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
 
 
 
@@ -1201,7 +1290,7 @@ await corsair.memberspot.api.users.setOfferStateByUid({ uid: 'uid-1', offerId: '
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `offerId` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
 
 
 
@@ -1225,7 +1314,7 @@ Sets the state of an offer tied to an order for a user by email
 **Risk:** `write`
 
 ```ts
-await corsair.memberspot.api.users.setOrderState({ email: 'jordan@acme.example', orderId: 'order-9' });
+await corsair.memberspot.api.users.setOrderState({ email: 'jordan@acme.example', orderId: 'order-9', active: true });
 ```
 
 **Input**
@@ -1234,7 +1323,7 @@ await corsair.memberspot.api.users.setOrderState({ email: 'jordan@acme.example',
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
 | `orderId` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
 
 
 
@@ -1265,8 +1354,8 @@ await corsair.memberspot.api.users.setOrderStateByOrderId({ orderId: 'order-9', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `orderId` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
+| `orderId` | `string` | Yes | Every member holding a grant with this order id is affected. |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
 
 
 
@@ -1290,7 +1379,7 @@ Sets the state of an offer tied to an order for a user by uid
 **Risk:** `write`
 
 ```ts
-await corsair.memberspot.api.users.setOrderStateByUid({ uid: 'uid-1', orderId: 'order-9' });
+await corsair.memberspot.api.users.setOrderStateByUid({ uid: 'uid-1', orderId: 'order-9', active: true });
 ```
 
 **Input**
@@ -1299,7 +1388,7 @@ await corsair.memberspot.api.users.setOrderStateByUid({ uid: 'uid-1', orderId: '
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `orderId` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
 
 
 
