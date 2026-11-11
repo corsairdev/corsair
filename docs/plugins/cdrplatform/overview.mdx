@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "CDR Platform plugin"
+sidebarTitle: "Overview"
 description: "Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health."
 ---
 
@@ -17,16 +18,20 @@ Use **CDR Platform** through Corsair: one client, typed API calls, local DB sync
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/cdrplatform
+npm install corsair @corsair-dev/cdrplatform better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/cdrplatform
+yarn add corsair @corsair-dev/cdrplatform better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/cdrplatform
+pnpm install corsair @corsair-dev/cdrplatform better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/cdrplatform
+bun add corsair @corsair-dev/cdrplatform better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
