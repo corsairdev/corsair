@@ -158,8 +158,9 @@ export const tldvAuthConfig = {
 	api_key: {
 		// `tenant_external_id` holds the organizer email `matchTldvTenantWebhook`
 		// routes a MeetingReady delivery by. Without the field there is no
-		// `keys.set_tenant_external_id` to store it with.
-		account: ['webhook_signature', 'tenant_external_id'] as const,
+		// `keys.set_tenant_external_id` to store it with. `webhook_signature` is
+		// already a base field of every api_key account, so it is not listed here.
+		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
