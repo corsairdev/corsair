@@ -116,8 +116,8 @@ export function envelopeCode(raw: unknown): string | undefined {
 /**
  * Turns a 2xx response that says the call failed into an error. OneDesk's
  * success value is `SUCCESS`; every documented failure code is either
- * `ERROR_*` or `INTERNAL_ERROR`, so anything else is passed through rather
- * than guessed at.
+ * `ERROR_*`, `INTERNAL_ERROR` or `UNKNOWN_ERROR` (a failed upload), so
+ * anything else is passed through rather than guessed at.
  */
 // unknown: see envelopeCode.
 export function throwIfEnvelopeFailed(
@@ -128,7 +128,10 @@ export function throwIfEnvelopeFailed(
 	if (!code || code === 'SUCCESS') return;
 	// A bare string body is the code itself; an object's `code` is only a
 	// failure when it says so.
-	const isFailure = code.startsWith('ERROR_') || code === 'INTERNAL_ERROR';
+	const isFailure =
+		code.startsWith('ERROR_') ||
+		code === 'INTERNAL_ERROR' ||
+		code === 'UNKNOWN_ERROR';
 	if (!isFailure) return;
 	throw new OnedeskAPIError(`OneDesk returned ${code}`, {
 		status: 200,

@@ -309,6 +309,14 @@ describe('envelopeCode', () => {
 		).toThrow(/INTERNAL_ERROR/);
 	});
 
+	it('treats UNKNOWN_ERROR, the failed-upload code, as a failure', () => {
+		// The attachment upload and attach routes document UNKNOWN_ERROR for a
+		// file that could not be stored; it must not read as an upload that worked.
+		expect(() =>
+			throwIfEnvelopeFailed({ code: 'UNKNOWN_ERROR' }, { method: 'POST' }),
+		).toThrow(/UNKNOWN_ERROR/);
+	});
+
 	it('passes an unrecognised code through rather than guessing', () => {
 		expect(() =>
 			throwIfEnvelopeFailed({ code: 'SOMETHING_ELSE' }, { method: 'POST' }),
