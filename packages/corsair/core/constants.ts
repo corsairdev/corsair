@@ -318,6 +318,7 @@ export const BaseProviders = [
 	'mailtrap',
 	'marketstack',
 	'mem0',
+	'memberspot',
 	'merriamwebsterdict',
 	'minimax',
 	'miro',
@@ -795,6 +796,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
 	mem0: 'Mem0',
+	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	miro: 'Miro',
@@ -1279,6 +1281,7 @@ export type AllProviders =
 	| 'mailtrap'
 	| 'marketstack'
 	| 'mem0'
+	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'miro'

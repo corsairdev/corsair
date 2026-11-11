@@ -2679,6 +2679,14 @@
                 ]
               },
               {
+                "group": "MemberSpot",
+                "pages": [
+                  "plugins/memberspot/overview",
+                  "plugins/memberspot/api",
+                  "plugins/memberspot/database"
+                ]
+              },
+              {
                 "group": "Merriam-Webster",
                 "pages": [
                   "plugins/merriamwebsterdict/overview",
