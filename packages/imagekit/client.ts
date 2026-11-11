@@ -124,6 +124,47 @@ function authHeader(apiKey: string): string {
 	return `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`;
 }
 
+// A signed URL's ik-s signature opens a private file until it expires.
+// metadata.getByUrl sends one in the query and cache.purge in the body, and
+// core's ApiError keeps both on url and request, where error logs would pick
+// them up. Matches the plain, encoded and double-encoded `=`.
+const SIGNATURE = /(ik-s(?:=|%3D|%253D))[^&#%\s"']+/gi;
+
+// unknown: request query, body and form values are any JSON-like shape.
+function redactSignatures(value: unknown): unknown {
+	if (typeof value === 'string') {
+		return value.replace(SIGNATURE, '$1[REDACTED]');
+	}
+	if (Array.isArray(value)) {
+		return value.map(redactSignatures);
+	}
+	// Plain objects only: a Blob or FormData passes through untouched.
+	if (
+		value !== null &&
+		typeof value === 'object' &&
+		Object.getPrototypeOf(value) === Object.prototype
+	) {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [key, redactSignatures(item)]),
+		);
+	}
+	return value;
+}
+
+function withoutSignatures(error: ApiError): ApiError {
+	const { request } = error;
+	return Object.assign(error, {
+		url: redactSignatures(error.url) as string,
+		request: {
+			...request,
+			url: redactSignatures(request.url) as string,
+			query: redactSignatures(request.query) as typeof request.query,
+			body: redactSignatures(request.body),
+			formData: redactSignatures(request.formData) as typeof request.formData,
+		},
+	});
+}
+
 // unknown: callers parse the body with the endpoint's zod output schema. It
 // is undefined for the bodyless answers: 204 on delete file and folder delete.
 export async function makeImageKitRequest(
@@ -178,7 +219,7 @@ export async function makeImageKitRequest(
 		if (error instanceof ApiError) {
 			throw new ImageKitAPIError(
 				describeImageKitError(error.status, error.body, error.message),
-				{ cause: error, replaySafe },
+				{ cause: withoutSignatures(error), replaySafe },
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

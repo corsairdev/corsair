@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { ImageKitAPIError, makeImageKitRequest, segment } from './client';
 import { file, fileNotFound, sourceFileMissing } from './test-fixtures';
 
@@ -174,6 +175,46 @@ describe('makeImageKitRequest', () => {
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(JSON.stringify(error.cause)).not.toContain(API_KEY);
+	});
+
+	it('keeps a signed URL signature out of the error cause', async () => {
+		const signed =
+			'https://ik.imagekit.io/your_imagekit_id/private.jpg?ik-t=1700000000&ik-s=abc123signature';
+
+		respond({ message: 'not found' }, 404);
+		const queryError = await failure(
+			makeImageKitRequest(API_KEY, {
+				method: 'GET',
+				path: '/v1/metadata',
+				query: { url: signed },
+				replaySafe: true,
+			}),
+		);
+
+		respond({ message: 'boom' }, 500);
+		const bodyError = await failure(
+			makeImageKitRequest(API_KEY, {
+				method: 'POST',
+				path: '/v1/files/purge',
+				body: { url: signed },
+			}),
+		);
+
+		for (const error of [queryError, bodyError]) {
+			const cause = error.cause as ApiError;
+			expect(cause).toBeInstanceOf(ApiError);
+			expect(JSON.stringify(cause)).not.toContain('abc123signature');
+			expect(cause.url).not.toContain('abc123signature');
+			expect(JSON.stringify(error)).not.toContain('abc123signature');
+		}
+		// Status, body and retry metadata survive the redaction.
+		expect(queryError.status).toBe(404);
+		expect(queryError.replaySafe).toBe(true);
+		expect(queryError.body).toEqual({ message: 'not found' });
+		expect(bodyError.status).toBe(500);
+		// The request itself still carried the full signed URL.
+		const [sentUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(decodeURIComponent(sentUrl)).toContain('ik-s=abc123signature');
 	});
 
 	it('percent-encodes path segments', () => {
