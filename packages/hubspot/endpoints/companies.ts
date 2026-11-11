@@ -224,16 +224,27 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 
 export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 	async (ctx, input) => {
-		const { domain, ...queryParams } = input;
+		const { domain, properties } = input;
 		const endpoint = '/crm/v3/objects/companies/search';
+
 		const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
 			endpoint,
 			ctx.key,
 			{
-				query: {
-					...queryParams,
-					domain,
-					properties: queryParams.properties?.join(','),
+				method: 'POST',
+				body: {
+					filterGroups: [
+						{
+							filters: [
+								{
+									propertyName: 'domain',
+									operator: 'EQ',
+									value: domain,
+								},
+							],
+						},
+					],
+					properties,
 				},
 			},
 		);
@@ -244,5 +255,6 @@ export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 			{ ...input },
 			'completed',
 		);
+
 		return result;
 	};
