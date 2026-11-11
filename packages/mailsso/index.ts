@@ -107,7 +107,7 @@ const mailssoEndpointMeta = {
 	'validations.batch': {
 		riskLevel: 'write',
 		description:
-			'Start a batch validation job for at least 2 different email addresses; needs a paid Mails.so plan, and the job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).',
+			'Start a batch validation job for at least 2 different email addresses; Mails.so documents it as paid-plan only, but a free account with credits ran batches in our test, and an account without access gets MailssoSubscriptionRequiredError. The job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).',
 		job: BATCH_JOB,
 	},
 	'validations.getBatch': {

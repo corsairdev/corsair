@@ -80,8 +80,9 @@ export class MailssoAPIError extends Error {
 }
 
 /**
- * Batch validation needs a paid plan. Mails.so answers a free key with
- * `Paid subscription required to use list validations`, documented as a 401,
+ * Mails.so documents batch validation as paid-plan only (a free account with
+ * credits ran one in our live test). The documented refusal is
+ * `Paid subscription required to use list validations`, a 401,
  * so it is told apart from a bad key by its message and never retried.
  */
 export class MailssoSubscriptionRequiredError extends MailssoAPIError {

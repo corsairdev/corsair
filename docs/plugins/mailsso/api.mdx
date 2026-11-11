@@ -14,7 +14,7 @@ description: "API reference for the Mails.so plugin in Corsair: every `mailsso.a
 
 `validations.batch`
 
-Start a batch validation job for at least 2 different email addresses; needs a paid Mails.so plan, and the job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).
+Start a batch validation job for at least 2 different email addresses; Mails.so documents it as paid-plan only, but a free account with credits ran batches in our test, and an account without access gets MailssoSubscriptionRequiredError. The job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).
 
 **Risk:** `write`
 
@@ -26,9 +26,9 @@ await corsair.mailsso.api.validations.batch({ emails: ['first@example.com', 'sec
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `emails` | `string[]` | Yes | The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one). Needs a paid Mails.so plan. |
+| `emails` | `string[]` | Yes | The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one). |
 
-Needs a paid Mails.so plan and at least 2 different addresses. Returns the job at once with status pending and no results; read it with validations.getBatch. A write: it starts a job on your account that the API cannot delete, and it is never replayed after a 5xx.
+Needs at least 2 different addresses. Mails.so documents batches as paid-plan only, though a free account with credits ran one in our test. Returns the job at once with status pending and no results; read it with validations.getBatch. A write: it starts a job on your account that the API cannot delete, and it is never replayed after a 5xx.
 
 
 

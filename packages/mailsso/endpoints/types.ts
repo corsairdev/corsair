@@ -23,7 +23,7 @@ const ValidationsBatchInputSchema = z.object({
 			message: 'A batch needs at least 2 different emails',
 		})
 		.describe(
-			'The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one). Needs a paid Mails.so plan.',
+			'The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one).',
 		),
 });
 
