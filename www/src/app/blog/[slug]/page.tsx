@@ -10,6 +10,7 @@ import {
 	faqsVisibleInBody,
 	serializeJsonLd,
 } from '@/lib/blog-seo';
+import { clampMetaDescription } from '@/lib/page-seo';
 import { urlForImage } from '@/lib/sanity/client';
 
 type PageProps = {
@@ -47,7 +48,10 @@ export async function generateMetadata({
 	}
 
 	const title = post.metaTitle ?? post.title;
-	const description = post.metaDescription ?? post.description;
+	// Posts written before the 155-character limit carry longer text.
+	const description = clampMetaDescription(
+		post.metaDescription ?? post.description,
+	);
 	const image = shareImageUrl(post) ?? DEFAULT_SHARE_IMAGE;
 
 	return {
