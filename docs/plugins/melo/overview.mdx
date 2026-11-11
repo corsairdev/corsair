@@ -9,7 +9,7 @@ Use **Melo** through Corsair: one client, typed API calls.
 
 **The live suite has not run.** `api.test.ts` needs `MELO_API_KEY` and no key was available when this plugin was built, so every response shape was written from Melo's documentation. The one route that answers without a key, `/public/location-autocomplete`, was checked against the real API, and a wrong key was confirmed to reach Melo and come back as a 401. Everything else is unverified against live traffic:
 
-- the response shape of every operation except `indicators.locations` (the documentation's examples are used as fixtures, and the spec's own types are known to be wrong in places, for example a location `id` that is a string where the spec says integer, which is why output schemas are loose)
+- the response shape of every operation except `indicators.locations` (the documentation's examples are used as fixtures, and the spec's own types are known to be wrong in places, for example a location `id` that is an integer where the spec says string, which is why output schemas are loose)
 - what `searches.update` replaces (it is a PUT, and the plugin sends the whole search)
 - the exact answer of `webhooks.simulate`, which the spec leaves undocumented, so the plugin reports `{ sent: true }` on any 2xx
 - the rate limit: Melo documents a 429 but no limit and no `Retry-After` header, so the plugin retries a 429 up to three times with a 1s, 2s, 4s backoff and uses a `Retry-After` if one ever arrives
@@ -84,13 +84,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-Store the API key for each tenant before its first call. A call made with no stored key throws `AuthMissingError`, which may carry a `connectUrl` where the tenant can supply one.
-
-```ts
-await corsair.withTenant('acme').melo.keys.set_api_key(process.env.MELO_API_KEY!);
-```
-
-Or from the CLI: `pnpm corsair setup --plugin=melo api_key=<key> --tenant=acme`. The key is sent as the `X-API-KEY` header.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 melo()
