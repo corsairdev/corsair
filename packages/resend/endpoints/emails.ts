@@ -136,7 +136,7 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 	const query: Record<string, string | number | undefined> = {};
 	if (input?.limit) query.limit = input.limit;
-	if (input?.cursor) query.cursor = input.cursor;
+	if (input?.cursor) query.after = input.cursor;
 
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsList']>(
 		'emails',
