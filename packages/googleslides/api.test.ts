@@ -20,9 +20,25 @@ if (!token) {
 
 const describeIfToken = token ? describe : describe.skip;
 
+/**
+ * Builds the client. The return type is left to inference so the plugin tuple
+ * reaches every endpoint: ReturnType<typeof createCorsair> widens the plugins to
+ * CorsairPlugin[], which makes each endpoint return `any` and turns the
+ * assertions below into no-ops.
+ */
+function createLiveClient(
+	db: ReturnType<typeof import('corsair/tests').createTestDatabase>['db'],
+) {
+	return createCorsair({
+		plugins: [googleslides({ key: token as string })],
+		database: db,
+		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+	});
+}
+
 describeIfToken('googleslides live smoke', () => {
 	let testDb: ReturnType<typeof import('corsair/tests').createTestDatabase>;
-	let corsair: ReturnType<typeof createCorsair>;
+	let corsair: ReturnType<typeof createLiveClient>;
 	let presentationId: string | undefined;
 
 	beforeAll(async () => {
@@ -32,11 +48,7 @@ describeIfToken('googleslides live smoke', () => {
 		);
 		testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'googleslides', 'default');
-		corsair = createCorsair({
-			plugins: [googleslides({ key: token })],
-			database: testDb.db,
-			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
-		});
+		corsair = createLiveClient(testDb.db);
 	}, 60_000);
 
 	afterAll(async () => {
@@ -61,8 +73,9 @@ describeIfToken('googleslides live smoke', () => {
 
 		expect(created.presentationId).toBeTruthy();
 		expect(created.url).toContain(created.presentationId);
-		// A new deck is blank apart from its masters and layouts.
-		expect(created.slideCount).toBe(0);
+		// Google ships every new deck with one blank slide. Measured against the
+		// live API: slides: 1, layouts: 11, masters: 1.
+		expect(created.slideCount).toBe(1);
 		expect(created.layoutCount).toBeGreaterThan(0);
 		expect(created.masterCount).toBeGreaterThan(0);
 	}, 60_000);
@@ -77,6 +90,9 @@ describeIfToken('googleslides live smoke', () => {
 	}, 60_000);
 
 	it('adds a slide and lists it', async () => {
+		const before = await corsair.googleslides.api.slides.list({
+			presentationId: presentationId as string,
+		});
 		const created = await corsair.googleslides.api.slides.create({
 			presentationId: presentationId as string,
 			layout: 'TITLE_AND_BODY',
@@ -88,8 +104,12 @@ describeIfToken('googleslides live smoke', () => {
 		const listed = await corsair.googleslides.api.slides.list({
 			presentationId: presentationId as string,
 		});
-		expect(listed.slides).toHaveLength(1);
-		expect(listed.slides[0]?.objectId).toBe(created.slideObjectId);
+		// One more than before: a new deck already carries a blank slide, so the
+		// count is relative rather than assumed to be one.
+		expect(listed.slides).toHaveLength(before.slides.length + 1);
+		expect(
+			listed.slides.some((slide) => slide.objectId === created.slideObjectId),
+		).toBe(true);
 	}, 60_000);
 
 	it('lists presentations through Drive and finds the deck', async () => {
