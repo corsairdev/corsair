@@ -38,16 +38,20 @@ function respond(
 	);
 }
 
-beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
-	jest.spyOn(console, 'log').mockImplementation(() => undefined);
-});
-
 afterEach(() => {
 	jest.restoreAllMocks();
 });
 
 describe('Databox plugin through createCorsair', () => {
+	// Scoped to the mocked tests so the live block below still reaches the API.
+	// An unmocked call here throws instead of reaching api.databox.com.
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+			throw new Error('unmocked fetch in a unit test');
+		});
+		jest.spyOn(console, 'log').mockImplementation(() => undefined);
+	});
+
 	it('fails fast with AuthMissingError when no key is configured', async () => {
 		const { corsair, testDb } = await createClient({});
 		try {
