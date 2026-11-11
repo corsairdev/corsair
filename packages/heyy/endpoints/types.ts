@@ -66,16 +66,11 @@ export type HeyyPagination = z.infer<typeof PaginationSchema>;
  * `query` is a structured expression, not a keyword: `equals(status, 'open')`,
  * `and(...)`, `contains(name, 'Acme')`. `search` is the free-text field, and
  * mixing the two up still returns 200 with rows the caller did not ask for,
- * which is why both are documented where an agent reads them.
+ * which is why both are documented where an agent reads them. `query` is
+ * added per resource by `searchParams`, because each search route filters on
+ * different fields.
  */
 const SearchBodySchema = z.object({
-	query: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'Structured filter, such as "equals(status, \'active\')" or "contains(name, \'Acme\')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter.',
-		),
 	sortBy: z
 		.string()
 		.min(1)
@@ -88,7 +83,7 @@ const SearchBodySchema = z.object({
 		.min(1)
 		.optional()
 		.describe(
-			'Free-text search. Only some resources support it; `query` is the field for structured filters.',
+			"Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined.",
 		),
 	pagination: z
 		.object({
@@ -114,18 +109,24 @@ export const HEYY_DEFAULT_PAGE_SIZE = 10;
 /** The maximum `pagination.limit` the API accepts. */
 export const HEYY_MAX_PAGE_SIZE = 100;
 
-const SearchParamsSchema = SearchBodySchema.superRefine((value, ctx) => {
-	// The API accepts both together, but they filter differently, so a caller
-	// passing both almost always means one of them.
-	if (value.query !== undefined && value.search !== undefined) {
-		ctx.addIssue({
-			code: 'custom',
-			path: ['search'],
-			message:
-				'`query` is a structured filter and `search` is free text; pass one of them, not both.',
-		});
-	}
-});
+/**
+ * The search body for one resource, with `query` describing the fields that
+ * route can filter on (from each route's `query` description in the v3 spec).
+ *
+ * `query` and `search` may be sent together: Heyy's search guide shows both in
+ * one body, and each narrows the rows.
+ */
+function searchParams(filterableFields: string, example: string) {
+	return SearchBodySchema.extend({
+		query: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				`Structured filter, such as "${example}". Filterable fields: ${filterableFields}. Combine with and(), or(), not(); see the query syntax reference. Can be combined with \`search\`. Omit for no filter.`,
+			),
+	});
+}
 
 /** What a search returns besides its rows. */
 export const heyySearchResultShape = {
@@ -169,7 +170,10 @@ const ContactSchema = z
 
 export type HeyyContact = z.infer<typeof ContactSchema>;
 
-const ContactsSearchInputSchema = SearchParamsSchema;
+const ContactsSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, firstName, lastName, isSubscribed, labels, notes, groups, phoneNumber, email; custom attributes through getBy('attributes', 'name', 'plan')",
+	"equals(email, 'jordan@acme.com')",
+);
 
 export type ContactsSearchInput = z.input<typeof ContactsSearchInputSchema>;
 
@@ -263,7 +267,10 @@ const AttributeSchema = z
 
 export type HeyyAttribute = z.infer<typeof AttributeSchema>;
 
-const AttributesSearchInputSchema = SearchParamsSchema;
+const AttributesSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, name, type, displayName, description, visibility, details",
+	"equals(type, 'single_select')",
+);
 
 export type AttributesSearchInput = z.input<typeof AttributesSearchInputSchema>;
 
@@ -364,7 +371,10 @@ const LabelSchema = z
 
 export type HeyyLabel = z.infer<typeof LabelSchema>;
 
-const LabelsSearchInputSchema = SearchParamsSchema;
+const LabelsSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, name",
+	"contains(name, 'VIP')",
+);
 
 export type LabelsSearchInput = z.input<typeof LabelsSearchInputSchema>;
 
@@ -496,7 +506,10 @@ export type ApiWebhooksCreateResponse = z.infer<
 	typeof ApiWebhooksCreateResponseSchema
 >;
 
-const ApiWebhooksSearchInputSchema = SearchParamsSchema;
+const ApiWebhooksSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, status, url, events",
+	"equals(status, 'active')",
+);
 
 export type ApiWebhooksSearchInput = z.input<
 	typeof ApiWebhooksSearchInputSchema
@@ -598,7 +611,10 @@ const ChannelSchema = z
 
 export type HeyyChannel = z.infer<typeof ChannelSchema>;
 
-const ChannelsSearchInputSchema = SearchParamsSchema;
+const ChannelsSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, name, type, status, vendor, vendorId",
+	"equals(type, 'whatsapp')",
+);
 
 export type ChannelsSearchInput = z.input<typeof ChannelsSearchInputSchema>;
 
@@ -631,7 +647,10 @@ const AutomationSchema = z
 
 export type HeyyAutomation = z.infer<typeof AutomationSchema>;
 
-const AutomationsSearchInputSchema = SearchParamsSchema;
+const AutomationsSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId",
+	"equals(status, 'active')",
+);
 
 export type AutomationsSearchInput = z.input<
 	typeof AutomationsSearchInputSchema
@@ -671,7 +690,10 @@ const MessageTemplateSchema = z
 
 export type HeyyMessageTemplate = z.infer<typeof MessageTemplateSchema>;
 
-const MessageTemplatesSearchInputSchema = SearchParamsSchema;
+const MessageTemplatesSearchInputSchema = searchParams(
+	"id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName",
+	"equals(channelId, 'channel-id')",
+);
 
 export type MessageTemplatesSearchInput = z.input<
 	typeof MessageTemplatesSearchInputSchema

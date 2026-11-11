@@ -16,6 +16,7 @@ import {
 	labelsSearch,
 	messageTemplatesSearch,
 } from './endpoints';
+import { HeyyEndpointInputSchemas } from './endpoints/types';
 import {
 	attributesCreateResponse,
 	attributesSearchResponse,
@@ -145,15 +146,32 @@ describe('contacts.search', () => {
 		expect(lastRequest().body).toEqual({ search: 'Jordan' });
 	});
 
-	it('rejects query and search together', async () => {
-		// They filter differently, so a caller passing both usually means one.
-		await expect(
-			invoke(contactsSearch, {
-				query: "equals(email, 'a@b.co')",
-				search: 'Jordan',
-			}),
-		).rejects.toThrow(/structured filter/);
-		expect(fetchMock).not.toHaveBeenCalled();
+	it('sends query and search together, as Heyy\'s search guide allows', async () => {
+		respond(contactsSearchResponse);
+
+		await invoke(contactsSearch, {
+			query: 'equals(isSubscribed, true)',
+			search: 'Jordan',
+		});
+
+		expect(lastRequest().body).toEqual({
+			query: 'equals(isSubscribed, true)',
+			search: 'Jordan',
+		});
+	});
+
+	it('names each route\'s own filterable fields in the query description', () => {
+		const queryDoc = (schema: unknown) =>
+			(schema as { shape: { query: { description?: string } } }).shape.query
+				.description ?? '';
+		const contacts = queryDoc(HeyyEndpointInputSchemas.contactsSearch);
+		const labels = queryDoc(HeyyEndpointInputSchemas.labelsSearch);
+
+		// Labels filter on id, dates and name only; contacts have no `name`.
+		expect(labels).toContain('Filterable fields: id, createdAt, updatedAt, name.');
+		expect(labels).not.toMatch(/status/);
+		expect(contacts).toContain('firstName');
+		expect(contacts).not.toMatch(/\bname,/);
 	});
 
 	it('rejects a limit above 100 and a negative page', async () => {
