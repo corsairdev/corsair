@@ -34,6 +34,7 @@ export const create: MistralAiEndpoints['agentsCreate'] = async (
 	});
 };
 
+/** Lists agents one page at a time; `metadata` goes out as one JSON query value. */
 export const list: MistralAiEndpoints['agentsList'] = async (ctx, rawInput) => {
 	const { metadata, ...input } = MistralAiEndpointInputSchemas.agentsList.parse(
 		rawInput ?? {},

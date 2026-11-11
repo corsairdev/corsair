@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Lists audio agents one page at a time. */
 export const list: MistralAiEndpoints['audioAgentsList'] = async (
 	ctx,
 	rawInput,

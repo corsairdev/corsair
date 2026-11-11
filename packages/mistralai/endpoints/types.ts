@@ -435,7 +435,7 @@ const OcrDocumentSchema = z.discriminatedUnion('type', [
 const OcrProcessInputSchema = z.object({
 	model: ModelSchema.describe('An OCR model, for example mistral-ocr-latest.'),
 	document: OcrDocumentSchema.describe(
-		'{ type: "document_url", document_url } for a PDF, { type: "image_url", image_url } for an image, or { type: "file", file_id } for an uploaded file.',
+		'{ type: "document_url", document_url } for a PDF, { type: "image_url", image_url } for an image, or { type: "file", file_id } for an uploaded file. document_url and image_url take a URL or a base64 data URL, for example "data:application/pdf;base64,..." or "data:image/png;base64,...".',
 	),
 	pages: z
 		.union([z.string(), z.array(z.number().int().min(0))])

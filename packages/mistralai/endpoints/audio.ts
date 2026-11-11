@@ -24,6 +24,7 @@ export const speech: MistralAiEndpoints['audioSpeech'] = async (
 	});
 };
 
+/** Transcribes audio sent as base64, a URL or an uploaded file id (exactly one), as a multipart request. */
 export const transcribe: MistralAiEndpoints['audioTranscribe'] = async (
 	ctx,
 	rawInput,

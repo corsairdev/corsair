@@ -842,6 +842,38 @@ describe('Mistral AI input checks', () => {
 		expect(form.get('file_url')).toBe('https://example.com/a.mp3');
 	});
 
+	it.each([
+		{
+			type: 'document_url' as const,
+			document_url: 'data:application/pdf;base64,JVBERi0xLjQK',
+		},
+		{
+			type: 'image_url' as const,
+			image_url: 'data:image/png;base64,iVBORw0KGgo=',
+		},
+	])(
+		'sends a base64 data URL to ocr.process unchanged ($type)',
+		async (document) => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({
+					model: 'mistral-ocr-2505',
+					pages: [],
+					document_annotation: null,
+					usage_info: { pages_processed: 1, doc_size_bytes: 12 },
+				}),
+			);
+			await client.corsair.mistralai.api.ocr.process({
+				model: 'mistral-ocr-latest',
+				document,
+			});
+			const init = (fetchMock.mock.calls[0] as [string, RequestInit])[1];
+			expect(JSON.parse(String(init.body))).toEqual({
+				model: 'mistral-ocr-latest',
+				document,
+			});
+		},
+	);
+
 	it('keeps fields Mistral adds later instead of dropping them', async () => {
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse({ ...model, brand_new_field: { nested: 1 } }),

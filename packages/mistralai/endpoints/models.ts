@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Lists the models the key can use. */
 export const list: MistralAiEndpoints['modelsList'] = async (ctx, rawInput) => {
 	const input = MistralAiEndpointInputSchemas.modelsList.parse(rawInput ?? {});
 	return callMistralAi(ctx, '/v1/models', {

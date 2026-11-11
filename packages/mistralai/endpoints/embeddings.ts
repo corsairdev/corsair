@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Creates embeddings for the given input. */
 export const create: MistralAiEndpoints['embeddingsCreate'] = async (
 	ctx,
 	rawInput,

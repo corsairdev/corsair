@@ -3448,7 +3448,7 @@ await corsair.mistralai.api.ocr.process({ model: 'mistral-ocr-latest', document:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | An OCR model, for example mistral-ocr-latest. |
-| `document` | `object` | Yes | &#123; type: "document_url", document_url &#125; for a PDF, &#123; type: "image_url", image_url &#125; for an image, or &#123; type: "file", file_id &#125; for an uploaded file. |
+| `document` | `object` | Yes | &#123; type: "document_url", document_url &#125; for a PDF, &#123; type: "image_url", image_url &#125; for an image, or &#123; type: "file", file_id &#125; for an uploaded file. document_url and image_url take a URL or a base64 data URL, for example "data:application/pdf;base64,..." or "data:image/png;base64,...". |
 | `pages` | `string \| number[]` | No | Pages to read, 0-based, for example [0, 1] or "0-3". |
 | `include_image_base64` | `boolean` | No | — |
 | `image_limit` | `number` | No | — |

@@ -2,6 +2,7 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { MistralAiAPIError } from './client';
 
+/** The HTTP status carried by a Mistral or transport error, if it has one. */
 function statusOf(error: Error): number | undefined {
 	if (error instanceof MistralAiAPIError || error instanceof ApiError) {
 		return error.status;
@@ -17,6 +18,7 @@ export const errorHandlers = {
 	// honoured only when a response carries it.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
+		/** Retries up to 3 times, waiting `Retry-After` when Mistral sent it. */
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
@@ -30,6 +32,7 @@ export const errorHandlers = {
 	// changed. A write that timed out (408) may still have run and billed, so
 	// it is not retried.
 	TIMEOUT_ERROR: {
+		/** True for a 503, and for a 408 only on a GET. */
 		match: (error: Error) => {
 			const status = statusOf(error);
 			if (status === 503) return true;
@@ -47,6 +50,7 @@ export const errorHandlers = {
 	// A missing, invalid or revoked key, or a key without access to the
 	// resource: sending the same request again cannot succeed.
 	AUTH_ERROR: {
+		/** True for a 401 or 403. */
 		match: (error: Error) => {
 			const status = statusOf(error);
 			return status === 401 || status === 403;

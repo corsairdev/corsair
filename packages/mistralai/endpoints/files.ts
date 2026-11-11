@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Lists files one page at a time, optionally by purpose. */
 export const list: MistralAiEndpoints['filesList'] = async (ctx, rawInput) => {
 	const input = MistralAiEndpointInputSchemas.filesList.parse(rawInput ?? {});
 	return callMistralAi(ctx, '/v1/files', {
@@ -15,6 +16,7 @@ export const list: MistralAiEndpoints['filesList'] = async (ctx, rawInput) => {
 	});
 };
 
+/** Uploads one file from base64 content as a multipart request. */
 export const upload: MistralAiEndpoints['filesUpload'] = async (
 	ctx,
 	rawInput,

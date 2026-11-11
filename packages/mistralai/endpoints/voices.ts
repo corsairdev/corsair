@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Lists voices one page at a time. */
 export const list: MistralAiEndpoints['voicesList'] = async (ctx, rawInput) => {
 	const input = MistralAiEndpointInputSchemas.voicesList.parse(rawInput ?? {});
 	return callMistralAi(ctx, '/v2/audio/voices', {

@@ -578,6 +578,7 @@ function mergeErrorHandlers(
 	};
 }
 
+/** The Mistral AI plugin: pass the options (key, hooks, error handlers) to `createCorsair`. */
 export function mistralai<const T extends MistralAiPluginOptions>(
 	incomingOptions: MistralAiPluginOptions & T = {} as MistralAiPluginOptions &
 		T,
@@ -603,6 +604,7 @@ export function mistralai<const T extends MistralAiPluginOptions>(
 		pluginTenantWebhookMatcher: () => null,
 		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: mergeErrorHandlers(options.errorHandlers),
+		/** Uses `options.key` when set, else the stored API key; empty when there is none. */
 		keyBuilder: async (ctx: MistralAiKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;

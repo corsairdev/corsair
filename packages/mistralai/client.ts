@@ -73,6 +73,7 @@ export function formatValidationDetail(body: unknown): string | undefined {
 	return lines.length > 0 ? lines.join('; ') : undefined;
 }
 
+/** The message for a failed call: the 422 field list, else Mistral's own `message` or `detail`, else the transport's. */
 function messageOf(error: ApiError): string {
 	const validation = formatValidationDetail(error.body);
 	if (validation) return `Mistral AI rejected the request: ${validation}`;
@@ -92,6 +93,10 @@ function messageOf(error: ApiError): string {
 	return error.message;
 }
 
+/**
+ * Sends one request to Mistral with the API key as a Bearer token and
+ * returns the parsed JSON. Failures are thrown as `MistralAiAPIError`.
+ */
 export async function makeMistralAiRequest<T>(
 	endpoint: string,
 	apiKey: string,

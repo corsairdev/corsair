@@ -5,6 +5,7 @@ import {
 	MistralAiEndpointOutputSchemas,
 } from './types';
 
+/** Lists batch jobs one page at a time, with Mistral's filters. */
 export const list: MistralAiEndpoints['batchList'] = async (ctx, rawInput) => {
 	const input = MistralAiEndpointInputSchemas.batchList.parse(rawInput ?? {});
 	return callMistralAi(ctx, '/v1/batch/jobs', {
