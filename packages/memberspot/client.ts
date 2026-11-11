@@ -134,12 +134,18 @@ export async function makeMemberSpotRequest(
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new MemberSpotAPIError(error.message, {
-				transport: true,
-				replaySafe: options.replaySafe,
-				// This came from fetch itself, so it never held the key header.
-				cause: error,
-			});
+			// undici quotes a header value it refuses, so a key pasted with an
+			// embedded newline lands in this message. Redact it, and drop the cause
+			// whenever it held the key.
+			const leaked = apiKey !== '' && error.message.includes(apiKey);
+			throw new MemberSpotAPIError(
+				leaked ? error.message.split(apiKey).join('[redacted]') : error.message,
+				{
+					transport: true,
+					replaySafe: options.replaySafe,
+					cause: leaked ? undefined : error,
+				},
+			);
 		}
 		throw new MemberSpotAPIError('Unknown MemberSpot error', {
 			replaySafe: options.replaySafe,
