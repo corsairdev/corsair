@@ -548,15 +548,34 @@ describe('teams', () => {
 		expect(lastRequest().body).toMatchObject({ users: ['u-1'] });
 	});
 
-	it('teams.update posts the member list update', async () => {
+	it('teams.update sends a replace as the flag plus newValue', async () => {
 		respond(updateCodeString);
 
 		await invoke(Records.teamsUpdate, {
 			externalId: 't-1',
-			users: { replace: ['u-1', 'u-2'] },
+			users: { replace: true, newValue: ['u-1', 'u-2'] },
 		});
 
-		expect(lastRequest().body).toEqual({ users: { replace: ['u-1', 'u-2'] } });
+		// ListUpdateData: `replace` is a boolean and the list is `newValue`.
+		expect(lastRequest().body).toEqual({
+			users: { replace: true, newValue: ['u-1', 'u-2'] },
+		});
+	});
+
+	it('list updates reject the list in replace, which OneDesk reads as a flag', async () => {
+		await expect(
+			invoke(Records.itemsUpdate, {
+				externalId: 'i-1',
+				assignedUserExternalIds: { replace: ['u-1'] },
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Records.projectsUpdate, {
+				externalId: 'p-1',
+				portfolioExternalIds: { newValue: ['pf-1'] },
+			}),
+		).rejects.toThrow(/replace: true together with newValue/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -959,6 +978,21 @@ describe('conversations and messages', () => {
 		expect(lastRequest().body).toMatchObject({
 			itemExternalId: 'i-1',
 			messages: [{ content: 'Hello' }],
+		});
+	});
+
+	it('conversations.create sends message attachments as attachmentIds', async () => {
+		respond(createdRecord);
+
+		await invoke(Crm.conversationsCreate, {
+			projectExternalId: 'p-1',
+			messages: [{ content: 'See attached', attachmentIds: ['a-1'] }],
+		});
+
+		// APIPublicCreateConversationData names the per-message list attachmentIds.
+		expect(lastRequest().body).toEqual({
+			projectExternalId: 'p-1',
+			messages: [{ content: 'See attached', attachmentIds: ['a-1'] }],
 		});
 	});
 

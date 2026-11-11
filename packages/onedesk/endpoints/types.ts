@@ -242,15 +242,33 @@ const PrioritySchema = z
 		'Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted.',
 	);
 
-/** A list update replaces, adds to or removes from an existing list. */
-const listUpdate = z.object({
-	replace: z
-		.array(z.string())
-		.optional()
-		.describe('Ids to set as the full list.'),
-	add: z.array(z.string()).optional().describe('Ids to append.'),
-	remove: z.array(z.string()).optional().describe('Ids to remove.'),
-});
+/**
+ * A list update (OneDesk's `ListUpdateData`): `replace: true` swaps the whole
+ * list for `newValue`, while `add` and `remove` change the existing list.
+ * `replace` is a flag, not the list, so the two travel together.
+ */
+const listUpdate = z
+	.object({
+		replace: z
+			.boolean()
+			.optional()
+			.describe('true to replace the whole list with newValue.'),
+		newValue: z
+			.array(z.string())
+			.optional()
+			.describe('Ids that become the full list when replace is true.'),
+		add: z.array(z.string()).optional().describe('Ids to append.'),
+		remove: z.array(z.string()).optional().describe('Ids to remove.'),
+	})
+	.superRefine((value, ctx) => {
+		if ((value.replace === true) !== (value.newValue !== undefined)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['newValue'],
+				message: 'Pass replace: true together with newValue, or use add/remove.',
+			});
+		}
+	});
 
 // ── items ─────────────────────────────────────────────────────────────────
 
@@ -1516,8 +1534,11 @@ const ConversationsCreateInputSchema = z
 			.array(
 				z.object({
 					content: z.string().optional(),
-					attachmentExternalIds: z.array(z.string()).optional(),
-					authorExternalId: z.string().nullish(),
+					// The spec names this attachmentIds here, unlike messages.create.
+					attachmentIds: z
+						.array(z.string())
+						.optional()
+						.describe('Attachment external ids, from attachments.upload.'),
 				}),
 			)
 			.optional(),
