@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-11T02:53:19.836Z",
-  "corsairVersion": "0.1.168",
+  "generatedAt": "2026-11-11T19:36:19.834Z",
+  "corsairVersion": "0.1.169",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -121,6 +121,21 @@
         "api": 4,
         "webhooks": 0,
         "db": 4
+      }
+    },
+    {
+      "id": "adyntel",
+      "displayName": "Adyntel",
+      "description": "Ad intelligence across Meta, Google, LinkedIn and TikTok - ad libraries, keyword searches, paid versus organic keywords.",
+      "npmPackageName": "@corsair-dev/adyntel",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -2381,6 +2396,21 @@
       }
     },
     {
+      "id": "commcare",
+      "displayName": "CommCare",
+      "description": "Global health data collection platform with CommCare HQ - list and read submitted forms and cases, manage mobile workers and groups, pull report data and lookup tables, submit XForms and run bulk form actions.",
+      "npmPackageName": "@corsair-dev/commcare",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 32,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "composio",
       "displayName": "Composio",
       "description": "Tool integration platform for AI agents. List toolkits and tools, execute them, manage connected accounts, and create sessions.",
@@ -2548,6 +2578,21 @@
       }
     },
     {
+      "id": "craftmypdf",
+      "displayName": "CraftMyPDF",
+      "description": "PDF generation API that renders PDFs and images from reusable drag-and-drop templates, and manages those templates, their versions and the account's usage.",
+      "npmPackageName": "@corsair-dev/craftmypdf",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 23,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "crowterminal",
       "displayName": "Crow Terminal",
       "description": "Financial terminal API for market data, trading tools, and investment research workflows.",
@@ -2663,6 +2708,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 15,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "databox",
+      "displayName": "Databox",
+      "description": "Business analytics with Databox - create data sources and datasets, push up to 500 records per call, poll ingestion results, read metrics over date ranges with breakdowns, and list dashboards.",
+      "npmPackageName": "@corsair-dev/databox",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 14,
         "webhooks": 0,
         "db": 0
       }
@@ -3011,6 +3071,21 @@
         "api": 56,
         "webhooks": 0,
         "db": 7
+      }
+    },
+    {
+      "id": "dropcontact",
+      "displayName": "Dropcontact",
+      "description": "B2B email finding and contact enrichment from Dropcontact - submit contacts for enrichment, read qualified email results, check remaining credits, and manage the account default webhook callback URL.",
+      "npmPackageName": "@corsair-dev/dropcontact",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -3890,6 +3965,21 @@
       }
     },
     {
+      "id": "happyscribe",
+      "displayName": "Happy Scribe",
+      "description": "Transcription, subtitle and meeting-notetaker platform with Happy Scribe - start transcriptions and translations, send the notetaker to meetings, export transcripts, read discovered contacts, and manage human-service orders.",
+      "npmPackageName": "@corsair-dev/happyscribe",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 28,
+        "webhooks": 7,
+        "db": 0
+      }
+    },
+    {
       "id": "harvest",
       "displayName": "Harvest",
       "description": "Time tracking and invoicing software for agencies, freelancers, and project billing.",
@@ -3945,6 +4035,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 135,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "heyy",
+      "displayName": "Heyy",
+      "description": "Customer messaging over WhatsApp, SMS and Instagram from Heyy - search and create contacts, define custom attributes and labels, and manage the webhook endpoints that deliver message events.",
+      "npmPackageName": "@corsair-dev/heyy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 15,
         "webhooks": 0,
         "db": 0
       }
@@ -4052,6 +4157,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 160,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "imagekit",
+      "displayName": "ImageKit",
+      "description": "Image and video media library and CDN with ImageKit - upload files, list and search assets, organize folders, tag files, read versions and metadata, run folder jobs and purge CDN cache.",
+      "npmPackageName": "@corsair-dev/imagekit",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
         "webhooks": 0,
         "db": 0
       }
@@ -4481,6 +4601,21 @@
       }
     },
     {
+      "id": "mailsso",
+      "displayName": "Mails.so",
+      "description": "Email address validation with Mails.so - check one address for deliverability, start a batch validation job for a list, and read the job back with its per-address results.",
+      "npmPackageName": "@corsair-dev/mailsso",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "mailtrap",
       "displayName": "Mailtrap",
       "description": "Email testing and delivery platform for safe staging inboxes and transactional sending.",
@@ -4493,6 +4628,21 @@
         "api": 49,
         "webhooks": 0,
         "db": 7
+      }
+    },
+    {
+      "id": "mapbox",
+      "displayName": "Mapbox",
+      "description": "Geocode addresses and coordinates, get routes, travel-time matrices, isochrones and optimized trips, and query vector tilesets with Mapbox.",
+      "npmPackageName": "@corsair-dev/mapbox",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 7,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -4511,6 +4661,21 @@
       }
     },
     {
+      "id": "melo",
+      "displayName": "Melo",
+      "description": "French real-estate listings through the Melo API (Stream Estate) - search properties across listing sites, read price-per-meter and points-of-interest indicators, look up locations and cities, and manage saved searches.",
+      "npmPackageName": "@corsair-dev/melo",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 13,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "mem0",
       "displayName": "Mem0",
       "description": "Long-term memory for AI agents with Mem0 - add, search, list, update and delete memories, read a memory's change history, and poll the events Mem0 queues for asynchronous work.",
@@ -4521,6 +4686,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 16,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "memberspot",
+      "displayName": "MemberSpot",
+      "description": "Membership and course platform access with MemberSpot - read users, offers, courses, exams and course progress, and grant or revoke offers, course access and custom properties.",
+      "npmPackageName": "@corsair-dev/memberspot",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 32,
         "webhooks": 0,
         "db": 0
       }
@@ -4798,6 +4978,21 @@
       }
     },
     {
+      "id": "onedesk",
+      "displayName": "OneDesk",
+      "description": "Help desk and project management in one platform, with a public API over tickets, tasks, projects, timesheets, invoices, quotes and customer conversations.",
+      "npmPackageName": "@corsair-dev/onedesk",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 79,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "onedrive",
       "displayName": "OneDrive",
       "description": "Microsoft cloud storage for files, folders, sharing, and Office document synchronization.",
@@ -4840,6 +5035,21 @@
         "api": 129,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "opengraph",
+      "displayName": "OpenGraph.io",
+      "description": "Web data extraction with OpenGraph.io - unfurl link preview metadata, scrape raw HTML, capture screenshots, pull structured elements, ask AI questions about pages, resolve oEmbed cards, convert pages to Markdown and analyze brands.",
+      "npmPackageName": "@corsair-dev/opengraph",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -5050,6 +5260,21 @@
         "api": 48,
         "webhooks": 0,
         "db": 9
+      }
+    },
+    {
+      "id": "placid",
+      "displayName": "Placid",
+      "description": "Creative automation with Placid - render templates to images, PDFs and videos, plus the template, collection, media and font operations behind them.",
+      "npmPackageName": "@corsair-dev/placid",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -10136,6 +10361,72 @@
       "kind": "api",
       "shortPath": "verify.address",
       "haystack": "verify.address addresszen.api.verify.address verify and standardize a us address using usps cass validation read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "google.ads",
+      "haystack": "google.ads adyntel.api.google.ads list a company's google ads from google's ad transparency report by domain, filtered by media type and country, with a continuation token per page read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "google.shopping",
+      "haystack": "google.shopping adyntel.api.google.shopping start a google shopping ad lookup for a domain: synchronous ads when `shopping` is true, otherwise a task id to poll with `google.shoppingstatus` read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "google.shoppingStatus",
+      "haystack": "google.shoppingstatus adyntel.api.google.shoppingstatus read the ads of a google shopping lookup started by `google.shopping`; free, and the only way to collect an async task read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "keywords.paidVsOrganic",
+      "haystack": "keywords.paidvsorganic adyntel.api.keywords.paidvsorganic read paid and organic keyword counts for a domain, with position breakdowns, estimated traffic, ad budget and average cpc read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "linkedin.ads",
+      "haystack": "linkedin.ads adyntel.api.linkedin.ads list a company's linkedin ads by domain or page id, with optional date filtering, eu impression data and creative text extraction, each of which costs an extra credit read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "linkedin.keywordSearch",
+      "haystack": "linkedin.keywordsearch adyntel.api.linkedin.keywordsearch search the linkedin ad library for a keyword, filtered by country and date range, with a continuation token per page read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "meta.ads",
+      "haystack": "meta.ads adyntel.api.meta.ads list a company's facebook and instagram ads from meta's ad library, by facebook page or domain, with country, language, media-type and ad-category filters and a continuation token per page read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "meta.adSearch",
+      "haystack": "meta.adsearch adyntel.api.meta.adsearch search the whole meta ad library for a keyword, optionally limited to one country, with a continuation token per page read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "tiktok.adDetails",
+      "haystack": "tiktok.addetails adyntel.api.tiktok.addetails read one tiktok ad in full, including its advertiser and its targeting, from an ad id returned by `tiktok.keywordsearch` read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "tiktok.ads",
+      "haystack": "tiktok.ads adyntel.api.tiktok.ads list a company's tiktok ads by domain, optionally including the influencers posting sponsored content for the brand, with continuation tokens read"
+    },
+    {
+      "pluginId": "adyntel",
+      "kind": "api",
+      "shortPath": "tiktok.keywordSearch",
+      "haystack": "tiktok.keywordsearch adyntel.api.tiktok.keywordsearch search the tiktok ad library for a keyword, limited to european countries or worldwide. returns the first page only: the api exposes no paging parameter, so `search_id` and `has_more` are informational and a later page cannot be requested read"
     },
     {
       "pluginId": "aeroleads",
@@ -44590,6 +44881,198 @@
       "haystack": "venues.list collegefootballdata.api.venues.list list venues with metadata read"
     },
     {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "cases.bulkFetch",
+      "haystack": "cases.bulkfetch commcare.api.cases.bulkfetch fetch many cases by id in one call, optionally limited to specific fields and properties read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "cases.get",
+      "haystack": "cases.get commcare.api.cases.get read one case with its properties and indices read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "cases.getByExternalId",
+      "haystack": "cases.getbyexternalid commcare.api.cases.getbyexternalid look up a case by the external id the application assigned it read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "cases.list",
+      "haystack": "cases.list commcare.api.cases.list list cases (case data api v2) with cursor paging and filters for case type, owner, name, closed state and indices read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "detExports.list",
+      "haystack": "detexports.list commcare.api.detexports.list list the data export tool export instances in the project read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "fixtures.getItem",
+      "haystack": "fixtures.getitem commcare.api.fixtures.getitem read one fixture item by id read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "fixtures.list",
+      "haystack": "fixtures.list commcare.api.fixtures.list list lookup-table fixture items, optionally filtered by fixture type read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "forms.bulkAction",
+      "haystack": "forms.bulkaction commcare.api.forms.bulkaction archive, unarchive, or permanently delete up to 5000 forms in one background job (delete needs the forms archived first); follow with forms.bulkactionstatus until status is complete or failed destructive"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "forms.bulkActionStatus",
+      "haystack": "forms.bulkactionstatus commcare.api.forms.bulkactionstatus where a bulk form action stands: pending, complete, or failed, with processed and succeeded counts read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "forms.get",
+      "haystack": "forms.get commcare.api.forms.get read one submitted form, including its xform content and metadata read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "forms.list",
+      "haystack": "forms.list commcare.api.forms.list list submitted forms with paging and time-window or xmlns filters read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create commcare.api.groups.create create a group, optionally with an initial member list write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get commcare.api.groups.get read one group: name, reporting flag and member user ids read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list commcare.api.groups.list list the reporting and case-sharing groups in the project with their members read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update commcare.api.groups.update rename a group, toggle reporting, or replace its member list write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "locations.get",
+      "haystack": "locations.get commcare.api.locations.get read one location with its type and parent read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "locations.list",
+      "haystack": "locations.list commcare.api.locations.list list project locations with site code, name and location type filters read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "locationTypes.get",
+      "haystack": "locationtypes.get commcare.api.locationtypes.get read one location type by id read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "locationTypes.list",
+      "haystack": "locationtypes.list commcare.api.locationtypes.list list the location types defined in the project read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "lookupTables.get",
+      "haystack": "lookuptables.get commcare.api.lookuptables.get read one lookup table with its field definitions read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "lookupTables.list",
+      "haystack": "lookuptables.list commcare.api.lookuptables.list list the lookup tables defined in the project read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "ota.restore",
+      "haystack": "ota.restore commcare.api.ota.restore pull the ota restore xml (user registration plus case blocks) for the api key owner in the domain; large payloads. hq accepts the apikey header here and restores the account that owns the key. the password hash in the registration block is replaced with [removed] read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "reports.getData",
+      "haystack": "reports.getdata commcare.api.reports.getdata run a configurable report and read its rows, with offset, limit (max 50) and the report filter parameters read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "reports.list",
+      "haystack": "reports.list commcare.api.reports.list list the configurable reports defined in the project, with their ids read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "submissions.submit",
+      "haystack": "submissions.submit commcare.api.submissions.submit submit a complete xform xml document to the openrosa receiver. fails when hq received the form but did not process it (nature submit_error or processing_failure); otherwise answers the message and its nature write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.create",
+      "haystack": "users.create commcare.api.users.create create a mobile worker account with an initial password write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete commcare.api.users.delete permanently delete a mobile worker account destructive"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get commcare.api.users.get read one mobile worker: username, names, email, phones and user data read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list commcare.api.users.list list the mobile workers in the project with paging read"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.sendPasswordReset",
+      "haystack": "users.sendpasswordreset commcare.api.users.sendpasswordreset email a password reset link to the mobile worker write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update commcare.api.users.update change a mobile worker: names, email, phone number or custom user data write"
+    },
+    {
+      "pluginId": "commcare",
+      "kind": "api",
+      "shortPath": "webUsers.list",
+      "haystack": "webusers.list commcare.api.webusers.list list the web users (dashboard accounts) in the project with their roles read"
+    },
+    {
       "pluginId": "composio",
       "kind": "api",
       "shortPath": "connections.create",
@@ -45518,6 +46001,144 @@
       "kind": "api",
       "shortPath": "search.get",
       "haystack": "search.get countdownapi.api.search.get search ebay products using countdown api read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "account.getInfo",
+      "haystack": "account.getinfo craftmypdf.api.account.getinfo read the account name, credit usage and template count against their limits read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "editor.createSession",
+      "haystack": "editor.createsession craftmypdf.api.editor.createsession create a signed url that lets its bearer edit a template in the embedded designer; the url is a credential write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "editor.deactivateSession",
+      "haystack": "editor.deactivatesession craftmypdf.api.editor.deactivatesession revoke an editor session so its url stops working write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.addText",
+      "haystack": "pdf.addtext craftmypdf.api.pdf.addtext draw text such as page numbers or headers on chosen pages of a pdf and return a new file write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.addWatermark",
+      "haystack": "pdf.addwatermark craftmypdf.api.pdf.addwatermark stamp a text watermark on every page of a pdf and return a new file write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.create",
+      "haystack": "pdf.create craftmypdf.api.pdf.create generate a pdf from a template and json data, synchronously; consumes one credit per pdf write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.createAsync",
+      "haystack": "pdf.createasync craftmypdf.api.pdf.createasync queue a pdf generation and return at once with a transaction reference, delivering the file to a webhook url; consumes one credit per pdf write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.createImage",
+      "haystack": "pdf.createimage craftmypdf.api.pdf.createimage render a template to a jpeg or png image instead of a pdf; consumes one credit per image write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.createMerge",
+      "haystack": "pdf.createmerge craftmypdf.api.pdf.createmerge render several templates, each with its own data, into one combined pdf; consumes one credit per template write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.createParallel",
+      "haystack": "pdf.createparallel craftmypdf.api.pdf.createparallel generate a batch of pdfs in one request, each from its own template data, optionally merging them into a single file; consumes one credit per pdf write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.getInfo",
+      "haystack": "pdf.getinfo craftmypdf.api.pdf.getinfo read the page count and document properties of a pdf at a url read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.merge",
+      "haystack": "pdf.merge craftmypdf.api.pdf.merge merge several pdfs fetched by url into one file write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "pdf.updateFields",
+      "haystack": "pdf.updatefields craftmypdf.api.pdf.updatefields fill the form fields of a pdf and optionally make them read-only, returning a new file write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.createFrom",
+      "haystack": "templates.createfrom craftmypdf.api.templates.createfrom create a new template by copying an existing one write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete craftmypdf.api.templates.delete permanently delete a template destructive"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get craftmypdf.api.templates.get read one template, including its body and sample json data read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list craftmypdf.api.templates.list list the templates on the account with the ids generation calls need read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.listVersions",
+      "haystack": "templates.listversions craftmypdf.api.templates.listversions list the saved versions of a template read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.queryUsage",
+      "haystack": "templates.queryusage craftmypdf.api.templates.queryusage report how many pdfs and credits the given templates used in a date range read"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.retainVersions",
+      "haystack": "templates.retainversions craftmypdf.api.templates.retainversions mark template versions to protect from automatic cleanup, or release the ones already kept; a released version can be cleaned up later write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.transfer",
+      "haystack": "templates.transfer craftmypdf.api.templates.transfer move a template to another team, after which this account no longer owns it write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update craftmypdf.api.templates.update change a template's name, sample json data or body; the body is what the template renders write"
+    },
+    {
+      "pluginId": "craftmypdf",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list craftmypdf.api.transactions.list list past generations with their status, credit cost and file size read"
     },
     {
       "pluginId": "crowterminal",
@@ -46646,6 +47267,90 @@
       "kind": "api",
       "shortPath": "nonProfits.search",
       "haystack": "nonprofits.search daffy.api.nonprofits.search search nonprofit organizations by cause or text. read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "auth.validateKey",
+      "haystack": "auth.validatekey databox.api.auth.validatekey check that the configured api key is valid; a setup or health check that reads nothing else read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "dashboards.list",
+      "haystack": "dashboards.list databox.api.dashboards.list list dashboards with their tags and the integrations they use read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.create",
+      "haystack": "datasets.create databox.api.datasets.create create a dataset in a data source with column definitions and an optional primary key that makes re-ingested records overwrite write"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.get",
+      "haystack": "datasets.get databox.api.datasets.get read one dataset with its status, sync and verification info read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.getIngestion",
+      "haystack": "datasets.getingestion databox.api.datasets.getingestion read one ingestion's status and record counts: how many records were appended, overwritten or rejected read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.ingestData",
+      "haystack": "datasets.ingestdata databox.api.datasets.ingestdata submit up to 500 records for ingestion; the response carries an ingestionid to poll in datasets.getingestion write"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.list",
+      "haystack": "datasets.list databox.api.datasets.list list datasets, optionally filtered by data source or type (api-created or merged), with search and paging read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "datasets.listData",
+      "haystack": "datasets.listdata databox.api.datasets.listdata read a page of a dataset's records with the column schema; records are keyed by column id read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "dataSources.create",
+      "haystack": "datasources.create databox.api.datasources.create create a data source for pushing custom data through the api; only a name is required write"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "dataSources.delete",
+      "haystack": "datasources.delete databox.api.datasources.delete permanently delete a data source and every dataset and record it holds; this cannot be undone destructive"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "dataSources.get",
+      "haystack": "datasources.get databox.api.datasources.get read one data source, including its status and sync interval read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "dataSources.list",
+      "haystack": "datasources.list databox.api.datasources.list list the data sources in the organization, with search, connection filter, sorting and paging read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "metrics.getData",
+      "haystack": "metrics.getdata databox.api.metrics.getdata read a metric's values over a date range with granularity, dimension breakdowns and filters; may wait for a first sync (up to two minutes) read"
+    },
+    {
+      "pluginId": "databox",
+      "kind": "api",
+      "shortPath": "metrics.list",
+      "haystack": "metrics.list databox.api.metrics.list list the organization's metrics with their dimensions, optionally filtered by source or name read"
     },
     {
       "pluginId": "databricks",
@@ -54452,6 +55157,42 @@
       "kind": "api",
       "shortPath": "templates.updateFiles",
       "haystack": "templates.updatefiles dropboxsign.api.templates.updatefiles updates files for a template write"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "account.credits",
+      "haystack": "account.credits dropcontact.api.account.credits read the enrichment credits left on the account; costs no credits read"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "enrichment.enrich",
+      "haystack": "enrichment.enrich dropcontact.api.enrichment.enrich submit up to 250 contacts for email finding, verification and company enrichment; spends one credit per contact and returns a request_id, not the results write"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "enrichment.results",
+      "haystack": "enrichment.results dropcontact.api.enrichment.results read the enriched contacts for a request_id: qualified emails, linkedin, phone and company data; reports success false with a reason while the batch is still processing read"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "webhook.get",
+      "haystack": "webhook.get dropcontact.api.webhook.get read the default webhook callback url used by enrichment requests that carry no custom callback of their own read"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "webhook.remove",
+      "haystack": "webhook.remove dropcontact.api.webhook.remove delete the account default webhook callback url; afterwards only requests carrying their own custom_callback_url notify anything destructive"
+    },
+    {
+      "pluginId": "dropcontact",
+      "kind": "api",
+      "shortPath": "webhook.set",
+      "haystack": "webhook.set dropcontact.api.webhook.set set the account default webhook callback url, replacing any previous one; enrichment requests without their own callback post their results there write"
     },
     {
       "pluginId": "dynapictures",
@@ -68140,6 +68881,216 @@
       "haystack": "users.getbyusername hackernews.api.users.getbyusername get a hackernews user profile via firebase read"
     },
     {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get happyscribe.api.companies.get read one discovered company with its enriched firmographics (intelligence api) read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list happyscribe.api.companies.list list companies discovered from meeting transcripts (intelligence api; 404 when the organization is not enrolled) read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "exports.create",
+      "haystack": "exports.create happyscribe.api.exports.create start exporting one or more transcriptions to a format (txt, srt, vtt, docx, pdf, json). follow with exports.get until state is ready write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "exports.get",
+      "haystack": "exports.get happyscribe.api.exports.get where an export stands; once state is ready the answer carries its download_link read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "glossaries.list",
+      "haystack": "glossaries.list happyscribe.api.glossaries.list list the glossaries an organization can attach to human orders read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "meetings.create",
+      "haystack": "meetings.create happyscribe.api.meetings.create send the happyscribe notetaker bot to a meeting url now or at joinat; it records and transcribes. follow with meetings.get until status is completed write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "meetings.get",
+      "haystack": "meetings.get happyscribe.api.meetings.get read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed, cancelled), settings, and the transcript and summary once ready read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "memberships.add",
+      "haystack": "memberships.add happyscribe.api.memberships.add add a user to an organization as admin or member, by email. an email new to happyscribe gets an invitation email and the answer carries invite instead of member write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "memberships.list",
+      "haystack": "memberships.list happyscribe.api.memberships.list list the members of an organization with their roles, 25 per page; nextpageurl is set when another page exists read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "memberships.remove",
+      "haystack": "memberships.remove happyscribe.api.memberships.remove remove a user from the organization; their existing transcripts stay destructive"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "memberships.updateRole",
+      "haystack": "memberships.updaterole happyscribe.api.memberships.updaterole change a member's role between admin and member write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "orders.confirm",
+      "haystack": "orders.confirm happyscribe.api.orders.confirm confirm an incomplete order, which charges the organization and starts the work destructive"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "orders.create",
+      "haystack": "orders.create happyscribe.api.orders.create create a transcription or subtitling order for media at a url: service auto (the default) is machine work, pro is human work. it stays incomplete and unpaid until orders.confirm or an explicit confirm flag destructive"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "orders.createTranslation",
+      "haystack": "orders.createtranslation happyscribe.api.orders.createtranslation create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. incomplete and unpaid until confirmed destructive"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "orders.get",
+      "haystack": "orders.get happyscribe.api.orders.get read one human-service order: state, operations, languages and pricing read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list happyscribe.api.organizations.list list the organizations the api token belongs to, with the caller role and human-service availability read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get happyscribe.api.people.get read one discovered contact with company linkage (intelligence api) read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list happyscribe.api.people.list list contacts discovered from meeting transcripts (intelligence api; 404 when not enrolled) read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "styleGuides.list",
+      "haystack": "styleguides.list happyscribe.api.styleguides.list list the style guides an organization can attach to human orders read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.create",
+      "haystack": "transcriptions.create happyscribe.api.transcriptions.create start transcribing media from a public url; spends transcription credits. follow with transcriptions.getdetails until state is automatic_done write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.delete",
+      "haystack": "transcriptions.delete happyscribe.api.transcriptions.delete delete a transcription. it moves to the trash unless permanent is true, which cannot be undone. deleting one still processing cancels it and refunds its credits destructive"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.getDetails",
+      "haystack": "transcriptions.getdetails happyscribe.api.transcriptions.getdetails read one transcription: processing state, language, duration, cost, media urls and download links read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.getSummary",
+      "haystack": "transcriptions.getsummary happyscribe.api.transcriptions.getsummary read the ai-generated meeting summary of a notetaker recording read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.list",
+      "haystack": "transcriptions.list happyscribe.api.transcriptions.list list transcriptions in an organization with paging, folder filter and, for intelligence-enrolled organizations, person and company filters read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "transcriptions.updateDetails",
+      "haystack": "transcriptions.updatedetails happyscribe.api.transcriptions.updatedetails change a transcription: rename it, move it to another folder in the same organization, or toggle its public sharing link write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "translations.createTask",
+      "haystack": "translations.createtask happyscribe.api.translations.createtask start machine-translating a transcript into a target language; spends credits. follow with translations.gettask until state is done write"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "translations.getTask",
+      "haystack": "translations.gettask happyscribe.api.translations.gettask where a translation task stands: progress percent, failure reason and the translated transcription id once done read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "api",
+      "shortPath": "uploads.getSignedUrl",
+      "haystack": "uploads.getsignedurl happyscribe.api.uploads.getsignedurl get a pre-signed s3 url for a filename; upload the file bytes there yourself, then create a transcription from it read"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.cancelled",
+      "haystack": "meetings.cancelled happyscribe.webhooks.meetings.cancelled the meeting was cancelled before completion"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.failed",
+      "haystack": "meetings.failed happyscribe.webhooks.meetings.failed the notetaker or transcription flow reached a terminal failure"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.recordingCompleted",
+      "haystack": "meetings.recordingcompleted happyscribe.webhooks.meetings.recordingcompleted the provider recording is available for processing"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.recordingStarted",
+      "haystack": "meetings.recordingstarted happyscribe.webhooks.meetings.recordingstarted the notetaker entered the call and recording started"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.summaryReady",
+      "haystack": "meetings.summaryready happyscribe.webhooks.meetings.summaryready the plain-text meeting summary has been generated and persisted"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "meetings.transcriptReady",
+      "haystack": "meetings.transcriptready happyscribe.webhooks.meetings.transcriptready the full json transcript is ready"
+    },
+    {
+      "pluginId": "happyscribe",
+      "kind": "webhook",
+      "shortPath": "other.other",
+      "haystack": "other.other happyscribe.webhooks.other.other happyscribe delivery whose event type this plugin has no dedicated handler for; check `type` before acting"
+    },
+    {
       "pluginId": "harvest",
       "kind": "api",
       "shortPath": "clients.create",
@@ -69596,6 +70547,96 @@
       "kind": "api",
       "shortPath": "webhooksQuota.updateEndpointV3",
       "haystack": "webhooksquota.updateendpointv3 heygen.api.webhooksquota.updateendpointv3 modify the url or subscribed events of an existing v3 webhook endpoint write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "apiWebhooks.create",
+      "haystack": "apiwebhooks.create heyy.api.apiwebhooks.create register an https endpoint for message events on the channels named in each event; heyy then posts every matching message, with its content and sender, to that url write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "apiWebhooks.remove",
+      "haystack": "apiwebhooks.remove heyy.api.apiwebhooks.remove delete a webhook endpoint by id; heyy stops delivering to it immediately destructive"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "apiWebhooks.search",
+      "haystack": "apiwebhooks.search heyy.api.apiwebhooks.search list the registered webhook endpoints with their url, status and subscribed events read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "apiWebhooks.update",
+      "haystack": "apiwebhooks.update heyy.api.apiwebhooks.update change a webhook's url or events, or pause deliveries by setting it inactive write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "attributes.create",
+      "haystack": "attributes.create heyy.api.attributes.create define a custom contact attribute: text, number, select or date, with the options a select needs and where it appears write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "attributes.remove",
+      "haystack": "attributes.remove heyy.api.attributes.remove delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored. an id that does not exist fails with 404 attribute_not_found destructive"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "attributes.search",
+      "haystack": "attributes.search heyy.api.attributes.search search the custom contact attributes defined on the workspace, with their type, options and where they appear in heyy read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "automations.search",
+      "haystack": "automations.search heyy.api.automations.search list the automation workflows on the workspace with their status: draft, active or paused read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "channels.search",
+      "haystack": "channels.search heyy.api.channels.search list the connected channels (whatsapp, instagram, messenger, sms or live chat) with their type and connection status read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create heyy.api.contacts.create create a contact with a name, phone number or email, attach labels by id and set custom attribute values write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "contacts.search",
+      "haystack": "contacts.search heyy.api.contacts.search search contacts with a structured filter, free-text search, sorting and paging; returns the matched contacts with their labels and attribute values read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "labels.create",
+      "haystack": "labels.create heyy.api.labels.create create a label with a name and a hex colour write"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "labels.remove",
+      "haystack": "labels.remove heyy.api.labels.remove delete a label by id; it is detached from every contact that carried it destructive"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "labels.search",
+      "haystack": "labels.search heyy.api.labels.search search the labels used to group contacts, with their colours read"
+    },
+    {
+      "pluginId": "heyy",
+      "kind": "api",
+      "shortPath": "messageTemplates.search",
+      "haystack": "messagetemplates.search heyy.api.messagetemplates.search list the message templates available for a channel, with their status, content and variables read"
     },
     {
       "pluginId": "higgsfield",
@@ -71810,6 +72851,162 @@
       "kind": "api",
       "shortPath": "webhooks.update",
       "haystack": "webhooks.update hunterio.api.webhooks.update update a webhook write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "cache.getPurgeStatus",
+      "haystack": "cache.getpurgestatus imagekit.api.cache.getpurgestatus where a cache purge stands; status pending or completed read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "cache.purge",
+      "haystack": "cache.purge imagekit.api.cache.purge purge the cdn cache of one delivered file url; follow with cache.getpurgestatus until status is completed write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.addTags",
+      "haystack": "files.addtags imagekit.api.files.addtags add tags to up to 50 files at once; the answer splits successes from per-file errors write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.bulkDelete",
+      "haystack": "files.bulkdelete imagekit.api.files.bulkdelete permanently delete up to 100 files by id; a 207 answer lists per-file failures in errors. the cdn keeps serving cached copies until cache.purge clears them destructive"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.copy",
+      "haystack": "files.copy imagekit.api.files.copy copy a file to another folder, optionally with all of its versions write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete imagekit.api.files.delete permanently delete a file and all of its versions; there is no trash and no restore. the cdn keeps serving cached copies until cache.purge clears them destructive"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.getDetails",
+      "haystack": "files.getdetails imagekit.api.files.getdetails read one file by id: path, url, tags, ai tags, size, versions and custom metadata read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.list",
+      "haystack": "files.list imagekit.api.files.list list and search files and folders with paging (limit and skip), a folder path filter, file type and a searchquery expression read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.move",
+      "haystack": "files.move imagekit.api.files.move move a file to another folder write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.removeAITags",
+      "haystack": "files.removeaitags imagekit.api.files.removeaitags remove ai-generated tags from up to 50 files at once write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.removeTags",
+      "haystack": "files.removetags imagekit.api.files.removetags remove tags from up to 50 files at once write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.rename",
+      "haystack": "files.rename imagekit.api.files.rename rename a file in place; purgecache purges the old url, its versions and query-parameter transformations from the cdn (path-parameter transformations need cache.purge), reported by purgerequestid. if the purge fails (e.g. quota exceeded), the rename still happens and the answer has reason purge_failed instead write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.updateDetails",
+      "haystack": "files.updatedetails imagekit.api.files.updatedetails change a file: replace tags, set custom metadata, coordinates or description, remove ai tags (names or all), or publish or unpublish it (that call alone) write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload imagekit.api.files.upload upload a file from an https url or base64 content into the media library, optionally into a folder and with tags write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "fileVersions.delete",
+      "haystack": "fileversions.delete imagekit.api.fileversions.delete permanently delete one non-current version of a file; the current version cannot be deleted destructive"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "fileVersions.getDetails",
+      "haystack": "fileversions.getdetails imagekit.api.fileversions.getdetails read one stored version of a file read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "fileVersions.list",
+      "haystack": "fileversions.list imagekit.api.fileversions.list list every stored version of a file, newest first read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "fileVersions.restore",
+      "haystack": "fileversions.restore imagekit.api.fileversions.restore make a stored version the current version of a file write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.copy",
+      "haystack": "folders.copy imagekit.api.folders.copy copy a folder subtree into another folder as a background job; follow with folders.getjobstatus until status is completed write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.create",
+      "haystack": "folders.create imagekit.api.folders.create create a folder in a parent folder path write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.delete",
+      "haystack": "folders.delete imagekit.api.folders.delete permanently delete a folder and everything inside it; there is no trash and no restore destructive"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.getJobStatus",
+      "haystack": "folders.getjobstatus imagekit.api.folders.getjobstatus where a folder bulk job stands; status pending or completed read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.move",
+      "haystack": "folders.move imagekit.api.folders.move move a folder subtree into another folder as a background job; follow with folders.getjobstatus write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "folders.rename",
+      "haystack": "folders.rename imagekit.api.folders.rename rename a folder as a background job; follow with folders.getjobstatus. purgecache also purges old cdn paths write"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "metadata.getByFileId",
+      "haystack": "metadata.getbyfileid imagekit.api.metadata.getbyfileid read image or video metadata of a stored file: dimensions, format, phash, exif read"
+    },
+    {
+      "pluginId": "imagekit",
+      "kind": "api",
+      "shortPath": "metadata.getByUrl",
+      "haystack": "metadata.getbyurl imagekit.api.metadata.getbyurl read metadata of any delivered file url, including transformed variants read"
     },
     {
       "pluginId": "imagior",
@@ -78916,6 +80113,24 @@
       "haystack": "unsubscribe mailchimp.webhooks.unsubscribe fired when a subscriber leaves a list."
     },
     {
+      "pluginId": "mailsso",
+      "kind": "api",
+      "shortPath": "validations.batch",
+      "haystack": "validations.batch mailsso.api.validations.batch start a batch validation job for at least 2 different email addresses; mails.so documents it as paid-plan only, but a free account with credits ran batches in our test, and an account without access gets mailssosubscriptionrequirederror. the job cannot be deleted through the api. it returns the job at once with no results: follow it with validations.getbatch until status is completed (it reads processing meanwhile). write"
+    },
+    {
+      "pluginId": "mailsso",
+      "kind": "api",
+      "shortPath": "validations.getBatch",
+      "haystack": "validations.getbatch mailsso.api.validations.getbatch read a batch validation job by id: status processing while it runs, and once completed the counts per result and the validation of every address read"
+    },
+    {
+      "pluginId": "mailsso",
+      "kind": "api",
+      "shortPath": "validations.single",
+      "haystack": "validations.single mailsso.api.validations.single validate one email address: deliverability result and reason, a 0-100 score, and format, domain, mx, block-list, catch-all, generic, disposable and free-provider checks read"
+    },
+    {
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "account.getBillingUsage",
@@ -79210,6 +80425,48 @@
       "haystack": "suppressions.list mailtrap.api.suppressions.list list (and optionally search) suppressed email addresses read"
     },
     {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "directions.route",
+      "haystack": "directions.route mapbox.api.directions.route get a route between 2 to 25 waypoints for driving, driving with traffic, walking or cycling, with optional steps, annotations and alternatives; throws when mapbox finds no route read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "geocoding.forward",
+      "haystack": "geocoding.forward mapbox.api.geocoding.forward turn an address or place name into coordinates and structured address context; a query with no match returns an empty features list read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "geocoding.reverse",
+      "haystack": "geocoding.reverse mapbox.api.geocoding.reverse turn a longitude and latitude into the address, place or other features at that point read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "isochrone.get",
+      "haystack": "isochrone.get mapbox.api.isochrone.get get the area reachable from a point within up to four travel times or distances, as geojson lines or polygons read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "matrix.calculate",
+      "haystack": "matrix.calculate mapbox.api.matrix.calculate get travel times, distances or both between up to 25 points (10 with traffic), as a sources by destinations table read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "tilequery.query",
+      "haystack": "tilequery.query mapbox.api.tilequery.query list the features of one or more vector tilesets at or near a point, nearest first read"
+    },
+    {
+      "pluginId": "mapbox",
+      "kind": "api",
+      "shortPath": "trips.optimize",
+      "haystack": "trips.optimize mapbox.api.trips.optimize find the fastest order to visit 2 to 12 stops (optimization v1, answered immediately); throws on nosegment or an unsupported roundtrip/source/destination combination read"
+    },
+    {
       "pluginId": "marketstack",
       "kind": "api",
       "shortPath": "currencies.list",
@@ -79268,6 +80525,84 @@
       "kind": "api",
       "shortPath": "tickers.list",
       "haystack": "tickers.list marketstack.api.tickers.list list or search the stock tickers supported by marketstack read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "indicators.cities",
+      "haystack": "indicators.cities melo.api.indicators.cities list cities by insee code, zipcode, name, label, slug or polygon, with paging read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "indicators.locations",
+      "haystack": "indicators.locations melo.api.indicators.locations search cities and departments by name and get the iris used in includedcities and includeddepartments filters; needs a key here although the api serves it publicly read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "indicators.pointsOfInterest",
+      "haystack": "indicators.pointsofinterest melo.api.indicators.pointsofinterest list schools, kindergartens, restaurants, hospitals or parking within a radius of a coordinate read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "indicators.pricePerMeter",
+      "haystack": "indicators.pricepermeter melo.api.indicators.pricepermeter average, median and time series of the price per meter for properties matching the same filters as properties.list read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "properties.get",
+      "haystack": "properties.get melo.api.properties.get get one property by uuid, with its adverts, city, stations and price events read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "properties.list",
+      "haystack": "properties.list melo.api.properties.list list french real-estate properties matching filters (location, price, surface, rooms, energy class and more), with paging via nextpage read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "properties.listSimilar",
+      "haystack": "properties.listsimilar melo.api.properties.listsimilar list properties similar to a given property, with paging read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "searches.create",
+      "haystack": "searches.create melo.api.searches.create create a saved search; melo also requires a location (includedcities, includeddepartments, includedzipcodes, lat/lon/radius or geoshapes) and a budget or price per meter bound. with notificationenabled and a webhook or email recipient, melo starts sending matches and events there write"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "searches.delete",
+      "haystack": "searches.delete melo.api.searches.delete permanently delete a saved search; its notifications stop and it cannot be restored destructive"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "searches.get",
+      "haystack": "searches.get melo.api.searches.get get one saved search by uuid read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "searches.list",
+      "haystack": "searches.list melo.api.searches.list list your saved searches, with paging read"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "searches.update",
+      "haystack": "searches.update melo.api.searches.update update a saved search (put) with the required title, transactiontype and propertytypes; fields left out keep their saved values write"
+    },
+    {
+      "pluginId": "melo",
+      "kind": "api",
+      "shortPath": "webhooks.simulate",
+      "haystack": "webhooks.simulate melo.api.webhooks.simulate ask melo to send a test match or event payload to a url you give; this is an api call that sends a request to that url, not an inbound webhook handler write"
     },
     {
       "pluginId": "mem0",
@@ -79364,6 +80699,198 @@
       "kind": "api",
       "shortPath": "webhooks.update",
       "haystack": "webhooks.update mem0.api.webhooks.update change a webhook's label, url or event subscriptions; the new event list replaces the old one write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "auth.check",
+      "haystack": "auth.check memberspot.api.auth.check returns the school the api key belongs to, which is the cheapest way to confirm a key works read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "chapters.enableAccess",
+      "haystack": "chapters.enableaccess memberspot.api.chapters.enableaccess grants a user access to one chapter by email write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "chapters.enableAccessByUid",
+      "haystack": "chapters.enableaccessbyuid memberspot.api.chapters.enableaccessbyuid grants a user access to one chapter by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "courses.list",
+      "haystack": "courses.list memberspot.api.courses.list lists all courses of the school with their ids and types read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "customProperties.list",
+      "haystack": "customproperties.list memberspot.api.customproperties.list lists the custom user properties defined for the school read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "exams.list",
+      "haystack": "exams.list memberspot.api.exams.list lists all exams of the school, including the examid used for results read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "exams.results",
+      "haystack": "exams.results memberspot.api.exams.results lists the exam results of every user who took an exam, with each run and whether it passed read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "offers.list",
+      "haystack": "offers.list memberspot.api.offers.list lists the offers available in the school read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.courseProgress",
+      "haystack": "users.courseprogress memberspot.api.users.courseprogress lists every course progress record for a user by email, paginated read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.courseProgressByUid",
+      "haystack": "users.courseprogressbyuid memberspot.api.users.courseprogressbyuid lists every course progress record for a user by uid, paginated read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.courseProgressDetail",
+      "haystack": "users.courseprogressdetail memberspot.api.users.courseprogressdetail returns one user’s progress in one course, by email read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.courseProgressDetailByUid",
+      "haystack": "users.courseprogressdetailbyuid memberspot.api.users.courseprogressdetailbyuid returns one user’s progress in one course, by uid read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete memberspot.api.users.delete permanently deletes up to 10 users by email; deleted accounts and their progress cannot be restored destructive"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.deleteByUid",
+      "haystack": "users.deletebyuid memberspot.api.users.deletebyuid permanently deletes up to 10 users by uid; deleted accounts and their progress cannot be restored destructive"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.findByEmail",
+      "haystack": "users.findbyemail memberspot.api.users.findbyemail returns one user by email; a member that does not exist answers 400 user_not_found rather than an empty result read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.findByUid",
+      "haystack": "users.findbyuid memberspot.api.users.findbyuid returns one user by uid; a uid that does not exist answers an empty body, which fails the output schema rather than returning null read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.grantOffer",
+      "haystack": "users.grantoffer memberspot.api.users.grantoffer creates or updates a user by email and optionally grants an offer in the same call; reports whether the user is new write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.grantOfferByUid",
+      "haystack": "users.grantofferbyuid memberspot.api.users.grantofferbyuid grants an offer to an existing user by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list memberspot.api.users.list returns a page of users, optionally filtered by offer or course, with a cursor for the next page read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.loginToken",
+      "haystack": "users.logintoken memberspot.api.users.logintoken mints a token and login url that signs a user in automatically, which is a credential; the token expires after one hour write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.offers",
+      "haystack": "users.offers memberspot.api.users.offers returns the offers granted to a user with their active state and expiry read"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setCourseStartDate",
+      "haystack": "users.setcoursestartdate memberspot.api.users.setcoursestartdate sets when a user’s access to a course starts write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setCustomProperties",
+      "haystack": "users.setcustomproperties memberspot.api.users.setcustomproperties sets several custom user properties at once by email; properties omitted from the map are left unchanged write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setCustomPropertiesByUid",
+      "haystack": "users.setcustompropertiesbyuid memberspot.api.users.setcustompropertiesbyuid sets several custom user properties at once by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setCustomProperty",
+      "haystack": "users.setcustomproperty memberspot.api.users.setcustomproperty sets one custom user property by email; a null value blanks it write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setCustomPropertyByUid",
+      "haystack": "users.setcustompropertybyuid memberspot.api.users.setcustompropertybyuid sets one custom user property by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOfferExpires",
+      "haystack": "users.setofferexpires memberspot.api.users.setofferexpires sets or clears the expiry date of an offer for a user by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOfferState",
+      "haystack": "users.setofferstate memberspot.api.users.setofferstate activates or deactivates an offer for a user by email, which is how access is revoked write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOfferStateByUid",
+      "haystack": "users.setofferstatebyuid memberspot.api.users.setofferstatebyuid activates or deactivates an offer for a user by uid write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOrderState",
+      "haystack": "users.setorderstate memberspot.api.users.setorderstate sets the state of an offer tied to an order for a user by email write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOrderStateByOrderId",
+      "haystack": "users.setorderstatebyorderid memberspot.api.users.setorderstatebyorderid sets the state of every offer carrying a given orderid, across all users write"
+    },
+    {
+      "pluginId": "memberspot",
+      "kind": "api",
+      "shortPath": "users.setOrderStateByUid",
+      "haystack": "users.setorderstatebyuid memberspot.api.users.setorderstatebyuid sets the state of an offer tied to an order for a user by uid write"
     },
     {
       "pluginId": "merriamwebsterdict",
@@ -83938,6 +85465,480 @@
       "haystack": "openai.listopenaimodels ollama.api.openai.listopenaimodels tool to list available models using openai-compatible api format. use when you need to retrieve locally available ollama models with metadata following openai's model list format. read"
     },
     {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "activities.filterDetails",
+      "haystack": "activities.filterdetails onedesk.api.activities.filterdetails list activity log entries by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.attachToItem",
+      "haystack": "attachments.attachtoitem onedesk.api.attachments.attachtoitem upload a file and attach it to a work item write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.attachToOrganization",
+      "haystack": "attachments.attachtoorganization onedesk.api.attachments.attachtoorganization upload a file and attach it to a customer organization write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.attachToPortfolio",
+      "haystack": "attachments.attachtoportfolio onedesk.api.attachments.attachtoportfolio upload a file and attach it to a portfolio write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.attachToProject",
+      "haystack": "attachments.attachtoproject onedesk.api.attachments.attachtoproject upload a file and attach it to a project write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.filter",
+      "haystack": "attachments.filter onedesk.api.attachments.filter list attachment external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.filterDetails",
+      "haystack": "attachments.filterdetails onedesk.api.attachments.filterdetails list attachments with their names read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.get",
+      "haystack": "attachments.get onedesk.api.attachments.get read one attachment record by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "attachments.upload",
+      "haystack": "attachments.upload onedesk.api.attachments.upload upload a file to the account and get its external id for attaching later write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "conversations.create",
+      "haystack": "conversations.create onedesk.api.conversations.create open a conversation on a work item or project, optionally with its first messages write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "conversations.filter",
+      "haystack": "conversations.filter onedesk.api.conversations.filter list conversation external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "conversations.filterDetails",
+      "haystack": "conversations.filterdetails onedesk.api.conversations.filterdetails list conversations with their open and lock state read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "conversations.get",
+      "haystack": "conversations.get onedesk.api.conversations.get read one conversation by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "conversations.update",
+      "haystack": "conversations.update onedesk.api.conversations.update close, reopen or lock a conversation write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create onedesk.api.customers.create create a customer, optionally inside a customer organization write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "customers.filter",
+      "haystack": "customers.filter onedesk.api.customers.filter list customer external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "customers.filterDetails",
+      "haystack": "customers.filterdetails onedesk.api.customers.filterdetails list customers with their contact details and organization read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get onedesk.api.customers.get read one customer by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update onedesk.api.customers.update change a customer, including deactivating them so they can no longer sign in write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "invoices.filter",
+      "haystack": "invoices.filter onedesk.api.invoices.filter list invoice external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "invoices.filterDetails",
+      "haystack": "invoices.filterdetails onedesk.api.invoices.filterdetails list invoices with their status and totals read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get onedesk.api.invoices.get read one invoice by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "invoices.update",
+      "haystack": "invoices.update onedesk.api.invoices.update change an invoice: its status, due date and line items. setting the status to 'void' cannot be undone destructive"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "items.create",
+      "haystack": "items.create onedesk.api.items.create create a work item such as a ticket or task, optionally with requesters, followers, a project and custom fields write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "items.filter",
+      "haystack": "items.filter onedesk.api.items.filter list work item external ids by type and filter, with paging and a total count read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "items.filterDetails",
+      "haystack": "items.filterdetails onedesk.api.items.filterdetails list work items with their details by type and filter, including assignees and lifecycle status read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "items.get",
+      "haystack": "items.get onedesk.api.items.get read one work item by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "items.update",
+      "haystack": "items.update onedesk.api.items.update change a work item: name, status, assignment, priority, dates, links and custom fields write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "messages.create",
+      "haystack": "messages.create onedesk.api.messages.create post a message into a conversation write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "messages.filter",
+      "haystack": "messages.filter onedesk.api.messages.filter list conversation message external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "messages.filterDetails",
+      "haystack": "messages.filterdetails onedesk.api.messages.filterdetails list conversation messages with their content and author read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "messages.get",
+      "haystack": "messages.get onedesk.api.messages.get read one conversation message by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "messages.update",
+      "haystack": "messages.update onedesk.api.messages.update change a message body or its attachments write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organization.containerTypes",
+      "haystack": "organization.containertypes onedesk.api.organization.containertypes list the organization container type names read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organization.itemTypes",
+      "haystack": "organization.itemtypes onedesk.api.organization.itemtypes list the organization work item type names that create and filter calls require read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organization.lifecycleStatus",
+      "haystack": "organization.lifecyclestatus onedesk.api.organization.lifecyclestatus list the lifecycle status names an item or project can be moved to read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organization.profile",
+      "haystack": "organization.profile onedesk.api.organization.profile read the organization profile and its policy settings read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organization.userTypes",
+      "haystack": "organization.usertypes onedesk.api.organization.usertypes list the organization user type names that user create calls accept read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organizations.create",
+      "haystack": "organizations.create onedesk.api.organizations.create create a customer organization write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organizations.filter",
+      "haystack": "organizations.filter onedesk.api.organizations.filter list customer organization external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organizations.filterDetails",
+      "haystack": "organizations.filterdetails onedesk.api.organizations.filterdetails list customer organizations with their domains and customers read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get onedesk.api.organizations.get read one customer organization by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "organizations.update",
+      "haystack": "organizations.update onedesk.api.organizations.update change a customer organization, its domains or its customers write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "portfolios.create",
+      "haystack": "portfolios.create onedesk.api.portfolios.create create a portfolio, optionally nested under others write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "portfolios.filter",
+      "haystack": "portfolios.filter onedesk.api.portfolios.filter list portfolio external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "portfolios.filterDetails",
+      "haystack": "portfolios.filterdetails onedesk.api.portfolios.filterdetails list portfolios with their details read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "portfolios.get",
+      "haystack": "portfolios.get onedesk.api.portfolios.get read one portfolio by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "portfolios.update",
+      "haystack": "portfolios.update onedesk.api.portfolios.update change a portfolio name, parents or attachments write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create onedesk.api.projects.create create a project, optionally under portfolios write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "projects.filter",
+      "haystack": "projects.filter onedesk.api.projects.filter list project external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "projects.filterDetails",
+      "haystack": "projects.filterdetails onedesk.api.projects.filterdetails list projects with their lifecycle status and invoice type read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get onedesk.api.projects.get read one project by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update onedesk.api.projects.update change a project: name, lifecycle status, portfolios and custom fields write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "quotes.filter",
+      "haystack": "quotes.filter onedesk.api.quotes.filter list quote external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "quotes.filterDetails",
+      "haystack": "quotes.filterdetails onedesk.api.quotes.filterdetails list quotes with their status and totals read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "quotes.get",
+      "haystack": "quotes.get onedesk.api.quotes.get read one quote by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "quotes.update",
+      "haystack": "quotes.update onedesk.api.quotes.update change a quote: its status, expiration date and line items write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create onedesk.api.teams.create create a team with an initial set of members write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "teams.filter",
+      "haystack": "teams.filter onedesk.api.teams.filter list team external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "teams.filterDetails",
+      "haystack": "teams.filterdetails onedesk.api.teams.filterdetails list teams with their members read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get onedesk.api.teams.get read one team by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "teams.update",
+      "haystack": "teams.update onedesk.api.teams.update rename a team or change its members write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.cancel",
+      "haystack": "timers.cancel onedesk.api.timers.cancel cancel a work timer, discarding the work recorded in that run destructive"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.filter",
+      "haystack": "timers.filter onedesk.api.timers.filter list timer external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.filterDetails",
+      "haystack": "timers.filterdetails onedesk.api.timers.filterdetails list timers with their status and accumulated work read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.get",
+      "haystack": "timers.get onedesk.api.timers.get read one timer by external id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.pause",
+      "haystack": "timers.pause onedesk.api.timers.pause pause a running work timer write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.resume",
+      "haystack": "timers.resume onedesk.api.timers.resume resume a paused work timer write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timers.start",
+      "haystack": "timers.start onedesk.api.timers.start start a work timer on a work item write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timesheets.create",
+      "haystack": "timesheets.create onedesk.api.timesheets.create book work against a work item for a user write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timesheets.filter",
+      "haystack": "timesheets.filter onedesk.api.timesheets.filter list timesheet external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timesheets.filterDetails",
+      "haystack": "timesheets.filterdetails onedesk.api.timesheets.filterdetails list timesheets with their hours, dates and approval status read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timesheets.get",
+      "haystack": "timesheets.get onedesk.api.timesheets.get read one timesheet by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "timesheets.update",
+      "haystack": "timesheets.update onedesk.api.timesheets.update change a timesheet, including approving or declining it and marking it billable write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "users.create",
+      "haystack": "users.create onedesk.api.users.create create a user, which sends them an invitation to the account write"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "users.filter",
+      "haystack": "users.filter onedesk.api.users.filter list user external ids by filter read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "users.filterDetails",
+      "haystack": "users.filterdetails onedesk.api.users.filterdetails list users with their profile, address and teams read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get onedesk.api.users.get read one user by external id or numeric id read"
+    },
+    {
+      "pluginId": "onedesk",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update onedesk.api.users.update change a user profile, teams or custom fields write"
+    },
+    {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "drive.get",
@@ -85130,6 +87131,54 @@
       "kind": "api",
       "shortPath": "videos.retrieve",
       "haystack": "videos.retrieve openai.api.videos.retrieve retrieve a video read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "brand.analyze",
+      "haystack": "brand.analyze opengraph.api.brand.analyze analyze the brand behind a website: identity, products, audiences, positioning, messaging, voice, visual style and links read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "extract.run",
+      "haystack": "extract.run opengraph.api.extract.run extract chosen html elements as structured data plus concatenated clean text from a url, ready for llm pipelines read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "markdown.get",
+      "haystack": "markdown.get opengraph.api.markdown.get convert a url to clean markdown with optional heading-aware chunking, keyword passage search and structure extraction read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "oembed.get",
+      "haystack": "oembed.get opengraph.api.oembed.get resolve embeddable html for a url: a native provider embed, an oembed discovery link, or a hosted fallback card read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "query.run",
+      "haystack": "query.run opengraph.api.query.run ask an ai question about a url and get an answer shaped by a requested structure, from a nano or mini model read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "scrape.fetch",
+      "haystack": "scrape.fetch opengraph.api.scrape.fetch fetch the raw html of a url, with optional javascript rendering and proxy tiers for protected sites read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "screenshot.capture",
+      "haystack": "screenshot.capture opengraph.api.screenshot.capture capture a screenshot of a url and get a cdn link that expires after 24 hours, with viewport, format and selector controls read"
+    },
+    {
+      "pluginId": "opengraph",
+      "kind": "api",
+      "shortPath": "site.get",
+      "haystack": "site.get opengraph.api.site.get extract opengraph, twitter card and html meta tags from a url as a merged hybrid graph for link previews read"
     },
     {
       "pluginId": "openrouter",
@@ -87176,6 +89225,162 @@
       "kind": "api",
       "shortPath": "vectors.upsert",
       "haystack": "vectors.upsert pinecone.api.vectors.upsert insert or replace a batch of vectors in an index namespace. write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "collections.create",
+      "haystack": "collections.create placid.api.collections.create create a collection, such as one per customer of your saas, holding up to 500 templates write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "collections.delete",
+      "haystack": "collections.delete placid.api.collections.delete permanently delete a collection. the templates inside it are not deleted destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "collections.get",
+      "haystack": "collections.get placid.api.collections.get read one collection and the template uuids it holds read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "collections.list",
+      "haystack": "collections.list placid.api.collections.list list template collections, either all at once or cursor-paged with `per_page` read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "collections.update",
+      "haystack": "collections.update placid.api.collections.update change a collection: replace its whole template list with `template_uuids`, or add and remove individual templates write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "fonts.create",
+      "haystack": "fonts.create placid.api.fonts.create upload a ttf, otf, woff or woff2 font from a public url. `terms_accepted` must be true. the returned `uuid` is the value to set as the `font` property on a text layer write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "fonts.delete",
+      "haystack": "fonts.delete placid.api.fonts.delete delete a custom font. fails with 409 when a template still uses it unless `force` is set, which leaves those templates on the default font destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "fonts.get",
+      "haystack": "fonts.get placid.api.fonts.get read one custom font by its `uuid` read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "fonts.list",
+      "haystack": "fonts.list placid.api.fonts.list list the custom fonts in the project, optionally including legacy account-wide fonts read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "fonts.update",
+      "haystack": "fonts.update placid.api.fonts.update rename a custom font. the file itself cannot be replaced: upload a new font instead write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "images.create",
+      "haystack": "images.create placid.api.images.create render a template to an image. the reply is usually `queued`: poll `images.get` with its `id` or set `webhook_success` to get the finished url. one image costs one credit. write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "images.delete",
+      "haystack": "images.delete placid.api.images.delete permanently delete an image. placid only keeps generated files for a limited time, so store them yourself if you need them destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "images.get",
+      "haystack": "images.get placid.api.images.get read an image by id, including `image_url` once `status` is `finished` and the render error fields when it is `error` read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "media.upload",
+      "haystack": "media.upload placid.api.media.upload upload a file from a public url to placid storage and get a url back for a picture layer. placid keeps it for a limited time write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "pdfs.create",
+      "haystack": "pdfs.create placid.api.pdfs.create render one template per page into a single pdf, merged in the order given. each page costs two credits write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "pdfs.delete",
+      "haystack": "pdfs.delete placid.api.pdfs.delete permanently delete a pdf destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "pdfs.get",
+      "haystack": "pdfs.get placid.api.pdfs.get read a pdf by id, including `pdf_url` once `status` is `finished` read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "pdfs.merge",
+      "haystack": "pdfs.merge placid.api.pdfs.merge merge 2 to 10 existing pdfs from public urls into one file, without rendering a template write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create placid.api.templates.create create an empty template, or duplicate an existing one with `from_template`, optionally adding it to collections write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete placid.api.templates.delete permanently delete a template destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get placid.api.templates.get read one template, including every dynamic layer that can be filled in read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list placid.api.templates.list list templates with their layer names and types, optionally filtered by collection, title or tag and sorted; paged 20 at a time read"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update placid.api.templates.update change a template's title, tags or custom_data write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "videos.create",
+      "haystack": "videos.create placid.api.videos.create render one template per clip into a video of up to 3 minutes, optionally with audio. each 10 seconds of video costs 10 credits write"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "videos.delete",
+      "haystack": "videos.delete placid.api.videos.delete permanently delete a video destructive"
+    },
+    {
+      "pluginId": "placid",
+      "kind": "api",
+      "shortPath": "videos.get",
+      "haystack": "videos.get placid.api.videos.get read a video by id, including `video_url` once `status` is `finished` read"
     },
     {
       "pluginId": "plain",
