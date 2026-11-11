@@ -38,16 +38,32 @@ export type UserflowRegion = 'us' | 'eu';
 
 export type UserflowPluginOptions = {
 	authType?: PickAuth<'api_key'>;
+	/** A Users API environment key (`ak_...`). */
 	key?: string;
 	/**
-	 * The region the environment lives in. An EU environment's key only works
-	 * against `api.eu.userflow.com`, and the key gives no hint of which it is.
+	 * A personal key (`pak_...`) for the Accounts API. Members and invites need one;
+	 * an environment key is refused there with `invalid_pak`.
+	 */
+	personalKey?: string;
+	/**
+	 * The region the environment lives in. An EU environment's Users API lives on
+	 * `api.eu.userflow.com`; the Accounts API is on `api.userflow.com` in every
+	 * region, and the client picks the host per operation.
 	 */
 	region?: UserflowRegion;
 	hooks?: InternalUserflowPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof userflowEndpointsNested>;
 };
+
+/**
+ * True for the operations the Accounts API serves. They are the ones under the
+ * `accounts`, `members` and `invites` groups, and they need a personal key.
+ */
+export function isAccountsOperation(shortPath: string | undefined): boolean {
+	if (!shortPath) return false;
+	return /^(accounts|members|invites)\./.test(shortPath);
+}
 
 export type UserflowContext = CorsairPluginContext<
 	typeof UserflowSchema,
@@ -516,11 +532,25 @@ export function userflow<const T extends UserflowPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: UserflowKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('userflow', ctx.authType ?? 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			const needsPersonal = isAccountsOperation(ctx.meteredOperationId);
+
+			if (needsPersonal) {
+				if (options.personalKey) return options.personalKey;
+				// A plugin without an authConfig field for a second key has one slot, so
+				// the personal key comes from the option or the stored key as a whole.
+				if (ctx.authType === 'api_key') {
+					const stored = await ctx.keys.get_api_key();
+					if (stored) return stored;
+				}
+				throw new AuthMissingError('userflow', ctx.authType ?? 'api_key');
+			}
+
+			if (options.key) return options.key;
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (res) return res;
 			}

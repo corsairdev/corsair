@@ -686,3 +686,58 @@ describe('error surface', () => {
 		expect(userflowEndpointSchemas['invites.delete'].output).toBeDefined();
 	});
 });
+
+describe('ordering and filters', () => {
+	it('accepts a scalar order_by and sends it as an array', async () => {
+		respond(fetchMock, usersPage);
+
+		await invoke(Users.list, { order_by: 'created_at' });
+
+		// A scalar is normalised to a one-item array and serialised as one pair.
+		const pairs = lastRequest(fetchMock).queryPairs.filter(([key]) =>
+			key.startsWith('order_by'),
+		);
+		expect(pairs).toEqual([['order_by', 'created_at']]);
+	});
+
+	it('accepts a descending order_by', async () => {
+		respond(fetchMock, usersPage);
+
+		await invoke(Users.list, { order_by: ['-created_at'] });
+
+		const pairs = lastRequest(fetchMock).queryPairs.filter(([key]) =>
+			key.startsWith('order_by'),
+		);
+		expect(pairs).toEqual([['order_by', '-created_at']]);
+	});
+
+	it('rejects an order_by field the API does not document', async () => {
+		await expect(
+			invoke(Users.list, { order_by: ['-password'] }),
+		).rejects.toThrow();
+	});
+
+	it('forwards the documented group filters', async () => {
+		respond(fetchMock, groupsPage);
+
+		await invoke(Groups.list, { user_id: 'u_1', segment_id: 's_1' });
+
+		const query = lastRequest(fetchMock).query;
+		expect(query.user_id).toBe('u_1');
+		expect(query.segment_id).toBe('s_1');
+	});
+
+	it('forwards the documented invite filters', async () => {
+		respond(fetchMock, invitesPage);
+
+		await invoke(Accounts.listInvites, {
+			account_id: 'a_1',
+			email: 'x@example.com',
+			is_expired: false,
+		});
+
+		const query = lastRequest(fetchMock).query;
+		expect(query.email).toBe('x@example.com');
+		expect(query.is_expired).toBe('false');
+	});
+});

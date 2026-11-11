@@ -78,10 +78,26 @@ export const list: UserflowEndpoints['groupsList'] = (ctx, input) =>
 			output: Outputs.groupsList,
 		},
 		input,
-		({ limit, starting_after, condition, order_by, expand }) => ({
+		({
+			limit,
+			starting_after,
+			condition,
+			user_id,
+			segment_id,
+			order_by,
+			expand,
+		}) => ({
 			method: 'GET',
 			path: '/groups',
-			query: { limit, starting_after, condition, order_by, expand },
+			query: {
+				limit,
+				starting_after,
+				condition,
+				user_id,
+				segment_id,
+				order_by,
+				expand,
+			},
 		}),
 		{
 			log: (_, result) => ({

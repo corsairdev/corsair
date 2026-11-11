@@ -10,12 +10,25 @@ import {
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
+/** The Accounts API owns these groups; everything else is the Users API. */
+const ACCOUNTS_API_GROUPS = new Set(['accounts', 'members', 'invites']);
+
+/** True when an event such as `members.list` belongs to the Accounts API. */
+export function isAccountsEvent(event: string): boolean {
+	return ACCOUNTS_API_GROUPS.has(event.split('.')[0] ?? '');
+}
+
 /**
- * An EU-region environment lives on `api.eu.userflow.com`, and the API key
- * carries no indication of which region issued it, so the region is a plugin
- * option rather than something the client can infer.
+ * An EU-region *Users* environment lives on `api.eu.userflow.com`. The Accounts API
+ * is on `api.userflow.com` in every region, so the host depends on which API an
+ * operation belongs to as well as on the region. The key carries no region marker,
+ * which is why `region` is a plugin option.
  */
-export function resolveBase(ctx: UserflowContext): string {
+export function resolveBase(
+	ctx: UserflowContext,
+	isAccountsApi: boolean,
+): string {
+	if (isAccountsApi) return USERFLOW_API_BASE;
 	return ctx.options?.region === 'eu'
 		? USERFLOW_EU_API_BASE
 		: USERFLOW_API_BASE;
@@ -40,10 +53,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
+	// The event name starts with its group, so the API family is known here without
+	// threading a flag through every endpoint.
+	const isAccountsApi = isAccountsEvent(operation.event);
 	const raw = await makeUserflowRequest(
 		ctx.key,
 		toRequest(parsed),
-		resolveBase(ctx),
+		resolveBase(ctx, isAccountsApi),
 	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,

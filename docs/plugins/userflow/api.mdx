@@ -343,7 +343,8 @@ await corsair.userflow.api.content.listVersions({ content_id: '54bce034-1303-420
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
 | `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
 | `number` | `number` | No | A specific version number. |
-| `order_by` | `number[]` | No | — |
+| `order_by` | `number \| string \| (number \| string)[]` | No | Sort by version number, optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
 
 
@@ -1006,7 +1007,9 @@ await corsair.userflow.api.groups.list({ limit: 50 });
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
 | `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
 | `condition` | `string` | No | — |
-| `order_by` | `(created_at \| attributes.name)[]` | No | — |
+| `user_id` | `string` | No | Only the groups this user belongs to. |
+| `segment_id` | `string` | No | Only the groups in this segment. |
+| `order_by` | `created_at \| attributes.name \| string \| (created_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 | `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
 
@@ -1251,6 +1254,8 @@ await corsair.userflow.api.invites.list({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3
 | `account_id` | `string` | Yes | — |
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
 | `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `email` | `string` | No | Only the invite for this address. |
+| `is_expired` | `boolean` | No | Only expired invites, or only the ones still open. |
 
 
 
@@ -1679,7 +1684,7 @@ await corsair.userflow.api.users.list({ email: 'evelyn@example.com', order_by: [
 | `group_id` | `string` | No | Only members of this group. |
 | `segment_id` | `string` | No | Only users in this segment; the id is in the segment menu in the UI. |
 | `condition` | `string` | No | A filter expression over any attribute, e.g. `attributes.plan_name:eq:plus`. |
-| `order_by` | `(created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name)[]` | No | Sort fields. Userflow defaults to `created_at`. |
+| `order_by` | `created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string \| (created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. Userflow defaults to `created_at`. |
 | `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
 

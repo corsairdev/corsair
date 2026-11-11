@@ -30,6 +30,35 @@ const AttributesSchema = z.record(z.string(), AttributeValueSchema);
  * and answers `next_page_url` — which is always set, even on the last page, so
  * `has_more` is what says whether to continue.
  */
+/**
+ * Userflow accepts `order_by` as a single field or an array, and a leading `-` on any
+ * field means descending. Both forms and both directions are accepted here, then
+ * flattened to the array the request builder sends.
+ */
+function orderBySchema<const T extends readonly [string, ...string[]]>(
+	fields: T,
+	description: string,
+) {
+	const base = z.enum(fields);
+	const withDescending = z.union([
+		base,
+		z
+			.string()
+			.refine(
+				(value): boolean =>
+					value.startsWith('-') &&
+					(fields as readonly string[]).includes(value.slice(1)),
+				{
+					message: `Use one of ${fields.join(', ')}, optionally prefixed with "-".`,
+				},
+			),
+	]);
+	return z
+		.union([withDescending, z.array(withDescending).min(1)])
+		.optional()
+		.describe(description);
+}
+
 const PagingSchema = {
 	limit: z
 		.number()
@@ -67,9 +96,13 @@ const GroupSchema = z
 	.object({
 		id: z.string().nullish(),
 		object: z.literal('group').nullish(),
+		// unknown: attributes are free-form caller data, so their values have no
+		// static type; the keys are validated by Userflow, not by this schema.
 		attributes: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		// null unless expanded with ?expand=users or ?expand=memberships.
+		// unknown: an expanded entry is a full user or membership, whose own schema
+		// would duplicate the models below; the raw objects are passed through.
 		users: z.array(z.unknown()).nullish(),
 		memberships: z.array(z.unknown()).nullish(),
 	})
@@ -233,18 +266,15 @@ const UsersListInputSchema = z.object({
 		.describe(
 			'A filter expression over any attribute, e.g. `attributes.plan_name:eq:plus`.',
 		),
-	order_by: z
-		.array(
-			z.enum([
-				'created_at',
-				'attributes.signed_up_at',
-				'attributes.last_seen_at',
-				'attributes.name',
-			]),
-		)
-		.min(1)
-		.optional()
-		.describe('Sort fields. Userflow defaults to `created_at`.'),
+	order_by: orderBySchema(
+		[
+			'created_at',
+			'attributes.signed_up_at',
+			'attributes.last_seen_at',
+			'attributes.name',
+		],
+		'Sort field or fields, each optionally prefixed with "-" for descending. Userflow defaults to `created_at`.',
+	),
 	expand: ExpandSchema,
 });
 
@@ -297,10 +327,18 @@ export type GroupsDeleteResponse = z.infer<typeof GroupsDeleteResponseSchema>;
 const GroupsListInputSchema = z.object({
 	...PagingSchema,
 	condition: z.string().optional(),
-	order_by: z
-		.array(z.enum(['created_at', 'attributes.name']))
-		.min(1)
-		.optional(),
+	user_id: z
+		.string()
+		.optional()
+		.describe('Only the groups this user belongs to.'),
+	segment_id: z
+		.string()
+		.optional()
+		.describe('Only the groups in this segment.'),
+	order_by: orderBySchema(
+		['created_at', 'attributes.name'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 	expand: ExpandSchema,
 });
 
@@ -498,7 +536,12 @@ const ContentVersionsListInputSchema = z.object({
 	),
 	...PagingSchema,
 	number: z.number().int().optional().describe('A specific version number.'),
-	order_by: z.array(z.literal('number')).min(1).optional(),
+	order_by: orderBySchema(
+		['number'],
+		'Sort by version number, optionally prefixed with "-" for descending.',
+	),
+	// Questions and tasks come back null unless the version is expanded.
+	expand: ExpandSchema,
 });
 
 export type ContentVersionsListInput = z.infer<
@@ -988,6 +1031,11 @@ export type UserflowInvite = z.infer<typeof InviteSchema>;
 const InvitesListInputSchema = z.object({
 	account_id: IdSchema,
 	...PagingSchema,
+	email: z.string().optional().describe('Only the invite for this address.'),
+	is_expired: z
+		.boolean()
+		.optional()
+		.describe('Only expired invites, or only the ones still open.'),
 });
 
 export type InvitesListInput = z.infer<typeof InvitesListInputSchema>;

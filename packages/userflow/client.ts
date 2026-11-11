@@ -125,6 +125,22 @@ export type UserflowQuery = Record<
 	string | number | boolean | readonly string[] | undefined
 >;
 
+/**
+ * Normalises a query before it is sent. Userflow accepts `order_by` as a bare field
+ * or an array and expects the repeated-key form, so a scalar becomes a one-item
+ * array here rather than at each of the call sites that build a query.
+ */
+function normaliseQuery(
+	query: UserflowQuery | undefined,
+): UserflowQuery | undefined {
+	if (!query) return undefined;
+	const orderBy = query.order_by;
+	if (typeof orderBy === 'string') {
+		return { ...query, order_by: [orderBy] };
+	}
+	return query;
+}
+
 export type UserflowRequest = {
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	path: string;
@@ -159,7 +175,7 @@ export async function makeUserflowRequest(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		query,
+		query: normaliseQuery(query),
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};

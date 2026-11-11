@@ -1,9 +1,14 @@
 export const API_KEY = 'ak_test_environment_key';
 
-/** A fake context carrying only what the endpoints read. */
+/**
+ * A fake context carrying only what the endpoints read. `$getAccountId` is present
+ * because `logEventFromContext` calls it on every success; without it the logging
+ * threw and was swallowed, so the happy path never exercised it.
+ */
 export const testContext = {
 	key: API_KEY,
 	options: { region: 'us' as const },
+	$getAccountId: async () => 'acct_test',
 } as never;
 
 // never parameters: every concrete endpoint is assignable to this because
