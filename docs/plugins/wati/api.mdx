@@ -95,8 +95,8 @@ await corsair.wati.api.broadcasts.list({ page_number: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -172,8 +172,8 @@ await corsair.wati.api.broadcasts.recipients({ broadcast_id: 'bc-1', page_number
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `broadcast_id` | `string` | Yes | — |
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -331,7 +331,38 @@ await corsair.wati.api.contacts.create({ whatsapp_number: '1234567890', name: 'J
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `wa_id` | `string \| null` | No | The WhatsApp identifier. |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `photo` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `last_updated` | `string \| null` | No | — |
+| `contact_status` | `string \| null` | No | — |
+| `source` | `string \| null` | No | Where the contact came from, e.g. manual. |
+| `channel_id` | `string \| null` | No | — |
+| `opted_in` | `boolean \| null` | No | — |
+| `allow_broadcast` | `boolean \| null` | No | — |
+| `allow_sms` | `boolean \| null` | No | — |
+| `teams` | `string[] \| null` | No | — |
+| `custom_params` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_params full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -340,7 +371,7 @@ await corsair.wati.api.contacts.create({ whatsapp_number: '1234567890', name: 'J
 
 `contacts.delete`
 
-Delete a contact and their conversation history; this cannot be undone
+Remove a contact from the workspace (WATI documents this as a soft delete, not a physical erasure)
 
 **Risk:** `destructive`
 
@@ -387,7 +418,38 @@ await corsair.wati.api.contacts.get({ target: '+1234567890' });
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `wa_id` | `string \| null` | No | The WhatsApp identifier. |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `photo` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `last_updated` | `string \| null` | No | — |
+| `contact_status` | `string \| null` | No | — |
+| `source` | `string \| null` | No | Where the contact came from, e.g. manual. |
+| `channel_id` | `string \| null` | No | — |
+| `opted_in` | `boolean \| null` | No | — |
+| `allow_broadcast` | `boolean \| null` | No | — |
+| `allow_sms` | `boolean \| null` | No | — |
+| `teams` | `string[] \| null` | No | — |
+| `custom_params` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_params full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -408,8 +470,8 @@ await corsair.wati.api.contacts.list({ page_number: 1, page_size: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -473,8 +535,8 @@ await corsair.wati.api.conversations.list({ page_number: 1, channel_type: 'whats
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 | `channel_type` | `string` | No | Filter by channel type, case-insensitive, such as whatsapp. |
 | `channel_id` | `string` | No | Filter by connected channel ID. |
 
@@ -535,8 +597,8 @@ await corsair.wati.api.conversations.messages({ target: 'conv-1', page_number: 1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `target` | `string` | Yes | The conversation target: a contact wa_id, a phone number, or a conversation ID. Do not pass a bare contact ID, which is a different value. |
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -635,7 +697,7 @@ await corsair.wati.api.messages.sendTemplate({ whatsapp_number: '1234567890', te
 |------|------|----------|-------------|
 | `whatsapp_number` | `string` | Yes | The recipient number, without a leading +. |
 | `template_name` | `string` | Yes | — |
-| `broadcast_name` | `string` | No | Groups the send as a campaign under this name. |
+| `broadcast_name` | `string` | Yes | Groups the send as a campaign under this name. Required by WATI even for a single recipient. |
 | `parameters` | `object[]` | No | The values bound to the template placeholders, in order. |
 | `local_message_id` | `string` | No | Your own id, which WATI echoes back for correlation. |
 
@@ -720,7 +782,25 @@ await corsair.wati.api.segments.evaluate({ segmentId: 'seg-1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `segmentId` | `string` | Yes | — |
+| `groups` | `object[]` | Yes | The filters to run. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  operator: AND | OR,
+  conditions: {
+    attribute: string,
+    operator: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -813,8 +893,8 @@ await corsair.wati.api.segments.list({ page_number: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -902,8 +982,9 @@ await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
+| `channel` | `string` | No | Only templates on this sending channel. |
 
 
 
@@ -1016,7 +1097,7 @@ await corsair.wati.api.webhooks.get({ id: 'wh-1' });
 | `id` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
-| `events` | `string[] \| null` | No | — |
+| `event_types` | `string[] \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `created` | `string \| null` | No | — |
 
@@ -1040,8 +1121,8 @@ await corsair.wati.api.webhooks.list({ page_number: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. |
-| `page_size` | `number` | No | Items per page, up to 100. |
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
 
 
 
@@ -1063,7 +1144,7 @@ await corsair.wati.api.webhooks.list({ page_number: 1 });
   id?: string | null,
   url?: string | null,
   name?: string | null,
-  events?: string[] | null,
+  event_types?: string[] | null,
   status?: string | null,
   created?: string | null
 }[] | null

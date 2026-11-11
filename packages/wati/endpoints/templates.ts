@@ -16,10 +16,10 @@ export const list: WatiEndpoints['templatesList'] = (ctx, input) =>
 			output: Outputs.templatesList,
 		},
 		input,
-		({ page_number, page_size }) => ({
+		({ page_number, page_size, channel }) => ({
 			method: 'GET',
 			path: '/messageTemplates',
-			query: { page_number, page_size },
+			query: { page_number, page_size, channel },
 		}),
 		{
 			log: (_, result) => ({

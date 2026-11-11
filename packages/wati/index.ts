@@ -41,6 +41,12 @@ export type WatiPluginOptions = {
 	 * nothing in the token says which, so this has to be configured.
 	 */
 	region?: WatiRegionOption;
+	/**
+	 * A dedicated API host issued to your account, such as
+	 * `https://company.wati.io`. It takes precedence over `region`; the
+	 * `/api/ext/v3` path is appended for you.
+	 */
+	apiHost?: string;
 	hooks?: InternalWatiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof watiEndpointsNested>;
@@ -248,9 +254,11 @@ const watiEndpointMeta = {
 		description: 'Count the contacts on the workspace',
 	},
 	'contacts.delete': {
+		// WATI documents this as a soft delete and says it is not GDPR erasure, so the
+		// history is retained on their side even though the contact leaves the list.
 		riskLevel: 'destructive',
 		description:
-			'Delete a contact and their conversation history; this cannot be undone',
+			'Remove a contact from the workspace (WATI documents this as a soft delete, not a physical erasure)',
 	},
 	'conversations.list': {
 		riskLevel: 'read',

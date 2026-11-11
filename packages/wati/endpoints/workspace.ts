@@ -148,8 +148,9 @@ export const segmentGet: WatiEndpoints['segmentsGet'] = (ctx, input) =>
 	);
 
 /**
- * Evaluates a segment, which is a read: it returns the matching count and
- * contacts without saving anything.
+ * Evaluates a set of contact filters and returns who matches, without saving
+ * anything. This is a POST with the filters in the body: the v3 route evaluates
+ * supplied `groups`, and `/segments/{id}/evaluate` does not exist.
  */
 export const evaluate: WatiEndpoints['segmentsEvaluate'] = (ctx, input) =>
 	call(
@@ -160,12 +161,15 @@ export const evaluate: WatiEndpoints['segmentsEvaluate'] = (ctx, input) =>
 			output: Outputs.segmentsEvaluate,
 		},
 		input,
-		({ segmentId }) => ({
-			method: 'GET',
-			path: `/segments/${segment(segmentId)}/evaluate`,
+		({ groups, page_number, page_size }) => ({
+			method: 'POST',
+			path: '/segments/evaluate',
+			body: { groups },
+			query: { page_number, page_size },
 		}),
 		{
-			log: (_, result) => ({
+			log: (parsed, result) => ({
+				groups: parsed.groups.length,
 				count: result.count ?? result.contacts?.length ?? 0,
 			}),
 		},

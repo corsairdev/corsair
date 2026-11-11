@@ -181,7 +181,8 @@ export const webhook = {
 	id: 'wh-1',
 	url: 'https://acme.example/hooks/wati',
 	name: 'Acme hook',
-	events: ['message', 'contact'],
+	// V3 renamed `events` to `event_types`.
+	event_types: ['message', 'contact'],
 	status: 'active',
 	created: '2024-01-01T00:00:00Z',
 };

@@ -24,8 +24,10 @@ export const sendText: WatiEndpoints['messagesSendText'] = (ctx, input) =>
 		input,
 		({ target: who, text }) => ({
 			method: 'POST',
-			path: `/conversations/${target(who)}/messages`,
-			body: { text },
+			// V3 sends from one route with the recipient in the body; the
+			// `/conversations/{target}/messages` form does not exist in v3.
+			path: '/conversations/messages/text',
+			body: { target: target(who), text },
 		}),
 		{
 			// The message text is the user's content, so only that one was sent.
@@ -57,14 +59,34 @@ export const sendTemplate: WatiEndpoints['messagesSendTemplate'] = (
 			output: Outputs.messagesSendTemplate,
 		},
 		input,
-		({ whatsapp_number, template_name, broadcast_name, parameters }) => ({
+		({
+			whatsapp_number,
+			template_name,
+			broadcast_name,
+			local_message_id,
+			parameters,
+		}) => ({
 			method: 'POST',
-			path: '/messages/template',
+			path: '/messageTemplates/send',
 			body: {
-				whatsapp_number,
 				template_name,
 				broadcast_name,
-				parameters,
+				recipients: [
+					{
+						target: target(whatsapp_number),
+						// The caller's own id comes back on the result, so a send can
+						// be matched to it.
+						local_message_id,
+						// A template with no placeholders takes no parameters.
+						custom_params:
+							parameters === undefined
+								? undefined
+								: parameters.map((entry) => ({
+										name: entry.name,
+										value: entry.value,
+									})),
+					},
+				],
 			},
 		}),
 		{
@@ -91,8 +113,13 @@ export const sendFile: WatiEndpoints['messagesSendFile'] = (ctx, input) =>
 		input,
 		({ target: who, url, caption, filename }) => ({
 			method: 'POST',
-			path: `/conversations/${target(who)}/messages`,
-			body: { url, caption, filename },
+			path: '/conversations/messages/fileViaUrl',
+			body: {
+				target: target(who),
+				file_url: url,
+				caption,
+				filename,
+			},
 		}),
 		{
 			log: (parsed, result) => ({

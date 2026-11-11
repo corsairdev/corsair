@@ -10,7 +10,20 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  * A token only works against its own region's host, and nothing in the token
  * says which that is, so the region is a plugin option.
  */
+/**
+ * The API host. A dedicated WATI account can be issued its own host, which takes
+ * precedence over the regional one, so `apiHost` is honoured first. It is a host
+ * only, never a path: the `/api/ext/v3` suffix is added here.
+ */
 export function resolveBase(ctx: WatiContext): string {
+	const custom = ctx.options?.apiHost?.trim().replace(/\/+$/, '');
+	if (custom) {
+		// A bare host is accepted with or without a scheme.
+		const withScheme = /^https?:\/\//i.test(custom)
+			? custom
+			: `https://${custom}`;
+		return `${withScheme}/api/ext/v3`;
+	}
 	const region = ctx.options?.region ?? 'global';
 	const host = WATI_REGIONS[region] ?? WATI_REGIONS.global;
 	return `${host}/api/ext/v3`;

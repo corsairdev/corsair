@@ -79,6 +79,8 @@ describe('contacts', () => {
 			name: 'John Doe',
 		});
 
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on, and a stricter type would restate every log field.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('whatsapp_number');
 		expect(logged).not.toHaveProperty('phone');
@@ -136,6 +138,8 @@ describe('contacts', () => {
 
 		expect(result).toMatchObject({ success: true });
 		expect(lastRequest(fetchMock).method).toBe('DELETE');
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on, and a stricter type would restate every log field.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('target');
 	});
@@ -190,8 +194,11 @@ describe('sending', () => {
 		expect(result).toEqual(sent);
 		const sentRequest = lastRequest(fetchMock);
 		expect(sentRequest.method).toBe('POST');
-		expect(sentRequest.path).toBe('/api/ext/v3/conversations/conv-1/messages');
-		expect(sentRequest.body).toEqual({ text: 'Your order shipped.' });
+		expect(sentRequest.path).toBe('/api/ext/v3/conversations/messages/text');
+		expect(sentRequest.body).toEqual({
+			target: 'conv-1',
+			text: 'Your order shipped.',
+		});
 	});
 
 	it('never logs the message text', async () => {
@@ -202,6 +209,8 @@ describe('sending', () => {
 			text: 'Your order shipped.',
 		});
 
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on, and a stricter type would restate every log field.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('text');
 	});
@@ -212,6 +221,7 @@ describe('sending', () => {
 		await invoke(Messages.sendTemplate, {
 			whatsapp_number: '1234567890',
 			template_name: 'order_update',
+			broadcast_name: 'shipping-updates',
 			parameters: [
 				{ name: '1', value: 'Jordan' },
 				{ name: '2', value: 'SHIPPED' },
@@ -220,9 +230,19 @@ describe('sending', () => {
 
 		const sentRequest = lastRequest(fetchMock);
 		expect(sentRequest.method).toBe('POST');
-		expect(sentRequest.path).toBe('/api/ext/v3/messages/template');
+		expect(sentRequest.path).toBe('/api/ext/v3/messageTemplates/send');
 		expect(sentRequest.body).toMatchObject({
 			template_name: 'order_update',
+			broadcast_name: 'shipping-updates',
+			recipients: [
+				{
+					target: '1234567890',
+					custom_params: [
+						{ name: '1', value: 'Jordan' },
+						{ name: '2', value: 'SHIPPED' },
+					],
+				},
+			],
 		});
 	});
 
@@ -232,9 +252,12 @@ describe('sending', () => {
 		await invoke(Messages.sendTemplate, {
 			whatsapp_number: '1234567890',
 			template_name: 'order_update',
+			broadcast_name: 'shipping-updates',
 			parameters: [{ name: '1', value: 'Jordan' }],
 		});
 
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on, and a stricter type would restate every log field.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged.parameters).toBe(1);
 		expect(logged).not.toHaveProperty('whatsapp_number');
@@ -255,14 +278,20 @@ describe('sending', () => {
 		});
 	});
 
-	it('rejects a campaign with no parameters to bind', async () => {
-		await expect(
-			invoke(Messages.sendTemplate, {
-				whatsapp_number: '1234567890',
-				template_name: 'june_promo',
-				broadcast_name: 'June promo',
-			}),
-		).rejects.toThrow('send parameters or drop broadcast_name');
+	it('accepts a template with no placeholders, which takes no parameters', async () => {
+		respond(fetchMock, sent);
+
+		await invoke(Messages.sendTemplate, {
+			whatsapp_number: '1234567890',
+			template_name: 'june_promo',
+			broadcast_name: 'June promo',
+		});
+
+		const body = lastRequest(fetchMock).body as {
+			// unknown: only presence of custom_params is asserted, not its contents.
+			recipients?: { custom_params?: unknown }[];
+		};
+		expect(body.recipients?.[0]?.custom_params).toBeUndefined();
 	});
 
 	it('sends a file from a public URL', async () => {
@@ -275,9 +304,12 @@ describe('sending', () => {
 		});
 
 		const sentRequest = lastRequest(fetchMock);
-		expect(sentRequest.path).toBe('/api/ext/v3/conversations/conv-1/messages');
+		expect(sentRequest.path).toBe(
+			'/api/ext/v3/conversations/messages/fileViaUrl',
+		);
 		expect(sentRequest.body).toMatchObject({
-			url: 'https://acme.example/invoice.pdf',
+			target: 'conv-1',
+			file_url: 'https://acme.example/invoice.pdf',
 			caption: 'Your invoice',
 		});
 	});
@@ -382,14 +414,22 @@ describe('workspace', () => {
 		respond(fetchMock, segmentEvaluation);
 
 		const result = (await invoke(Workspace.evaluate, {
-			segmentId: 'seg-1',
+			groups: [
+				{
+					operator: 'AND',
+					conditions: [
+						{ attribute: 'contact_status', operator: 'eq', value: 'active' },
+					],
+				},
+			],
 		})) as { count?: number };
 
 		expect(result.count).toBe(420);
 		const sent = lastRequest(fetchMock);
-		// A read, so a retry is safe.
-		expect(sent.method).toBe('GET');
-		expect(sent.path).toBe('/api/ext/v3/segments/seg-1/evaluate');
+		// V3 evaluates supplied filters with a POST; the per-id GET does not exist.
+		expect(sent.method).toBe('POST');
+		expect(sent.path).toBe('/api/ext/v3/segments/evaluate');
+		expect(sent.body).toMatchObject({ groups: [{ operator: 'AND' }] });
 	});
 });
 

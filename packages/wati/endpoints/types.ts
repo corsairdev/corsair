@@ -8,20 +8,24 @@ import { z } from 'zod';
 // host identifies the region. Pagination is `page_number` (1-based) plus
 // `page_size`, capped at 100.
 
+/**
+ * WATI requires both paging fields on every list route, and a request without them
+ * can be refused, so they carry documented defaults rather than being optional.
+ */
 const PageSchema = {
 	page_number: z
 		.number()
 		.int()
 		.min(1)
-		.optional()
-		.describe('The page to return, 1-based.'),
+		.default(1)
+		.describe('The page to return, 1-based. Defaults to 1.'),
 	page_size: z
 		.number()
 		.int()
 		.min(1)
 		.max(100)
-		.optional()
-		.describe('Items per page, up to 100.'),
+		.default(20)
+		.describe('Items per page, up to 100. Defaults to 20.'),
 };
 
 /** The paging fields a list response echoes back. */
@@ -94,7 +98,9 @@ const ContactsGetInputSchema = z.object({
 
 export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 
-const ContactResponseSchema = z.object({}).loose();
+// One contact looks like a row of the contact list, so the same model is used;
+// an empty object exposed nothing and made the generated docs read "empty object".
+const ContactResponseSchema = ContactSchema;
 
 export type ContactResponse = z.infer<typeof ContactResponseSchema>;
 
@@ -255,44 +261,37 @@ export type MessagesSendTextInput = z.infer<typeof MessagesSendTextInputSchema>;
  * the template's `{{1}}`-style placeholders in order, and `broadcast_name` is
  * what makes it a campaign rather than a one-off.
  */
-const MessagesSendTemplateInputSchema = z
-	.object({
-		whatsapp_number: z
-			.string()
-			.min(1)
-			.describe('The recipient number, without a leading +.'),
-		template_name: z.string().min(1),
-		broadcast_name: z
-			.string()
-			.optional()
-			.describe('Groups the send as a campaign under this name.'),
-		parameters: z
-			.array(
-				z
-					.object({
-						name: z.string().min(1).describe('The placeholder, e.g. `1`.'),
-						value: z.string(),
-					})
-					.loose(),
-			)
-			.min(1)
-			.optional()
-			.describe('The values bound to the template placeholders, in order.'),
-		local_message_id: z
-			.string()
-			.optional()
-			.describe('Your own id, which WATI echoes back for correlation.'),
-	})
-	.superRefine((value, ctx) => {
-		if (value.broadcast_name !== undefined && value.parameters === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['parameters'],
-				message:
-					'A template campaign without parameters only works for a template with no placeholders — send parameters or drop broadcast_name.',
-			});
-		}
-	});
+const MessagesSendTemplateInputSchema = z.object({
+	whatsapp_number: z
+		.string()
+		.min(1)
+		.describe('The recipient number, without a leading +.'),
+	template_name: z.string().min(1),
+	broadcast_name: z
+		.string()
+		.min(1)
+		.describe(
+			'Groups the send as a campaign under this name. Required by WATI even for a single recipient.',
+		),
+	parameters: z
+		.array(
+			z
+				.object({
+					name: z.string().min(1).describe('The placeholder, e.g. `1`.'),
+					value: z.string(),
+				})
+				.loose(),
+		)
+		.min(1)
+		.optional()
+		.describe('The values bound to the template placeholders, in order.'),
+	local_message_id: z
+		.string()
+		.optional()
+		.describe('Your own id, which WATI echoes back for correlation.'),
+});
+// No cross-field rule: `parameters` is omitted for a template with no
+// placeholders, which is a valid send, and `broadcast_name` is always required.
 
 export type MessagesSendTemplateInput = z.infer<
 	typeof MessagesSendTemplateInputSchema
@@ -341,7 +340,14 @@ const TemplateSchema = z
 
 export type WatiTemplate = z.infer<typeof TemplateSchema>;
 
-const TemplatesListInputSchema = z.object({ ...PageSchema });
+const TemplatesListInputSchema = z.object({
+	...PageSchema,
+	channel: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only templates on this sending channel.'),
+});
 
 export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
 
@@ -518,8 +524,41 @@ const SegmentResponseSchema = SegmentSchema;
 
 export type SegmentResponse = z.infer<typeof SegmentResponseSchema>;
 
+/**
+ * The filters to evaluate. Each group is a set of conditions combined by its own
+ * operator, and the groups themselves are combined with `operator`.
+ */
+const SegmentFilterGroupSchema = z
+	.object({
+		operator: z
+			.enum(['AND', 'OR'])
+			.describe('How the conditions inside this group combine.'),
+		conditions: z
+			.array(
+				z
+					.object({
+						attribute: z
+							.string()
+							.min(1)
+							.describe('The contact attribute, e.g. `contact_status`.'),
+						operator: z
+							.string()
+							.min(1)
+							.describe('The comparison, e.g. `eq`, `contains`, `gt`.'),
+						value: z.string().describe('The value to compare against.'),
+					})
+					.loose(),
+			)
+			.min(1),
+	})
+	.loose();
+
 const SegmentsEvaluateInputSchema = z.object({
-	segmentId: z.string().min(1),
+	groups: z
+		.array(SegmentFilterGroupSchema)
+		.min(1)
+		.describe('The filters to run.'),
+	...PageSchema,
 });
 
 export type SegmentsEvaluateInput = z.infer<typeof SegmentsEvaluateInputSchema>;
@@ -542,7 +581,9 @@ const WebhookSchema = z
 		id: z.string().nullish(),
 		url: z.string().nullish(),
 		name: z.string().nullish(),
-		events: z.array(z.string()).nullish(),
+		// V3 renamed this from `events`; keeping the old name logged zero events for
+		// a subscription that has them.
+		event_types: z.array(z.string()).nullish(),
 		status: z.string().nullish(),
 		created: z.string().nullish(),
 	})

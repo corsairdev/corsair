@@ -46,7 +46,7 @@ export const get: WatiEndpoints['webhooksGet'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				id: result.id ?? undefined,
-				events: result.events?.length ?? 0,
+				events: result.event_types?.length ?? 0,
 			}),
 		},
 	);
