@@ -34,11 +34,26 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // The raw bytes are what the signature covers, so read text rather than
+    // parsing: re-serialising JSON can change whitespace and escaping.
+    const body = await request.text();
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    const result = await processWebhook(corsair, headers, body, query);
+    // `result.response` is a plain object, not a Response.
+    return Response.json(
+        result.response ?? { success: false },
+        {
+            status: !result.plugin
+                ? 404
+                : result.response?.success === false
+                    ? 500
+                    : 200,
+        },
+    );
 }
 ```
+
+The route reads the body as text and wraps the result with `Response.json`. Both matter: parsing with `request.json()` and re-serialising changes the bytes the signature covers, so a valid delivery fails verification, and returning `result.response` directly hands back a plain object where a `Response` is required.
 
 ## Events
 

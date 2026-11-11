@@ -153,3 +153,34 @@ describe('userlist key builder', () => {
 		);
 	});
 });
+
+describe('webhook wiring', () => {
+	it('returns the webhook secret for a delivery, not the Push key', async () => {
+		const plugin = userlist({ key: 'push-key', webhookSecret: 'whsec_x' });
+
+		const built = await plugin.keyBuilder?.(
+			keyContext('push-key') as never,
+			'webhook',
+		);
+
+		expect(built).toBe('whsec_x');
+	});
+
+	it('throws for a delivery when no webhook secret is configured', async () => {
+		const plugin = userlist({ key: 'push-key' });
+
+		await expect(
+			plugin.keyBuilder?.(keyContext('push-key') as never, 'webhook'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('passes webhookHooks through to the plugin', () => {
+		const after = jest.fn();
+		const plugin = userlist({
+			key: 'push-key',
+			webhookHooks: { userCreated: { after } },
+		});
+
+		expect(plugin.webhookHooks).toEqual({ userCreated: { after } });
+	});
+});

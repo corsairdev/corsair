@@ -28,8 +28,15 @@ import { USERLIST_WEBHOOK_EVENTS } from './webhooks/types';
 
 export type UserlistPluginOptions = {
 	authType?: PickAuth<'api_key'>;
+	/** The Push API key used by the endpoint operations. */
 	key?: string;
+	/**
+	 * The signing secret for incoming deliveries. Userlist returns one per webhook
+	 * subscription, and it is not the Push key, so it is a separate option.
+	 */
+	webhookSecret?: string;
 	hooks?: InternalUserlistPlugin['hooks'];
+	webhookHooks?: InternalUserlistPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof userlistEndpointsNested>;
 };
@@ -46,7 +53,13 @@ export type UserlistBoundEndpoints = BindEndpoints<
 	typeof userlistEndpointsNested
 >;
 
-/** The handlers, keyed by topic. Each verifies its own signature. */
+/**
+ * The handlers, keyed by topic. Each verifies its own signature.
+ *
+ * unknown: these are the erased generics of `CorsairWebhook`. Each handler's real
+ * payload and result types live in `webhooks/types.ts`; repeating all fourteen here
+ * would duplicate that file, and the handler map is only used for binding.
+ */
 export type UserlistWebhookHandlers = {
 	userCreated: CorsairWebhook<UserlistContext, unknown, unknown>;
 	userUpdated: CorsairWebhook<UserlistContext, unknown, unknown>;
@@ -211,6 +224,7 @@ export function userlist<const T extends UserlistPluginOptions>(
 		schema: UserlistSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: userlistEndpointsNested,
 		webhooks: UserlistWebhooks,
 		endpointMeta: userlistEndpointMeta,
@@ -238,11 +252,17 @@ export function userlist<const T extends UserlistPluginOptions>(
 		},
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: UserlistKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			// A delivery is verified with its subscription's signing secret, which is
+			// not the Push key. Returning nothing here made every delivery throw before
+			// its handler ran.
+			if (source === 'webhook') {
+				if (options.webhookSecret) return options.webhookSecret;
+				throw new AuthMissingError('userlist', ctx.authType ?? 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (options.key) return options.key;
+
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (res) return res;
 			}
