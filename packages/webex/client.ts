@@ -180,8 +180,21 @@ export async function makeWebexRequest(
 }
 
 /**
+ * A page of a list, plus the URL of the next one.
+ *
+ * `corsair/http` returns `responseHeader ?? responseBody`, so a header cannot come
+ * back with the body. Lists therefore make one GET with `fetch` directly and read
+ * both; everything else goes through the shared client.
+ */
+export type WebexPage = {
+	body: unknown;
+	/** The absolute URL of the next page, from the `Link` header, when there is one. */
+	nextLink?: string;
+};
+
+/**
  * Webex pages by a `Link` header with a `next` rel, not by a cursor in the body,
- * so a caller follows `link` rather than computing an offset.
+ * so a caller follows the returned `nextLink` rather than computing an offset.
  */
 export function nextPageFromLink(
 	link: string | null | undefined,
@@ -192,6 +205,100 @@ export function nextPageFromLink(
 		if (match?.[1]) return match[1];
 	}
 	return undefined;
+}
+
+/**
+ * A GET that reads the pagination header as well as the body.
+ *
+ * Both the fetch call and the body read are normalised to `WebexAPIError`, so a
+ * dropped connection on a 5xx still reaches the plugin's error handlers, and the
+ * caller may pass a `nextLink` from a previous page instead of building a query.
+ */
+export async function makeWebexListRequest(
+	apiKey: string,
+	{
+		path,
+		query,
+		nextLink,
+	}: { path: string; query?: WebexQuery; nextLink?: string },
+): Promise<WebexPage> {
+	const url = nextLink ?? buildListUrl(path, query);
+
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Bearer ${apiKey}`,
+			},
+		});
+	} catch (error) {
+		// A transport failure never reached Webex, so this read is safe to replay.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new WebexAPIError(error.message, { cause: error, method: 'GET' });
+		}
+		throw new WebexAPIError('Unknown Webex error', { method: 'GET' });
+	}
+
+	let text: string;
+	try {
+		text = await response.text();
+	} catch (error) {
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new WebexAPIError(error.message, { cause: error, method: 'GET' });
+		}
+		throw new WebexAPIError('Unknown Webex error', { method: 'GET' });
+	}
+
+	if (!response.ok) {
+		let parsed: unknown = text;
+		try {
+			parsed = JSON.parse(text) as unknown;
+		} catch {
+			// An HTML or empty body is kept as text; the handler reads the status.
+		}
+		throw new WebexAPIError(
+			describeWebexError(response.status, parsed, `HTTP ${response.status}`),
+			{
+				status: response.status,
+				retryAfter: readRetryAfter(response),
+				method: 'GET',
+			},
+		);
+	}
+
+	let body: unknown;
+	try {
+		body = JSON.parse(text) as unknown;
+	} catch {
+		throw new WebexAPIError('Webex returned a list that is not JSON', {
+			status: response.status,
+			method: 'GET',
+		});
+	}
+
+	return {
+		body,
+		nextLink: nextPageFromLink(response.headers.get('link')),
+	};
+}
+
+/** Builds the first-page URL from the path and its query. */
+function buildListUrl(path: string, query: WebexQuery | undefined): string {
+	const url = new URL(`${WEBEX_API_BASE}${path}`);
+	for (const [key, value] of Object.entries(query ?? {})) {
+		if (value !== undefined) url.searchParams.set(key, String(value));
+	}
+	return url.toString();
+}
+
+/** Reads Retry-After, which a 429 carries in seconds. */
+function readRetryAfter(response: Response): number | undefined {
+	const header = response.headers.get('retry-after');
+	if (!header) return undefined;
+	const seconds = Number(header);
+	return Number.isFinite(seconds) ? seconds * 1000 : undefined;
 }
 
 /** Narrows a caught value to this plugin's error. */

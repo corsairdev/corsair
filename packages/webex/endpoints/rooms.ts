@@ -1,13 +1,13 @@
 import type { WebexEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, list as listPage } from './call';
 import {
 	WebexEndpointInputSchemas as Inputs,
 	WebexEndpointOutputSchemas as Outputs,
 } from './types';
 
 export const list: WebexEndpoints['roomsList'] = (ctx, input) =>
-	call(
+	listPage(
 		ctx,
 		{ event: 'rooms.list', input: Inputs.roomsList, output: Outputs.roomsList },
 		input,

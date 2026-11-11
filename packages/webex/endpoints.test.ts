@@ -183,13 +183,13 @@ describe('messages', () => {
 
 	it('rejects a message with no destination', async () => {
 		await expect(invoke(Messages.create, { text: 'Nowhere' })).rejects.toThrow(
-			'A message needs a roomId, a toPersonId or a toPersonEmail.',
+			'A message needs a non-empty roomId, toPersonId or toPersonEmail.',
 		);
 	});
 
 	it('rejects a message with no content', async () => {
 		await expect(invoke(Messages.create, { roomId: room.id })).rejects.toThrow(
-			'A message needs text, markdown, html or files.',
+			'A message needs non-empty text, markdown, html, or files.',
 		);
 	});
 
@@ -228,6 +228,8 @@ describe('messages', () => {
 			text: 'Your order shipped.',
 		});
 
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		// The body is the user's content, so it never reaches the event log.
 		expect(logged).not.toHaveProperty('text');
@@ -294,6 +296,8 @@ describe('people', () => {
 
 		await invoke(People.me, {});
 
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('emails');
 		expect(logged.displayName).toBe('Jordan Ruiz');
@@ -436,6 +440,8 @@ describe('webhooks', () => {
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/v1/webhooks');
 		// The secret is sent, but only its presence is logged.
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged.hasSecret).toBe(true);
 		expect(logged).not.toHaveProperty('secret');
@@ -482,5 +488,52 @@ describe('a validation failure from the API', () => {
 
 		expect(error.errors).toEqual(['roomId is required']);
 		expect(error.message).toContain('roomId is required');
+	});
+});
+
+describe('review fixes', () => {
+	it('rejects an empty room id and empty text, not just missing ones', async () => {
+		await expect(
+			invoke(Messages.create, { roomId: '', text: '' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects an empty room id on a message list', async () => {
+		await expect(invoke(Messages.list, { roomId: '' })).rejects.toThrow();
+	});
+
+	it('returns nextLink so the next page can be fetched', async () => {
+		// A Link header with a next rel, which the list request reads.
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ items: [] }), {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/json',
+					Link: '<https://webexapis.com/v1/rooms?max=2&page=2>; rel="next"',
+				},
+			}),
+		);
+
+		const result = (await invoke(Rooms.list, { max: 2 })) as {
+			nextLink?: string;
+		};
+
+		expect(result.nextLink).toBe('https://webexapis.com/v1/rooms?max=2&page=2');
+	});
+
+	it('pins the next page from nextLink rather than rebuilding the query', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ items: [] }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		await invoke(Rooms.list, {
+			nextLink: 'https://webexapis.com/v1/rooms?max=2&page=4',
+		});
+
+		const [url] = fetchMock.mock.calls.at(-1) as [string];
+		expect(url).toBe('https://webexapis.com/v1/rooms?max=2&page=4');
 	});
 });

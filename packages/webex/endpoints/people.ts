@@ -1,6 +1,6 @@
 import type { WebexEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, list as listPage } from './call';
 import {
 	WebexEndpointInputSchemas as Inputs,
 	WebexEndpointOutputSchemas as Outputs,
@@ -23,7 +23,7 @@ export const me: WebexEndpoints['peopleMe'] = (ctx, input) =>
 	);
 
 export const list: WebexEndpoints['peopleList'] = (ctx, input) =>
-	call(
+	listPage(
 		ctx,
 		{
 			event: 'people.list',
@@ -61,7 +61,7 @@ export const get: WebexEndpoints['peopleGet'] = (ctx, input) =>
 	);
 
 export const teams: WebexEndpoints['teamsList'] = (ctx, input) =>
-	call(
+	listPage(
 		ctx,
 		{ event: 'teams.list', input: Inputs.teamsList, output: Outputs.teamsList },
 		input,
@@ -121,7 +121,7 @@ export const teamMembershipsList: WebexEndpoints['teamMembershipsList'] = (
 	ctx,
 	input,
 ) =>
-	call(
+	listPage(
 		ctx,
 		{
 			event: 'teamMemberships.list',
@@ -185,7 +185,7 @@ export const membershipsList: WebexEndpoints['membershipsList'] = (
 	ctx,
 	input,
 ) =>
-	call(
+	listPage(
 		ctx,
 		{
 			event: 'memberships.list',

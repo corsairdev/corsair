@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { WebexContext } from '..';
 import type { WebexRequest } from '../client';
-import { makeWebexRequest } from '../client';
+import { makeWebexListRequest, makeWebexRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -37,4 +37,45 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		'completed',
 	);
 	return result;
+}
+
+/**
+ * A list call. Same contract as `call`, but the page is fetched with the client's
+ * list request so the `Link` header survives, and the next page's URL is added to
+ * the result as `nextLink`.
+ */
+export async function list<Input extends z.ZodType, Output extends z.ZodType>(
+	ctx: WebexContext,
+	operation: { event: string; input: Input; output: Output },
+	// unknown: raw caller input, parsed below by the operation's input schema.
+	rawInput: unknown,
+	toRequest: (parsed: z.output<Input>) => {
+		path: string;
+		query?: Record<string, string | number | boolean | undefined>;
+	},
+	options: {
+		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
+	} = {},
+): Promise<z.output<Output> & { nextLink?: string }> {
+	const parsed = operation.input.parse(rawInput ?? {});
+	const { path, query } = toRequest(parsed);
+	// `nextLink` replaces the path and query: it is the URL Webex itself returned.
+	const nextLink = (parsed as { nextLink?: string }).nextLink;
+	const page = await makeWebexListRequest(ctx.key, { path, query, nextLink });
+	const result = operation.output.parse(page.body) as z.output<Output>;
+
+	await logEventFromContext(
+		ctx,
+		`webex.${operation.event}`,
+		options.log?.(parsed, result) ?? {},
+		'completed',
+	);
+	// The output schema is always an object for a list, so the spread is safe; the
+	// cast states that to the compiler, which only knows the generic.
+	return {
+		...(result as Record<string, unknown>),
+		nextLink: page.nextLink,
+	} as z.output<Output> & {
+		nextLink?: string;
+	};
 }

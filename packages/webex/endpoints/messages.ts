@@ -1,6 +1,6 @@
 import type { WebexEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, list as listPage } from './call';
 import {
 	WebexEndpointInputSchemas as Inputs,
 	WebexEndpointOutputSchemas as Outputs,
@@ -12,7 +12,7 @@ import {
  * messages, which is never what is wanted.
  */
 export const list: WebexEndpoints['messagesList'] = (ctx, input) =>
-	call(
+	listPage(
 		ctx,
 		{
 			event: 'messages.list',

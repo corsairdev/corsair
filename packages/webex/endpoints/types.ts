@@ -45,6 +45,8 @@ const MessageSchema = z
 		mentionedPeople: z.array(z.string()).nullish(),
 		mentionedGroups: z.array(z.string()).nullish(),
 		parentId: z.string().nullish(),
+		// unknown: an attachment action carries a free-form `inputs` map whose keys
+		// belong to the card's author, so its shape is not ours to model.
 		attachmentActions: z.array(z.unknown()).nullish(),
 		// A transcript or a cue is rendered from the same message object.
 		isVoiceClip: z.boolean().nullish(),
@@ -137,8 +139,20 @@ const WebhookSchema = z
 export type WebexWebhook = z.infer<typeof WebhookSchema>;
 
 /** Webex answers a list as `{ items: [...] }`. */
+/**
+ * A page of a list. `nextLink` is the URL of the next page, taken from Webex's
+ * `Link` header; when it is absent this was the last page.
+ */
 function items<T extends z.ZodType>(item: T) {
-	return z.object({ items: z.array(item).nullish() }).loose();
+	return z
+		.object({
+			items: z.array(item).nullish(),
+			nextLink: z
+				.string()
+				.nullish()
+				.describe('The next page, or null when this is the last one.'),
+		})
+		.loose();
 }
 
 const MaxSchema = z
@@ -149,10 +163,26 @@ const MaxSchema = z
 	.optional()
 	.describe('Items per page, up to 1000.');
 
+/**
+ * The next page, as the `nextLink` value the previous page returned.
+ *
+ * Webex pages with a `Link` header, and `corsair/http` returns the body only, so
+ * the plugin reads that header into `nextLink` on the response and the caller
+ * passes it straight back here to continue.
+ */
+const NextLinkSchema = z
+	.string()
+	.url()
+	.optional()
+	.describe(
+		"Pass the previous page's `nextLink` to read the next page. Omit it for the first page.",
+	);
+
 // ── rooms ─────────────────────────────────────────────────────────────────
 
 const RoomsListInputSchema = z.object({
 	max: MaxSchema,
+	nextLink: NextLinkSchema,
 	type: z.enum(['group', 'direct']).optional(),
 	isLocked: z.boolean().optional(),
 	orgId: z.string().optional(),
@@ -235,6 +265,7 @@ const MessagesListInputSchema = z
 			.optional()
 			.describe('Only messages before this id.'),
 		max: MaxSchema,
+		nextLink: NextLinkSchema,
 	})
 	.superRefine((value, ctx) => {
 		if (value.roomId === undefined && value.parentId === undefined) {
@@ -286,27 +317,32 @@ const MessagesCreateInputSchema = z
 		parentId: z.string().optional().describe('Post as a reply in this thread.'),
 	})
 	.superRefine((value, ctx) => {
+		// An empty string is as undirected as a missing one, and would reach Webex
+		// as a request it refuses.
+		const filled = (part: string | undefined): boolean =>
+			part !== undefined && part.trim().length > 0;
 		if (
-			value.roomId === undefined &&
-			value.toPersonId === undefined &&
-			value.toPersonEmail === undefined
+			!filled(value.roomId) &&
+			!filled(value.toPersonId) &&
+			!filled(value.toPersonEmail)
 		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['roomId'],
-				message: 'A message needs a roomId, a toPersonId or a toPersonEmail.',
+				message:
+					'A message needs a non-empty roomId, toPersonId or toPersonEmail.',
 			});
 		}
 		if (
-			value.text === undefined &&
-			value.markdown === undefined &&
-			value.html === undefined &&
+			!filled(value.text) &&
+			!filled(value.markdown) &&
+			!filled(value.html) &&
 			value.files === undefined
 		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['text'],
-				message: 'A message needs text, markdown, html or files.',
+				message: 'A message needs non-empty text, markdown, html, or files.',
 			});
 		}
 	});
@@ -337,6 +373,7 @@ const PeopleListInputSchema = z.object({
 	id: z.string().optional(),
 	orgId: z.string().optional(),
 	max: MaxSchema,
+	nextLink: NextLinkSchema,
 });
 
 export type PeopleListInput = z.infer<typeof PeopleListInputSchema>;
@@ -359,7 +396,10 @@ export type PeopleGetInput = z.infer<typeof PeopleGetInputSchema>;
 
 // ── teams ─────────────────────────────────────────────────────────────────
 
-const TeamsListInputSchema = z.object({ max: MaxSchema });
+const TeamsListInputSchema = z.object({
+	max: MaxSchema,
+	nextLink: NextLinkSchema,
+});
 
 export type TeamsListInput = z.infer<typeof TeamsListInputSchema>;
 
@@ -386,6 +426,7 @@ export type TeamsDeleteInput = z.infer<typeof TeamsDeleteInputSchema>;
 const TeamMembershipsListInputSchema = z.object({
 	teamId: z.string().min(1),
 	max: MaxSchema,
+	nextLink: NextLinkSchema,
 });
 
 export type TeamMembershipsListInput = z.infer<
@@ -428,6 +469,7 @@ const MembershipsListInputSchema = z.object({
 	personId: z.string().optional(),
 	personEmail: z.string().optional(),
 	max: MaxSchema,
+	nextLink: NextLinkSchema,
 });
 
 export type MembershipsListInput = z.infer<typeof MembershipsListInputSchema>;
@@ -461,7 +503,10 @@ export type MembershipsDeleteInput = z.infer<
 
 // ── webhooks ──────────────────────────────────────────────────────────────
 
-const WebhooksListInputSchema = z.object({ max: MaxSchema });
+const WebhooksListInputSchema = z.object({
+	max: MaxSchema,
+	nextLink: NextLinkSchema,
+});
 
 export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
 

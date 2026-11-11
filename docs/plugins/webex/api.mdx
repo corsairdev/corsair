@@ -103,6 +103,7 @@ await corsair.webex.api.memberships.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00v
 | `personId` | `string` | No | — |
 | `personEmail` | `string` | No | — |
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -111,6 +112,7 @@ await corsair.webex.api.memberships.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00v
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -289,6 +291,7 @@ await corsair.webex.api.messages.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJ
 | `before` | `string` | No | ISO 8601: only earlier messages. |
 | `beforeMessage` | `string` | No | Only messages before this id. |
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -297,6 +300,7 @@ await corsair.webex.api.messages.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJ
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -444,6 +448,7 @@ await corsair.webex.api.people.list({ email: 'jordan@acme.example' });
 | `id` | `string` | No | — |
 | `orgId` | `string` | No | — |
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -452,6 +457,7 @@ await corsair.webex.api.people.list({ email: 'jordan@acme.example' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -656,6 +662,7 @@ await corsair.webex.api.rooms.list({ max: 50, type: 'group' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 | `type` | `group \| direct` | No | — |
 | `isLocked` | `boolean` | No | — |
 | `orgId` | `string` | No | — |
@@ -669,6 +676,7 @@ await corsair.webex.api.rooms.list({ max: 50, type: 'group' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -832,6 +840,7 @@ await corsair.webex.api.teamMemberships.list({ teamId: 'team-1' });
 |------|------|----------|-------------|
 | `teamId` | `string` | Yes | — |
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -840,6 +849,7 @@ await corsair.webex.api.teamMemberships.list({ teamId: 'team-1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -979,6 +989,7 @@ await corsair.webex.api.teams.list({ max: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -987,6 +998,7 @@ await corsair.webex.api.teams.list({ max: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1143,6 +1155,7 @@ await corsair.webex.api.webhooks.list({ max: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `max` | `number` | No | Items per page, up to 1000. |
+| `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 
 
 
@@ -1151,6 +1164,7 @@ await corsair.webex.api.webhooks.list({ max: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | The next page, or null when this is the last one. |
 
 <AccordionGroup>
 <Accordion title="items full type">
