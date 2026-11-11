@@ -113,21 +113,23 @@ export const locationType = {
 	parent: null,
 };
 
+// Shapes from the Fixture Data API and Lookup Table Individual API pages.
 export const fixtureItem = {
-	id: '1J9NF7B4FT',
-	data_type: 'city',
-	fields: { name: 'Boston' },
+	id: '1J9NF7B4FTH73435PYJJSL5SJ',
+	fixture_type: 'city',
+	fields: { name: 'Boston', population: 617594, state: 'Massachusetts' },
+	resource_uri: '',
 };
 
 export const lookupTable = {
-	id: 'tbl_01',
-	name: 'prices',
+	id: 'bcf49791f7f04f09bd46262097e107f2',
+	tag: 'vaccines',
+	is_global: true,
 	fields: [
 		{ field_name: 'name', properties: ['lang'] },
 		{ field_name: 'price', properties: [] },
 	],
-	created_at: '2024-01-15T10:30:00.000Z',
-	updated_at: '2024-02-01T14:20:00.000Z',
+	resource_uri: '',
 };
 
 export const reportList = [

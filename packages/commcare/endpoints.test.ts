@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { Cases, Device, Directory, Forms, Groups, Users } from './endpoints';
+import type { CommCareEndpointOutputs } from './endpoints/types';
+import {
+	CommCareGlossarySchema,
+	CommCareLookupTableSchema,
+} from './endpoints/types';
 import {
 	bulkActionAccepted,
 	bulkActionComplete,
@@ -444,7 +449,7 @@ describe('directory', () => {
 
 	it('lists fixtures and reads one item', async () => {
 		respond({ objects: [fixtureItem] });
-		const result = await invoke<{ objects: unknown[] }>(
+		const result = await invoke<CommCareEndpointOutputs['fixturesList']>(
 			Directory.listFixtures,
 			{
 				domain: DOMAIN,
@@ -452,30 +457,53 @@ describe('directory', () => {
 			},
 		);
 		expect(result.objects).toHaveLength(1);
+		expect(result.objects[0]!.fixture_type).toBe('city');
 		expect(lastRequest().query.fixture_type).toBe('city');
 
 		respond(fixtureItem);
-		const got = await invoke<{ id?: string }>(Directory.getFixtureItem, {
-			domain: DOMAIN,
-			itemId: '1J9NF7B4FT',
-		});
+		const got = await invoke<CommCareEndpointOutputs['fixturesGetItem']>(
+			Directory.getFixtureItem,
+			{
+				domain: DOMAIN,
+				itemId: fixtureItem.id,
+			},
+		);
 		expect(got.id).toBe(fixtureItem.id);
+		expect(got.fields?.population).toBe(617594);
 	});
 
 	it('lists and reads lookup tables', async () => {
 		respond({ objects: [lookupTable] });
-		const result = await invoke<{ objects: { name?: string }[] }>(
+		const result = await invoke<CommCareEndpointOutputs['lookupTablesList']>(
 			Directory.listLookupTables,
 			{ domain: DOMAIN },
 		);
-		expect(result.objects[0]!.name).toBe('prices');
+		expect(result.objects[0]!.tag).toBe('vaccines');
 
 		respond(lookupTable);
-		const got = await invoke<{ name?: string }>(Directory.getLookupTable, {
-			domain: DOMAIN,
-			tableId: 'tbl_01',
-		});
-		expect(got.name).toBe('prices');
+		const got = await invoke<CommCareEndpointOutputs['lookupTablesGet']>(
+			Directory.getLookupTable,
+			{
+				domain: DOMAIN,
+				tableId: lookupTable.id,
+			},
+		);
+		expect(got.tag).toBe('vaccines');
+		expect(got.is_global).toBe(true);
+	});
+
+	it('types the fixture and lookup-table fields CommCare returns', () => {
+		// HQ's FixtureResource serializes fixture_type (not name), and
+		// LookupTableResource serializes tag and is_global (no name or
+		// timestamps).
+		expect(Object.keys(CommCareGlossarySchema.shape)).toEqual(
+			expect.arrayContaining(['id', 'fixture_type', 'fields']),
+		);
+		expect(Object.keys(CommCareGlossarySchema.shape)).not.toContain('name');
+		expect(Object.keys(CommCareLookupTableSchema.shape)).toEqual(
+			expect.arrayContaining(['id', 'tag', 'is_global', 'fields']),
+		);
+		expect(Object.keys(CommCareLookupTableSchema.shape)).not.toContain('name');
 	});
 
 	it('lists reports and runs report data', async () => {

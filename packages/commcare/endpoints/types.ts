@@ -179,11 +179,14 @@ export const CommCareLocationTypeSchema = z
 
 export type CommCareLocationType = z.infer<typeof CommCareLocationTypeSchema>;
 
+// One lookup-table row as the Fixture Data API serializes it.
 export const CommCareGlossarySchema = z
 	.object({
 		id: z.string().nullish(),
-		name: z.string().nullish(),
-		// unknown: fixture tables are free-form lookup structures.
+		// Tag of the lookup table the row belongs to; null when HQ cannot
+		// find the table.
+		fixture_type: z.string().nullish(),
+		// unknown: column values are user-defined (strings, numbers).
 		fields: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -193,7 +196,10 @@ export type CommCareGlossary = z.infer<typeof CommCareGlossarySchema>;
 export const CommCareLookupTableSchema = z
 	.object({
 		id: z.string().nullish(),
-		name: z.string().nullish(),
+		// The table's name (its Table ID in HQ); fixtures.list takes it as
+		// fixtureType.
+		tag: z.string().nullish(),
+		is_global: z.boolean().nullish(),
 		// unknown: table columns are user-defined.
 		fields: z
 			.array(
@@ -205,8 +211,7 @@ export const CommCareLookupTableSchema = z
 					.loose(),
 			)
 			.nullish(),
-		created_at: z.string().nullish(),
-		updated_at: z.string().nullish(),
+		item_attributes: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -751,7 +756,9 @@ const FixturesListInputSchema = z.object({
 	fixtureType: z
 		.string()
 		.optional()
-		.describe('Only fixture items whose data type matches this name.'),
+		.describe(
+			'Only rows of the lookup table with this tag (the `tag` from lookupTables.list).',
+		),
 });
 
 export type FixturesListInput = z.input<typeof FixturesListInputSchema>;
