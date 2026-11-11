@@ -1,0 +1,2950 @@
+{
+  "id": "melo",
+  "displayName": "Melo",
+  "description": "French real-estate listings through the Melo API (Stream Estate) - search properties across listing sites, read price-per-meter and points-of-interest indicators, look up locations and cities, and manage saved searches.",
+  "npmPackageName": "@corsair-dev/melo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "melo.api.indicators.cities",
+      "shortPath": "indicators.cities",
+      "description": "List cities by INSEE code, zipcode, name, label, slug or polygon, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "excludeGroupedCities",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to true to exclude cities that have grouped cities under them. The API defaults to false."
+          },
+          {
+            "key": "insee",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Filter by INSEE code. A string is sent as `insee`, an array as `insee[]`."
+          },
+          {
+            "key": "polygon",
+            "optional": true,
+            "type": "{ lat: number, lon: number }[]",
+            "description": "Filter by cities inside a polygon of GPS points. Sent as `polygon[0][lat]`, `polygon[0][lon]`, and so on. The spec types this as a string; its example uses this indexed form."
+          },
+          {
+            "key": "libelle",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by city label."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by city name."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ name?: asc | desc }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The collection page number. Defaults to 1."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by city slug."
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Filter by zipcode. A string is sent as `zipcode`, an array as `zipcode[]`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ @id?: string | null, @type?: string | null, zipcode?: string | null, insee?: string | null, article?: string | null, name?: string | null, libelle?: string | null, department?: string | null, cityParent?: {} | null, originalName?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page number to request next, read from `hydra:view.hydra:next`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.indicators.locations",
+      "shortPath": "indicators.locations",
+      "description": "Search cities and departments by name and get the IRIs used in includedCities and includedDepartments filters; needs a key here although the API serves it publicly",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Query term to perform search."
+          },
+          {
+            "key": "excludedCitiesIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Exclude cities using their IRI, for example `/cities/37008`."
+          },
+          {
+            "key": "excludedDepartmentsIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Exclude departments using their IRI, for example `/departments/77`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ @id?: string | null, @type?: string | null, code?: string | null, displayName?: string | null, groupedCityNames?: string[] | null, groupedCityZipcodes?: string[] | null, id?: string | number | null, insee?: string | null, libelle?: string | null, location?: { lat?: number | null, lon?: number | null } | null, name?: string | null, zipcode?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.indicators.pointsOfInterest",
+      "shortPath": "indicators.pointsOfInterest",
+      "description": "List schools, kindergartens, restaurants, hospitals or parking within a radius of a coordinate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "facilities",
+            "optional": false,
+            "type": "(kindergarten | school | restaurant | hospital | parking)[]",
+            "description": "Categories of points of interest to return."
+          },
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude."
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude."
+          },
+          {
+            "key": "radius",
+            "optional": false,
+            "type": "number",
+            "description": "Distance expressed in kilometers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ lat?: number | null, lon?: number | null, name?: string | null, type?: string | null, attributes?: {} | never[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.indicators.pricePerMeter",
+      "shortPath": "indicators.pricePerMeter",
+      "description": "Average, median and time series of the price per meter for properties matching the same filters as properties.list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "advertPriceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum price of advert. Filters properties based on any non expired adverts prices."
+          },
+          {
+            "key": "advertPriceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum price of advert. Filters properties based on any non expired adverts prices."
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of bedrooms in the property."
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of bedrooms in the property."
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum budget for the property."
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum budget for the property."
+          },
+          {
+            "key": "condominiumFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum condominium fees for the property."
+          },
+          {
+            "key": "condominiumFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum condominium fees for the property."
+          },
+          {
+            "key": "constructionYearMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum construction year of the property."
+          },
+          {
+            "key": "constructionYearMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum construction year of the property."
+          },
+          {
+            "key": "energyCategories",
+            "optional": true,
+            "type": "(A | B | C | D | E | F | G)[]",
+            "description": "The energy efficiency categories of the property."
+          },
+          {
+            "key": "energyValueMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum energy value of the property."
+          },
+          {
+            "key": "energyValueMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum energy value of the property."
+          },
+          {
+            "key": "eventPriceVariationFromCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which an event of type price is created — inclusive."
+          },
+          {
+            "key": "eventPriceVariationToCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date before which an event of type price is created — inclusive."
+          },
+          {
+            "key": "eventPriceVariationMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percent variation of an event of type price."
+          },
+          {
+            "key": "eventPriceVariationMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percent variation of an event of type price."
+          },
+          {
+            "key": "eventSurfaceVariationFromCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which an event of type surface is created — inclusive."
+          },
+          {
+            "key": "eventSurfaceVariationToCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date before which an event of type surface is created — inclusive."
+          },
+          {
+            "key": "eventSurfaceVariationMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percent variation of an event of type surface."
+          },
+          {
+            "key": "eventSurfaceVariationMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percent variation of an event of type surface."
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Cities to be excluded."
+          },
+          {
+            "key": "excludedInseeCodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Insee codes to be excluded."
+          },
+          {
+            "key": "excludedProperties",
+            "optional": true,
+            "type": "string[]",
+            "description": "Properties to be excluded."
+          },
+          {
+            "key": "excludedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Zipcodes to be excluded."
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "{ word: string, options?: { includes?: boolean, strict?: boolean } }[][]",
+            "description": "Full-text rules on the title or description of the property: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. Sent as `expressions[group][term][word]` and `expressions[group][term][options][includes|strict]`."
+          },
+          {
+            "key": "feesPercentageMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percentage of fees."
+          },
+          {
+            "key": "feesPercentageMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percentage of fees."
+          },
+          {
+            "key": "feesResponsibility",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Responsibility for fees. `0` for seller, `1` for buyer."
+          },
+          {
+            "key": "floorQuantityMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of floors in the property."
+          },
+          {
+            "key": "floorQuantityMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of floors in the property."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the property is created — inclusive."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Date until which the property is created — inclusive."
+          },
+          {
+            "key": "fromUpdatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the property is updated — inclusive."
+          },
+          {
+            "key": "toUpdatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date until which the property is updated — inclusive."
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Filter for furnished properties."
+          },
+          {
+            "key": "geoAccuracy",
+            "optional": true,
+            "type": "(1 | 2)[]",
+            "description": "Filters properties by geocoding confidence level: `1` (house-number level), `2` (neighborhood level)."
+          },
+          {
+            "key": "geoShapes",
+            "optional": true,
+            "type": "[number, number][][]",
+            "description": "Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. Sent as `geoShapes[polygon][point][0|1]`."
+          },
+          {
+            "key": "greenHouseGasCategories",
+            "optional": true,
+            "type": "(A | B | C | D | E | F | G)[]",
+            "description": "Green house gas performance letter array of the property."
+          },
+          {
+            "key": "greenHouseGasValueMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum value of green house gas of the property."
+          },
+          {
+            "key": "greenHouseGasValueMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum value of green house gas of the property."
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`."
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`."
+          },
+          {
+            "key": "includedInseeCodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given insee codes."
+          },
+          {
+            "key": "includedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given zipcodes."
+          },
+          {
+            "key": "inventoryPriceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given inventory price."
+          },
+          {
+            "key": "inventoryPriceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given inventory price."
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude. Will work if latitude exists in the property."
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude. Will work if longitude exists in the property."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Distance expressed in kilometers. Will work if latitude & longitude parameters are also set."
+          },
+          {
+            "key": "lotCountMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given lot count."
+          },
+          {
+            "key": "lotCountMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given lot count."
+          },
+          {
+            "key": "priceExcludingFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given price excluding fees."
+          },
+          {
+            "key": "priceExcludingFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given price excluding fees."
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given price per meter."
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given price per meter."
+          },
+          {
+            "key": "propertyTypes",
+            "optional": true,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6)[]",
+            "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`."
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1)[]",
+            "description": "Type of publisher. Individual `0`, Professional `1`."
+          },
+          {
+            "key": "rentalChargesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given rental charges amount."
+          },
+          {
+            "key": "rentalChargesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given rental charges amount."
+          },
+          {
+            "key": "rentalPledgeMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given rental pledge amount."
+          },
+          {
+            "key": "rentalPledgeMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given rental pledge amount."
+          },
+          {
+            "key": "renterFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given renter fees."
+          },
+          {
+            "key": "renterFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given renter fees."
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum rooms of the property."
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rooms of the property."
+          },
+          {
+            "key": "sortMode",
+            "optional": true,
+            "type": "property | advert",
+            "description": "Whether to sort results by properties or by adverts. If `property`, `fromDate`/`toDate` apply to the property root object; if `advert`, they apply to the nested adverts."
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given surface."
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given surface."
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Type of transaction. Sell `0`, Rent `1`."
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent — both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`."
+          },
+          {
+            "key": "withLocation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Having a latitude and longitude."
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean",
+            "description": "Having a virtual tour video link."
+          },
+          {
+            "key": "expired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to show properties that are expired. A property is considered expired when all its adverts are expired. Default is `null` which returns all properties no matter if they're expired or not."
+          },
+          {
+            "key": "aggregationInterval",
+            "optional": true,
+            "type": "month | year",
+            "description": "Date histogram granularity for the time series. Defaults to `month`."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ createdAt?: asc | desc, updatedAt?: asc | desc }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The collection page number. Defaults to 1."
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number",
+            "description": "The number of items per page. Max is 30; defaults to 30. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ average?: number | null, average_min?: number | null, average_max?: number | null, median?: number | null, series?: Record<string, number> | never[] | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page number to request next, read from `hydra:view.hydra:next`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.properties.get",
+      "shortPath": "properties.get",
+      "description": "Get one property by UUID, with its adverts, city, stations and price events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the property. Taken from the `uuid` field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "adverts",
+            "optional": true,
+            "type": "{ condominiumFees?: number | null, constructionYear?: number | null, contact?: { agency?: string | null, email?: string | null, fax?: string | null, name?: string | null, phone?: string | null, reference?: string | null } | null, createdAt?: string | null, description?: string | null, elevator?: boolean | null, energy?: { category?: string | null, value?: number | null } | null, events?: { createdAt?: string | null, fieldName?: string | null, fieldNewValue?: string | number | boolean | null, fieldOldValue?: string | number | boolean | null, percentVariation?: number | null }[] | null, features?: string[] | null, feesPercentage?: number | null, feesResponsibility?: 0 | 1 | number | null, floor?: number | null, floorQuantity?: number | null, furnished?: boolean | null, greenHouseGas?: { category?: string | null, value?: number | null } | null, inventoryPrice?: number | null, landSurface?: number | null, lastCrawledAt?: string | null, lotCount?: number | null, pictures?: string[] | null, picturesRemote?: string[] | null, price?: number | null, priceExcludingFees?: number | null, publisher?: { category?: string | null, name?: string | null, type?: 0 | 1 | number | null } | null, rentalCharges?: number | null, rentalPledge?: number | null, renterFees?: number | null, surface?: number | null, title?: string | null, updatedAt?: string | null, url?: string | null, uuid?: string | null, virtualTour?: string | null }[] | null"
+          },
+          {
+            "key": "bedroom",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "{ cityParentId?: number | null, country?: { code?: string | null, id?: number | null, name?: string | null } | null, department?: { code?: string | null, id?: number | null, name?: string | null } | null, groupedCityNames?: string[] | null, groupedCityZipcodes?: string[] | null, hasGroupedByName?: boolean | null, hasGroupedByZipcode?: boolean | null, id?: number | null, insee?: string | null, location?: { lat?: number | null, lon?: number | null } | null, name?: string | null, open?: boolean | null, originalName?: string | null, region?: { code?: string | null, id?: number | null, name?: string | null } | null, zipcode?: string | null } | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "elevator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "expired",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "A property is expired when all its adverts are expired."
+          },
+          {
+            "key": "expiredAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "floor",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "landSurface",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastCrawledAdvert",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastCrawledAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ lat?: number | null, lon?: number | null } | null"
+          },
+          {
+            "key": "pictures",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pricePerMeter",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "property",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "propertyType",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null",
+            "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Other values may appear later."
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1 | number)[] | null"
+          },
+          {
+            "key": "room",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ id?: number | null, lines?: { color?: string | null, id?: number | null, name?: string | null, number?: string | null, routeName?: string | null }[] | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "surface",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1 | number | null",
+            "description": "Type of transaction. Sell `0`, Rent `1`. Other values may appear later."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.properties.list",
+      "shortPath": "properties.list",
+      "description": "List French real-estate properties matching filters (location, price, surface, rooms, energy class and more), with paging via nextPage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "advertPriceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum price of advert. Filters properties based on any non expired adverts prices."
+          },
+          {
+            "key": "advertPriceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum price of advert. Filters properties based on any non expired adverts prices."
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of bedrooms in the property."
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of bedrooms in the property."
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum budget for the property."
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum budget for the property."
+          },
+          {
+            "key": "condominiumFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum condominium fees for the property."
+          },
+          {
+            "key": "condominiumFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum condominium fees for the property."
+          },
+          {
+            "key": "constructionYearMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum construction year of the property."
+          },
+          {
+            "key": "constructionYearMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum construction year of the property."
+          },
+          {
+            "key": "energyCategories",
+            "optional": true,
+            "type": "(A | B | C | D | E | F | G)[]",
+            "description": "The energy efficiency categories of the property."
+          },
+          {
+            "key": "energyValueMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum energy value of the property."
+          },
+          {
+            "key": "energyValueMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum energy value of the property."
+          },
+          {
+            "key": "eventPriceVariationFromCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which an event of type price is created — inclusive."
+          },
+          {
+            "key": "eventPriceVariationToCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date before which an event of type price is created — inclusive."
+          },
+          {
+            "key": "eventPriceVariationMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percent variation of an event of type price."
+          },
+          {
+            "key": "eventPriceVariationMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percent variation of an event of type price."
+          },
+          {
+            "key": "eventSurfaceVariationFromCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which an event of type surface is created — inclusive."
+          },
+          {
+            "key": "eventSurfaceVariationToCreatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date before which an event of type surface is created — inclusive."
+          },
+          {
+            "key": "eventSurfaceVariationMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percent variation of an event of type surface."
+          },
+          {
+            "key": "eventSurfaceVariationMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percent variation of an event of type surface."
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Cities to be excluded."
+          },
+          {
+            "key": "excludedInseeCodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Insee codes to be excluded."
+          },
+          {
+            "key": "excludedProperties",
+            "optional": true,
+            "type": "string[]",
+            "description": "Properties to be excluded."
+          },
+          {
+            "key": "excludedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Zipcodes to be excluded."
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "{ word: string, options?: { includes?: boolean, strict?: boolean } }[][]",
+            "description": "Full-text rules on the title or description of the property: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. Sent as `expressions[group][term][word]` and `expressions[group][term][options][includes|strict]`."
+          },
+          {
+            "key": "feesPercentageMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum percentage of fees."
+          },
+          {
+            "key": "feesPercentageMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum percentage of fees."
+          },
+          {
+            "key": "feesResponsibility",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Responsibility for fees. `0` for seller, `1` for buyer."
+          },
+          {
+            "key": "floorQuantityMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of floors in the property."
+          },
+          {
+            "key": "floorQuantityMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of floors in the property."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the property is created — inclusive."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Date until which the property is created — inclusive."
+          },
+          {
+            "key": "fromUpdatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the property is updated — inclusive."
+          },
+          {
+            "key": "toUpdatedAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date until which the property is updated — inclusive."
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Filter for furnished properties."
+          },
+          {
+            "key": "geoAccuracy",
+            "optional": true,
+            "type": "(1 | 2)[]",
+            "description": "Filters properties by geocoding confidence level: `1` (house-number level), `2` (neighborhood level)."
+          },
+          {
+            "key": "geoShapes",
+            "optional": true,
+            "type": "[number, number][][]",
+            "description": "Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. Sent as `geoShapes[polygon][point][0|1]`."
+          },
+          {
+            "key": "greenHouseGasCategories",
+            "optional": true,
+            "type": "(A | B | C | D | E | F | G)[]",
+            "description": "Green house gas performance letter array of the property."
+          },
+          {
+            "key": "greenHouseGasValueMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum value of green house gas of the property."
+          },
+          {
+            "key": "greenHouseGasValueMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum value of green house gas of the property."
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`."
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`."
+          },
+          {
+            "key": "includedInseeCodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given insee codes."
+          },
+          {
+            "key": "includedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Located in given zipcodes."
+          },
+          {
+            "key": "inventoryPriceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given inventory price."
+          },
+          {
+            "key": "inventoryPriceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given inventory price."
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude. Will work if latitude exists in the property."
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude. Will work if longitude exists in the property."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Distance expressed in kilometers. Will work if latitude & longitude parameters are also set."
+          },
+          {
+            "key": "lotCountMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given lot count."
+          },
+          {
+            "key": "lotCountMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given lot count."
+          },
+          {
+            "key": "priceExcludingFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given price excluding fees."
+          },
+          {
+            "key": "priceExcludingFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given price excluding fees."
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given price per meter."
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given price per meter."
+          },
+          {
+            "key": "propertyTypes",
+            "optional": true,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6)[]",
+            "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`."
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1)[]",
+            "description": "Type of publisher. Individual `0`, Professional `1`."
+          },
+          {
+            "key": "rentalChargesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given rental charges amount."
+          },
+          {
+            "key": "rentalChargesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given rental charges amount."
+          },
+          {
+            "key": "rentalPledgeMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given rental pledge amount."
+          },
+          {
+            "key": "rentalPledgeMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given rental pledge amount."
+          },
+          {
+            "key": "renterFeesMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given renter fees."
+          },
+          {
+            "key": "renterFeesMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given renter fees."
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum rooms of the property."
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rooms of the property."
+          },
+          {
+            "key": "sortMode",
+            "optional": true,
+            "type": "property | advert",
+            "description": "Whether to sort results by properties or by adverts. If `property`, `fromDate`/`toDate` apply to the property root object; if `advert`, they apply to the nested adverts."
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Greater than or equal to given surface."
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Lower than or equal to given surface."
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Type of transaction. Sell `0`, Rent `1`."
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent — both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`."
+          },
+          {
+            "key": "withLocation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Having a latitude and longitude."
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean",
+            "description": "Having a virtual tour video link."
+          },
+          {
+            "key": "expired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to show properties that are expired. A property is considered expired when all its adverts are expired. Default is `null` which returns all properties no matter if they're expired or not."
+          },
+          {
+            "key": "fromExpiredAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the advert is expired — inclusive."
+          },
+          {
+            "key": "toExpiredAt",
+            "optional": true,
+            "type": "string",
+            "description": "Date until which the advert is expired — inclusive."
+          },
+          {
+            "key": "excludedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be excluded."
+          },
+          {
+            "key": "includedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be included."
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum land surface."
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum land surface."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ createdAt?: asc | desc, updatedAt?: asc | desc, pricePerMeter?: asc | desc, price?: asc | desc, surface?: asc | desc }",
+            "description": "Sent as `order[createdAt]`, `order[price]` and so on."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The collection page number. Defaults to 1."
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number",
+            "description": "The number of items per page. Max is 30; defaults to 10. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ @context?: string | null, @id?: string | null, @type?: string | null, adverts?: { condominiumFees?: number | null, constructionYear?: number | null, contact?: { agency?: string | null, email?: string | null, fax?: string | null, name?: string | null, phone?: string | null, reference?: string | null } | null, createdAt?: string | null, description?: string | null, elevator?: boolean | null, energy?: { category?: string | null, value?: number | null } | null, events?: { createdAt?: string | null, fieldName?: string | null, fieldNewValue?: string | number | boolean | null, fieldOldValue?: string | number | boolean | null, percentVariation?: number | null }[] | null, features?: string[] | null, feesPercentage?: number | null, feesResponsibility?: 0 | 1 | number | null, floor?: number | null, floorQuantity?: number | null, furnished?: boolean | null, greenHouseGas?: { category?: string | null, value?: number | null } | null, inventoryPrice?: number | null, landSurface?: number | null, lastCrawledAt?: string | null, lotCount?: number | null, pictures?: string[] | null, picturesRemote?: string[] | null, price?: number | null, priceExcludingFees?: number | null, publisher?: { category?: string | null, name?: string | null, type?: 0 | 1 | number | null } | null, rentalCharges?: number | null, rentalPledge?: number | null, renterFees?: number | null, surface?: number | null, title?: string | null, updatedAt?: string | null, url?: string | null, uuid?: string | null, virtualTour?: string | null }[] | null, bedroom?: number | null, city?: { cityParentId?: number | null, country?: { code?: string | null, id?: number | null, name?: string | null } | null, department?: { code?: string | null, id?: number | null, name?: string | null } | null, groupedCityNames?: string[] | null, groupedCityZipcodes?: string[] | null, hasGroupedByName?: boolean | null, hasGroupedByZipcode?: boolean | null, id?: number | null, insee?: string | null, location?: { lat?: number | null, lon?: number | null } | null, name?: string | null, open?: boolean | null, originalName?: string | null, region?: { code?: string | null, id?: number | null, name?: string | null } | null, zipcode?: string | null } | null, createdAt?: string | null, description?: string | null, elevator?: boolean | null, expired?: boolean | null, expiredAt?: string | null, floor?: number | null, furnished?: boolean | null, landSurface?: number | null, lastCrawledAdvert?: string | null, lastCrawledAt?: string | null, locations?: { lat?: number | null, lon?: number | null } | null, pictures?: string[] | null, price?: number | null, pricePerMeter?: number | null, property?: string | null, propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null, publisherTypes?: (0 | 1 | number)[] | null, room?: number | null, stations?: { id?: number | null, lines?: { color?: string | null, id?: number | null, name?: string | null, number?: string | null, routeName?: string | null }[] | null, name?: string | null }[] | null, surface?: number | null, title?: string | null, transactionType?: 0 | 1 | number | null, updatedAt?: string | null, uuid?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page number to request next, read from `hydra:view.hydra:next`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.properties.listSimilar",
+      "shortPath": "properties.listSimilar",
+      "description": "List properties similar to a given property, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the property to find similar ones for. Taken from the `uuid` field."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Date from which the property is created — inclusive."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ createdAt?: asc | desc, updatedAt?: asc | desc, pricePerMeter?: asc | desc, price?: asc | desc, surface?: asc | desc }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The collection page number. Defaults to 1."
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number",
+            "description": "The number of items per page. Max is 30; defaults to 10. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ @context?: string | null, @id?: string | null, @type?: string | null, adverts?: { condominiumFees?: number | null, constructionYear?: number | null, contact?: { agency?: string | null, email?: string | null, fax?: string | null, name?: string | null, phone?: string | null, reference?: string | null } | null, createdAt?: string | null, description?: string | null, elevator?: boolean | null, energy?: { category?: string | null, value?: number | null } | null, events?: { createdAt?: string | null, fieldName?: string | null, fieldNewValue?: string | number | boolean | null, fieldOldValue?: string | number | boolean | null, percentVariation?: number | null }[] | null, features?: string[] | null, feesPercentage?: number | null, feesResponsibility?: 0 | 1 | number | null, floor?: number | null, floorQuantity?: number | null, furnished?: boolean | null, greenHouseGas?: { category?: string | null, value?: number | null } | null, inventoryPrice?: number | null, landSurface?: number | null, lastCrawledAt?: string | null, lotCount?: number | null, pictures?: string[] | null, picturesRemote?: string[] | null, price?: number | null, priceExcludingFees?: number | null, publisher?: { category?: string | null, name?: string | null, type?: 0 | 1 | number | null } | null, rentalCharges?: number | null, rentalPledge?: number | null, renterFees?: number | null, surface?: number | null, title?: string | null, updatedAt?: string | null, url?: string | null, uuid?: string | null, virtualTour?: string | null }[] | null, bedroom?: number | null, city?: { cityParentId?: number | null, country?: { code?: string | null, id?: number | null, name?: string | null } | null, department?: { code?: string | null, id?: number | null, name?: string | null } | null, groupedCityNames?: string[] | null, groupedCityZipcodes?: string[] | null, hasGroupedByName?: boolean | null, hasGroupedByZipcode?: boolean | null, id?: number | null, insee?: string | null, location?: { lat?: number | null, lon?: number | null } | null, name?: string | null, open?: boolean | null, originalName?: string | null, region?: { code?: string | null, id?: number | null, name?: string | null } | null, zipcode?: string | null } | null, createdAt?: string | null, description?: string | null, elevator?: boolean | null, expired?: boolean | null, expiredAt?: string | null, floor?: number | null, furnished?: boolean | null, landSurface?: number | null, lastCrawledAdvert?: string | null, lastCrawledAt?: string | null, locations?: { lat?: number | null, lon?: number | null } | null, pictures?: string[] | null, price?: number | null, pricePerMeter?: number | null, property?: string | null, propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null, publisherTypes?: (0 | 1 | number)[] | null, room?: number | null, stations?: { id?: number | null, lines?: { color?: string | null, id?: number | null, name?: string | null, number?: string | null, routeName?: string | null }[] | null, name?: string | null }[] | null, surface?: number | null, title?: string | null, transactionType?: 0 | 1 | number | null, updatedAt?: string | null, uuid?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page number to request next, read from `hydra:view.hydra:next`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.searches.create",
+      "shortPath": "searches.create",
+      "description": "Create a saved search; Melo also requires a location (includedCities, includedDepartments, includedZipcodes, lat/lon/radius or geoShapes) and a budget or price per meter bound. With notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of bedrooms in the property."
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of bedrooms in the property."
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum budget for the property."
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum budget for the property."
+          },
+          {
+            "key": "endpointRecipient",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled: true`."
+          },
+          {
+            "key": "eventEndpoint",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled: true` and at least one entry in `subscribedEvents`."
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Cities to be excluded."
+          },
+          {
+            "key": "excludedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be excluded."
+          },
+          {
+            "key": "excludedSiteCategories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Site categories to be excluded."
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "{ word: string, options?: { includes?: boolean, strict?: boolean } }[][]",
+            "description": "Full-text rules on the title or description: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`."
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the property is furnished or not."
+          },
+          {
+            "key": "geoAccuracy",
+            "optional": true,
+            "type": "1 | 2",
+            "description": "Geocoding confidence level. `1` keeps only house-number level matches and `2` includes neighborhood-level approximations. Leave empty to allow both."
+          },
+          {
+            "key": "geoShapes",
+            "optional": true,
+            "type": "[number, number][][]",
+            "description": "Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points."
+          },
+          {
+            "key": "hidePropertyContact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to hide property contact information or not."
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`."
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`."
+          },
+          {
+            "key": "includedSiteCategories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included site categories."
+          },
+          {
+            "key": "includedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be included."
+          },
+          {
+            "key": "includedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included zipcodes."
+          },
+          {
+            "key": "includedZipcodesInsee",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included INSEE codes (used to infer the cities associated with the search)."
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum land surface."
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum land surface."
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude of the center point used for radial filtering. Provide together with `lon`."
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude of the center point used for radial filtering. Provide together with `lat`."
+          },
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enables delivery of matches and events by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`). The API defaults to false."
+          },
+          {
+            "key": "notificationRecipient",
+            "optional": true,
+            "type": "string",
+            "description": "Email address that receives alert summaries when `notificationEnabled` is true."
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum price per meter."
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum price per meter."
+          },
+          {
+            "key": "propertyTypes",
+            "optional": false,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6)[]",
+            "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Required."
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1)[]"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Distance in kilometers around the provided `lat`/`lon`."
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of rooms."
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of rooms."
+          },
+          {
+            "key": "subscribedEvents",
+            "optional": true,
+            "type": "(ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update)[]",
+            "description": "Event codes you want to receive on the `eventEndpoint`."
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum property surface area."
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum property surface area."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Title of the search. Required."
+          },
+          {
+            "key": "transactionType",
+            "optional": false,
+            "type": "0 | 1",
+            "description": "Type of transaction. Sell `0`, Rent `1`."
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Price coherence filter. `true` keeps adverts whose price passes the coherence checks, `false` keeps adverts flagged as incoherent (both also include unassessed ones), `null` disables the filter. The API defaults to `true` when omitted."
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the property includes a virtual tour."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpointRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventEndpoint",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "excludedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "(string | {} | (string | {})[])[] | null"
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hidePropertyContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastAlertAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "notificationRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "propertyTypes",
+            "optional": true,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null"
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1 | number)[] | null"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "subscribedEvents",
+            "optional": true,
+            "type": "(ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null"
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1 | number | null",
+            "description": "Type of transaction. Sell `0`, Rent `1`. Other values may appear later."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.searches.delete",
+      "shortPath": "searches.delete",
+      "description": "Permanently delete a saved search; its notifications stop and it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the search to delete. Taken from the `uuid` field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the search that was deleted."
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true",
+            "description": "The API answers 204 with no body when the search is deleted."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.searches.get",
+      "shortPath": "searches.get",
+      "description": "Get one saved search by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the search. Taken from the `uuid` field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpointRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventEndpoint",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "excludedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "(string | {} | (string | {})[])[] | null"
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hidePropertyContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastAlertAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "notificationRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "propertyTypes",
+            "optional": true,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null"
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1 | number)[] | null"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "subscribedEvents",
+            "optional": true,
+            "type": "(ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null"
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1 | number | null",
+            "description": "Type of transaction. Sell `0`, Rent `1`. Other values may appear later."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.searches.list",
+      "shortPath": "searches.list",
+      "description": "List your saved searches, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Filter searches that have notifications enabled or not."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ title?: asc | desc }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The collection page number. Defaults to 1."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Title of the search."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hydra:totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hydra:view",
+            "optional": true,
+            "type": "{ @id?: string | null, @type?: string | null, hydra:first?: string | null, hydra:last?: string | null, hydra:next?: string | null } | null"
+          },
+          {
+            "key": "hydra:search",
+            "optional": true,
+            "type": "{ @type?: string | null, hydra:template?: string | null, hydra:variableRepresentation?: string | null, hydra:mapping?: {}[] | null } | null"
+          },
+          {
+            "key": "hydra:member",
+            "optional": false,
+            "type": "{ @context?: string | null, @id?: string | null, @type?: string | null, bedroomMin?: number | null, bedroomMax?: number | null, budgetMax?: number | null, budgetMin?: number | null, createdAt?: string | null, endpointRecipient?: string | null, eventEndpoint?: string | null, excludedCities?: (string | {})[] | null, excludedSiteCategories?: (string | {})[] | null, expressions?: (string | {} | (string | {})[])[] | null, furnished?: boolean | null, hidePropertyContact?: boolean | null, includedCities?: (string | {})[] | null, includedDepartments?: (string | {})[] | null, includedSiteCategories?: (string | {})[] | null, landSurfaceMax?: number | null, landSurfaceMin?: number | null, lastAlertAt?: string | null, lat?: number | null, lon?: number | null, notificationEnabled?: boolean | null, notificationRecipient?: string | null, pricePerMeterMax?: number | null, pricePerMeterMin?: number | null, propertyTypes?: (0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null, publisherTypes?: (0 | 1 | number)[] | null, radius?: number | null, roomMin?: number | null, roomMax?: number | null, subscribedEvents?: (ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null, surfaceMax?: number | null, surfaceMin?: number | null, title?: string | null, token?: string | null, transactionType?: 0 | 1 | number | null, updatedAt?: string | null, user?: string | null, withCoherentPrice?: boolean | null, withVirtualTour?: boolean | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page number to request next, read from `hydra:view.hydra:next`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.searches.update",
+      "shortPath": "searches.update",
+      "description": "Update a saved search (PUT) with the required title, transactionType and propertyTypes; fields left out keep their saved values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the search to update. Taken from the `uuid` field."
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of bedrooms in the property."
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of bedrooms in the property."
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum budget for the property."
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum budget for the property."
+          },
+          {
+            "key": "endpointRecipient",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled: true`."
+          },
+          {
+            "key": "eventEndpoint",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled: true` and at least one entry in `subscribedEvents`."
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Cities to be excluded."
+          },
+          {
+            "key": "excludedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be excluded."
+          },
+          {
+            "key": "excludedSiteCategories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Site categories to be excluded."
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "{ word: string, options?: { includes?: boolean, strict?: boolean } }[][]",
+            "description": "Full-text rules on the title or description: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`."
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the property is furnished or not."
+          },
+          {
+            "key": "geoAccuracy",
+            "optional": true,
+            "type": "1 | 2",
+            "description": "Geocoding confidence level. `1` keeps only house-number level matches and `2` includes neighborhood-level approximations. Leave empty to allow both."
+          },
+          {
+            "key": "geoShapes",
+            "optional": true,
+            "type": "[number, number][][]",
+            "description": "Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points."
+          },
+          {
+            "key": "hidePropertyContact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to hide property contact information or not."
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`."
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`."
+          },
+          {
+            "key": "includedSiteCategories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included site categories."
+          },
+          {
+            "key": "includedSites",
+            "optional": true,
+            "type": "string[]",
+            "description": "Source sites to be included."
+          },
+          {
+            "key": "includedZipcodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included zipcodes."
+          },
+          {
+            "key": "includedZipcodesInsee",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included INSEE codes (used to infer the cities associated with the search)."
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum land surface."
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum land surface."
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude of the center point used for radial filtering. Provide together with `lon`."
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude of the center point used for radial filtering. Provide together with `lat`."
+          },
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enables delivery of matches and events by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`). The API defaults to false."
+          },
+          {
+            "key": "notificationRecipient",
+            "optional": true,
+            "type": "string",
+            "description": "Email address that receives alert summaries when `notificationEnabled` is true."
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum price per meter."
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum price per meter."
+          },
+          {
+            "key": "propertyTypes",
+            "optional": false,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6)[]",
+            "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Required."
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1)[]"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Distance in kilometers around the provided `lat`/`lon`."
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of rooms."
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of rooms."
+          },
+          {
+            "key": "subscribedEvents",
+            "optional": true,
+            "type": "(ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update)[]",
+            "description": "Event codes you want to receive on the `eventEndpoint`."
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum property surface area."
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum property surface area."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Title of the search. Required."
+          },
+          {
+            "key": "transactionType",
+            "optional": false,
+            "type": "0 | 1",
+            "description": "Type of transaction. Sell `0`, Rent `1`."
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Price coherence filter. `true` keeps adverts whose price passes the coherence checks, `false` keeps adverts flagged as incoherent (both also include unassessed ones), `null` disables the filter. The API defaults to `true` when omitted."
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the property includes a virtual tour."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@context",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "@type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bedroomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bedroomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpointRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventEndpoint",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "excludedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "excludedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "expressions",
+            "optional": true,
+            "type": "(string | {} | (string | {})[])[] | null"
+          },
+          {
+            "key": "furnished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hidePropertyContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includedCities",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedDepartments",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "includedSiteCategories",
+            "optional": true,
+            "type": "(string | {})[] | null"
+          },
+          {
+            "key": "landSurfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "landSurfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastAlertAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "notificationEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "notificationRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pricePerMeterMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pricePerMeterMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "propertyTypes",
+            "optional": true,
+            "type": "(0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null"
+          },
+          {
+            "key": "publisherTypes",
+            "optional": true,
+            "type": "(0 | 1 | number)[] | null"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "roomMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "subscribedEvents",
+            "optional": true,
+            "type": "(ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null"
+          },
+          {
+            "key": "surfaceMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "surfaceMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionType",
+            "optional": true,
+            "type": "0 | 1 | number | null",
+            "description": "Type of transaction. Sell `0`, Rent `1`. Other values may appear later."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "withCoherentPrice",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "withVirtualTour",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "melo.api.webhooks.simulate",
+      "shortPath": "webhooks.simulate",
+      "description": "Ask Melo to send a test match or event payload to a URL you give; this is an API call that sends a request to that URL, not an inbound webhook handler",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint where the match or the event will be sent to."
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update",
+            "description": "The type of event to trigger. Omit it to simulate a `match`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": false,
+            "type": "true",
+            "description": "The API answered 2xx: the simulated payload was sent to the endpoint. Melo returns no delivery result."
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string",
+            "description": "The endpoint the payload was sent to."
+          },
+          {
+            "key": "simulated",
+            "optional": false,
+            "type": "match | ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update",
+            "description": "`match`, or the event type that was simulated."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
