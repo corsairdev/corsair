@@ -103,6 +103,13 @@ describe('toValue', () => {
 		expect(root && toValue(root)).toBe('');
 	});
 
+	it('turns an empty typed array into an empty array, not a string', () => {
+		// `<projects type="array"/>` is what an account with no projects returns;
+		// '' here made every list operation throw.
+		const root = parseXml('<projects type="array"/>');
+		expect(root && toValue(root)).toEqual([]);
+	});
+
 	it('turns a nil attribute into null', () => {
 		const root = parseXml('<description nil="true"></description>');
 		expect(root && toValue(root)).toBeNull();

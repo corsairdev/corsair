@@ -62,6 +62,8 @@ describe('makeWorksnapsRequest', () => {
 		const error = (await makeWorksnapsRequest(API_KEY, {
 			method: 'GET',
 			path: '/projects.xml',
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as WorksnapsAPIError;
 
 		expect(error).toBeInstanceOf(WorksnapsAPIError);
@@ -75,6 +77,8 @@ describe('makeWorksnapsRequest', () => {
 		const error = (await makeWorksnapsRequest(API_KEY, {
 			method: 'GET',
 			path: '/me.xml',
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as WorksnapsAPIError;
 
 		expect(error.message).toBe('fetch failed');

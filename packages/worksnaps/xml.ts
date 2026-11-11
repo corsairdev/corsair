@@ -205,6 +205,11 @@ export function toValue(node: XmlNode): XmlValue {
 
 	if (nil) return null;
 
+	// A typed array with no children is an empty collection, not an empty string.
+	// Without this, `<projects type="array"/>` becomes '', and every list operation
+	// throws on an account that simply has none of that thing yet.
+	if (type === 'array' && node.children.length === 0) return [];
+
 	if (node.children.length === 0) {
 		const text = node.text;
 		if (text === '') {

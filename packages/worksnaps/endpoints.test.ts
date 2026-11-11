@@ -314,6 +314,8 @@ describe('assignments', () => {
 	it('lists task assignments', async () => {
 		respondText(fetchMock, taskAssignmentsXml);
 
+		// unknown: only the length is asserted; the row shape belongs to the XML
+		// decoder and is covered by its own suites.
 		const result = (await invoke(Assignments.taskList, {
 			project_id: 3456,
 		})) as { task_assignments?: unknown[] };
@@ -431,6 +433,7 @@ describe('users and reports', () => {
 	it('lists users, logging only the count', async () => {
 		respondText(fetchMock, usersXml);
 
+		// unknown: only the length is asserted; the row shape is covered elsewhere.
 		const result = (await invoke(Users.list, {})) as { users?: unknown[] };
 
 		expect(result.users).toHaveLength(1);
