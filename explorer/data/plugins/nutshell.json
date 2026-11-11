@@ -1,0 +1,3696 @@
+{
+  "id": "nutshell",
+  "displayName": "Nutshell",
+  "description": "CRM integration for accounts, contacts, leads, activities, tasks, products, quotes, and invoices.",
+  "npmPackageName": "@corsair-dev/nutshell",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 114,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "email"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nutshell.api.accounts.create",
+      "shortPath": "accounts.create",
+      "description": "Create an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ accounts?: { name?: string, description?: string, phones?: { isPrimary?: boolean, name?: string, value?: string }[], emails?: { value?: string }[], urls?: { value?: string }[], addresses?: { name?: string, isPrimary?: boolean, value?: { address_1?: string, city?: string, state?: string } }[], links?: {}, customFields?: {} }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { href?: string | null, revenue?: { amount?: string | number | null, formatted?: string | null } | null, employeeCount?: number | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.createCustomField",
+      "shortPath": "accounts.createCustomField",
+      "description": "Create a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: any, type?: any, choices?: any, isMultiple?: any, id?: string, title?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.customFieldAttributes",
+      "shortPath": "accounts.customFieldAttributes",
+      "description": "Get a list of custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.customfields",
+      "shortPath": "accounts.customfields",
+      "description": "Get custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "({ id?: string | null } & { value?: string | null, id?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.delete",
+      "shortPath": "accounts.delete",
+      "description": "Delete an account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { href?: string | null, revenue?: { amount?: string | number | null, formatted?: string | null } | null, employeeCount?: number | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          },
+          {
+            "key": "creators",
+            "optional": true,
+            "type": "({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null })[] | null"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null })[] | null"
+          },
+          {
+            "key": "origins",
+            "optional": true,
+            "type": "(((({ avatarUrl?: string | null, initials?: string | null } & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null, name?: string | null, modifiedTime?: number | null, lastseenTime?: number | null, originType?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null })[] | null"
+          },
+          {
+            "key": "accountTypes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, modifiedTime?: number | null }[] | null"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Get an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { href?: string | null, revenue?: { amount?: string | number | null, formatted?: string | null } | null, employeeCount?: number | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          },
+          {
+            "key": "creators",
+            "optional": true,
+            "type": "({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null })[] | null"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null })[] | null"
+          },
+          {
+            "key": "origins",
+            "optional": true,
+            "type": "(((({ avatarUrl?: string | null, initials?: string | null } & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null, name?: string | null, modifiedTime?: number | null, lastseenTime?: number | null, originType?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null })[] | null"
+          },
+          {
+            "key": "accountTypes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, modifiedTime?: number | null }[] | null"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "Get a list of accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(-accountType | -createdTime | -industry | -lastContactedTime | -name | -numberOfContacts | -owner | -phone | -postalCode | -territory | accountType | createdTime | industry | lastContactedTime | name | numberOfContacts | owner | phone | postalCode | territory)[]"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "(({ count?: number | null } & { total?: number | null }) & { facets?: { AccountType?: { n-accountTypes?: number | null } | null } | null }) & { instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { href?: string | null, revenue?: { amount?: string | number | null, formatted?: string | null } | null, employeeCount?: number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.listFields",
+      "shortPath": "accounts.listFields",
+      "description": "Get the fields for an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ exampleProperty?: { type?: string | null, title?: string | null, description?: string | null, isFilterable?: boolean | null, isDisplayable?: boolean | null, isSortable?: boolean | null, isGoalable?: boolean | null, isAddable?: boolean | null, isBoardable?: boolean | null, isRequireable?: boolean | null, isAndable?: boolean | null, isNullable?: boolean | null, relationships?: string[] | null, enum?: string[] | null, format?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.listItems",
+      "shortPath": "accounts.listItems",
+      "description": "Get list items for all accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(-accountType | -createdTime | -industry | -lastContactedTime | -name | -numberOfContacts | -owner | -phone | -postalCode | -territory | accountType | createdTime | industry | lastContactedTime | name | numberOfContacts | owner | phone | postalCode | territory)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "(({ count?: number | null } & { total?: number | null }) & { facets?: { AccountType?: { n-accountTypes?: number | null } | null } | null }) & { instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "listItems",
+            "optional": true,
+            "type": "((((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, primaryName?: string | null, primaryInfo?: string | null, relatedName?: string | null, relatedInfo?: string | null, relatedType?: string | null, relatedUrl?: string | null, relatedUrlPath?: string | null, primaryContact?: string | {} | null, primaryAccount?: string | {} | null, latlon?: string | string[] | null, mapUrl?: string | null, isDeleted?: boolean | null, fields?: {}[] | Record<string, any> | null }) & { description?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.undelete",
+      "shortPath": "accounts.undelete",
+      "description": "Undelete an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { href?: string | null, revenue?: { amount?: string | number | null, formatted?: string | null } | null, employeeCount?: number | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.accounts.update",
+      "shortPath": "accounts.update",
+      "description": "Update an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "nutshell.api.accountTypes.list",
+      "shortPath": "accountTypes.list",
+      "description": "Get a list of account types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "accountTypes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, modifiedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.activities.create",
+      "shortPath": "activities.create",
+      "description": "Create an activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ activities?: { name?: string, description?: string, note?: string, location?: string, activityType?: string, startTime?: number, endTime?: number, transcription?: string, isFlagged?: boolean, isLogged?: boolean, isAllDay?: boolean, links?: { participants?: string[], leads?: string[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { activities?: ((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null })[] | null, id?: string | null, agenda?: any | null, createdTime?: number | null, endTime?: number | null, deletedTime?: number | null, href?: string | null, isAllDay?: boolean | null, isEditable?: boolean | null, isCancelled?: boolean | null, isFlagged?: boolean | null, isLogged?: boolean | null, isOverdue?: boolean | null, loggedTime?: number | null, modifiedTime?: number | null, name?: string | null, startTime?: number | null, isMediaLogged?: boolean | null, transcription?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.activities.get",
+      "shortPath": "activities.get",
+      "description": "Get an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { activities?: ((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null })[] | null, id?: string | null, agenda?: any | null, createdTime?: number | null, endTime?: number | null, deletedTime?: number | null, href?: string | null, isAllDay?: boolean | null, isEditable?: boolean | null, isCancelled?: boolean | null, isFlagged?: boolean | null, isLogged?: boolean | null, isOverdue?: boolean | null, loggedTime?: number | null, modifiedTime?: number | null, name?: string | null, startTime?: number | null, isMediaLogged?: boolean | null, transcription?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "Get activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter[participant][]",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter[status][]",
+            "optional": true,
+            "type": "(scheduled | logged | cancelled)[]"
+          },
+          {
+            "key": "filter[leadPriority][]",
+            "optional": true,
+            "type": "hot"
+          },
+          {
+            "key": "filter[activityType]",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "filter[flagged]",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter[isImportant]",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter[dateMin]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMax]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { activities?: ((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null })[] | null, id?: string | null, agenda?: any | null, createdTime?: number | null, endTime?: number | null, deletedTime?: number | null, href?: string | null, isAllDay?: boolean | null, isEditable?: boolean | null, isCancelled?: boolean | null, isFlagged?: boolean | null, isLogged?: boolean | null, isOverdue?: boolean | null, loggedTime?: number | null, modifiedTime?: number | null, name?: string | null, startTime?: number | null, isMediaLogged?: boolean | null, transcription?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.activities.update",
+      "shortPath": "activities.update",
+      "description": "Update an activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ activities?: { name?: string, description?: string, note?: string, location?: string, activityType?: string, startTime?: number, endTime?: number, transcription?: string, isFlagged?: boolean, isLogged?: boolean, isAllDay?: boolean, links?: { participants?: string[], leads?: string[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { activities?: ((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { id?: string | null })[] | null, id?: string | null, agenda?: any | null, createdTime?: number | null, endTime?: number | null, deletedTime?: number | null, href?: string | null, isAllDay?: boolean | null, isEditable?: boolean | null, isCancelled?: boolean | null, isFlagged?: boolean | null, isLogged?: boolean | null, isOverdue?: boolean | null, loggedTime?: number | null, modifiedTime?: number | null, name?: string | null, startTime?: number | null, isMediaLogged?: boolean | null, transcription?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.activityTypes.list",
+      "shortPath": "activityTypes.list",
+      "description": "Get activity types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "activityTypes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null, isBenchmarkable?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.audiences.create",
+      "shortPath": "audiences.create",
+      "description": "Create an audience",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ emAudiences?: { name?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emAudiences",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, isWebFX?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.audiences.list",
+      "shortPath": "audiences.list",
+      "description": "Get a list of audiences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "emAudiences",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, isWebFX?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.competitorMaps.delete",
+      "shortPath": "competitorMaps.delete",
+      "description": "Delete a lead-competitor relationship",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "nutshell.api.competitorMaps.get",
+      "shortPath": "competitorMaps.get",
+      "description": "Get a lead-competitor relationship",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "competitorMaps",
+            "optional": true,
+            "type": "{ id?: string | null, relationship?: string | null, name?: string | null, status?: string | null | null, links?: { lead?: string | null, competitor?: string | null } | null }[] | null"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "(({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null })[] | null"
+          },
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.competitorMaps.list",
+      "shortPath": "competitorMaps.list",
+      "description": "Get a list of lead-competitor relationships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "competitorMaps",
+            "optional": true,
+            "type": "{ id?: string | null, relationship?: string | null, name?: string | null, status?: string | null | null, links?: { lead?: string | null, competitor?: string | null } | null }[] | null"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "(({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null })[] | null"
+          },
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.competitorMaps.update",
+      "shortPath": "competitorMaps.update",
+      "description": "Update a lead-competitor relationship",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "nutshell.api.competitors.get",
+      "shortPath": "competitors.get",
+      "description": "Get a competitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.competitors.list",
+      "shortPath": "competitors.list",
+      "description": "Get a list of competitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "competitors",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ contacts?: { name?: string, description?: string, phones?: { isOptedOut?: boolean, isPrimary?: boolean, name?: string, value?: { countryCode?: string, number?: string, extension?: string, numberFormatted?: string, E164?: string, countryCodeAndNumber?: string } }[], emails?: { isPrimary?: boolean, name?: string, value?: string }[], urls?: { isPrimary?: boolean, name?: string, value?: string }[], addresses?: { isPrimary?: boolean, name?: string, value?: { location?: { longitude?: number, latitude?: number } }, locationAccuracy?: string, address_1?: string, address_2?: string, address_3?: string, city?: string, state?: string, postalCode?: string, country?: string, timezone?: string }[], customFields?: {}, links?: { accounts?: string[], territory?: string, owner?: string, tags?: string[], emAudiences?: string[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "(((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }) & { links?: {} | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.createCustomField",
+      "shortPath": "contacts.createCustomField",
+      "description": "Create a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: any, type?: any, choices?: any, isMultiple?: any, id?: string, title?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.customFieldAttributes",
+      "shortPath": "contacts.customFieldAttributes",
+      "description": "Get applicable custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.customfields",
+      "shortPath": "contacts.customfields",
+      "description": "Get contact custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "(((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }) & { links?: {} | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Get a list of contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "accountType | -accountType | accounts | -accounts | createdTime | -createdTime | email | -email | industry | -industry | lastContactedTime | -lastContactedTime | name | -name | owner | -owner | phone | -phone | postalCode | -postalCode | territory | -territory"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "(((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }) & { links?: {} | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.listFields",
+      "shortPath": "contacts.listFields",
+      "description": "Get the fields for a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ exampleProperty?: { type?: string | null, title?: string | null, description?: string | null, isFilterable?: boolean | null, isDisplayable?: boolean | null, isSortable?: boolean | null, isGoalable?: boolean | null, isAddable?: boolean | null, isBoardable?: boolean | null, isRequireable?: boolean | null, isAndable?: boolean | null, isNullable?: boolean | null, relationships?: string[] | null, enum?: string[] | null, format?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.listItems",
+      "shortPath": "contacts.listItems",
+      "description": "Get list items for all contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(-accountType | -accounts | -createdTime | -industry | -lastContactedTime | -owner | -phone | -postalCode | -territory | accountType | accounts | createdTime | industry | lastContactedTime | owner | phone | postalCode | territory)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "({ count?: number | null } & { total?: number | null }) & { instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "listItems",
+            "optional": true,
+            "type": "((((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, primaryName?: string | null, primaryInfo?: string | null, relatedName?: string | null, relatedInfo?: string | null, relatedType?: string | null, relatedUrl?: string | null, relatedUrlPath?: string | null, primaryContact?: string | {} | null, primaryAccount?: string | {} | null, latlon?: string | string[] | null, mapUrl?: string | null, isDeleted?: boolean | null, fields?: {}[] | Record<string, any> | null }) & { description?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.undelete",
+      "shortPath": "contacts.undelete",
+      "description": "Undelete a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "(((((({ id?: string | null, name?: string | null, description?: string | null, createdTime?: number | null, deletedTime?: number | null, emails?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null, addresses?: { isPrimary?: boolean | null, name?: string | null, value?: { location?: { longitude?: number | null, latitude?: number | null } | null } | null, locationAccuracy?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, country?: string | null, timezone?: string | null }[] | null, phones?: { isOptedOut?: boolean | null, isPrimary?: boolean | null, name?: string | null, value?: { countryCode?: string | null, number?: string | null, extension?: string | null, numberFormatted?: string | null, E164?: string | null, countryCodeAndNumber?: string | null } | null }[] | null, urls?: { isPrimary?: boolean | null, name?: string | null, value?: string | null }[] | null } & { avatarUrl?: string | null, initials?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { jobTitle?: any | null, firstName?: any | null, lastName?: any | null, href?: string | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }) & { links?: {} | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.dashboards.listFields",
+      "shortPath": "dashboards.listFields",
+      "description": "Get dashboard field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$schema",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "object"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{ stageset?: { type: enum, enum: { id: string, type: stagesets, name: string }[], title: string, description: string, isFilterable: boolean, isDisplayable: boolean, isSortable: boolean, isAndable: boolean, isNullable: boolean, size: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.editions.get",
+      "shortPath": "editions.get",
+      "description": "Get a single edition by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.editions.list",
+      "shortPath": "editions.list",
+      "description": "Get a list of editions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.emails.get",
+      "shortPath": "emails.get",
+      "description": "Get an email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.events.deleted",
+      "shortPath": "events.deleted",
+      "description": "Get deletion events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter[types]",
+            "optional": true,
+            "type": "accounts | activities | assignments | chats | companyEnrichment | constantContact | contacts | emails | emailInteraction | formSubmissions | inbox_threads | leadUpdates | leads | marketingEmails | mcfxSessions | notes | queued | ticketMessages | undelivered | unshared"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-change_time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "({ instanceId?: string | null, siteId?: string | null } & { previous?: string | null }) & { next?: string | null } | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "({ id?: string | null, createdTime?: number | null, actorType?: string | null, payloadType?: string | null, action?: string | null, changes?: { attribute?: string | null, oldValue?: string | number | boolean | { id?: string | null, type?: string | null, name?: string | null, position?: number | null } | null, newValue?: string | number | boolean | { id?: string | null, type?: string | null, name?: string | null, position?: number | null } | null }[] | null, count?: string | null } & { links?: { actor?: string | null, payloads?: string[] | null, comments?: string[] | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.events.list",
+      "shortPath": "events.list",
+      "description": "Get a list of events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(comments | mailchimp | followup | constantContact | emailInteraction | assignments | formSubmissions)[]"
+          },
+          {
+            "key": "filters[payload][]",
+            "optional": true,
+            "type": "(accounts | activities | assignments | chats | companyEnrichment | constantContact | contacts | emails | emailInteraction | formSubmissions | inbox_threads | leadUpdates | leads | marketingEmails | mcfxSessions | notes | queued | ticketMessages | undelivered | unshared)[]"
+          },
+          {
+            "key": "filters[creator][]",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filters[emailEntityType][]",
+            "optional": true,
+            "type": "(sender | recipient)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "({ instanceId?: string | null, siteId?: string | null } & { previous?: string | null }) & { next?: string | null } | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "({ id?: string | null, createdTime?: number | null, actorType?: string | null, payloadType?: string | null, action?: string | null, changes?: { attribute?: string | null, oldValue?: string | number | boolean | { id?: string | null, type?: string | null, name?: string | null, position?: number | null } | null, newValue?: string | number | boolean | { id?: string | null, type?: string | null, name?: string | null, position?: number | null } | null }[] | null, count?: string | null } & { links?: { actor?: string | null, payloads?: string[] | null, comments?: string[] | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.filters.list",
+      "shortPath": "filters.list",
+      "description": "Get saved filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reportType",
+            "optional": true,
+            "type": "report_* | entity_list_leads | entity_list_contacts | entity_list_accounts"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Get a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { instanceId?: string | null, siteId?: string | null } | null, links?: {} | null, wfForms?: ({ id?: string | null, name?: string | null, href?: string | null, createdTime?: string | null } & { links?: { fields?: string[] | null } | null })[] | null } & { wfFields?: { id?: string | null, label?: string | null, fieldName?: string | null, fieldType?: string | null, entityName?: string | null }[] | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.forms.getFieldId",
+      "shortPath": "forms.getFieldId",
+      "description": "Get a form field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wfFields",
+            "optional": true,
+            "type": "{ id?: string | null, label?: string | null, fieldName?: string | null, fieldType?: string | null, entityName?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "Get all forms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "wfForms",
+            "optional": true,
+            "type": "({ id?: string | null, name?: string | null, href?: string | null, createdTime?: string | null } & { links?: { fields?: string[] | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.industries.get",
+      "shortPath": "industries.get",
+      "description": "Get a single industry by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.industries.list",
+      "shortPath": "industries.list",
+      "description": "Get a list of industries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Get an invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, paidTime?: string | null, completionComment?: string | null, deletedTime?: string | number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "Get a list of invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter[lead]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMin]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMax]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, paidTime?: string | null, completionComment?: string | null, deletedTime?: string | number | null })[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.invoices.status",
+      "shortPath": "invoices.status",
+      "description": "Update the status of an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ status: READY | SENT | REVOKED | ACCEPTED | ARCHIVED, comment?: string, acceptedName?: string, acceptedEmail?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, paidTime?: string | null, completionComment?: string | null, deletedTime?: string | number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ leads?: { description?: string, manualValue?: string, dueTime?: { absoluteLocalizedString?: string, timestamp?: number, value?: string }, customFields?: {}, links?: { accounts?: string[], contacts?: string[], owner?: string, sources?: string[], tags?: string[], productMaps?: { id?: string, relationship?: any, price?: { formatted?: string, amount?: string, currency?: string }, name?: any, unit?: any, quantity?: number, productType?: string, links?: { product?: string } }[], competitorMaps?: string[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.createCustomField",
+      "shortPath": "leads.createCustomField",
+      "description": "Create a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: any, type?: any, choices?: any, isMultiple?: any, id?: string, title?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.customFieldAttributes",
+      "shortPath": "leads.customFieldAttributes",
+      "description": "Get applicable custom fields for leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.customfields",
+      "shortPath": "leads.customfields",
+      "description": "Get a lead's custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "({ id?: string | null } & { value?: string | null, id?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Get a lead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ instanceId?: string | null, siteId?: string | null }"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "((((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }) & { attributionTracking: { gclid: string[], fbclid: string[], msclkid: string[], lifatid: string[], wbraid: string[], gbraid: string[] } })[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.installments",
+      "shortPath": "leads.installments",
+      "description": "Get installments for a lead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "installments",
+            "optional": false,
+            "type": "{ id?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, description?: string | null, value?: { currency?: string | null, amount?: string | number | null } | null, failedTime?: string | null, isPaid?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "Get a list of leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-age | -value | -milestone | -confidence | -name | -closedTime | -owner | -sources | age | value | milestone | confidence | name | closedTime | owner | sources"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "(((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.listFields",
+      "shortPath": "leads.listFields",
+      "description": "Get the fields for a lead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ exampleProperty?: { type?: string | null, title?: string | null, description?: string | null, isFilterable?: boolean | null, isDisplayable?: boolean | null, isSortable?: boolean | null, isGoalable?: boolean | null, isAddable?: boolean | null, isBoardable?: boolean | null, isRequireable?: boolean | null, isAndable?: boolean | null, isNullable?: boolean | null, relationships?: string[] | null, enum?: string[] | null, format?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.listItems",
+      "shortPath": "leads.listItems",
+      "description": "Get list items for all leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-age | -value | -milestone | -confidence | -name | -closedTime | -owner | -sources | age | value | milestone | confidence | name | closedTime | owner | sources"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "({ count?: number | null } & { total?: number | null }) & { instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "listItems",
+            "optional": true,
+            "type": "(((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, primaryName?: string | null, primaryInfo?: string | null, relatedName?: string | null, relatedInfo?: string | null, relatedType?: string | null, relatedUrl?: string | null, relatedUrlPath?: string | null, primaryContact?: string | {} | null, primaryAccount?: string | {} | null, latlon?: string | string[] | null, mapUrl?: string | null, isDeleted?: boolean | null, fields?: {}[] | Record<string, any> | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.postStageset",
+      "shortPath": "leads.postStageset",
+      "description": "Set the pipeline for a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ stageset?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.reopen",
+      "shortPath": "leads.reopen",
+      "description": "Reopen a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.report",
+      "shortPath": "leads.report",
+      "description": "Get reports for a lead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter[name]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv | html"
+          },
+          {
+            "key": "gap",
+            "optional": true,
+            "type": "d | w | m | y | q"
+          },
+          {
+            "key": "groupByField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pivotFacet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reportType",
+            "optional": true,
+            "type": "sales | losses | newleads | forecast | attribution | custom"
+          },
+          {
+            "key": "segmentByField",
+            "optional": true,
+            "type": "outcomes | competitors | products | productCategories | assignees | territories | sources | tags | channels"
+          },
+          {
+            "key": "useConfidence",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ reports?: { report?: { id?: string | null, key?: string | null, data?: { bucket?: { bucket?: string | null, count?: { formatted?: string | null, prefix?: string | null, suffix?: string | null, value?: number | null } | null, total?: { formatted?: string | null, prefix?: string | null, suffix?: string | null, value?: number | null } | null, bucketType?: string | null, bucketSubtype?: string | null, filters?: string[] | null, segments?: string[] | null } | null }[] | null, name?: string | null, prefix?: string | null, summary?: { bucket?: string | null, count?: { formatted?: string | null, prefix?: string | null, suffix?: string | null, value?: number | null } | null, total?: { formatted?: string | null, prefix?: string | null, suffix?: string | null, value?: number | null } | null, bucketType?: string | null, bucketSubtype?: string | null, filters?: string[] | null, segments?: string[] | null } | null } | null }[] | null } | string"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.stages",
+      "shortPath": "leads.stages",
+      "description": "Get all stages associated with lead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } & { timeSpent?: { formatted?: string | null, prefix?: string | null, suffix?: string | null, value?: number | null, unit?: string | null }[] | null, stageset?: { id?: string | null, name?: any | null, default?: boolean | null, canAccess?: boolean | null, status?: string | number | null } | null } | null"
+          },
+          {
+            "key": "stages",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, position?: number | null, activeAvatarUrl?: string | null, completeAvatarUrl?: string | null, incompleteAvatarUrl?: string | null, overdueAvatarUrl?: string | null, numSteps?: number | null, canAdvanceStage?: boolean | null, links?: { stageset?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.status",
+      "shortPath": "leads.status",
+      "description": "Update the status of a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ outcomeId?: string, competitorMaps?: string[], productMaps?: { id?: string, relationship?: any, price?: { formatted?: string, amount?: string, currency?: string }, name?: any, unit?: any, quantity?: number, productType?: string, links?: { product?: string } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.undelete",
+      "shortPath": "leads.undelete",
+      "description": "Undelete a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Update a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "nutshell.api.leads.updateInstallments",
+      "shortPath": "leads.updateInstallments",
+      "description": "Replace a lead's installment schedule",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id?: string, dueTime: string, description?: string, value: string, isFailed: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "installments",
+            "optional": false,
+            "type": "{ id?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, description?: string | null, value?: { currency?: string | null, amount?: string | number | null } | null, failedTime?: string | null, isPaid?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.leads.watch",
+      "shortPath": "leads.watch",
+      "description": "Watch a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "((({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { avatarUrl?: string | null, initials?: string | null }) & { id?: string | null, deletedTime?: string | number | null, name?: string | null, value?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, number?: string | number | null, description?: string | null, createdTime?: { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, closedTime?: string | null, dueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, anticipatedClosedTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, ownerType?: string | null, status?: string | null, lastContactedTime?: any | null, pieState?: string | null, isOverdue?: boolean | null, overdueTime?: string | { absoluteLocalizedString?: string | null, timestamp?: number | null, value?: string | null } | null, href?: string | null, confidence?: number | null, priority?: number | null, isCurrentUserWatching?: boolean | null }) & { htmlUrl?: string | null, htmlUrlPath?: string | null }) & { avatarUrl?: string | null, initials?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.markets.get",
+      "shortPath": "markets.get",
+      "description": "Get a market by the ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencySymbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.markets.list",
+      "shortPath": "markets.list",
+      "description": "Get a list of markets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencySymbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data?: { body?: any, links?: { parent?: string } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, createdTime?: string | null, deletedTime?: string | number | null, href?: string | null, body?: string | null, bodyHtml?: string | null, bodyMarkup?: string | null, isEditable?: boolean | null, parentType?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete a note",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, createdTime?: string | null, deletedTime?: string | number | null, href?: string | null, body?: string | null, bodyHtml?: string | null, bodyMarkup?: string | null, isEditable?: boolean | null, parentType?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.notes.get",
+      "shortPath": "notes.get",
+      "description": "Get a note",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, createdTime?: string | null, deletedTime?: string | number | null, href?: string | null, body?: string | null, bodyHtml?: string | null, bodyMarkup?: string | null, isEditable?: boolean | null, parentType?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "Get a list of notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, createdTime?: string | null, deletedTime?: string | number | null, href?: string | null, body?: string | null, bodyHtml?: string | null, bodyMarkup?: string | null, isEditable?: boolean | null, parentType?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.notes.undelete",
+      "shortPath": "notes.undelete",
+      "description": "Undelete a note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, createdTime?: string | null, deletedTime?: string | number | null, href?: string | null, body?: string | null, bodyHtml?: string | null, bodyMarkup?: string | null, isEditable?: boolean | null, parentType?: string | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.outcomes.get",
+      "shortPath": "outcomes.get",
+      "description": "Get a lead outcome by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.outcomes.list",
+      "shortPath": "outcomes.list",
+      "description": "Get a list of lead outcomes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "outcomes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, type?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productCategories.create",
+      "shortPath": "productCategories.create",
+      "description": "Create a product category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ productCategories?: { name?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productCategories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null, href?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productCategories.get",
+      "shortPath": "productCategories.get",
+      "description": "Get a product category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productCategories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null, href?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productCategories.list",
+      "shortPath": "productCategories.list",
+      "description": "List all product categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productCategories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, modifiedTime?: number | null, href?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productMaps.delete",
+      "shortPath": "productMaps.delete",
+      "description": "Delete a product on a lead",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "productMaps",
+            "optional": true,
+            "type": "{ id?: string | null, relationship?: any | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, name?: any | null, unit?: any | null, quantity?: number | null, productType?: string | null, links?: { product?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productMaps.get",
+      "shortPath": "productMaps.get",
+      "description": "Get lead product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "productMaps",
+            "optional": true,
+            "type": "{ id?: string | null, relationship?: any | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, name?: any | null, unit?: any | null, quantity?: number | null, productType?: string | null, links?: { product?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productMaps.list",
+      "shortPath": "productMaps.list",
+      "description": "Get lead products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "productMaps",
+            "optional": true,
+            "type": "{ id?: string | null, relationship?: any | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, name?: any | null, unit?: any | null, quantity?: number | null, productType?: string | null, links?: { product?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.productMaps.update",
+      "shortPath": "productMaps.update",
+      "description": "Update a lead's product information",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "nutshell.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: any | null, description?: any | null, modifiedTime?: number | null, deletedTime?: string | number | null, sku?: any | null, productType?: any | null, prices?: { 1-markets?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null } | null, price?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get a product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: any | null, description?: any | null, modifiedTime?: number | null, deletedTime?: string | number | null, sku?: any | null, productType?: any | null, prices?: { 1-markets?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null } | null, price?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.products.list",
+      "shortPath": "products.list",
+      "description": "List or search products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | -name | sku | -sku"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: any | null, description?: any | null, modifiedTime?: number | null, deletedTime?: string | number | null, sku?: any | null, productType?: any | null, prices?: { 1-markets?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null } | null, price?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.products.undelete",
+      "shortPath": "products.undelete",
+      "description": "Undelete a product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: any | null, description?: any | null, modifiedTime?: number | null, deletedTime?: string | number | null, sku?: any | null, productType?: any | null, prices?: { 1-markets?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null } | null, price?: { amount?: string | number | null, currency?: string | null, formatted?: string | null, currencySymbol?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.quotes.createInvoice",
+      "shortPath": "quotes.createInvoice",
+      "description": "Create an invoice from a quote",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, paidTime?: string | null, completionComment?: string | null, deletedTime?: string | number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.quotes.get",
+      "shortPath": "quotes.get",
+      "description": "Get a quote",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, acceptedTime?: string | null, deletedTime?: string | number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.quotes.list",
+      "shortPath": "quotes.list",
+      "description": "Get a list of quotes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter[lead]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMin]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMax]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, acceptedTime?: string | null, deletedTime?: string | number | null })[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.quotes.status",
+      "shortPath": "quotes.status",
+      "description": "Update the status of a quote",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ status: READY | SENT | REVOKED | ACCEPTED | ARCHIVED, acceptedName?: string, acceptedEmail?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": true,
+            "type": "({ id?: string | null, displayStatus?: DRAFT | READY | SENT | REVOKED | ACCEPTED | ARCHIVED | EXPIRED | null, productLineItems?: { id?: string | null, position?: number | null, product?: string | null, name?: string | null, description?: string | null, sku?: string | null, quantity?: number | null, term?: string | null, price?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, discountUnit?: string | null, discountNumber?: number | null }[] | null, subtotalLineItems?: { id?: string | null, position?: number | null, label?: string | null, modifierUnit?: string | null, modifierValue?: number | null, operation?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null }[] | null, recipient?: { id?: string | null, name?: string | null, email?: string | null } | null, acceptedName?: string | null, acceptedEmail?: string | null } & { number?: string | null, total?: { formatted?: string | null, amount?: string | number | null, currency?: string | null } | null, validThroughTime?: string | null, createdTime?: string | null, publishedTime?: string | null, sentTime?: string | null, acceptedTime?: string | null, deletedTime?: string | number | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.sources.create",
+      "shortPath": "sources.create",
+      "description": "Create a new source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ sources?: { name?: string, channel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: string | null, modifiedTime?: number | null, channel?: { value?: number | null, display?: string | null } | null, deletedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.sources.delete",
+      "shortPath": "sources.delete",
+      "description": "Delete a Source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: string | null, modifiedTime?: number | null, channel?: { value?: number | null, display?: string | null } | null, deletedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "Get a list of sources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: string | null, modifiedTime?: number | null, channel?: { value?: number | null, display?: string | null } | null, deletedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.sources.undelete",
+      "shortPath": "sources.undelete",
+      "description": "Undelete a Source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ id?: string | null, name?: any | null, href?: string | null, modifiedTime?: number | null, channel?: { value?: number | null, display?: string | null } | null, deletedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.stages.list",
+      "shortPath": "stages.list",
+      "description": "Get a list of stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ instanceId?: string | null, siteId?: string | null }"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "stages",
+            "optional": false,
+            "type": "{ id: string, type: stages, name: string, description: string, position: number, activeAvatarUrl: string, completeAvatarUrl: string, incompleteAvatarUrl: string, overdueAvatarUrl: string, links: { stageset: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.stageSets.export",
+      "shortPath": "stageSets.export",
+      "description": "Get a CSV export of lead movements through a pipeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "nutshell.api.stageSets.list",
+      "shortPath": "stageSets.list",
+      "description": "Get a list of pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ instanceId?: string | null, siteId?: string | null }"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "stagesets",
+            "optional": false,
+            "type": "({ id?: string | null, name?: any | null, default?: boolean | null, canAccess?: boolean | null, status?: string | number | null } & { type: stagesets, links: { stages: string[] } })[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tags?: { name?: string, colorType?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14, tagType?: 1 | 2 | 3, links?: { entities?: string[] } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, href?: string | null, modifiedTime?: number | null, deletedTime?: number | null, tagType?: string | null, count?: number | null, colorType?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, href?: string | null, modifiedTime?: number | null, deletedTime?: number | null, tagType?: string | null, count?: number | null, colorType?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "Get a list of tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[tagType]",
+            "optional": true,
+            "type": "leads | contacts | accounts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, href?: string | null, modifiedTime?: number | null, deletedTime?: number | null, tagType?: string | null, count?: number | null, colorType?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tags.undelete",
+      "shortPath": "tags.undelete",
+      "description": "Undelete a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, href?: string | null, modifiedTime?: number | null, deletedTime?: number | null, tagType?: string | null, count?: number | null, colorType?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tasks?: { title?: string, description?: string, dueTime?: string, recurrenceRule?: { htmlUrl?: string, htmlUrlPath?: string } & { rule?: string, mode?: dueDate | completion, id?: string }, links?: { relatedEntity?: string, assignee?: string } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, recurrenceRule?: { htmlUrl?: string | null, htmlUrlPath?: string | null } & { rule?: string | null, mode?: string | null, id?: string | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, recurrenceRule?: { htmlUrl?: string | null, htmlUrlPath?: string | null } & { rule?: string | null, mode?: string | null, id?: string | null } | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, recurrenceRule?: { htmlUrl?: string | null, htmlUrlPath?: string | null } & { rule?: string | null, mode?: string | null, id?: string | null } | null }"
+      }
+    },
+    {
+      "path": "nutshell.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "Get a list of tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[assignee]",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter[relatedEntity]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMin]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dateMax]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page[page]",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, recurrenceRule?: { htmlUrl?: string | null, htmlUrlPath?: string | null } & { rule?: string | null, mode?: string | null, id?: string | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy, path: string, value?: JsonValue }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "({ htmlUrl?: string | null, htmlUrlPath?: string | null } & { id?: string | null, recurrenceRule?: { htmlUrl?: string | null, htmlUrlPath?: string | null } & { rule?: string | null, mode?: string | null, id?: string | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.territories.list",
+      "shortPath": "territories.list",
+      "description": "Get a list of territories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "territories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, href?: string | null, modifiedTime?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.todos.list",
+      "shortPath": "todos.list",
+      "description": "Get tasks and sales process steps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter[assignee]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[type]",
+            "optional": true,
+            "type": "(tasks | steps | follow-ups | follow-up tasks)[]"
+          },
+          {
+            "key": "filter[stagesets]",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter[dueTime]",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter[dueWindow]",
+            "optional": true,
+            "type": "overdue | today | tomorrow | upcoming"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeComplete",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "onlyComplete",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "includeDoneFacet",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "onlyDue",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "onlyHotLeads",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "singleStep",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "page[startIndex]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page[limit]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page[endIndex]",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "todos",
+            "optional": false,
+            "type": "{ id: string, type: string, title: string, description?: string | null, href?: string | null, dueTime?: number | null, completedTime?: number | null, isCompleted?: boolean | null, isOverdue?: boolean | null, isRecurring?: boolean | null, isSkipped?: boolean | null, delays?: { id?: string | null, name?: string | null, displayLength?: string | null }[] | null, links?: {} | null }[]"
+          },
+          {
+            "key": "relatedEntities",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number | null, facets: { past: number | null, today: number | null, tomorrow: number | null, future: number | null, done?: number | null }, page: { startIndex: number, endIndex: number } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } & { next?: string | null, previous?: string | null, total?: number | null } | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "(({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nutshell.api.users.list",
+      "shortPath": "users.list",
+      "description": "Get a list of users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ instanceId?: string | null, siteId?: string | null } & { next?: string | null, previous?: string | null, total?: number | null } | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "(({ avatarUrl?: string | null, initials?: string | null } & { id?: string | null, name?: any | null, firstName?: any | null, modifiedTime?: number | null, isEnabled?: boolean | null, hasSetPassword?: boolean | null, isAdministrator?: boolean | null, isViewingRestricted?: boolean | null, isHiddenFromFilters?: boolean | null, canAccessEmailMarketing?: boolean | null, permissions?: { canAccessSetup?: boolean | null, canAccessMarketing?: boolean | null, canBulkEdit?: boolean | null, canExport?: boolean | null, canViewSharedEmails?: boolean | null, canImport?: boolean | null, canMergeEntities?: boolean | null, canDeleteEntities?: boolean | null, canAssignEntities?: boolean | null, canAccessBilling?: boolean | null, canManageEmailTemplates?: boolean | null, canAccessCrm?: boolean | null, canAccessFullCampaigns?: boolean | null, canUsePeopleIQ?: boolean | null, canUseInbox?: boolean | null } | null, emails?: string[] | null, phonecallerType?: any | null }) & { avatarUrl?: string | null, initials?: string | null })[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

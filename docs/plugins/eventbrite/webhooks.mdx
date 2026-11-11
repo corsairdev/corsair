@@ -1,0 +1,102 @@
+---
+title: Webhooks
+description: "Eventbrite incoming webhooks: event paths, payloads, and response data."
+---
+
+The Eventbrite plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/eventbrite/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `notifications`
+  - `delivery` (`notifications.delivery`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Notifications
+
+### Delivery
+
+`notifications.delivery`
+
+An Eventbrite webhook delivery: the notification naming the changed object’s `api_url` and the `config.action` that fired, not the object itself
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_url` | `string` | Yes | Absolute v3 API URL of the object that changed, always on eventbriteapi.com. |
+| `config` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  action?: string | null,
+  endpoint_url?: string | null,
+  user_id?: string | null,
+  webhook_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  api_url: string,
+  config?: {
+    action?: string | null,
+    endpoint_url?: string | null,
+    user_id?: string | null,
+    webhook_id?: string | null
+  } | null,
+  action: string | null,
+  organizationId: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+eventbrite({
+    webhookHooks: {
+        notifications: {
+            delivery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
