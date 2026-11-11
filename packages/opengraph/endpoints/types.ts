@@ -648,194 +648,209 @@ export type OembedGetResponse = z.infer<typeof OembedGetResponseSchema>;
 
 // ── markdown.get ───────────────────────────────────────────────────────────
 
-const MarkdownGetInputSchema = z.object({
-	url: UrlInput,
-	only_main_content: z
-		.boolean()
-		.optional()
-		.describe('Strip navigation, sidebars and footers. Default true.'),
-	include_tags: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Comma-separated CSS selectors to keep, e.g. article,main.'),
-	exclude_tags: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'Comma-separated CSS selectors to drop, e.g. nav,.sidebar,footer.',
-		),
-	max_chars: z
-		.number()
-		.int()
-		.positive()
-		.optional()
-		.describe('Cap the Markdown at this many characters.'),
-	chunking: z
-		.boolean()
-		.optional()
-		.describe(
-			'Split the document into chunks sized for embedding. Default false.',
-		),
-	chunk_size: z
-		.number()
-		.int()
-		.min(200)
-		.max(20000)
-		.optional()
-		.describe('Target chunk size in characters. Default 2000.'),
-	chunk_overlap: z
-		.number()
-		.int()
-		.min(0)
-		.optional()
-		.describe(
-			'Characters repeated from the end of the previous chunk. Default 0.',
-		),
-	heading_aware: z
-		.boolean()
-		.optional()
-		.describe('Start a new chunk at each section heading. Default true.'),
-	heading_aware_level: z
-		.number()
-		.int()
-		.min(1)
-		.max(6)
-		.optional()
-		.describe('Which heading level starts a new chunk. Default 2.'),
-	max_chunks: z
-		.number()
-		.int()
-		.min(1)
-		.max(2000)
-		.optional()
-		.describe('Most chunks to return. Default 500.'),
-	query: z
-		.string()
-		.min(1)
-		.max(512)
-		.optional()
-		.describe(
-			'Return only passages matching these keywords, with relevance scores. Implies chunking.',
-		),
-	query_top_k: z
-		.number()
-		.int()
-		.positive()
-		.optional()
-		.describe('How many matching passages to return. Default 5.'),
-	include_markdown: z
-		.boolean()
-		.optional()
-		.describe('Include the document itself. Default true.'),
-	include_metadata: z
-		.boolean()
-		.optional()
-		.describe('Include the page metadata block. Default true.'),
-	include_chunks: z
-		.boolean()
-		.optional()
-		.describe('Include the chunk texts. Default true.'),
-	include_headings: z
-		.boolean()
-		.optional()
-		.describe(
-			'Return the heading outline and table and code block counts. Default false.',
-		),
-	include_links: z
-		.boolean()
-		.optional()
-		.describe(
-			'Return every link from the main content as an absolute URL. Default false.',
-		),
-	include_images: z
-		.boolean()
-		.optional()
-		.describe(
-			'Return every image with its source and alt text. Default false.',
-		),
-	ai_sanitize: z
-		.boolean()
-		.optional()
-		.describe('Scan the page for prompt injection (1 extra credit).'),
-	ai_sanitize_mode: z
-		.enum(['sanitize', 'warn', 'block'])
-		.optional()
-		.describe('What to do on detected injection risk. Default sanitize.'),
-	cache_ok: CacheOkInput,
-	max_cache_age: z
-		.number()
-		.int()
-		.positive()
-		.optional()
-		.describe('Maximum age of an acceptable cached result, in milliseconds.'),
-	full_render: z
-		.boolean()
-		.optional()
-		.describe(
-			'Always render in a browser first. Adds 5-10 seconds and is billed.',
-		),
-	wait_for_selector: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Wait for this CSS selector before reading. Enables rendering.'),
-	scroll_to_bottom: z
-		.boolean()
-		.optional()
-		.describe(
-			'Scroll the page to trigger lazy-loaded content. Enables rendering.',
-		),
-	load_more_selector: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('A load-more button to click before reading. Enables rendering.'),
-	use_proxy: z
-		.boolean()
-		.optional()
-		.describe('Fetch through the standard datacenter proxy (10 credits).'),
-	use_premium: z
-		.boolean()
-		.optional()
-		.describe('Fetch through the residential proxy (20 credits).'),
-	use_superior: z
-		.boolean()
-		.optional()
-		.describe(
-			'Fetch through the mobile proxy for heavily protected sites (30 credits).',
-		),
-	proxy_country: z
-		.string()
-		.min(2)
-		.max(2)
-		.optional()
-		.describe('Two-letter country code to fetch from, e.g. US.'),
-	accept_lang: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Accept-Language header sent to the page, e.g. en-US.'),
-	auto_render: z
-		.boolean()
-		.optional()
-		.describe(
-			'Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true.',
-		),
-	auto_proxy: z
-		.boolean()
-		.optional()
-		.describe(
-			'Let OpenGraph.io pick the proxy for the domain. v3.0 default: true.',
-		),
-	retry: z
-		.boolean()
-		.optional()
-		.describe(
-			'Retry a failed fetch with a stronger proxy tier. v3.0 default: true.',
-		),
-});
+const MarkdownGetInputSchema = z
+	.object({
+		url: UrlInput,
+		only_main_content: z
+			.boolean()
+			.optional()
+			.describe('Strip navigation, sidebars and footers. Default true.'),
+		include_tags: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Comma-separated CSS selectors to keep, e.g. article,main.'),
+		exclude_tags: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'Comma-separated CSS selectors to drop, e.g. nav,.sidebar,footer.',
+			),
+		max_chars: z
+			.number()
+			.int()
+			.positive()
+			.optional()
+			.describe('Cap the Markdown at this many characters.'),
+		chunking: z
+			.boolean()
+			.optional()
+			.describe(
+				'Split the document into chunks sized for embedding. Default false.',
+			),
+		chunk_size: z
+			.number()
+			.int()
+			.min(200)
+			.max(20000)
+			.optional()
+			.describe('Target chunk size in characters. Default 2000.'),
+		chunk_overlap: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe(
+				'Characters repeated from the end of the previous chunk, at most half of chunk_size. Default 0.',
+			),
+		heading_aware: z
+			.boolean()
+			.optional()
+			.describe('Start a new chunk at each section heading. Default true.'),
+		heading_aware_level: z
+			.number()
+			.int()
+			.min(1)
+			.max(6)
+			.optional()
+			.describe('Which heading level starts a new chunk. Default 2.'),
+		max_chunks: z
+			.number()
+			.int()
+			.min(1)
+			.max(2000)
+			.optional()
+			.describe('Most chunks to return. Default 500.'),
+		query: z
+			.string()
+			.min(1)
+			.max(512)
+			.optional()
+			.describe(
+				'Return only passages matching these keywords, with relevance scores. Implies chunking.',
+			),
+		query_top_k: z
+			.number()
+			.int()
+			.positive()
+			.optional()
+			.describe('How many matching passages to return. Default 5.'),
+		include_markdown: z
+			.boolean()
+			.optional()
+			.describe('Include the document itself. Default true.'),
+		include_metadata: z
+			.boolean()
+			.optional()
+			.describe('Include the page metadata block. Default true.'),
+		include_chunks: z
+			.boolean()
+			.optional()
+			.describe('Include the chunk texts. Default true.'),
+		include_headings: z
+			.boolean()
+			.optional()
+			.describe(
+				'Return the heading outline and table and code block counts. Default false.',
+			),
+		include_links: z
+			.boolean()
+			.optional()
+			.describe(
+				'Return every link from the main content as an absolute URL. Default false.',
+			),
+		include_images: z
+			.boolean()
+			.optional()
+			.describe(
+				'Return every image with its source and alt text. Default false.',
+			),
+		ai_sanitize: z
+			.boolean()
+			.optional()
+			.describe('Scan the page for prompt injection (1 extra credit).'),
+		ai_sanitize_mode: z
+			.enum(['sanitize', 'warn', 'block'])
+			.optional()
+			.describe('What to do on detected injection risk. Default sanitize.'),
+		cache_ok: CacheOkInput,
+		max_cache_age: z
+			.number()
+			.int()
+			.positive()
+			.optional()
+			.describe('Maximum age of an acceptable cached result, in milliseconds.'),
+		full_render: z
+			.boolean()
+			.optional()
+			.describe(
+				'Always render in a browser first. Adds 5-10 seconds and is billed.',
+			),
+		wait_for_selector: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'Wait for this CSS selector before reading. Enables rendering.',
+			),
+		scroll_to_bottom: z
+			.boolean()
+			.optional()
+			.describe(
+				'Scroll the page to trigger lazy-loaded content. Enables rendering.',
+			),
+		load_more_selector: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'A load-more button to click before reading. Enables rendering.',
+			),
+		use_proxy: z
+			.boolean()
+			.optional()
+			.describe('Fetch through the standard datacenter proxy (10 credits).'),
+		use_premium: z
+			.boolean()
+			.optional()
+			.describe('Fetch through the residential proxy (20 credits).'),
+		use_superior: z
+			.boolean()
+			.optional()
+			.describe(
+				'Fetch through the mobile proxy for heavily protected sites (30 credits).',
+			),
+		proxy_country: z
+			.string()
+			.min(2)
+			.max(2)
+			.optional()
+			.describe('Two-letter country code to fetch from, e.g. US.'),
+		accept_lang: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Accept-Language header sent to the page, e.g. en-US.'),
+		auto_render: z
+			.boolean()
+			.optional()
+			.describe(
+				'Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true.',
+			),
+		auto_proxy: z
+			.boolean()
+			.optional()
+			.describe(
+				'Let OpenGraph.io pick the proxy for the domain. v3.0 default: true.',
+			),
+		retry: z
+			.boolean()
+			.optional()
+			.describe(
+				'Retry a failed fetch with a stronger proxy tier. v3.0 default: true.',
+			),
+	})
+	// OpenGraph.io caps the overlap at half the chunk size (default 2000).
+	.refine(
+		(input) =>
+			input.chunk_overlap === undefined ||
+			input.chunk_overlap * 2 <= (input.chunk_size ?? 2000),
+		{
+			message: 'chunk_overlap can be at most half of chunk_size',
+			path: ['chunk_overlap'],
+		},
+	);
 
 export type MarkdownGetInput = z.input<typeof MarkdownGetInputSchema>;
 

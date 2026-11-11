@@ -452,6 +452,28 @@ describe('markdown.get', () => {
 		).rejects.toBeInstanceOf(Error);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it.each([
+		[{ chunk_size: 200, chunk_overlap: 101 }],
+		[{ chunk_overlap: 1001 }],
+	])('rejects an overlap above half the chunk size: %j', async (options) => {
+		await expect(
+			invoke(Markdown.get, { url: 'https://example.com', ...options }),
+		).rejects.toBeInstanceOf(Error);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts an overlap of exactly half the default chunk size', async () => {
+		respond(markdownChunkedResponse);
+
+		await invoke(Markdown.get, {
+			url: 'https://example.com',
+			chunking: true,
+			chunk_overlap: 1000,
+		});
+
+		expect(lastRequest().query.chunk_overlap).toBe('1000');
+	});
 });
 
 describe('brand.analyze', () => {
