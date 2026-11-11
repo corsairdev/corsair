@@ -75,7 +75,7 @@ await corsair.happyscribe.api.companies.list({ organizationId: 123, domain: 'acm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `search` | `string` | No | Case-insensitive substring match on company name. |
 | `domain` | `string` | No | Exact match on the primary domain or any known domain. |
 | `page` | `number` | No | Page to retrieve; companies count from 1. |
@@ -141,7 +141,7 @@ await corsair.happyscribe.api.exports.create({ format: 'txt', transcriptionIds: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `format` | `txt \| srt \| vtt \| docx \| pdf \| json \| mp3 \| tsv \| html` | Yes | Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`. |
+| `format` | `txt \| docx \| pdf \| srt \| vtt \| stl \| avid \| avid_script \| avid_ds_subtitles \| avid_edl \| facebook_srt \| html \| premiere \| maxqda \| json \| fcp \| edl \| csv \| xlsx \| mp3 \| mp4` | Yes | Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`. |
 | `transcriptionIds` | `string[]` | Yes | Transcription IDs to include in the export. |
 | `showTimestamps` | `boolean` | No | Include timestamps in the exported file. |
 | `showSpeakers` | `boolean` | No | Include speaker names. |
@@ -224,7 +224,7 @@ await corsair.happyscribe.api.glossaries.list({ organizationId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 
 
 
@@ -262,7 +262,7 @@ await corsair.happyscribe.api.glossaries.list({ organizationId: 123 });
 
 `meetings.create`
 
-Send the HappyScribe notetaker bot to a meeting URL at join_at; it records and transcribes. Follow with meetings.get until status is completed
+Send the HappyScribe notetaker bot to a meeting URL now or at joinAt; it records and transcribes. Follow with meetings.get until status is completed
 
 **Risk:** `write`
 
@@ -274,16 +274,16 @@ await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `meetingUrl` | `string` | Yes | Meeting room URL the notetaker joins, e.g. a Zoom or Meet link. |
-| `joinAt` | `string` | Yes | ISO 8601 moment for the notetaker to join the call. |
-| `language` | `string` | Yes | Spoken language code, e.g. `en`. |
+| `joinAt` | `string` | No | Future ISO 8601 moment, with a UTC offset, for the notetaker to join. Omit to send it now. |
+| `language` | `string` | No | Spoken language code, e.g. `en`, or `auto`. |
 | `participants` | `object[]` | No | People on the call; the notetaker greets them by name. |
-| `metadata` | `Record<string, unknown>` | No | Free-form metadata echoed on the meeting and its webhooks. |
+| `metadata` | `Record<string, any>` | No | Free-form metadata echoed on the meeting and its webhooks. |
 | `botName` | `string` | No | Display name of the notetaker bot. |
 | `recordingMode` | `audio_only \| audio_and_video` | No | What the notetaker records. |
 | `summaryTemplate` | `string` | No | Summary template slug, e.g. `sales_call`. |
-| `accessLevel` | `private \| organization` | No | Who can open the resulting transcript. |
+| `accessLevel` | `public \| organization \| organization_participants \| private` | No | Who can open the resulting transcript. |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -310,8 +310,8 @@ await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl:
 | `status` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `participants` | `object[] \| null` | No | — |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
-| `settings` | `Record<string, unknown> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `settings` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -333,7 +333,7 @@ await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl:
 
 `meetings.get`
 
-Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed) and settings
+Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed, cancelled), settings, and the transcript and summary once ready
 
 **Risk:** `read`
 
@@ -360,8 +360,8 @@ await corsair.happyscribe.api.meetings.get({ meetingId: 'mtg_01k0h4r9s8x7c2dvq3m
 | `status` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `participants` | `object[] \| null` | No | — |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
-| `settings` | `Record<string, unknown> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `settings` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -385,7 +385,7 @@ await corsair.happyscribe.api.meetings.get({ meetingId: 'mtg_01k0h4r9s8x7c2dvq3m
 
 `memberships.add`
 
-Add a user to an organization as admin or member, by email
+Add a user to an organization as admin or member, by email. An email new to HappyScribe gets an invitation email and the answer carries invite instead of member
 
 **Risk:** `write`
 
@@ -397,7 +397,7 @@ await corsair.happyscribe.api.memberships.add({ organizationId: 123, email: 'new
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `email` | `string` | Yes | Email of the user to add. |
 | `role` | `admin \| member` | Yes | Role the member gets. |
 
@@ -407,12 +407,34 @@ await corsair.happyscribe.api.memberships.add({ organizationId: 123, email: 'new
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `organizationId` | `number \| null` | No | — |
-| `organizationName` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `role` | `string \| null` | No | — |
+| `member` | `object \| null` | No | — |
+| `invite` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  id: number,
+  organizationId?: number | null,
+  organizationName?: string | null,
+  email?: string | null,
+  name?: string | null,
+  role?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="invite full type">
+
+```ts
+{
+  email?: string | null,
+  role?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -422,7 +444,7 @@ await corsair.happyscribe.api.memberships.add({ organizationId: 123, email: 'new
 
 `memberships.list`
 
-List the members of an organization with their roles
+List the members of an organization with their roles, 25 per page; nextPageUrl is set when another page exists
 
 **Risk:** `read`
 
@@ -434,7 +456,8 @@ await corsair.happyscribe.api.memberships.list({ organizationId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
+| `page` | `number` | No | Page to retrieve; memberships count from 1, 25 per page. |
 
 
 
@@ -443,6 +466,7 @@ await corsair.happyscribe.api.memberships.list({ organizationId: 123 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `members` | `object[]` | Yes | — |
+| `nextPageUrl` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="members full type">
@@ -514,12 +538,23 @@ await corsair.happyscribe.api.memberships.updateRole({ membershipId: 9002, role:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `organizationId` | `number \| null` | No | — |
-| `organizationName` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `role` | `string \| null` | No | — |
+| `member` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  id: number,
+  organizationId?: number | null,
+  organizationName?: string | null,
+  email?: string | null,
+  name?: string | null,
+  role?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -554,7 +589,7 @@ await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1
 | `id` | `string` | Yes | — |
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `operations` | `Record<string, unknown>[] \| null` | No | — |
+| `operations` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -564,7 +599,7 @@ await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1
 
 `orders.create`
 
-Create a human transcription or subtitling order for media at a URL. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag
+Create a transcription or subtitling order for media at a URL: service auto (the default) is machine work, pro is human work. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag
 
 **Risk:** `write`
 
@@ -578,9 +613,9 @@ await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Public URL of the media to transcribe or subtitle. |
 | `language` | `string` | Yes | Spoken language code of the media. |
-| `service` | `pro \| standard` | No | Human service tier; omit for the default. |
+| `service` | `auto \| pro` | No | `auto` (the default) for machine work, `pro` for human work. |
 | `confirm` | `boolean` | No | Confirm and pay immediately instead of leaving the order incomplete. |
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `folderId` | `number` | No | Folder ID for the result. |
 | `folder` | `string` | No | Folder path for the result, e.g. `my_project`. |
 | `name` | `string` | No | Name of the ordered transcription. |
@@ -600,7 +635,7 @@ await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp
 | `id` | `string` | Yes | — |
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `operations` | `Record<string, unknown>[] \| null` | No | — |
+| `operations` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -610,7 +645,7 @@ await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp
 
 `orders.createTranslation`
 
-Create a human translation order for an existing transcription; incomplete and unpaid until confirmed
+Create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. Incomplete and unpaid until confirmed
 
 **Risk:** `write`
 
@@ -624,8 +659,9 @@ await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: 
 |------|------|----------|-------------|
 | `sourceTranscriptionId` | `string` | Yes | Transcription to translate. |
 | `targetLanguages` | `string[]` | Yes | Languages to translate into. |
+| `service` | `auto \| pro` | No | `auto` (the default) for machine translation, `pro` for human translators. |
 | `confirm` | `boolean` | No | Confirm and pay immediately. |
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `glossaryIds` | `number[]` | No | Glossaries for the translators. |
 
 
@@ -637,7 +673,7 @@ await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: 
 | `id` | `string` | Yes | — |
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `operations` | `Record<string, unknown>[] \| null` | No | — |
+| `operations` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -670,7 +706,7 @@ await corsair.happyscribe.api.orders.get({ orderId: '10b1edd9381d4a00a3d0db1ca1b
 | `id` | `string` | Yes | — |
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
-| `operations` | `Record<string, unknown>[] \| null` | No | — |
+| `operations` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -704,8 +740,7 @@ await corsair.happyscribe.api.organizations.list({});
 
 ```ts
 {
-  // A string on the live API, though the docs examples show a number.
-  id: string,
+  id: string | number,
   name?: string | null,
   role?: string | null,
   createdAt?: string | null,
@@ -803,7 +838,7 @@ await corsair.happyscribe.api.people.list({ organizationId: 123, search: 'Jane' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `search` | `string` | No | Full-text match over name and email fields. |
 | `email` | `string` | No | Exact email match, case-insensitive. |
 | `companyId` | `number` | No | Only people of this company. |
@@ -872,7 +907,7 @@ await corsair.happyscribe.api.styleGuides.list({ organizationId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 
 
 
@@ -916,7 +951,7 @@ await corsair.happyscribe.api.transcriptions.create({ organizationId: 123, name:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
 | `name` | `string` | Yes | Name of the transcription. |
 | `language` | `string` | Yes | BCP-47 language code the media is spoken in, e.g. `en-GB`. |
 | `tmpUrl` | `string` | Yes | Public https URL of the media file to transcribe. |
@@ -949,7 +984,7 @@ await corsair.happyscribe.api.transcriptions.create({ organizationId: 123, name:
 | `tags` | `string[] \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
-| `links` | `Record<string, unknown> \| null` | No | — |
+| `links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="folder full type">
@@ -998,7 +1033,7 @@ await corsair.happyscribe.api.transcriptions.create({ organizationId: 123, name:
 
 `transcriptions.delete`
 
-Permanently delete a transcription and its media; there is no restore
+Delete a transcription. It moves to the Trash unless permanent is true, which cannot be undone. Deleting one still processing cancels it and refunds its credits
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -1011,6 +1046,7 @@ await corsair.happyscribe.api.transcriptions.delete({ fileId: '9josdjdfo09j309om
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
+| `permanent` | `boolean` | No | Delete for good. Without it the transcription moves to the Trash and can be restored. |
 
 
 
@@ -1062,7 +1098,7 @@ await corsair.happyscribe.api.transcriptions.getDetails({ fileId: '9josdjdfo09j3
 | `tags` | `string[] \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
-| `links` | `Record<string, unknown> \| null` | No | — |
+| `links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="folder full type">
@@ -1153,7 +1189,7 @@ await corsair.happyscribe.api.transcriptions.list({ organizationId: 123, page: 0
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `number` | Yes | Organization to list transcriptions from. |
+| `organizationId` | `string \| number` | Yes | Organization to list transcriptions from. |
 | `folderId` | `number` | No | Only transcriptions inside this folder or its subfolders. |
 | `page` | `number` | No | Page to retrieve; transcriptions count from 0. |
 | `perPage` | `number` | No | Results per page. |
@@ -1211,7 +1247,7 @@ await corsair.happyscribe.api.transcriptions.list({ organizationId: 123, page: 0
     name?: string | null,
     primaryDomain?: string | null
   }[] | null,
-  links?: Record<string, unknown> | null
+  links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1225,7 +1261,7 @@ await corsair.happyscribe.api.transcriptions.list({ organizationId: 123, page: 0
 
 `transcriptions.updateDetails`
 
-Change a transcription: move it between organizations or toggle its public sharing link
+Change a transcription: rename it, move it to another folder in the same organization, or toggle its public sharing link
 
 **Risk:** `write`
 
@@ -1238,7 +1274,9 @@ await corsair.happyscribe.api.transcriptions.updateDetails({ fileId: '9josdjdfo0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
-| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `organizationId` | `string \| number` | Yes | Organization the transcription belongs to. |
+| `name` | `string` | No | New name. |
+| `folderId` | `number` | No | Folder in the same organization to move the transcription to. |
 | `sharingEnabled` | `boolean` | No | Turn the public sharing link on or off. |
 
 
@@ -1266,7 +1304,7 @@ await corsair.happyscribe.api.transcriptions.updateDetails({ fileId: '9josdjdfo0
 | `tags` | `string[] \| null` | No | — |
 | `people` | `object[] \| null` | No | — |
 | `companies` | `object[] \| null` | No | — |
-| `links` | `Record<string, unknown> \| null` | No | — |
+| `links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="folder full type">

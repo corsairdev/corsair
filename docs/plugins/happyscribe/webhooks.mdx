@@ -28,18 +28,10 @@ import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
-    // Signature verification needs the exact bytes Happy Scribe signed;
-    // request.json() would re-serialize them and break valid deliveries.
-    const rawBody = await request.text();
     const headers = Object.fromEntries(request.headers);
-    // The subscription URL carries the tenant, e.g.
-    // /api/webhook?tenantId=acme - forwarded so processWebhook routes it.
-    const query = Object.fromEntries(new URL(request.url).searchParams);
-    const result = await processWebhook(corsair, headers, rawBody, query);
-    // Failed verification or handler validation must stay non-2xx so
-    // Happy Scribe retries; only genuine successes answer 200.
-    const status = result.response.success === false ? 400 : 200;
-    return Response.json(result.response, { status });
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
 }
 ```
 
