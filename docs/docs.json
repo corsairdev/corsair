@@ -2370,6 +2370,14 @@
                 ]
               },
               {
+                "group": "Heyy",
+                "pages": [
+                  "plugins/heyy/overview",
+                  "plugins/heyy/api",
+                  "plugins/heyy/database"
+                ]
+              },
+              {
                 "group": "Higgsfield",
                 "pages": [
                   "plugins/higgsfield/overview",
