@@ -2297,6 +2297,15 @@
                 ]
               },
               {
+                "group": "Happy Scribe",
+                "pages": [
+                  "plugins/happyscribe/overview",
+                  "plugins/happyscribe/api",
+                  "plugins/happyscribe/database",
+                  "plugins/happyscribe/webhooks"
+                ]
+              },
+              {
                 "group": "Harvest",
                 "pages": [
                   "plugins/harvest/overview",

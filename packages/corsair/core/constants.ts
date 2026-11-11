@@ -272,6 +272,7 @@ export const BaseProviders = [
 	'gumroad',
 	'habitica',
 	'hackernews',
+	'happyscribe',
 	'harvest',
 	'hashnode',
 	'here',
@@ -746,6 +747,7 @@ export const ProviderDisplayNames = {
 	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
+	happyscribe: 'Happy Scribe',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	here: 'HERE',
@@ -1227,6 +1229,7 @@ export type AllProviders =
 	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
+	| 'happyscribe'
 	| 'harvest'
 	| 'hashnode'
 	| 'here'
