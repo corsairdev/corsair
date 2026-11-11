@@ -3,9 +3,14 @@ description: PDF generation API that renders PDFs and images from reusable drag-
 domain: craftmypdf.com
 recommendedAuth: api_key
 overviewNote: |
-  CraftMyPDF renders from templates you design in its editor, so every generation
-  call needs a `template_id` and the JSON data that fills it. Read one with the
-  templates list operation first.
+  CraftMyPDF renders from templates you design in its editor. The template calls
+  (`pdf.create`, `pdf.createAsync`, `pdf.createImage`, `pdf.createMerge`,
+  `pdf.createParallel`) need a `template_id`, which the templates list operation
+  returns, and the JSON data that fills it; the merge and parallel calls take one
+  per entry. `pdf.create` and `pdf.createImage` can fetch that data from a URL
+  with `load_data_from` instead of `data`. The PDF editing calls (`pdf.merge`,
+  `pdf.addText`, `pdf.addWatermark`, `pdf.updateFields`, `pdf.getInfo`) take PDF
+  URLs and no template.
 
   Generation is metered: each PDF or image costs one credit from the monthly
   allowance. Reads (account, templates, transactions) are free.
@@ -49,7 +54,7 @@ apiExamples:
       }
 apiNotes:
   pdf.create: A synchronous call can take up to 100 seconds, so the plugin waits 120 seconds before timing out. Each call spends one credit.
-  pdf.createAsync: CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file, transaction_ref, status, message and details as query parameters. Without that URL the result only appears in `transactions.list`.
+  pdf.createAsync: CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file (the PDF URL), transaction_ref, status, message and details as query parameters. The webhook is the only place the file URL arrives. `transactions.list` shows the job and its status, but no file URL, so pass `webhook_url` if you need the file.
   pdf.createParallel: Each request entry carries its own template data. Set `merge` to also receive one combined PDF.
   templates.list: CraftMyPDF reports no total, so `next_offset` is present only when the page came back full. Pass it as `offset` to read the next page.
   transactions.list: "`next_offset` is present only when the page came back full."

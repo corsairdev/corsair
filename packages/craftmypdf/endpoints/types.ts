@@ -262,7 +262,7 @@ const PdfCreateAsyncInputSchema = z.object({
 		.url()
 		.optional()
 		.describe(
-			'CraftMyPDF calls this URL with a GET once the PDF is ready, adding file, transaction_ref, status, message and details as query parameters. Without it the result is only recorded in transactions.list.',
+			'CraftMyPDF calls this URL with a GET once the PDF is ready, adding file (the PDF URL), transaction_ref, status, message and details as query parameters. This is the only way to get the file URL: transactions.list records the job and its status, but no file URL.',
 		),
 	image_resample_res: ImageResampleResSchema,
 	cloud_storage: CloudStorageSchema,

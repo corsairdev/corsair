@@ -355,13 +355,13 @@ await corsair.craftmypdf.api.pdf.createAsync({
 | `data` | `string \| Record<string, JsonValue>` | Yes | Template JSON data, either an object or a stringified JSON string. |
 | `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
 | `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
-| `webhook_url` | `string` | No | CraftMyPDF calls this URL with a GET once the PDF is ready, adding file, transaction_ref, status, message and details as query parameters. Without it the result is only recorded in transactions.list. |
+| `webhook_url` | `string` | No | CraftMyPDF calls this URL with a GET once the PDF is ready, adding file (the PDF URL), transaction_ref, status, message and details as query parameters. This is the only way to get the file URL: transactions.list records the job and its status, but no file URL. |
 | `image_resample_res` | `number` | No | Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72. |
 | `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
 | `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
 | `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
 
-CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file, transaction_ref, status, message and details as query parameters. Without that URL the result only appears in `transactions.list`.
+CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file (the PDF URL), transaction_ref, status, message and details as query parameters. The webhook is the only place the file URL arrives. `transactions.list` shows the job and its status, but no file URL, so pass `webhook_url` if you need the file.
 
 
 
