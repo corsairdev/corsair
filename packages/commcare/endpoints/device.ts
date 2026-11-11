@@ -49,9 +49,12 @@ export const submit: CommCareEndpoints['submissionsSubmit'] = (ctx, input) =>
 			method: 'POST',
 			path: `/a/${segment(domain)}/receiver/${segment(appId)}/`,
 			// The receiver rejects xml_submission_file sent as a plain text
-			// field, so the XForm goes as a named file part.
+			// field, and rejects a file whose name has no `.xml` extension (a
+			// bare Blob goes out named `blob`), so the XForm goes as a File.
 			formData: {
-				xml_submission_file: new Blob([xml], { type: 'text/xml' }),
+				xml_submission_file: new File([xml], 'submission.xml', {
+					type: 'text/xml',
+				}),
 			},
 		}),
 		{

@@ -565,6 +565,9 @@ describe('device', () => {
 		const part = (sent.body as FormData).get('xml_submission_file');
 		expect(part).toBeInstanceOf(Blob);
 		expect(await (part as Blob).text()).toBe('<xform></xform>');
+		// HQ's receiver rejects an instance file whose name has no `.xml`
+		// extension, and a bare Blob goes out named `blob`.
+		expect((part as File).name).toBe('submission.xml');
 	});
 });
 
