@@ -525,4 +525,5 @@ export type {
 	UserResponse,
 	UsersListInput,
 	UsersListResponse,
+	UserUpdatedResponse,
 } from './endpoints/types';

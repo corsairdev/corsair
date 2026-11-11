@@ -150,6 +150,29 @@ describe('user writes', () => {
 	it('reads a mutation envelope', () => {
 		expect(Outputs.usersDelete.parse(MUTATION_BODY).success).toBe(true);
 	});
+
+	// The spec answers all four custom-property writes with the updated User.
+	it.each([
+		'usersSetCustomProperties',
+		'usersSetCustomPropertiesByUid',
+		'usersSetCustomProperty',
+		'usersSetCustomPropertyByUid',
+	] as const)(
+		'%s reads the updated user and still takes an empty reply',
+		(key) => {
+			const schema = Outputs[key];
+			expect(Object.keys(schema.shape)).toEqual(
+				expect.arrayContaining(['uid', 'email', 'customUserProperties']),
+			);
+			expect(schema.parse(USER).customUserProperties).toEqual({
+				department: 'Sales',
+			});
+			expect(schema.parse({})).toEqual({});
+			expect(() =>
+				schema.parse({ ...USER, customUserProperties: 'Sales' }),
+			).toThrow();
+		},
+	);
 });
 
 describe('course progress', () => {

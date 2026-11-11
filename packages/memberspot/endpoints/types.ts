@@ -520,6 +520,14 @@ const MutationResponseSchema = z
 
 export type MutationResponse = z.infer<typeof MutationResponseSchema>;
 
+/**
+ * The spec answers the four custom-property writes with the updated `User`.
+ * Every field stays optional so an empty reply still parses.
+ */
+const UserUpdatedResponseSchema = UserSchema.partial();
+
+export type UserUpdatedResponse = z.infer<typeof UserUpdatedResponseSchema>;
+
 // ── chapters ──────────────────────────────────────────────────────────────
 
 const ChapterAccessInputSchema = z.object({
@@ -632,10 +640,10 @@ export type MemberSpotEndpointOutputs = {
 	usersCourseProgressByUid: UserCourseProgressResponse;
 	usersCourseProgressDetail: UserCourseProgressDetail;
 	usersCourseProgressDetailByUid: UserCourseProgressDetail;
-	usersSetCustomProperties: MutationResponse;
-	usersSetCustomPropertiesByUid: MutationResponse;
-	usersSetCustomProperty: MutationResponse;
-	usersSetCustomPropertyByUid: MutationResponse;
+	usersSetCustomProperties: UserUpdatedResponse;
+	usersSetCustomPropertiesByUid: UserUpdatedResponse;
+	usersSetCustomProperty: UserUpdatedResponse;
+	usersSetCustomPropertyByUid: UserUpdatedResponse;
 	usersDelete: MutationResponse;
 	usersDeleteByUid: MutationResponse;
 	examResults: ExamResultsResponse;
@@ -702,10 +710,10 @@ export const MemberSpotEndpointOutputSchemas = {
 	usersCourseProgressByUid: UserCourseProgressResponseSchema,
 	usersCourseProgressDetail: UserCourseProgressDetailSchema,
 	usersCourseProgressDetailByUid: UserCourseProgressDetailSchema,
-	usersSetCustomProperties: MutationResponseSchema,
-	usersSetCustomPropertiesByUid: MutationResponseSchema,
-	usersSetCustomProperty: MutationResponseSchema,
-	usersSetCustomPropertyByUid: MutationResponseSchema,
+	usersSetCustomProperties: UserUpdatedResponseSchema,
+	usersSetCustomPropertiesByUid: UserUpdatedResponseSchema,
+	usersSetCustomProperty: UserUpdatedResponseSchema,
+	usersSetCustomPropertyByUid: UserUpdatedResponseSchema,
 	usersDelete: MutationResponseSchema,
 	usersDeleteByUid: MutationResponseSchema,
 	examResults: ExamResultsResponseSchema,
