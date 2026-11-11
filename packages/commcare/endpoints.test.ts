@@ -454,11 +454,17 @@ describe('directory', () => {
 			{
 				domain: DOMAIN,
 				fixtureType: 'city',
+				limit: 10,
+				offset: 20,
 			},
 		);
 		expect(result.objects).toHaveLength(1);
 		expect(result.objects[0]!.fixture_type).toBe('city');
-		expect(lastRequest().query.fixture_type).toBe('city');
+		expect(lastRequest().query).toEqual({
+			fixture_type: 'city',
+			limit: '10',
+			offset: '20',
+		});
 
 		respond(fixtureItem);
 		const got = await invoke<CommCareEndpointOutputs['fixturesGetItem']>(
