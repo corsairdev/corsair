@@ -1366,6 +1366,14 @@
                 ]
               },
               {
+                "group": "Cloudflare Browser Run",
+                "pages": [
+                  "plugins/cloudflarebrowserrendering/overview",
+                  "plugins/cloudflarebrowserrendering/api",
+                  "plugins/cloudflarebrowserrendering/database"
+                ]
+              },
+              {
                 "group": "Cloudinary",
                 "pages": [
                   "plugins/cloudinary/overview",

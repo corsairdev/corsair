@@ -160,6 +160,7 @@ export const BaseProviders = [
 	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
+	'cloudflarebrowserrendering',
 	'cloudinary',
 	'coassemble',
 	'coda',
@@ -630,6 +631,7 @@ export const ProviderDisplayNames = {
 	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
+	cloudflarebrowserrendering: 'Cloudflare Browser Run',
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
@@ -1107,6 +1109,7 @@ export type AllProviders =
 	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
+	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
 	| 'coassemble'
 	| 'coda'
