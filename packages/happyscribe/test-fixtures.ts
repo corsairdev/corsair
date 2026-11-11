@@ -101,9 +101,11 @@ export const translationDone = {
 	translatedTranscriptionId: '372e9530d8f24ba68ccbcce11de43f9d',
 };
 
+// Captured from the live API (11-11): the key is snake_case, unlike the
+// reference's `signedUrl` example.
 export const signedUrl = {
-	signedUrl:
-		'https://happy-scribe-domain.s3.eu-west-1.amazonaws.com/xxxxxx?x-amz-signature=xxxxx',
+	signed_url:
+		'https://media2.happyscribe.com/uploads/ef3e7ce2-7022-441e-ab4a-d8ff09cb6727/my_media.mp3?X-Amz-Signature=xxxxx',
 };
 
 export const order = {

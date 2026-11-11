@@ -323,7 +323,7 @@ describe('uploads', () => {
 		const result = await invoke<{ signedUrl: string }>(Uploads.getSignedUrl, {
 			filename: 'my_media.mp3',
 		});
-		expect(result.signedUrl).toContain('s3.eu-west-1');
+		expect(result.signedUrl).toBe(signedUrl.signed_url);
 		expect(lastRequest().query.filename).toBe('my_media.mp3');
 	});
 });
