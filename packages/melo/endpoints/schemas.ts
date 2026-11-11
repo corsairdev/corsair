@@ -13,6 +13,22 @@ import {
  */
 const emptyArray = z.array(z.never());
 
+// Output enums stay open: a property type, publisher type or event code that
+// Melo adds later must not fail a call that already succeeded (and, on
+// searches.create, hide the id of a search that was saved). The documented
+// values stay listed for docs and types. Inputs keep the strict schemas.
+const openNumber = <T extends z.ZodType<number>>(documented: T) =>
+	z
+		.union([documented, z.number().int()])
+		.describe(`${documented.description ?? ''} Other values may appear later.`);
+const OpenPropertyTypeSchema = openNumber(PropertyTypeSchema);
+const OpenPublisherTypeSchema = openNumber(PublisherTypeSchema);
+const OpenTransactionTypeSchema = openNumber(TransactionTypeSchema);
+const OpenFeesResponsibilitySchema = openNumber(FeesResponsibilitySchema);
+const OpenSubscribedEventSchema = z
+	.union([SubscribedEventSchema, z.string()])
+	.describe('An event code; other codes may appear later.');
+
 // Every response field is optional in the OpenAPI spec, which has no examples
 // of its own, so output fields are `.nullish()` and objects are `.loose()`.
 // The one required field on a collection is `hydra:member`.
@@ -67,7 +83,7 @@ const PublisherSchema = z
 	.object({
 		category: z.string().nullish(),
 		name: z.string().nullish(),
-		type: PublisherTypeSchema.nullish(),
+		type: OpenPublisherTypeSchema.nullish(),
 	})
 	.loose();
 
@@ -83,7 +99,7 @@ export const AdvertSchema = z
 		events: z.array(AdvertEventSchema).nullish(),
 		features: z.array(z.string()).nullish(),
 		feesPercentage: z.number().nullish(),
-		feesResponsibility: FeesResponsibilitySchema.nullish(),
+		feesResponsibility: OpenFeesResponsibilitySchema.nullish(),
 		floor: z.number().nullish(),
 		floorQuantity: z.number().nullish(),
 		furnished: z.boolean().nullish(),
@@ -173,13 +189,13 @@ export const PropertyDocumentSchema = z
 		price: z.number().nullish(),
 		pricePerMeter: z.number().nullish(),
 		property: z.string().nullish(),
-		propertyType: PropertyTypeSchema.nullish(),
-		publisherTypes: z.array(PublisherTypeSchema).nullish(),
+		propertyType: OpenPropertyTypeSchema.nullish(),
+		publisherTypes: z.array(OpenPublisherTypeSchema).nullish(),
 		room: z.number().nullish(),
 		stations: z.array(StationSchema).nullish(),
 		surface: z.number().nullish(),
 		title: z.string().nullish(),
-		transactionType: TransactionTypeSchema.nullish(),
+		transactionType: OpenTransactionTypeSchema.nullish(),
 		updatedAt: z.string().nullish(),
 		uuid: z.string().nullish(),
 	})
@@ -345,17 +361,17 @@ export const SearchSchema = z
 		notificationRecipient: z.string().nullish(),
 		pricePerMeterMax: z.number().nullish(),
 		pricePerMeterMin: z.number().nullish(),
-		propertyTypes: z.array(PropertyTypeSchema).nullish(),
-		publisherTypes: z.array(PublisherTypeSchema).nullish(),
+		propertyTypes: z.array(OpenPropertyTypeSchema).nullish(),
+		publisherTypes: z.array(OpenPublisherTypeSchema).nullish(),
 		radius: z.number().nullish(),
 		roomMin: z.number().nullish(),
 		roomMax: z.number().nullish(),
-		subscribedEvents: z.array(SubscribedEventSchema).nullish(),
+		subscribedEvents: z.array(OpenSubscribedEventSchema).nullish(),
 		surfaceMax: z.number().nullish(),
 		surfaceMin: z.number().nullish(),
 		title: z.string().nullish(),
 		token: z.string().nullish(),
-		transactionType: TransactionTypeSchema.nullish(),
+		transactionType: OpenTransactionTypeSchema.nullish(),
 		updatedAt: z.string().nullish(),
 		user: z.string().nullish(),
 		withCoherentPrice: z.boolean().nullish(),

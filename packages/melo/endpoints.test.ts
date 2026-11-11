@@ -341,8 +341,33 @@ describe('output rejections', () => {
 		expect(error).toBeInstanceOf(z.ZodError);
 	});
 
-	it('rejects a malformed known field: a propertyType outside 0 to 6', async () => {
-		respondLd(fetchMock, { ...propertyResponse, propertyType: 9 });
+	it('accepts a propertyType, publisher type or fees value Melo adds after 0 to 6', async () => {
+		const [advert] = propertyResponse.adverts;
+		respondLd(fetchMock, {
+			...propertyResponse,
+			propertyType: 9,
+			publisherTypes: [0, 2],
+			transactionType: 2,
+			adverts: [
+				{
+					...advert,
+					feesResponsibility: 2,
+					publisher: { ...advert?.publisher, type: 2 },
+				},
+			],
+		});
+
+		const result = await endpoints.properties.get(ctx, { id: PROPERTY_ID });
+
+		expect(result.propertyType).toBe(9);
+		expect(result.publisherTypes).toEqual([0, 2]);
+		expect(result.transactionType).toBe(2);
+		expect(result.adverts?.[0]?.feesResponsibility).toBe(2);
+		expect(result.adverts?.[0]?.publisher?.type).toBe(2);
+	});
+
+	it('still rejects a propertyType that is not a number', async () => {
+		respondLd(fetchMock, { ...propertyResponse, propertyType: 'house' });
 
 		const error = await captureError(
 			endpoints.properties.get(ctx, { id: PROPERTY_ID }),
@@ -361,20 +386,28 @@ describe('output rejections', () => {
 		expect(error).toBeInstanceOf(z.ZodError);
 	});
 
-	it('rejects a malformed search: a transactionType outside 0 and 1', async () => {
-		respondLd(fetchMock, { ...searchCreatedResponse, transactionType: 5 });
-
-		const error = await captureError(
-			endpoints.searches.create(ctx, VALID_SEARCH),
-		);
-
-		expect(error).toBeInstanceOf(z.ZodError);
-	});
-
-	it('rejects a subscribedEvents value that is not an event code', async () => {
+	it('returns a created search whose enums carry values Melo added later', async () => {
 		respondLd(fetchMock, {
 			...searchCreatedResponse,
-			subscribedEvents: ['ad.deleted'],
+			transactionType: 5,
+			propertyTypes: [0, 7],
+			publisherTypes: [2],
+			subscribedEvents: ['ad.update.price', 'ad.deleted'],
+		});
+
+		const result = await endpoints.searches.create(ctx, VALID_SEARCH);
+
+		expect(result['@id']).toBe(searchCreatedResponse['@id']);
+		expect(result.transactionType).toBe(5);
+		expect(result.propertyTypes).toEqual([0, 7]);
+		expect(result.publisherTypes).toEqual([2]);
+		expect(result.subscribedEvents).toEqual(['ad.update.price', 'ad.deleted']);
+	});
+
+	it('still rejects a subscribedEvents entry that is not a string', async () => {
+		respondLd(fetchMock, {
+			...searchCreatedResponse,
+			subscribedEvents: [42],
 		});
 
 		const error = await captureError(

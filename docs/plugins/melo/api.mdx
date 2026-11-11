@@ -521,13 +521,13 @@ await corsair.melo.api.properties.get({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c45
 | `price` | `number \| null` | No | — |
 | `pricePerMeter` | `number \| null` | No | — |
 | `property` | `string \| null` | No | — |
-| `propertyType` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| null` | No | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. |
-| `publisherTypes` | `(0 \| 1)[] \| null` | No | — |
+| `propertyType` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number \| null` | No | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Other values may appear later. |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
 | `room` | `number \| null` | No | — |
 | `stations` | `object[] \| null` | No | — |
 | `surface` | `number \| null` | No | — |
 | `title` | `string \| null` | No | — |
-| `transactionType` | `0 \| 1 \| null` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
 | `updatedAt` | `string \| null` | No | — |
 | `uuid` | `string \| null` | No | — |
 
@@ -562,7 +562,7 @@ await corsair.melo.api.properties.get({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c45
   }[] | null,
   features?: string[] | null,
   feesPercentage?: number | null,
-  feesResponsibility?: 0 | 1 | null,
+  feesResponsibility?: 0 | 1 | number | null,
   floor?: number | null,
   floorQuantity?: number | null,
   furnished?: boolean | null,
@@ -581,7 +581,7 @@ await corsair.melo.api.properties.get({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c45
   publisher?: {
     category?: string | null,
     name?: string | null,
-    type?: 0 | 1 | null
+    type?: 0 | 1 | number | null
   } | null,
   rentalCharges?: number | null,
   rentalPledge?: number | null,
@@ -870,7 +870,7 @@ await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'
     }[] | null,
     features?: string[] | null,
     feesPercentage?: number | null,
-    feesResponsibility?: 0 | 1 | null,
+    feesResponsibility?: 0 | 1 | number | null,
     floor?: number | null,
     floorQuantity?: number | null,
     furnished?: boolean | null,
@@ -889,7 +889,7 @@ await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'
     publisher?: {
       category?: string | null,
       name?: string | null,
-      type?: 0 | 1 | null
+      type?: 0 | 1 | number | null
     } | null,
     rentalCharges?: number | null,
     rentalPledge?: number | null,
@@ -952,8 +952,8 @@ await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'
   price?: number | null,
   pricePerMeter?: number | null,
   property?: string | null,
-  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | null,
-  publisherTypes?: (0 | 1)[] | null,
+  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
   room?: number | null,
   stations?: {
     id?: number | null,
@@ -968,7 +968,7 @@ await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'
   }[] | null,
   surface?: number | null,
   title?: string | null,
-  transactionType?: 0 | 1 | null,
+  transactionType?: 0 | 1 | number | null,
   updatedAt?: string | null,
   uuid?: string | null
 }[]
@@ -1093,7 +1093,7 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
     }[] | null,
     features?: string[] | null,
     feesPercentage?: number | null,
-    feesResponsibility?: 0 | 1 | null,
+    feesResponsibility?: 0 | 1 | number | null,
     floor?: number | null,
     floorQuantity?: number | null,
     furnished?: boolean | null,
@@ -1112,7 +1112,7 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
     publisher?: {
       category?: string | null,
       name?: string | null,
-      type?: 0 | 1 | null
+      type?: 0 | 1 | number | null
     } | null,
     rentalCharges?: number | null,
     rentalPledge?: number | null,
@@ -1175,8 +1175,8 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
   price?: number | null,
   pricePerMeter?: number | null,
   property?: string | null,
-  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | null,
-  publisherTypes?: (0 | 1)[] | null,
+  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
   room?: number | null,
   stations?: {
     id?: number | null,
@@ -1191,7 +1191,7 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
   }[] | null,
   surface?: number | null,
   title?: string | null,
-  transactionType?: 0 | 1 | null,
+  transactionType?: 0 | 1 | number | null,
   updatedAt?: string | null,
   uuid?: string | null
 }[]
@@ -1310,17 +1310,17 @@ await corsair.melo.api.searches.create({ title: 'Houses in Paris', transactionTy
 | `notificationRecipient` | `string \| null` | No | — |
 | `pricePerMeterMax` | `number \| null` | No | — |
 | `pricePerMeterMin` | `number \| null` | No | — |
-| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[] \| null` | No | — |
-| `publisherTypes` | `(0 \| 1)[] \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
 | `radius` | `number \| null` | No | — |
 | `roomMin` | `number \| null` | No | — |
 | `roomMax` | `number \| null` | No | — |
-| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update)[] \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
 | `surfaceMax` | `number \| null` | No | — |
 | `surfaceMin` | `number \| null` | No | — |
 | `title` | `string \| null` | No | — |
 | `token` | `string \| null` | No | — |
-| `transactionType` | `0 \| 1 \| null` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
 | `updatedAt` | `string \| null` | No | — |
 | `user` | `string \| null` | No | — |
 | `withCoherentPrice` | `boolean \| null` | No | — |
@@ -1463,17 +1463,17 @@ await corsair.melo.api.searches.get({ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
 | `notificationRecipient` | `string \| null` | No | — |
 | `pricePerMeterMax` | `number \| null` | No | — |
 | `pricePerMeterMin` | `number \| null` | No | — |
-| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[] \| null` | No | — |
-| `publisherTypes` | `(0 \| 1)[] \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
 | `radius` | `number \| null` | No | — |
 | `roomMin` | `number \| null` | No | — |
 | `roomMax` | `number \| null` | No | — |
-| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update)[] \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
 | `surfaceMax` | `number \| null` | No | — |
 | `surfaceMin` | `number \| null` | No | — |
 | `title` | `string \| null` | No | — |
 | `token` | `string \| null` | No | — |
-| `transactionType` | `0 \| 1 \| null` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
 | `updatedAt` | `string \| null` | No | — |
 | `user` | `string \| null` | No | — |
 | `withCoherentPrice` | `boolean \| null` | No | — |
@@ -1646,17 +1646,17 @@ await corsair.melo.api.searches.list({});
   notificationRecipient?: string | null,
   pricePerMeterMax?: number | null,
   pricePerMeterMin?: number | null,
-  propertyTypes?: (0 | 1 | 2 | 3 | 4 | 5 | 6)[] | null,
-  publisherTypes?: (0 | 1)[] | null,
+  propertyTypes?: (0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
   radius?: number | null,
   roomMin?: number | null,
   roomMax?: number | null,
-  subscribedEvents?: (ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update)[] | null,
+  subscribedEvents?: (ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null,
   surfaceMax?: number | null,
   surfaceMin?: number | null,
   title?: string | null,
   token?: string | null,
-  transactionType?: 0 | 1 | null,
+  transactionType?: 0 | 1 | number | null,
   updatedAt?: string | null,
   user?: string | null,
   withCoherentPrice?: boolean | null,
@@ -1776,17 +1776,17 @@ await corsair.melo.api.searches.update({ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb
 | `notificationRecipient` | `string \| null` | No | — |
 | `pricePerMeterMax` | `number \| null` | No | — |
 | `pricePerMeterMin` | `number \| null` | No | — |
-| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[] \| null` | No | — |
-| `publisherTypes` | `(0 \| 1)[] \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
 | `radius` | `number \| null` | No | — |
 | `roomMin` | `number \| null` | No | — |
 | `roomMax` | `number \| null` | No | — |
-| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update)[] \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
 | `surfaceMax` | `number \| null` | No | — |
 | `surfaceMin` | `number \| null` | No | — |
 | `title` | `string \| null` | No | — |
 | `token` | `string \| null` | No | — |
-| `transactionType` | `0 \| 1 \| null` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
 | `updatedAt` | `string \| null` | No | — |
 | `user` | `string \| null` | No | — |
 | `withCoherentPrice` | `boolean \| null` | No | — |
