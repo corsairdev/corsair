@@ -3107,7 +3107,7 @@ await corsair.onedesk.api.portfolios.create({ name: '2024 portfolio' });
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Name of the portfolio. |
 | `description` | `string` | No | — |
-| `type` | `string` | No | — |
+| `type` | `string` | Yes | Portfolio type label, for example 'Portfolio'. Read the labels with organization.containerTypes (isPortfolio: true). |
 | `parentPortfolioExternalIds` | `string[]` | No | — |
 | `attachmentExternalIds` | `string[]` | No | — |
 
@@ -4097,7 +4097,7 @@ await corsair.onedesk.api.quotes.get({ externalId: '35650e86-0000-0000-0000-55a4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `externalId` | `string` | No | — |
-| `id` | `number` | No | — |
+| `id` | `string` | No | The quote's id as OneDesk sends it, for example 'Q-1'. |
 
 
 
@@ -4179,7 +4179,7 @@ await corsair.onedesk.api.quotes.update({ externalId: '35650e86-0000-0000-0000-5
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `externalId` | `string` | No | — |
-| `id` | `number` | No | — |
+| `id` | `string` | No | The quote's id as OneDesk sends it, for example 'Q-1'. |
 | `displayNumber` | `string` | No | — |
 | `status` | `draft \| open \| sent \| accepted \| cancelled \| convert to invoice` | No | — |
 | `expirationDate` | `string` | No | — |
@@ -4854,7 +4854,7 @@ await corsair.onedesk.api.timers.start({ timerExternalId: '4t52581b-0000-0000-00
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timerExternalId` | `string` | Yes | Timer external id: the same value resumes the same timer later. |
+| `timerExternalId` | `string` | Yes | A UUID you choose for the timer; pass the same value to pause, resume or cancel it. OneDesk answers ERROR_INVALID_ID for anything that is not a UUID. |
 | `itemExternalId` | `string` | Yes | Work item the timer is for. |
 
 A timer is identified by the external id you choose, so starting the same id again resumes that timer.
@@ -5090,16 +5090,16 @@ await corsair.onedesk.api.timesheets.filterDetails({ limit: 50 });
   created?: string | null,
   work?: number | null,
   invoiceWork?: number | null,
-  percentCompletedReported?: number | null,
+  percentCompleteReported?: number | null,
   comments?: string | null,
   status?: string | null,
-  assignees?: {
+  assignee?: {
     typeName?: string | null,
     displayName?: string | null,
     email?: string | null,
     teamName?: string | null,
     externalId?: string | null
-  }[] | null,
+  } | null,
   taskExternalId?: string | null,
   projectExternalId?: string | null,
   billable?: string | boolean | null,
@@ -5168,7 +5168,7 @@ await corsair.onedesk.api.timesheets.get({ externalId: 'ff87a554-0000-0000-0000-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `externalId` | `string` | No | — |
-| `id` | `number` | No | — |
+| `id` | `string` | No | The timesheet's id as OneDesk sends it, for example '5-1'. |
 
 
 
@@ -5192,16 +5192,16 @@ await corsair.onedesk.api.timesheets.get({ externalId: 'ff87a554-0000-0000-0000-
   created?: string | null,
   work?: number | null,
   invoiceWork?: number | null,
-  percentCompletedReported?: number | null,
+  percentCompleteReported?: number | null,
   comments?: string | null,
   status?: string | null,
-  assignees?: {
+  assignee?: {
     typeName?: string | null,
     displayName?: string | null,
     email?: string | null,
     teamName?: string | null,
     externalId?: string | null
-  }[] | null,
+  } | null,
   taskExternalId?: string | null,
   projectExternalId?: string | null,
   billable?: string | boolean | null,
@@ -5248,7 +5248,7 @@ await corsair.onedesk.api.timesheets.update({ externalId: 'ff87a554-0000-0000-00
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `externalId` | `string` | No | — |
-| `id` | `number` | No | — |
+| `id` | `string` | No | The timesheet's id as OneDesk sends it, for example '5-1'. |
 | `works` | `number` | No | — |
 | `billable` | `boolean` | No | — |
 | `note` | `string` | No | — |
