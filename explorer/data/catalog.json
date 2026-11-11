@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T20:14:53.707Z",
-  "corsairVersion": "0.1.165",
+  "generatedAt": "2026-11-11T02:53:19.836Z",
+  "corsairVersion": "0.1.168",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -5445,6 +5445,21 @@
         "api": 225,
         "webhooks": 7,
         "db": 14
+      }
+    },
+    {
+      "id": "sanity",
+      "displayName": "Sanity",
+      "description": "Sanity's Content Lake from an agent. Query documents with GROQ, create and edit drafts, publish, upload images and files, read history, run Sanity's AI Agent Actions, manage datasets and webhooks, and receive signed document webhooks.",
+      "npmPackageName": "@corsair-dev/sanity",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
+        "webhooks": 1,
+        "db": 0
       }
     },
     {
@@ -94271,6 +94286,168 @@
       "kind": "webhook",
       "shortPath": "taskCreatedOrCompleted",
       "haystack": "taskcreatedorcompleted salesforce.webhooks.taskcreatedorcompleted task created or completed"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.generate",
+      "haystack": "agentactions.generate sanity.api.agentactions.generate have sanity's ai write content into a document's fields from an instruction, following the schema. writes to the draft unless forcepublishedwrite; nowrite returns it without saving. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.prompt",
+      "haystack": "agentactions.prompt sanity.api.agentactions.prompt ask sanity's ai a question, optionally about documents passed as params, and get text or json back. writes nothing. costs one sanity ai credit. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.transform",
+      "haystack": "agentactions.transform sanity.api.agentactions.transform have sanity's ai rewrite a document's existing content by an instruction (tone, length, style), in place or into another document. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.translate",
+      "haystack": "agentactions.translate sanity.api.agentactions.translate have sanity's ai translate a document into another language, usually into a new document. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "assets.upload",
+      "haystack": "assets.upload sanity.api.assets.upload upload an image or file (base64, up to 25 mb) as a sanity asset and get its asset document and cdn url, ready to reference from a document. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.create",
+      "haystack": "datasets.create sanity.api.datasets.create create an empty dataset in the project. needs an administrator token. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.delete",
+      "haystack": "datasets.delete sanity.api.datasets.delete delete a dataset with every document and asset in it, for good. needs the name twice and an administrator token. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.list",
+      "haystack": "datasets.list sanity.api.datasets.list the project's datasets and whether each is public. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.create",
+      "haystack": "documents.create sanity.api.documents.create create a document as a draft (default) or, with publish: true, publish it at once. returns its id and draft id. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.delete",
+      "haystack": "documents.delete sanity.api.documents.delete delete up to 100 documents, published and draft together. documents that reference them must drop the references first. with purge, they also leave the history. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.discardDraft",
+      "haystack": "documents.discarddraft sanity.api.documents.discarddraft throw away a document's unpublished changes (its draft). the published version stays. with purge, the draft also leaves the history. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.edit",
+      "haystack": "documents.edit sanity.api.documents.edit change a document the way the studio does: the patch goes to its draft, made from the published version if needed, and nothing goes live until documents.publish (or publish: true). write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.get",
+      "haystack": "documents.get sanity.api.documents.get fetch up to 100 documents by exact id (drafts.<id> for a draft). ids that are missing or unreadable come back in omitted. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.history",
+      "haystack": "documents.history sanity.api.documents.history a document as it stood at a revision or a point in time. how far back depends on the plan's history retention. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.mutate",
+      "haystack": "documents.mutate sanity.api.documents.mutate apply raw sanity mutations (create, createorreplace, createifnotexists, patch, delete, by id or by query) in one transaction. for anything documents.create, edit, patch and delete can't express. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.patch",
+      "haystack": "documents.patch sanity.api.documents.patch patch one exact document id directly and get it back. a published id changes the live document at once; use documents.edit to go through a draft. ifrevisionid guards against overwriting someone else's change. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.publish",
+      "haystack": "documents.publish sanity.api.documents.publish publish a document's draft: the draft replaces the published version and goes away. fails when there is no draft. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.query",
+      "haystack": "documents.query sanity.api.documents.query run a groq query against a dataset and get its result. reads published documents unless perspective says otherwise. pass user input as params. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.transactions",
+      "haystack": "documents.transactions sanity.api.documents.transactions the transactions that changed some documents: when, by whom and which revisions, optionally with each mutation. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.unpublish",
+      "haystack": "documents.unpublish sanity.api.documents.unpublish take a published document off the published perspective; its content stays as a draft. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "schemas.list",
+      "haystack": "schemas.list sanity.api.schemas.list the schemas deployed to a dataset: their ids (the schemaid agent actions take) and each type's fields. pass type for one type's full definition. read this before writing documents of a type you don't know. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.attempts",
+      "haystack": "webhooks.attempts sanity.api.webhooks.attempts recent delivery attempts of a webhook with the status your endpoint answered, to debug failing deliveries. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create sanity.api.webhooks.create create a webhook that posts to a url when documents matching a groq filter are created, updated or deleted. set a secret so deliveries can be verified. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete sanity.api.webhooks.delete delete a webhook; deliveries stop at once. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list sanity.api.webhooks.list the project's groq-powered webhooks: url, dataset, filter, projection and whether each is signed (never the secret). read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update sanity.api.webhooks.update change a webhook's url, filter, projection, events or secret, or pause and resume it with disabled. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "webhook",
+      "shortPath": "documents.changed",
+      "haystack": "documents.changed sanity.webhooks.documents.changed a groq-powered webhook fired: a document matching its filter was created, updated or deleted. the body is the webhook's projection; the operation, document id and dataset come from its headers. only signed deliveries are accepted."
     },
     {
       "pluginId": "saperly",
