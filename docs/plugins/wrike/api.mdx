@@ -1,0 +1,1315 @@
+---
+title: API
+description: "API reference for Wrike: every `wrike.api.*` operation with input and output types."
+---
+
+Every `wrike.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account, including the virtual root folder id that a task or folder create needs as its parent
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  dateFormat?: string | null,
+  firstDayOfWeek?: string | null,
+  workDays?: string[] | null,
+  rootFolderId?: string | null,
+  recycleBinId?: string | null,
+  timezone?: string | null,
+  locale?: string | null,
+  subscription?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Post a comment on a task
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.comments.create({ taskId: 'IEAAABCDEF12345', text: 'Looks good to me.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `text` | `string` | Yes | The comment text. Plain text; Wrike renders the links itself. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  authorId?: string | null,
+  type?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  taskId?: string | null,
+  folderId?: string | null,
+  rootCommentId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wrike.api.comments.delete({ id: 'CMABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments across the account
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.comments.list({ pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  authorId?: string | null,
+  type?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  taskId?: string | null,
+  folderId?: string | null,
+  rootCommentId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### task
+
+`comments.task`
+
+List the comments on a task
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.comments.task({ taskId: 'IEAAABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  authorId?: string | null,
+  type?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  taskId?: string | null,
+  folderId?: string | null,
+  rootCommentId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Edit the text of a comment you wrote
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.comments.update({ id: 'CMABCDEF12345', text: 'Edited.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  authorId?: string | null,
+  type?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  taskId?: string | null,
+  folderId?: string | null,
+  rootCommentId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### get
+
+`contacts.get`
+
+Read one contact by id, or `me` for the one behind the token
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.contacts.get({ id: 'me' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A contact id, or `me` for the contact behind the token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  primaryEmail?: string | null,
+  title?: string | null,
+  companyName?: string | null,
+  phone?: string | null,
+  location?: string | null,
+  timezone?: string | null,
+  locale?: string | null,
+  type?: string | null,
+  avatarUrl?: string | null,
+  deleted?: boolean | null,
+  me?: boolean | null,
+  myTeam?: boolean | null,
+  profiles?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List the contacts on the account, optionally only active ones or only yourself
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.contacts.list({ active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `me` | `boolean` | No | Only the contact behind the token. |
+| `active` | `boolean` | No | Only contacts who have not been deleted. |
+| `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  primaryEmail?: string | null,
+  title?: string | null,
+  companyName?: string | null,
+  phone?: string | null,
+  location?: string | null,
+  timezone?: string | null,
+  locale?: string | null,
+  type?: string | null,
+  avatarUrl?: string | null,
+  deleted?: boolean | null,
+  me?: boolean | null,
+  myTeam?: boolean | null,
+  profiles?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder inside another, or in the account root when given its virtual root id
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.folders.create({ parentId: 'IEAABCDEF12345', title: 'Checkout revamp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentId` | `string` | Yes | The parent folder id. Use the Root Folder API id for the account root. |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `shareds` | `string[]` | No | Contact ids to share with. |
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  childIds?: string[] | null,
+  scope?: string | null,
+  space?: boolean | null,
+  color?: string | null,
+  customItemTypeId?: string | null,
+  project?: {
+    status?: string | null,
+    ownerIds?: string[] | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    createdDate?: string | null,
+    completedDate?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a folder; a non-empty one is refused unless recursive is set, which deletes its contents too
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wrike.api.folders.delete({ id: 'IEAABCDEF12345', recursive: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recursive` | `boolean` | No | Also delete the folder contents. Without it a non-empty folder is refused. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Read one folder or project
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.folders.get({ id: 'IEAABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  childIds?: string[] | null,
+  scope?: string | null,
+  space?: boolean | null,
+  color?: string | null,
+  customItemTypeId?: string | null,
+  project?: {
+    status?: string | null,
+    ownerIds?: string[] | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    createdDate?: string | null,
+    completedDate?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List folders and projects, each with its parent and scope
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.folders.list({ pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  childIds?: string[] | null,
+  scope?: string | null,
+  space?: boolean | null,
+  color?: string | null,
+  customItemTypeId?: string | null,
+  project?: {
+    status?: string | null,
+    ownerIds?: string[] | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    createdDate?: string | null,
+    completedDate?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tasks
+
+`folders.tasks`
+
+List the tasks in a folder, optionally including every descendant folder
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.folders.tasks({ id: 'IEAABCDEF12345', descendants: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The folder id. |
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `descendants` | `boolean` | No | Also search every descendant folder. |
+| `sortField` | `Status \| Importance \| Title \| StartDate \| DueDate \| CreatedDate \| UpdatedDate` | No | — |
+| `sortOrder` | `Asc \| Desc` | No | — |
+| `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  importance?: string | null,
+  permalink?: string | null,
+  dates?: {
+    type?: string | null,
+    duration?: number | null,
+    start?: string | null,
+    due?: string | null
+  } | null,
+  parentIds?: string[] | null,
+  subTaskIds?: string[] | null,
+  superTaskIds?: string[] | null,
+  authorIds?: string[] | null,
+  responsibleIds?: string[] | null,
+  followerIds?: string[] | null,
+  sharedIds?: string[] | null,
+  hasAttachments?: boolean | null,
+  recurrent?: boolean | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  completedDate?: string | null,
+  customFields?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename a folder, change its description or move it between parents
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.folders.update({ id: 'IEAABCDEF12345', title: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `addParents` | `string[]` | No | — |
+| `removeParents` | `string[]` | No | — |
+| `customFields` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  childIds?: string[] | null,
+  scope?: string | null,
+  space?: boolean | null,
+  color?: string | null,
+  customItemTypeId?: string | null,
+  project?: {
+    status?: string | null,
+    ownerIds?: string[] | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    createdDate?: string | null,
+    completedDate?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a folder, with assignees, dates, custom fields and metadata; Wrike has no account-level create
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship the new checkout', importance: 'High' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The parent folder id. Use the Root Folder API id for the account root. |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `Active \| Deferred \| Completed \| Cancelled` | No | — |
+| `importance` | `High \| Low \| Normal` | No | — |
+| `responsibles` | `string[]` | No | Contact ids to assign. |
+| `followers` | `string[]` | No | — |
+| `startDate` | `string` | No | — |
+| `dueDate` | `string` | No | — |
+| `dates` | `object` | No | A richer date form than startDate and dueDate. |
+| `parentIds` | `string[]` | No | Additional parent folders, beyond the one in the path. |
+| `customFields` | `Record<string, any>[]` | No | — |
+| `metadata` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dates full type">
+
+```ts
+{
+  type?: Backlog | Milestone | Planned | Wrike,
+  start?: string,
+  due?: string,
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  importance?: string | null,
+  permalink?: string | null,
+  dates?: {
+    type?: string | null,
+    duration?: number | null,
+    start?: string | null,
+    due?: string | null
+  } | null,
+  parentIds?: string[] | null,
+  subTaskIds?: string[] | null,
+  superTaskIds?: string[] | null,
+  authorIds?: string[] | null,
+  responsibleIds?: string[] | null,
+  followerIds?: string[] | null,
+  sharedIds?: string[] | null,
+  hasAttachments?: boolean | null,
+  recurrent?: boolean | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  completedDate?: string | null,
+  customFields?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Move a task to the recycle bin, which a later update with restore can undo
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wrike.api.tasks.delete({ id: 'IEAAABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Read one task with its status, dates, assignees and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.tasks.get({ id: 'IEAAABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The task id, including its IEAA prefix. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  importance?: string | null,
+  permalink?: string | null,
+  dates?: {
+    type?: string | null,
+    duration?: number | null,
+    start?: string | null,
+    due?: string | null
+  } | null,
+  parentIds?: string[] | null,
+  subTaskIds?: string[] | null,
+  superTaskIds?: string[] | null,
+  authorIds?: string[] | null,
+  responsibleIds?: string[] | null,
+  followerIds?: string[] | null,
+  sharedIds?: string[] | null,
+  hasAttachments?: boolean | null,
+  recurrent?: boolean | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  completedDate?: string | null,
+  customFields?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+Search tasks account-wide by title, status, dates, author or assignee, with paging and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.tasks.list({ status: ['Active', 'Completed'], importance: 'High', pageSize: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `title` | `string` | No | A substring of the title. |
+| `status` | `(Active \| Deferred \| Completed \| Cancelled)[]` | No | — |
+| `importance` | `High \| Low \| Normal` | No | — |
+| `startDate` | `string` | No | A date, or a range as `{start},{end}`. |
+| `dueDate` | `string` | No | A date, or a range as `{start},{end}`. |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `completedDate` | `string` | No | — |
+| `authors` | `string[]` | No | Contact ids: only tasks created by any of them. |
+| `responsibles` | `string[]` | No | Contact ids: only tasks assigned to any of them. |
+| `permalink` | `string` | No | A task permalink, exact match. |
+| `type` | `Milestone \| Backlog \| Planned` | No | — |
+| `subTasks` | `boolean` | No | Include subtasks in the scope. |
+| `withInvitations` | `boolean` | No | Include invitations in the shared and responsible id lists. |
+| `sortField` | `Status \| Importance \| Title \| StartDate \| DueDate \| CreatedDate \| UpdatedDate` | No | — |
+| `sortOrder` | `Asc \| Desc` | No | — |
+| `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  importance?: string | null,
+  permalink?: string | null,
+  dates?: {
+    type?: string | null,
+    duration?: number | null,
+    start?: string | null,
+    due?: string | null
+  } | null,
+  parentIds?: string[] | null,
+  subTaskIds?: string[] | null,
+  superTaskIds?: string[] | null,
+  authorIds?: string[] | null,
+  responsibleIds?: string[] | null,
+  followerIds?: string[] | null,
+  sharedIds?: string[] | null,
+  hasAttachments?: boolean | null,
+  recurrent?: boolean | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  completedDate?: string | null,
+  customFields?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Change a task title, status, dates, assignees or followers, or restore it from the recycle bin
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.tasks.update({ id: 'IEAAABCDEF12345', status: 'Completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `Active \| Deferred \| Completed \| Cancelled` | No | — |
+| `importance` | `High \| Low \| Normal` | No | — |
+| `addResponsibles` | `string[]` | No | — |
+| `removeResponsibles` | `string[]` | No | — |
+| `addFollowers` | `string[]` | No | — |
+| `removeFollowers` | `string[]` | No | — |
+| `startDate` | `string` | No | Send an empty string to clear it. |
+| `dueDate` | `string` | No | Send an empty string to clear it. |
+| `restore` | `boolean` | No | Restore a task from the recycle bin. |
+| `customFields` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  importance?: string | null,
+  permalink?: string | null,
+  dates?: {
+    type?: string | null,
+    duration?: number | null,
+    start?: string | null,
+    due?: string | null
+  } | null,
+  parentIds?: string[] | null,
+  subTaskIds?: string[] | null,
+  superTaskIds?: string[] | null,
+  authorIds?: string[] | null,
+  responsibleIds?: string[] | null,
+  followerIds?: string[] | null,
+  sharedIds?: string[] | null,
+  hasAttachments?: boolean | null,
+  recurrent?: boolean | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  completedDate?: string | null,
+  customFields?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Timelogs
+
+### create
+
+`timelogs.create`
+
+Log hours against a task for a tracked date, optionally with a comment and category
+
+**Risk:** `write`
+
+```ts
+await corsair.wrike.api.timelogs.create({ taskId: 'IEAAABCDEF12345', hours: 6.5, trackedDate: '2024-06-01', comment: 'Built the cart' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `hours` | `number` | Yes | — |
+| `trackedDate` | `string` | Yes | The day the work belongs to, as yyyy-MM-dd. |
+| `comment` | `string` | No | — |
+| `categoryId` | `string` | No | A timelog category id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  taskId?: string | null,
+  userId?: string | null,
+  hours?: number | null,
+  trackedDate?: string | null,
+  comment?: string | null,
+  billingType?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  approvalStatus?: string | null,
+  lockStatus?: string | null,
+  categoryId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timelogs.delete`
+
+Delete a logged time entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wrike.api.timelogs.delete({ id: 'TLABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`timelogs.list`
+
+List the time logged on the account, filtered by task, person or date
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.timelogs.list({ taskId: 'IEAAABCDEF12345', trackedDate: '2024-06-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `taskId` | `string` | No | Only this task. |
+| `userId` | `string` | No | Only this person. |
+| `trackedDate` | `string` | No | A date, or a range as `{start},{end}`. |
+| `createdDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  taskId?: string | null,
+  userId?: string | null,
+  hours?: number | null,
+  trackedDate?: string | null,
+  comment?: string | null,
+  billingType?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  approvalStatus?: string | null,
+  lockStatus?: string | null,
+  categoryId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### task
+
+`timelogs.task`
+
+List the time logged against one task
+
+**Risk:** `read`
+
+```ts
+await corsair.wrike.api.timelogs.task({ taskId: 'IEAAABCDEF12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `pageSize` | `number` | No | Items per page, up to 1000. |
+| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  taskId?: string | null,
+  userId?: string | null,
+  hours?: number | null,
+  trackedDate?: string | null,
+  comment?: string | null,
+  billingType?: string | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  approvalStatus?: string | null,
+  lockStatus?: string | null,
+  categoryId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

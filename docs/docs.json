@@ -3897,6 +3897,14 @@
                 ]
               },
               {
+                "group": "Wrike",
+                "pages": [
+                  "plugins/wrike/overview",
+                  "plugins/wrike/api",
+                  "plugins/wrike/database"
+                ]
+              },
+              {
                 "group": "Writer",
                 "pages": [
                   "plugins/writer/overview",

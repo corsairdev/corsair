@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Work management with Wrike - search and manage tasks, work with folders and projects, log and read time entries, comment on tasks, and read contacts and account settings."
+---
+
+Use **Wrike** through Corsair: one client, typed API calls.
+
+Create a permanent access token in Wrike under **Apps & Integrations → API**, or use an OAuth 2.0 token. It goes in `Authorization: bearer`, lowercase as Wrike's own docs write it, against `/api/v4`.
+
+- **Three regional hosts.** Wrike runs the same v4 API on `www.wrike.com`, `app-eu.wrike.com` and `app-us2.wrike.com`, and an account lives on exactly one. Nothing in a token says which, so pass `host: 'eu'` or `'us2'`; the default is `www`. A test asserts the routing.
+- **Both auth failures are a 401 `not_authorized`.** The `errorDescription` is what separates them: `Authorization method unknown` means no header was sent at all, and `Access token is unknown or invalid` means one was sent and is wrong. Both are auth errors, but the distinction tells you whether a credential was configured.
+- **There is no account-level task create.** A task always lives in a folder, so `tasks.create` takes a `folderId` and posts to `/folders/{folderId}/tasks`. For the account root, use the `rootFolderId` that `account.get` returns — it is a virtual folder, which is why reading the account once is worth doing.
+- **Every response is `{ kind, data: [...] }`.** Even a single task comes back inside an array, so the output schemas unwrap by index rather than pretending a get returns one object.
+- **Ids carry a prefix.** `IEAA…` is a task, `IEA…` a folder, `KU…` a contact, `TL…` a timelog. The prefix is part of the id and is never stripped or rewritten.
+- **Filters are comma-joined, not repeated.** `status`, `responsibles` and `authors` take one comma-separated value, so the plugin joins an array rather than sending the key twice.
+- **A task delete is recoverable.** Wrike moves it to the recycle bin, and `tasks.update` with `restore: true` brings it back — which is why it is destructive but undoable, unlike a folder delete with `recursive`.
+- **A folder delete is refused when it is not empty.** `recursive` deletes the contents with it, so the plugin does not default it: the safe call is the one that fails on a folder with anything in it.
+- **`trackedDate` and `hours` are both required on a timelog.** The date is the day the work belongs to, not when it was entered, and `hours` is what every report totals.
+- **Webhooks are configured in the app.** Wrike has no REST route for creating one, so the plugin is REST-only rather than pretending to manage them.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/wrike better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/wrike better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/wrike better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/wrike better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { wrike } from '@corsair-dev/wrike';
+
+export const corsair = createCorsair({
+	plugins: [
+		wrike(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+wrike()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'wrike',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Page through active tasks**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wrike.api.tasks.list({ pageSize: 25 });
+```
+
+
+**Create a task in a folder**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship the new checkout' });
+```
+
+
+See the full list on the [API](/plugins/wrike/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/wrike/api">
+    Every `wrike.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
