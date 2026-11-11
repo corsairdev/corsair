@@ -1627,6 +1627,14 @@
                 ]
               },
               {
+                "group": "Databox",
+                "pages": [
+                  "plugins/databox/overview",
+                  "plugins/databox/api",
+                  "plugins/databox/database"
+                ]
+              },
+              {
                 "group": "Databricks",
                 "pages": [
                   "plugins/databricks/overview",
