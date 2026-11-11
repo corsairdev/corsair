@@ -299,7 +299,7 @@ const imageKitEndpointMeta = {
 	'files.rename': {
 		riskLevel: 'write',
 		description:
-			'Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId',
+			'Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId. If the purge fails (e.g. quota exceeded), the rename still happens and the answer has reason PURGE_FAILED instead',
 	},
 	'files.addTags': {
 		riskLevel: 'write',

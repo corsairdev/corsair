@@ -444,7 +444,7 @@ const FilesRenameInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer.',
+			'Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer, or reason PURGE_FAILED when the rename worked but the purge did not.',
 		),
 });
 

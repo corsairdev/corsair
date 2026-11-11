@@ -483,7 +483,7 @@ await corsair.imagekit.api.files.removeTags({ fileIds: ['598821f949c0a938d57563b
 
 `files.rename`
 
-Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId
+Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId. If the purge fails (e.g. quota exceeded), the rename still happens and the answer has reason PURGE_FAILED instead
 
 **Risk:** `write`
 
@@ -497,7 +497,7 @@ await corsair.imagekit.api.files.rename({ filePath: '/products/old.jpg', newFile
 |------|------|----------|-------------|
 | `filePath` | `string` | Yes | Path of the file to rename. |
 | `newFileName` | `string` | Yes | New file name, without the folder. |
-| `purgeCache` | `boolean` | No | Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer. |
+| `purgeCache` | `boolean` | No | Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer, or reason PURGE_FAILED when the rename worked but the purge did not. |
 
 
 
