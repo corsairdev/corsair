@@ -1,0 +1,143 @@
+---
+title: Overview
+description: "AI pipelines and agents with VectorShift - run pipelines singly or in bulk, create them from a graph, create and query knowledge bases, run chatbots, and execute Python transformations in VectorShift's sandbox."
+---
+
+Use **VectorShift** through Corsair: one client, typed API calls.
+
+Create a key in VectorShift: click the logo, then Profile, then the API Keys tab. Calls go to `https://api.vectorshift.ai/v1` with the key as a Bearer token.
+
+- **The API is published as a beta.** The docs say so explicitly and warn that error codes and response formats may change. Nothing here depends on that changing, but treat any surprise in the response bodies as possible rather than impossible.
+- **A 200 can still mean failure.** Every response is `{ status: 'success' | 'failed', ... }`, so a run that failed arrives with HTTP 200. The plugin treats only `success` as a result and raises a `VectorshiftRunFailedError` carrying the `error` text otherwise — a silent failure would otherwise look like an empty success. A failed run is never retried, since a pipeline may already have had side effects.
+- **`GET /v1` is not the API root.** `https://api.vectorshift.ai/v1` is a 404 and `https://api.vectorshift.ai/` answers `{"Ping":"Pong"}`. The routes live under `/v1`, so the base carries it.
+- **Errors are `{ error: "..." }`.** A missing key sends its own messages — `Missing authorization header`, `Invalid authorization header format`, `Invalid API key` — rather than a code, and a bad key adds a parser detail after the prefix, so the plugin matches on the start of the message.
+- **Singular and plural routes disagree.** A knowledge base is fetched with `GET /knowledge-bases` (plural) but queried with `POST /knowledge-base/{id}/query` (singular). Both are wrapped as they are documented; mixing them up is a 404.
+- **A knowledge base is looked up by id or by name, never both.** `username` and `org_name` narrow a name lookup and are rejected with an id.
+- **Creating a chatbot needs the node names.** `input` and `output` are required, not optional — a wrong node name produces a chatbot that answers nothing, so the schema keeps them required instead of defaulting them.
+- **A chatbot takes text or audio, never both**, and a reply carries a `conversation_id` to continue the thread. `stream: true` is not offered: the plugin reads JSON, and the streamed variant is server-sent events.
+- **A pipeline can be run once or many times.** `pipelines.bulkRun` takes one entry per run and executes them in parallel, each with its own `run_id` and outputs.
+- **A pipeline `config` is passed through unchanged.** Its shape belongs to the visual builder; the API only requires that it is present, so the plugin does not try to model it.
+- **Outputs are typed but open.** A pipeline output is a string, number, boolean, list, map or file; a file arrives as base64 `raw_bytes` with `metadata`. All of them pass through as-is.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/vectorshift better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/vectorshift better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/vectorshift better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/vectorshift better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { vectorshift } from '@corsair-dev/vectorshift';
+
+export const corsair = createCorsair({
+	plugins: [
+		vectorshift(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+vectorshift()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'vectorshift',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List pipelines**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.vectorshift.api.pipelines.list({ verbose: true });
+```
+
+
+**Run a pipeline with a question**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.vectorshift.api.pipelines.run({
+	id: 'pl_7f3a2b',
+	inputs: { question: 'Where is my refund?' },
+});
+```
+
+
+See the full list on the [API](/plugins/vectorshift/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/vectorshift/api">
+    Every `vectorshift.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

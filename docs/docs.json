@@ -3734,6 +3734,14 @@
                 ]
               },
               {
+                "group": "VectorShift",
+                "pages": [
+                  "plugins/vectorshift/overview",
+                  "plugins/vectorshift/api",
+                  "plugins/vectorshift/database"
+                ]
+              },
+              {
                 "group": "Vercel",
                 "pages": [
                   "plugins/vercel/overview",

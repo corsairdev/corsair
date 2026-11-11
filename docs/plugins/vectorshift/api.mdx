@@ -1,0 +1,488 @@
+---
+title: API
+description: "API reference for VectorShift: every `vectorshift.api.*` operation with input and output types."
+---
+
+Every `vectorshift.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chatbots
+
+### create
+
+`chatbots.create`
+
+Create a chatbot over a pipeline, naming the input and output nodes its messages use
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.chatbots.create({ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipeline` | `object` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `deployment_options` | `Record<string, any>` | Yes | — |
+| `access_config` | `Record<string, any>` | Yes | — |
+| `twilio_config` | `Record<string, any>` | Yes | — |
+| `slack_config` | `Record<string, any>` | Yes | — |
+| `deployed` | `boolean` | Yes | — |
+| `input` | `string` | Yes | The pipeline input node the message is fed to. |
+| `output` | `string` | Yes | The pipeline output node the reply is read from. |
+
+<AccordionGroup>
+<Accordion title="pipeline full type">
+
+```ts
+{
+  id: string,
+  version?: latest | {
+    major: number,
+    minor: number,
+    patch: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `id` | `string \| null` | No | — |
+
+
+
+---
+
+### run
+
+`chatbots.run`
+
+Send a text or audio message to a chatbot and read its reply, continuing a conversation by id
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.chatbots.run({ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `audio` | `string` | No | Base64-encoded audio. |
+| `conversation_id` | `string` | No | Continue an existing conversation. Omit to start one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `conversation_id` | `string \| null` | No | Pass this back to continue the conversation. |
+| `output_message` | `string \| null` | No | — |
+| `follow_up_questions` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Knowledge Bases
+
+### create
+
+`knowledgeBases.create`
+
+Create a knowledge base, choosing the file parser, chunk size and overlap
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.knowledgeBases.create({ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `file_processing_implementation` | `Default \| Textract \| Unstructured \| LlamaParse \| Other` | No | Which parser reads uploaded files. |
+| `chunk_size` | `number` | No | — |
+| `chunk_overlap` | `number` | No | — |
+| `analyze_documents` | `boolean` | No | — |
+| `apify_key` | `string` | No | Only for the Apify-backed implementation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `id` | `string \| null` | No | The new knowledge base id. |
+
+
+
+---
+
+### get
+
+`knowledgeBases.get`
+
+Read one knowledge base by id, or by name with an optional owner
+
+**Risk:** `read`
+
+```ts
+await corsair.vectorshift.api.knowledgeBases.get({ id: 'kb_4d2f9a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | The knowledge base name, as an alternative to the id. |
+| `username` | `string` | No | Narrows a name lookup to a user. Only with `name`. |
+| `org_name` | `string` | No | Narrows a name lookup to an organization. Only with `name`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `object` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### query
+
+`knowledgeBases.query`
+
+Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.knowledgeBases.query({ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The knowledge base id. |
+| `queries` | `string[]` | Yes | One or more questions, answered against the same retrieval. |
+| `context` | `string` | No | Extra context for the answer. |
+| `search_metadata` | `object` | No | — |
+| `config` | `object` | No | Retrieval and answering switches. Every field is optional. |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  filter?: string,
+  opensearch_filter?: string,
+  top_k?: number,
+  group_by_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="config full type">
+
+```ts
+{
+  rerank_documents?: boolean,
+  generate_metadata_filters?: boolean,
+  transform_query?: boolean,
+  answer_multi_query?: boolean,
+  expand_query?: boolean,
+  do_advanced_qa?: boolean,
+  format_context_for_llm?: boolean,
+  generate_ai_doc_summaries?: boolean,
+  retrieval_unit?: string,
+  score_cutoff?: number,
+  retrieval_config?: {
+    max_documents?: number,
+    data_fusion_method?: string
+  },
+  reranking_config?: {
+    reranking_model?: string,
+    api_key?: string,
+    num_chunks_to_rerank?: number
+  },
+  question_answering_config?: {
+    qa_model?: string,
+    advanced_qa_mode?: string
+  },
+  hybrid_search_config?: {
+    alpha?: number,
+    fusion_method?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `result` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Pipelines
+
+### bulkRun
+
+`pipelines.bulkRun`
+
+Run one pipeline once per entry in parallel, with separate inputs and a run id each
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The pipeline id to run repeatedly. |
+| `runs` | `object[]` | Yes | One entry per run, each with its own inputs. Run in parallel. |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+  inputs?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `run_outputs` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="run_outputs full type">
+
+```ts
+{
+  run_id?: string | null,
+  outputs?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`pipelines.create`
+
+Create a pipeline from a builder graph, passed through unchanged
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.pipelines.create({ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `config` | `Record<string, any>` | Yes | The pipeline graph. Required by the API but its shape is defined by the builder, so it is passed through unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `id` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List pipeline ids, optionally including shared pipelines and the full objects
+
+**Risk:** `read`
+
+```ts
+await corsair.vectorshift.api.pipelines.list({ include_shared: true, verbose: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_shared` | `boolean` | No | Also list pipelines shared with you. |
+| `verbose` | `boolean` | No | Also return the full pipeline objects, not only their ids. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `object_ids` | `string[] \| null` | No | — |
+| `objects` | `Record<string, any>[] \| null` | No | — |
+
+
+
+---
+
+### run
+
+`pipelines.run`
+
+Run a pipeline with the given inputs and read back every output node value
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.pipelines.run({ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The pipeline id. |
+| `inputs` | `Record<string, any>` | No | Input name to value, matching the pipeline input nodes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `run_id` | `string \| null` | No | — |
+| `outputs` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Transformations
+
+### create
+
+`transformations.create`
+
+Create a transformation from a Python function and its input and output schemas
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.transformations.create({ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `function_name` | `string` | Yes | The Python function to call. |
+| `function` | `string` | Yes | The function source. |
+| `input_schema` | `Record<string, string>` | Yes | Argument name to type, for the generated signature. |
+| `output_schema` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `id` | `string \| null` | No | — |
+
+
+
+---
+
+### run
+
+`transformations.run`
+
+Run a transformation in VectorShift's sandbox with the given arguments
+
+**Risk:** `write`
+
+```ts
+await corsair.vectorshift.api.transformations.run({ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `inputs` | `Record<string, string \| number \| boolean \| any[] \| Record<string, any>>` | Yes | Argument name to value, matching the transformation input schema. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failed` | Yes | — |
+| `result` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
