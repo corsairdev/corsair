@@ -77,7 +77,10 @@ function expectAuthenticated() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unmocked call throws instead of reaching api.databox.com.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch');
+	});
 	mockLog.mockClear();
 });
 
