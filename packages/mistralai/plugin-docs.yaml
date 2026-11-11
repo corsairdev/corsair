@@ -3,3 +3,136 @@ displayName: Mistral AI
 description: Mistral AI's model API. Run chat, fill-in-the-middle and agent completions, create embeddings, moderate and classify text, read documents with OCR, transcribe and synthesize speech, and manage models, files, batch jobs and agents.
 domain: mistral.ai
 recommendedAuth: api_key
+overviewNote: |
+  Each operation returns one JSON result: streaming is off for completions, responses, speech and transcription. Files and audio go in as base64 (`content_base64` with a `filename`); `files.getSignedUrl` gives a download link for a file's content, such as a batch job's results.
+
+  A batch job runs on Mistral after `batch.create` returns. Follow it with `batch.get({ job_id })` until `status` is SUCCESS (read `output_file` with `files.getSignedUrl`), or FAILED, TIMEOUT_EXCEEDED or CANCELLED. QUEUED, RUNNING and CANCELLATION_REQUESTED mean it is still going.
+
+  `agents.*` other than `agents.complete` are Mistral beta endpoints. A 422 from Mistral names each rejected field in the error message, for example `body.messages.0.content: Field required`.
+examples:
+  read:
+    path: models.list
+    title: List the models this key can use
+    args: {}
+  write:
+    path: chat.complete
+    title: Ask a model a question
+    args:
+      model: mistral-small-latest
+      messages:
+        - role: user
+          content: In one sentence, what is retrieval-augmented generation?
+apiNotes:
+  chat.complete: '`stream` is always false; the answer is in `choices[0].message.content`. Pass `response_format: { type: "json_schema", json_schema: { name, schema } }` for structured output.'
+  batch.create: Pass exactly one of `input_files` (ids of `.jsonl` files uploaded with purpose `batch`, one request per line) or `requests` inline. Every request goes to `endpoint`.
+  batch.cancel: Cancellation is a request; `batch.get` shows CANCELLATION_REQUESTED until the job reaches CANCELLED. There is no operation to resume a cancelled job.
+  files.upload: '`content_base64` is the file content; a `data:` URL prefix is accepted. Use purpose `batch` for batch input, `fine-tune` for training data, `ocr` for documents.'
+  audio.transcribe: Pass exactly one of `content_base64` (with `filename`), `file_url` or `file_id`.
+  audio.speech: '`audio_data` is base64 audio in `response_format` (mp3 by default).'
+  agents.list: Page with `page_token`, the `next_page_token` of the previous page.
+  models.unarchive: Uses HTTP DELETE on the archive route, but only undoes `models.archive`.
+apiExamples:
+  chat.complete:
+    call: "{ model: 'mistral-small-latest', messages: [{ role: 'system', content: 'Answer briefly.' }, { role: 'user', content: 'Capital of France?' }], temperature: 0.2 }"
+  fim.complete:
+    call: "{ model: 'codestral-latest', prompt: 'def fibonacci(n):', suffix: 'print(fibonacci(10))', max_tokens: 64 }"
+  agents.complete:
+    call: "{ agent_id: '<agent id>', messages: [{ role: 'user', content: 'Summarize ticket #4521' }] }"
+  agents.create:
+    call: "{ model: 'mistral-medium-latest', name: 'Support triage', instructions: 'Classify each ticket and answer in one sentence.', tools: [{ type: 'web_search' }] }"
+  agents.list:
+    call: "{ page_size: 20, search: 'support' }"
+  agents.get:
+    call: "{ agent_id: '<agent id>', agent_version: 'production' }"
+  agents.update:
+    call: "{ agent_id: '<agent id>', instructions: 'Answer in two sentences at most.', version_message: 'Shorter answers' }"
+  agents.delete:
+    call: "{ agent_id: '<agent id>' }"
+  agents.setVersion:
+    call: "{ agent_id: '<agent id>', version: 2 }"
+  agents.listVersions:
+    call: "{ agent_id: '<agent id>', page: 0, page_size: 10 }"
+  agents.getVersion:
+    call: "{ agent_id: '<agent id>', version: '2' }"
+  agents.listAliases:
+    call: "{ agent_id: '<agent id>' }"
+  agents.upsertAlias:
+    call: "{ agent_id: '<agent id>', alias: 'production', version: 2 }"
+  agents.deleteAlias:
+    call: "{ agent_id: '<agent id>', alias: 'staging' }"
+  embeddings.create:
+    call: "{ model: 'mistral-embed', input: ['How do I reset my password?', 'Billing questions'] }"
+  classifiers.moderate:
+    call: "{ model: 'mistral-moderation-latest', input: ['Text to check'] }"
+  classifiers.moderateChat:
+    call: "{ model: 'mistral-moderation-latest', input: [{ role: 'user', content: 'Message to check' }] }"
+  classifiers.classify:
+    call: "{ model: '<fine-tuned classifier id>', input: ['I want a refund for my order'] }"
+  classifiers.classifyChat:
+    call: "{ model: '<fine-tuned classifier id>', input: { messages: [{ role: 'user', content: 'I want a refund' }] } }"
+  ocr.process:
+    call: "{ model: 'mistral-ocr-latest', document: { type: 'document_url', document_url: 'https://arxiv.org/pdf/2201.04234' }, pages: [0, 1] }"
+  audio.speech:
+    call: "{ input: 'Your order has shipped.', voice_id: '<voice id>', response_format: 'mp3' }"
+  audio.transcribe:
+    call: "{ model: 'voxtral-mini-latest', file_url: 'https://example.com/call.mp3', timestamp_granularities: ['segment'] }"
+  voices.list:
+    call: "{ type: 'preset', page_size: 20 }"
+  voices.get:
+    call: "{ voice_id: '<voice id>' }"
+  voices.create:
+    call: "{ name: 'Narrator', languages: ['en'], sample_audio: '<base64 audio>', sample_filename: 'sample.wav' }"
+  voices.update:
+    call: "{ voice_id: '<voice id>', tags: ['calm', 'narration'] }"
+  voices.delete:
+    call: "{ voice_id: '<voice id>' }"
+  audioAgents.list:
+    call: "{ page_size: 10 }"
+  audioAgents.get:
+    call: "{ agent_id: '<audio agent id>' }"
+  audioAgents.create:
+    call: "{ name: 'Receptionist', configuration: { llm: { model: 'mistral-small-latest' }, tts: { voice_id: '<voice id>' }, instructions: 'Greet callers and take a message.' } }"
+  audioAgents.update:
+    call: "{ agent_id: '<audio agent id>', name: 'Receptionist', configuration: { welcome_message: 'Hello, how can I help?' } }"
+  audioAgents.delete:
+    call: "{ agent_id: '<audio agent id>' }"
+  audioAgents.listVersions:
+    call: "{ agent_id: '<audio agent id>', page_size: 10 }"
+  audioAgents.listSessions:
+    call: "{ agent_id: '<audio agent id>', page_size: 10 }"
+  models.list:
+    call: "{}"
+  models.get:
+    call: "{ model_id: 'mistral-small-latest' }"
+  models.delete:
+    call: "{ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' }"
+  models.update:
+    call: "{ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>', name: 'Support tone v2' }"
+  models.archive:
+    call: "{ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' }"
+  models.unarchive:
+    call: "{ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' }"
+  files.list:
+    call: "{ purpose: 'batch', page: 0, page_size: 20 }"
+  files.upload:
+    call: "{ filename: 'requests.jsonl', content_base64: '<base64 .jsonl>', purpose: 'batch' }"
+  files.get:
+    call: "{ file_id: '<file id>' }"
+  files.delete:
+    call: "{ file_id: '<file id>' }"
+  files.getSignedUrl:
+    call: "{ file_id: '<file id>', expiry: 1 }"
+  batch.list:
+    call: "{ status: ['RUNNING', 'QUEUED'], page_size: 20 }"
+  batch.create:
+    call: "{ endpoint: '/v1/chat/completions', model: 'mistral-small-latest', input_files: ['<file id>'] }"
+  batch.get:
+    call: "{ job_id: '<batch job id>' }"
+  batch.delete:
+    call: "{ job_id: '<batch job id>' }"
+  batch.cancel:
+    call: "{ job_id: '<batch job id>' }"
+  responses.create:
+    call: "{ model: 'mistral-medium-latest', input: 'Draft a two-line release note for v2.1', max_output_tokens: 120 }"
+  responses.countInputTokens:
+    call: "{ model: 'mistral-medium-latest', input: 'Draft a two-line release note for v2.1' }"
