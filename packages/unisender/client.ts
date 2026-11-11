@@ -122,31 +122,44 @@ function failure(body: unknown): { message?: string; code?: string } {
 }
 
 /**
- * True when a body is Unisender's error envelope. Most failures carry a non-2xx
- * status, but a body with a `code` and no `result` is a refusal either way, and the
- * client checks so a failure can never reach an output schema as a result.
+ * True when a body is Unisender's error envelope. A refusal carries a string `code`,
+ * and the docs show one that also includes `"result": ""`; checking `result` first
+ * would treat that refusal as a success on a permissive schema such as
+ * `lists.delete`. A string `code` wins over a present `result`.
  * unknown: the body is untyped until `failure` narrows it.
  */
 export function isUnisenderFailure(body: unknown): boolean {
 	const record = asRecord(body);
 	if (!record) return false;
-	return record.result === undefined && typeof record.code === 'string';
+	return typeof record.code === 'string' && record.code.length > 0;
 }
 
 /**
  * Builds the message for an error body. The `code` is the part a caller can act on,
  * so it goes first and the long `error` text follows.
+ *
+ * A wrong key is echoed verbatim in the provider's text
+ * (`There is no user with api_key 'BADKEY'`), so the submitted key is redacted here.
+ * Dropping the `ApiError` cause was not enough on its own: the message itself would
+ * carry the key into logs and into anything that serialises the error.
  * unknown: the body is untyped until `failure` narrows it.
  */
 export function describeUnisenderError(
 	status: number | undefined,
 	body: unknown,
 	fallback: string,
+	apiKey?: string,
 ): string {
 	const { message, code } = failure(body);
-	const text = message ?? fallback;
+	const text = redactKey(message ?? fallback, apiKey);
 	const label = [status, code].filter((part) => part !== undefined).join(' ');
 	return label ? `Unisender ${label}: ${text}` : text;
+}
+
+/** Replaces every occurrence of the submitted key with a placeholder. */
+export function redactKey(text: string, apiKey?: string): string {
+	if (!apiKey || apiKey.length === 0) return text;
+	return text.split(apiKey).join('[redacted]');
 }
 
 /**
@@ -214,16 +227,32 @@ export function encodeForm(form: UnisenderForm): string {
 		if (value === undefined) continue;
 		if (Array.isArray(value)) {
 			for (const entry of value) {
-				parts.push(
-					`${encodeURIComponent(`${key}[]`)}=${encodeURIComponent(entry)}`,
-				);
+				parts.push(`${encodeFormKey(`${key}[]`)}=${encodeURIComponent(entry)}`);
 			}
 			continue;
 		}
-		if (value === '') continue;
-		parts.push(`${key}=${encodeURIComponent(String(value))}`);
+		parts.push(`${encodeFormKey(key)}=${encodeURIComponent(String(value))}`);
 	}
 	return parts.join('&');
+}
+
+/**
+ * Encodes a form key while keeping the bracket syntax Unisender requires.
+ *
+ * A caller-supplied field name reaches this as part of a bracketed key such as
+ * `fields[order+id]`, and `fields` / `metadata` names are arbitrary. Passing them
+ * through raw let `&`, `+` and `=` inside a name start or end a parameter, so a
+ * name could add its own argument: `fields[x]&overwrite=1&y` would overwrite a
+ * contact's fields on what the caller expected to be a plain subscribe. Only the
+ * brackets stay literal; everything inside a segment is percent-encoded.
+ */
+function encodeFormKey(key: string): string {
+	return key
+		.split(/([[\]])/)
+		.map((part) =>
+			part === '[' || part === ']' ? part : encodeURIComponent(part),
+		)
+		.join('');
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema.
@@ -251,7 +280,7 @@ export async function makeUnisenderRequest(
 			// The cause holds the request, and with it the api_key in the body, so the
 			// fields the handlers need are copied and the cause is dropped.
 			throw new UnisenderAPIError(
-				describeUnisenderError(error.status, error.body, error.message),
+				describeUnisenderError(error.status, error.body, error.message, apiKey),
 				{
 					status: error.status,
 					code: fields.code,

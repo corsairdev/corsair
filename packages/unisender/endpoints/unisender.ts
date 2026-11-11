@@ -137,9 +137,15 @@ export const subscribe: UnisenderEndpoints['contactsSubscribe'] = (
 			tags: tags && tags.length > 0 ? csv(tags) : undefined,
 		}),
 		{
+			// The response carries only person_id; the contact's confirmation status is
+			// not in it, so it is not logged as though it were.
 			log: (parsed, result) => ({
 				lists: parsed.list_ids.length,
-				status: result.result.email?.status ?? undefined,
+				personId:
+					result.result.person_id === null ||
+					result.result.person_id === undefined
+						? undefined
+						: String(result.result.person_id),
 			}),
 		},
 	);
@@ -223,22 +229,18 @@ export const importContacts: UnisenderEndpoints['contactsImport'] = (
 			replayable: false,
 		},
 		input,
-		({ list_ids, field_names, data, overwrite_tags, overwrite_lists }) => ({
+		({ field_names, data, overwrite_tags, overwrite_lists }) => ({
 			...bracketForm('field_names', field_names),
 			...bracketForm('data', data),
-			...bracketForm('list_ids', list_ids),
 			overwrite_tags,
 			overwrite_lists,
 		}),
 		{
-			log: (parsed, result) => {
-				const rows = Object.values(result.result);
-				return {
-					rows: parsed.data.length,
-					created: rows.reduce((sum, row) => sum + (row.created ?? 0), 0),
-					skipped: rows.reduce((sum, row) => sum + (row.skipped ?? 0), 0),
-				};
-			},
+			log: (parsed, result) => ({
+				rows: parsed.data.length,
+				inserted: result.result.inserted ?? 0,
+				invalid: result.result.invalid ?? 0,
+			}),
 		},
 	);
 
@@ -427,10 +429,18 @@ export const sendEmail: UnisenderEndpoints['messagesSendEmail'] = (
 			...bracketForm('metadata', metadata ?? {}),
 		}),
 		{
-			log: (_, result) => ({
-				sent: result.result.length,
-				emailId: result.result[0]?.email_id ?? undefined,
-			}),
+			// The answer is an object for the default call and an array when
+			// `error_checking` is set, so both are read.
+			log: (_, result) => {
+				const answer = result.result;
+				const rows = Array.isArray(answer) ? answer : [answer];
+				const first = rows[0]?.email_id;
+				return {
+					sent: rows.length,
+					emailId:
+						first === null || first === undefined ? undefined : String(first),
+				};
+			},
 		},
 	);
 

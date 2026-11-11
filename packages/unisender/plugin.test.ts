@@ -79,23 +79,25 @@ describe('unisender plugin definition', () => {
 		}
 	});
 
-	it('marks the three deletes as destructive', () => {
+	it('marks the deletes and the import as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
 			(operation) =>
 				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
 		);
 
-		expect(destructive.sort()).toEqual(['fields.delete', 'lists.delete']);
+		// contacts.import is here because its `delete` column removes contacts, so a
+		// cautious caller must approve it like any other destructive call.
+		expect(destructive.sort()).toEqual([
+			'contacts.import',
+			'fields.delete',
+			'lists.delete',
+		]);
 	});
 
 	it('marks the sends as writes, since each reaches recipients', () => {
 		const meta = plugin.endpointMeta ?? {};
-		for (const operation of [
-			'messages.sendEmail',
-			'campaigns.create',
-			'contacts.import',
-		]) {
+		for (const operation of ['messages.sendEmail', 'campaigns.create']) {
 			expect(meta[operation as keyof typeof meta]?.riskLevel).toBe('write');
 		}
 	});

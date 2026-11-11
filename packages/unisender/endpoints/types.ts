@@ -77,7 +77,9 @@ const ListsDeleteInputSchema = z.object({
 
 export type ListsDeleteInput = z.infer<typeof ListsDeleteInputSchema>;
 
-const ListsDeleteResponseSchema = resultOf(z.unknown());
+// The documented success is `{"result": ""}`, an empty acknowledgement rather than
+// a record; a strict object schema would reject it, so the empty string is modelled.
+const ListsDeleteResponseSchema = resultOf(z.literal(''));
 
 export type ListsDeleteResponse = z.infer<typeof ListsDeleteResponseSchema>;
 
@@ -128,8 +130,27 @@ const ContactsGetResponseSchema = resultOf(
 	z
 		.object({
 			email: ContactEmailSchema.nullish(),
-			lists: z.array(ListSchema).nullish(),
-			fields: z.array(z.record(z.string(), z.unknown())).nullish(),
+			// With include_lists the ids arrive as strings, so both forms are accepted.
+			lists: z
+				.array(
+					z
+						.object({
+							id: z
+								.union([z.number(), z.string()])
+								.nullish()
+								.describe('Numeric in some responses, a string in others.'),
+							name: z.string().nullish(),
+						})
+						.loose(),
+				)
+				.nullish(),
+			// With include_fields the values come back keyed by field name, not an array.
+			fields: z
+				.union([
+					z.record(z.string(), z.unknown()),
+					z.array(z.record(z.string(), z.unknown())),
+				])
+				.nullish(),
 			details: z.record(z.string(), z.unknown()).nullish(),
 		})
 		.loose(),
@@ -147,18 +168,19 @@ const ContactsSubscribeInputSchema = z.object({
 		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
 		.optional()
 		.describe('Custom field name to value, sent as fields[<name>]=value.'),
-	// Unisender documents 0, 1 and 3: 0 sends no confirmation, 1 does, 3 adds
-	// without any email at all.
+	// Unisender documents 0, 3 and 4 only; 1 is not a valid value.
 	double_optin: z
-		.union([z.literal(0), z.literal(1), z.literal(3)])
+		.union([z.literal(0), z.literal(3), z.literal(4)])
 		.optional()
 		.describe(
-			"0 adds without a confirmation email, 1 sends one, 3 adds without any email. Defaults to Unisender's own choice.",
+			'0 sends a confirmation invitation and leaves the contact unconfirmed until it is accepted, 3 adds the contact as new with no email, 4 adds it silently when it already exists in your lists and sends an invitation otherwise.',
 		),
 	overwrite: z
-		.union([z.literal(0), z.literal(1)])
+		.union([z.literal(0), z.literal(1), z.literal(2)])
 		.optional()
-		.describe("1 overwrites the contact's existing field values."),
+		.describe(
+			'0 adds new fields and tags and keeps existing ones, 1 REPLACES every field and tag and removes the contact from all lists not named in list_ids, 2 replaces only the fields you send and keeps the rest.',
+		),
 	tags: z
 		.array(z.string())
 		.max(10)
@@ -171,20 +193,13 @@ export type ContactsSubscribeInput = z.infer<
 >;
 
 /**
- * A subscribe answers a `person` object plus a per-address result, whose `status`
- * says what happened: `new`, `invited`, `active`, `unsubscribed` or an error string.
+ * A subscribe answers `{"result": {"person_id": <int>}}` and nothing else. The
+ * contact's confirmation status is not in this response; read it with contacts.get.
  */
 const ContactsSubscribeResponseSchema = resultOf(
 	z
 		.object({
-			person: z.record(z.string(), z.unknown()).nullish(),
-			email: z
-				.object({
-					email: z.string().nullish(),
-					status: z.string().nullish(),
-				})
-				.loose()
-				.nullish(),
+			person_id: z.union([z.number(), z.string()]).nullish(),
 		})
 		.loose(),
 );
@@ -235,15 +250,11 @@ export type ContactsExcludeResponse = z.infer<
 >;
 
 const ContactsImportInputSchema = z.object({
-	list_ids: z
-		.array(ListIdSchema)
-		.min(1)
-		.describe('The lists to add every imported contact to.'),
 	field_names: z
 		.array(z.string().min(1))
 		.min(1)
 		.describe(
-			'The column names, which must include email. `tags` is a comma-separated tag list and `delete` set to 1 removes the contact.',
+			'The column names, which must include email. `email_list_ids` is a comma-separated list of list codes to subscribe each row to, `tags` is a comma-separated tag list, and `delete` set to 1 removes the contact.',
 		),
 	data: z
 		.array(z.array(z.union([z.string(), z.number(), z.boolean()])))
@@ -259,25 +270,33 @@ const ContactsImportInputSchema = z.object({
 export type ContactsImportInput = z.infer<typeof ContactsImportInputSchema>;
 
 /**
- * The import answers how many were created, updated and skipped per list, keyed by
- * the list id as a string. A skipped contact is a role address such as `sales@` or a
- * spam trap, which Unisender refuses on purpose.
+ * The import answers one summary for the whole call, counting what happened to each
+ * row. `invalid` covers the role addresses and spam traps Unisender refuses on
+ * purpose, and `log` names the reason for each row it did not take.
  */
 const ContactsImportResponseSchema = resultOf(
-	z.record(
-		z.string(),
-		z
-			.object({
-				created: z.number().nullish(),
-				updated: z.number().nullish(),
-				deleted: z.number().nullish(),
-				skipped: z.number().nullish(),
-				new_emails: z.number().nullish(),
-				invalid: z.number().nullish(),
-				errors: z.array(z.string()).nullish(),
-			})
-			.loose(),
-	),
+	z
+		.object({
+			total: z.number().nullish(),
+			inserted: z.number().nullish(),
+			updated: z.number().nullish(),
+			deleted: z.number().nullish(),
+			new_emails: z.number().nullish(),
+			invalid: z.number().nullish(),
+			role_based: z.number().nullish(),
+			log: z
+				.array(
+					z
+						.object({
+							index: z.union([z.number(), z.string()]).nullish(),
+							code: z.string().nullish(),
+							message: z.string().nullish(),
+						})
+						.loose(),
+				)
+				.nullish(),
+		})
+		.loose(),
 );
 
 export type ContactsImportResponse = z.infer<
@@ -303,7 +322,8 @@ const ContactsCountResponseSchema = resultOf(
 	z
 		.object({
 			listId: z.number().nullish(),
-			count: z.number().nullish(),
+			// The documented success body sends "count":"500" as a string.
+			count: z.union([z.number(), z.string()]).nullish(),
 			searchParams: z.record(z.string(), z.unknown()).nullish(),
 		})
 		.loose(),
@@ -386,7 +406,8 @@ const FieldsDeleteInputSchema = z.object({
 
 export type FieldsDeleteInput = z.infer<typeof FieldsDeleteInputSchema>;
 
-const FieldsDeleteResponseSchema = resultOf(z.unknown());
+// Same empty acknowledgement as lists.delete: `{"result": ""}` on success.
+const FieldsDeleteResponseSchema = resultOf(z.literal(''));
 
 export type FieldsDeleteResponse = z.infer<typeof FieldsDeleteResponseSchema>;
 
@@ -436,25 +457,39 @@ export type MessagesSendEmailInput = z.infer<
 >;
 
 /**
- * `sendEmail` answers an array of per-recipient results, each with the `email_id`
- * that `messages.status` takes. There is no field substitution beyond
- * `{{UnsubscribeUrl}}`, which is why this is for transactional mail rather than a
- * campaign.
+ * `sendEmail` answers two different shapes. Without `error_checking` and without a
+ * `cc`, the documented answer is `{"result": {"email_id": N}}`. With `error_checking`
+ * it is an array of per-recipient results, which may carry per-address errors.
+ * Both are accepted; the `email_id` is what `messages.status` takes.
  */
+const MessagesSendEmailResultSchema = z
+	.object({
+		email_id: z
+			.union([z.number(), z.string()])
+			.nullish()
+			.describe('Pass this to messages.status.'),
+		email: z.string().nullish(),
+		message_id: z.number().nullish(),
+		message: z.string().nullish(),
+		index: z.number().nullish(),
+		errors: z
+			.array(
+				z
+					.object({
+						code: z.string().nullish(),
+						message: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+	})
+	.loose();
+
 const MessagesSendEmailResponseSchema = resultOf(
-	z.array(
-		z
-			.object({
-				email_id: z
-					.number()
-					.nullish()
-					.describe('Pass this to messages.status.'),
-				email: z.string().nullish(),
-				message_id: z.number().nullish(),
-				message: z.string().nullish(),
-			})
-			.loose(),
-	),
+	z.union([
+		MessagesSendEmailResultSchema,
+		z.array(MessagesSendEmailResultSchema),
+	]),
 );
 
 export type MessagesSendEmailResponse = z.infer<
@@ -483,7 +518,8 @@ const MessagesStatusResponseSchema = resultOf(
 				.array(
 					z
 						.object({
-							id: z.number().nullish(),
+							// The documented statuses carry string ids.
+							id: z.union([z.number(), z.string()]).nullish(),
 							status: z.string().nullish(),
 						})
 						.loose(),

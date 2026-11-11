@@ -225,9 +225,13 @@ const unisenderEndpointMeta = {
 			'Remove a contact from lists without marking them unsubscribed, so they can be re-added later',
 	},
 	'contacts.import': {
-		riskLevel: 'write',
+		// The documented `delete` column marks contacts for removal, so an import can
+		// destroy data on a call a `cautious` caller would otherwise let through as a
+		// write. Destructive, and not reversible by another import.
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Import up to 500 contacts from columnar data; role addresses such as sales@ are skipped on purpose',
+			'Import up to 500 contacts from columnar data; role addresses such as sales@ are skipped on purpose, and a `delete` column marks contacts for removal',
 	},
 	'contacts.count': {
 		riskLevel: 'read',

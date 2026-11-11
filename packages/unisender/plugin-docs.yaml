@@ -10,7 +10,7 @@ overviewNote: |
   - **Double opt-in.** `contacts.subscribe` takes `double_optin` of 0, 1 or 3. 0 adds the contact with no email, 1 sends a confirmation email, and 3 adds the contact without sending anything and without marking them confirmed. `2` is not a documented value and is rejected by Unisender. A contact added with 1 starts as `invited` and only becomes `active` when they confirm; an `invited` address cannot be mailed.
   - **Unsubscribe versus exclude.** `contacts.unsubscribe` marks the contact unsubscribed, and only the contact can reverse that from a confirmation email. `contacts.exclude` only removes them from the given lists, and they can be subscribed again later.
   - **Imports skip some addresses.** `contacts.import` takes at most 500 rows per call. Unisender deliberately skips role addresses (`sales@`, `no-reply@`) and spam traps and reports them as `skipped`, so an import that reports fewer created than rows sent is normal, not a failure.
-  - **Exports are asynchronous.** `contacts.export` returns an acknowledgement and posts the file to your `notify_url` when it is ready. There is no way to poll for it.
+  - **Exports are asynchronous.** `contacts.export` returns a `task_uuid` and posts the file to your `notify_url` when it is ready. This plugin does not wrap the `async/getTaskResult` poll, so keep the `task_uuid` if the callback may be missed: query it directly to recover the file.
   - **Sending limits.** `messages.sendEmail` accepts a body up to 1 MB, is limited to 1,000 messages a day and 60 calls a minute. `messages.createEmail` accepts a body up to 8 MB. The general allowance is 1,200 calls a minute.
   - **Delivery status is short-lived.** `messages.status` takes up to 500 `email_id` values from `messages.sendEmail`, and Unisender keeps those records for one month. A status beginning `err_` is a failure, `ok_` is a success or still in progress, and `not_sent` is its own case.
   - **A campaign without `start_time` sends immediately.** `campaigns.create` needs a `message_id` from `messages.createEmail`, and `campaigns.list` needs a `from` date and returns at most 10,000 rows a page.
@@ -62,6 +62,6 @@ apiExamples:
   messages.createEmail:
     call: "{ sender_name: 'Acme', sender_email: 'hello@acme.example', subject: 'November news', body: '<p>Hello.</p>', list_id: 1 }"
   campaigns.create:
-    call: "{ message_id: 98765, start_time: '2026-12-01 09:00:00', timezone: 'Europe/Berlin' }"
+    call: "{ message_id: 98765, start_time: '2026-12-01 09:00:00', timezone: 'UTC' }"
   campaigns.list:
     call: "{ from: '2026-01-01 00:00:00', limit: 100 }"

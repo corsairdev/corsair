@@ -105,6 +105,25 @@ describe('Unisender client', () => {
 		expect(error.apiMethod).toBe('getLists');
 	});
 
+	it('never puts the submitted key in the error message', async () => {
+		// The provider echoes the key in its own text, so it has to be redacted.
+		respond(INVALID_KEY, 401);
+
+		const error = await failure(
+			makeUnisenderRequest('BADKEY', {
+				apiMethod: 'getLists',
+				form: {},
+				replayable: true,
+			}),
+		);
+
+		expect(error.message).not.toContain('BADKEY');
+		expect(error.message).toContain('[redacted]');
+		// JSON.stringify hides a cause, so the message itself is what matters here.
+		expect(JSON.stringify(error)).not.toContain('BADKEY');
+		expect(require('node:util').inspect(error)).not.toContain('BADKEY');
+	});
+
 	it('treats a missing key, which is 403 access_denied, as an auth error too', async () => {
 		respond(ACCESS_DENIED, 403);
 
@@ -192,13 +211,13 @@ describe('encodeForm', () => {
 		expect(encodeForm({ title: 'x', tag: undefined })).toBe('title=x');
 	});
 
-	it('drops an empty string', () => {
-		expect(encodeForm({ title: 'x', tag: '' })).toBe('title=x');
+	it('keeps an empty string, which is a value a caller sent on purpose', () => {
+		expect(encodeForm({ title: 'x', tag: '' })).toBe('title=x&tag=');
 	});
 
 	it('encodes an array as repeated key[] entries', () => {
 		expect(encodeForm({ field_names: ['email', 'name'] })).toBe(
-			'field_names%5B%5D=email&field_names%5B%5D=name',
+			'field_names[]=email&field_names[]=name',
 		);
 	});
 
@@ -206,6 +225,21 @@ describe('encodeForm', () => {
 		// URLSearchParams would escape these into one literal name.
 		const encoded = encodeForm({ 'fields[city]': 'Berlin' });
 		expect(encoded).toBe('fields[city]=Berlin');
+	});
+
+	it('escapes a caller-supplied field name so it cannot add a parameter', () => {
+		// `fields[x]&overwrite=1&y` would otherwise send an extra overwrite
+		// argument on a call the caller expected to be a plain subscribe.
+		const encoded = encodeForm({ 'fields[x]&overwrite=1&y': 'v' });
+		expect(encoded).toBe('fields[x]%26overwrite%3D1%26y=v');
+		expect(encoded.split('&')).toHaveLength(1);
+	});
+
+	it('escapes a plus so a field name keeps its meaning', () => {
+		// A raw `+` decodes to a space, so `order+id` would arrive as `order id`.
+		expect(encodeForm({ 'fields[order+id]': '1' })).toBe(
+			'fields[order%2Bid]=1',
+		);
 	});
 
 	it('keeps a numeric value numeric', () => {
@@ -220,6 +254,14 @@ describe('isUnisenderFailure', () => {
 
 	it('does not mistake a result for a failure', () => {
 		expect(isUnisenderFailure(LISTS)).toBe(false);
+	});
+
+	it('reads a refusal that also carries an empty result as a failure', () => {
+		// The docs show `{code, result: ""}`; treating result as the signal would
+		// let this reach a permissive schema as a success.
+		expect(
+			isUnisenderFailure({ code: 'invalid_arg', result: '', error: 'bad' }),
+		).toBe(true);
 	});
 
 	it('does not mistake a void result for a failure', () => {
