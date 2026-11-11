@@ -320,6 +320,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailsso',
 	'mailtrap',
+	'mapbox',
 	'marketstack',
 	'mem0',
 	'memberspot',
@@ -803,6 +804,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
+	mapbox: 'Mapbox',
 	marketstack: 'Marketstack',
 	mem0: 'Mem0',
 	memberspot: 'MemberSpot',
@@ -1293,6 +1295,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailsso'
 	| 'mailtrap'
+	| 'mapbox'
 	| 'marketstack'
 	| 'mem0'
 	| 'memberspot'
