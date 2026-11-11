@@ -189,12 +189,12 @@ const meloEndpointMeta = {
 	'searches.create': {
 		riskLevel: 'write',
 		description:
-			'Create a saved search; with notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there',
+			'Create a saved search; Melo also requires a location (includedCities, includedDepartments, includedZipcodes, lat/lon/radius or geoShapes) and a budget or price per meter bound. With notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there',
 	},
 	'searches.update': {
 		riskLevel: 'write',
 		description:
-			'Replace a saved search (PUT) with a full definition, including the required title, transactionType and propertyTypes',
+			'Update a saved search (PUT) with the required title, transactionType and propertyTypes; fields left out keep their saved values',
 	},
 	'searches.delete': {
 		riskLevel: 'destructive',

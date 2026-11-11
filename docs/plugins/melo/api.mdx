@@ -556,8 +556,8 @@ await corsair.melo.api.properties.get({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c45
   events?: {
     createdAt?: string | null,
     fieldName?: string | null,
-    fieldNewValue?: string | null,
-    fieldOldValue?: string | null,
+    fieldNewValue?: string | number | boolean | null,
+    fieldOldValue?: string | number | boolean | null,
     percentVariation?: number | null
   }[] | null,
   features?: string[] | null,
@@ -864,8 +864,8 @@ await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'
     events?: {
       createdAt?: string | null,
       fieldName?: string | null,
-      fieldNewValue?: string | null,
-      fieldOldValue?: string | null,
+      fieldNewValue?: string | number | boolean | null,
+      fieldOldValue?: string | number | boolean | null,
       percentVariation?: number | null
     }[] | null,
     features?: string[] | null,
@@ -1087,8 +1087,8 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
     events?: {
       createdAt?: string | null,
       fieldName?: string | null,
-      fieldNewValue?: string | null,
-      fieldOldValue?: string | null,
+      fieldNewValue?: string | number | boolean | null,
+      fieldOldValue?: string | number | boolean | null,
       percentVariation?: number | null
     }[] | null,
     features?: string[] | null,
@@ -1209,7 +1209,7 @@ await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8
 
 `searches.create`
 
-Create a saved search; with notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there
+Create a saved search; Melo also requires a location (includedCities, includedDepartments, includedZipcodes, lat/lon/radius or geoShapes) and a budget or price per meter bound. With notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there
 
 **Risk:** `write`
 
@@ -1674,7 +1674,7 @@ await corsair.melo.api.searches.list({});
 
 `searches.update`
 
-Replace a saved search (PUT) with a full definition, including the required title, transactionType and propertyTypes
+Update a saved search (PUT) with the required title, transactionType and propertyTypes; fields left out keep their saved values
 
 **Risk:** `write`
 

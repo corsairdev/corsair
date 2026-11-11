@@ -3,15 +3,18 @@ description: French real-estate listings through the Melo API (Stream Estate) - 
 domain: melo.io
 recommendedAuth: api_key
 overviewNote: |
-  **Melo is the product, Stream Estate is the API.** melo.io is the French real-estate aggregator; its developer API is served from `https://api.stream.estate` and documented at docs.stream.estate (docs.melo.io redirects there). The plugin calls `https://api.stream.estate` and authenticates with the `X-API-KEY` header. Create the key on the API Keys page of the Stream Estate console (stream.estate/console). The API is paid: a subscription, or a trial that asks for a card.
+  **Melo is the product, Stream Estate is the API.** melo.io is the French real-estate aggregator; its developer API is served from `https://api.stream.estate` and documented at docs.stream.estate (docs.melo.io redirects there). The plugin calls `https://api.stream.estate` and authenticates with the `X-API-KEY` header. Create the key on the API Keys page of the Stream Estate console (stream.estate/console). The API is paid: a subscription, or pay-as-you-go per returned item.
 
-  **The live suite has not run.** `api.test.ts` needs `MELO_API_KEY` and no key was available when this plugin was built, so every response shape was written from Melo's documentation. The one route that answers without a key, `/public/location-autocomplete`, was checked against the real API, and a wrong key was confirmed to reach Melo and come back as a 401. Everything else is unverified against live traffic:
+  **Checked live on 11-11** (pay-as-you-go account: free starting credit, then EUR 0.01 per returned item, so ask for small pages). All 13 operations ran through the plugin and `api.test.ts` passes. What the run showed:
 
-  - the response shape of every operation except `indicators.locations` (the documentation's examples are used as fixtures, and the spec's own types are known to be wrong in places, for example a location `id` that is an integer where the spec says string, which is why output schemas are loose)
-  - what `searches.update` replaces (it is a PUT, and the plugin sends the whole search)
-  - the exact answer of `webhooks.simulate`, which the spec leaves undocumented, so the plugin reports `{ sent: true }` on any 2xx
-  - the rate limit: Melo documents a 429 but no limit and no `Retry-After` header, so the plugin retries a 429 up to three times with a 1s, 2s, 4s backoff and uses a `Retry-After` if one ever arrives
-  - the update example in the documentation sets a webhook without `notificationEnabled`, which the notification rules in the same spec forbid, so the plugin follows the rules, not the example
+  - Response shapes match the schemas, with one exception now fixed: advert `events` carry booleans in `fieldOldValue` / `fieldNewValue` when an advert expires, not strings. Location `id` is an integer. No enum value outside the documented ones appeared, though output enums stay open in case one does.
+  - `searches.create` needs more than the spec says: a location (`includedCities`, `includedDepartments`, `includedZipcodes`, `lat`/`lon`/`radius` or `geoShapes`) and one of `budgetMin`, `budgetMax`, `pricePerMeterMin` or `pricePerMeterMax`, or Melo answers 400 naming what is missing.
+  - `searches.update` is a PUT, but fields left out keep their saved values: an update without `budgetMax` or `includedDepartments` kept both.
+  - `webhooks.simulate` answers 200 with `{"success":true,"code":200,"error":null}` and delivers one POST to the endpoint (a `match` payload, or `event` / `adEvent` / `match` for an event type).
+  - `properties.listSimilar` is served by a redirect to a `/documents/properties` search; fetch follows it.
+  - `indicators.pointsOfInterest` answered an empty collection to every query tried, and sometimes took 30 to 40 s, past the 20 s request timeout (the retry then succeeded). Its item shape is still unverified.
+  - No rate-limit headers were seen, so the 429 handling (three retries, 1s/2s/4s backoff, `Retry-After` if one arrives) is still untested.
+  - The update example in the documentation sets a webhook without `notificationEnabled`, which the notification rules in the same spec forbid, so the plugin follows the rules, not the example.
 
   **The OpenAPI spec was the source of truth over earlier notes.** The locations route is `/public/location-autocomplete`, the cities route is `/cities`, and the webhook test route is `GET /webhook-tester`. There are 13 operations, exactly the ones in the spec.
 
