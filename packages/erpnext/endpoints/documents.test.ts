@@ -1,3 +1,4 @@
+
 import { createCorsair } from 'corsair/core';
 import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
@@ -845,6 +846,147 @@ describe('ERPNext tenant host and local document sync', () => {
 			expect(deleteByEntityId).toHaveBeenCalledWith('Customer:CUST-003');
 		} finally {
 			mockFetch.mockRestore();
+		}
+	});
+});
+// Greptile round-3: explicit credentials and the site host must come from
+// the same source — an explicitly configured key pair never travels to a
+// tenant-stored base_url from another account.
+describe('ERPNext same-source host and credential pairing', () => {
+	it('pairs explicit credentials with the explicit baseUrl even when a tenant base_url is stored', async () => {
+		const captures: Array<{ url: URL }> = [];
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url) => {
+				captures.push({ url: new URL(String(url)) });
+				return new Response(
+					JSON.stringify({ data: { doctype: 'Customer', name: 'CUST-004' } }),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			await documentsEndpoints.get(
+				{
+					key: 'explicit-key:explicit-secret',
+					options: {
+						baseUrl: 'https://explicit.example.com',
+						key: 'explicit-key:explicit-secret',
+					},
+					keys: {
+						get_base_url: async () => 'https://tenant-stored.example.com',
+					},
+				},
+				{ doctype: 'Customer', name: 'CUST-004' },
+			);
+			expect(captures).toHaveLength(1);
+			expect(captures[0]?.url.origin).toBe('https://explicit.example.com');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('pairs a bare key plus apiSecret with the explicit baseUrl', async () => {
+		const captures: Array<{ url: URL }> = [];
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url) => {
+				captures.push({ url: new URL(String(url)) });
+				return new Response(
+					JSON.stringify({ data: { doctype: 'Customer', name: 'CUST-007' } }),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			await documentsEndpoints.get(
+				{
+					key: 'split-key:split-secret',
+					options: {
+						baseUrl: 'https://split.example.com',
+						key: 'split-key',
+						apiSecret: 'split-secret',
+					},
+					keys: {
+						get_base_url: async () => 'https://tenant-stored.example.com',
+					},
+				},
+				{ doctype: 'Customer', name: 'CUST-007' },
+			);
+			expect(captures).toHaveLength(1);
+			expect(captures[0]?.url.origin).toBe('https://split.example.com');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('pairs stored credentials with the stored tenant base_url when no explicit credentials are set', async () => {
+		const captures: Array<{ url: URL }> = [];
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url) => {
+				captures.push({ url: new URL(String(url)) });
+				return new Response(
+					JSON.stringify({ data: { doctype: 'Customer', name: 'CUST-005' } }),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			await documentsEndpoints.get(
+				{
+					key: 'stored-key:stored-secret',
+					options: { baseUrl: 'https://shared-fallback.example.com' },
+					keys: {
+						get_base_url: async () => 'https://tenant-stored.example.com',
+					},
+				},
+				{ doctype: 'Customer', name: 'CUST-005' },
+			);
+			expect(captures).toHaveLength(1);
+			expect(captures[0]?.url.origin).toBe('https://tenant-stored.example.com');
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('refuses to fall back to the shared option when a bound tenant has no stored base_url', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch');
+		try {
+			await expect(
+				documentsEndpoints.get(
+					{
+						key: 'stored-key:stored-secret',
+						options: { baseUrl: 'https://shared-fallback.example.com' },
+						keys: { get_base_url: async () => null },
+					},
+					{ doctype: 'Customer', name: 'CUST-008' },
+				),
+			).rejects.toThrow(/missing tenant base_url/);
+			// The token never leaves for the shared fallback host.
+			expect(fetchSpy).not.toHaveBeenCalled();
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+
+	it('propagates a failure to read the stored tenant base_url instead of falling back', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch');
+		try {
+			await expect(
+				documentsEndpoints.get(
+					{
+						key: 'stored-key:stored-secret',
+						options: { baseUrl: 'https://shared-fallback.example.com' },
+						keys: {
+							get_base_url: async () => {
+								throw new Error('key manager unavailable');
+							},
+						},
+					},
+					{ doctype: 'Customer', name: 'CUST-009' },
+				),
+			).rejects.toThrow('key manager unavailable');
+			expect(fetchSpy).not.toHaveBeenCalled();
+		} finally {
+			fetchSpy.mockRestore();
 		}
 	});
 });

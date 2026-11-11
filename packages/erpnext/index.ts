@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { explicitErpnextCredential } from './credentials';
 import type { ErpnextRuntimeSchemas } from './endpoints';
 import {
 	erpnextEndpointMeta,
@@ -152,18 +153,16 @@ async function resolveErpnextCredential(
 	options: ErpnextPluginOptions,
 	ctx: ErpnextKeyBuilderContext,
 ): Promise<string> {
-	if (options.key && options.key.includes(':')) {
-		const [keyPart, secretPart] = options.key.split(':');
-		if (keyPart && secretPart) {
-			return options.key;
-		}
+	// One shared definition of "explicit credentials": the host resolver reads
+	// the same helper, so the chosen credential and site always match.
+	const explicit = explicitErpnextCredential(options);
+	if (explicit.kind === 'credential') {
+		return explicit.value;
+	}
+	if (explicit.kind === 'malformed') {
 		// A malformed compact credential (an empty half) would put `token :`
 		// on the wire; an unusable credential is a missing one.
 		throw new AuthMissingError('erpnext', 'api_key');
-	}
-	const apiKey = options.apiKey ?? options.key;
-	if (apiKey && options.apiSecret) {
-		return `${apiKey}:${options.apiSecret}`;
 	}
 	if (ctx.authType === 'api_key') {
 		// The stored api_key alone is not a usable Frappe credential without
@@ -207,7 +206,9 @@ export function erpnext<const T extends ErpnextPluginOptions>(
 				throw new AuthMissingError('erpnext', 'api_key');
 			}
 
-			const credential = await resolveErpnextCredential(options, ctx);
+			// Read the options from the same request context the host resolver
+			// uses, so credential and site can never come from two sources.
+			const credential = await resolveErpnextCredential(ctx.options, ctx);
 			if (!credential) {
 				throw new AuthMissingError('erpnext', 'api_key');
 			}
