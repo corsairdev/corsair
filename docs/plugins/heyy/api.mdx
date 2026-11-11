@@ -98,7 +98,7 @@ await corsair.heyy.api.apiWebhooks.remove({ webhookId: 'b1a2c3d4-0000-4000-8000-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `webhookId` | `string` | Yes | The webhook to delete. |
+| `webhookId` | `string` | Yes | The webhook to delete, a UUID. |
 
 
 
@@ -221,7 +221,7 @@ await corsair.heyy.api.apiWebhooks.update({ webhookId: 'b1a2c3d4-0000-4000-8000-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `webhookId` | `string` | Yes | The webhook to change. |
+| `webhookId` | `string` | Yes | The webhook to change, a UUID. |
 | `url` | `string` | No | New HTTPS URL for deliveries. |
 | `status` | `active \| inactive` | No | Pause deliveries with `inactive`. |
 | `events` | `object[]` | No | Replace the delivered events. |
@@ -370,7 +370,7 @@ A single_select or multi_select attribute needs `details.options`; any other typ
 
 `attributes.remove`
 
-Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored
+Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored. An id that does not exist fails with 404 attribute_not_found
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -382,7 +382,7 @@ await corsair.heyy.api.attributes.remove({ attributeId: 'b1a2c3d4-0000-4000-8000
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `attributeId` | `string` | Yes | The attribute to delete. |
+| `attributeId` | `string` | Yes | The attribute to delete, a UUID. |
 
 
 
@@ -906,7 +906,7 @@ await corsair.heyy.api.labels.remove({ labelId: 'b1a2c3d4-0000-4000-8000-0000000
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `labelId` | `string` | Yes | The label to delete. |
+| `labelId` | `string` | Yes | The label to delete, a UUID. |
 
 
 
