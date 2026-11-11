@@ -46,6 +46,7 @@ function invoke(endpoint: AnyEndpoint, input: unknown, region?: string) {
 }
 
 let fetchMock: jest.SpyInstance;
+let unmockedFetches = 0;
 
 // unknown: response bodies are arbitrary JSON.
 function respond(body: unknown, status = 200) {
@@ -72,8 +73,11 @@ function lastRequest() {
 
 beforeEach(() => {
 	// Any call a test did not queue a response for throws, so no test can reach
-	// the real API.
+	// the real API. afterEach also fails the test, so a negative test whose
+	// input was wrongly accepted cannot pass on this error instead.
+	unmockedFetches = 0;
 	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		unmockedFetches += 1;
 		throw new Error('unmocked fetch in a unit test');
 	});
 	mockLog.mockClear();
@@ -81,6 +85,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	fetchMock.mockRestore();
+	expect(unmockedFetches).toBe(0);
 });
 
 describe('pdf generation', () => {
