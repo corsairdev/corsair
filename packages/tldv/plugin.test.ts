@@ -1,4 +1,8 @@
-import { AuthMissingError, createCorsair } from 'corsair/core';
+import {
+	AuthMissingError,
+	BASE_AUTH_FIELDS,
+	createCorsair,
+} from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { tldv, tldvAuthConfig, tldvEndpointSchemas } from './index';
 
@@ -63,6 +67,20 @@ describe('tldv plugin definition', () => {
 		// `webhook_signature` comes from the base api_key fields; listing it here
 		// again made it show twice in the catalog's account fields.
 		expect([...tldvAuthConfig.api_key.account]).toEqual(['tenant_external_id']);
+	});
+
+	it('lists each account field once in what the catalog shows', () => {
+		// scripts/build-explorer-catalog.ts joins the base api_key fields and the
+		// plugin's own, so this is the list a setup checklist renders.
+		const fields = [
+			...BASE_AUTH_FIELDS.api_key.account,
+			...tldvAuthConfig.api_key.account,
+		];
+		expect(fields).toEqual([
+			'api_key',
+			'webhook_signature',
+			'tenant_external_id',
+		]);
 	});
 
 	it('registers exactly the six operations', () => {
