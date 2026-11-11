@@ -260,6 +260,131 @@ describe('chat.estimateInputTokens', () => {
 	});
 });
 
+describe('ordinary text model defaults at the request boundary', () => {
+	it('serializes Flash when chat model is omitted', async () => {
+		mockedRequest.mockResolvedValue({ id: 'chat-default' });
+
+		await Chat.completion(ctx, {
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v1/text/chatcompletion_v2',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					model: 'MiniMax-M3.1-Flash',
+					messages: [{ role: 'user', content: 'hi' }],
+				},
+			},
+		);
+	});
+
+	it('preserves explicit M3, legacy, and custom model IDs', async () => {
+		mockedRequest.mockResolvedValue({ id: 'chat-explicit' });
+
+		for (const model of ['MiniMax-M3', 'MiniMax-M2', 'saved-custom-model']) {
+			await Chat.completion(ctx, {
+				model,
+				messages: [{ role: 'user', content: 'hi' }],
+			});
+		}
+
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/text/chatcompletion_v2',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					model: 'MiniMax-M3',
+					messages: [{ role: 'user', content: 'hi' }],
+				},
+			},
+		);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/text/chatcompletion_v2',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					model: 'MiniMax-M2',
+					messages: [{ role: 'user', content: 'hi' }],
+				},
+			},
+		);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/text/chatcompletion_v2',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					model: 'saved-custom-model',
+					messages: [{ role: 'user', content: 'hi' }],
+				},
+			},
+		);
+	});
+
+	it('rejects unsupported Flash options before transport', async () => {
+		await expect(
+			invokeWith(Chat.completion, {
+				messages: [{ role: 'user', content: 'hi' }],
+				thinking: { type: 'disabled' },
+			}),
+		).rejects.toThrow();
+		await expect(
+			invokeWith(Chat.completion, {
+				messages: [{ role: 'user', content: 'hi' }],
+				reasoning_effort: 'none',
+			}),
+		).rejects.toThrow();
+		await expect(
+			invokeWith(Chat.completion, {
+				messages: [{ role: 'user', content: 'hi' }],
+				service_tier: 'priority',
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('uses Flash for Responses and preserves multimodal input', async () => {
+		mockedRequest.mockResolvedValue({ id: 'response-default' });
+
+		await Chat.createResponse(ctx, {
+			input: [
+				{
+					type: 'message',
+					role: 'user',
+					content: [{ type: 'input_text', text: 'hi' }],
+				},
+			],
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v1/responses',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					model: 'MiniMax-M3.1-Flash',
+					input: [
+						{
+							type: 'message',
+							role: 'user',
+							content: [{ type: 'input_text', text: 'hi' }],
+						},
+					],
+				},
+			},
+		);
+	});
+});
+
 describe('speech.t2a', () => {
 	it('sends the text and returns the synthesized audio payload', async () => {
 		const input: MinimaxEndpointInputs['speechT2a'] = {
