@@ -1,0 +1,3776 @@
+---
+title: API
+description: "API reference for Miro: every `miro.api.*` operation with input and output types."
+---
+
+Every `miro.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Boards
+
+### copy
+
+`boards.copy`
+
+Copy an existing board, including its content, into a new board with its own name and team
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.boards.copy({ boardId: 'uXjVK1abcd=', name: 'Copy of roadmap' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board to copy. |
+| `name` | `string` | No | Name for the copy. |
+| `description` | `string` | No | — |
+| `teamId` | `string` | No | Team to put the copy in. |
+| `projectId` | `string` | No | — |
+
+The source board is a required `copy_from` query parameter on a PUT to the collection, which this operation fills from `boardId`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `viewLink` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `currentUserMembership` | `object \| null` | No | — |
+| `policy` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="currentUserMembership full type">
+
+```ts
+{
+  role?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
+  sharingPolicy?: {
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`boards.create`
+
+Create a board with a name, description and sharing policy, optionally in a given team or project
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.boards.create({ name: 'Product roadmap', description: 'Q1 planning' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Board name, up to 60 characters. |
+| `description` | `string` | No | Board description, up to 300 characters. |
+| `teamId` | `string` | No | The team to create it in. |
+| `projectId` | `string` | No | — |
+| `policy` | `object` | No | Sharing and permission settings. |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
+    copyAccess?: anyone | team_members | team_editors | board_owner,
+    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
+  },
+  sharingPolicy?: {
+    access?: private | view | comment | edit,
+    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
+    teamAccess?: private | view | comment | edit
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `viewLink` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `currentUserMembership` | `object \| null` | No | — |
+| `policy` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="currentUserMembership full type">
+
+```ts
+{
+  role?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
+  sharingPolicy?: {
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`boards.get`
+
+Read one board: its name, owner, team, project, sharing policy and the membership of the calling user
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.boards.get({ boardId: 'uXjVK1abcd=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `viewLink` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `currentUserMembership` | `object \| null` | No | — |
+| `policy` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="currentUserMembership full type">
+
+```ts
+{
+  role?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
+  sharingPolicy?: {
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`boards.list`
+
+List the boards the token can reach, filtered by team, project, owner or name, with offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.boards.list({ limit: 10, sort: 'last_modified' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Only boards in this team. |
+| `projectId` | `string` | No | Only boards in this project. |
+| `query` | `string` | No | Only boards whose name contains this text. |
+| `owner` | `string` | No | Only boards owned by this user id. |
+| `sort` | `default \| last_modified \| last_opened \| last_created \| alphabetically` | No | Board ordering. Defaults to Miro own order. |
+| `limit` | `number` | No | Results per page, up to 50. Defaults to 20. |
+| `offset` | `number` | No | Zero-based offset of the first result. Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | Rows matching the filters, across pages. |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `size` | `number \| null` | No | Rows in this page. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  owner?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  team?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  organization?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  projectId?: string | null,
+  viewLink?: string | null,
+  type?: string | null,
+  currentUserMembership?: {
+    role?: string | null
+  } | null,
+  policy?: {
+    permissionsPolicy?: {
+      collaborationToolsStartAccess?: string | null,
+      copyAccess?: string | null,
+      sharingAccess?: string | null
+    } | null,
+    sharingPolicy?: {
+      access?: string | null,
+      inviteToAccountAndBoardLinkAccess?: string | null,
+      organizationAccess?: string | null,
+      teamAccess?: string | null
+    } | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`boards.remove`
+
+Delete a board and everything on it; Miro moves it to Trash, where an owner can restore it in the Miro UI for 90 days, but there is no API call to do so
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.boards.remove({ boardId: 'uXjVK1abcd=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`boards.update`
+
+Change a board name, description or sharing policy; the policy controls who can view, comment and edit
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.boards.update({ boardId: 'uXjVK1abcd=', name: 'Roadmap 2027' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `policy` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: all_editors | board_owners_and_coowners,
+    copyAccess?: anyone | team_members | team_editors | board_owner,
+    sharingAccess?: team_members_with_editing_rights | owner_and_coowners
+  },
+  sharingPolicy?: {
+    access?: private | view | comment | edit,
+    inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor,
+    teamAccess?: private | view | comment | edit
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `modifiedBy` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | The board owner. |
+| `team` | `object \| null` | No | The team the board belongs to. |
+| `organization` | `object \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `viewLink` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `currentUserMembership` | `object \| null` | No | — |
+| `policy` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="modifiedBy full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="currentUserMembership full type">
+
+```ts
+{
+  role?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policy full type">
+
+```ts
+{
+  permissionsPolicy?: {
+    collaborationToolsStartAccess?: string | null,
+    copyAccess?: string | null,
+    sharingAccess?: string | null
+  } | null,
+  sharingPolicy?: {
+    access?: string | null,
+    inviteToAccountAndBoardLinkAccess?: string | null,
+    organizationAccess?: string | null,
+    teamAccess?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### create
+
+`cards.create`
+
+Add a card with a title, description, due date and assignee, for task boards
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.cards.create({ boardId: 'uXjVK1abcd=', title: 'Review designs', dueDate: '2026-12-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `title` | `string` | No | Card title. |
+| `description` | `string` | No | — |
+| `dueDate` | `string` | No | ISO 8601 due date, such as 2026-12-01T00:00:00Z. |
+| `assigneeId` | `string` | No | User id of the assignee. |
+| `cardTheme` | `string` | No | Card colour theme. |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `parentId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    title?: string | null,
+    description?: string | null,
+    dueDate?: string | null,
+    assigneeId?: string | null
+  } | null,
+  style?: {
+    cardTheme?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`cards.update`
+
+Change a card title, description, due date, assignee or position
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.cards.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Reopened' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `dueDate` | `string` | No | — |
+| `assigneeId` | `string` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `cardTheme` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    title?: string | null,
+    description?: string | null,
+    dueDate?: string | null,
+    assigneeId?: string | null
+  } | null,
+  style?: {
+    cardTheme?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connectors
+
+### create
+
+`connectors.create`
+
+Connect two existing items with an arrow, line style, caps and captions; both endpoints must already exist
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.connectors.create({ boardId: 'uXjVK1abcd=', startItemId: '3458764513820541002', endItemId: '3458764513820541003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `startItemId` | `string` | Yes | The item the connector starts from. |
+| `endItemId` | `string` | Yes | The item the connector points at. |
+| `shape` | `straight \| elbowed \| elbow \| curved` | No | The route the line takes. Defaults to `curved`. |
+| `strokeColor` | `string` | No | Line colour, such as #4262ff. |
+| `strokeWidth` | `string` | No | — |
+| `strokeStyle` | `normal \| dotted \| dashed` | No | — |
+| `startStrokeCap` | `none \| stealth \| rounded_stealth \| arrow \| triangle \| filled_triangle` | No | — |
+| `endStrokeCap` | `none \| stealth \| rounded_stealth \| arrow \| triangle \| filled_triangle` | No | — |
+| `captions` | `string[]` | No | Labels shown along the line: up to 20, each up to 200 characters. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  startItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  endItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  shape?: string | null,
+  style?: {
+    strokeColor?: string | null,
+    strokeWidth?: string | null,
+    strokeStyle?: string | null,
+    startStrokeCap?: string | null,
+    endStrokeCap?: string | null
+  } | null,
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`connectors.get`
+
+Read one connector by id
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.connectors.get({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `connectorId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  startItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  endItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  shape?: string | null,
+  style?: {
+    strokeColor?: string | null,
+    strokeWidth?: string | null,
+    strokeStyle?: string | null,
+    startStrokeCap?: string | null,
+    endStrokeCap?: string | null
+  } | null,
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connectors.list`
+
+Page through the connectors on a board, with their endpoints and style
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.connectors.list({ boardId: 'uXjVK1abcd=', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `limit` | `number` | No | Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route. |
+| `cursor` | `string` | No | The `cursor` from the previous page; omit for the first. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectors` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="connectors full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  startItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  endItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  shape?: string | null,
+  style?: {
+    strokeColor?: string | null,
+    strokeWidth?: string | null,
+    strokeStyle?: string | null,
+    startStrokeCap?: string | null,
+    endStrokeCap?: string | null
+  } | null,
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`connectors.remove`
+
+Delete a connector; the two items it joined stay on the board
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.connectors.remove({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `connectorId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`connectors.update`
+
+Change a connector shape, stroke style or captions
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.connectors.update({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007', strokeColor: '#f24726' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `connectorId` | `string` | Yes | — |
+| `shape` | `straight \| elbowed \| elbow \| curved` | No | — |
+| `strokeColor` | `string` | No | — |
+| `strokeWidth` | `string` | No | — |
+| `strokeStyle` | `normal \| dotted \| dashed` | No | — |
+| `captions` | `string[]` | No | Replaces the labels; pass an empty list to remove them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  startItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  endItem?: {
+    id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  shape?: string | null,
+  style?: {
+    strokeColor?: string | null,
+    strokeWidth?: string | null,
+    strokeStyle?: string | null,
+    startStrokeCap?: string | null,
+    endStrokeCap?: string | null
+  } | null,
+  captions?: {
+    content?: string | null,
+    position?: string | null,
+    textAlignVertical?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Embeds
+
+### create
+
+`embeds.create`
+
+Embed content from a URL, such as a video or a web page
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.embeds.create({ boardId: 'uXjVK1abcd=', url: 'https://www.youtube.com/watch?v=abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `url` | `string` | Yes | The page or media URL to embed. |
+| `mode` | `inline \| modal` | No | Defaults to `inline`. |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `parentId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    url?: string | null,
+    mode?: string | null,
+    previewUrl?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`embeds.update`
+
+Change an embed URL, mode, position or size
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.embeds.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', mode: 'modal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `mode` | `inline \| modal` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    url?: string | null,
+    mode?: string | null,
+    previewUrl?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Frames
+
+### create
+
+`frames.create`
+
+Add a frame, which groups other items into a region such as a section or a slide
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.frames.create({ boardId: 'uXjVK1abcd=', title: 'Discovery', position: { x: 0, y: 0 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `title` | `string` | No | Frame title, shown as its label. |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | Frames need width and height; rotation is not allowed. |
+| `showContent` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    title?: string | null,
+    type?: string | null,
+    format?: string | null,
+    showContent?: boolean | null
+  } | null,
+  style?: {
+    fillColor?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`frames.update`
+
+Change a frame title, position, size or whether it shows its content
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.frames.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Build' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `showContent` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    title?: string | null,
+    type?: string | null,
+    format?: string | null,
+    showContent?: boolean | null
+  } | null,
+  style?: {
+    fillColor?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### get
+
+`items.get`
+
+Read one item by id, whatever its kind: sticky note, shape, card, text, frame, embed or connector
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    startItem?: {
+      id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    endItem?: {
+      id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    shape?: string | null,
+    style?: {
+      strokeColor?: string | null,
+      strokeWidth?: string | null,
+      strokeStyle?: string | null,
+      startStrokeCap?: string | null,
+      endStrokeCap?: string | null
+    } | null,
+    captions?: {
+      content?: string | null,
+      position?: string | null,
+      textAlignVertical?: string | null
+    }[] | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      content?: string | null,
+      shape?: string | null
+    } | null,
+    style?: {
+      fillColor?: string | null,
+      textAlign?: string | null,
+      textAlignVertical?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null,
+    parent?: {
+      id?: string | null
+    } | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      shape?: string | null,
+      content?: string | null
+    } | null,
+    style?: {
+      fillColor?: string | null,
+      fillOpacity?: string | number | null,
+      borderColor?: string | null,
+      borderWidth?: string | number | null,
+      borderStyle?: string | null,
+      borderOpacity?: string | number | null,
+      fontSize?: string | number | null,
+      fontFamily?: string | null,
+      textAlign?: string | null,
+      textAlignVertical?: string | null,
+      color?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null,
+    parent?: {
+      id?: string | null
+    } | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      title?: string | null,
+      description?: string | null,
+      dueDate?: string | null,
+      assigneeId?: string | null
+    } | null,
+    style?: {
+      cardTheme?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null,
+    parent?: {
+      id?: string | null
+    } | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      content?: string | null
+    } | null,
+    style?: {
+      color?: string | null,
+      fillColor?: string | null,
+      fillOpacity?: string | number | null,
+      fontSize?: string | number | null,
+      fontFamily?: string | null,
+      textAlign?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null,
+    parent?: {
+      id?: string | null
+    } | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      title?: string | null,
+      type?: string | null,
+      format?: string | null,
+      showContent?: boolean | null
+    } | null,
+    style?: {
+      fillColor?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null
+  }
+} | {
+  item: {
+    id: string,
+    type?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    modifiedAt?: string | null,
+    modifiedBy?: {
+      id?: string | null,
+      type?: string | null,
+      name?: string | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null,
+    data?: {
+      url?: string | null,
+      mode?: string | null,
+      previewUrl?: string | null
+    } | null,
+    position?: {
+      x?: number | null,
+      y?: number | null,
+      origin?: string | null,
+      relativeTo?: string | null
+    } | null,
+    geometry?: {
+      width?: number | null,
+      height?: number | null,
+      rotation?: number | null
+    } | null,
+    parent?: {
+      id?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`items.list`
+
+Page through a board items, optionally only one type or only what sits inside a frame
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.items.list({ boardId: 'uXjVK1abcd=', type: ['sticky_note'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `type` | `(app_card \| card \| data_table_format \| doc_format \| document \| embed \| frame \| image \| preview \| shape \| sticky_note \| text)[]` | No | Only this item kind. Miro filters on one type per call, so pass a single value. |
+| `parentItemId` | `string` | No | Only items inside this frame or parent item. |
+| `limit` | `number` | No | Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route. |
+| `cursor` | `string` | No | The `cursor` from the previous page; omit for the first. |
+
+Miro filters on a single item type, so `type` takes one value. Pass `parentItemId` to read only what sits inside a frame.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | No | Pass as `cursor` for the next page. |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  data?: Record<string, JsonValue> | null,
+  parent?: {
+    id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`items.remove`
+
+Delete any board item by id; its content cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.items.remove({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Read one board member's role and details
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.members.get({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `memberId` | `string` | Yes | The board member id, not a user id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `role` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List who has access to a board, with their role
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.members.list({ boardId: 'uXjVK1abcd=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `limit` | `number` | No | Results per page, up to 50. Defaults to 20. |
+| `offset` | `number` | No | Zero-based offset of the first result. Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | Members across all pages. |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  role?: string | null,
+  name?: string | null,
+  type?: string | null,
+  email?: string | null,
+  createdAt?: string | null,
+  modifiedAt?: string | null,
+  links?: {
+    self?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`members.remove`
+
+Remove a member's access to a board; their role cannot be restored by another call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.members.remove({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `memberId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### share
+
+`members.share`
+
+Invite email addresses to a board with a role, which grants them access to its content
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.members.share({ boardId: 'uXjVK1abcd=', emails: ['jordan@acme.com'], role: 'editor' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `emails` | `string[]` | Yes | Email addresses to invite to the board, up to 20 per call. |
+| `role` | `viewer \| commenter \| editor \| coowner \| owner` | No | The role they get. Defaults to `commenter`; `owner` is treated as `coowner`. |
+| `message` | `string` | No | Note included in the invitation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successful` | `(string \| number)[] \| null` | No | Ids of the invitations that were sent, one per address that worked. |
+| `failed` | `object[] \| null` | No | The addresses that could not be invited, each with a reason. |
+
+<AccordionGroup>
+<Accordion title="failed full type">
+
+```ts
+{
+  email?: string | null,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`members.update`
+
+Change a board member's role, for example promoting a viewer to an editor
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.members.update({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603', role: 'commenter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `memberId` | `string` | Yes | — |
+| `role` | `viewer \| commenter \| editor \| coowner \| owner` | Yes | The new role. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `role` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shapes
+
+### create
+
+`shapes.create`
+
+Draw a shape such as a rectangle, circle or flowchart node, with text and styling, for diagrams
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.shapes.create({ boardId: 'uXjVK1abcd=', shape: 'rectangle', content: 'Design' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `shape` | `rectangle \| round_rectangle \| circle \| triangle \| rhombus \| parallelogram \| trapezoid \| pentagon \| hexagon \| octagon \| wedge_round_rectangle_callout \| star \| flow_chart_predefined_process \| cloud \| cross \| can \| right_arrow \| left_arrow \| left_right_arrow \| left_brace \| right_brace \| flow_chart_connector \| flow_chart_process \| flow_chart_decision \| flow_chart_input_output \| flow_chart_internal_storage \| flow_chart_cloud` | No | The shape to draw. Defaults to `rectangle`. |
+| `content` | `string` | No | Text inside the shape. |
+| `style` | `object` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `parentId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  fillColor?: string,
+  fillOpacity?: number,
+  borderColor?: string,
+  borderWidth?: number,
+  borderStyle?: normal | dashed | dotted,
+  borderOpacity?: number,
+  fontSize?: number,
+  fontFamily?: string,
+  textAlign?: left | center | right,
+  textAlignVertical?: top | middle | bottom,
+  color?: string
+}
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    shape?: string | null,
+    content?: string | null
+  } | null,
+  style?: {
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    borderColor?: string | null,
+    borderWidth?: string | number | null,
+    borderStyle?: string | null,
+    borderOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null,
+    color?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`shapes.update`
+
+Change a shape text, style, position or size
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.shapes.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', style: { fillColor: '#dbeafe' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `style` | `object` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  fillColor?: string,
+  fillOpacity?: number,
+  borderColor?: string,
+  borderWidth?: number,
+  borderStyle?: normal | dashed | dotted,
+  borderOpacity?: number,
+  fontSize?: number,
+  fontFamily?: string,
+  textAlign?: left | center | right,
+  textAlignVertical?: top | middle | bottom,
+  color?: string
+}
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    shape?: string | null,
+    content?: string | null
+  } | null,
+  style?: {
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    borderColor?: string | null,
+    borderWidth?: string | number | null,
+    borderStyle?: string | null,
+    borderOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null,
+    color?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sticky Notes
+
+### create
+
+`stickyNotes.create`
+
+Add a sticky note with text, shape and colour at a position, optionally inside a frame
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.stickyNotes.create({ boardId: 'uXjVK1abcd=', content: 'Ship the roadmap', fillColor: 'light_yellow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `content` | `string` | No | The note text. |
+| `shape` | `square \| rectangle` | No | — |
+| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_pink \| pink \| violet \| red \| light_blue \| blue \| dark_blue \| black` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `parentId` | `string` | No | Frame or parent item to place it inside. |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    content?: string | null,
+    shape?: string | null
+  } | null,
+  style?: {
+    fillColor?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`stickyNotes.update`
+
+Change a sticky note text, shape, colour, position or size
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.stickyNotes.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Updated text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `shape` | `square \| rectangle` | No | — |
+| `fillColor` | `gray \| light_yellow \| yellow \| orange \| light_green \| green \| dark_green \| cyan \| light_pink \| pink \| violet \| red \| light_blue \| blue \| dark_blue \| black` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    content?: string | null,
+    shape?: string | null
+  } | null,
+  style?: {
+    fillColor?: string | null,
+    textAlign?: string | null,
+    textAlignVertical?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### attach
+
+`tags.attach`
+
+Attach an existing tag to an item; card and sticky items accept up to eight
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.tags.attach({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `tagId` | `string` | Yes | The tag to attach to the item. |
+
+The tag id goes in the query string, not the body. One call attaches one tag, and calling it again adds another without removing the first.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`tags.create`
+
+Create a tag with a title and colour for categorising board items
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.tags.create({ boardId: 'uXjVK1abcd=', title: 'priority', fillColor: 'red' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `title` | `string` | Yes | Tag text, up to 120 characters. |
+| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| gray \| violet \| dark_green \| dark_blue \| black` | No | Tag colour. Defaults to `red`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  title?: string | null,
+  fillColor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Read one tag by id, with its title, colour and links
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.tags.get({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  title?: string | null,
+  fillColor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### items
+
+`tags.items`
+
+List the items that carry a given tag, with offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.tags.items({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `tagId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  data?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List the tags defined on a board, with their colours
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.tags.list({ boardId: 'uXjVK1abcd=', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `limit` | `number` | No | Results per page, up to 50. Defaults to 20. |
+| `offset` | `number` | No | Zero-based offset of the first result. Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  title?: string | null,
+  fillColor?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ofItem
+
+`tags.ofItem`
+
+List the tags attached to one item
+
+**Risk:** `read`
+
+```ts
+await corsair.miro.api.tags.ofItem({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+| `size` | `number \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  title?: string | null,
+  fillColor?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tags.remove`
+
+Delete a tag from the board; it is detached from every item that carried it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.tags.remove({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### removeFromItem
+
+`tags.removeFromItem`
+
+Detach a tag from one item; the tag itself stays on the board
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.miro.api.tags.removeFromItem({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Change a tag title or colour
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.tags.update({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008', fillColor: 'blue' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `tagId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `fillColor` | `red \| light_green \| cyan \| yellow \| magenta \| green \| blue \| gray \| violet \| dark_green \| dark_blue \| black` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  title?: string | null,
+  fillColor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Texts
+
+### create
+
+`texts.create`
+
+Add a text item, for labels and annotations
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.texts.create({ boardId: 'uXjVK1abcd=', content: 'Sprint 12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `content` | `string` | Yes | The text. |
+| `style` | `object` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+| `parentId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  color?: string,
+  fontSize?: number,
+  fontFamily?: string,
+  textAlign?: left | center | right
+}
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    content?: string | null
+  } | null,
+  style?: {
+    color?: string | null,
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`texts.update`
+
+Change a text item content, style, position or size
+
+**Risk:** `write`
+
+```ts
+await corsair.miro.api.texts.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Sprint 13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | The board id, as shown in the board URL. |
+| `itemId` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `style` | `object` | No | — |
+| `position` | `object` | No | — |
+| `geometry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  color?: string,
+  fontSize?: number,
+  fontFamily?: string,
+  textAlign?: left | center | right
+}
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  origin?: string
+}
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  rotation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  modifiedAt?: string | null,
+  modifiedBy?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null,
+  data?: {
+    content?: string | null
+  } | null,
+  style?: {
+    color?: string | null,
+    fillColor?: string | null,
+    fillOpacity?: string | number | null,
+    fontSize?: string | number | null,
+    fontFamily?: string | null,
+    textAlign?: string | null
+  } | null,
+  position?: {
+    x?: number | null,
+    y?: number | null,
+    origin?: string | null,
+    relativeTo?: string | null
+  } | null,
+  geometry?: {
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null
+  } | null,
+  parent?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,5575 @@
+---
+title: API
+description: "API reference for Lemon Squeezy: every `lemonsqueezy.api.*` operation with input and output types."
+---
+
+Every `lemonsqueezy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Affiliates
+
+### get
+
+`affiliates.get`
+
+Read one affiliate, with their status and earnings
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.affiliates.get({ affiliateId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    user_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    share_domain?: string | null,
+    status?: string | null,
+    products?: Record<string, JsonValue> | null,
+    total_earnings?: number | null,
+    unpaid_earnings?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`affiliates.list`
+
+List affiliates, filtered by store or email
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.affiliates.list({ storeId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only affiliates of this store. |
+| `userEmail` | `string` | No | Only the affiliate with this email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    user_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    share_domain?: string | null,
+    status?: string | null,
+    products?: Record<string, JsonValue> | null,
+    total_earnings?: number | null,
+    unpaid_earnings?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Checkouts
+
+### create
+
+`checkouts.create`
+
+Create a checkout link for a variant and return its URL, with optional prefilled data, custom pricing and appearance
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.checkouts.create({ storeId: 1, variantId: 1, checkoutData: { email: 'buyer@example.com' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `number` | Yes | The store the checkout belongs to. |
+| `variantId` | `number` | Yes | The variant to sell. Other variants of its product appear alongside it. |
+| `customPrice` | `number` | No | Override the variant price, in cents. Only valid for a pay-what-you-want product. |
+| `productOptions` | `Record<string, JsonValue>` | No | Overrides such as `name`, `description`, `redirect_url`, `receipt_button_text`, `receipt_link_url`, `receipt_thank_you_note` and `enabled_variants`. |
+| `checkoutOptions` | `Record<string, JsonValue>` | No | Appearance and behaviour such as `embed`, `media`, `logo`, `desc`, `discount`, `subscription_preview`, the `*_color` values and `locale`. |
+| `checkoutData` | `Record<string, JsonValue>` | No | Prefill and custom data such as `email`, `name`, `billing_address`, `tax_number`, `discount_code`, `custom` and `variant_quantities`. |
+| `expiresAt` | `string` | No | When the checkout link stops working, as an ISO 8601 date. |
+| `preview` | `boolean` | No | Return a preview checkout that cannot take a payment. |
+| `testMode` | `boolean` | No | Create a test-mode checkout. Defaults to the store mode. |
+
+The answer's `data.attributes.url` is the page to send a buyer to. `customPrice` is only valid for a pay-what-you-want product.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    variant_id?: number | null,
+    custom_price?: number | null,
+    product_options?: Record<string, JsonValue> | null,
+    checkout_options?: Record<string, JsonValue> | null,
+    checkout_data?: Record<string, JsonValue> | null,
+    expires_at?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`checkouts.get`
+
+Read one checkout, with its options and prefilled data
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.checkouts.get({ checkoutId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkoutId` | `string` | Yes | The checkout id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    variant_id?: number | null,
+    custom_price?: number | null,
+    product_options?: Record<string, JsonValue> | null,
+    checkout_options?: Record<string, JsonValue> | null,
+    checkout_data?: Record<string, JsonValue> | null,
+    expires_at?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`checkouts.list`
+
+List checkouts, filtered by store or variant
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.checkouts.list({ storeId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only checkouts in this store. |
+| `variantId` | `number` | No | Only checkouts for this variant. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    variant_id?: number | null,
+    custom_price?: number | null,
+    product_options?: Record<string, JsonValue> | null,
+    checkout_options?: Record<string, JsonValue> | null,
+    checkout_data?: Record<string, JsonValue> | null,
+    expires_at?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer record. This does not send an invitation to the customer
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.customers.create({ storeId: 1, name: 'Ada Lovelace', email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `number` | Yes | The store the customer belongs to. |
+| `name` | `string` | Yes | The customer name. |
+| `email` | `string` | Yes | The customer email address. |
+
+Creates the customer record only. Lemon Squeezy does not send the customer an invitation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    city?: string | null,
+    region?: string | null,
+    country?: string | null,
+    country_formatted?: string | null,
+    total_revenue_currency?: number | null,
+    total_revenue_currency_formatted?: string | null,
+    mrr?: number | null,
+    mrr_formatted?: string | null,
+    urls?: {
+      customer_portal?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer, with their status, country and revenue
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.customers.get({ customerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    city?: string | null,
+    region?: string | null,
+    country?: string | null,
+    country_formatted?: string | null,
+    total_revenue_currency?: number | null,
+    total_revenue_currency_formatted?: string | null,
+    mrr?: number | null,
+    mrr_formatted?: string | null,
+    urls?: {
+      customer_portal?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, filtered by store or email
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.customers.list({ storeId: 1, email: 'buyer@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only customers in this store. |
+| `email` | `string` | No | Only the customer with this email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    city?: string | null,
+    region?: string | null,
+    country?: string | null,
+    country_formatted?: string | null,
+    total_revenue_currency?: number | null,
+    total_revenue_currency_formatted?: string | null,
+    mrr?: number | null,
+    mrr_formatted?: string | null,
+    urls?: {
+      customer_portal?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change a customer's name or email address
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.customers.update({ customerId: '1', name: 'Ada Byron' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer to update. |
+| `name` | `string` | No | The new name. |
+| `email` | `string` | No | The new email address. |
+
+Give `name`, `email`, or both.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    city?: string | null,
+    region?: string | null,
+    country?: string | null,
+    country_formatted?: string | null,
+    total_revenue_currency?: number | null,
+    total_revenue_currency_formatted?: string | null,
+    mrr?: number | null,
+    mrr_formatted?: string | null,
+    urls?: {
+      customer_portal?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discount Redemptions
+
+### get
+
+`discountRedemptions.get`
+
+Read one discount redemption, with the amount it took off
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.discountRedemptions.get({ discountRedemptionId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discountRedemptionId` | `string` | Yes | The discount redemption id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    discount_id?: number | null,
+    order_id?: number | null,
+    discount_name?: string | null,
+    discount_code?: string | null,
+    discount_amount?: number | null,
+    discount_amount_type?: string | null,
+    amount?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`discountRedemptions.list`
+
+List discount redemptions, filtered by discount or order
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.discountRedemptions.list({ discountId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `discountId` | `number` | No | Only redemptions of this discount. |
+| `orderId` | `number` | No | Only redemptions on this order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    discount_id?: number | null,
+    order_id?: number | null,
+    discount_name?: string | null,
+    discount_code?: string | null,
+    discount_amount?: number | null,
+    discount_amount_type?: string | null,
+    amount?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discounts
+
+### create
+
+`discounts.create`
+
+Create a discount code, either a percentage or a fixed amount in cents, lasting once, a number of months or forever
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.discounts.create({ storeId: 1, name: 'Launch', code: 'LAUNCH10', amount: 10, amountType: 'percent', duration: 'once' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `number` | Yes | The store the discount belongs to. |
+| `name` | `string` | Yes | A name for the discount, shown in the dashboard. |
+| `code` | `string` | Yes | The code a customer enters. Lemon Squeezy rejects one already in use. |
+| `amount` | `number` | Yes | The discount: a percentage when `amountType` is percent, cents when fixed. |
+| `amountType` | `percent \| fixed` | Yes | Whether `amount` is a percentage or an amount in cents. |
+| `duration` | `once \| repeating \| forever` | Yes | `once` applies to the first payment, `repeating` to a number of months, `forever` to every payment. |
+| `durationInMonths` | `number` | No | How many months a `repeating` discount lasts. |
+| `isLimitedRedemptions` | `boolean` | No | Cap how many times the code can be redeemed. |
+| `maxRedemptions` | `number` | No | The redemption cap, when `isLimitedRedemptions` is true. |
+| `startsAt` | `string` | No | When the discount starts, as an ISO 8601 date. Defaults to now. |
+| `expiresAt` | `string` | No | When the discount expires, as an ISO 8601 date. |
+
+`amount` is a percentage when `amountType` is percent and cents when it is fixed. `durationInMonths` is only read for a `repeating` discount, and `maxRedemptions` only with `isLimitedRedemptions`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    amount?: number | null,
+    amount_type?: string | null,
+    is_limited_to_products?: boolean | null,
+    is_limited_redemptions?: boolean | null,
+    max_redemptions?: number | null,
+    starts_at?: string | null,
+    expires_at?: string | null,
+    duration?: string | null,
+    duration_in_months?: number | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`discounts.delete`
+
+Delete a discount code. A deleted code cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lemonsqueezy.api.discounts.delete({ discountId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discountId` | `string` | Yes | The discount to delete. |
+
+Deleting a code cannot be undone. Discounts already applied to an order keep their effect.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `discountId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`discounts.get`
+
+Read one discount code, with its amount, duration and status
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.discounts.get({ discountId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discountId` | `string` | Yes | The discount id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    amount?: number | null,
+    amount_type?: string | null,
+    is_limited_to_products?: boolean | null,
+    is_limited_redemptions?: boolean | null,
+    max_redemptions?: number | null,
+    starts_at?: string | null,
+    expires_at?: string | null,
+    duration?: string | null,
+    duration_in_months?: number | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`discounts.list`
+
+List discount codes, optionally for one store
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.discounts.list({ storeId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only discounts in this store. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    amount?: number | null,
+    amount_type?: string | null,
+    is_limited_to_products?: boolean | null,
+    is_limited_redemptions?: boolean | null,
+    max_redemptions?: number | null,
+    starts_at?: string | null,
+    expires_at?: string | null,
+    duration?: string | null,
+    duration_in_months?: number | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### get
+
+`files.get`
+
+Read one file and its download URL
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.files.get({ fileId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | The file id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    variant_id?: number | null,
+    identifier?: string | null,
+    name?: string | null,
+    extension?: string | null,
+    download_url?: string | null,
+    size?: number | null,
+    size_formatted?: string | null,
+    version?: string | null,
+    sort?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List downloadable files, optionally for one variant
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.files.list({ variantId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `variantId` | `number` | No | Only files of this variant. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    variant_id?: number | null,
+    identifier?: string | null,
+    name?: string | null,
+    extension?: string | null,
+    download_url?: string | null,
+    size?: number | null,
+    size_formatted?: string | null,
+    version?: string | null,
+    sort?: number | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## License Key Instances
+
+### get
+
+`licenseKeyInstances.get`
+
+Read one license key instance, with its identifier and name
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.licenseKeyInstances.get({ licenseKeyInstanceId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseKeyInstanceId` | `string` | Yes | The license key instance id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    license_key_id?: number | null,
+    identifier?: string | null,
+    name?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licenseKeyInstances.list`
+
+List the instances a license key has been activated on
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.licenseKeyInstances.list({ licenseKeyId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `licenseKeyId` | `number` | No | Only instances of this license key. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    license_key_id?: number | null,
+    identifier?: string | null,
+    name?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## License Keys
+
+### get
+
+`licenseKeys.get`
+
+Read one license key, including the full key string
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.licenseKeys.get({ licenseKeyId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseKeyId` | `string` | Yes | The license key id. |
+
+Returns the full license key string. Prefer `licenseKeys.list` when only metadata is needed; it also returns the full key, so treat either as sensitive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    key?: string | null,
+    key_short?: string | null,
+    activation_limit?: number | null,
+    instances_count?: number | null,
+    disabled?: boolean | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    expires_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licenseKeys.list`
+
+List license keys, filtered by store, order, product or status
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.licenseKeys.list({ storeId: 1, status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only license keys in this store. |
+| `orderId` | `number` | No | Only license keys from this order. |
+| `orderItemId` | `number` | No | Only license keys from this order item. |
+| `productId` | `number` | No | Only license keys for this product. |
+| `status` | `inactive \| active \| expired \| disabled` | No | Only license keys in this status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    key?: string | null,
+    key_short?: string | null,
+    activation_limit?: number | null,
+    instances_count?: number | null,
+    disabled?: boolean | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    expires_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`licenseKeys.update`
+
+Change a license key's activation limit, expiry or disabled state
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.licenseKeys.update({ licenseKeyId: '1', disabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenseKeyId` | `string` | Yes | The license key to update. |
+| `activationLimit` | `number` | No | The number of instances that can use this key. |
+| `expiresAt` | `string` | No | When the key expires, as an ISO 8601 date. |
+| `disabled` | `boolean` | No | Disable or re-enable the key. |
+
+Give `activationLimit`, `expiresAt` or `disabled`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    key?: string | null,
+    key_short?: string | null,
+    activation_limit?: number | null,
+    instances_count?: number | null,
+    disabled?: boolean | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    expires_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Order Items
+
+### get
+
+`orderItems.get`
+
+Read one order line item, with its price and quantity
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.orderItems.get({ orderItemId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderItemId` | `string` | Yes | The order item id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    order_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    price?: number | null,
+    quantity?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orderItems.list`
+
+List order line items, filtered by order, product or variant
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.orderItems.list({ orderId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `orderId` | `number` | No | Only items of this order. |
+| `productId` | `number` | No | Only items for this product. |
+| `variantId` | `number` | No | Only items for this variant. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    order_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    price?: number | null,
+    quantity?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### generateInvoice
+
+`orders.generateInvoice`
+
+Generate the PDF invoice for an order and return its URL. No money moves
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.orders.generateInvoice({ orderId: '1', name: 'Acme Ltd', address: '123 Main St', city: 'Anytown', state: 'CA', zipCode: '12345', country: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | The order to generate an invoice for. |
+| `name` | `string` | Yes | The full name shown on the invoice. |
+| `address` | `string` | Yes | The street address. |
+| `city` | `string` | Yes | The city. |
+| `state` | `string` | No | The state or province. Required for the US and Canada. |
+| `zipCode` | `string` | Yes | The ZIP or postal code. |
+| `country` | `string` | Yes | The country, as an ISO 3166-1 alpha-2 code such as US. |
+| `notes` | `string` | No | Extra notes printed on the invoice. |
+| `locale` | `string` | No | An ISO 639 language code for the invoice, such as en. |
+
+Builds the invoice PDF and returns a download link in `meta.urls.download_invoice`. The billing details are sent as query parameters; `state` is required for a US or Canadian address. No money moves.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  urls: {
+    download_invoice: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Read one order, with its totals, tax and refund state
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.orders.get({ orderId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | The order id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    affiliate_id?: number | null,
+    identifier?: string | null,
+    order_number?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    subtotal?: number | null,
+    setup_fee?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    setup_fee_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    tax_name?: string | null,
+    tax_rate?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    subtotal_formatted?: string | null,
+    setup_fee_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    first_order_item?: Record<string, JsonValue> | null,
+    urls?: {
+      receipt?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List orders, filtered by store, email or order number
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.orders.list({ storeId: 1, userEmail: 'buyer@example.com', pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only orders in this store. |
+| `userEmail` | `string` | No | Only orders for this email address. |
+| `orderNumber` | `number` | No | Only the order with this number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    affiliate_id?: number | null,
+    identifier?: string | null,
+    order_number?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    subtotal?: number | null,
+    setup_fee?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    setup_fee_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    tax_name?: string | null,
+    tax_rate?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    subtotal_formatted?: string | null,
+    setup_fee_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    first_order_item?: Record<string, JsonValue> | null,
+    urls?: {
+      receipt?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refund
+
+`orders.refund`
+
+Refund an order in full, or partially by amount in cents. A refund cannot be undone through the API
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lemonsqueezy.api.orders.refund({ orderId: '1', amount: 500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | The order to refund. |
+| `amount` | `number` | No | The amount to refund, in cents. Omit it for a full refund. A partial refund cannot be undone. |
+
+A partial refund cannot be undone through the API. The amount is in cents and its currency is the store currency; omit it to refund the order in full.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    affiliate_id?: number | null,
+    identifier?: string | null,
+    order_number?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    subtotal?: number | null,
+    setup_fee?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    setup_fee_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    tax_name?: string | null,
+    tax_rate?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    subtotal_formatted?: string | null,
+    setup_fee_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    first_order_item?: Record<string, JsonValue> | null,
+    urls?: {
+      receipt?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prices
+
+### get
+
+`prices.get`
+
+Read one price, with its scheme, tiers and renewal interval
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.prices.get({ priceId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `priceId` | `string` | Yes | The price id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    variant_id?: number | null,
+    category?: string | null,
+    scheme?: string | null,
+    usage_aggregation?: string | null,
+    unit_price?: number | null,
+    unit_price_decimal?: number | string | null,
+    setup_fee_enabled?: boolean | null,
+    setup_fee?: number | null,
+    package_size?: number | null,
+    renewal_interval_unit?: string | null,
+    renewal_interval_quantity?: number | null,
+    trial_interval_unit?: string | null,
+    trial_interval_quantity?: number | null,
+    min_price?: number | null,
+    suggested_price?: number | null,
+    tax_code?: string | null,
+    tiers?: Record<string, JsonValue>[] | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`prices.list`
+
+List prices, optionally for one variant
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.prices.list({ variantId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `variantId` | `number` | No | Only prices of this variant. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    variant_id?: number | null,
+    category?: string | null,
+    scheme?: string | null,
+    usage_aggregation?: string | null,
+    unit_price?: number | null,
+    unit_price_decimal?: number | string | null,
+    setup_fee_enabled?: boolean | null,
+    setup_fee?: number | null,
+    package_size?: number | null,
+    renewal_interval_unit?: string | null,
+    renewal_interval_quantity?: number | null,
+    trial_interval_unit?: string | null,
+    trial_interval_quantity?: number | null,
+    min_price?: number | null,
+    suggested_price?: number | null,
+    tax_code?: string | null,
+    tiers?: Record<string, JsonValue>[] | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Read one product, with its price range and buy-now URL
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.products.get({ productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | The product id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    thumb_url?: string | null,
+    large_thumb_url?: string | null,
+    price?: number | null,
+    price_formatted?: string | null,
+    from_price?: number | null,
+    from_price_formatted?: string | null,
+    to_price?: number | null,
+    to_price_formatted?: string | null,
+    pay_what_you_want?: boolean | null,
+    buy_now_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products, optionally for one store
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.products.list({ storeId: 1, pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only products in this store. |
+
+A page holds at most 100 rows. `meta.page.lastPage` says how many pages there are.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    thumb_url?: string | null,
+    large_thumb_url?: string | null,
+    price?: number | null,
+    price_formatted?: string | null,
+    from_price?: number | null,
+    from_price_formatted?: string | null,
+    to_price?: number | null,
+    to_price_formatted?: string | null,
+    pay_what_you_want?: boolean | null,
+    buy_now_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stores
+
+### get
+
+`stores.get`
+
+Read one store, with its plan, currency and sales totals
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.stores.get({ storeId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string` | Yes | The store id, as `data.id` reports it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    name?: string | null,
+    slug?: string | null,
+    domain?: string | null,
+    url?: string | null,
+    avatar_url?: string | null,
+    plan?: string | null,
+    country?: string | null,
+    country_nicename?: string | null,
+    currency?: string | null,
+    total_sales?: number | null,
+    total_revenue?: number | null,
+    thirty_day_sales?: number | null,
+    thirty_day_revenue?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stores.list`
+
+List the stores the key can reach, with their plan and sales totals
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.stores.list({ pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    name?: string | null,
+    slug?: string | null,
+    domain?: string | null,
+    url?: string | null,
+    avatar_url?: string | null,
+    plan?: string | null,
+    country?: string | null,
+    country_nicename?: string | null,
+    currency?: string | null,
+    total_sales?: number | null,
+    total_revenue?: number | null,
+    thirty_day_sales?: number | null,
+    thirty_day_revenue?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscription Invoices
+
+### generate
+
+`subscriptionInvoices.generate`
+
+Generate the PDF invoice for a subscription invoice and return its URL. No money moves
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionInvoices.generate({ subscriptionInvoiceId: '1', name: 'Acme Ltd', address: '1 High St', city: 'London', zipCode: 'N1 1AA', country: 'GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionInvoiceId` | `string` | Yes | The subscription invoice to generate a PDF invoice for. |
+| `name` | `string` | Yes | The full name shown on the invoice. |
+| `address` | `string` | Yes | The street address. |
+| `city` | `string` | Yes | The city. |
+| `state` | `string` | No | The state or province. Required for the US and Canada. |
+| `zipCode` | `string` | Yes | The ZIP or postal code. |
+| `country` | `string` | Yes | The country, as an ISO 3166-1 alpha-2 code such as US. |
+| `notes` | `string` | No | Extra notes printed on the invoice. |
+| `locale` | `string` | No | An ISO 639 language code for the invoice, such as en. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  urls: {
+    download_invoice: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptionInvoices.get`
+
+Read one subscription invoice, with its totals and refund state
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionInvoices.get({ subscriptionInvoiceId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionInvoiceId` | `string` | Yes | The subscription invoice id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    subscription_id?: number | null,
+    customer_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    billing_reason?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    subtotal?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    subtotal_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    urls?: {
+      invoice_url?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptionInvoices.list`
+
+List subscription invoices, filtered by store, status, refund state or subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionInvoices.list({ subscriptionId: 1, status: 'paid' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only invoices in this store. |
+| `status` | `pending \| paid \| void \| refunded \| partial_refund` | No | Only invoices in this status. |
+| `refunded` | `boolean` | No | Only refunded or only unrefunded invoices. |
+| `subscriptionId` | `number` | No | Only invoices of this subscription. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    subscription_id?: number | null,
+    customer_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    billing_reason?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    subtotal?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    subtotal_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    urls?: {
+      invoice_url?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refund
+
+`subscriptionInvoices.refund`
+
+Refund a subscription invoice in full, or partially by amount in cents. A refund cannot be undone through the API
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionInvoices.refund({ subscriptionInvoiceId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionInvoiceId` | `string` | Yes | The subscription invoice to refund. |
+| `amount` | `number` | No | The amount to refund, in cents. Omit it for a full refund. A partial refund cannot be undone. |
+
+The same rules as an order refund: the amount is optional and in cents, and a partial refund cannot be undone through the API.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    subscription_id?: number | null,
+    customer_id?: number | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    billing_reason?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    currency?: string | null,
+    currency_rate?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    refunded?: boolean | null,
+    refunded_at?: string | null,
+    subtotal?: number | null,
+    discount_total?: number | null,
+    tax?: number | null,
+    total?: number | null,
+    refunded_amount?: number | null,
+    subtotal_usd?: number | null,
+    discount_total_usd?: number | null,
+    tax_usd?: number | null,
+    total_usd?: number | null,
+    refunded_amount_usd?: number | null,
+    subtotal_formatted?: string | null,
+    discount_total_formatted?: string | null,
+    tax_formatted?: string | null,
+    total_formatted?: string | null,
+    refunded_amount_formatted?: string | null,
+    urls?: {
+      invoice_url?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscription Items
+
+### get
+
+`subscriptionItems.get`
+
+Read one subscription item, with its price, quantity and usage flag
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionItems.get({ subscriptionItemId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionItemId` | `string` | Yes | The subscription item id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_id?: number | null,
+    price_id?: number | null,
+    quantity?: number | null,
+    is_usage_based?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptionItems.list`
+
+List a subscription's items, filtered by subscription or price
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionItems.list({ subscriptionId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `subscriptionId` | `number` | No | Only items of this subscription. |
+| `priceId` | `number` | No | Only items on this price. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_id?: number | null,
+    price_id?: number | null,
+    quantity?: number | null,
+    is_usage_based?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscriptionItems.update`
+
+Change a subscription item's quantity
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionItems.update({ subscriptionItemId: '1', quantity: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionItemId` | `string` | Yes | The subscription item to update. |
+| `quantity` | `number` | Yes | The new quantity. Use `usageRecords.create` for metered increases. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_id?: number | null,
+    price_id?: number | null,
+    quantity?: number | null,
+    is_usage_based?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`subscriptionItems.usage`
+
+Read a usage-based item's metered usage for the current period
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptionItems.usage({ subscriptionItemId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionItemId` | `string` | Yes | The subscription item id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  period_start?: string | null,
+  period_end?: string | null,
+  quantity?: number | null,
+  interval_unit?: string | null,
+  interval_quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### cancel
+
+`subscriptions.cancel`
+
+Cancel an active subscription. It stays readable but stops renewing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptions.cancel({ subscriptionId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | The subscription to cancel. |
+
+Cancels an active subscription. It stays readable and keeps its history, but stops renewing.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    payment_processor?: string | null,
+    pause?: {
+      mode?: string | null,
+      resumes_at?: string | null
+    } | null,
+    cancelled?: boolean | null,
+    trial_ends_at?: string | null,
+    billing_anchor?: number | null,
+    first_subscription_item?: {
+      id?: number | null,
+      subscription_id?: number | null,
+      price_id?: number | null,
+      quantity?: number | null,
+      is_usage_based?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    urls?: {
+      update_payment_method?: string | null,
+      customer_portal?: string | null,
+      customer_portal_update_subscription?: string | null
+    } | null,
+    renews_at?: string | null,
+    ends_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Read one subscription, with its status, renewal date and pause state
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptions.get({ subscriptionId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | The subscription id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    payment_processor?: string | null,
+    pause?: {
+      mode?: string | null,
+      resumes_at?: string | null
+    } | null,
+    cancelled?: boolean | null,
+    trial_ends_at?: string | null,
+    billing_anchor?: number | null,
+    first_subscription_item?: {
+      id?: number | null,
+      subscription_id?: number | null,
+      price_id?: number | null,
+      quantity?: number | null,
+      is_usage_based?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    urls?: {
+      update_payment_method?: string | null,
+      customer_portal?: string | null,
+      customer_portal_update_subscription?: string | null
+    } | null,
+    renews_at?: string | null,
+    ends_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List subscriptions, filtered by store, order, product, variant, email or status
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptions.list({ storeId: 1, status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only subscriptions in this store. |
+| `orderId` | `number` | No | Only subscriptions from this order. |
+| `orderItemId` | `number` | No | Only subscriptions from this order item. |
+| `productId` | `number` | No | Only subscriptions for this product. |
+| `variantId` | `number` | No | Only subscriptions for this variant. |
+| `userEmail` | `string` | No | Only subscriptions for this email address. |
+| `status` | `on_trial \| active \| paused \| past_due \| unpaid \| cancelled \| expired` | No | Only subscriptions in this status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    payment_processor?: string | null,
+    pause?: {
+      mode?: string | null,
+      resumes_at?: string | null
+    } | null,
+    cancelled?: boolean | null,
+    trial_ends_at?: string | null,
+    billing_anchor?: number | null,
+    first_subscription_item?: {
+      id?: number | null,
+      subscription_id?: number | null,
+      price_id?: number | null,
+      quantity?: number | null,
+      is_usage_based?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    urls?: {
+      update_payment_method?: string | null,
+      customer_portal?: string | null,
+      customer_portal_update_subscription?: string | null
+    } | null,
+    renews_at?: string | null,
+    ends_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscriptions.update`
+
+Move a subscription to another variant, pause or resume it, or change its billing date. A plan change prorates the next charge
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.subscriptions.update({ subscriptionId: '1', variantId: 2, invoiceImmediately: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | The subscription to update. |
+| `variantId` | `number` | No | Move the subscription to this variant. Lemon Squeezy prorates the next charge unless `invoiceImmediately` is set. |
+| `invoiceImmediately` | `boolean` | No | Charge the prorated difference now instead of at the next billing date. |
+| `disableProrations` | `boolean` | No | Do not prorate the charge when the plan changes. |
+| `pause` | `object` | No | Pause collection. Only valid on an active subscription. |
+| `unpause` | `boolean` | No | Resume collection on a paused subscription. Sent as `pause: null`, which is how the API unpauses. |
+| `billingAnchor` | `number` | No | Move the billing date to this day of the month, 1 to 31. A day past the month's end uses its last day. |
+
+A variant change prorates the next charge unless `invoiceImmediately` or `disableProrations` says otherwise. `pause` and `unpause` are opposite actions, and at least one change is required.
+
+<AccordionGroup>
+<Accordion title="pause full type">
+
+```ts
+{
+  mode: void | free,
+  resumesAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    customer_id?: number | null,
+    order_id?: number | null,
+    order_item_id?: number | null,
+    product_id?: number | null,
+    variant_id?: number | null,
+    product_name?: string | null,
+    variant_name?: string | null,
+    user_name?: string | null,
+    user_email?: string | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    card_brand?: string | null,
+    card_last_four?: string | null,
+    payment_processor?: string | null,
+    pause?: {
+      mode?: string | null,
+      resumes_at?: string | null
+    } | null,
+    cancelled?: boolean | null,
+    trial_ends_at?: string | null,
+    billing_anchor?: number | null,
+    first_subscription_item?: {
+      id?: number | null,
+      subscription_id?: number | null,
+      price_id?: number | null,
+      quantity?: number | null,
+      is_usage_based?: boolean | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    urls?: {
+      update_payment_method?: string | null,
+      customer_portal?: string | null,
+      customer_portal_update_subscription?: string | null
+    } | null,
+    renews_at?: string | null,
+    ends_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage Records
+
+### create
+
+`usageRecords.create`
+
+Record metered usage against a subscription item: add to the period total, or replace it
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.usageRecords.create({ subscriptionItemId: 1, quantity: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionItemId` | `number` | Yes | The usage-based subscription item to record usage against. |
+| `quantity` | `number` | Yes | The usage to report: added to the period total with `increment`, or the new total with `set`. |
+| `action` | `increment \| set` | No | `increment` (the default) adds the quantity to the period total and is for a price with "sum of usage" aggregation. `set` makes the quantity the period total and only works with "most recent usage" aggregation; under "sum of usage" a `set` record is added like an increment. |
+
+The default `increment` adds `quantity` to the period total and suits a "sum of usage" price. `action: "set"` makes `quantity` the total only on a "most recent usage" price; on a sum price it is added like an increment. Only a usage-based subscription item accepts records.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_item_id?: number | null,
+    quantity?: number | null,
+    action?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`usageRecords.get`
+
+Read one usage record, with its quantity and action
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.usageRecords.get({ usageRecordId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usageRecordId` | `string` | Yes | The usage record id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_item_id?: number | null,
+    quantity?: number | null,
+    action?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`usageRecords.list`
+
+List metered usage records, optionally for one subscription item
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.usageRecords.list({ subscriptionItemId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `subscriptionItemId` | `number` | No | Only usage records of this subscription item. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    subscription_item_id?: number | null,
+    quantity?: number | null,
+    action?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read the account that owns the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.users.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    name?: string | null,
+    email?: string | null,
+    color?: string | null,
+    avatar_url?: string | null,
+    has_custom_avatar?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Variants
+
+### get
+
+`variants.get`
+
+Read one variant, with its license settings and checkout links
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.variants.get({ variantId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variantId` | `string` | Yes | The variant id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    product_id?: number | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    has_license_keys?: boolean | null,
+    license_activation_limit?: number | null,
+    is_license_limit_unlimited?: boolean | null,
+    license_length_value?: number | null,
+    license_length_unit?: string | null,
+    is_license_length_unlimited?: boolean | null,
+    sort?: number | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`variants.list`
+
+List variants, optionally for one product or status
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.variants.list({ productId: 1, status: 'published' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `productId` | `number` | No | Only variants of this product. |
+| `status` | `pending \| draft \| published` | No | Only variants in this status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    product_id?: number | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    has_license_keys?: boolean | null,
+    license_activation_limit?: number | null,
+    is_license_limit_unlimited?: boolean | null,
+    license_length_value?: number | null,
+    license_length_unit?: string | null,
+    is_license_length_unlimited?: boolean | null,
+    sort?: number | null,
+    status?: string | null,
+    status_formatted?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook URL with its signing secret and the events to send
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.webhooks.create({ storeId: 1, url: 'https://example.com/hooks/lemonsqueezy', events: ['order_created'], secret: '<signing secret>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `number` | Yes | The store the webhook listens to. |
+| `url` | `string` | Yes | The https URL Lemon Squeezy posts events to. |
+| `events` | `(order_created \| order_refunded \| customer_updated \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| license_key_created \| license_key_updated \| affiliate_activated)[]` | Yes | The events to send. At least one is required. |
+| `secret` | `string` | Yes | The signing secret. Lemon Squeezy signs each delivery with it, so store the same value to verify the `X-Signature` header. |
+
+`secret` is required, and Lemon Squeezy signs each delivery with it in the `X-Signature` header. The secret is never returned in a response.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    url?: string | null,
+    events?: string[] | null,
+    last_sent_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook. Deliveries to it stop immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lemonsqueezy.api.webhooks.delete({ webhookId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The webhook to delete. |
+
+Deliveries to the URL stop immediately, and the webhook cannot be restored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook, with its URL, events and last delivery time
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.webhooks.get({ webhookId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The webhook id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    url?: string | null,
+    events?: string[] | null,
+    last_sent_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks, optionally for one store
+
+**Risk:** `read`
+
+```ts
+await corsair.lemonsqueezy.api.webhooks.list({ storeId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | The page to read, starting at 1. |
+| `pageSize` | `number` | No | Items per page. Lemon Squeezy caps this at 100. |
+| `sort` | `string` | No | Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400. |
+| `include` | `string[]` | No | Related resources to embed, such as ["subscription-items"]. They arrive in the answer's `included` array. |
+| `storeId` | `number` | No | Only webhooks in this store. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    url?: string | null,
+    events?: string[] | null,
+    last_sent_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page: {
+    currentPage: number,
+    from?: number | null,
+    lastPage: number,
+    perPage: number,
+    to?: number | null,
+    total?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook's URL, event list or signing secret
+
+**Risk:** `write`
+
+```ts
+await corsair.lemonsqueezy.api.webhooks.update({ webhookId: '1', events: ['order_created', 'order_refunded'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The webhook to update. |
+| `url` | `string` | No | The new https URL. |
+| `events` | `(order_created \| order_refunded \| customer_updated \| subscription_created \| subscription_updated \| subscription_cancelled \| subscription_resumed \| subscription_expired \| subscription_paused \| subscription_unpaused \| subscription_payment_success \| subscription_payment_failed \| subscription_payment_recovered \| subscription_payment_refunded \| license_key_created \| license_key_updated \| affiliate_activated)[]` | No | The new event list, which replaces the old one. |
+| `secret` | `string` | No | A new signing secret. Deliveries start using it immediately. |
+
+Give `url`, `events` or `secret`. A new `events` list replaces the old one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes: {
+    store_id?: number | null,
+    url?: string | null,
+    events?: string[] | null,
+    last_sent_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    test_mode?: boolean | null
+  },
+  relationships?: Record<string, {
+    links?: {
+      related?: string | null,
+      self?: string | null
+    } | null
+  }>,
+  links?: {
+    self?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

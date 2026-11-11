@@ -1,0 +1,787 @@
+---
+title: API
+description: "API reference for CoinMarketCap: every `coinmarketcap.api.*` operation with input and output types."
+---
+
+Every `coinmarketcap.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cryptocurrency
+
+### info
+
+`cryptocurrency.info`
+
+Static metadata for a cryptocurrency, such as its description, logo, website and social links, by CMC ID, slug, ticker or contract address
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.cryptocurrency.info({ id: ['1'], aux: 'description,logo,urls' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string[]` | No | CoinMarketCap IDs, such as ["1", "1027"]. |
+| `slug` | `string[]` | No | Slugs, such as ["bitcoin"]. |
+| `symbol` | `string[]` | No | Tickers, such as ["BTC"]. |
+| `address` | `string` | No | A contract address, when the asset is a token. |
+| `skip_invalid` | `boolean` | No | Skip unknown identifiers instead of failing the whole call. |
+| `aux` | `string` | No | Comma-separated supplemental fields: urls, logo, description, tags, platform, date_added, notice, status. |
+
+Pass exactly one of `id`, `slug`, `symbol` or `address`. A token's `platform.id` is a string on this route and a number on the others.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cryptocurrencies` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cryptocurrencies full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  symbol?: string | null,
+  category?: string | null,
+  slug?: string | null,
+  logo?: string | null,
+  description?: string | null,
+  date_added?: string | null,
+  date_launched?: string | null,
+  notice?: string | null,
+  tags?: string[] | null,
+  tag-names?: string[] | null,
+  tag-groups?: string[] | null,
+  subreddit?: string | null,
+  twitter_username?: string | null,
+  infinite_supply?: boolean | null,
+  is_hidden?: number | null,
+  platform?: {
+    id?: number | string | null,
+    slug?: string | null,
+    name?: string | null,
+    symbol?: string | null,
+    token_address?: string | null
+  } | null,
+  urls?: {
+    website?: string[] | null,
+    twitter?: string[] | null,
+    reddit?: string[] | null,
+    message_board?: string[] | null,
+    chat?: string[] | null,
+    facebook?: string[] | null,
+    explorer?: string[] | null,
+    technical_doc?: string[] | null,
+    source_code?: string[] | null,
+    announcement?: string[] | null
+  } | null,
+  lookup_key: string
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listings
+
+`cryptocurrency.listings`
+
+Rank every active cryptocurrency by market cap, price, volume or a percent change, with price, market cap and volume filters, paging and up to 120 quote currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.cryptocurrency.listings({ limit: 10, sort: 'market_cap', sort_dir: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `number` | No | 1-based index of the first result. Defaults to 1. |
+| `limit` | `number` | No | How many results to return. Defaults to 100; the maximum is 5000. Each 250 results costs one credit. |
+| `price_min` | `number` | No | Minimum USD price. |
+| `price_max` | `number` | No | Maximum USD price. |
+| `market_cap_min` | `number` | No | Minimum market cap in USD. |
+| `market_cap_max` | `number` | No | Maximum market cap in USD. |
+| `volume_24h_min` | `number` | No | Minimum rolling 24 hour USD volume. |
+| `volume_24h_max` | `number` | No | Maximum rolling 24 hour USD volume. |
+| `circulating_supply_min` | `number` | No | — |
+| `circulating_supply_max` | `number` | No | — |
+| `percent_change_24h_min` | `number` | No | Minimum 24 hour percent change, so -50 for a 50% drop. |
+| `percent_change_24h_max` | `number` | No | — |
+| `convert` | `string[]` | No | Quote currencies by symbol, such as ["USD"] or ["USD", "EUR"]. Each one past the first costs an extra credit, and a plan may cap how many it allows. |
+| `convert_id` | `string[]` | No | Quote currencies by CMC ID instead of symbol. Cannot be combined with `convert`. |
+| `sort` | `market_cap \| market_cap_strict \| name \| symbol \| date_added \| price \| circulating_supply \| total_supply \| max_supply \| num_market_pairs \| market_cap_by_total_supply_strict \| volume_24h \| volume_7d \| volume_30d \| percent_change_1h \| percent_change_24h \| percent_change_7d` | No | Field to sort by. Defaults to market_cap. |
+| `sort_dir` | `asc \| desc` | No | Sort direction. Defaults to desc. |
+| `cryptocurrency_type` | `all \| coins \| tokens` | No | Limit the result to coins, tokens or both. Defaults to all. |
+| `tag` | `string` | No | Only assets carrying this tag, such as "defi" or "layer-2". |
+| `aux` | `string` | No | Comma-separated supplemental fields, for example "platform,first_historical_data". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assets` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  symbol?: string | null,
+  slug?: string | null,
+  platform?: {
+    id?: number | string | null,
+    slug?: string | null,
+    name?: string | null,
+    symbol?: string | null,
+    token_address?: string | null
+  } | null,
+  tags?: (string | {
+    slug?: string | null,
+    name?: string | null,
+    category?: string | null
+  })[] | null,
+  is_active?: number | null,
+  infinite_supply?: boolean | null,
+  is_market_cap_included_in_calc?: number | null,
+  is_fiat?: number | null,
+  circulating_supply?: number | null,
+  total_supply?: number | null,
+  max_supply?: number | null,
+  date_added?: string | null,
+  num_market_pairs?: number | null,
+  cmc_rank?: number | null,
+  last_updated?: string | null,
+  tvl_ratio?: number | null,
+  self_reported_circulating_supply?: number | null,
+  self_reported_market_cap?: number | null,
+  unlocked_circulating_supply?: number | null,
+  unlocked_market_cap?: number | null,
+  minted_market_cap?: number | null,
+  quote: {
+    id?: number,
+    symbol?: string,
+    price?: number | null,
+    volume_24h?: number | null,
+    cex_volume_24h?: number | null,
+    dex_volume_24h?: number | null,
+    volume_24h_reported?: number | null,
+    volume_7d?: number | null,
+    volume_7d_reported?: number | null,
+    volume_30d?: number | null,
+    volume_30d_reported?: number | null,
+    volume_change_24h?: number | null,
+    percent_change_1h?: number | null,
+    percent_change_24h?: number | null,
+    percent_change_7d?: number | null,
+    percent_change_30d?: number | null,
+    percent_change_60d?: number | null,
+    percent_change_90d?: number | null,
+    market_cap?: number | null,
+    market_cap_dominance?: number | null,
+    fully_diluted_market_cap?: number | null,
+    minted_market_cap?: number | null,
+    market_cap_by_total_supply?: number | null,
+    tvl?: number | null,
+    last_updated?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### map
+
+`cryptocurrency.map`
+
+Resolve tickers, or a page of the full asset list, to the stable CoinMarketCap IDs, names and slugs that every other call takes; it has no slug filter
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.cryptocurrency.map({ symbol: ['BTC', 'ETH'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listing_status` | `(active \| inactive \| untracked)[]` | No | Which listing statuses to include. Defaults to active. |
+| `start` | `number` | No | 1-based index of the first result. Defaults to 1. |
+| `limit` | `number` | No | How many results to return. Defaults to every match; the maximum is 5000. |
+| `sort` | `cmc_rank \| id` | No | Field to sort by. Defaults to id. |
+| `symbol` | `string[]` | No | Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, the API ignores every other option except `aux`. |
+| `aux` | `string` | No | Comma-separated supplemental fields: platform, first_historical_data, last_historical_data, is_active, status. |
+
+When `symbol` is set, CoinMarketCap ignores `listing_status`, `start`, `limit` and `sort`, so this operation rejects those combinations rather than sending a request that would silently return the wrong rows. `aux` still applies with `symbol`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cryptocurrencies` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cryptocurrencies full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  symbol?: string | null,
+  slug?: string | null,
+  rank?: number | null,
+  is_active?: number | null,
+  status?: string | null,
+  first_historical_data?: string | null,
+  last_historical_data?: string | null,
+  platform?: {
+    id?: number | string | null,
+    slug?: string | null,
+    name?: string | null,
+    symbol?: string | null,
+    token_address?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### quotes
+
+`cryptocurrency.quotes`
+
+Latest price, market cap, volume and percent changes for specific assets, by CMC ID, slug or ticker, in one or more quote currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.cryptocurrency.quotes({ id: ['1', '1027'], convert: ['USD'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string[]` | No | CoinMarketCap IDs, such as ["1", "1027"]. |
+| `slug` | `string[]` | No | Slugs, such as ["bitcoin", "ethereum"]. |
+| `symbol` | `string[]` | No | Tickers, such as ["BTC", "ETH"]. |
+| `convert` | `string[]` | No | Quote currencies by symbol. Each one past the first costs an extra credit. |
+| `convert_id` | `string[]` | No | Quote currencies by CMC ID. Cannot be combined with `convert`. |
+| `aux` | `string` | No | Comma-separated supplemental fields, for example "platform,first_historical_data". |
+| `skip_invalid` | `boolean` | No | Skip unknown identifiers instead of failing the whole call. Defaults to false. |
+
+Pass exactly one of `id`, `slug` or `symbol`. Two at once is rejected by the API as a conflict between exclusive peers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  symbol?: string | null,
+  slug?: string | null,
+  platform?: {
+    id?: number | string | null,
+    slug?: string | null,
+    name?: string | null,
+    symbol?: string | null,
+    token_address?: string | null
+  } | null,
+  tags?: (string | {
+    slug?: string | null,
+    name?: string | null,
+    category?: string | null
+  })[] | null,
+  is_active?: number | null,
+  infinite_supply?: boolean | null,
+  is_market_cap_included_in_calc?: number | null,
+  is_fiat?: number | null,
+  circulating_supply?: number | null,
+  total_supply?: number | null,
+  max_supply?: number | null,
+  date_added?: string | null,
+  num_market_pairs?: number | null,
+  cmc_rank?: number | null,
+  last_updated?: string | null,
+  tvl_ratio?: number | null,
+  self_reported_circulating_supply?: number | null,
+  self_reported_market_cap?: number | null,
+  unlocked_circulating_supply?: number | null,
+  unlocked_market_cap?: number | null,
+  minted_market_cap?: number | null,
+  quote: {
+    id?: number,
+    symbol?: string,
+    price?: number | null,
+    volume_24h?: number | null,
+    cex_volume_24h?: number | null,
+    dex_volume_24h?: number | null,
+    volume_24h_reported?: number | null,
+    volume_7d?: number | null,
+    volume_7d_reported?: number | null,
+    volume_30d?: number | null,
+    volume_30d_reported?: number | null,
+    volume_change_24h?: number | null,
+    percent_change_1h?: number | null,
+    percent_change_24h?: number | null,
+    percent_change_7d?: number | null,
+    percent_change_30d?: number | null,
+    percent_change_60d?: number | null,
+    percent_change_90d?: number | null,
+    market_cap?: number | null,
+    market_cap_dominance?: number | null,
+    fully_diluted_market_cap?: number | null,
+    minted_market_cap?: number | null,
+    market_cap_by_total_supply?: number | null,
+    tvl?: number | null,
+    last_updated?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exchange
+
+### info
+
+`exchange.info`
+
+Metadata for a centralised exchange, such as its description, logo, launch date and links, by CMC exchange ID or slug
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.exchange.info({ slug: ['binance'], aux: 'logo,urls,description' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string[]` | No | CoinMarketCap exchange IDs, such as ["270"]. |
+| `slug` | `string[]` | No | Exchange slugs, such as ["binance"]. Pass exactly one of `id` or `slug`. |
+| `aux` | `string` | No | Comma-separated supplemental fields: urls, logo, description, date_launched, notice, status. |
+
+Pass exactly one of `id` or `slug`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchanges` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="exchanges full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug?: string | null,
+  logo?: string | null,
+  description?: string | null,
+  date_launched?: string | null,
+  notice?: string | null,
+  is_hidden?: number | null,
+  status?: string | null,
+  urls?: {
+    website?: string[] | null,
+    twitter?: string[] | null,
+    blog?: string[] | null,
+    chat?: string[] | null,
+    fee?: string[] | null,
+    message_board?: string[] | null,
+    actual?: string[] | null,
+    register?: string[] | null
+  } | null,
+  type?: string | null,
+  tags?: {
+    name?: string | null,
+    slug?: string | null,
+    group?: string | null
+  }[] | null,
+  maker_fee?: number | null,
+  taker_fee?: number | null,
+  weekly_visits?: number | null,
+  spot_volume_usd?: number | null,
+  spot_volume_last_updated?: string | null,
+  porStatus?: string | null,
+  porAuditStatus?: string | null,
+  porSwitch?: boolean | null,
+  lookup_key: string
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Global Metrics
+
+### quotes
+
+`globalMetrics.quotes`
+
+Market-wide totals: total market cap and 24 hour volume, BTC and ETH dominance, and the count of tracked assets, pairs and exchanges
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.globalMetrics.quotes({ convert: ['USD'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `convert` | `string[]` | No | Quote currencies by symbol. Each one past the first costs an extra credit. |
+| `convert_id` | `string[]` | No | Quote currencies by CMC ID. Cannot be combined with `convert`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  btc_dominance?: number | null,
+  btc_dominance_24h_percentage_change?: number | null,
+  eth_dominance?: number | null,
+  eth_dominance_24h_percentage_change?: number | null,
+  active_cryptocurrencies?: number | null,
+  total_cryptocurrencies?: number | null,
+  active_market_pairs?: number | null,
+  active_exchanges?: number | null,
+  total_exchanges?: number | null,
+  total_crypto_dex_currencies?: number | null,
+  today_change_percent?: number | null,
+  past_24h_incremental_crypto_number?: number | null,
+  past_7d_incremental_crypto_number?: number | null,
+  past_30d_incremental_crypto_number?: number | null,
+  last_updated?: string | null,
+  quote: Record<string, {
+    total_market_cap?: number | null,
+    total_volume_24h?: number | null,
+    total_volume_24h_reported?: number | null,
+    altcoin_market_cap?: number | null,
+    altcoin_volume_24h?: number | null,
+    altcoin_volume_24h_reported?: number | null,
+    defi_market_cap?: number | null,
+    defi_volume_24h?: number | null,
+    defi_volume_24h_reported?: number | null,
+    stablecoin_market_cap?: number | null,
+    stablecoin_volume_24h?: number | null,
+    derivatives_volume_24h?: number | null,
+    last_updated?: string | null
+  }>
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Key
+
+### info
+
+`key.info`
+
+Plan and usage for the configured API key: the minute request limit, the monthly credit limit, and what is left today and this month
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.key.info({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `object` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  credit_limit_monthly?: number | null,
+  credit_limit_monthly_reset?: string | null,
+  credit_limit_monthly_reset_timestamp?: string | null,
+  rate_limit_minute?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  current_minute?: {
+    requests_made?: number | null,
+    requests_left?: number | null
+  } | null,
+  current_day?: {
+    credits_used?: number | null,
+    credits_left?: number | null
+  } | null,
+  current_month?: {
+    credits_used?: number | null,
+    credits_left?: number | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### priceConversion
+
+`tools.priceConversion`
+
+Convert an amount of one currency into another, optionally at a past timestamp; a ticker shared by several assets returns one result per asset
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcap.api.tools.priceConversion({ amount: 10.43, symbol: 'BTC', convert: ['USD'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | How much of the source currency to convert, such as 1.5. |
+| `id` | `number` | No | The source currency CMC ID. CoinMarketCap takes exactly one ID here, not a list. |
+| `symbol` | `string` | No | The source currency ticker. When several assets share it, one result per asset is returned. |
+| `time` | `string` | No | A Unix or ISO 8601 timestamp to convert at. Defaults to now. |
+| `convert` | `string[]` | No | Target currencies by symbol, such as ["USD"]. |
+| `convert_id` | `string[]` | No | Target currencies by CMC ID. Cannot be combined with `convert`. |
+
+Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one. A `symbol` lookup returns every asset sharing the ticker, and `price` is null for one CoinMarketCap has no price for.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversions` | `object[]` | Yes | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversions full type">
+
+```ts
+{
+  id: number,
+  symbol?: string | null,
+  name?: string | null,
+  amount?: number | null,
+  last_updated?: string | null,
+  quote: Record<string, {
+    price?: number | null,
+    last_updated?: string | null
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  timestamp?: string,
+  error_code?: number | string,
+  error_message?: string | null,
+  elapsed?: number | string,
+  credit_count?: number,
+  notice?: string | null,
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

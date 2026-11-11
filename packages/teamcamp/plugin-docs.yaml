@@ -1,0 +1,59 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Teamcamp
+description: Project management for client work. Read and create projects, their task groups and their tasks, with the workspace members and customers a project is built from.
+domain: teamcamp.app
+recommendedAuth: api_key
+overviewNote: |
+  Every call goes through `https://api.teamcamp.app/v1.0` with the key in an `apiKey` header. The published spec names the scheme `bearerAuth`, but it is declared as an `apiKey` header and the live API agrees: an `Authorization: Bearer` token is rejected, the `apiKey` header is accepted.
+
+  List calls answer a bare JSON array. A project delete answers a bare JSON string. Both are returned as this plugin's own shape: `{ projects: [...] }`, `{ users: [...] }`, and `{ archived, projectId, message }`.
+
+  A project read is what makes a task create useful. Its `status` array holds the workflow columns (`Todo`, `In Progress`, `Done`) with the `_id` a task's `statusId` takes, and `projectUsers` holds the member ids a task's `taskUsers` takes.
+
+  Two Teamcamp behaviours worth knowing. A task's `status` is a boolean, and its workflow column is `statusId`, which is a string. A project delete archives rather than erases: the project leaves the project list, but reading it by id still answers it with `archived: true`.
+examples:
+  read:
+    path: projects.list
+    title: List the projects in the workspace
+    args: {}
+  write:
+    path: tasks.create
+    title: Create a task in a project
+    args:
+      projectId: <project id from projects.list>
+      taskName: Draft the launch announcement
+apiExamples:
+  account.verify:
+    call: "{}"
+  users.list:
+    call: "{}"
+  customers.list:
+    call: "{}"
+  projects.list:
+    call: "{}"
+  projects.get:
+    call: "{ projectId: '<project id>' }"
+  projects.create:
+    call: "{ projectName: 'Website Redesign', customerId: '<customer id>', startDate: '2026-11-30', dueDate: '2026-12-31' }"
+  projects.update:
+    call: "{ projectId: '<project id>', projectName: 'Website Redesign v2' }"
+  projects.delete:
+    call: "{ projectId: '<project id>' }"
+  groups.list:
+    call: "{ projectId: '<project id>' }"
+  tasks.list:
+    call: "{ projectId: '<project id>', complete: false }"
+  tasks.get:
+    call: "{ taskId: '<task id>' }"
+  tasks.create:
+    call: "{ projectId: '<project id>', taskName: 'Draft the launch announcement', priority: 'high', dueDate: '2026-12-15' }"
+apiNotes:
+  account.verify: 'Reads the workspace the key belongs to. A bad key answers 403 here, which is the one call where that status really does mean the key.'
+  users.list: 'The answer also carries each member''s timezone, date format and last seen time, which the published spec does not mention.'
+  projects.get: 'The workflow statuses in `status` are what a task create needs for `statusId`, and `projectUsers` is what it needs for `taskUsers`.'
+  projects.create: 'Only `projectName` is required. A `templateId` copies the template''s statuses and groups into the new project.'
+  projects.update: 'Give at least one of `projectName`, `description`, `startDate`, `dueDate` or `customerId`.'
+  projects.delete: 'This archives the project rather than erasing it. It leaves the project list, but a read by id still returns it with `archived: true`, so this is destructive but the record survives.'
+  tasks.list: '`projectId` is required; the API answers 400 "ProjectId is required" without it. `complete: true` returns only finished tasks, `false` only open ones.'
+  tasks.create: 'The name field is sent as `taskName`, which is what the API accepts; the published spec calls it `name` and that is rejected.'
+  tasks.get: 'Comments on the task use PascalCase fields (`_id`, `CreatedBy`, `CreatedTime`, `Type`), unlike the rest of the answer.'

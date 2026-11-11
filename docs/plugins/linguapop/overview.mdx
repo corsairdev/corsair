@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Language placement tests with Linguapop - list the languages it can test and create candidate invitations that return a direct test link, optionally emailed to the candidate."
+---
+
+Use **Linguapop** through Corsair: one client, typed API calls.
+
+Create the key in Linguapop under Integrations (an organization admin clicks **+ Add**, names the integration, then copies its API key). Archived integrations are rejected, and refreshing a key invalidates the old one at once. Things to know before you send:
+
+- **Linguapop needs a paid plan for invitations.** You can create an account and preview tests for free, but an active subscription with billing details is required to administer placement tests. Linguapop bills only completed tests.
+- **The key travels in the request body.** Linguapop reads an `apiKey` field from the JSON body of `invitations.create`, not a header. Corsair adds it for you; it is not an input, and passing `apiKey` yourself is rejected. Errors thrown by this plugin never carry the key.
+- **Languages.** `languages.list` returns `{ name, code }` pairs. Pass the `code` (for example `ita`, and `ger` for German) as `languageCode`. More languages are planned, so the plugin does not restrict `code` to today's five.
+- **No key is sent to `languages.list`.** A live check showed Linguapop answers it without one, so the plugin does not put the key on a GET. Corsair still needs a saved key to run the call.
+- **Invitations are not undone.** `invitations.create` is not documented as idempotent and has no cancel call, so it is never retried after a 5xx or a timeout. Check Linguapop before repeating a call that failed that way. `externalIdentifier` is your own ID for the candidate; it is not a duplicate guard.
+- **The returned `url` is the candidate's access link.** It holds the invitation token, so treat it as a secret. Set `sendEmail: false` to hand it to the candidate yourself.
+- **Results.** Linguapop reports a finished test by POSTing to the `callbackUrl` you give. That call is unsigned and this plugin does not receive it, and the API has no call to fetch results.
+- **Unverified.** The author had no paid account, so the live suite in `api.test.ts` has not run against `invitations.create`: the exact response shape follows the docs' example and is untested against the real API. Only `languages.list` and the rejection of an unrecognised key were checked live.
+- **Webhooks.** None are handled.
+
+**What you get:**
+
+- 2 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/linguapop better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/linguapop better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/linguapop better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/linguapop better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { linguapop } from '@corsair-dev/linguapop';
+
+export const corsair = createCorsair({
+	plugins: [
+		linguapop(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+linguapop()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'linguapop',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the languages Linguapop can test**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.linguapop.api.languages.list({});
+```
+
+
+**Create a placement test invitation and return the link without emailing it**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.linguapop.api.invitations.create({
+	email: 'sam.rivera@example.com',
+	name: 'Sam Rivera',
+	languageCode: 'ita',
+	sendEmail: false,
+	externalIdentifier: 'crm-lead-4812',
+});
+```
+
+
+See the full list on the [API](/plugins/linguapop/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/linguapop/api">
+    Every `linguapop.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
