@@ -31,7 +31,11 @@ function respond(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can reach
+	// the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
@@ -135,6 +139,11 @@ describeIfKey('live CommCare', () => {
 	const key = process.env.COMMCARE_API_KEY as string;
 	const username = process.env.COMMCARE_USERNAME as string;
 	const domain = process.env.COMMCARE_DOMAIN as string;
+
+	// The live suite needs the real fetch, not the throwing spy.
+	beforeEach(() => {
+		fetchMock.mockRestore();
+	});
 
 	it('lists users from the live project', async () => {
 		const { corsair, testDb } = await createClient({ key });
