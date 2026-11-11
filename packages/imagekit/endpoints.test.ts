@@ -222,7 +222,7 @@ describe('files.getDetails and files.updateDetails', () => {
 		expect(sent.body).toEqual({ tags: ['spring'] });
 	});
 
-	it('sends an empty tag array through, which clears every tag', async () => {
+	it('sends an empty tag array as tags: null, the documented way to clear tags', async () => {
 		respond(file);
 
 		await invoke(Files.updateDetails, {
@@ -230,7 +230,7 @@ describe('files.getDetails and files.updateDetails', () => {
 			tags: [],
 		});
 
-		expect(lastRequest().body).toEqual({ tags: [] });
+		expect(lastRequest().body).toEqual({ tags: null });
 	});
 
 	it('sends removal of every AI tag as the string all', async () => {

@@ -142,7 +142,8 @@ export const updateDetails: ImageKitEndpoints['filesUpdateDetails'] = (
 			// ImageKit's update body is a oneOf: publication status is the
 			// nested `publish` object and cannot mix with the detail fields.
 			body: {
-				...(tags !== undefined ? { tags } : {}),
+				// ImageKit documents `tags: null` as the way to clear every tag.
+				...(tags !== undefined ? { tags: tags.length > 0 ? tags : null } : {}),
 				...(customCoordinates !== undefined ? { customCoordinates } : {}),
 				...(customMetadata !== undefined ? { customMetadata } : {}),
 				...(description !== undefined ? { description } : {}),
