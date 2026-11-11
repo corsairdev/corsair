@@ -159,6 +159,22 @@ describe('request shape per operation', () => {
 		expect(url.searchParams.get('courseId')).toBe('course-1');
 	});
 
+	it('users.list forwards active: false, so only inactive members come back', async () => {
+		respondJson({ data: [] });
+
+		await api.users.list(makeCtx(), { active: false });
+
+		expect(sent().url.searchParams.get('active')).toBe('false');
+	});
+
+	it('users.list leaves active out when the caller does not filter', async () => {
+		respondJson({ data: [] });
+
+		await api.users.list(makeCtx(), {});
+
+		expect(sent().url.searchParams.has('active')).toBe(false);
+	});
+
 	it('users.findByEmail encodes the email into the path', async () => {
 		respondJson(USER);
 

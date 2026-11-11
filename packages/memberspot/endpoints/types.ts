@@ -220,6 +220,12 @@ const PageInputSchema = z.object({
 });
 
 const UsersListInputSchema = PageInputSchema.extend({
+	active: z
+		.boolean()
+		.optional()
+		.describe(
+			'True returns only active members, false only inactive ones. Leave it out for all members.',
+		),
 	offerId: z.string().optional().describe('Only users holding this offer.'),
 	courseId: z
 		.string()

@@ -94,6 +94,7 @@ export const usersList: MemberSpotEndpoints['usersList'] = (ctx, input) =>
 				pageLength: parsed.pageLength,
 				offerId: parsed.offerId,
 				courseId: parsed.courseId,
+				active: parsed.active,
 			},
 			replaySafe: true,
 		}),
