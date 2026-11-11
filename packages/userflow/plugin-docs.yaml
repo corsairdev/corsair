@@ -1,0 +1,103 @@
+displayName: Userflow
+description: In-app onboarding with Userflow - sync users, groups and membership attributes, track events, read flows, checklists and their sessions, and manage webhook subscriptions, accounts, members and invites.
+domain: userflow.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Userflow app: an **environment** key (`ak_…`) under Settings → API for the Users API, or a **personal** key (`pak_…`) under My Account → Personal API Keys for the Accounts API.
+
+  - **Two APIs, two key types, one plugin.** The Users API manages your users, groups and events; the Accounts API manages team resources inside a Userflow account. An environment key cannot call `/accounts`: Userflow answers `401` with the code `invalid_pak`. Both codes are treated as auth errors, so a missing or wrong key surfaces the same way — but only a personal key reaches members and invites.
+  - **The API version is pinned.** Userflow has released one dated version and defaults every request to the latest, so this plugin sends `Userflow-Version: 2020-01-03` explicitly, as the docs recommend. A later version cannot silently change the shapes underneath.
+  - **Creating and updating are the same call.** `users.upsert` and `groups.upsert` take your own id: an unseen id creates the object, a known one merges only the attributes sent. Because of that, a `400` on a retried write is not the only risk — which is why a 5xx is replayed for reads only.
+  - **Groups or memberships, never both.** `users.upsert` takes `groups` for simple membership or `memberships` when the membership itself holds attributes such as a role. Sending both is rejected before the request.
+  - **`prune_memberships` is a delete.** It removes every membership not listed, so sending it with no list would clear them all; the schema refuses that combination.
+  - **Relationships are opt-in.** `groups` and `memberships` come back as `null` unless you pass `expand`, and nesting works to four levels (`memberships.group`). Every read takes an `expand` argument for this.
+  - **Paging is `has_more`, not the link.** Every list answers `next_page_url`, and it is set even on the last page, so the plugin reports `has_more` and passes `starting_after` through rather than following the link blindly.
+  - **Sessions are the record of what was seen.** A flow or checklist run is a content session; `contentSessions.list` filtered by `user_id` and `content_id` answers whether that person has seen it, and `progress` is a decimal string from `0` to `1`.
+  - **Definitions are created by Userflow.** Attribute and event definitions appear the first time an unseen name arrives, and the API can only list them — which makes `attributes.list` the way to discover what a workspace already tracks.
+  - **Webhook subscriptions are managed here; delivery is not.** Each subscription has its own `whsec_…` secret, returned only on create and update, and notifications are signed as `Userflow-Signature: t=<timestamp>,v1=<hmac>`. The plugin manages subscriptions, but does not receive them, since there is no single workspace-wide signing key to verify against.
+  - **EU environments use a different host.** An EU environment lives on `api.eu.userflow.com`, and the key gives no hint of its region, so pass `region: 'eu'` to the plugin.
+examples:
+  read:
+    path: users.list
+    title: List users ordered by signup
+    args:
+      limit: 50
+      order_by:
+        - attributes.signed_up_at
+  write:
+    path: users.upsert
+    title: Sync a user with their company
+    args:
+      id: 2a845972-4cde-4cb4-ba14-5cb2fc15ec4c
+      attributes:
+        name: Evelyn Reichert
+        email: evelyn@example.com
+apiExamples:
+  users.upsert:
+    call: "{ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', attributes: { name: 'Evelyn Reichert', email: 'evelyn@example.com' }, groups: [{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' }] }"
+  users.get:
+    call: "{ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', expand: 'memberships.group' }"
+  users.delete:
+    call: "{ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c' }"
+  users.list:
+    call: "{ email: 'evelyn@example.com', order_by: ['created_at'], limit: 10 }"
+  groups.upsert:
+    call: "{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e', attributes: { name: 'Acme Inc.', billing_plan: 'plus' } }"
+  groups.get:
+    call: "{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e', expand: 'users' }"
+  groups.delete:
+    call: "{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' }"
+  groups.list:
+    call: "{ limit: 50 }"
+  memberships.remove:
+    call: "{ user_id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', group_id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' }"
+  events.track:
+    call: "{ name: 'subscription_activated', user_id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', attributes: { plan_name: 'plus', plan_price: 199 } }"
+  content.get:
+    call: "{ id: '54bce034-1303-4200-a09a-780a2eee355d', expand: 'published_version' }"
+  content.list:
+    call: "{ type: 'flow' }"
+  content.getVersion:
+    call: "{ id: '152a63cc-0a49-475a-a8e4-5f89bee94fe6' }"
+  content.listVersions:
+    call: "{ content_id: '54bce034-1303-4200-a09a-780a2eee355d' }"
+  contentSessions.get:
+    call: "{ id: '33af21fd-f025-43fc-a492-cf5179b38ee3', expand: 'answers' }"
+  contentSessions.end:
+    call: "{ id: '33af21fd-f025-43fc-a492-cf5179b38ee3' }"
+  contentSessions.delete:
+    call: "{ id: '33af21fd-f025-43fc-a492-cf5179b38ee3' }"
+  contentSessions.list:
+    call: "{ user_id: '34907ae0-24e0-4261-ac31-3c7299a354c0', content_id: '54bce034-1303-4200-a09a-780a2eee355d' }"
+  attributes.list:
+    call: "{ scope: 'user' }"
+  eventDefinitions.list:
+    call: "{ limit: 100 }"
+  webhookSubscriptions.create:
+    call: "{ url: 'https://acme.example/hooks/userflow', topics: ['user', 'event'] }"
+  webhookSubscriptions.get:
+    call: "{ id: 'c8783643-7f16-4a02-b736-4f5a327f8231' }"
+  webhookSubscriptions.update:
+    call: "{ id: 'c8783643-7f16-4a02-b736-4f5a327f8231', disabled: true }"
+  webhookSubscriptions.delete:
+    call: "{ id: 'c8783643-7f16-4a02-b736-4f5a327f8231' }"
+  webhookSubscriptions.list: {}
+  accounts.list: {}
+  accounts.get:
+    call: "{ id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', expand: 'environments' }"
+  members.list:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', role: ['admin', 'editor'] }"
+  members.get:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e' }"
+  members.update:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e', role: 'admin' }"
+  members.remove:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e' }"
+  invites.list:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b' }"
+  invites.get:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: 'e4d9916e-c5c3-4aa7-998b-8a7b1ff014c2' }"
+  invites.create:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', name: 'Jane Doe', email: 'jane@example.com', role: 'editor' }"
+  invites.delete:
+    call: "{ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: 'e4d9916e-c5c3-4aa7-998b-8a7b1ff014c2' }"
