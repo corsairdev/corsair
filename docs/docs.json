@@ -3692,6 +3692,14 @@
                 ]
               },
               {
+                "group": "Unisender",
+                "pages": [
+                  "plugins/unisender/overview",
+                  "plugins/unisender/api",
+                  "plugins/unisender/database"
+                ]
+              },
+              {
                 "group": "Uniswap",
                 "pages": [
                   "plugins/uniswapapi/overview",

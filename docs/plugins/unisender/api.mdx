@@ -1,0 +1,825 @@
+---
+title: API
+description: "API reference for Unisender: every `unisender.api.*` operation with input and output types."
+---
+
+Every `unisender.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Start or schedule a campaign from a message; omitting start_time sends it immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.campaigns.create({ message_id: 98765, start_time: '2026-12-01 09:00:00', timezone: 'Europe/Berlin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `number` | Yes | The message from messages.createEmail. |
+| `start_time` | `string` | No | YYYY-MM-DD hh:mm:ss in the given timezone. Omit it to start immediately. |
+| `timezone` | `string` | No | The timezone start_time is in. |
+| `track_read` | `0 \| 1` | No | — |
+| `track_links` | `0 \| 1` | No | — |
+| `contacts` | `string` | No | A comma-separated address list, as an alternative to the message's list. |
+| `track_ga` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  campaign_id?: number | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns whose start time falls in a window, up to 10,000 a page
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.campaigns.list({ from: '2026-01-01 00:00:00', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | YYYY-MM-DD hh:mm:ss in UTC; the earliest start to include. |
+| `to` | `string` | No | YYYY-MM-DD hh:mm:ss in UTC; the latest start to include. |
+| `limit` | `number` | No | At most 10,000 a call. |
+| `offset` | `number` | No | Zero-based position of the first record. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  start_time?: string | null,
+  status?: string | null,
+  subject?: string | null,
+  sender_name?: string | null,
+  sender_email?: string | null,
+  message_id?: number | null,
+  lists?: (number | string)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### count
+
+`contacts.count`
+
+Count the contacts in a list, optionally narrowed by tag, kind or a substring
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.contacts.count({ list_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | A contact list id from lists.list. |
+| `tag_id` | `number` | No | Only contacts with this tag. |
+| `type` | `address \| phone` | No | Only contacts of this kind. |
+| `search` | `string` | No | A substring of an address or phone; needs `type`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  listId?: number | null,
+  count?: number | null,
+  searchParams?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exclude
+
+`contacts.exclude`
+
+Remove a contact from lists without marking them unsubscribed, so they can be re-added later
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.contacts.exclude({ email: 'jordan@acme-logistics.com', list_ids: [1] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `contact_type` | `email` | No | email is the documented value; it is sent explicitly. |
+| `list_ids` | `number[]` | No | The lists to unsubscribe from. Omit it to unsubscribe from every list the contact is in. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### export
+
+`contacts.export`
+
+Request an asynchronous export of the contact data, delivered to a notify URL
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.contacts.export({ list_id: 1, notify_url: 'https://acme.example/export-ready', field_names: ['email', 'Name'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | No | Only this list. Omit for every list. |
+| `notify_url` | `string` | No | Where Unisender posts the export when the file is ready. |
+| `field_names` | `string[]` | No | Only these fields. Omit for every field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact's address status, lists and custom fields by email
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.contacts.get({ email: 'jordan@acme-logistics.com', include_lists: true, include_fields: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `list_id` | `number` | No | Read the contact as they appear in this list, when the fields differ per list. |
+| `include_lists` | `boolean` | No | Also return the lists the contact belongs to. |
+| `include_fields` | `boolean` | No | Also return the custom field values. |
+| `include_details` | `boolean` | No | Also return the extended contact details. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  email?: {
+    email?: string | null,
+    added_at?: string | null,
+    status?: string | null
+  } | null,
+  lists?: {
+    id?: number | null,
+    title?: string | null
+  }[] | null,
+  fields?: Record<string, any>[] | null,
+  details?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`contacts.import`
+
+Import up to 500 contacts from columnar data; role addresses such as sales@ are skipped on purpose
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.contacts.import({ list_ids: [1], field_names: ['email', 'Name'], data: [['jordan@acme-logistics.com', 'Jordan']] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_ids` | `number[]` | Yes | The lists to add every imported contact to. |
+| `field_names` | `string[]` | Yes | The column names, which must include email. `tags` is a comma-separated tag list and `delete` set to 1 removes the contact. |
+| `data` | `(string \| number \| boolean)[][]` | Yes | Rows, each with a value per field_names entry and in the same order. At most 500 contacts per call. |
+| `overwrite_tags` | `0 \| 1` | No | — |
+| `overwrite_lists` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+Record<string, {
+  created?: number | null,
+  updated?: number | null,
+  deleted?: number | null,
+  skipped?: number | null,
+  new_emails?: number | null,
+  invalid?: number | null,
+  errors?: string[] | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`contacts.subscribe`
+
+Add or update a contact in one or more lists, choosing whether to send a confirmation email; the resulting status says whether the address can be mailed yet
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.contacts.subscribe({ list_ids: [1], email: 'jordan@acme-logistics.com', fields: { Name: 'Jordan' }, double_optin: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_ids` | `number[]` | Yes | The lists to add the contact to. |
+| `email` | `string` | Yes | — |
+| `fields` | `Record<string, string \| number \| boolean>` | No | Custom field name to value, sent as fields[&lt;name&gt;]=value. |
+| `double_optin` | `0 \| 1 \| 3` | No | 0 adds without a confirmation email, 1 sends one, 3 adds without any email. Defaults to Unisender's own choice. |
+| `overwrite` | `0 \| 1` | No | 1 overwrites the contact's existing field values. |
+| `tags` | `string[]` | No | Up to 10 tags to add. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  person?: Record<string, any> | null,
+  email?: {
+    email?: string | null,
+    status?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`contacts.unsubscribe`
+
+Unsubscribe a contact from lists, which only the contact can reverse through an activation link
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.contacts.unsubscribe({ email: 'jordan@acme-logistics.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `contact_type` | `email` | No | email is the documented value; it is sent explicitly. |
+| `list_ids` | `number[]` | No | The lists to unsubscribe from. Omit it to unsubscribe from every list the contact is in. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a custom contact field
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.fields.create({ name: 'company', type: 'string' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The field name, as used in fields[...] arguments. |
+| `type` | `string \| text \| number \| date` | Yes | string for a short value, text for a long one. |
+| `is_visible` | `0 \| 1` | No | 1 to show the field in the admin. |
+| `view_pos` | `number` | No | Display order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Delete a custom contact field by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unisender.api.fields.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The field id from fields.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | Yes | — |
+
+
+
+---
+
+### list
+
+`fields.list`
+
+List the custom contact fields with their types
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.fields.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  is_visible?: number | null,
+  view_pos?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a contact list, which models a topic rather than a single send; the title must be unique
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.lists.create({ title: 'Newsletter', after_subscribe_url: 'https://acme.example/thanks' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | The list name, unique within the account. A duplicate name is an error. |
+| `before_subscribe_url` | `string` | No | Where to send a contact before they confirm a subscription. |
+| `after_subscribe_url` | `string` | No | Where to send a contact after they confirm a subscription. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a contact list by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unisender.api.lists.delete({ list_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | A contact list id from lists.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | Yes | — |
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List the contact lists in the account, with their ids and titles
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### createEmail
+
+`messages.createEmail`
+
+Create a campaign email without sending it, for campaigns.create to send
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.messages.createEmail({ sender_name: 'Acme', sender_email: 'hello@acme.example', subject: 'November news', body: '<p>Hello.</p>', list_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sender_name` | `string` | Yes | — |
+| `sender_email` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | The HTML body, up to 8 MB. |
+| `list_id` | `number` | Yes | A contact list id from lists.list. |
+| `tag` | `string` | No | A tag to attach to the message. |
+| `lang` | `string` | No | The message language, such as en. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  message_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendEmail
+
+`messages.sendEmail`
+
+Send one transactional email to a single recipient; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL
+
+**Risk:** `write`
+
+```ts
+await corsair.unisender.api.messages.sendEmail({ email: 'jordan@acme-logistics.com', sender_name: 'Acme', sender_email: 'hello@acme.example', subject: 'Your receipt', body: '<p>Thanks.</p>', list_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The recipient, optionally as `Name <address>`. |
+| `sender_name` | `string` | Yes | The From display name. |
+| `sender_email` | `string` | Yes | The From address, which must be verified. |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | The HTML body, up to 1 MB. |
+| `list_id` | `number` | Yes | The list the message is associated with, for unsubscribe handling. |
+| `track_read` | `0 \| 1` | No | — |
+| `track_links` | `0 \| 1` | No | — |
+| `cc` | `string` | No | A carbon-copy address. |
+| `metadata` | `Record<string, string \| number>` | No | Your own keys, echoed back by checkEmail. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  email_id?: number | null,
+  email?: string | null,
+  message_id?: number | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`messages.status`
+
+Read delivery status for up to 500 sent emails; err_ is a failure and ok_ a success or still in progress
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.messages.status({ email_id: [123456789] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_id` | `number[]` | Yes | Up to 500 email_id values from messages.sendEmail. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  statuses?: {
+    id?: number | null,
+    status?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List the contact tags with their ids
+
+**Risk:** `read`
+
+```ts
+await corsair.unisender.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
