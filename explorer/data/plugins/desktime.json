@@ -1,0 +1,651 @@
+{
+  "id": "desktime",
+  "displayName": "DeskTime",
+  "description": "Time tracking and productivity reporting with DeskTime - read account settings, list employees for a day, week or month, and fetch one employee's tracked apps and projects.",
+  "npmPackageName": "@corsair-dev/desktime",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "desktime.api.company.get",
+      "shortPath": "company.get",
+      "description": "Read the account's name, work hours, tracking window and timezone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_starts",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_ends",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_duration",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "working_days",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "work_start_tracking",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_stop_tracking",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone_identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "__request_time",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.employee.apps",
+      "shortPath": "employee.apps",
+      "description": "Read the apps one employee used on a day, grouped as unrated, neutral and productive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The employee to read. Omit it to read the key owner, which is the account the API key belongs to."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A day in YYYY-MM-DD form."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profileUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isOnline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "arrived",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "late",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "onlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "desktimeTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "atWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "afterWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "beforeWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productiveTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productivity",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "efficiency",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "work_starts",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "work_ends",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "activeProject",
+            "optional": true,
+            "type": "{ project?: string | null, task?: string | null }[] | { project?: string | null, task?: string | null } | null"
+          },
+          {
+            "key": "apps",
+            "optional": true,
+            "type": "Record<string, { app?: string | null, title?: string | null, time?: number | null }[]> | null",
+            "description": "Tracked apps keyed by productivity class, where `-1` is unrated, `0` neutral and `1` productive."
+          },
+          {
+            "key": "apps_by_productivity",
+            "optional": true,
+            "type": "{ unrated?: { app?: string | null, title?: string | null, time?: number | null }[], neutral?: { app?: string | null, title?: string | null, time?: number | null }[], productive?: { app?: string | null, title?: string | null, time?: number | null }[] }",
+            "description": "The same apps relabelled from the numeric productivity keys to `unrated`, `neutral` and `productive`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.employee.basic",
+      "shortPath": "employee.basic",
+      "description": "Read one employee's arrival, departure, tracked time and productivity for a day, defaulting to the key owner and today",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The employee to read. Omit it to read the key owner, which is the account the API key belongs to."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A day in YYYY-MM-DD form."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profileUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isOnline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "arrived",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "late",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "onlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "desktimeTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "atWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "afterWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "beforeWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productiveTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productivity",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "efficiency",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "work_starts",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "work_ends",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "activeProject",
+            "optional": true,
+            "type": "{ project?: string | null, task?: string | null }[] | { project?: string | null, task?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.employee.projects",
+      "shortPath": "employee.projects",
+      "description": "Read the projects one employee tracked time against on a day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The employee to read. Omit it to read the key owner, which is the account the API key belongs to."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A day in YYYY-MM-DD form."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profileUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isOnline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "arrived",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "late",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "onlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offlineTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "desktimeTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "atWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "afterWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "beforeWorkTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productiveTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "productivity",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "efficiency",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "work_starts",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "work_ends",
+            "optional": true,
+            "type": "string | false | null",
+            "description": "A timestamp, or `false` when it has not happened yet."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "activeProject",
+            "optional": true,
+            "type": "{ project?: string | null, task?: string | null }[] | { project?: string | null, task?: string | null } | null"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ project?: string | null, task?: string | null, time?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.employees.list",
+      "shortPath": "employees.list",
+      "description": "List every employee for a day, week or month with their arrival, tracked time and productivity, nested by date then employee id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A day in YYYY-MM-DD form."
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "day | week | month",
+            "description": "The window to return, starting at `date` or today. `day` returns one bucket, `week` seven, `month` the calendar month."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": false,
+            "type": "Record<string, Record<string, { id: number, name?: string | null, email?: string | null, groupId?: number | null, group?: string | null, profileUrl?: string | null, isOnline?: boolean | null, arrived?: string | false | null, left?: string | false | null, late?: boolean | null, onlineTime?: number | null, offlineTime?: number | null, desktimeTime?: number | null, atWorkTime?: number | null, afterWorkTime?: number | null, beforeWorkTime?: number | null, productiveTime?: number | null, productivity?: number | null, efficiency?: number | null, work_starts?: string | false | null, work_ends?: string | false | null, notes?: Record<string, any>[] | null, timezone?: string | null, activeProject?: { project?: string | null, task?: string | null }[] | { project?: string | null, task?: string | null } | null }>>"
+          },
+          {
+            "key": "buckets",
+            "optional": false,
+            "type": "{ date: string, employees: { id: number, name?: string | null, email?: string | null, groupId?: number | null, group?: string | null, profileUrl?: string | null, isOnline?: boolean | null, arrived?: string | false | null, left?: string | false | null, late?: boolean | null, onlineTime?: number | null, offlineTime?: number | null, desktimeTime?: number | null, atWorkTime?: number | null, afterWorkTime?: number | null, beforeWorkTime?: number | null, productiveTime?: number | null, productivity?: number | null, efficiency?: number | null, work_starts?: string | false | null, work_ends?: string | false | null, notes?: Record<string, any>[] | null, timezone?: string | null, activeProject?: { project?: string | null, task?: string | null }[] | { project?: string | null, task?: string | null } | null }[] }[]",
+            "description": "The same employees flattened out of the two-level map, newest date first, with the date kept on each entry so a multi-day response stays unambiguous."
+          },
+          {
+            "key": "__request_time",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.ping.get",
+      "shortPath": "ping.get",
+      "description": "Check that the DeskTime API answers. A configured key is still required, because the runtime resolves the account key before any endpoint runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pong",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "__request_time",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "desktime.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the account's active projects with their tasks. Archived projects are left out",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, created_at?: string | number | null, created_at_iso?: string | null, tasks?: { id?: number | null, name?: string | null, created_at?: string | number | null, created_at_iso?: string | null }[] | null }[]"
+          },
+          {
+            "key": "__request_time",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

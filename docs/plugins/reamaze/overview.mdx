@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Customer support inbox for Re:amaze - read and reply to conversations, manage contacts, identities and notes, publish help articles, and pull the volume, response time, tag and channel reports."
+---
+
+Use **Re:amaze** through Corsair: one client, typed API calls.
+
+**Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. The brand name on its own (`acme`) and a pasted `https://acme.reamaze.io/` are accepted too. Requests only go to `https://<brand>.reamaze.io`: another domain, an IP address or a port is rejected before anything is sent. Without a host the plugin throws before it sends anything.
+
+Credentials are a **login email and a personal API token**, sent as HTTP Basic. The token lives under Settings, then API tokens, inside the brand. Store the pair as the account's `api_key`, JSON-encoded as `{"email":"...","token":"..."}`, which is how a single-string key carries two values; `reamaze({ key })` takes the same string.
+
+Things to know before you call:
+
+- **Paging is by page number.** Pass `page`; the response carries `page_size`, `page_count` and `total_count`. `channels.list` sends only `total_count`, so read `channels.length` for that route.
+- **Three routes answer a bare array**, not a wrapper: contact notes, incidents and systems. The plugin wraps each under a named key (`notes`, `incidents`, `systems`) so a caller always reads a collection, and a non-array body throws instead of becoming an empty list.
+- **Report payloads are maps, not arrays.** `reports.volume` keys conversation counts by `YYYY-MM-DD`, `reports.tags` keys tag counts by tag name, `reports.staff` keys metrics by staff display name, and `reports.channelSummary` keys them by channel id. Read them with `Object.entries`.
+- **Conversation status is an integer**: 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7 and 8 for the AI agent, 9 AI spam.
+- **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` and `notes.update` send the fields unwrapped, as a bare `{ body }` plus the optional `creator_email` and `created_at`.
+- **`incidents.update` is a PUT.** The vendor heading says PUT and its curl example sends `-X POST`; the route only answers PUT, so that is what the endpoint sends.
+- **An unknown route answers HTML, not JSON.** An unknown resource answers `{"errors":"Not Found"}`, an unknown route `{"status":404,"error":"Not Found"}`, and a validation failure a map of field to message with status 422.
+
+**What you get:**
+
+- 38 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/reamaze better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/reamaze better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/reamaze better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/reamaze better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { reamaze } from '@corsair-dev/reamaze';
+
+export const corsair = createCorsair({
+	plugins: [
+		reamaze(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+reamaze()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'reamaze',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent conversations**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.reamaze.api.conversations.list({ page: 1 });
+```
+
+
+**Reply to a conversation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.reamaze.api.messages.create({ slug: 'knock-knock', body: 'Thanks for reaching out, we are looking into this now.', visibility: 0 });
+```
+
+
+See the full list on the [API](/plugins/reamaze/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/reamaze/api">
+    Every `reamaze.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
