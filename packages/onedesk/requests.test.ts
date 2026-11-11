@@ -3,6 +3,7 @@ import { Attachments, Crm, Records } from './endpoints';
 import {
 	activity,
 	activityDetailsPage,
+	attachment,
 	attachmentDetailsPage,
 	conversation,
 	conversationDetailsPage,
@@ -24,6 +25,7 @@ import {
 	organizationProfile,
 	organizationUserTypes,
 	pagedIds,
+	portfolio,
 	project,
 	projectDetailsPage,
 	quote,
@@ -378,10 +380,12 @@ describe('projects and portfolios', () => {
 		respond(projectDetailsPage);
 
 		const result = (await invoke(Records.projectsFilterDetails, {})) as {
-			data: { name?: string }[];
+			data: { name?: string; type?: { label?: string } }[];
 		};
 
 		expect(result.data[0]?.name).toBe(project.name);
+		// ProjectDetails.type is a ContainerType object, not a bare string.
+		expect(result.data[0]?.type?.label).toBe('Project');
 		const request = lastRequest();
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/rest/public/projects/filter/details');
@@ -461,11 +465,22 @@ describe('projects and portfolios', () => {
 	});
 
 	it('portfolios.get reads by external id', async () => {
-		respond({ code: 'SUCCESS', data: { externalId: 'pf-1', name: '2024' } });
+		respond({ code: 'SUCCESS', data: portfolio });
 
-		await invoke(Records.portfoliosGet, { externalId: 'pf-1' });
+		const result = (await invoke(Records.portfoliosGet, {
+			externalId: 'pf-1',
+		})) as {
+			data: {
+				type?: { label?: string };
+				parentPortfolioExternalIds?: string[];
+			};
+		};
 
 		expect(lastRequest().path).toBe('/rest/public/portfolios/externalId/pf-1');
+		expect(result.data.type?.label).toBe('Portfolio');
+		expect(result.data.parentPortfolioExternalIds).toEqual(
+			portfolio.parentPortfolioExternalIds,
+		);
 	});
 
 	it('portfolios.create does not log the submitted name', async () => {
@@ -592,10 +607,18 @@ describe('invoices and quotes', () => {
 		respond(invoiceDetailsPage);
 
 		const result = (await invoke(Records.invoicesFilterDetails, {})) as {
-			data: { displayNumber?: string }[];
+			data: {
+				displayNumber?: string;
+				invoiceExternalId?: string;
+				invoiceStatus?: string;
+				totalAmount?: number;
+			}[];
 		};
 
 		expect(result.data[0]?.displayNumber).toBe(invoice.displayNumber);
+		expect(result.data[0]?.invoiceExternalId).toBe(invoice.invoiceExternalId);
+		expect(result.data[0]?.invoiceStatus).toBe('Sent');
+		expect(result.data[0]?.totalAmount).toBe(100);
 	});
 
 	it('invoices.get reads by external id', async () => {
@@ -644,10 +667,13 @@ describe('invoices and quotes', () => {
 		respond(quoteDetailsPage);
 
 		const result = (await invoke(Records.quotesFilterDetails, {})) as {
-			data: { displayNumber?: string }[];
+			data: { displayNumber?: string; id?: string; quoteStatus?: string }[];
 		};
 
 		expect(result.data[0]?.displayNumber).toBe(quote.displayNumber);
+		// QuoteDetails.id is a string such as 'Q-1'.
+		expect(result.data[0]?.id).toBe('Q-1');
+		expect(result.data[0]?.quoteStatus).toBe('Sent');
 	});
 
 	it('quotes.get reads by numeric id', async () => {
@@ -689,10 +715,13 @@ describe('customers and organizations', () => {
 		respond(customerDetailsPage);
 
 		const result = (await invoke(Crm.customersFilterDetails, {})) as {
-			data: { email?: string }[];
+			data: { profile?: { email?: string }; customerOrganization?: string }[];
 		};
 
-		expect(result.data[0]?.email).toBe(customer.email);
+		expect(result.data[0]?.profile?.email).toBe(customer.profile.email);
+		expect(result.data[0]?.customerOrganization).toBe(
+			customer.customerOrganization,
+		);
 		const request = lastRequest();
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/rest/public/customers/filter/details');
@@ -748,10 +777,12 @@ describe('customers and organizations', () => {
 		respond(organizationDetailsPage);
 
 		const result = (await invoke(Crm.organizationsFilterDetails, {})) as {
-			data: { name?: string }[];
+			data: { name?: string; domains?: string[] }[];
 		};
 
 		expect(result.data[0]?.name).toBe(organization.name);
+		// The spec lists domains as plain strings.
+		expect(result.data[0]?.domains).toEqual(['analytical.example']);
 	});
 
 	it('organizations.get reads by external id', async () => {
@@ -812,10 +843,13 @@ describe('timesheets and timers', () => {
 		respond(timesheetDetailsPage);
 
 		const result = (await invoke(Crm.timesheetsFilterDetails, {})) as {
-			data: { works?: number }[];
+			data: { id?: string; work?: number; billable?: string }[];
 		};
 
-		expect(result.data[0]?.works).toBe(timesheet.works);
+		// TimesheetDetails: a string id, `work`, and `billable` as a string.
+		expect(result.data[0]?.id).toBe('8-1');
+		expect(result.data[0]?.work).toBe(timesheet.work);
+		expect(result.data[0]?.billable).toBe('true');
 	});
 
 	it('timesheets.get reads by external id', async () => {
@@ -883,10 +917,11 @@ describe('timesheets and timers', () => {
 		respond(timerDetailsPage);
 
 		const result = (await invoke(Crm.timersFilterDetails, {})) as {
-			data: { status?: string }[];
+			data: { amountOfWork?: number; itemExternalId?: string }[];
 		};
 
-		expect(result.data[0]?.status).toBe(timer.status);
+		expect(result.data[0]?.amountOfWork).toBe(timer.amountOfWork);
+		expect(result.data[0]?.itemExternalId).toBe(timer.itemExternalId);
 	});
 
 	it('timers.get reads by external id', async () => {
@@ -951,10 +986,11 @@ describe('conversations and messages', () => {
 		respond(conversationDetailsPage);
 
 		const result = (await invoke(Crm.conversationsFilterDetails, {})) as {
-			data: { externalId?: string }[];
+			data: { id?: string; locked?: boolean }[];
 		};
 
-		expect(result.data[0]?.externalId).toBe(conversation.externalId);
+		expect(result.data[0]?.id).toBe(conversation.id);
+		expect(result.data[0]?.locked).toBe(false);
 	});
 
 	it('conversations.get reads by external id', async () => {
@@ -1029,10 +1065,11 @@ describe('conversations and messages', () => {
 		respond(messageDetailsPage);
 
 		const result = (await invoke(Crm.messagesFilterDetails, {})) as {
-			data: { content?: string }[];
+			data: { content?: string; conversationId?: string }[];
 		};
 
 		expect(result.data[0]?.content).toBe(message.content);
+		expect(result.data[0]?.conversationId).toBe(message.conversationId);
 	});
 
 	it('messages.get reads by external id', async () => {
@@ -1095,10 +1132,13 @@ describe('activities and attachments', () => {
 		respond(attachmentDetailsPage);
 
 		const result = (await invoke(Attachments.attachmentsFilterDetails, {})) as {
-			data: { name?: string }[];
+			data: { name?: string; id?: string; url?: string }[];
 		};
 
 		expect(result.data[0]?.name).toBe('invoice.pdf');
+		// Attachment.id is the uuid, not a number.
+		expect(result.data[0]?.id).toBe(attachment.id);
+		expect(result.data[0]?.url).toBe(attachment.url);
 	});
 
 	it('attachments.get reads by external id', async () => {

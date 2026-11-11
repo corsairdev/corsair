@@ -65,10 +65,15 @@ await corsair.onedesk.api.activities.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
-  externalId?: string | null,
+  projectExternalId?: string | null,
+  authorExternalId?: string | null,
+  itemExternalId?: string | null,
   activityType?: string | null,
-  created?: string | null
+  automationType?: string | null,
+  creationDate?: string | null,
+  itemType?: string | null,
+  itemName?: string | null,
+  newValue?: string | null
 }[]
 ```
 </Accordion>
@@ -369,9 +374,12 @@ await corsair.onedesk.api.attachments.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
-  externalId?: string | null,
-  name?: string | null
+  id?: string | number | null,
+  name?: string | null,
+  contentType?: string | null,
+  creationDate?: string | null,
+  authorExternalId?: string | null,
+  url?: string | null
 }[]
 ```
 </Accordion>
@@ -435,9 +443,12 @@ await corsair.onedesk.api.attachments.get({ externalId: '1234596f4-0000-0000-000
 
 ```ts
 {
-  id?: number | null,
-  externalId?: string | null,
-  name?: string | null
+  id?: string | number | null,
+  name?: string | null,
+  contentType?: string | null,
+  creationDate?: string | null,
+  authorExternalId?: string | null,
+  url?: string | null
 } | null
 ```
 </Accordion>
@@ -512,8 +523,7 @@ await corsair.onedesk.api.conversations.create({ itemExternalId: '0abb5fgh-0000-
 ```ts
 {
   content?: string,
-  attachmentExternalIds?: string[],
-  authorExternalId?: string | null
+  attachmentIds?: string[]
 }[]
 ```
 </Accordion>
@@ -663,19 +673,16 @@ await corsair.onedesk.api.conversations.filterDetails({ limit: 50 });
 
 ```ts
 {
-  externalId?: string | null,
+  id?: string | null,
+  authorExternalId?: string | null,
+  lastPostedAuthorExternalId?: string | null,
+  open?: boolean | null,
+  publicConversation?: boolean | null,
+  created?: string | null,
+  lastPosted?: string | null,
   itemExternalId?: string | null,
   projectExternalId?: string | null,
-  publicConversation?: boolean | null,
-  open?: boolean | null,
-  lock?: boolean | null,
-  author?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  } | null
+  locked?: boolean | null
 }[]
 ```
 </Accordion>
@@ -739,19 +746,16 @@ await corsair.onedesk.api.conversations.get({ externalId: '6634596f4-0000-0000-0
 
 ```ts
 {
-  externalId?: string | null,
+  id?: string | null,
+  authorExternalId?: string | null,
+  lastPostedAuthorExternalId?: string | null,
+  open?: boolean | null,
+  publicConversation?: boolean | null,
+  created?: string | null,
+  lastPosted?: string | null,
   itemExternalId?: string | null,
   projectExternalId?: string | null,
-  publicConversation?: boolean | null,
-  open?: boolean | null,
-  lock?: boolean | null,
-  author?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  } | null
+  locked?: boolean | null
 } | null
 ```
 </Accordion>
@@ -989,13 +993,18 @@ await corsair.onedesk.api.customers.filterDetails({ limit: 50 });
 {
   id?: number | null,
   externalId?: string | null,
-  firstName?: string | null,
-  lastName?: string | null,
-  email?: string | null,
-  phoneNumber?: string | null,
-  type?: string | null,
+  customerType?: string | null,
+  created?: string | null,
   priority?: number | null,
-  title?: string | null,
+  registered?: boolean | null,
+  profile?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    phoneWork?: string | null,
+    title?: string | null,
+    language?: string | null
+  } | null,
   address?: {
     address1?: string | null,
     address2?: string | null,
@@ -1004,14 +1013,11 @@ await corsair.onedesk.api.customers.filterDetails({ limit: 50 });
     zip?: string | null,
     country?: string | null
   } | null,
-  organization?: {
-    externalId?: string | null,
-    name?: string | null
-  } | null,
   customFieldsData?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
-  }[] | null
+  }[] | null,
+  customerOrganization?: string | null
 }[]
 ```
 </Accordion>
@@ -1078,13 +1084,18 @@ await corsair.onedesk.api.customers.get({ externalId: '35650e86-0000-0000-0000-5
 {
   id?: number | null,
   externalId?: string | null,
-  firstName?: string | null,
-  lastName?: string | null,
-  email?: string | null,
-  phoneNumber?: string | null,
-  type?: string | null,
+  customerType?: string | null,
+  created?: string | null,
   priority?: number | null,
-  title?: string | null,
+  registered?: boolean | null,
+  profile?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    phoneWork?: string | null,
+    title?: string | null,
+    language?: string | null
+  } | null,
   address?: {
     address1?: string | null,
     address2?: string | null,
@@ -1093,14 +1104,11 @@ await corsair.onedesk.api.customers.get({ externalId: '35650e86-0000-0000-0000-5
     zip?: string | null,
     country?: string | null
   } | null,
-  organization?: {
-    externalId?: string | null,
-    name?: string | null
-  } | null,
   customFieldsData?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
-  }[] | null
+  }[] | null,
+  customerOrganization?: string | null
 } | null
 ```
 </Accordion>
@@ -1303,13 +1311,54 @@ await corsair.onedesk.api.invoices.filterDetails({ limit: 50 });
 ```ts
 {
   id?: number | null,
-  externalId?: string | null,
-  displayNumber?: string | null,
-  status?: string | null,
+  invoiceExternalId?: string | null,
+  created?: string | null,
+  customerOrganization?: {
+    displayName?: string | null,
+    emailAddress?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
+  displayNumber?: string | number | null,
+  invoiceStatus?: string | null,
+  type?: string | null,
+  invoiceMonth?: number | null,
+  invoiceYear?: number | null,
+  dateOfIssue?: string | null,
   dueDate?: string | null,
-  total?: number | null,
-  balance?: number | null,
-  created?: string | null
+  lastSent?: string | null,
+  paidDate?: string | null,
+  serviceLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  basicLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  flatRateLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  prepaidHoursLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  totalAmount?: number | null,
+  billableHours?: number | null,
+  currency?: string | null,
+  calculationLevel?: string | null,
+  integrationType?: string | null,
+  integrationInvoiceId?: string | number | null,
+  companyName?: string | null,
+  customerAddress?: {
+    name?: string | null,
+    address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zipCode?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -1375,13 +1424,54 @@ await corsair.onedesk.api.invoices.get({ externalId: '35650e86-0000-0000-0000-55
 ```ts
 {
   id?: number | null,
-  externalId?: string | null,
-  displayNumber?: string | null,
-  status?: string | null,
+  invoiceExternalId?: string | null,
+  created?: string | null,
+  customerOrganization?: {
+    displayName?: string | null,
+    emailAddress?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
+  displayNumber?: string | number | null,
+  invoiceStatus?: string | null,
+  type?: string | null,
+  invoiceMonth?: number | null,
+  invoiceYear?: number | null,
+  dateOfIssue?: string | null,
   dueDate?: string | null,
-  total?: number | null,
-  balance?: number | null,
-  created?: string | null
+  lastSent?: string | null,
+  paidDate?: string | null,
+  serviceLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  basicLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  flatRateLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  prepaidHoursLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  totalAmount?: number | null,
+  billableHours?: number | null,
+  currency?: string | null,
+  calculationLevel?: string | null,
+  integrationType?: string | null,
+  integrationInvoiceId?: string | number | null,
+  companyName?: string | null,
+  customerAddress?: {
+    name?: string | null,
+    address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zipCode?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -1672,10 +1762,27 @@ Returns full item records. OneDesk caps `limit` at 50 on the details variants, a
   } | null,
   timesheets?: string[] | null,
   agilePoints?: number | null,
-  customFieldsData?: {
+  assignedTeams?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  published?: boolean | null,
+  attachments?: {
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  customFields?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
-  }[] | null
+  }[] | null,
+  sla?: string | null,
+  satisfactionRating?: string | null,
+  incomingEmailQueueName?: string | null,
+  workItemUrl?: string | null
 }[]
 ```
 </Accordion>
@@ -1777,10 +1884,27 @@ await corsair.onedesk.api.items.get({ externalId: '0abb5fgh-0000-0000-0000-c75df
   } | null,
   timesheets?: string[] | null,
   agilePoints?: number | null,
-  customFieldsData?: {
+  assignedTeams?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  published?: boolean | null,
+  attachments?: {
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  customFields?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
-  }[] | null
+  }[] | null,
+  sla?: string | null,
+  satisfactionRating?: string | null,
+  incomingEmailQueueName?: string | null,
+  workItemUrl?: string | null
 } | null
 ```
 </Accordion>
@@ -1839,14 +1963,15 @@ await corsair.onedesk.api.items.update({ externalId: '0abb5fgh-0000-0000-0000-c7
 | `requesterTeamAndCustomerOrganizationExternalIds` | `object` | No | — |
 | `archived` | `boolean` | No | — |
 
-Related and assigned lists take a replace, add or remove object rather than an array, so an existing value can be kept.
+Related and assigned lists take a list update object rather than an array: `{ replace: true, newValue: [ids] }` sets the whole list, and `add` or `remove` change it while keeping the rest.
 
 <AccordionGroup>
 <Accordion title="relatedItemExternalIds full type">
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1857,7 +1982,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1868,7 +1994,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1879,7 +2006,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1890,7 +2018,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1901,7 +2030,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1912,7 +2042,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1923,7 +2054,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1934,7 +2066,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1945,7 +2078,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1956,7 +2090,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1967,7 +2102,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1978,7 +2114,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -1989,7 +2126,8 @@ Related and assigned lists take a replace, add or remove object rather than an a
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -2176,17 +2314,21 @@ await corsair.onedesk.api.messages.filterDetails({ limit: 50 });
 
 ```ts
 {
-  externalId?: string | null,
-  conversationExternalId?: string | null,
+  id?: string | null,
+  authorExternalId?: string | null,
+  conversationId?: string | null,
   content?: string | null,
-  author?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  } | null,
-  created?: string | null
+  source?: string | null,
+  creationDate?: string | null,
+  attachments?: {
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  deleted?: boolean | null
 }[]
 ```
 </Accordion>
@@ -2250,17 +2392,21 @@ await corsair.onedesk.api.messages.get({ externalId: '7e895fe5-0000-0000-0000-06
 
 ```ts
 {
-  externalId?: string | null,
-  conversationExternalId?: string | null,
+  id?: string | null,
+  authorExternalId?: string | null,
+  conversationId?: string | null,
   content?: string | null,
-  author?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  } | null,
-  created?: string | null
+  source?: string | null,
+  creationDate?: string | null,
+  attachments?: {
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  deleted?: boolean | null
 } | null
 ```
 </Accordion>
@@ -2295,7 +2441,8 @@ await corsair.onedesk.api.messages.update({ externalId: '7e895fe5-0000-0000-0000
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -2710,26 +2857,39 @@ await corsair.onedesk.api.organizations.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
   name?: string | null,
-  description?: string | null,
-  phoneNumber?: string | null,
-  address?: {
-    address1?: string | null,
-    address2?: string | null,
+  profile?: {
+    description?: string | null,
+    phone?: string | null,
+    address?: string | null,
     city?: string | null,
     state?: string | null,
-    zip?: string | null,
-    country?: string | null
+    country?: string | null,
+    zipCode?: string | null,
+    attachments?: {
+      id?: string | number | null,
+      name?: string | null,
+      contentType?: string | null,
+      creationDate?: string | null,
+      authorExternalId?: string | null,
+      url?: string | null
+    }[] | null
   } | null,
-  domains?: {
-    domain?: string | null,
-    externalId?: string | null
-  }[] | null,
-  customers?: {
-    externalId?: string | null,
-    email?: string | null
+  invoicePreference?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    currencySymbol?: string | null,
+    enablePrepaidHours?: boolean | null,
+    remainingPrepaidHoursInMillis?: number | null
+  } | null,
+  customerExternalIds?: string[] | null,
+  domains?: (string | {
+  })[] | null,
+  customFields?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null
 }[]
 ```
@@ -2794,26 +2954,39 @@ await corsair.onedesk.api.organizations.get({ externalId: '04969ee3-f2b0-45b2-95
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
   name?: string | null,
-  description?: string | null,
-  phoneNumber?: string | null,
-  address?: {
-    address1?: string | null,
-    address2?: string | null,
+  profile?: {
+    description?: string | null,
+    phone?: string | null,
+    address?: string | null,
     city?: string | null,
     state?: string | null,
-    zip?: string | null,
-    country?: string | null
+    country?: string | null,
+    zipCode?: string | null,
+    attachments?: {
+      id?: string | number | null,
+      name?: string | null,
+      contentType?: string | null,
+      creationDate?: string | null,
+      authorExternalId?: string | null,
+      url?: string | null
+    }[] | null
   } | null,
-  domains?: {
-    domain?: string | null,
-    externalId?: string | null
-  }[] | null,
-  customers?: {
-    externalId?: string | null,
-    email?: string | null
+  invoicePreference?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    currencySymbol?: string | null,
+    enablePrepaidHours?: boolean | null,
+    remainingPrepaidHoursInMillis?: number | null
+  } | null,
+  customerExternalIds?: string[] | null,
+  domains?: (string | {
+  })[] | null,
+  customFields?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null
 } | null
 ```
@@ -2869,7 +3042,8 @@ await corsair.onedesk.api.organizations.update({ externalId: '04969ee3-f2b0-45b2
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -2880,7 +3054,8 @@ await corsair.onedesk.api.organizations.update({ externalId: '04969ee3-f2b0-45b2
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -2891,7 +3066,8 @@ await corsair.onedesk.api.organizations.update({ externalId: '04969ee3-f2b0-45b2
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -3079,15 +3255,20 @@ await corsair.onedesk.api.portfolios.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
+  created?: string | null,
   name?: string | null,
-  description?: string | null,
-  type?: string | null,
-  parentExternalIds?: string[] | null,
+  type?: {
+    label?: string | null
+  } | string | null,
+  parentPortfolioExternalIds?: string[] | null,
   attachments?: {
-    externalId?: string | null,
-    name?: string | null
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
   }[] | null
 }[]
 ```
@@ -3152,15 +3333,20 @@ await corsair.onedesk.api.portfolios.get({ externalId: '04969ee3-f2b0-45b2-95a5-
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
+  created?: string | null,
   name?: string | null,
-  description?: string | null,
-  type?: string | null,
-  parentExternalIds?: string[] | null,
+  type?: {
+    label?: string | null
+  } | string | null,
+  parentPortfolioExternalIds?: string[] | null,
   attachments?: {
-    externalId?: string | null,
-    name?: string | null
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
   }[] | null
 } | null
 ```
@@ -3199,7 +3385,8 @@ await corsair.onedesk.api.portfolios.update({ externalId: '04969ee3-f2b0-45b2-95
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -3210,7 +3397,8 @@ await corsair.onedesk.api.portfolios.update({ externalId: '04969ee3-f2b0-45b2-95
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -3435,7 +3623,9 @@ await corsair.onedesk.api.projects.filterDetails({ limit: 50 });
   description?: string | null,
   created?: string | null,
   archivedDate?: string | null,
-  type?: string | null,
+  type?: {
+    label?: string | null
+  } | string | null,
   invoiceType?: string | null,
   lifecycleStatus?: {
     name?: string | null,
@@ -3456,9 +3646,36 @@ await corsair.onedesk.api.projects.filterDetails({ limit: 50 });
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null,
   attachments?: {
-    externalId?: string | null,
-    name?: string | null
-  }[] | null
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  invoices?: string[] | null,
+  archived?: boolean | null,
+  published?: boolean | null,
+  template?: boolean | null,
+  customerFollowers?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  teamsFollowers?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customerOrganizationsFollowers?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  requesterCustomerOrganization?: {
+    name?: string | null,
+    externalId?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -3529,7 +3746,9 @@ await corsair.onedesk.api.projects.get({ externalId: 'e150be49-b53c-4d81-a25d-ab
   description?: string | null,
   created?: string | null,
   archivedDate?: string | null,
-  type?: string | null,
+  type?: {
+    label?: string | null
+  } | string | null,
   invoiceType?: string | null,
   lifecycleStatus?: {
     name?: string | null,
@@ -3550,9 +3769,36 @@ await corsair.onedesk.api.projects.get({ externalId: 'e150be49-b53c-4d81-a25d-ab
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null,
   attachments?: {
-    externalId?: string | null,
-    name?: string | null
-  }[] | null
+    id?: string | number | null,
+    name?: string | null,
+    contentType?: string | null,
+    creationDate?: string | null,
+    authorExternalId?: string | null,
+    url?: string | null
+  }[] | null,
+  invoices?: string[] | null,
+  archived?: boolean | null,
+  published?: boolean | null,
+  template?: boolean | null,
+  customerFollowers?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  teamsFollowers?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customerOrganizationsFollowers?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  requesterCustomerOrganization?: {
+    name?: string | null,
+    externalId?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -3597,7 +3843,8 @@ A lifecycle status name must be one the organization defines; read them with `or
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -3608,7 +3855,8 @@ A lifecycle status name must be one the organization defines; read them with `or
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -3761,13 +4009,46 @@ await corsair.onedesk.api.quotes.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
-  externalId?: string | null,
-  displayNumber?: string | null,
-  status?: string | null,
-  expirationDate?: string | null,
-  total?: number | null,
-  created?: string | null
+  id?: string | number | null,
+  quoteExternalId?: string | null,
+  created?: string | null,
+  customerOrganization?: {
+    displayName?: string | null,
+    emailAddress?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
+  displayNumber?: string | number | null,
+  quoteStatus?: string | null,
+  quoteIssued?: string | null,
+  quoteLastSent?: string | null,
+  quoteExpiration?: string | null,
+  quoteAccepted?: string | null,
+  serviceLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  basicLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  prepaidHoursLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  totalAmount?: number | null,
+  billableHours?: number | null,
+  currency?: string | null,
+  calculationLevel?: string | null,
+  companyName?: string | null,
+  customerAddress?: {
+    name?: string | null,
+    address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zipCode?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -3832,13 +4113,46 @@ await corsair.onedesk.api.quotes.get({ externalId: '35650e86-0000-0000-0000-55a4
 
 ```ts
 {
-  id?: number | null,
-  externalId?: string | null,
-  displayNumber?: string | null,
-  status?: string | null,
-  expirationDate?: string | null,
-  total?: number | null,
-  created?: string | null
+  id?: string | number | null,
+  quoteExternalId?: string | null,
+  created?: string | null,
+  customerOrganization?: {
+    displayName?: string | null,
+    emailAddress?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
+  displayNumber?: string | number | null,
+  quoteStatus?: string | null,
+  quoteIssued?: string | null,
+  quoteLastSent?: string | null,
+  quoteExpiration?: string | null,
+  quoteAccepted?: string | null,
+  serviceLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  basicLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  prepaidHoursLineItems?: {
+    name?: string | null,
+    amount?: number | null
+  }[] | null,
+  totalAmount?: number | null,
+  billableHours?: number | null,
+  currency?: string | null,
+  calculationLevel?: string | null,
+  companyName?: string | null,
+  customerAddress?: {
+    name?: string | null,
+    address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zipCode?: string | null
+  } | null
 } | null
 ```
 </Accordion>
@@ -4155,7 +4469,8 @@ await corsair.onedesk.api.teams.update({ externalId: '46d4eed9-776f-4a88-aea7-5f
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -4353,12 +4668,12 @@ await corsair.onedesk.api.timers.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
-  status?: string | null,
-  works?: number | null,
-  start?: string | null,
-  finish?: string | null
+  userExternalId?: string | null,
+  itemExternalId?: string | null,
+  startDate?: string | null,
+  amountOfWork?: number | null,
+  startCurrentTimer?: string | null
 }[]
 ```
 </Accordion>
@@ -4422,12 +4737,12 @@ await corsair.onedesk.api.timers.get({ externalId: '4t52581b-0000-0000-0000-b023
 
 ```ts
 {
-  id?: number | null,
   externalId?: string | null,
-  status?: string | null,
-  works?: number | null,
-  start?: string | null,
-  finish?: string | null
+  userExternalId?: string | null,
+  itemExternalId?: string | null,
+  startDate?: string | null,
+  amountOfWork?: number | null,
+  startCurrentTimer?: string | null
 } | null
 ```
 </Accordion>
@@ -4767,16 +5082,41 @@ await corsair.onedesk.api.timesheets.filterDetails({ limit: 50 });
 
 ```ts
 {
-  id?: number | null,
+  id?: string | number | null,
   externalId?: string | null,
-  works?: number | null,
-  billable?: boolean | null,
-  note?: string | null,
-  status?: string | null,
-  completion?: number | null,
+  taskName?: string | null,
   start?: string | null,
   finish?: string | null,
-  customFieldsData?: {
+  created?: string | null,
+  work?: number | null,
+  invoiceWork?: number | null,
+  percentCompletedReported?: number | null,
+  comments?: string | null,
+  status?: string | null,
+  assignees?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  taskExternalId?: string | null,
+  projectExternalId?: string | null,
+  billable?: string | boolean | null,
+  serviceType?: string | null,
+  invoiceableCustomerOrganizationExternalId?: string | null,
+  linkedInvoiceExternalId?: string | null,
+  userRequesters?: string[] | null,
+  customerRequesters?: string[] | null,
+  teamRequesters?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customerOrganizationRequesters?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customFields?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null
@@ -4844,16 +5184,41 @@ await corsair.onedesk.api.timesheets.get({ externalId: 'ff87a554-0000-0000-0000-
 
 ```ts
 {
-  id?: number | null,
+  id?: string | number | null,
   externalId?: string | null,
-  works?: number | null,
-  billable?: boolean | null,
-  note?: string | null,
-  status?: string | null,
-  completion?: number | null,
+  taskName?: string | null,
   start?: string | null,
   finish?: string | null,
-  customFieldsData?: {
+  created?: string | null,
+  work?: number | null,
+  invoiceWork?: number | null,
+  percentCompletedReported?: number | null,
+  comments?: string | null,
+  status?: string | null,
+  assignees?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  taskExternalId?: string | null,
+  projectExternalId?: string | null,
+  billable?: string | boolean | null,
+  serviceType?: string | null,
+  invoiceableCustomerOrganizationExternalId?: string | null,
+  linkedInvoiceExternalId?: string | null,
+  userRequesters?: string[] | null,
+  customerRequesters?: string[] | null,
+  teamRequesters?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customerOrganizationRequesters?: {
+    name?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customFields?: {
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null
@@ -4903,7 +5268,8 @@ await corsair.onedesk.api.timesheets.update({ externalId: 'ff87a554-0000-0000-00
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -4914,7 +5280,8 @@ await corsair.onedesk.api.timesheets.update({ externalId: 'ff87a554-0000-0000-00
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }
@@ -5305,7 +5672,8 @@ await corsair.onedesk.api.users.update({ externalId: '67475168-7241-4a76-8bd5-dc
 
 ```ts
 {
-  replace?: string[],
+  replace?: boolean,
+  newValue?: string[],
   add?: string[],
   remove?: string[]
 }

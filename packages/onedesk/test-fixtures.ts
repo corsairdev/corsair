@@ -46,7 +46,7 @@ export const item = {
 	],
 	project: { externalId: 'p-1', name: 'Website' },
 	agilePoints: 3,
-	customFieldsData: [{ name: 'Severity', value: 'High' }],
+	customFields: [{ name: 'Severity', value: 'High' }],
 };
 
 export const itemDetailsPage = {
@@ -102,13 +102,28 @@ export const project = {
 	description: 'Marketing site',
 	created: '2024-02-01T00:00:00Z',
 	archivedDate: null,
-	type: 'Project',
+	// ProjectDetails: the type is a ContainerType object with a label.
+	type: { label: 'Project' },
 	invoiceType: 'flat fee',
-	lifecycleStatus: { name: 'Open', externalId: 'ls-1', state: 'OPEN' },
+	lifecycleStatus: { name: 'Open', externalId: 'ls-1', state: 'not started' },
 	author: { typeName: 'User', displayName: 'Ada', externalId: 'u-1' },
 	discoverable: true,
 	parentExternalIds: [],
 	customFields: [],
+	attachments: [],
+	archived: false,
+	requesterCustomerOrganization: {
+		name: 'Team 1',
+		externalId: '5adf2c85-0000-0000-0000-dd5bb59d2dad',
+	},
+};
+
+export const portfolio = {
+	externalId: '9343a3e4-0000-0000-0000-e1c087ebe9ea',
+	created: '2021-03-28 19:29:41.343000 +00:00',
+	name: 'Sample portfolio',
+	type: { label: 'Portfolio' },
+	parentPortfolioExternalIds: ['9343a3e4-0000-0000-0000-e1c087ebe9eb'],
 	attachments: [],
 };
 
@@ -127,19 +142,25 @@ export const team = {
 
 export const teamDetailsPage = { code: 'SUCCESS', data: [team], totalNum: 1 };
 
+/** CustomerDetails: the name and email sit in `profile`, as on a user. */
 export const customer = {
-	id: 21,
-	externalId: 'c-1',
-	firstName: 'Ada',
-	lastName: 'Lovelace',
-	email: 'ada@example.com',
-	phoneNumber: '+1 555 0101',
-	type: 'customer',
-	priority: 20,
-	title: 'CTO',
-	address: { address1: '1 Main St', city: 'Springfield' },
-	organization: { externalId: 'co-1', name: 'Analytical Engines' },
+	id: 5,
+	externalId: '03014379-0000-0000-0000-e1452fd43483',
+	customerType: 'New-customer',
+	created: '2023-07-31 21:07:04.112000 +00:00',
+	priority: 100,
+	registered: true,
+	profile: {
+		email: 'myemail@example.com',
+		firstName: 'John',
+		lastName: 'Doe',
+		phoneWork: '+14381234567',
+		title: 'Mr',
+		language: 'english',
+	},
+	address: { address1: '3175 Rowes Lane', city: 'Miami', country: 'US' },
 	customFieldsData: [],
+	customerOrganization: '1234596f4-0000-0000-0000-cb0e42b1db19',
 };
 
 export const customerDetailsPage = {
@@ -148,15 +169,21 @@ export const customerDetailsPage = {
 	totalNum: 1,
 };
 
+/** customer-organizations UserTeam: domains are plain strings. */
 export const organization = {
-	id: 31,
-	externalId: 'co-1',
+	externalId: '3214596f4-0000-0000-0000-cb0e42b1db19',
 	name: 'Analytical Engines',
-	description: 'Client',
-	phoneNumber: '+1 555 0102',
-	address: { address1: '1 Main St' },
-	domains: [],
-	customers: [],
+	profile: {
+		description: 'Client',
+		phone: '+1 555 0102',
+		address: '100 rue',
+		city: 'Montreal',
+		country: 'Canada',
+	},
+	invoicePreference: { currencySymbol: 'CAD', enablePrepaidHours: true },
+	customerExternalIds: ['6634596f4-0000-0000-0000-cb0e42b1db19'],
+	domains: ['analytical.example'],
+	customFields: [],
 };
 
 export const organizationDetailsPage = {
@@ -165,17 +192,24 @@ export const organizationDetailsPage = {
 	totalNum: 1,
 };
 
+/** TimesheetDetails: a string id and `billable` typed as a string. */
 export const timesheet = {
-	id: 41,
-	externalId: 'ts-1',
-	works: 2.5,
-	billable: true,
-	note: 'Implemented the form',
+	id: '8-1',
+	externalId: '3214596f4-0000-0000-0000-cb0e42b1db19',
+	taskName: 'Sample task',
+	start: '2024-05-14T09:00:00+00:00',
+	finish: '2024-05-14T11:30:00+00:00',
+	created: '2024-05-14T11:31:00+00:00',
+	work: 2.5,
+	invoiceWork: 2,
+	percentCompletedReported: 50,
+	comments: 'Implemented the form',
 	status: 'not approved yet',
-	completion: 100,
-	start: '2024-05-14T09:00:00Z',
-	finish: '2024-05-14T11:30:00Z',
-	customFieldsData: [],
+	taskExternalId: '616c7f21-0000-0000-0000-e1c087ebe9ea',
+	billable: 'true',
+	serviceType: 'Services',
+	userRequesters: [],
+	customFields: [],
 };
 
 export const timesheetDetailsPage = {
@@ -185,12 +219,12 @@ export const timesheetDetailsPage = {
 };
 
 export const timer = {
-	id: 51,
-	externalId: 'tm-1',
-	status: 'RUNNING',
-	works: 1.2,
-	start: '2024-05-14T09:00:00Z',
-	finish: null,
+	externalId: '4t52581b-0000-0000-0000-b0232f2a4453',
+	userExternalId: 'ec4e9ef9-0000-0000-0000-2ae9a95c27bc',
+	itemExternalId: '616c7f21-0000-0000-0000-e1c087ebe9ea',
+	startDate: '2024-01-04T17:10:05.155+00:00',
+	amountOfWork: 4.5,
+	startCurrentTimer: '2024-01-04T17:10:05.155+00:00',
 };
 
 export const timerDetailsPage = { code: 'SUCCESS', data: [timer], totalNum: 1 };
@@ -201,14 +235,21 @@ export const timerActionResult = {
 };
 
 export const invoice = {
-	id: 61,
-	externalId: 'inv-1',
+	id: 1,
+	invoiceExternalId: '550e8400-0000-0000-0000-446655440000',
+	created: '2024-01-12T16:10:29.499Z',
+	customerOrganization: {
+		displayName: 'John',
+		emailAddress: 'jdoe@example.com',
+	},
 	displayNumber: 'INV-001',
-	status: 'draft',
-	dueDate: '2024-06-01',
-	total: 1250,
-	balance: 1250,
-	created: '2024-05-01T00:00:00Z',
+	invoiceStatus: 'Sent',
+	type: 'Monthly',
+	dueDate: '2023-12-21T19:44:04.342+00:00',
+	basicLineItems: [{ name: 'Setup', amount: 50, type: 'BASIC' }],
+	totalAmount: 100,
+	currency: '$',
+	calculationLevel: 'TEAM',
 };
 
 export const invoiceDetailsPage = {
@@ -217,14 +258,16 @@ export const invoiceDetailsPage = {
 	totalNum: 1,
 };
 
+/** QuoteDetails: unlike an invoice, the id is a string. */
 export const quote = {
-	id: 71,
-	externalId: 'q-1',
+	id: 'Q-1',
+	quoteExternalId: '550e8400-0000-0000-0000-446655440001',
+	created: '2024-01-12T16:10:29.499Z',
 	displayNumber: 'QUO-001',
-	status: 'sent',
-	expirationDate: '2024-06-15',
-	total: 900,
-	created: '2024-05-01T00:00:00Z',
+	quoteStatus: 'Sent',
+	quoteExpiration: '2023-11-22T22:05:06.775+00:00',
+	totalAmount: 15,
+	currency: '$',
 };
 
 export const quoteDetailsPage = {
@@ -233,14 +276,16 @@ export const quoteDetailsPage = {
 	totalNum: 1,
 };
 
+/** Conversation: the external id is `id`, and a read says `locked`. */
 export const conversation = {
-	externalId: 'cv-1',
-	itemExternalId: 'i-1',
-	projectExternalId: null,
-	publicConversation: false,
+	id: '1234596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com',
+	authorExternalId: '1234596f4-0000-0000-0000-cb0e42b1db19',
 	open: true,
-	lock: false,
-	author: { typeName: 'User', displayName: 'Ada', externalId: 'u-1' },
+	publicConversation: false,
+	created: '2023-12-20T18:14:24.329+00:00',
+	itemExternalId: '6634596f4-0000-0000-0000-cb0e42b1db19',
+	projectExternalId: null,
+	locked: false,
 };
 
 export const conversationDetailsPage = {
@@ -250,11 +295,15 @@ export const conversationDetailsPage = {
 };
 
 export const message = {
-	externalId: 'm-1',
-	conversationExternalId: 'cv-1',
+	id: '4B85822F-0000-0000-0000-DB929C97D532',
+	authorExternalId: '9343a3e4-0000-0000-0000-e1c087ebe9ea',
+	conversationId:
+		'1234596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com',
 	content: 'Thanks for the update.',
-	author: { typeName: 'User', displayName: 'Ada', externalId: 'u-1' },
-	created: '2024-05-14T12:00:00Z',
+	source: 'MAIN_APP',
+	creationDate: '2022-04-11T21:24:14.162+00:00',
+	attachments: [],
+	deleted: false,
 };
 
 export const messageDetailsPage = {
@@ -264,10 +313,15 @@ export const messageDetailsPage = {
 };
 
 export const activity = {
-	id: 81,
-	externalId: 'a-1',
-	activityType: 'ITEM_CREATED',
-	created: '2024-05-14T12:00:00Z',
+	projectExternalId: '293496f4-0000-0000-0000-cb0e42b1db19',
+	authorExternalId: '293496f4-0000-0000-0000-cb0e42b1db19',
+	itemExternalId: '293496f4-0000-0000-0000-cb0e42b1db19',
+	activityType: 'updated name',
+	automationType: 'workflow triggered',
+	creationDate: '2023-12-20T18:14:24.329+00:00',
+	itemType: 'Portfolio',
+	itemName: 'Sample Portfolio Name',
+	newValue: 'portfolio name updated v2',
 };
 
 export const activityDetailsPage = {
@@ -276,10 +330,14 @@ export const activityDetailsPage = {
 	totalNum: 1,
 };
 
+/** Attachment: the id is the uuid the routes call the external id. */
 export const attachment = {
-	id: 91,
-	externalId: 'at-1',
+	id: 'f4f93ccd-0000-0000-0000-d908c97a6190',
 	name: 'invoice.pdf',
+	contentType: 'application/pdf',
+	creationDate: '2023-11-29T14:00:00.000+00:00',
+	authorExternalId: '0abb5fgh-0000-0000-0000-c75df7969bad',
+	url: 'https://app.onedesk.com/cware/view/f4f93ccd-0000-0000-0000-d908c97a6190',
 };
 
 export const attachmentDetailsPage = {

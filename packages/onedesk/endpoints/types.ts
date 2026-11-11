@@ -190,11 +190,35 @@ const CustomFieldValueSchema = z
 	})
 	.loose();
 
-/** An attachment reference embedded in a project or portfolio. */
+/**
+ * An attachment as OneDesk's `Attachment` describes it, on its own and
+ * embedded in projects, portfolios and messages. Its `id` is the uuid the
+ * attachments routes call the external id.
+ */
 const AttachmentRefSchema = z
 	.object({
-		externalId: z.string().nullish(),
+		// The spec types this as a uuid string; a number is also accepted
+		// rather than failing a read that already happened.
+		id: z.union([z.string(), z.number()]).nullish(),
 		name: z.string().nullish(),
+		contentType: z.string().nullish(),
+		creationDate: z.string().nullish(),
+		authorExternalId: z.string().nullish(),
+		url: z.string().nullish(),
+	})
+	.loose();
+
+/** A project or portfolio type: an object with a `label` in the spec. */
+const ContainerTypeSchema = z.union([
+	z.object({ label: z.string().nullish() }).loose(),
+	z.string(),
+]);
+
+/** A team or customer organization reference: a name and an external id. */
+const TeamDetailsSchema = z
+	.object({
+		name: z.string().nullish(),
+		externalId: z.string().nullish(),
 	})
 	.loose();
 
@@ -265,7 +289,8 @@ const listUpdate = z
 			ctx.addIssue({
 				code: 'custom',
 				path: ['newValue'],
-				message: 'Pass replace: true together with newValue, or use add/remove.',
+				message:
+					'Pass replace: true together with newValue, or use add/remove.',
 			});
 		}
 	});
@@ -296,7 +321,16 @@ export const OnedeskItemSchema = z
 			.nullish(),
 		timesheets: z.array(z.string()).nullish(),
 		agilePoints: z.number().nullish(),
-		customFieldsData: z.array(CustomFieldValueSchema).nullish(),
+		assignedTeams: z.array(TeamDetailsSchema).nullish(),
+		published: z.boolean().nullish(),
+		attachments: z.array(AttachmentRefSchema).nullish(),
+		// ItemDetails names this customFields (users and customers use
+		// customFieldsData).
+		customFields: z.array(CustomFieldValueSchema).nullish(),
+		sla: z.string().nullish(),
+		satisfactionRating: z.string().nullish(),
+		incomingEmailQueueName: z.string().nullish(),
+		workItemUrl: z.string().nullish(),
 	})
 	.loose();
 
@@ -583,7 +617,7 @@ export const OnedeskProjectSchema = z
 		description: z.string().nullish(),
 		created: z.string().nullish(),
 		archivedDate: z.string().nullish(),
-		type: z.string().nullish(),
+		type: ContainerTypeSchema.nullish(),
 		invoiceType: z.string().nullish(),
 		lifecycleStatus: LifecycleStatusSchema.nullish(),
 		author: OnedeskUserRefSchema.nullish(),
@@ -591,6 +625,14 @@ export const OnedeskProjectSchema = z
 		parentExternalIds: z.array(z.string()).nullish(),
 		customFields: z.array(CustomFieldValueSchema).nullish(),
 		attachments: z.array(AttachmentRefSchema).nullish(),
+		invoices: z.array(z.string()).nullish(),
+		archived: z.boolean().nullish(),
+		published: z.boolean().nullish(),
+		template: z.boolean().nullish(),
+		customerFollowers: z.array(OnedeskUserRefSchema).nullish(),
+		teamsFollowers: z.array(TeamDetailsSchema).nullish(),
+		customerOrganizationsFollowers: z.array(TeamDetailsSchema).nullish(),
+		requesterCustomerOrganization: TeamDetailsSchema.nullish(),
 	})
 	.loose();
 
@@ -699,12 +741,11 @@ export type ProjectsUpdateResponse = z.infer<
 
 export const OnedeskPortfolioSchema = z
 	.object({
-		id: z.number().nullish(),
 		externalId: z.string().nullish(),
+		created: z.string().nullish(),
 		name: z.string().nullish(),
-		description: z.string().nullish(),
-		type: z.string().nullish(),
-		parentExternalIds: z.array(z.string()).nullish(),
+		type: ContainerTypeSchema.nullish(),
+		parentPortfolioExternalIds: z.array(z.string()).nullish(),
 		attachments: z.array(AttachmentRefSchema).nullish(),
 	})
 	.loose();
@@ -846,22 +887,26 @@ export const OnedeskCustomerSchema = z
 	.object({
 		id: z.number().nullish(),
 		externalId: z.string().nullish(),
-		firstName: z.string().nullish(),
-		lastName: z.string().nullish(),
-		email: z.string().nullish(),
-		phoneNumber: z.string().nullish(),
-		type: z.string().nullish(),
+		customerType: z.string().nullish(),
+		created: z.string().nullish(),
 		priority: z.number().nullish(),
-		title: z.string().nullish(),
-		address: AddressSchema.nullish(),
-		organization: z
+		registered: z.boolean().nullish(),
+		// The name, email and phone sit in the profile, as on a user.
+		profile: z
 			.object({
-				externalId: z.string().nullish(),
-				name: z.string().nullish(),
+				firstName: z.string().nullish(),
+				lastName: z.string().nullish(),
+				email: z.string().nullish(),
+				phoneWork: z.string().nullish(),
+				title: z.string().nullish(),
+				language: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
+		address: AddressSchema.nullish(),
 		customFieldsData: z.array(CustomFieldValueSchema).nullish(),
+		// External id of the customer's organization.
+		customerOrganization: z.string().nullish(),
 	})
 	.loose();
 
@@ -966,32 +1011,37 @@ export type CustomersUpdateResponse = z.infer<
 
 export const OnedeskCustomerOrganizationSchema = z
 	.object({
-		id: z.number().nullish(),
 		externalId: z.string().nullish(),
 		name: z.string().nullish(),
-		description: z.string().nullish(),
-		phoneNumber: z.string().nullish(),
-		address: AddressSchema.nullish(),
-		domains: z
-			.array(
-				z
-					.object({
-						domain: z.string().nullish(),
-						externalId: z.string().nullish(),
-					})
-					.loose(),
-			)
+		profile: z
+			.object({
+				description: z.string().nullish(),
+				phone: z.string().nullish(),
+				address: z.string().nullish(),
+				city: z.string().nullish(),
+				state: z.string().nullish(),
+				country: z.string().nullish(),
+				zipCode: z.string().nullish(),
+				attachments: z.array(AttachmentRefSchema).nullish(),
+			})
+			.loose()
 			.nullish(),
-		customers: z
-			.array(
-				z
-					.object({
-						externalId: z.string().nullish(),
-						email: z.string().nullish(),
-					})
-					.loose(),
-			)
+		invoicePreference: z
+			.object({
+				firstName: z.string().nullish(),
+				lastName: z.string().nullish(),
+				email: z.string().nullish(),
+				currencySymbol: z.string().nullish(),
+				enablePrepaidHours: z.boolean().nullish(),
+				remainingPrepaidHoursInMillis: z.number().nullish(),
+			})
+			.loose()
 			.nullish(),
+		customerExternalIds: z.array(z.string()).nullish(),
+		// The spec lists domains as plain strings; an object is accepted too
+		// rather than failing a read that already happened.
+		domains: z.array(z.union([z.string(), z.object({}).loose()])).nullish(),
+		customFields: z.array(CustomFieldValueSchema).nullish(),
 	})
 	.loose();
 
@@ -1074,16 +1124,31 @@ export type OrganizationsUpdateResponse = z.infer<
 
 export const OnedeskTimesheetSchema = z
 	.object({
-		id: z.number().nullish(),
+		// The spec types the id and `billable` as strings; the JSON types a
+		// client would expect are accepted too.
+		id: z.union([z.string(), z.number()]).nullish(),
 		externalId: z.string().nullish(),
-		works: z.number().nullish(),
-		billable: z.boolean().nullish(),
-		note: z.string().nullish(),
-		status: z.string().nullish(),
-		completion: z.number().nullish(),
+		taskName: z.string().nullish(),
 		start: z.string().nullish(),
 		finish: z.string().nullish(),
-		customFieldsData: z.array(CustomFieldValueSchema).nullish(),
+		created: z.string().nullish(),
+		work: z.number().nullish(),
+		invoiceWork: z.number().nullish(),
+		percentCompletedReported: z.number().nullish(),
+		comments: z.string().nullish(),
+		status: z.string().nullish(),
+		assignees: z.array(OnedeskUserRefSchema).nullish(),
+		taskExternalId: z.string().nullish(),
+		projectExternalId: z.string().nullish(),
+		billable: z.union([z.string(), z.boolean()]).nullish(),
+		serviceType: z.string().nullish(),
+		invoiceableCustomerOrganizationExternalId: z.string().nullish(),
+		linkedInvoiceExternalId: z.string().nullish(),
+		userRequesters: z.array(z.string()).nullish(),
+		customerRequesters: z.array(z.string()).nullish(),
+		teamRequesters: z.array(TeamDetailsSchema).nullish(),
+		customerOrganizationRequesters: z.array(TeamDetailsSchema).nullish(),
+		customFields: z.array(CustomFieldValueSchema).nullish(),
 	})
 	.loose();
 
@@ -1200,12 +1265,12 @@ export type TimesheetsUpdateResponse = z.infer<
 
 export const OnedeskTimerSchema = z
 	.object({
-		id: z.number().nullish(),
 		externalId: z.string().nullish(),
-		status: z.string().nullish(),
-		works: z.number().nullish(),
-		start: z.string().nullish(),
-		finish: z.string().nullish(),
+		userExternalId: z.string().nullish(),
+		itemExternalId: z.string().nullish(),
+		startDate: z.string().nullish(),
+		amountOfWork: z.number().nullish(),
+		startCurrentTimer: z.string().nullish(),
 	})
 	.loose();
 
@@ -1263,16 +1328,63 @@ export type TimerNamedInput = z.input<typeof TimerNamedInputSchema>;
 
 // ── invoices and quotes ───────────────────────────────────────────────────
 
+/** The billed organization as an invoice or quote embeds it. */
+const InvoiceCustomerSchema = z
+	.object({
+		displayName: z.string().nullish(),
+		emailAddress: z.string().nullish(),
+		givenName: z.string().nullish(),
+		familyName: z.string().nullish(),
+	})
+	.loose();
+
+const InvoiceAddressSchema = z
+	.object({
+		name: z.string().nullish(),
+		address: z.string().nullish(),
+		city: z.string().nullish(),
+		state: z.string().nullish(),
+		country: z.string().nullish(),
+		zipCode: z.string().nullish(),
+	})
+	.loose();
+
+/** A line item on a read: every kind is a flat object of named amounts. */
+const InvoiceLineItemSchema = z
+	.object({
+		name: z.string().nullish(),
+		amount: z.number().nullish(),
+	})
+	.loose();
+
 export const OnedeskInvoiceSchema = z
 	.object({
 		id: z.number().nullish(),
-		externalId: z.string().nullish(),
-		displayNumber: z.string().nullish(),
-		status: z.string().nullish(),
-		dueDate: z.string().nullish(),
-		total: z.number().nullish(),
-		balance: z.number().nullish(),
+		invoiceExternalId: z.string().nullish(),
 		created: z.string().nullish(),
+		customerOrganization: InvoiceCustomerSchema.nullish(),
+		// A string in the spec's schema, a number in its examples.
+		displayNumber: z.union([z.string(), z.number()]).nullish(),
+		invoiceStatus: z.string().nullish(),
+		type: z.string().nullish(),
+		invoiceMonth: z.number().nullish(),
+		invoiceYear: z.number().nullish(),
+		dateOfIssue: z.string().nullish(),
+		dueDate: z.string().nullish(),
+		lastSent: z.string().nullish(),
+		paidDate: z.string().nullish(),
+		serviceLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		basicLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		flatRateLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		prepaidHoursLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		totalAmount: z.number().nullish(),
+		billableHours: z.number().nullish(),
+		currency: z.string().nullish(),
+		calculationLevel: z.string().nullish(),
+		integrationType: z.string().nullish(),
+		integrationInvoiceId: z.union([z.string(), z.number()]).nullish(),
+		companyName: z.string().nullish(),
+		customerAddress: InvoiceAddressSchema.nullish(),
 	})
 	.loose();
 
@@ -1379,13 +1491,27 @@ export type InvoicesUpdateResponse = z.infer<
 
 export const OnedeskQuoteSchema = z
 	.object({
-		id: z.number().nullish(),
-		externalId: z.string().nullish(),
-		displayNumber: z.string().nullish(),
-		status: z.string().nullish(),
-		expirationDate: z.string().nullish(),
-		total: z.number().nullish(),
+		// The spec types a quote id as a string, unlike an invoice's.
+		id: z.union([z.string(), z.number()]).nullish(),
+		quoteExternalId: z.string().nullish(),
 		created: z.string().nullish(),
+		customerOrganization: InvoiceCustomerSchema.nullish(),
+		// A string in the spec's schema, a number in its examples.
+		displayNumber: z.union([z.string(), z.number()]).nullish(),
+		quoteStatus: z.string().nullish(),
+		quoteIssued: z.string().nullish(),
+		quoteLastSent: z.string().nullish(),
+		quoteExpiration: z.string().nullish(),
+		quoteAccepted: z.string().nullish(),
+		serviceLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		basicLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		prepaidHoursLineItems: z.array(InvoiceLineItemSchema).nullish(),
+		totalAmount: z.number().nullish(),
+		billableHours: z.number().nullish(),
+		currency: z.string().nullish(),
+		calculationLevel: z.string().nullish(),
+		companyName: z.string().nullish(),
+		customerAddress: InvoiceAddressSchema.nullish(),
 	})
 	.loose();
 
@@ -1474,13 +1600,18 @@ export type QuotesUpdateResponse = z.infer<typeof QuotesUpdateResponseSchema>;
 
 export const OnedeskConversationSchema = z
 	.object({
-		externalId: z.string().nullish(),
+		// The conversation's external id, e.g. `...@conference.im.onedesk.com`.
+		id: z.string().nullish(),
+		authorExternalId: z.string().nullish(),
+		lastPostedAuthorExternalId: z.string().nullish(),
+		open: z.boolean().nullish(),
+		publicConversation: z.boolean().nullish(),
+		created: z.string().nullish(),
+		lastPosted: z.string().nullish(),
 		itemExternalId: z.string().nullish(),
 		projectExternalId: z.string().nullish(),
-		publicConversation: z.boolean().nullish(),
-		open: z.boolean().nullish(),
-		lock: z.boolean().nullish(),
-		author: OnedeskUserRefSchema.nullish(),
+		// A read says `locked`; conversations.update takes `lock`.
+		locked: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -1577,11 +1708,14 @@ export type ConversationsUpdateResponse = z.infer<
 
 export const OnedeskConversationMessageSchema = z
 	.object({
-		externalId: z.string().nullish(),
-		conversationExternalId: z.string().nullish(),
+		id: z.string().nullish(),
+		authorExternalId: z.string().nullish(),
+		conversationId: z.string().nullish(),
 		content: z.string().nullish(),
-		author: OnedeskUserRefSchema.nullish(),
-		created: z.string().nullish(),
+		source: z.string().nullish(),
+		creationDate: z.string().nullish(),
+		attachments: z.array(AttachmentRefSchema).nullish(),
+		deleted: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -1656,10 +1790,17 @@ export type MessagesUpdateResponse = z.infer<
 
 export const OnedeskActivitySchema = z
 	.object({
-		id: z.number().nullish(),
-		externalId: z.string().nullish(),
+		projectExternalId: z.string().nullish(),
+		authorExternalId: z.string().nullish(),
+		itemExternalId: z.string().nullish(),
+		// Free text such as 'updated lifecycle status'; the spec lists over a
+		// hundred values, so it is not an enum.
 		activityType: z.string().nullish(),
-		created: z.string().nullish(),
+		automationType: z.string().nullish(),
+		creationDate: z.string().nullish(),
+		itemType: z.string().nullish(),
+		itemName: z.string().nullish(),
+		newValue: z.string().nullish(),
 	})
 	.loose();
 
@@ -1681,13 +1822,7 @@ export type ActivitiesFilterDetailsResponse = z.infer<
 
 // ── attachments ───────────────────────────────────────────────────────────
 
-export const OnedeskAttachmentSchema = z
-	.object({
-		id: z.number().nullish(),
-		externalId: z.string().nullish(),
-		name: z.string().nullish(),
-	})
-	.loose();
+export const OnedeskAttachmentSchema = AttachmentRefSchema;
 
 export type OnedeskAttachment = z.infer<typeof OnedeskAttachmentSchema>;
 
