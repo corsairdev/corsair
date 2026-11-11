@@ -257,6 +257,7 @@ export const BaseProviders = [
 	'giphy',
 	'github',
 	'gitlab',
+	'givebutter',
 	'gladia',
 	'gmail',
 	'gmicloud',
@@ -742,6 +743,7 @@ export const ProviderDisplayNames = {
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
+	givebutter: 'Givebutter',
 	gladia: 'Gladia',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
@@ -1234,6 +1236,7 @@ export type AllProviders =
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
+	| 'givebutter'
 	| 'gladia'
 	| 'gmail'
 	| 'gmicloud'

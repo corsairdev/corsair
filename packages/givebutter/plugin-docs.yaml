@@ -1,0 +1,4 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Givebutter"
+description: Manage Givebutter fundraising campaigns, supporters, donations, and related fundraising operations.
