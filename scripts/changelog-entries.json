@@ -2765,5 +2765,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/dropcontact",
+    "dir": "packages/dropcontact",
+    "name": "Dropcontact",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/heyy",
+    "dir": "packages/heyy",
+    "name": "Heyy",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/onedesk",
+    "dir": "packages/onedesk",
+    "name": "OneDesk",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
