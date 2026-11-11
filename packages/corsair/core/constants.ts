@@ -172,6 +172,7 @@ export const BaseProviders = [
 	'coinmarketcal',
 	'coinmarketcap',
 	'collegefootballdata',
+	'commcare',
 	'composio',
 	'confluence',
 	'connecteam',
@@ -647,6 +648,7 @@ export const ProviderDisplayNames = {
 	coinmarketcal: 'Coinmarketcal',
 	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
+	commcare: 'CommCare',
 	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -1129,6 +1131,7 @@ export type AllProviders =
 	| 'coinmarketcal'
 	| 'coinmarketcap'
 	| 'collegefootballdata'
+	| 'commcare'
 	| 'composio'
 	| 'confluence'
 	| 'connecteam'

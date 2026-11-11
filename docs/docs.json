@@ -1465,6 +1465,14 @@
                 ]
               },
               {
+                "group": "CommCare",
+                "pages": [
+                  "plugins/commcare/overview",
+                  "plugins/commcare/api",
+                  "plugins/commcare/database"
+                ]
+              },
+              {
                 "group": "Composio",
                 "pages": [
                   "plugins/composio/overview",
