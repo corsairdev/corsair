@@ -327,7 +327,7 @@ auto | none | any | required | {
 
 `agents.create`
 
-Create an agent: a model with instructions, tools and default settings (beta)
+Create an agent: a model with instructions, tools and default settings (beta). Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted
 
 **Risk:** `write`
 
@@ -349,6 +349,8 @@ await corsair.mistralai.api.agents.create({ model: 'mistral-medium-latest', name
 | `handoffs` | `string[]` | No | Ids of agents this one can hand the conversation to. |
 | `metadata` | `Record<string, any>` | No | — |
 | `version_message` | `string` | No | — |
+
+Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted.
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -1574,7 +1576,7 @@ Cancellation is a request; `batch.get` shows CANCELLATION_REQUESTED until the jo
 
 `batch.create`
 
-Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits. Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED
+Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED
 
 **Risk:** `write`
 
@@ -1594,7 +1596,7 @@ await corsair.mistralai.api.batch.create({ endpoint: '/v1/chat/completions', mod
 | `metadata` | `Record<string, string>` | No | — |
 | `timeout_hours` | `number` | No | — |
 
-Pass exactly one of `input_files` (ids of `.jsonl` files uploaded with purpose `batch`, one request per line) or `requests` inline. Every request goes to `endpoint`.
+Pass exactly one of `input_files` (ids of `.jsonl` files uploaded with purpose `batch`, one request per line) or `requests` inline. Every request goes to `endpoint`. Batch jobs need a Mistral plan with billing enabled; without it Mistral returns 402.
 
 <AccordionGroup>
 <Accordion title="requests full type">

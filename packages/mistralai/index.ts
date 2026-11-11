@@ -309,7 +309,7 @@ export const mistralAiEndpointMeta = {
 	'agents.create': {
 		riskLevel: 'write',
 		description:
-			'Create an agent: a model with instructions, tools and default settings (beta)',
+			'Create an agent: a model with instructions, tools and default settings (beta). Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted',
 	},
 	'agents.list': {
 		riskLevel: 'read',
@@ -503,7 +503,7 @@ export const mistralAiEndpointMeta = {
 	'batch.create': {
 		riskLevel: 'write',
 		description:
-			'Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits. Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED',
+			'Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED',
 		job: BATCH_JOB,
 	},
 	'batch.get': {

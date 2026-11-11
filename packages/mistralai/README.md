@@ -13,7 +13,7 @@ pnpm add @corsair-dev/mistralai
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `agents.complete` | `mistralai.api.agents.complete` | `write` | Run an agent on a list of messages with the agent's instructions and tools; spends Mistral credits |
-| `agents.create` | `mistralai.api.agents.create` | `write` | Create an agent: a model with instructions, tools and default settings (beta) |
+| `agents.create` | `mistralai.api.agents.create` | `write` | Create an agent: a model with instructions, tools and default settings (beta). Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted |
 | `agents.delete` | `mistralai.api.agents.delete` | `destructive` | Delete an agent; cannot be undone (beta) |
 | `agents.deleteAlias` | `mistralai.api.agents.deleteAlias` | `destructive` | Remove a version alias from an agent; the version itself stays (beta) |
 | `agents.get` | `mistralai.api.agents.get` | `read` | Get an agent, at its current version or at a given version or alias (beta) |
@@ -34,7 +34,7 @@ pnpm add @corsair-dev/mistralai
 | `audioAgents.listVersions` | `mistralai.api.audioAgents.listVersions` | `read` | List a voice agent's versions; page with page_token |
 | `audioAgents.update` | `mistralai.api.audioAgents.update` | `write` | Replace a voice agent's name, description and configuration |
 | `batch.cancel` | `mistralai.api.batch.cancel` | `destructive` | Ask Mistral to cancel a batch job: status goes to CANCELLATION_REQUESTED, then CANCELLED; there is no way to resume it |
-| `batch.create` | `mistralai.api.batch.create` | `write` | Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits. Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED |
+| `batch.create` | `mistralai.api.batch.create` | `write` | Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED |
 | `batch.delete` | `mistralai.api.batch.delete` | `destructive` | Ask Mistral to delete a batch job; cannot be undone |
 | `batch.get` | `mistralai.api.batch.get` | `read` | Where a batch job stands: status, request counts, and output_file once it's done |
 | `batch.list` | `mistralai.api.batch.list` | `read` | List batch jobs, filtered by status, model or date; page with page and page_size |
