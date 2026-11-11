@@ -284,7 +284,7 @@ const AttributeSchema = z
 export type HeyyAttribute = z.infer<typeof AttributeSchema>;
 
 const AttributesSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, name, type, displayName, description, visibility, details",
+	'id, createdAt, updatedAt, name, type, displayName, description, visibility, details',
 	"equals(type, 'single_select')",
 );
 
@@ -388,7 +388,7 @@ const LabelSchema = z
 export type HeyyLabel = z.infer<typeof LabelSchema>;
 
 const LabelsSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, name",
+	'id, createdAt, updatedAt, name',
 	"contains(name, 'VIP')",
 );
 
@@ -523,7 +523,7 @@ export type ApiWebhooksCreateResponse = z.infer<
 >;
 
 const ApiWebhooksSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, status, url, events",
+	'id, createdAt, updatedAt, status, url, events',
 	"equals(status, 'active')",
 );
 
@@ -632,7 +632,7 @@ const ChannelSchema = z
 export type HeyyChannel = z.infer<typeof ChannelSchema>;
 
 const ChannelsSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, name, type, status, vendor, vendorId",
+	'id, createdAt, updatedAt, name, type, status, vendor, vendorId',
 	"equals(type, 'whatsapp')",
 );
 
@@ -668,7 +668,7 @@ const AutomationSchema = z
 export type HeyyAutomation = z.infer<typeof AutomationSchema>;
 
 const AutomationsSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId",
+	'id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId',
 	"equals(status, 'active')",
 );
 
@@ -711,7 +711,7 @@ const MessageTemplateSchema = z
 export type HeyyMessageTemplate = z.infer<typeof MessageTemplateSchema>;
 
 const MessageTemplatesSearchInputSchema = searchParams(
-	"id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName",
+	'id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName',
 	"equals(channelId, 'channel-id')",
 );
 

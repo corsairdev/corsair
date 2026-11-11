@@ -124,10 +124,7 @@ describe('contacts.search', () => {
 	it('returns attribute values with the attribute they belong to', async () => {
 		respond(contactsSearchResponse);
 
-		const result = (await invoke(
-			contactsSearch,
-			{},
-		)) as ContactsSearchResponse;
+		const result = (await invoke(contactsSearch, {})) as ContactsSearchResponse;
 
 		const value = result.contacts[0]?.attributes?.[0];
 		expect(value?.attribute?.name).toBe('plan');
@@ -162,7 +159,7 @@ describe('contacts.search', () => {
 		expect(lastRequest().body).toEqual({ search: 'Jordan' });
 	});
 
-	it('sends query and search together, as Heyy\'s search guide allows', async () => {
+	it("sends query and search together, as Heyy's search guide allows", async () => {
 		respond(contactsSearchResponse);
 
 		await invoke(contactsSearch, {
@@ -176,7 +173,7 @@ describe('contacts.search', () => {
 		});
 	});
 
-	it('names each route\'s own filterable fields in the query description', () => {
+	it("names each route's own filterable fields in the query description", () => {
 		const queryDoc = (schema: unknown) =>
 			(schema as { shape: { query: { description?: string } } }).shape.query
 				.description ?? '';
@@ -184,7 +181,9 @@ describe('contacts.search', () => {
 		const labels = queryDoc(HeyyEndpointInputSchemas.labelsSearch);
 
 		// Labels filter on id, dates and name only; contacts have no `name`.
-		expect(labels).toContain('Filterable fields: id, createdAt, updatedAt, name.');
+		expect(labels).toContain(
+			'Filterable fields: id, createdAt, updatedAt, name.',
+		);
 		expect(labels).not.toMatch(/status/);
 		expect(contacts).toContain('firstName');
 		expect(contacts).not.toMatch(/\bname,/);
