@@ -367,7 +367,7 @@ describe('organization resources', () => {
 	});
 
 	it('adds a member with a flat body', async () => {
-		respond(memberships.members[0]);
+		respond({ member: memberships.members[0] }, 201);
 		await invoke(Memberships.add, {
 			organizationId: 123,
 			email: 'new-hire@acme.com',
@@ -381,7 +381,7 @@ describe('organization resources', () => {
 	});
 
 	it('updates a role and removes a membership', async () => {
-		respond(memberships.members[0]);
+		respond({ member: memberships.members[0] });
 		await invoke(Memberships.updateRole, { membershipId: 9002, role: 'admin' });
 		expect(lastRequest().body).toEqual({ role: 'admin' });
 
@@ -495,5 +495,190 @@ describe('error transport', () => {
 		await expect(
 			invoke(Transcriptions.list, { organizationId: 123 }),
 		).rejects.toMatchObject({ status: 503 });
+	});
+});
+
+// Response shapes copied from https://dev.happyscribe.com/sections/product/.
+describe('documented response shapes', () => {
+	it('lists style guides from the snake_case style_guides key', async () => {
+		respond({
+			style_guides: [
+				{ id: 1, name: 'Corporate Standard', operation: 'transcription' },
+			],
+		});
+		const result = await invoke<{ styleGuides: { id: number }[] }>(
+			StyleGuides.list,
+			{ organizationId: 123 },
+		);
+		expect(result.styleGuides).toEqual([
+			expect.objectContaining({ id: 1, name: 'Corporate Standard' }),
+		]);
+	});
+
+	it('accepts numeric organization ids as the reference shows them', async () => {
+		respond({ organizations: [{ id: 123, name: 'Acme Corp', role: 'owner' }] });
+		const result = await invoke<{ organizations: { id: string | number }[] }>(
+			Organizations.list,
+			{},
+		);
+		expect(result.organizations[0]!.id).toBe(123);
+	});
+
+	it('reads the member envelope when adding an existing user', async () => {
+		respond(
+			{
+				member: {
+					id: 9002,
+					organizationId: 123,
+					email: 'new-hire@acme.com',
+					role: 'member',
+				},
+			},
+			201,
+		);
+		const result = await invoke<{ member?: { id: number } }>(Memberships.add, {
+			organizationId: 123,
+			email: 'new-hire@acme.com',
+			role: 'member',
+		});
+		expect(result.member?.id).toBe(9002);
+	});
+
+	it('reads the invite envelope when the email is new', async () => {
+		respond({ invite: { email: 'new-hire@acme.com', role: 'member' } }, 202);
+		const result = await invoke<{ invite?: { email?: string } }>(
+			Memberships.add,
+			{ organizationId: 123, email: 'new-hire@acme.com', role: 'member' },
+		);
+		expect(result.invite?.email).toBe('new-hire@acme.com');
+	});
+
+	it('reads the member envelope on a role change', async () => {
+		respond({ member: { id: 9002, role: 'admin' } });
+		const result = await invoke<{ member?: { role?: string } }>(
+			Memberships.updateRole,
+			{ membershipId: 9002, role: 'admin' },
+		);
+		expect(result.member?.role).toBe('admin');
+	});
+
+	it('pages memberships and flattens the next cursor', async () => {
+		respond({
+			members: [{ id: 9001, role: 'admin' }],
+			_links: {
+				next: {
+					url: 'https://www.happyscribe.com/api/v1/organization_memberships?organization_id=123&page=2',
+				},
+			},
+		});
+		const result = await invoke<{ nextPageUrl?: string }>(Memberships.list, {
+			organizationId: 123,
+			page: 2,
+		});
+		expect(lastRequest().query.page).toBe('2');
+		expect(result.nextPageUrl).toContain('page=2');
+	});
+});
+
+describe('documented inputs', () => {
+	it('orders the automatic service, which is the documented default', async () => {
+		respond(order);
+		await invoke(Orders.create, {
+			url: 'https://example.com/media.mp3',
+			language: 'es',
+			service: 'auto',
+			organizationId: 123,
+		});
+		expect(lastRequest().body).toMatchObject({ order: { service: 'auto' } });
+	});
+
+	it('rejects the undocumented standard service', async () => {
+		await expect(
+			invoke(Orders.create, {
+				url: 'https://example.com/media.mp3',
+				language: 'es',
+				service: 'standard',
+				organizationId: 123,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends the service on a translation order', async () => {
+		respond(order);
+		await invoke(Orders.createTranslation, {
+			sourceTranscriptionId: transcription.id,
+			targetLanguages: ['es'],
+			organizationId: 123,
+			service: 'pro',
+		});
+		expect(lastRequest().body).toMatchObject({ order: { service: 'pro' } });
+	});
+
+	it.each(['xlsx', 'csv', 'mp4', 'stl'])(
+		'accepts the documented %s export format',
+		async (format) => {
+			respond(exportCreated);
+			await invoke(Exports.create, {
+				format,
+				transcriptionIds: [transcription.id],
+			});
+			expect(lastRequest().body).toMatchObject({ export: { format } });
+		},
+	);
+
+	it('rejects tsv, which is not an export format', async () => {
+		await expect(
+			invoke(Exports.create, {
+				format: 'tsv',
+				transcriptionIds: [transcription.id],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('moves to the trash by default and deletes for good on permanent', async () => {
+		respondEmpty(204);
+		await invoke(Transcriptions.delete, { fileId: transcription.id });
+		expect(lastRequest().query.permanent).toBeUndefined();
+
+		respondEmpty(204);
+		await invoke(Transcriptions.delete, {
+			fileId: transcription.id,
+			permanent: true,
+		});
+		expect(lastRequest().query.permanent).toBe('true');
+	});
+
+	it('renames and moves a transcription to a folder', async () => {
+		respond(transcription);
+		await invoke(Transcriptions.updateDetails, {
+			fileId: transcription.id,
+			organizationId: 123,
+			name: 'Renamed',
+			folderId: 521,
+		});
+		expect(lastRequest().body).toEqual({
+			transcription: {
+				organization_id: 123,
+				name: 'Renamed',
+				folder_id: 521,
+			},
+		});
+	});
+
+	it('dispatches a meeting now when joinAt and language are omitted', async () => {
+		respond(meeting, 201);
+		await invoke(Meetings.create, {
+			organizationId: 413,
+			meetingUrl: 'https://zoom.us/j/123456789',
+			accessLevel: 'organization_participants',
+		});
+		const body = lastRequest().body as Record<string, unknown>;
+		expect(body).not.toHaveProperty('join_at');
+		expect(body).not.toHaveProperty('language');
+		expect(body).toMatchObject({
+			settings: { access_level: 'organization_participants' },
+		});
 	});
 });

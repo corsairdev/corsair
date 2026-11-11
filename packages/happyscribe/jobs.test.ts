@@ -63,7 +63,7 @@ describe('happyscribe jobs', () => {
 					done: ['automatic_done'],
 					failed: ['failed', 'locked'],
 				},
-				'exports.create': { done: ['ready'], failed: [] },
+				'exports.create': { done: ['ready'], failed: ['failed', 'expired'] },
 				'translations.createTask': { done: ['done'], failed: ['failed'] },
 				'meetings.create': {
 					done: ['completed'],

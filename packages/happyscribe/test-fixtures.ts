@@ -135,8 +135,9 @@ export const glossaries = {
 	],
 };
 
+// The API answers under `style_guides`; the plugin exposes styleGuides.
 export const styleGuides = {
-	styleGuides: [{ id: 5, name: 'House style' }],
+	style_guides: [{ id: 5, name: 'House style', operation: 'transcription' }],
 };
 
 export const organizations = {

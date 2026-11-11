@@ -318,7 +318,7 @@ const EXPORT_JOB = {
 		idArg: 'exportId',
 		statusPath: 'state',
 		done: ['ready'],
-		failed: [],
+		failed: ['failed', 'expired'],
 	},
 } as const;
 
@@ -369,13 +369,13 @@ const happyScribeEndpointMeta = {
 	'transcriptions.updateDetails': {
 		riskLevel: 'write',
 		description:
-			'Change a transcription: move it between organizations or toggle its public sharing link',
+			'Change a transcription: rename it, move it to another folder in the same organization, or toggle its public sharing link',
 	},
 	'transcriptions.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Permanently delete a transcription and its media; there is no restore',
+			'Delete a transcription. It moves to the Trash unless permanent is true, which cannot be undone. Deleting one still processing cancels it and refunds its credits',
 	},
 	'exports.create': {
 		riskLevel: 'write',
@@ -402,13 +402,13 @@ const happyScribeEndpointMeta = {
 	'meetings.create': {
 		riskLevel: 'write',
 		description:
-			'Send the HappyScribe notetaker bot to a meeting URL at join_at; it records and transcribes. Follow with meetings.get until status is completed',
+			'Send the HappyScribe notetaker bot to a meeting URL now or at joinAt; it records and transcribes. Follow with meetings.get until status is completed',
 		job: MEETING_JOB,
 	},
 	'meetings.get': {
 		riskLevel: 'read',
 		description:
-			'Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed) and settings',
+			'Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed, cancelled), settings, and the transcript and summary once ready',
 	},
 	'uploads.getSignedUrl': {
 		riskLevel: 'read',
@@ -432,11 +432,13 @@ const happyScribeEndpointMeta = {
 	},
 	'memberships.list': {
 		riskLevel: 'read',
-		description: 'List the members of an organization with their roles',
+		description:
+			'List the members of an organization with their roles, 25 per page; nextPageUrl is set when another page exists',
 	},
 	'memberships.add': {
 		riskLevel: 'write',
-		description: 'Add a user to an organization as admin or member, by email',
+		description:
+			'Add a user to an organization as admin or member, by email. An email new to HappyScribe gets an invitation email and the answer carries invite instead of member',
 	},
 	'memberships.updateRole': {
 		riskLevel: 'write',
@@ -450,12 +452,12 @@ const happyScribeEndpointMeta = {
 	'orders.create': {
 		riskLevel: 'write',
 		description:
-			'Create a human transcription or subtitling order for media at a URL. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag',
+			'Create a transcription or subtitling order for media at a URL: service auto (the default) is machine work, pro is human work. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag',
 	},
 	'orders.createTranslation': {
 		riskLevel: 'write',
 		description:
-			'Create a human translation order for an existing transcription; incomplete and unpaid until confirmed',
+			'Create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. Incomplete and unpaid until confirmed',
 	},
 	'orders.get': {
 		riskLevel: 'read',

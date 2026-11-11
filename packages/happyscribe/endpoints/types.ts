@@ -207,9 +207,9 @@ export type HappyScribeStyleGuide = z.infer<typeof HappyScribeStyleGuideSchema>;
 
 export const HappyScribeOrganizationSchema = z
 	.object({
-		// A string, not the number the docs examples show: observed on the
-		// live API (organizations.list answered ids like "123").
-		id: z.string(),
+		// The reference shows numbers; strings were observed on the live API.
+		// Either is accepted and passed back to organizationId as given.
+		id: z.union([z.string(), z.number()]),
 		name: z.string().nullish(),
 		role: z.string().nullish(),
 		createdAt: z.string().nullish(),
@@ -321,8 +321,30 @@ export const HappyScribeGlossaryListSchema = z
 	.object({ glossaries: z.array(HappyScribeGlossarySchema) })
 	.loose();
 
+// Memberships page 25 at a time; the shape helper flattens
+// `_links.next.url` into nextPageUrl.
 export const HappyScribeMembershipListSchema = z
-	.object({ members: z.array(HappyScribeMembershipSchema) })
+	.object({
+		members: z.array(HappyScribeMembershipSchema),
+		nextPageUrl: z.string().nullish(),
+	})
+	.loose();
+
+// Adding answers `{ member }` (201) for an existing user or `{ invite }`
+// (202) when HappyScribe emailed an invitation instead.
+const HappyScribeMembershipAddResultSchema = z
+	.object({
+		member: HappyScribeMembershipSchema.nullish(),
+		invite: z
+			.object({ email: z.string().nullish(), role: z.string().nullish() })
+			.loose()
+			.nullish(),
+	})
+	.loose();
+
+// A role change answers `{ member }`.
+const HappyScribeMembershipUpdateResultSchema = z
+	.object({ member: HappyScribeMembershipSchema.nullish() })
 	.loose();
 
 export const HappyScribeOrganizationListSchema = z
@@ -427,7 +449,15 @@ const TranscriptionsGetSummaryResponseSchema = z
 
 const TranscriptionsUpdateDetailsInputSchema = z.object({
 	fileId: FileIdSchema,
-	organizationId: OrganizationIdSchema,
+	organizationId: OrganizationIdSchema.describe(
+		'Organization the transcription belongs to.',
+	),
+	name: z.string().min(1).optional().describe('New name.'),
+	folderId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Folder in the same organization to move the transcription to.'),
 	sharingEnabled: z
 		.boolean()
 		.optional()
@@ -441,7 +471,15 @@ export type TranscriptionsUpdateDetailsInput = z.input<
 const TranscriptionsUpdateDetailsResponseSchema =
 	HappyScribeTranscriptionSchema;
 
-const TranscriptionsDeleteInputSchema = z.object({ fileId: FileIdSchema });
+const TranscriptionsDeleteInputSchema = z.object({
+	fileId: FileIdSchema,
+	permanent: z
+		.boolean()
+		.optional()
+		.describe(
+			'Delete for good. Without it the transcription moves to the Trash and can be restored.',
+		),
+});
 
 export type TranscriptionsDeleteInput = z.input<
 	typeof TranscriptionsDeleteInputSchema
@@ -452,16 +490,29 @@ const TranscriptionsDeleteResponseSchema = z.object({}).loose();
 
 // ── exports.create / exports.get ──────────────────────────────────────────
 
+// The documented format list; mp3 and mp4 take exactly one transcription.
 const EXPORT_FORMATS = [
 	'txt',
-	'srt',
-	'vtt',
 	'docx',
 	'pdf',
-	'json',
-	'mp3',
-	'tsv',
+	'srt',
+	'vtt',
+	'stl',
+	'avid',
+	'avid_script',
+	'avid_ds_subtitles',
+	'avid_edl',
+	'facebook_srt',
 	'html',
+	'premiere',
+	'maxqda',
+	'json',
+	'fcp',
+	'edl',
+	'csv',
+	'xlsx',
+	'mp3',
+	'mp4',
 ] as const;
 
 const TranscriptionsCreateExportInputSchema = z.object({
@@ -539,8 +590,15 @@ const MeetingsCreateInputSchema = z.object({
 	joinAt: z
 		.string()
 		.min(1)
-		.describe('ISO 8601 moment for the notetaker to join the call.'),
-	language: z.string().min(1).describe('Spoken language code, e.g. `en`.'),
+		.optional()
+		.describe(
+			'Future ISO 8601 moment, with a UTC offset, for the notetaker to join. Omit to send it now.',
+		),
+	language: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Spoken language code, e.g. `en`, or `auto`.'),
 	participants: z
 		.array(
 			z.object({
@@ -565,7 +623,7 @@ const MeetingsCreateInputSchema = z.object({
 		.optional()
 		.describe('Summary template slug, e.g. `sales_call`.'),
 	accessLevel: z
-		.enum(['private', 'organization'])
+		.enum(['public', 'organization', 'organization_participants', 'private'])
 		.optional()
 		.describe('Who can open the resulting transcript.'),
 });
@@ -636,6 +694,12 @@ const OrganizationsListResponseSchema = HappyScribeOrganizationListSchema;
 
 const MembershipsListInputSchema = z.object({
 	organizationId: OrganizationIdSchema,
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page to retrieve; memberships count from 1, 25 per page.'),
 });
 
 export type MembershipsListInput = z.input<typeof MembershipsListInputSchema>;
@@ -650,7 +714,7 @@ const MembershipsAddInputSchema = z.object({
 
 export type MembershipsAddInput = z.input<typeof MembershipsAddInputSchema>;
 
-const MembershipsAddResponseSchema = HappyScribeMembershipSchema;
+const MembershipsAddResponseSchema = HappyScribeMembershipAddResultSchema;
 
 const MembershipsUpdateRoleInputSchema = z.object({
 	membershipId: z.number().int().describe('Membership ID to change.'),
@@ -661,7 +725,8 @@ export type MembershipsUpdateRoleInput = z.input<
 	typeof MembershipsUpdateRoleInputSchema
 >;
 
-const MembershipsUpdateRoleResponseSchema = HappyScribeMembershipSchema;
+const MembershipsUpdateRoleResponseSchema =
+	HappyScribeMembershipUpdateResultSchema;
 
 const MembershipsRemoveInputSchema = z.object({
 	membershipId: z.number().int().describe('Membership ID to remove.'),
@@ -682,9 +747,9 @@ const OrdersCreateInputSchema = z.object({
 		.describe('Public URL of the media to transcribe or subtitle.'),
 	language: z.string().min(1).describe('Spoken language code of the media.'),
 	service: z
-		.enum(['pro', 'standard'])
+		.enum(['auto', 'pro'])
 		.optional()
-		.describe('Human service tier; omit for the default.'),
+		.describe('`auto` (the default) for machine work, `pro` for human work.'),
 	confirm: z
 		.boolean()
 		.optional()
@@ -729,6 +794,12 @@ const OrdersCreateTranslationInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(1)
 		.describe('Languages to translate into.'),
+	service: z
+		.enum(['auto', 'pro'])
+		.optional()
+		.describe(
+			'`auto` (the default) for machine translation, `pro` for human translators.',
+		),
 	confirm: z.boolean().optional().describe('Confirm and pay immediately.'),
 	organizationId: OrganizationIdSchema,
 	glossaryIds: z

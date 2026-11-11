@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
@@ -5,6 +6,26 @@ import {
 	HappyScribeEndpointInputSchemas as Inputs,
 	HappyScribeEndpointOutputSchemas as Outputs,
 } from './types';
+
+// unknown: raw is the list envelope until the output schema validates it.
+// Style guides arrive under `style_guides`; the plugin exposes them as
+// styleGuides.
+function styleGuideList(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record || record.style_guides === undefined) return raw;
+	const { style_guides, ...rest } = record;
+	return { ...rest, styleGuides: style_guides };
+}
+
+// unknown: raw is the list envelope until the output schema validates it.
+function memberList(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record) return raw;
+	return {
+		...record,
+		nextPageUrl: asRecord(asRecord(record._links)?.next)?.url,
+	};
+}
 
 export const listGlossaries: HappyScribeEndpoints['glossariesList'] = (
 	ctx,
@@ -45,7 +66,10 @@ export const listStyleGuides: HappyScribeEndpoints['styleGuidesList'] = (
 			query: { organization_id: organizationId },
 			replaySafe: true,
 		}),
-		{ log: (_, result) => ({ count: result.styleGuides.length }) },
+		{
+			shape: styleGuideList,
+			log: (_, result) => ({ count: result.styleGuides.length }),
+		},
 	);
 
 export const listOrganizations: HappyScribeEndpoints['organizationsList'] = (
@@ -80,13 +104,19 @@ export const listMemberships: HappyScribeEndpoints['membershipsList'] = (
 			output: Outputs.membershipsList,
 		},
 		input,
-		({ organizationId }) => ({
+		({ organizationId, page }) => ({
 			method: 'GET',
 			path: '/organization_memberships',
-			query: { organization_id: organizationId },
+			query: { organization_id: organizationId, page },
 			replaySafe: true,
 		}),
-		{ log: (_, result) => ({ count: result.members.length }) },
+		{
+			shape: memberList,
+			log: (_, result) => ({
+				count: result.members.length,
+				hasMore: result.nextPageUrl !== undefined,
+			}),
+		},
 	);
 
 export const addMembership: HappyScribeEndpoints['membershipsAdd'] = (

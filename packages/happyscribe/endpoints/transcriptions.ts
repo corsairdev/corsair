@@ -162,12 +162,14 @@ export const updateDetails: HappyScribeEndpoints['transcriptionsUpdateDetails'] 
 				output: Outputs.transcriptionsUpdateDetails,
 			},
 			input,
-			({ fileId, organizationId, sharingEnabled }) => ({
+			({ fileId, organizationId, name, folderId, sharingEnabled }) => ({
 				method: 'PATCH',
 				path: `/transcriptions/${segment(fileId)}`,
 				body: {
 					transcription: {
 						organization_id: organizationId,
+						name,
+						folder_id: folderId,
 						sharing_enabled: sharingEnabled,
 					},
 				},
@@ -186,13 +188,18 @@ export const remove: HappyScribeEndpoints['transcriptionsDelete'] = (
 			output: Outputs.transcriptionsDelete,
 		},
 		input,
-		({ fileId }) => ({
+		({ fileId, permanent }) => ({
 			method: 'DELETE',
 			path: `/transcriptions/${segment(fileId)}`,
+			// Without permanent=true the transcription goes to the Trash.
+			query: permanent ? { permanent: 'true' } : undefined,
 		}),
 		{
 			// The deletion carries no body.
 			shape: (raw) => raw ?? {},
-			log: ({ fileId }) => ({ fileId }),
+			log: ({ fileId, permanent }) => ({
+				fileId,
+				permanent: permanent ?? false,
+			}),
 		},
 	);

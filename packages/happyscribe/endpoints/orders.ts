@@ -76,6 +76,7 @@ export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] 
 			({
 				sourceTranscriptionId,
 				targetLanguages,
+				service,
 				confirm,
 				organizationId,
 				glossaryIds,
@@ -86,6 +87,7 @@ export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] 
 					order: {
 						source_transcription_id: sourceTranscriptionId,
 						target_languages: targetLanguages,
+						...(service !== undefined ? { service } : {}),
 						confirm,
 						organization_id: organizationId,
 						...(glossaryIds !== undefined ? { glossary_ids: glossaryIds } : {}),
