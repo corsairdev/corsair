@@ -1,0 +1,2699 @@
+---
+title: API
+description: "API reference for Fidel: every `fidel.api.*` operation with input and output types."
+---
+
+Every `fidel.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### createBrand
+
+`brands.createBrand`
+
+Create a brand on Fidel
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.brands.createBrand({ name: 'Acme Coffee', websiteURL: 'https://acme.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `websiteURL` | `string` | No | — |
+| `logoURL` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteBrand
+
+`brands.deleteBrand`
+
+Delete a brand from the Fidel account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.brands.deleteBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBrands
+
+`brands.listBrands`
+
+List the brands on the Fidel account
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.brands.listBrands({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveBrand
+
+`brands.retrieveBrand`
+
+Retrieve a brand by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.brands.retrieveBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBrand
+
+`brands.updateBrand`
+
+Update the details of a brand
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.brands.updateBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `websiteURL` | `string` | No | — |
+| `logoURL` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### deleteCard
+
+`cards.deleteCard`
+
+Remove a linked card from a program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.cards.deleteCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCards
+
+`cards.listCards`
+
+List the linked cards of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.cards.listCards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCardsFromMetadataId
+
+`cards.listCardsFromMetadataId`
+
+List the linked cards matching a metadata identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.cards.listCardsFromMetadataId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadataId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveCard
+
+`cards.retrieveCard`
+
+Retrieve a linked card by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.cards.retrieveCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCardMetadata
+
+`cards.updateCardMetadata`
+
+Replace the metadata of a linked card
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.cards.updateCardMetadata({
+	cardId: 'd35e2001-ecfc-4b49-84f4-a5012edf8a9b',
+	metadata: { customKey: 'customValue' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+`metadata` replaces the card's whole metadata object. Pass `{}` to clear it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### createLocation
+
+`locations.createLocation`
+
+Create a location under a program and brand
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.locations.createLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `brandId` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `countryCode` | `CAN \| DNK \| FIN \| GBR \| IRL \| JPN \| NOR \| SWE \| USA` | Yes | — |
+| `postcode` | `string` | Yes | — |
+| `stateCode` | `string` | No | — |
+| `searchBy` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `status` | `string` | No | — |
+
+To attach merchant IDs you already know, pass `searchBy` as a nested object: `{ merchantIds: { visa: ['1234567'], mastercard: ['7654321'], amex: ['1357986420'] } }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteLocation
+
+`locations.deleteLocation`
+
+Delete a location from a program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.locations.deleteLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLocations
+
+`locations.listLocations`
+
+List the locations of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.locations.listLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocationsByBrand
+
+`locations.listLocationsByBrand`
+
+List the locations of a brand within a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.locations.listLocationsByBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `programId` | `string` | Yes | — |
+| `postcode` | `string` | No | — |
+| `status` | `string` | No | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocationsByOffer
+
+`locations.listLocationsByOffer`
+
+List the locations linked to an offer
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.locations.listLocationsByOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveLocation
+
+`locations.retrieveLocation`
+
+Retrieve a location by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.locations.retrieveLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLocation
+
+`locations.updateLocation`
+
+Update the details of a location
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.locations.updateLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `countryCode` | `string` | Yes | — |
+| `postcode` | `string` | Yes | — |
+| `stateCode` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `searchBy` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Marketplace
+
+### createOfferFromMarketplaceOffer
+
+`marketplace.createOfferFromMarketplaceOffer`
+
+Create an offer from a marketplace offer
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.marketplace.createOfferFromMarketplaceOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplaceOfferId` | `string` | Yes | — |
+| `programIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| number` | No | — |
+| `message` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+
+
+---
+
+### listMarketplaceOffers
+
+`marketplace.listMarketplaceOffers`
+
+List the offers available in the Fidel marketplace
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.marketplace.listMarketplaceOffers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `select` | `string` | No | — |
+| `order` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `status` | `string` | No | — |
+| `activation` | `string` | No | — |
+| `approval` | `string` | No | — |
+| `brandId` | `string[]` | No | — |
+| `channel` | `string` | No | — |
+| `supplierId` | `string` | No | — |
+| `countryCode` | `string` | No | — |
+| `network` | `string` | No | — |
+| `returnPeriod` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mid-insights
+
+### listMidInsights
+
+`mid-insights.listMidInsights`
+
+List the MID insights of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mid-insights.listMidInsights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `origin` | `string[]` | No | — |
+| `id` | `string[]` | No | — |
+| `status` | `string` | No | — |
+| `brandId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+| `midId` | `string` | No | — |
+| `scheme` | `string` | No | — |
+| `seNumber` | `string` | No | — |
+| `mcAcquiringMid` | `string` | No | — |
+| `mcLocationId` | `string` | No | — |
+| `visaAcquiringMid` | `string` | No | — |
+| `visaBin` | `string` | No | — |
+| `vmid` | `string` | No | — |
+| `vsid` | `string` | No | — |
+| `lastSeenTransactionDateFrom` | `string` | No | — |
+| `lastSeenTransactionDateTo` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `start` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mid-requests
+
+### createMidRequest
+
+`mid-requests.createMidRequest`
+
+Create a MID request to onboard, offboard or reassign a merchant ID; offboarding stops transaction tracking for that MID
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.mid-requests.createMidRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `action` | `onboard \| offboard \| reassign` | Yes | — |
+| `scheme` | `amex \| mastercard \| visa` | No | — |
+| `locationId` | `string` | No | — |
+| `midId` | `string` | No | — |
+| `origin` | `missing-transaction-lookup \| brand-provided-mid \| processor-provided-mid \| third-party-provided-mid \| manual-mid-lookup` | No | — |
+| `reason` | `wrong-mid \| undesired-mid \| invalid-mid \| duplicated-location \| wrong-location` | No | — |
+| `seNumber` | `string` | No | — |
+| `mcAcquiringMid` | `string` | No | — |
+| `mcLocationId` | `string` | No | — |
+| `vmid` | `string` | No | — |
+| `vsid` | `string` | No | — |
+| `visaBin` | `string` | No | — |
+| `visaAcquiringMid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMidRequests
+
+`mid-requests.listMidRequests`
+
+List the MID requests of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mid-requests.listMidRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `locationId` | `string` | No | — |
+| `brandId` | `string` | No | — |
+| `midId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `scheme` | `string` | No | — |
+| `seNumber` | `string` | No | — |
+| `mcAcquiringMid` | `string` | No | — |
+| `vmid` | `string` | No | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveMidRequest
+
+`mid-requests.retrieveMidRequest`
+
+Retrieve a MID request by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mid-requests.retrieveMidRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `midRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mids
+
+### listMids
+
+`mids.listMids`
+
+List the merchant IDs of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mids.listMids({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `locationId` | `string` | No | — |
+| `brandId` | `string` | No | — |
+| `scheme` | `string` | No | — |
+| `seNumber` | `string` | No | — |
+| `mcAcquiringMid` | `string` | No | — |
+| `visaAcquiringMid` | `string` | No | — |
+| `vmid` | `string` | No | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveMid
+
+`mids.retrieveMid`
+
+Retrieve a merchant ID of a program by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.mids.retrieveMid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `midId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Missing-transaction-requests
+
+### createMissingTransactionRequest
+
+`missing-transaction-requests.createMissingTransactionRequest`
+
+Create a missing transaction request for a linked card
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.missing-transaction-requests.createMissingTransactionRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `transactionDate` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMissingTransactionRequests
+
+`missing-transaction-requests.listMissingTransactionRequests`
+
+List the missing transaction requests of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.missing-transaction-requests.listMissingTransactionRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `brandId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+| `cardId` | `string` | No | — |
+| `amount` | `string` | No | — |
+| `transactionDate` | `string` | No | — |
+| `scheme` | `string` | No | — |
+| `status` | `string` | No | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveMissingTransactionRequest
+
+`missing-transaction-requests.retrieveMissingTransactionRequest`
+
+Retrieve a missing transaction request by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.missing-transaction-requests.retrieveMissingTransactionRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `missingTransactionRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offers
+
+### activateOfferOnCard
+
+`offers.activateOfferOnCard`
+
+Activate an offer on a linked card
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.activateOfferOnCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOffer
+
+`offers.createOffer`
+
+Create an offer on Fidel
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.createOffer({
+	brandId: '838d648e-5614-48a7-8e8b-6b3014638c66',
+	countryCode: 'GBR',
+	name: '10% off on weekends',
+	startDate: '2030-01-01T00:00:00',
+	type: { name: 'discount', value: 10 },
+	schemes: ['visa', 'mastercard'],
+	channels: ['in-store'],
+	daysOfWeek: [0, 6],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `countryCode` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `type` | `Record<string, any>` | No | — |
+| `daysOfWeek` | `number[]` | No | — |
+| `endDate` | `string` | No | — |
+| `minTransactionAmount` | `number` | No | — |
+| `returnPeriod` | `number` | No | — |
+| `schemes` | `(visa \| mastercard \| amex)[]` | No | — |
+| `activation` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `feeSplit` | `number` | No | — |
+| `channels` | `(in-store \| online)[]` | No | — |
+| `shortDescription` | `string` | No | — |
+| `longDescription` | `string` | No | — |
+| `requiresApproval` | `boolean` | No | — |
+| `customerRecency` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteOffer
+
+`offers.deleteOffer`
+
+Delete an offer from Fidel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.offers.deleteOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### linkAllBrandLocationsToOffer
+
+`offers.linkAllBrandLocationsToOffer`
+
+Link every location of a brand in a program to an offer
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.linkAllBrandLocationsToOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `programId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| number` | No | — |
+| `message` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+
+
+---
+
+### linkLocationToOffer
+
+`offers.linkLocationToOffer`
+
+Link a location to an offer
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.linkLocationToOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCardsWithActiveOffer
+
+`offers.listCardsWithActiveOffer`
+
+List the linked cards with an active offer
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.offers.listCardsWithActiveOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `order` | `string` | No | — |
+| `start` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOffers
+
+`offers.listOffers`
+
+List the offers of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.offers.listOffers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+| `status` | `string` | No | — |
+| `activation` | `string` | No | — |
+| `approval` | `string` | No | — |
+| `brandId` | `string` | No | — |
+| `contentProviderId` | `string` | No | — |
+| `programId` | `string` | No | — |
+| `countryCode` | `string` | No | — |
+| `customerRecency` | `string` | No | — |
+| `network` | `string` | No | — |
+| `returnPeriod` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveActiveOfferOnCard
+
+`offers.retrieveActiveOfferOnCard`
+
+Check whether an offer is active on a linked card
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.offers.retrieveActiveOfferOnCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveOffer
+
+`offers.retrieveOffer`
+
+Retrieve an offer by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.offers.retrieveOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendOfferToBrand
+
+`offers.sendOfferToBrand`
+
+Send an offer to its brand for approval; this notifies the brand and works only in the live environment
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.sendOfferToBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlinkCardFromOffer
+
+`offers.unlinkCardFromOffer`
+
+Deactivate an offer on a linked card and reset its usage
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.offers.unlinkCardFromOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unlinkLocationToOffer
+
+`offers.unlinkLocationToOffer`
+
+Unlink a location from an offer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.offers.unlinkLocationToOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateOffer
+
+`offers.updateOffer`
+
+Update the details of an offer
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.offers.updateOffer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `type` | `Record<string, any>` | No | — |
+| `activation` | `Record<string, any>` | No | — |
+| `daysOfWeek` | `number[]` | No | — |
+| `minTransactionAmount` | `number` | No | — |
+| `returnPeriod` | `number` | No | — |
+| `schemes` | `(visa \| mastercard \| amex)[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Programs
+
+### createProgram
+
+`programs.createProgram`
+
+Create a program on Fidel
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.programs.createProgram({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `icon` | `string` | No | — |
+| `iconBackground` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPrograms
+
+`programs.listPrograms`
+
+List the programs on the Fidel account
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.programs.listPrograms({ limit: '50' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveProgram
+
+`programs.retrieveProgram`
+
+Retrieve a program by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.programs.retrieveProgram({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProgram
+
+`programs.updateProgram`
+
+Update the details of a program
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.programs.updateProgram({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `iconBackground` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### createTransactionTest
+
+`transactions.createTransactionTest`
+
+Create a test transaction in the test environment
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.transactions.createTransactionTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `cardId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTransactions
+
+`transactions.listTransactions`
+
+List the transactions of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.transactions.listTransactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTransactionsByCard
+
+`transactions.listTransactionsByCard`
+
+List the transactions of a linked card
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.transactions.listTransactionsByCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `start` | `string` | No | — |
+| `order` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveTransaction
+
+`transactions.retrieveTransaction`
+
+Retrieve a transaction by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.transactions.retrieveTransaction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### createBrandWebhook
+
+`webhooks.createBrandWebhook`
+
+Create a webhook for brand events on Fidel
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.webhooks.createBrandWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `brand.consent` | Yes | — |
+| `url` | `string` | Yes | — |
+| `headers` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createProgramWebhook
+
+`webhooks.createProgramWebhook`
+
+Create a webhook for program events on Fidel
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.webhooks.createProgramWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `event` | `card.linked \| card.failed \| program.status \| transaction.auth \| transaction.auth.qualified \| transaction.clearing \| transaction.clearing.qualified \| transaction.refund \| transaction.refund.qualified \| credits.balance.low \| marketplace.offer.live \| marketplace.offer.updated` | Yes | — |
+| `url` | `string` | Yes | — |
+| `offerId` | `string` | No | — |
+| `headers` | `Record<string, any>` | No | — |
+
+Values in `headers` are sent to Fidel and returned by it, but Corsair's event log keeps only the header names. The response carries the hook's `secretKey`, which signs each delivery (`x-fidel-signature`); store it where you verify webhooks.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Delete a webhook from a program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fidel.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWebhooks
+
+`webhooks.listWebhooks`
+
+List the webhooks of a program
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.webhooks.listWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | — |
+| `limit` | `string` | No | — |
+| `event` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveWebhook
+
+`webhooks.retrieveWebhook`
+
+Retrieve a webhook by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fidel.api.webhooks.retrieveWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateWebhook
+
+`webhooks.updateWebhook`
+
+Update the details of a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.fidel.api.webhooks.updateWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `programId` | `string` | No | — |
+| `offerId` | `string` | No | — |
+| `headers` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `count` | `number` | No | — |
+| `last` | `any` | No | Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged. |
+| `exists` | `boolean` | No | Active-offer check only: whether the offer is active. |
+| `resource` | `string` | No | — |
+| `status` | `string \| number` | No | — |
+| `execution` | `number \| Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

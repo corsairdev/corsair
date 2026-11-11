@@ -1,0 +1,56 @@
+displayName: Foursquare
+description: Places data from Foursquare - search places by text, category or location, read full place details, autocomplete a partial query, and pull a place's tips and photos.
+domain: foursquare.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a Service Key in the Foursquare Developer Console (https://foursquare.com/developers/console), then store it as the account's `api_key`. It is sent as `Authorization: Bearer <key>`.
+
+  Things to know before you call:
+
+  - **Two headers are required, not one.** Besides the Bearer token, every request must send `X-Places-Api-Version`. Without it the API answers `400 "Please provide a valid version."` even with a valid key, which reads like an auth failure. The plugin always sends the documented version.
+  - **The host is `places-api.foursquare.com`,** not `api.foursquare.com`. The v3 paths on the old host answer `401 Invalid request token` for every request; `api.foursquare.com/v2` is the separate legacy API and is not wrapped here.
+  - **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do, so almost every output field is optional. The identifier a response needs is always added back to your selection, because Foursquare returns exactly what you ask for: `fields: ['name']` alone answers `{"results":[{"name":"..."}]}` with no `fsq_place_id`.
+  - **Pagination.** `places.search` returns `nextCursor`, taken from the `link` response header. Pass it back as `cursor` to continue the same search; it is absent on the last page. This is the only operation that pages, because Foursquare paginates by cursor and the other list endpoints take only `limit`.
+  - **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-letter country code. Foursquare states that only English-speaking countries are supported. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found`, a 400 asking for a latitude and longitude, or a 500.
+  - **Rate limits** are 50 QPS pay-as-you-go and 100 QPS enterprise, counted across all endpoints. A 429 is retried three times using `Retry-After` when present.
+  - **No inbound webhooks.** The Places API does not send any, so this plugin registers none.
+examples:
+  read:
+    path: places.search
+    title: Find coffee shops near a point
+    args:
+      query: coffee
+      ll: '41.8781,-87.6298'
+      radius: 2000
+      limit: 10
+  write:
+    path: places.get
+    title: Read one place by id
+    args:
+      fsq_place_id: 4b28f2aef964a520f9d024e3
+apiExamples:
+  places.search:
+    call: "{ query: 'coffee', near: 'Chicago, IL', limit: 10 }"
+  places.get:
+    call: "{ fsq_place_id: '4b28f2aef964a520f9d024e3' }"
+  places.autocomplete:
+    call: "{ query: 'sta', ll: '41.8781,-87.6298' }"
+  places.tips:
+    call: "{ fsq_place_id: '4b28f2aef964a520f9d024e3', sort: 'POPULAR', limit: 10 }"
+  places.photos:
+    call: "{ fsq_place_id: '4b28f2aef964a520f9d024e3', limit: 5 }"
+  places.match:
+    call: "{ name: 'Wrigley Field', address: '1060 W Addison St', city: 'Chicago', state: 'IL', cc: 'US' }"
+apiNotes:
+  places.search: |
+    Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw`. With none of them the search falls back to IP biasing. Array filters such as `fsq_category_ids` and `fields` are comma-joined before sending. `limit` caps at 50 and defaults to 10. Each response carries `nextCursor` when more results exist; pass it back as `cursor` to fetch the next page of the same search.
+  places.get: |
+    Answers the place object directly, not wrapped. `fields` narrows it; omitting it returns every Pro field.
+  places.autocomplete: |
+    `query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search or geo. Each result carries a `type` and a `text`. A place result nests the whole place under `place`, so its id is `result.place.fsq_place_id`; a geo or search result has no `place`.
+  places.tips: |
+    Returns `{ tips: [...] }`: Foursquare answers a bare array and the plugin wraps it. A tip carries `fsq_tip_id`, `created_at` and `text` by default; ask for `agree_count`, `disagree_count`, `lang` or `url` through `fields`. `sort` accepts POPULAR or NEWEST.
+  places.photos: |
+    Returns `{ photos: [...] }`: Foursquare answers a bare array and the plugin wraps it. `sort` accepts POPULAR or NEWEST. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
+  places.match: |
+    Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found` or a 400 asking for `ll`.
