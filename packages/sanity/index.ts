@@ -379,6 +379,35 @@ export type ExternalSanityPlugin<T extends SanityPluginOptions> =
 	BaseSanityPlugin<T>;
 
 /**
+ * Core's messages for an account that can't hold a stored secret yet: no
+ * account row, or no data key (nothing has been stored). Only these fall back
+ * to the webhookSecret option. Any other failure, such as a secret that won't
+ * decrypt, stops the delivery: falling back there would let the option's
+ * secret stand in for a tenant that has its own. If core rewords these
+ * messages, deliveries are refused rather than accepted.
+ */
+const NOTHING_STORED = [
+	/^No DEK found for account/,
+	/^Account not found for tenant/,
+];
+
+async function storedWebhookSecret(keys: {
+	get_webhook_signature: () => Promise<string | null>;
+}): Promise<string | null> {
+	try {
+		return await keys.get_webhook_signature();
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			NOTHING_STORED.some((pattern) => pattern.test(error.message))
+		) {
+			return null;
+		}
+		throw error;
+	}
+}
+
+/**
  * Core takes the first handler whose match says yes, in key order, so anything
  * added after DEFAULT might never run. A custom DEFAULT replaces this plugin's,
  * and every other custom handler sits ahead of it.
@@ -416,13 +445,7 @@ export function sanity<const T extends SanityPluginOptions>(
 				// The tenant's own secret comes first. Letting the option override it
 				// would let a delivery signed for one tenant verify under another
 				// tenant's id whenever the option holds the first tenant's secret.
-				let stored: string | null = null;
-				try {
-					stored = await ctx.keys.get_webhook_signature();
-				} catch {
-					// No key store for this account (an app using only the option).
-					stored = null;
-				}
+				const stored = await storedWebhookSecret(ctx.keys);
 				return stored || options.webhookSecret || '';
 			}
 

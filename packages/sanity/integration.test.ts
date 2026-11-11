@@ -13,15 +13,20 @@ import {
 	WEBHOOK_SECRET,
 } from './test-fixtures';
 
-async function createClient(options: Parameters<typeof sanity>[0] = {}) {
+const KEK = process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef';
+
+async function createClient(
+	options: Parameters<typeof sanity>[0] = {},
+	{ issueDek = true } = {},
+) {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'sanity', 'default');
 	const corsair = createCorsair({
 		plugins: [sanity(options)],
 		database: testDb.db,
-		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		kek: KEK,
 	});
-	await corsair.sanity.keys.issue_new_dek();
+	if (issueDek) await corsair.sanity.keys.issue_new_dek();
 	return { corsair, testDb };
 }
 
@@ -234,6 +239,46 @@ describe('sanity plugin through createCorsair', () => {
 					DELIVERY_BODY,
 				);
 				expect(signedWithStored.response?.success).toBe(true);
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
+		it('uses the option for an account with no data key yet, as an option-only app has', async () => {
+			const { corsair, testDb } = await createClient(
+				{ webhookSecret: WEBHOOK_SECRET },
+				{ issueDek: false },
+			);
+			try {
+				const result = await processWebhook(
+					corsair,
+					deliveryHeaders(DELIVERY_BODY),
+					DELIVERY_BODY,
+				);
+				expect(result.response?.success).toBe(true);
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
+		it("refuses, rather than falling back to the option, when the tenant's stored secret can't be decrypted", async () => {
+			const { corsair, testDb } = await createClient();
+			try {
+				await corsair.sanity.keys.set_webhook_signature(
+					'this-tenants-own-secret',
+				);
+				// The same database read with another encryption key: decryption fails.
+				const wrongKek = createCorsair({
+					plugins: [sanity({ webhookSecret: WEBHOOK_SECRET })],
+					database: testDb.db,
+					kek: 'fedcba9876543210fedcba9876543210',
+				});
+				const result = await processWebhook(
+					wrongKek,
+					deliveryHeaders(DELIVERY_BODY, { secret: WEBHOOK_SECRET }),
+					DELIVERY_BODY,
+				);
+				expect(result.response?.success).not.toBe(true);
 			} finally {
 				testDb.cleanup();
 			}
