@@ -1,0 +1,224 @@
+---
+title: API
+description: "API reference for Web Scraper Cloud: every `webscraperio.api.*` operation with input and output types."
+---
+
+Every `webscraperio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account plan and how much of the page and job allowance is used; the cheapest way to check a token
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  plan?: string | null,
+  pages_allowed?: number | null,
+  pages_used?: number | null,
+  scraping_jobs_allowed?: number | null,
+  scraping_jobs_used?: number | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sitemaps
+
+### create
+
+`sitemaps.create`
+
+Create a sitemap from the definition the browser extension exports, selectors included
+
+**Risk:** `write`
+
+```ts
+await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalogue', name: 'Product catalogue', startUrl: 'https://acme.example/products', selectors: [{ id: 'name', selector: 'h1.title', type: 'text' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sitemap` | `Record<string, any>` | Yes | The sitemap definition: `_id`, name, startUrl, selectors and startUrls, in the form the browser extension exports. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  url?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  selectors?: Record<string, any>[] | null,
+  start_urls?: Record<string, any>[] | null,
+  jobs?: Record<string, any>[] | null,
+  jobs_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sitemaps.get`
+
+Read one sitemap with its selectors, start URLs and status
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.sitemaps.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The sitemap id, from sitemaps.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  url?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  selectors?: Record<string, any>[] | null,
+  start_urls?: Record<string, any>[] | null,
+  jobs?: Record<string, any>[] | null,
+  jobs_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sitemaps.list`
+
+List the sitemaps on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.sitemaps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  url?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  selectors?: Record<string, any>[] | null,
+  start_urls?: Record<string, any>[] | null,
+  jobs?: Record<string, any>[] | null,
+  jobs_count?: number | null
+}[] | {
+  data?: {
+    id?: number | null,
+    name?: string | null,
+    url?: string | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    selectors?: Record<string, any>[] | null,
+    start_urls?: Record<string, any>[] | null,
+    jobs?: Record<string, any>[] | null,
+    jobs_count?: number | null
+  }[] | null,
+  total?: number | null,
+  current_page?: number | null,
+  last_page?: number | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
