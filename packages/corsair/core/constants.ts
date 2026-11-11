@@ -469,6 +469,7 @@ export const BaseProviders = [
 	'writer',
 	'xero',
 	'xquik',
+	'ynab',
 	'youcom',
 	'youtube',
 	'zendesk',
@@ -939,6 +940,7 @@ export const ProviderDisplayNames = {
 	writer: 'Writer',
 	xero: 'Xero',
 	xquik: 'XQuik',
+	ynab: 'YNAB',
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -1416,6 +1418,7 @@ export type AllProviders =
 	| 'writer'
 	| 'xero'
 	| 'xquik'
+	| 'ynab'
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'

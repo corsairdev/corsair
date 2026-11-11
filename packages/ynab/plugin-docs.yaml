@@ -1,0 +1,81 @@
+displayName: YNAB
+description: Budgeting with YNAB - read budgets, accounts, categories, payees and months, assign money to categories, and create, update and delete transactions and scheduled transactions.
+domain: ynab.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a personal access token in YNAB under **Account Settings → Developer Settings → New Token**. It goes in `Authorization: Bearer` against `https://api.ynab.com/v1`.
+
+  - **Amounts are milliunits, not currency.** Every amount is the currency value times 1,000, so $12.34 is `12340` and $1,234.56 is `1234560`. An amount is a whole number of milliunits, so a fractional value is rejected before the request rather than rounded. Reading a milliunit as a decimal is the most common mistake with this API.
+  - **Outflows are negative.** A $12.34 purchase is `-12340`, and an inflow is positive. The sign carries the direction; there is no separate field.
+  - **A category assignment replaces, it does not add.** `categories.update` sets the month's budgeted amount to exactly the value given, so sending `50000` makes the month $50 — it does not add $50. Sending `0` clears it.
+  - **Dates are `yyyy-MM-dd`.** No time and no zone. A month is addressed by its first day, so `2024-06-01` is June.
+  - **Everything is wrapped in `data`.** Every response is `{ data: … }`, and list endpoints add `server_knowledge` — a counter you can pass back as `last_knowledge_of_server` to receive only what changed since. That is worth using, because a full budget is very large.
+  - **`budgets.get` returns the whole budget.** Every account, category, payee, month and transaction in one answer, which is huge for a real budget. `last-used` reaches the most recently opened one without listing first.
+  - **Transactions can be created 500 at a time.** The batch is validated together rather than one call each, and an `import_id` on each makes a repeat idempotent: a duplicate updates the existing transaction and is reported in `duplicate_import_ids`.
+  - **A split transaction has a null parent category.** When `subtransactions` is non-empty, the parent's `category_id` and `category_name` are null and the amounts live on the splits.
+  - **A 403 is a lapsed subscription, not a bad key.** YNAB makes the account read-only when the subscription expires, so that case has its own handler — only a 401 is a credential problem.
+  - **A malformed delta request is rejected whole.** Nothing is partly applied, which is why a 400 is never retried.
+  - **Memo and payee names are personal.** A memo can name a merchant and a payee can name an employer, so the plugin logs ids, amounts and cleared state rather than text.
+examples:
+  read:
+    path: accounts.list
+    title: List the accounts in a budget
+    args:
+      budgetId: last-used
+  write:
+    path: transactions.create
+    title: Record a purchase
+    args:
+      budgetId: last-used
+      transactions:
+        - account_id: acc00000-0000-0000-0000-000000000001
+          date: "2024-06-01"
+          amount: -123450
+apiExamples:
+  budgets.list:
+    call: "{ include_accounts: false }"
+  budgets.get:
+    call: "{ budgetId: 'last-used' }"
+  accounts.list:
+    call: "{ budgetId: 'last-used', last_knowledge_of_server: 1234 }"
+  accounts.get:
+    call: "{ budgetId: 'last-used', accountId: 'acc00000-0000-0000-0000-000000000001' }"
+  accounts.create:
+    call: "{ budgetId: 'last-used', name: 'Checking', type: 'checking', balance: 1234560 }"
+  categories.list:
+    call: "{ budgetId: 'last-used' }"
+  categories.get:
+    call: "{ budgetId: 'last-used', categoryId: 'cat00000-0000-0000-0000-000000000001' }"
+  categories.update:
+    call: "{ budgetId: 'last-used', month: '2024-06-01', categoryId: 'cat00000-0000-0000-0000-000000000001', budgeted: 500000 }"
+  payees.list:
+    call: "{ budgetId: 'last-used' }"
+  payees.get:
+    call: "{ budgetId: 'last-used', payeeId: 'pay00000-0000-0000-0000-000000000001' }"
+  payees.create:
+    call: "{ budgetId: 'last-used', name: 'Acme Grocer' }"
+  payees.update:
+    call: "{ budgetId: 'last-used', payeeId: 'pay00000-0000-0000-0000-000000000001', name: 'Renamed' }"
+  months.list:
+    call: "{ budgetId: 'last-used' }"
+  months.get:
+    call: "{ budgetId: 'last-used', month: '2024-06-01' }"
+  transactions.list:
+    call: "{ budgetId: 'last-used', since_date: '2024-06-01', type: 'uncategorized' }"
+  transactions.get:
+    call: "{ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001' }"
+  transactions.create:
+    call: "{ budgetId: 'last-used', transactions: [{ account_id: 'acc00000-0000-0000-0000-000000000001', date: '2024-06-01', amount: -123450, payee_name: 'Acme Grocer', category_id: 'cat00000-0000-0000-0000-000000000001' }] }"
+  transactions.update:
+    call: "{ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001', amount: -200000 }"
+  transactions.delete:
+    call: "{ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001' }"
+  transactions.scheduledList:
+    call: "{ budgetId: 'last-used' }"
+  transactions.scheduledGet:
+    call: "{ budgetId: 'last-used', scheduledTransactionId: 'sch00000-0000-0000-0000-000000000001' }"
+  transactions.scheduledCreate:
+    call: "{ budgetId: 'last-used', scheduled_transaction: { account_id: 'acc00000-0000-0000-0000-000000000001', date: '2024-07-01', amount: -150000, frequency: 'monthly' } }"
+  transactions.scheduledDelete:
+    call: "{ budgetId: 'last-used', scheduledTransactionId: 'sch00000-0000-0000-0000-000000000001' }"
+  user.get: {}
