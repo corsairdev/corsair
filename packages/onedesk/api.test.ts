@@ -5,7 +5,7 @@
  *
  * Splitting the two matters: the default `test` command runs this file, so a
  * key present in the environment would otherwise let a test change the account.
- * The one write test creates its own project and leaves it behind, so no
+ * The one write test creates its own project and archives it afterwards, so no
  * existing record is ever touched.
  *
  * A self-hosted or white-label account also needs `ONEDESK_HOST`; the plugin
@@ -194,32 +194,45 @@ describeWrites('OneDesk live API: writes (opt-in)', () => {
 		expect(typeof projectId).toBe('string');
 		if (!projectId) return;
 
-		// An update answers a bare code string, not an object; the plugin turns
-		// it into { code }.
-		const raw = await makeOnedeskRequest(
-			LIVE_KEY,
-			{
-				method: 'POST',
-				path: `/projects/externalId/${projectId}`,
-				body: { name: `Corsair live test renamed ${Date.now()}` },
-			},
-			options,
-		);
+		try {
+			// An update answers a bare code string, not an object; the plugin
+			// turns it into { code }.
+			const raw = await makeOnedeskRequest(
+				LIVE_KEY,
+				{
+					method: 'POST',
+					path: `/projects/externalId/${projectId}`,
+					body: { name: `Corsair live test renamed ${Date.now()}` },
+				},
+				options,
+			);
 
-		expect(typeof raw).toBe('string');
-		expect(raw).toBe('SUCCESS');
-
-		// The public API has no delete for a project, so archiving is the
-		// closest to cleanup: it takes the record out of the active lists.
-		const archived = await makeOnedeskRequest(
-			LIVE_KEY,
-			{
-				method: 'POST',
-				path: `/projects/externalId/${projectId}`,
-				body: { archived: true },
-			},
-			options,
-		);
-		expect(archived).toBe('SUCCESS');
+			expect(typeof raw).toBe('string');
+			expect(raw).toBe('SUCCESS');
+		} finally {
+			// The public API has no delete for a project, so archiving is the
+			// closest to cleanup: it takes the record out of the active lists.
+			// It runs even when the rename fails; a failed archive is reported
+			// without hiding the original failure.
+			const archived = await makeOnedeskRequest(
+				LIVE_KEY,
+				{
+					method: 'POST',
+					path: `/projects/externalId/${projectId}`,
+					body: { archived: true },
+				},
+				options,
+			).catch((error: unknown) => {
+				console.warn(
+					`Could not archive live test project ${projectId}: ${String(error)}`,
+				);
+				return undefined;
+			});
+			if (archived !== undefined && archived !== 'SUCCESS') {
+				console.warn(
+					`Archiving live test project ${projectId} answered ${String(archived)}`,
+				);
+			}
+		}
 	});
 });
