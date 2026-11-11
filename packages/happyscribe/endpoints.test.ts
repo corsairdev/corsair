@@ -121,6 +121,8 @@ describe('transcriptions', () => {
 	it('lists with organization filter and flattens the next cursor', async () => {
 		respond(transcriptionList);
 
+		// unknown: each result is arbitrary transcription JSON; the test reads
+		// only id and state.
 		const result = await invoke<{
 			results: (Record<string, unknown> & { id?: string; state?: string })[];
 			nextPageUrl?: string;
@@ -225,6 +227,7 @@ describe('transcriptions', () => {
 
 	it('renames _links to links on the updated transcription', async () => {
 		respond(transcription);
+		// unknown: links is arbitrary JSON, compared whole to the fixture.
 		const result = await invoke<{ links?: unknown }>(
 			Transcriptions.updateDetails,
 			{ fileId: transcription.id, organizationId: 123, name: 'Renamed' },
@@ -380,6 +383,8 @@ describe('organization resources', () => {
 
 	it('lists style guides', async () => {
 		respond(styleGuides);
+		// unknown: the test counts the style guides and reads none of their
+		// fields.
 		const result = await invoke<{ styleGuides: unknown[] }>(StyleGuides.list, {
 			organizationId: 123,
 		});
@@ -783,6 +788,7 @@ describe('documented inputs', () => {
 			meetingUrl: 'https://zoom.us/j/123456789',
 			botName: 'corsair-plugin-test',
 		});
+		// unknown: the request body is arbitrary JSON; the test checks keys only.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body).not.toHaveProperty('join_at');
 		expect(body).not.toHaveProperty('language');
@@ -795,6 +801,8 @@ describe('live response fields', () => {
 	// Every field the live API sent is a declared (typed) field, so callers
 	// read `created_at`, not an always-undefined `createdAt`. `_links` is
 	// exposed as `links`.
+	// unknown: each live fixture is arbitrary JSON; the test compares its keys
+	// with the schema's declared fields.
 	const cases: [string, z.ZodObject, Record<string, unknown>, string[]][] = [
 		[
 			'transcription',

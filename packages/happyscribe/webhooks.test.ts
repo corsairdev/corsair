@@ -12,6 +12,7 @@ const SECRET = 'whsec_test_secret_string';
 
 const rawBody = JSON.stringify(webhookEvent);
 
+// unknown: the payload is parsed from the body by the webhook under test.
 function request(
 	headers: Record<string, string>,
 	body: string = rawBody,
