@@ -322,34 +322,47 @@ export type FilesGetDetailsInput = z.input<typeof FilesGetDetailsInputSchema>;
 
 const FilesGetDetailsResponseSchema = ImageKitFileSchema;
 
-const FilesUpdateDetailsInputSchema = z.object({
-	fileId: FileIdSchema,
-	tags: z
-		.array(z.string().min(1))
-		.optional()
-		.describe('Full replacement tag list; an empty array clears every tag.'),
-	customCoordinates: z
-		.string()
-		.optional()
-		.describe('Custom coordinates string, e.g. `10,10,100,100`.'),
-	customMetadata: CustomMetadataSchema.optional(),
-	description: z
-		.string()
-		.optional()
-		.describe('Short human-readable description stored with the file.'),
-	removeAITags: z
-		.union([TagsSchema, z.literal('all')])
-		.optional()
-		.describe(
-			'AI tag names to remove, or the string `all` to remove every AI tag.',
-		),
-	isPublished: z
-		.boolean()
-		.optional()
-		.describe(
-			'Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields.',
-		),
-});
+const FilesUpdateDetailsInputSchema = z
+	.object({
+		fileId: FileIdSchema,
+		tags: z
+			.array(z.string().min(1))
+			.optional()
+			.describe('Full replacement tag list; an empty array clears every tag.'),
+		customCoordinates: z
+			.string()
+			.optional()
+			.describe('Custom coordinates string, e.g. `10,10,100,100`.'),
+		customMetadata: CustomMetadataSchema.optional(),
+		description: z
+			.string()
+			.optional()
+			.describe('Short human-readable description stored with the file.'),
+		removeAITags: z
+			.union([TagsSchema, z.literal('all')])
+			.optional()
+			.describe(
+				'AI tag names to remove, or the string `all` to remove every AI tag.',
+			),
+		isPublished: z
+			.boolean()
+			.optional()
+			.describe(
+				'Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields.',
+			),
+	})
+	// ImageKit's update body is a oneOf: a publish change cannot carry the
+	// detail fields, so the mix fails here instead of at ImageKit.
+	.refine(
+		({ isPublished, fileId: _fileId, ...details }) =>
+			isPublished === undefined ||
+			Object.values(details).every((value) => value === undefined),
+		{
+			message:
+				'Send isPublished alone; change tags, metadata, coordinates or description in a separate call.',
+			path: ['isPublished'],
+		},
+	);
 
 export type FilesUpdateDetailsInput = z.input<
 	typeof FilesUpdateDetailsInputSchema

@@ -255,6 +255,17 @@ describe('files.getDetails and files.updateDetails', () => {
 		expect(lastRequest().body).toEqual({ publish: { isPublished: true } });
 	});
 
+	it('rejects isPublished mixed with detail fields before any request', async () => {
+		await expect(
+			invoke(Files.updateDetails, {
+				fileId: file.fileId,
+				isPublished: true,
+				tags: ['summer'],
+			}),
+		).rejects.toThrow(/isPublished/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects details without a fileId', async () => {
 		await expect(invoke(Files.getDetails, {})).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
