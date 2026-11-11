@@ -14,7 +14,9 @@ import {
 	Uploads,
 } from './endpoints';
 import {
+	HappyScribeMeetingSchema,
 	HappyScribeMembershipSchema,
+	HappyScribeOrderSchema,
 	HappyScribeOrganizationSchema,
 	HappyScribeTranscriptionSchema,
 } from './endpoints/types';
@@ -670,6 +672,69 @@ describe('documented inputs', () => {
 			expect(lastRequest().body).toMatchObject({ export: { format } });
 		},
 	);
+
+	it.each(['mp3', 'mp4'])(
+		'rejects a %s export of more than one transcription',
+		async (format) => {
+			await expect(
+				invoke(Exports.create, {
+					format,
+					transcriptionIds: [transcription.id, 'second-transcription-id'],
+				}),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('still exports several transcriptions to a text format', async () => {
+		respond(exportCreated);
+		await invoke(Exports.create, {
+			format: 'txt',
+			transcriptionIds: [transcription.id, 'second-transcription-id'],
+		});
+		expect(lastRequest().body).toMatchObject({
+			export: {
+				transcription_ids: [transcription.id, 'second-transcription-id'],
+			},
+		});
+	});
+
+	it('sends webhook_url on a translation order', async () => {
+		respond(order);
+		await invoke(Orders.createTranslation, {
+			sourceTranscriptionId: transcription.id,
+			targetLanguages: ['es'],
+			organizationId: 123,
+			webhookUrl: 'https://example.com/hooks/happyscribe',
+		});
+		expect(lastRequest().body).toMatchObject({
+			order: { webhook_url: 'https://example.com/hooks/happyscribe' },
+		});
+	});
+
+	it('types the transcript, summary and transcription id of a completed meeting', () => {
+		const parsed = HappyScribeMeetingSchema.parse(meetingCompleted);
+		expect(parsed.transcription_id).toBe(meetingCompleted.transcription_id);
+		expect(parsed.summary).toBe(meetingCompleted.summary);
+		expect(parsed.transcript).toHaveLength(1);
+		expect(
+			HappyScribeMeetingSchema.safeParse({ ...meeting, summary: 42 }).success,
+		).toBe(false);
+	});
+
+	it('types the outputsIds of a fulfilled order', () => {
+		const fulfilled = {
+			...order,
+			state: 'fulfilled',
+			outputsIds: ['e5fb537c'],
+		};
+		expect(HappyScribeOrderSchema.parse(fulfilled).outputsIds).toEqual([
+			'e5fb537c',
+		]);
+		expect(
+			HappyScribeOrderSchema.safeParse({ ...order, outputsIds: [1] }).success,
+		).toBe(false);
+	});
 
 	it('rejects tsv, which is not an export format', async () => {
 		await expect(

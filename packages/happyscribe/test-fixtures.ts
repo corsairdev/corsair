@@ -59,9 +59,29 @@ export const meeting = {
 	settings: { bot_name: 'Acme Notetaker', recording_mode: 'audio_only' },
 };
 
+// Shape from the Meeting reference: the transcript uses the json export's
+// paragraph-and-word schema.
 export const meetingCompleted = {
 	...meeting,
 	status: 'completed',
+	transcription_id: 'e458099e7f8da14f9625854ba7b6a026917ad306',
+	transcript: [
+		{
+			data_start: 0.0,
+			data_end: 1.2,
+			speaker: 'Carmen',
+			words: [
+				{
+					text: 'Hello',
+					type: 'word',
+					data_start: 0.0,
+					data_end: 0.4,
+					confidence: 0.99,
+				},
+			],
+		},
+	],
+	summary: 'Carmen agreed to send the budget by Friday.',
 };
 
 export const summary = {

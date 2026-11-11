@@ -79,6 +79,7 @@ export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] 
 				service,
 				confirm,
 				organizationId,
+				webhookUrl,
 				glossaryIds,
 			}) => ({
 				method: 'POST',
@@ -90,6 +91,7 @@ export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] 
 						...(service !== undefined ? { service } : {}),
 						confirm,
 						organization_id: organizationId,
+						...(webhookUrl !== undefined ? { webhook_url: webhookUrl } : {}),
 						...(glossaryIds !== undefined ? { glossary_ids: glossaryIds } : {}),
 					},
 				},

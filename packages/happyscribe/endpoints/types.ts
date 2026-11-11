@@ -131,6 +131,13 @@ export const HappyScribeMeetingSchema = z
 		metadata: z.record(z.string(), z.unknown()).nullish(),
 		// unknown: effective notetaker settings vary by plan and origin.
 		settings: z.record(z.string(), z.unknown()).nullish(),
+		// Set once the recording is transcribed; pass it to
+		// transcriptions.getDetails or exports.create.
+		transcription_id: z.string().nullish(),
+		// unknown: each paragraph follows the json export's
+		// paragraph-and-word schema, which HappyScribe extends over time.
+		transcript: z.array(z.record(z.string(), z.unknown())).nullish(),
+		summary: z.string().nullish(),
 	})
 	.loose();
 
@@ -179,6 +186,9 @@ export const HappyScribeOrderSchema = z
 		state: z.string().nullish(),
 		// unknown: per-operation service lines vary by order type.
 		operations: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// IDs of the transcriptions or translations the order produced;
+		// present once the order is fulfilled.
+		outputsIds: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -528,22 +538,34 @@ const EXPORT_FORMATS = [
 	'mp4',
 ] as const;
 
-const TranscriptionsCreateExportInputSchema = z.object({
-	format: z
-		.enum(EXPORT_FORMATS)
-		.describe('Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`.'),
-	transcriptionIds: z
-		.array(FileIdSchema)
-		.min(1)
-		.describe('Transcription IDs to include in the export.'),
-	showTimestamps: z
-		.boolean()
-		.optional()
-		.describe('Include timestamps in the exported file.'),
-	showSpeakers: z.boolean().optional().describe('Include speaker names.'),
-	showComments: z.boolean().optional().describe('Include comments.'),
-	showHighlights: z.boolean().optional().describe('Include highlights.'),
-});
+const TranscriptionsCreateExportInputSchema = z
+	.object({
+		format: z
+			.enum(EXPORT_FORMATS)
+			.describe('Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`.'),
+		transcriptionIds: z
+			.array(FileIdSchema)
+			.min(1)
+			.describe('Transcription IDs to include in the export.'),
+		showTimestamps: z
+			.boolean()
+			.optional()
+			.describe('Include timestamps in the exported file.'),
+		showSpeakers: z.boolean().optional().describe('Include speaker names.'),
+		showComments: z.boolean().optional().describe('Include comments.'),
+		showHighlights: z.boolean().optional().describe('Include highlights.'),
+	})
+	.refine(
+		// mp3 and mp4 point at the source media, so the API takes exactly one
+		// transcription for them and rejects a request with more.
+		(input) =>
+			!(input.format === 'mp3' || input.format === 'mp4') ||
+			input.transcriptionIds.length === 1,
+		{
+			message: 'mp3 and mp4 exports take exactly one transcription ID',
+			path: ['transcriptionIds'],
+		},
+	);
 
 export type TranscriptionsCreateExportInput = z.input<
 	typeof TranscriptionsCreateExportInputSchema
@@ -813,6 +835,10 @@ const OrdersCreateTranslationInputSchema = z.object({
 		),
 	confirm: z.boolean().optional().describe('Confirm and pay immediately.'),
 	organizationId: OrganizationIdSchema,
+	webhookUrl: z
+		.string()
+		.optional()
+		.describe('URL notified each time the order changes state.'),
 	glossaryIds: z
 		.array(z.number().int())
 		.optional()
