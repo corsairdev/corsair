@@ -10,6 +10,20 @@ import {
 // core hands back the text). The docs show the worker's Basic credentials,
 // but HQ accepts the ApiKey header too (checked live) and restores the
 // account that owns the key.
+//
+// The restore's <Registration> block carries the key owner's password hash
+// (the phone uses it for offline login). A read caller has no use for it, so
+// it is replaced before the XML is returned. Only the Registration block is
+// touched: a case property can also be called `password`.
+const REGISTRATION_BLOCK = /<Registration\b[\s\S]*?<\/Registration>/g;
+const PASSWORD_ELEMENT = /<password\b[^>]*?(?:\/>|>[\s\S]*?<\/password>)/g;
+
+function removeRegistrationPassword(xml: string): string {
+	return xml.replace(REGISTRATION_BLOCK, (block) =>
+		block.replace(PASSWORD_ELEMENT, '<password>[removed]</password>'),
+	);
+}
+
 export const restore: CommCareEndpoints['otaRestore'] = (ctx, input) =>
 	call(
 		ctx,
@@ -27,7 +41,9 @@ export const restore: CommCareEndpoints['otaRestore'] = (ctx, input) =>
 		{
 			// unknown: the body is an OpenRosa XML payload until narrowed.
 			shape: (raw) => ({
-				raw: typeof raw === 'string' ? raw : String(raw ?? ''),
+				raw: removeRegistrationPassword(
+					typeof raw === 'string' ? raw : String(raw ?? ''),
+				),
 			}),
 			log: (_, result) => ({ bytes: result.raw.length }),
 		},

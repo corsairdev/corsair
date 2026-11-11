@@ -14,7 +14,7 @@ Generate an API key in CommCare HQ under Account Settings, API Keys (the key bel
 - **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete` or `failed`. `complete` does not mean every form succeeded: compare `succeeded` with `requested` and read `skipped`. A form must be archived before it can be deleted.
 - **Writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver. HQ answers 201 even when it could not process the form; the call fails in that case (nature `submit_error` or `processing_failure`) and otherwise returns the `message` and its `nature`. `users.create` provisions a worker account with an initial password.
 - **Delete is permanent.** `users.delete` removes a worker account, and `forms.bulkAction` with action `delete` permanently removes forms.
-- **OTA restore auth.** `ota.restore` pulls the full case-restore XML. The docs show worker Basic credentials, but HQ also accepts the ApiKey header and restores the account that owns the key, so a web user's key returns that user's restore, not a mobile worker's.
+- **OTA restore auth.** `ota.restore` pulls the full case-restore XML. The docs show worker Basic credentials, but HQ also accepts the ApiKey header and restores the account that owns the key, so a web user's key returns that user's restore, not a mobile worker's. HQ puts the owner's password hash in the restore's registration block; the plugin replaces it with `[removed]` before returning the XML.
 
 **What you get:**
 

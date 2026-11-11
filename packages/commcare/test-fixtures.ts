@@ -172,6 +172,11 @@ export const bulkActionComplete = {
 export const otaRestoreXml =
 	"<?xml version='1.0' encoding='UTF-8'?><OpenRosaResponse xmlns=\"http://openrosa.org/http/response\"><message>Successfully restored account danny!</message></OpenRosaResponse>";
 
+// Shape of HQ's restore: a Registration block with the owner's password
+// hash, then case blocks (one with a case property named password).
+export const otaRestoreWithRegistrationXml =
+	'<OpenRosaResponse xmlns="http://openrosa.org/http/response"><message nature="ota_restore_success">Successfully restored account danny!</message><Sync xmlns="http://commcarehq.org/sync"><restore_id>r1</restore_id></Sync><Registration xmlns="http://openrosa.org/user/registration"><username>danny</username><password>sha1$abc12$0123456789abcdef</password><uuid>u1</uuid><date>2026-11-11</date></Registration><case case_id="c1"><update><password>case-value</password></update></case></OpenRosaResponse>';
+
 export const submissionErrorXml =
 	'<OpenRosaResponse xmlns="http://openrosa.org/http/response"><message nature="submit_error">InvalidCaseIndex: case c9 does not exist</message></OpenRosaResponse>';
 

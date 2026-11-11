@@ -17,6 +17,7 @@ import {
 	location,
 	locationType,
 	lookupTable,
+	otaRestoreWithRegistrationXml,
 	otaRestoreXml,
 	reportData,
 	reportList,
@@ -549,6 +550,18 @@ describe('device', () => {
 		});
 		expect(result.raw).toContain('OpenRosaResponse');
 		expect(lastRequest().path).toBe(`/a/${DOMAIN}/phone/restore/`);
+	});
+
+	it('removes the registration password hash from the restore', async () => {
+		respond(otaRestoreWithRegistrationXml);
+		const result = await invoke<{ raw: string }>(Device.restore, {
+			domain: DOMAIN,
+		});
+		expect(result.raw).not.toContain('sha1$');
+		expect(result.raw).toContain('<password>[removed]</password>');
+		expect(result.raw).toContain('<username>danny</username>');
+		// A case property that happens to be called password is case data.
+		expect(result.raw).toContain('<password>case-value</password>');
 	});
 
 	it('submits an XForm and surfaces the message', async () => {

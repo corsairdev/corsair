@@ -434,7 +434,7 @@ const commCareEndpointMeta = {
 	'ota.restore': {
 		riskLevel: 'read',
 		description:
-			'Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key',
+			'Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key. The password hash in the registration block is replaced with [removed]',
 	},
 	'submissions.submit': {
 		riskLevel: 'write',
