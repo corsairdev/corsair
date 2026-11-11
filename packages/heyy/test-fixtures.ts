@@ -17,7 +17,25 @@ export const contact = {
 	phoneNumber: '+15550100',
 	email: 'jordan@acme.com',
 	labels: [{ id: 'lbl-1' }],
-	attributes: [{ name: 'Plan', value: 'pro' }],
+	// The spec's shape: the value row, with the attribute definition nested.
+	attributes: [
+		{
+			id: '3f1a2b4c-0000-4000-8000-0000000000a1',
+			contactId: '3f1a2b4c-0000-4000-8000-000000000001',
+			attribute: {
+				id: 'attr-1',
+				createdAt: '2026-10-01T09:00:00.000Z',
+				updatedAt: '2026-10-01T09:00:00.000Z',
+				name: 'plan',
+				type: 'single_select',
+				displayName: 'Plan',
+				description: null,
+				visibility: { inbox: true, contacts: true, create: true },
+				details: { options: [{ value: 'pro', color: '#3B82F6' }] },
+			},
+			value: 'pro',
+		},
+	],
 	handles: [],
 	chats: [],
 	metadata: {},

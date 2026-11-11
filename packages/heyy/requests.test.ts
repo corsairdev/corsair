@@ -16,6 +16,7 @@ import {
 	labelsSearch,
 	messageTemplatesSearch,
 } from './endpoints';
+import type { ContactsSearchResponse } from './endpoints/types';
 import { HeyyEndpointInputSchemas } from './endpoints/types';
 import {
 	attributesCreateResponse,
@@ -118,6 +119,21 @@ describe('contacts.search', () => {
 		expect(result.contacts[0]?.email).toBe('jordan@acme.com');
 		expect(result.pagination).toEqual({ page: 0, limit: 25, total: 2 });
 		expect(result.success).toBe(true);
+	});
+
+	it('returns attribute values with the attribute they belong to', async () => {
+		respond(contactsSearchResponse);
+
+		const result = (await invoke(
+			contactsSearch,
+			{},
+		)) as ContactsSearchResponse;
+
+		const value = result.contacts[0]?.attributes?.[0];
+		expect(value?.attribute?.name).toBe('plan');
+		expect(value?.attribute?.displayName).toBe('Plan');
+		expect(value?.contactId).toBe('3f1a2b4c-0000-4000-8000-000000000001');
+		expect(value?.value).toBe('pro');
 	});
 
 	it('sends query, sortBy and pagination as given', async () => {

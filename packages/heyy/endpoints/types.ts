@@ -136,9 +136,25 @@ export const heyySearchResultShape = {
 
 // ── contacts.search ─────────────────────────────────────────────────────────
 
+/**
+ * One attribute value on a contact. The spec returns the value row's own id,
+ * the contact id and the attribute definition it belongs to; the attribute's
+ * name sits under `attribute`, not on the row.
+ */
 const ContactAttributeValueSchema = z
 	.object({
-		name: z.string().nullish(),
+		id: z.string().nullish(),
+		contactId: z.string().nullish(),
+		attribute: z
+			.object({
+				id: z.string(),
+				name: z.string(),
+				displayName: z.string().nullish(),
+				type: z.string().nullish(),
+			})
+			.loose()
+			.nullish()
+			.describe('The attribute definition, as `attributes.search` returns it.'),
 		value: z.union([z.string(), z.number(), z.array(z.string())]).nullish(),
 	})
 	.loose();
