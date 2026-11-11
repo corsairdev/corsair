@@ -83,6 +83,7 @@ export const deleteDatasource: KlipfolioEndpoints['deleteDatasource'] = async (
 		KlipfolioEndpointOutputs['deleteDatasource']
 	>(ctx, klipfolioPathParameter('/datasources/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -288,7 +289,7 @@ export const deleteDatasourceShareRight: KlipfolioEndpoints['deleteDatasourceSha
 				'group-id',
 				input.groupId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,
@@ -354,7 +355,7 @@ export const deleteDatasourceInstances: KlipfolioEndpoints['deleteDatasourceInst
 		>(
 			ctx,
 			klipfolioPathParameter('/datasource-instances/{id}', 'id', input.id),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,

@@ -85,6 +85,7 @@ export const deleteClient: KlipfolioEndpoints['deleteClient'] = async (
 		KlipfolioEndpointOutputs['deleteClient']
 	>(ctx, klipfolioPathParameter('/clients/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -351,7 +352,7 @@ export const deleteClientShareRight: KlipfolioEndpoints['deleteClientShareRight'
 				'group-id',
 				input.groupId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,

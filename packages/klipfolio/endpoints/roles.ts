@@ -89,6 +89,7 @@ export const deleteRole: KlipfolioEndpoints['deleteRole'] = async (
 		KlipfolioEndpointOutputs['deleteRole']
 	>(ctx, klipfolioPathParameter('/roles/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -156,7 +157,7 @@ export const deleteRoleUser: KlipfolioEndpoints['deleteRoleUser'] = async (
 			'userid',
 			input.userid,
 		),
-		{ method: 'DELETE' },
+		{ method: 'DELETE', query: rest },
 	);
 	await logEventFromContext(
 		ctx,
@@ -210,6 +211,7 @@ export const deleteRolePermissions: KlipfolioEndpoints['deleteRolePermissions'] 
 			KlipfolioEndpointOutputs['deleteRolePermissions']
 		>(ctx, klipfolioPathParameter('/roles/{id}/permissions', 'id', input.id), {
 			method: 'DELETE',
+			query: rest,
 		});
 		await logEventFromContext(
 			ctx,

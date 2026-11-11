@@ -104,6 +104,7 @@ export const deleteKlip: KlipfolioEndpoints['deleteKlip'] = async (
 		KlipfolioEndpointOutputs['deleteKlip']
 	>(ctx, klipfolioPathParameter('/klips/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -220,7 +221,7 @@ export const deleteKlipAnnotation: KlipfolioEndpoints['deleteKlipAnnotation'] =
 				'annotation_id',
 				input.annotationId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,

@@ -96,7 +96,7 @@ export const deleteDashboardPublishedLinks: KlipfolioEndpoints['deleteDashboardP
 				'published_link_id',
 				input.publishedLinkId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,

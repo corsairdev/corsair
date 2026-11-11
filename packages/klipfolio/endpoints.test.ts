@@ -201,9 +201,13 @@ describe('Klipfolio endpoint request seams', () => {
 				external_id: 'external_id-1',
 			},
 		});
-		await deleteClient(ctx, { id: 'id-1' } as never);
+		await deleteClient(ctx, {
+			id: 'id-1',
+			client_id: 'client_id-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/clients/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await enableDirectBillingClient(ctx, { id: 'id-1' } as never);
 		expect(request).toHaveBeenCalledWith(
@@ -289,11 +293,12 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteClientShareRight(ctx, {
 			id: 'id-1',
 			groupId: 'groupId-1',
+			client_id: 'client_id-1',
 		} as never);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/clients/id-1/share-rights/groupId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await listDatasources(ctx, { client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/datasources', {
@@ -349,6 +354,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/datasources/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await enableDatasource(ctx, { id: 'id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/datasources/id-1/@/enable', {
@@ -440,7 +446,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/datasources/id-1/share-rights/groupId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1', type: 'type-1' } },
 		);
 		await listDatasourceInstances(ctx, {
 			datasource_id: 'datasource_id-1',
@@ -479,6 +485,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/datasource-instances/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveDatasourceInstancesData(ctx, {
 			id: 'id-1',
@@ -600,6 +607,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteGroup(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/groups/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveGroupDefaultTabs(ctx, {
 			id: 'id-1',
@@ -666,7 +674,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/groups/id-1/default-tabs/id2-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await retrieveGroupUsers(ctx, {
 			id: 'id-1',
@@ -692,6 +700,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/groups/id-1/users/id2-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await listKlips(ctx, {
 			datasource_id: 'datasource_id-1',
@@ -748,6 +757,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteKlip(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/klips/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveKlipAnnotations(ctx, {
 			id: 'id-1',
@@ -809,7 +819,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/klips/id-1/annotations/annotationId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await updateFromParentKlip(ctx, { id: 'id-1' } as never);
 		expect(request).toHaveBeenCalledWith(
@@ -940,7 +950,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/dashboard-published-links/publishedLinkId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await listRoles(ctx, { client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/roles', {
@@ -991,6 +1001,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteRole(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/roles/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveRoleUsers(ctx, {
 			id: 'id-1',
@@ -1016,6 +1027,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/roles/id-1/users/userid-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveRolePermissions(ctx, {
 			id: 'id-1',
@@ -1041,6 +1053,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/roles/id-1/permissions', {
 			method: 'DELETE',
+			query: { name: 'name-1', client_id: 'client_id-1' },
 		});
 		await listTabs(ctx, { client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/tabs', {
@@ -1086,6 +1099,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteTab(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/tabs/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveTabKlipInstances(ctx, {
 			id: 'id-1',
@@ -1112,7 +1126,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/tabs/id-1/klip-instances/klipInstanceId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await retrieveTabLayout(ctx, {
 			id: 'id-1',
@@ -1162,7 +1176,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/tabs/id-1/share-rights/groupId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 		await importTab(ctx, {
 			id: 'id-1',
@@ -1243,6 +1257,7 @@ describe('Klipfolio endpoint request seams', () => {
 		await deleteUser(ctx, { id: 'id-1', client_id: 'client_id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveUserGroups(ctx, {
 			id: 'id-1',
@@ -1276,6 +1291,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/groups/groupId-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await resendInviteUser(ctx, { id: 'id-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/@/resend-invite', {
@@ -1304,10 +1320,14 @@ describe('Klipfolio endpoint request seams', () => {
 			method: 'PUT',
 			body: { client_id: 'client_id-1', properties: { key: 'value-1' } },
 		});
-		await deleteUserProperties(ctx, { id: 'id-1', name: 'name-1' } as never);
+		await deleteUserProperties(ctx, {
+			id: 'id-1',
+			name: 'name-1',
+			client_id: 'client_id-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/properties', {
 			method: 'DELETE',
-			query: { name: 'name-1' },
+			query: { name: 'name-1', client_id: 'client_id-1' },
 		});
 		await retrieveUserRoles(ctx, {
 			id: 'id-1',
@@ -1334,6 +1354,7 @@ describe('Klipfolio endpoint request seams', () => {
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/roles/roleid-1', {
 			method: 'DELETE',
+			query: { client_id: 'client_id-1' },
 		});
 		await retrieveUserTabInstances(ctx, {
 			id: 'id-1',
@@ -1360,7 +1381,7 @@ describe('Klipfolio endpoint request seams', () => {
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/users/id-1/tab-instances/tabInstanceId-1',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: { client_id: 'client_id-1' } },
 		);
 	});
 
@@ -1380,17 +1401,11 @@ describe('Klipfolio endpoint request seams', () => {
 			roles: ['role-1'],
 			password: 'tempPassword',
 		} as never);
-		// unknown: the event-writer mock records the runtime context and provider
-		// payload, which the endpoint signature does not expose; only the logged
-		// payload is asserted.
 		const calls = logMock.mock.calls as Array<
 			[unknown, string, unknown, string]
 		>;
 		expect(calls[calls.length - 1]?.[2]).toEqual({ redacted: true });
 		await retrieveUser(ctx, { id: 'user-1' } as never);
-		// unknown: the event-writer mock records the runtime context and provider
-		// payload, which the endpoint signature does not expose; only the logged
-		// payload is asserted.
 		const readCalls = logMock.mock.calls as Array<
 			[unknown, string, Record<string, unknown>, string]
 		>;

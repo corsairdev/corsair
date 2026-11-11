@@ -85,6 +85,7 @@ export const deleteGroup: KlipfolioEndpoints['deleteGroup'] = async (
 		KlipfolioEndpointOutputs['deleteGroup']
 	>(ctx, klipfolioPathParameter('/groups/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -203,7 +204,7 @@ export const deleteGroupDefaultTab: KlipfolioEndpoints['deleteGroupDefaultTab'] 
 				'id2',
 				input.id2,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,
@@ -271,7 +272,7 @@ export const deleteGroupUser: KlipfolioEndpoints['deleteGroupUser'] = async (
 			'id2',
 			input.id2,
 		),
-		{ method: 'DELETE' },
+		{ method: 'DELETE', query: rest },
 	);
 	await logEventFromContext(
 		ctx,

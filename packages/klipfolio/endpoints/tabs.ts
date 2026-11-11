@@ -77,6 +77,7 @@ export const deleteTab: KlipfolioEndpoints['deleteTab'] = async (
 		KlipfolioEndpointOutputs['deleteTab']
 	>(ctx, klipfolioPathParameter('/tabs/{id}', 'id', input.id), {
 		method: 'DELETE',
+		query: rest,
 	});
 	await logEventFromContext(
 		ctx,
@@ -141,7 +142,7 @@ export const deleteTabKlipInstance: KlipfolioEndpoints['deleteTabKlipInstance'] 
 				'klip_instance_id',
 				input.klipInstanceId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,
@@ -242,7 +243,7 @@ export const deleteTabShareRight: KlipfolioEndpoints['deleteTabShareRight'] =
 				'group-id',
 				input.groupId,
 			),
-			{ method: 'DELETE' },
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,
