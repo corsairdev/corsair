@@ -6,10 +6,10 @@ overviewNote: |
   Generate an API key in CommCare HQ under Account Settings, API Keys (the key belongs to your CommCare username). Because ApiKey auth is user-scoped, every operation takes the project `domain` and that `username` as inputs. Things to know before you call:
 
   - **API access needs a plan.** The CommCare APIs require a Standard plan or above.
-  - **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`, so set the plugin's `domain` option once.
-  - **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` uses a cursor you follow from the `next` link, and pages oldest-to-newest.
-  - **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete`.
-  - **Credit-bearing writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
+  - **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`. There is no plugin-level `domain` or `username` option: pass both on every call.
+  - **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` pages oldest-to-newest by cursor: pass the `nextCursor` it answers as `cursor` until `nextCursor` is absent.
+  - **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete` or `failed`. `complete` does not mean every form succeeded: compare `succeeded` with `requested` and read `skipped`. A form must be archived before it can be deleted.
+  - **Writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
   - **Delete is permanent.** `users.delete` removes a worker account, and `forms.bulkAction` with action `delete` permanently removes forms.
   - **OTA restore auth.** `ota.restore` pulls the full case-restore XML; the docs authenticate that endpoint with the worker's Basic credentials, which the plugin does not hold, so it may answer 401 with an API key.
 examples:
@@ -17,14 +17,17 @@ examples:
     path: cases.list
     title: List open cases of a type
     args:
+      username: jdoe@my-project.commcarehq.org
       domain: my-project
       caseType: patient
+      closed: false
   write:
     path: users.create
     title: Add a mobile worker
     args:
+      username: jdoe@my-project.commcarehq.org
       domain: my-project
-      username: new.worker@my-project.commcarehq.org
+      workerUsername: new.worker@my-project.commcarehq.org
       password: change-me-1
       firstName: Jordan
       lastName: Lee
@@ -50,7 +53,7 @@ apiExamples:
   users.get:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
   users.create:
-    call: "{ domain: 'my-project', username: 'new.worker@my-project.commcarehq.org', password: 'change-me-1', firstName: 'Jordan', lastName: 'Lee' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', workerUsername: 'new.worker@my-project.commcarehq.org', password: 'change-me-1', firstName: 'Jordan', lastName: 'Lee' }"
   users.update:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339', phoneNumber: '+15551234567' }"
   users.delete:
@@ -82,7 +85,7 @@ apiExamples:
   lookupTables.list:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   lookupTables.get:
-    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', tableId: 'tbl_01' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', tableId: 'bcf49791f7f04f09bd46262097e107f2' }"
   reports.list:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   reports.getData:

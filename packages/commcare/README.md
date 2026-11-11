@@ -19,7 +19,7 @@ pnpm add @corsair-dev/commcare
 | `detExports.list` | `commcare.api.detExports.list` | `read` | List the Data Export Tool export instances in the project |
 | `fixtures.getItem` | `commcare.api.fixtures.getItem` | `read` | Read one fixture item by id |
 | `fixtures.list` | `commcare.api.fixtures.list` | `read` | List lookup-table fixture items, optionally filtered by fixture type |
-| `forms.bulkAction` | `commcare.api.forms.bulkAction` | `destructive` | Archive, unarchive, or permanently delete up to 5000 forms in one background job; follow with forms.bulkActionStatus until status is complete |
+| `forms.bulkAction` | `commcare.api.forms.bulkAction` | `destructive` | Archive, unarchive, or permanently delete up to 5000 forms in one background job (delete needs the forms archived first); follow with forms.bulkActionStatus until status is complete or failed |
 | `forms.bulkActionStatus` | `commcare.api.forms.bulkActionStatus` | `read` | Where a bulk form action stands: pending, complete, or failed, with processed and succeeded counts |
 | `forms.get` | `commcare.api.forms.get` | `read` | Read one submitted form, including its XForm content and metadata |
 | `forms.list` | `commcare.api.forms.list` | `read` | List submitted forms with paging and time-window or xmlns filters |

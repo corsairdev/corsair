@@ -8,10 +8,10 @@ Use **CommCare** through Corsair: one client, typed API calls.
 Generate an API key in CommCare HQ under Account Settings, API Keys (the key belongs to your CommCare username). Because ApiKey auth is user-scoped, every operation takes the project `domain` and that `username` as inputs. Things to know before you call:
 
 - **API access needs a plan.** The CommCare APIs require a Standard plan or above.
-- **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`, so set the plugin's `domain` option once.
-- **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` uses a cursor you follow from the `next` link, and pages oldest-to-newest.
-- **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete`.
-- **Credit-bearing writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
+- **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`. There is no plugin-level `domain` or `username` option: pass both on every call.
+- **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` pages oldest-to-newest by cursor: pass the `nextCursor` it answers as `cursor` until `nextCursor` is absent.
+- **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete` or `failed`. `complete` does not mean every form succeeded: compare `succeeded` with `requested` and read `skipped`. A form must be archived before it can be deleted.
+- **Writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
 - **Delete is permanent.** `users.delete` removes a worker account, and `forms.bulkAction` with action `delete` permanently removes forms.
 - **OTA restore auth.** `ota.restore` pulls the full case-restore XML; the docs authenticate that endpoint with the worker's Basic credentials, which the plugin does not hold, so it may answer 401 with an API key.
 
@@ -73,7 +73,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl`. ApiKey auth is user-scoped, so every operation takes the project `domain` and the key's `username` as inputs.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 commcare()
@@ -107,7 +107,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.commcare.api.cases.list({ domain: 'my-project', caseType: 'patient' });
+await tenant.commcare.api.cases.list({
+	username: 'jdoe@my-project.commcarehq.org',
+	domain: 'my-project',
+	caseType: 'patient',
+	closed: false,
+});
 ```
 
 
@@ -116,8 +121,9 @@ await tenant.commcare.api.cases.list({ domain: 'my-project', caseType: 'patient'
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.commcare.api.users.create({
+	username: 'jdoe@my-project.commcarehq.org',
 	domain: 'my-project',
-	username: 'new.worker@my-project.commcarehq.org',
+	workerUsername: 'new.worker@my-project.commcarehq.org',
 	password: 'change-me-1',
 	firstName: 'Jordan',
 	lastName: 'Lee',

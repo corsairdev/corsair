@@ -311,7 +311,7 @@ const commCareEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Archive, unarchive, or permanently delete up to 5000 forms in one background job; follow with forms.bulkActionStatus until status is complete',
+			'Archive, unarchive, or permanently delete up to 5000 forms in one background job (delete needs the forms archived first); follow with forms.bulkActionStatus until status is complete or failed',
 		job: BULK_ACTION_JOB,
 	},
 	'forms.bulkActionStatus': {
