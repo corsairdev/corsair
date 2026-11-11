@@ -74,7 +74,11 @@ function define<T extends EndpointName>(
 }
 
 export const Messages = {
-	list: define('listMessages', { method: 'GET', path: () => '/v1/messages' }),
+	list: define('listMessages', {
+		method: 'GET',
+		path: () => '/v1/messages',
+		query: ({ page }) => ({ page }),
+	}),
 	get: define('getMessage', {
 		method: 'GET',
 		path: ({ message }) => `/v1/messages/${pathValue(message)}`,
@@ -82,7 +86,11 @@ export const Messages = {
 } as const;
 
 export const Payouts = {
-	list: define('listPayouts', { method: 'GET', path: () => '/v1/payouts' }),
+	list: define('listPayouts', {
+		method: 'GET',
+		path: () => '/v1/payouts',
+		query: ({ page }) => ({ page }),
+	}),
 	get: define('getPayout', {
 		method: 'GET',
 		path: ({ payout }) => `/v1/payouts/${pathValue(payout)}`,
@@ -90,7 +98,11 @@ export const Payouts = {
 } as const;
 
 export const Pledges = {
-	list: define('listPledges', { method: 'GET', path: () => '/v1/pledges' }),
+	list: define('listPledges', {
+		method: 'GET',
+		path: () => '/v1/pledges',
+		query: ({ page }) => ({ page }),
+	}),
 	get: define('getPledge', {
 		method: 'GET',
 		path: ({ pledge }) => `/v1/pledges/${pathValue(pledge)}`,
@@ -101,7 +113,7 @@ export const Plans = {
 	list: define('listPlans', {
 		method: 'GET',
 		path: () => '/v1/plans',
-		query: ({ contacts }) => toQuery({ contacts }),
+		query: ({ contacts, page }) => toQuery({ contacts, page }),
 	}),
 	get: define('getPlan', {
 		method: 'GET',
@@ -138,7 +150,11 @@ export const Transactions = {
 } as const;
 
 export const Webhooks = {
-	list: define('listWebhooks', { method: 'GET', path: () => '/v1/webhooks' }),
+	list: define('listWebhooks', {
+		method: 'GET',
+		path: () => '/v1/webhooks',
+		query: ({ page }) => ({ page }),
+	}),
 	create: define('createWebhook', {
 		method: 'POST',
 		path: () => '/v1/webhooks',
@@ -164,6 +180,7 @@ export const WebhookActivities = {
 	list: define('listWebhookActivities', {
 		method: 'GET',
 		path: ({ webhook }) => `/v1/webhooks/${pathValue(webhook)}/activities`,
+		query: ({ page }) => ({ page }),
 	}),
 	get: define('getWebhookActivity', {
 		method: 'GET',

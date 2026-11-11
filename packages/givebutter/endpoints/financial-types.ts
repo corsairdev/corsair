@@ -8,6 +8,7 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 }, 'Route identifiers must be safe path segments');
 
 const NullableString = z.string().nullable();
+const PageInput = z.object({ page: z.number().int().min(1).optional() });
 // Nested financial payloads include provider-defined values whose fields vary by method.
 const JsonObject = z.object({}).loose();
 const WebhookEvent = z.enum([
@@ -178,13 +179,15 @@ const WebhookActivityPathInputSchema = z.object({
 });
 
 export const GivebutterFinancialEndpointInputSchemas = {
-	listMessages: z.object({}),
+	listMessages: z.object({}).extend(PageInput.shape),
 	getMessage: z.object({ message: RouteId }),
-	listPayouts: z.object({}),
+	listPayouts: z.object({}).extend(PageInput.shape),
 	getPayout: z.object({ payout: RouteId }),
-	listPledges: z.object({}),
+	listPledges: z.object({}).extend(PageInput.shape),
 	getPledge: z.object({ pledge: RouteId }),
-	listPlans: z.object({ contacts: NullableString.optional() }),
+	listPlans: z
+		.object({ contacts: NullableString.optional() })
+		.extend(PageInput.shape),
 	getPlan: z.object({
 		plan: RouteId,
 		first_name: z.string().max(255).optional(),
@@ -192,27 +195,29 @@ export const GivebutterFinancialEndpointInputSchemas = {
 		email: z.string().optional(),
 		amount: z.string().optional(),
 	}),
-	listTransactions: z.object({
-		transactedAfter: NullableString.optional(),
-		transactedBefore: NullableString.optional(),
-		createdAfter: NullableString.optional(),
-		createdBefore: NullableString.optional(),
-		updatedAfter: NullableString.optional(),
-		updatedBefore: NullableString.optional(),
-		checkDepositedAfter: NullableString.optional(),
-		checkDepositedBefore: NullableString.optional(),
-		contacts: NullableString.optional(),
-		method: NullableString.optional(),
-		scope: z.enum(['all', 'benefiting', 'chapters']).nullable().optional(),
-		sortBy: z
-			.enum(['amount', 'transacted_at', 'created_at', 'contact_name'])
-			.nullable()
-			.optional(),
-		sortByDesc: z
-			.enum(['amount', 'transacted_at', 'created_at', 'contact_name'])
-			.nullable()
-			.optional(),
-	}),
+	listTransactions: z
+		.object({
+			transactedAfter: NullableString.optional(),
+			transactedBefore: NullableString.optional(),
+			createdAfter: NullableString.optional(),
+			createdBefore: NullableString.optional(),
+			updatedAfter: NullableString.optional(),
+			updatedBefore: NullableString.optional(),
+			checkDepositedAfter: NullableString.optional(),
+			checkDepositedBefore: NullableString.optional(),
+			contacts: NullableString.optional(),
+			method: NullableString.optional(),
+			scope: z.enum(['all', 'benefiting', 'chapters']).nullable().optional(),
+			sortBy: z
+				.enum(['amount', 'transacted_at', 'created_at', 'contact_name'])
+				.nullable()
+				.optional(),
+			sortByDesc: z
+				.enum(['amount', 'transacted_at', 'created_at', 'contact_name'])
+				.nullable()
+				.optional(),
+		})
+		.extend(PageInput.shape),
 	createTransaction: z.object({
 		...TransactionFields,
 		method: PaymentMethod,
@@ -224,7 +229,7 @@ export const GivebutterFinancialEndpointInputSchemas = {
 		transaction: RouteId,
 		...TransactionUpdateFields,
 	}),
-	listWebhooks: z.object({}),
+	listWebhooks: z.object({}).extend(PageInput.shape),
 	createWebhook: z.object({
 		url: z.string().url(),
 		event: WebhookEvent.optional(),
@@ -241,7 +246,7 @@ export const GivebutterFinancialEndpointInputSchemas = {
 		enabled: z.boolean().optional(),
 	}),
 	deleteWebhook: WebhookPathInputSchema,
-	listWebhookActivities: WebhookPathInputSchema,
+	listWebhookActivities: WebhookPathInputSchema.extend(PageInput.shape),
 	getWebhookActivity: WebhookActivityPathInputSchema,
 } as const;
 

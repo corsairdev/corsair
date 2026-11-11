@@ -73,7 +73,7 @@ export const Campaigns = {
 	list: define('listCampaigns', {
 		method: 'GET',
 		path: () => '/v1/campaigns',
-		query: ({ scope }) => ({ scope }),
+		query: ({ scope, page }) => ({ scope, page }),
 	}),
 	create: define('createCampaign', {
 		method: 'POST',
@@ -101,6 +101,7 @@ export const DiscountCodes = {
 		method: 'GET',
 		path: ({ campaign }) =>
 			`/v1/campaigns/${pathValue(campaign)}/discount-codes`,
+		query: ({ page }) => ({ page }),
 	}),
 	create: define('createDiscountCode', {
 		method: 'POST',
@@ -131,6 +132,7 @@ export const Members = {
 	list: define('listMembers', {
 		method: 'GET',
 		path: ({ campaign }) => `/v1/campaigns/${pathValue(campaign)}/members`,
+		query: ({ page }) => ({ page }),
 	}),
 	get: define('getMember', {
 		method: 'GET',
@@ -149,6 +151,7 @@ export const Teams = {
 	list: define('listTeams', {
 		method: 'GET',
 		path: ({ campaign }) => `/v1/campaigns/${pathValue(campaign)}/teams`,
+		query: ({ page }) => ({ page }),
 	}),
 	get: define('getTeam', {
 		method: 'GET',
@@ -168,6 +171,7 @@ export const TicketItems = {
 		method: 'GET',
 		path: ({ campaign }) =>
 			`/v1/campaigns/${pathValue(campaign)}/items/tickets`,
+		query: ({ page }) => ({ page }),
 	}),
 	create: define('createTicketItem', {
 		method: 'POST',
@@ -183,7 +187,11 @@ export const TicketItems = {
 } as const;
 
 export const Tickets = {
-	list: define('listTickets', { method: 'GET', path: () => '/v1/tickets' }),
+	list: define('listTickets', {
+		method: 'GET',
+		path: () => '/v1/tickets',
+		query: ({ page }) => ({ page }),
+	}),
 	get: define('getTicket', {
 		method: 'GET',
 		path: ({ ticket }) => `/v1/tickets/${pathValue(ticket)}`,

@@ -11,6 +11,7 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 // validating the documented top-level resource fields below.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
+const PageInput = z.object({ page: z.number().int().min(1).optional() });
 const ContactType = z.enum(['individual', 'company']);
 const Gender = z.enum(['male', 'female', 'other']);
 const ActivityType = z.enum([
@@ -26,12 +27,12 @@ const ActivityType = z.enum([
 const ContactResource = z
 	.object({
 		id: z.string(),
-		external_id: z.string().optional(),
+		external_id: NullableString.optional(),
 		type: ContactType.optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		primary_email: z.string().optional(),
-		primary_phone: z.string().optional(),
+		first_name: NullableString.optional(),
+		last_name: NullableString.optional(),
+		primary_email: NullableString.optional(),
+		primary_phone: NullableString.optional(),
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 	})
@@ -158,50 +159,54 @@ const HouseholdContactPathInputSchema = z.object({
 const FundPathInputSchema = z.object({ fund: RouteId });
 
 export const GivebutterCrmEndpointInputSchemas = {
-	listContacts: z.object({
-		type: ContactType.optional(),
-		createdAfter: z.string().optional(),
-		createdBefore: z.string().optional(),
-		updatedAfter: z.string().optional(),
-		updatedBefore: z.string().optional(),
-		totalContributionsMin: z.number().optional(),
-		totalContributionsMax: z.number().optional(),
-		recurringContributionsMin: z.number().optional(),
-		recurringContributionsMax: z.number().optional(),
-		tags: z.string().optional(),
-		sortBy: z
-			.enum([
-				'name_or_company',
-				'primary_email',
-				'point_of_contact',
-				'created_at',
-				'total_contributions',
-				'recurring_contributions',
-				'last_donation_amount',
-			])
-			.optional(),
-		sortByDesc: z
-			.enum([
-				'name_or_company',
-				'primary_email',
-				'point_of_contact',
-				'created_at',
-				'total_contributions',
-				'recurring_contributions',
-				'last_donation_amount',
-			])
-			.optional(),
-		email: z.string().optional(),
-		primaryEmail: z.string().optional(),
-		firstName: z.string().max(1000).optional(),
-		lastName: z.string().max(1000).optional(),
-	}),
+	listContacts: z
+		.object({
+			type: ContactType.optional(),
+			createdAfter: z.string().optional(),
+			createdBefore: z.string().optional(),
+			updatedAfter: z.string().optional(),
+			updatedBefore: z.string().optional(),
+			totalContributionsMin: z.number().optional(),
+			totalContributionsMax: z.number().optional(),
+			recurringContributionsMin: z.number().optional(),
+			recurringContributionsMax: z.number().optional(),
+			tags: z.string().optional(),
+			sortBy: z
+				.enum([
+					'name_or_company',
+					'primary_email',
+					'point_of_contact',
+					'created_at',
+					'total_contributions',
+					'recurring_contributions',
+					'last_donation_amount',
+				])
+				.optional(),
+			sortByDesc: z
+				.enum([
+					'name_or_company',
+					'primary_email',
+					'point_of_contact',
+					'created_at',
+					'total_contributions',
+					'recurring_contributions',
+					'last_donation_amount',
+				])
+				.optional(),
+			email: z.string().optional(),
+			primaryEmail: z.string().optional(),
+			firstName: z.string().max(1000).optional(),
+			lastName: z.string().max(1000).optional(),
+		})
+		.extend(PageInput.shape),
 	createContact: ContactCreateInputSchema,
 	getContact: ContactPathInputSchema,
 	updateContact: ContactUpdateInputSchema,
 	deleteContact: ContactPathInputSchema,
 	restoreContact: ContactPathInputSchema,
-	listActivities: z.object({ contact: RouteId, type: ActivityType.optional() }),
+	listActivities: z
+		.object({ contact: RouteId, type: ActivityType.optional() })
+		.extend(PageInput.shape),
 	createActivity: z.object({
 		contact: RouteId,
 		type: ActivityType,
@@ -216,7 +221,7 @@ export const GivebutterCrmEndpointInputSchemas = {
 	addTags: TagInputSchema,
 	removeTags: TagInputSchema,
 	syncTags: TagInputSchema,
-	listFunds: z.object({}),
+	listFunds: z.object({}).extend(PageInput.shape),
 	createFund: z.object({
 		name: z.string().max(255),
 		code: NullableString.optional(),
@@ -253,7 +258,7 @@ export const GivebutterCrmEndpointInputSchemas = {
 		envelope_name: z.string().max(255).nullable().optional(),
 	}),
 	deleteHousehold: HouseholdPathInputSchema,
-	listHouseholdContacts: HouseholdPathInputSchema,
+	listHouseholdContacts: HouseholdPathInputSchema.extend(PageInput.shape),
 	addHouseholdContact: z.object({
 		household: RouteId,
 		contact_id: z.number().int(),

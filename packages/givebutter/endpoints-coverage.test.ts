@@ -62,6 +62,57 @@ it('forwards Givebutter’s documented household page query', async () => {
 	expect(url).toBe('https://api.givebutter.com/v1/households?page=2');
 	expect(init.method).toBe('GET');
 });
+
+it.each([
+	{
+		name: 'contacts',
+		list: () => Contacts.list(ctx as never, { page: 2 }),
+		path: '/v1/contacts?page=2',
+		transactions: false,
+	},
+	{
+		name: 'transactions',
+		list: () => Transactions.list(ctx as never, { page: 2 }),
+		path: '/v1/transactions?page=2',
+		transactions: true,
+	},
+	{
+		name: 'webhooks',
+		list: () => Webhooks.list(ctx as never, { page: 2 }),
+		path: '/v1/webhooks?page=2',
+		transactions: false,
+	},
+])('forwards page 2 for $name', async ({ list, path, transactions }) => {
+	respond(
+		transactions
+			? { ...page, meta: { ...page.meta, unfiltered_total: 0 } }
+			: page,
+	);
+	await list();
+	const [url] = fetchMock.mock.calls[0] as [string];
+	expect(url).toBe(`https://api.givebutter.com${path}`);
+});
+
+it('accepts documented cleared contact resource fields', async () => {
+	respond({
+		id: 'contact_1',
+		external_id: null,
+		first_name: null,
+		last_name: null,
+		primary_email: null,
+		primary_phone: null,
+	});
+	await expect(
+		Contacts.get(ctx as never, { contact: 1 }),
+	).resolves.toMatchObject({
+		id: 'contact_1',
+		external_id: null,
+		first_name: null,
+		last_name: null,
+		primary_email: null,
+		primary_phone: null,
+	});
+});
 afterEach(() => fetchMock.mockRestore());
 
 describe('Givebutter CRM and financial operation seams', () => {

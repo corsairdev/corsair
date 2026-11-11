@@ -19,6 +19,7 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 // making the documented resource envelope itself untyped.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
+const PageInput = z.object({ page: z.number().int().min(1).optional() });
 const CampaignType = z.enum(['general', 'collect', 'fundraise', 'event']);
 const DiscountCodeType = z.enum(['percentage', 'fixed']);
 
@@ -35,8 +36,8 @@ const CampaignResource = z
 		event_id: z.string(),
 		type: z.string(),
 		title: z.string(),
-		subtitle: z.string(),
-		description: z.string(),
+		subtitle: NullableString,
+		description: NullableString,
 		slug: z.string(),
 		url: z.string(),
 		goal: z.number().int().nullable(),
@@ -45,9 +46,9 @@ const CampaignResource = z
 		currency: z.string(),
 		cover: z.string(),
 		status: z.string(),
-		timezone: z.string(),
-		end_at: z.string(),
-		settings: z.array(JsonObject),
+		timezone: NullableString,
+		end_at: NullableString,
+		settings: z.array(JsonObject).nullable(),
 		created_at: z.string(),
 		updated_at: z.string(),
 	})
@@ -176,26 +177,28 @@ const DiscountCodePathInputSchema = z.object({
 const TicketPathInputSchema = z.object({ ticket: RouteId });
 
 export const GivebutterEndpointInputSchemas = {
-	listCampaigns: z.object({ scope: z.string().optional() }),
+	listCampaigns: z
+		.object({ scope: z.string().optional() })
+		.extend(PageInput.shape),
 	createCampaign: CampaignCreateInputSchema,
 	getCampaign: CampaignPathInputSchema,
 	updateCampaign: CampaignUpdateInputSchema,
 	deleteCampaign: CampaignPathInputSchema,
-	listDiscountCodes: CampaignPathInputSchema,
+	listDiscountCodes: CampaignPathInputSchema.extend(PageInput.shape),
 	createDiscountCode: DiscountCodeCreateInputSchema,
 	getDiscountCode: DiscountCodePathInputSchema,
 	updateDiscountCode: DiscountCodeUpdateInputSchema,
 	deleteDiscountCode: DiscountCodePathInputSchema,
-	listMembers: CampaignPathInputSchema,
+	listMembers: CampaignPathInputSchema.extend(PageInput.shape),
 	getMember: CampaignMemberPathInputSchema,
 	deleteMember: CampaignMemberPathInputSchema,
-	listTeams: CampaignPathInputSchema,
+	listTeams: CampaignPathInputSchema.extend(PageInput.shape),
 	getTeam: CampaignTeamPathInputSchema,
 	deleteTeam: CampaignTeamPathInputSchema,
-	listTicketItems: CampaignPathInputSchema,
+	listTicketItems: CampaignPathInputSchema.extend(PageInput.shape),
 	createTicketItem: TicketCreateInputSchema,
 	getTicketItem: CampaignTicketPathInputSchema,
-	listTickets: EmptyInputSchema,
+	listTickets: EmptyInputSchema.extend(PageInput.shape),
 	getTicket: TicketPathInputSchema,
 	getSsoAccount: EmptyInputSchema,
 	getSsoCampaign: CampaignPathInputSchema,

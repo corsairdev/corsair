@@ -80,6 +80,35 @@ describe('Givebutter campaign and catalog routes', () => {
 		expect(mockLog).toHaveBeenCalled();
 	});
 
+	it('forwards the requested campaign page', async () => {
+		response(campaignPage);
+		await Campaigns.list(ctx as never, { page: 2 });
+		expect(lastRequest().url).toBe(
+			'https://api.givebutter.com/v1/campaigns?page=2',
+		);
+	});
+
+	it('accepts documented cleared campaign resource fields', async () => {
+		response({
+			id: 'campaign_1',
+			subtitle: null,
+			description: null,
+			timezone: null,
+			end_at: null,
+			settings: null,
+		});
+		await expect(
+			Campaigns.get(ctx as never, { campaign: 1 }),
+		).resolves.toMatchObject({
+			id: 'campaign_1',
+			subtitle: null,
+			description: null,
+			timezone: null,
+			end_at: null,
+			settings: null,
+		});
+	});
+
 	it('keeps campaign path identifiers out of write bodies', async () => {
 		response({ id: '12' });
 		await Campaigns.update(ctx as never, { campaign: 12, title: 'Updated' });
