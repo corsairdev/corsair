@@ -6,14 +6,19 @@ import {
 	WebscraperioEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** Counts the sitemaps in whichever of the two list shapes came back. */
-function countOf(raw: unknown): number {
-	if (typeof raw !== 'object' || raw === null) return 0;
-	const data = (raw as { data?: unknown }).data;
+/**
+ * Counts the sitemaps in whichever of the two documented list shapes came back:
+ * a bare `data` array, or a paginated object that nests another `data`.
+ */
+type SitemapListBody = {
+	data?: unknown[] | { data?: unknown[] } | null;
+};
+
+function countOf(body: SitemapListBody): number {
+	const data = body.data;
 	if (Array.isArray(data)) return data.length;
-	if (typeof data === 'object' && data !== null) {
-		const inner = (data as { data?: unknown }).data;
-		if (Array.isArray(inner)) return inner.length;
+	if (data !== null && typeof data === 'object' && !Array.isArray(data)) {
+		return Array.isArray(data.data) ? data.data.length : 0;
 	}
 	return 0;
 }
@@ -27,12 +32,16 @@ export const list: WebscraperioEndpoints['sitemapsList'] = (ctx, input) =>
 			output: Outputs.sitemapsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/sitemaps' }),
+		({ page }) => ({
+			method: 'GET',
+			path: '/sitemaps',
+			query: { page },
+		}),
 		{
 			// unknown: the count is read off the raw body, since the list shape
 			// has two documented forms and the result is already validated.
 			shape: (raw) => raw,
-			log: (_, result) => ({ count: countOf(result) }),
+			log: (_, result) => ({ count: countOf(result as SitemapListBody) }),
 		},
 	);
 

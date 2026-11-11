@@ -110,6 +110,28 @@ describe('makeWebscraperioRequest', () => {
 		expect(error.message).toBe('fetch failed');
 		expect(error.method).toBe('POST');
 	});
+
+	it('never leaves the token in the error message or the body', async () => {
+		// The provider echoes the submitted token in its bad-key message.
+		respond(
+			fetchMock,
+			{ success: false, error: 'Unauthorized, invalid api_token BADTOKEN.' },
+			401,
+		);
+
+		const error = (await makeWebscraperioRequest('BADTOKEN', {
+			method: 'GET',
+			path: '/sitemaps',
+		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+
+		expect(error.message).not.toContain('BADTOKEN');
+		expect(error.message).toContain('[redacted]');
+		// The body is kept for `handled`, with the token removed.
+		expect(JSON.stringify(error.body)).not.toContain('BADTOKEN');
+		// No cause is attached, so the request URL cannot carry it either.
+		expect((error as { cause?: unknown }).cause).toBeUndefined();
+		expect(require('node:util').inspect(error)).not.toContain('BADTOKEN');
+	});
 });
 
 describe('WebscraperioAPIError', () => {

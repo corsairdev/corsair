@@ -44,7 +44,18 @@ const SitemapResponseSchema = z
 
 export type SitemapResponse = z.infer<typeof SitemapResponseSchema>;
 
-const SitemapsListInputSchema = z.object({});
+/**
+ * The list is paginated by a 1-based `page`; the response reports `current_page`
+ * and `last_page`, so a caller pages until it reaches `last_page`.
+ */
+const SitemapsListInputSchema = z.object({
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('The page to return, 1-based. Defaults to 1.'),
+});
 
 export type SitemapsListInput = z.infer<typeof SitemapsListInputSchema>;
 

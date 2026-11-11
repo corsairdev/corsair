@@ -152,4 +152,12 @@ describe('sitemaps', () => {
 		expect(error.isAuthError).toBe(true);
 		expect(error.handled).toBe(true);
 	});
+
+	it('sends the requested page on a sitemap list', async () => {
+		respond(fetchMock, sitemapsPaginatedResponse);
+
+		await invoke(Sitemaps.list, { page: 3 });
+
+		expect(lastRequest(fetchMock).query.page).toBe('3');
+	});
 });

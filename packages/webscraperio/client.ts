@@ -113,10 +113,13 @@ export function describeWebscraperioError(
 	status: number | undefined,
 	body: unknown,
 	fallback: string,
+	apiKey?: string,
 ): string {
 	const record = asRecord(body);
-	const text =
+	const raw =
 		readString(record, 'error') ?? readString(record, 'message') ?? fallback;
+	// The provider echoes the token in a bad-key message.
+	const text = apiKey ? redactToken(raw, apiKey) : raw;
 	return status ? `Web Scraper Cloud ${status}: ${text}` : text;
 }
 
@@ -166,9 +169,24 @@ export async function makeWebscraperioRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// The token travels as `api_token`, which the shared redactor does not
+			// know, so it would stay readable in `cause.url` and in the cause's
+			// request query. Only the fields the handlers need are copied.
 			throw new WebscraperioAPIError(
-				describeWebscraperioError(error.status, error.body, error.message),
-				{ cause: error },
+				describeWebscraperioError(
+					error.status,
+					error.body,
+					redactToken(error.message, apiKey),
+					apiKey,
+				),
+				{
+					status: error.status,
+					// The body is kept because `handled` and the error text come from it,
+					// but the token it may echo is removed first.
+					body: redactBody(error.body, apiKey),
+					retryAfter: error.retryAfter,
+					method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
@@ -179,6 +197,31 @@ export async function makeWebscraperioRequest(
 			method,
 		});
 	}
+}
+
+/** Removes the submitted token anywhere the provider echoed it back. */
+export function redactToken(text: string, apiKey: string): string {
+	if (!apiKey) return text;
+	return text.split(apiKey).join('[redacted]');
+}
+
+/** A copy of an error body with the submitted token removed from its strings. */
+function redactBody(body: unknown, apiKey: string): unknown {
+	if (!apiKey || typeof body !== 'object' || body === null) return body;
+	const walk = (value: unknown): unknown => {
+		if (typeof value === 'string') return redactToken(value, apiKey);
+		if (Array.isArray(value)) return value.map(walk);
+		if (typeof value === 'object' && value !== null) {
+			return Object.fromEntries(
+				Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+					k,
+					walk(v),
+				]),
+			);
+		}
+		return value;
+	};
+	return walk(body);
 }
 
 /** Narrows a caught value to this plugin's error. */
