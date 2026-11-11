@@ -3,6 +3,7 @@ import { YandexAPIError } from './client';
 import { Translate } from './endpoints';
 import {
 	detected,
+	detectedGerman,
 	languages,
 	translated,
 	translatedHtml,
@@ -83,6 +84,8 @@ describe('translate', () => {
 		const result = (await invoke(Translate.translate, {
 			targetLanguageCode: 'ru',
 			texts: ['Hello', 'World'],
+		// unknown: only the length is asserted; the row shape is validated by the
+		// output schema in the cases that read fields.
 		})) as { translations?: unknown[] };
 
 		expect(result.translations).toHaveLength(2);
@@ -173,8 +176,10 @@ describe('translate', () => {
 });
 
 describe('detect', () => {
-	it('detects one language per passage, in order', async () => {
+	it('detects one language per passage, in order, with one request each', async () => {
+		// One answer per passage, in the order the requests go out.
 		respond(fetchMock, detected);
+		respond(fetchMock, detectedGerman);
 
 		const result = (await invoke(Translate.detect, {
 			texts: ['Hello', 'Guten Tag'],
@@ -182,13 +187,16 @@ describe('detect', () => {
 
 		expect(result.detections?.[0]?.languageCode).toBe('en');
 		expect(result.detections?.[1]?.languageCode).toBe('de');
-		const sent = lastRequest(fetchMock);
-		expect(sent.path).toBe('/translate/v2/detect');
-		expect(sent.body).toEqual({ texts: ['Hello', 'Guten Tag'] });
+		// Two passages mean two requests, each carrying a single `text`.
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		const first = lastRequest(fetchMock);
+		expect(first.path).toBe('/translate/v2/detect');
+		expect(first.body).toEqual({ text: 'Guten Tag' });
 	});
 
 	it('never logs the passages', async () => {
 		respond(fetchMock, detected);
+		respond(fetchMock, detectedGerman);
 
 		await invoke(Translate.detect, { texts: ['secret phrase', 'another'] });
 
@@ -214,20 +222,15 @@ describe('languages', () => {
 		expect(lastRequest(fetchMock).path).toBe('/translate/v2/languages');
 	});
 
-	it('asks for display names in a given language', async () => {
+	it('sends no display-language or hint fields, which the route does not take', async () => {
 		respond(fetchMock, languages);
 
-		await invoke(Translate.languages, { ui: 'ru' });
+		await invoke(Translate.languages, { folderId: 'b1g' });
 
-		expect(lastRequest(fetchMock).body).toMatchObject({ ui: 'ru' });
-	});
-
-	it('sends language hints', async () => {
-		respond(fetchMock, languages);
-
-		await invoke(Translate.languages, { hints: ['eo'] });
-
-		expect(lastRequest(fetchMock).body).toMatchObject({ hints: ['eo'] });
+		// folderId travels as a header, and the body is empty.
+		const sent = lastRequest(fetchMock);
+		expect(sent.body).toEqual({});
+		expect(sent.headers['x-folder-id']).toBe('b1g');
 	});
 });
 

@@ -42,7 +42,14 @@ export const translate: YandexEndpoints['translate'] = (ctx, input) =>
 		},
 	);
 
-/** Detects the language of each passage, one result per input, in order. */
+/**
+ * Detects the language of each passage, one result per input, in order.
+ *
+ * The provider's `/detect` route takes a single `text` and answers one
+ * `{ languageCode }`, so a passage is one request. They run in sequence rather
+ * than in parallel, which keeps the provider's per-second limit comfortable and
+ * the results in the order they were sent.
+ */
 export const detect: YandexEndpoints['detectLanguages'] = (ctx, input) =>
 	call(
 		ctx,
@@ -52,16 +59,28 @@ export const detect: YandexEndpoints['detectLanguages'] = (ctx, input) =>
 			output: Outputs.detectLanguages,
 		},
 		input,
-		({ folderId: _folderId, texts }) => ({
-			method: 'POST',
-			path: '/translate/v2/detect',
-			body: { texts },
-		}),
+		({ texts }) => ({ method: 'POST', path: '/translate/v2/detect', body: {} }),
 		{
 			folderId: (parsed) => parsed.folderId,
+			// One request per passage; the shape callback collects the answers into
+			// the single ordered result the output schema describes.
+			detectEach: true,
+			shape: (raw, parsed) => {
+				const single = raw as { languageCode?: unknown };
+				return {
+					detections: [
+						{
+							languageCode:
+								typeof single?.languageCode === 'string'
+									? single.languageCode
+									: 'und',
+						},
+					],
+				};
+			},
 			log: (parsed, result) => ({
 				passages: parsed.texts.length,
-				detections: result.detections?.length ?? 0,
+				detections: result.detections.length,
 			}),
 		},
 	);
@@ -76,11 +95,8 @@ export const languages: YandexEndpoints['listLanguages'] = (ctx, input) =>
 			output: Outputs.listLanguages,
 		},
 		input,
-		({ folderId: _folderId, ui, hints }) => ({
-			method: 'POST',
-			path: '/translate/v2/languages',
-			body: { ui, hints },
-		}),
+		// The route takes only folderId, which travels as a header.
+		() => ({ method: 'POST', path: '/translate/v2/languages', body: {} }),
 		{
 			folderId: (parsed) => parsed.folderId,
 			log: (_, result) => ({ count: result.languages?.length ?? 0 }),

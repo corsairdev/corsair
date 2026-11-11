@@ -25,6 +25,12 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		 * the API scopes a cloud resource to a folder that way.
 		 */
 		folderId?: (parsed: z.output<Input>) => string | undefined;
+		/**
+		 * Set when the operation is one request per `texts` entry: the request is
+		 * sent once per passage and the answers are collected into one detection
+		 * list, in the order they were sent.
+		 */
+		detectEach?: boolean;
 		// unknown: raw is the response body. The output schema validates
 		// whatever this returns.
 		shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
@@ -32,6 +38,33 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
+
+	if (options.detectEach) {
+		const texts = (parsed as { texts?: string[] }).texts ?? [];
+		const detections: { languageCode: string }[] = [];
+		for (const text of texts) {
+			// A single passage per request, which is what the route documents.
+			const raw = await makeYandexRequest(
+				ctx.key,
+				{ ...toRequest(parsed), body: { text } },
+				options.folderId?.(parsed),
+			);
+			const shaped = options.shape?.(raw, parsed) as
+				| { detections?: { languageCode: string }[] }
+				| undefined;
+			const found = shaped?.detections?.[0];
+			if (found) detections.push(found);
+		}
+		const collected = operation.output.parse({ detections });
+		await logEventFromContext(
+			ctx,
+			`yandex.${operation.event}`,
+			options.log?.(parsed, collected) ?? {},
+			'completed',
+		);
+		return collected;
+	}
+
 	const raw = await makeYandexRequest(
 		ctx.key,
 		toRequest(parsed),

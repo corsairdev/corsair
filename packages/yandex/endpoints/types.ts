@@ -10,7 +10,9 @@ import { z } from 'zod';
 /** A translated passage: the text and the language it was detected in. */
 const TranslationSchema = z
 	.object({
-		text: z.string().nullish(),
+		// A 200 with `[{}]` would otherwise pass as a translation with no text, so
+		// both the list and this field are required.
+		text: z.string(),
 		detectedLanguageCode: z
 			.string()
 			.nullish()
@@ -22,7 +24,7 @@ export type YandexTranslation = z.infer<typeof TranslationSchema>;
 
 const TranslateOutputSchema = z
 	.object({
-		translations: z.array(TranslationSchema).nullish(),
+		translations: z.array(TranslationSchema),
 	})
 	.loose();
 
@@ -80,47 +82,53 @@ export type TranslateInput = z.infer<typeof TranslateInputSchema>;
 
 const DetectOutputSchema = z
 	.object({
-		detections: z
-			.array(
-				z
-					.object({
-						languageCode: z.string().nullish(),
-					})
-					.loose(),
-			)
-			.nullish(),
+		// One entry per input passage, in the order they were sent.
+		detections: z.array(
+			z
+				.object({
+					languageCode: z.string(),
+				})
+				.loose(),
+		),
 	})
 	.loose();
 
 export type DetectOutput = z.infer<typeof DetectOutputSchema>;
 
 /**
- * Detects the language of each passage. It takes the same `texts` array and
- * answers one detection per entry, in order.
+ * Detects the language of each passage. The provider's `/detect` route takes a
+ * single `text` and answers one `{ languageCode }`, so one request is made per
+ * passage and the results are returned in order.
  */
-const DetectInputSchema = z.object({
-	texts: z.array(z.string().min(1)).min(1).max(1000),
-	folderId: z.string().optional(),
-});
+const DetectInputSchema = z
+	.object({
+		texts: z.array(z.string().min(1)).min(1).max(1000),
+		folderId: z.string().optional(),
+	})
+	.superRefine((value, ctx) => {
+		// The documented limit is 1,000 characters per request, and each passage is
+		// its own request here.
+		value.texts.forEach((text, index) => {
+			if (text.length > 1000) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['texts', index],
+					message: `Passage ${index + 1} is ${text.length} characters; the detect route accepts at most 1,000 per request.`,
+				});
+			}
+		});
+	});
 
 export type DetectInput = z.infer<typeof DetectInputSchema>;
 
 // ── languages ─────────────────────────────────────────────────────────────
 
 /**
- * Lists the languages the service supports. `ui` narrows the names to that
- * language, and `hints` biases the list towards the given codes.
+ * Lists the languages the service supports. The documented route takes only
+ * `folderId`; there is no display-language or hint parameter, so neither is
+ * offered here.
  */
 const LanguagesInputSchema = z.object({
-	ui: z
-		.string()
-		.optional()
-		.describe('Return the display names in this language, e.g. `en`.'),
-	hints: z
-		.array(z.string().min(2))
-		.min(1)
-		.optional()
-		.describe('Codes to include in the list even if not usually returned.'),
 	folderId: z.string().optional(),
 });
 

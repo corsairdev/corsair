@@ -26,9 +26,9 @@ export const translatedHtml = {
 	],
 };
 
-export const detected = {
-	detections: [{ languageCode: 'en' }, { languageCode: 'de' }],
-};
+// The detect route answers one `{ languageCode }` per request, not a list.
+export const detected = { languageCode: 'en' };
+export const detectedGerman = { languageCode: 'de' };
 
 export const languages = {
 	languages: [

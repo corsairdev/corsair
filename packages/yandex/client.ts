@@ -119,7 +119,11 @@ export class YandexAPIError extends Error {
 	}
 }
 
-/** Reads `requestId` out of the gRPC `details` array. */
+/**
+ * Reads `requestId` out of the gRPC `details` array.
+ * unknown: the array holds heterogeneous `@type`-tagged objects from Google's
+ * error model, so each entry is narrowed by `asRecord` here.
+ */
 function readRequestId(details: unknown): string | undefined {
 	if (!Array.isArray(details)) return undefined;
 	for (const entry of details) {
@@ -180,6 +184,7 @@ export async function makeYandexRequest(
 	apiKey: string,
 	{ path, query, body }: YandexRequest,
 	folderId?: string,
+	// unknown: callers parse the body with the operation's output schema.
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: YANDEX_TRANSLATE_BASE,
@@ -203,6 +208,8 @@ export async function makeYandexRequest(
 	};
 
 	try {
+		// unknown: the body is provider JSON until the caller's output schema parses
+		// it; `request` cannot know the operation's shape.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: YANDEX_RATE_LIMIT_CONFIG,
 		});
