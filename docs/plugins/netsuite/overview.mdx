@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "NetSuite plugin"
+sidebarTitle: "Overview"
 description: "Create, read, update, and delete NetSuite records, run SuiteQL, and manage OAuth 2.0 tokens."
 ---
 
@@ -17,16 +18,20 @@ Use **NetSuite** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/netsuite
+npm install corsair @corsair-dev/netsuite better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/netsuite
+yarn add corsair @corsair-dev/netsuite better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/netsuite
+pnpm install corsair @corsair-dev/netsuite better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/netsuite
+bun add corsair @corsair-dev/netsuite better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
