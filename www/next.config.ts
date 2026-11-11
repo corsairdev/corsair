@@ -56,6 +56,11 @@ const nextConfig: NextConfig = {
 	// catch-all — first match wins.
 	async rewrites() {
 		return [
+			// Agents are told to read SKILL.md as often as skill.md.
+			{
+				source: '/SKILL.md',
+				destination: '/skill.md',
+			},
 			{
 				source: '/ingest/static/:path*',
 				destination: 'https://us-assets.i.posthog.com/static/:path*',
