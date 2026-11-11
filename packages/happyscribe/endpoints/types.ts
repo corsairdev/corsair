@@ -622,10 +622,8 @@ const MeetingsCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Summary template slug, e.g. `sales_call`.'),
-	accessLevel: z
-		.enum(['public', 'organization', 'organization_participants', 'private'])
-		.optional()
-		.describe('Who can open the resulting transcript.'),
+	// No access level: the live API answers 400 "access_level is not a bot
+	// field" to it, at the top level and inside `settings`.
 });
 
 export type MeetingsCreateInput = z.input<typeof MeetingsCreateInputSchema>;

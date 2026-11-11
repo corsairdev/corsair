@@ -25,10 +25,11 @@ export const create: HappyScribeEndpoints['meetingsCreate'] = (ctx, input) =>
 			botName,
 			recordingMode,
 			summaryTemplate,
-			accessLevel,
 		}) => ({
 			method: 'POST',
 			path: '/meetings',
+			// The live API reads notetaker settings at the top level and
+			// answers 400 "settings is not a bot field" to a `settings` object.
 			body: {
 				organization_id: organizationId,
 				meeting_url: meetingUrl,
@@ -36,16 +37,9 @@ export const create: HappyScribeEndpoints['meetingsCreate'] = (ctx, input) =>
 				language,
 				participants,
 				metadata,
-				settings: {
-					...(botName !== undefined ? { bot_name: botName } : {}),
-					...(recordingMode !== undefined
-						? { recording_mode: recordingMode }
-						: {}),
-					...(summaryTemplate !== undefined
-						? { summary_template: summaryTemplate }
-						: {}),
-					...(accessLevel !== undefined ? { access_level: accessLevel } : {}),
-				},
+				bot_name: botName,
+				recording_mode: recordingMode,
+				summary_template: summaryTemplate,
 			},
 		}),
 		{

@@ -301,9 +301,27 @@ describe('meetings', () => {
 		expect(result.status).toBe('queued');
 		const sent = lastRequest();
 		expect(sent.path).toBe('/api/v1/meetings');
-		expect(sent.body).toMatchObject({
+		// Live (11-11): a `settings` object answers 400 "settings is not a bot
+		// field"; bot_name and recording_mode are read at the top level.
+		expect(sent.body).toEqual({
 			organization_id: 413,
-			settings: { bot_name: 'Acme Notetaker', recording_mode: 'audio_only' },
+			meeting_url: 'https://zoom.us/j/123456789',
+			join_at: '2026-07-20T14:00:00Z',
+			language: 'en',
+			bot_name: 'Acme Notetaker',
+			recording_mode: 'audio_only',
+		});
+	});
+
+	it('sends a join-now meeting with only the organization and the url', async () => {
+		respond(meeting, 201);
+		await invoke(Meetings.create, {
+			organizationId: 'wks_01m755y521zx980pmgjght4mkk',
+			meetingUrl: 'https://zoom.us/j/123456789',
+		});
+		expect(lastRequest().body).toEqual({
+			organization_id: 'wks_01m755y521zx980pmgjght4mkk',
+			meeting_url: 'https://zoom.us/j/123456789',
 		});
 	});
 
@@ -679,13 +697,12 @@ describe('documented inputs', () => {
 		await invoke(Meetings.create, {
 			organizationId: 413,
 			meetingUrl: 'https://zoom.us/j/123456789',
-			accessLevel: 'organization_participants',
+			botName: 'corsair-plugin-test',
 		});
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body).not.toHaveProperty('join_at');
 		expect(body).not.toHaveProperty('language');
-		expect(body).toMatchObject({
-			settings: { access_level: 'organization_participants' },
-		});
+		expect(body).not.toHaveProperty('settings');
+		expect(body).toMatchObject({ bot_name: 'corsair-plugin-test' });
 	});
 });
