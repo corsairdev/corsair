@@ -37,6 +37,7 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 - [Error handling](https://docs.corsair.dev/concepts/error-handling): Retry strategies and the typed AuthMissingError / ReconnectRequiredError.
 
 ### Use with AI
+- [Agent door](https://corsair.dev/agent.txt): AI agents ask Corsair through the Concierge Agent Protocol.
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
 
 ### Hub
