@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Threat intelligence with VirusTotal - read file, URL, domain and IP reports with every engine verdict, rescan and submit indicators, poll analyses, and comment and vote on files and URLs."
+---
+
+Use **VirusTotal** through Corsair: one client, typed API calls.
+
+Copy your key from the VirusTotal account menu. It goes in the `x-apikey` header — not a bearer token — and every call is against `https://www.virustotal.com/api/v3`.
+
+- **The key header is `x-apikey`.** Without it the API answers `AuthenticationRequiredError`; with a wrong one, `WrongCredentialsError`. Both are 401, and both mean the credential needs fixing.
+- **Two different 429s, and only one is retryable.** `TooManyRequestsError` is a burst that clears, and the plugin retries it up to three times with backoff. `QuotaExceededError` means a minute, daily or monthly allowance is spent — retrying only burns another request against a quota that is already gone, so it has a separate `QUOTA_ERROR` handler with no retries.
+- **`NotAvailableYet` is a 400, not a 404.** A freshly submitted file or URL exists but has not been processed, so it answers `400 NotAvailableYet` rather than `404 NotFoundError`. The plugin keeps them apart: one means wait, the other means the indicator is unknown.
+- **Scans answer an id, not a verdict.** `urls.scan` and every rescan return an analysis descriptor; poll `analyses.get` until its `status` is `completed`. A `queued` analysis is a normal result, not a failure.
+- **A URL is addressed by its base64url identifier.** `urls.get` needs that identifier, not the raw URL — `urlId()` builds it, and it is unpadded base64url as RFC 4648 §3.2 specifies.
+- **`urls.scan` is the one form-encoded route.** It takes `url=` as a form field rather than a JSON body, which is why the plugin names the media type for that call.
+- **Commenting and voting use a JSON:API envelope.** The body is `{ data: { type: 'comment', attributes: { text } } }` or `{ data: { type: 'vote', attributes: { verdict } } }`, not a plain field map. A word starting with `#` in a comment becomes a tag.
+- **A vote is `harmless` or `malicious`** — there is no abstention, and no way to change a vote other than voting again.
+- **Submitting an indicator publishes it.** VirusTotal's docs are explicit that anything scanned or queried through the API joins the public dataset, so `urls.scan` cannot be withdrawn — and the plugin cannot undo it either.
+- **Paging is `meta.cursor`.** Lists answer `{ data, meta: { cursor } }` rather than a `next` link, and `limit` is capped at 40.
+- **Reports are large and open.** A file report carries over a hundred attributes and a per-engine verdict map; the plugin names the common ones and passes the rest through rather than pretending to model them all.
+
+**What you get:**
+
+- 19 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/virustotal better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/virustotal better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/virustotal better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/virustotal better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { virustotal } from '@corsair-dev/virustotal';
+
+export const corsair = createCorsair({
+	plugins: [
+		virustotal(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+virustotal()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'virustotal',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a file report**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.virustotal.api.files.get({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f' });
+```
+
+
+**Submit a URL for analysis**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.virustotal.api.urls.scan({ url: 'https://acme.example/login' });
+```
+
+
+See the full list on the [API](/plugins/virustotal/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/virustotal/api">
+    Every `virustotal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

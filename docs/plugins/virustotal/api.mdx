@@ -1,0 +1,1046 @@
+---
+title: API
+description: "API reference for VirusTotal: every `virustotal.api.*` operation with input and output types."
+---
+
+Every `virustotal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analyses
+
+### get
+
+`analyses.get`
+
+Read an analysis a scan produced; its status moves from queued to completed
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.analyses.get({ id: 'NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The analysis id a scan returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: analysis | null,
+  id?: string | null,
+  attributes?: {
+    status?: string | null,
+    date?: number | null,
+    stats?: Record<string, any> | null,
+    results?: Record<string, any> | null
+  } | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### delete
+
+`comments.delete`
+
+Permanently delete one of your own comments, which cannot be restored
+
+**Risk:** `destructive`
+
+```ts
+await corsair.virustotal.api.comments.delete({ id: 'u-011915942db556bbab5137f761efe61fed2b00598fea900360b800b193a7bf31-d94d7c8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`comments.get`
+
+Read one comment
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.comments.get({ id: 'u-011915942db556bbab5137f761efe61fed2b00598fea900360b800b193a7bf31-d94d7c8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments across the account, optionally filtered
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.comments.list({ limit: 20, filter: 'tag:malware' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page. VirusTotal caps this at 40. |
+| `cursor` | `string` | No | The `meta.cursor` from the previous page. |
+| `filter` | `string` | No | A VirusTotal Intelligence filter expression. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### get
+
+`domains.get`
+
+Read a domain report: registrar, dates, categories, DNS records and engine verdicts
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.domains.get({ domain: 'acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain name, not an identifier. |
+| `relationships` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: domain | null,
+  id?: string | null,
+  attributes?: {
+    registrar?: string | null,
+    creation_date?: number | null,
+    last_update_date?: number | null,
+    expiration_date?: number | null,
+    categories?: Record<string, string> | null,
+    reputation?: number | null,
+    tags?: string[] | null,
+    last_dns_records?: any[] | null,
+    last_dns_records_date?: number | null,
+    last_analysis_stats?: {
+      harmless?: number | null,
+      suspicious?: number | null,
+      undetected?: number | null,
+      timeout?: number | null,
+      malicious?: number | null
+    } | null
+  } | null,
+  relationships?: Record<string, any> | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rescan
+
+`domains.rescan`
+
+Ask VirusTotal to reanalyse a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.domains.rescan({ id: 'acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The domain name to reanalyse. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### addComment
+
+`files.addComment`
+
+Comment on a file publicly; a word starting with # becomes a tag, and only the author can delete it
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.files.addComment({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f', text: '#malware seen in a phishing campaign' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+| `text` | `string` | Yes | The comment. A word starting with # becomes a tag. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### comments
+
+`files.comments`
+
+List the comments on a file, newest first, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.files.comments({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+| `limit` | `number` | No | Items per page. VirusTotal caps this at 40. |
+| `cursor` | `string` | No | The `meta.cursor` from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`files.get`
+
+Read a file report by SHA-256, SHA-1 or MD5, including every engine verdict and the malicious tally
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.files.get({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+| `relationships` | `string` | No | Comma-separated relationships to include, such as `behaviours`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: file | null,
+  id?: string | null,
+  attributes?: {
+    meaningful_name?: string | null,
+    type_description?: string | null,
+    type_tag?: string | null,
+    size?: number | null,
+    names?: string[] | null,
+    md5?: string | null,
+    sha1?: string | null,
+    sha256?: string | null,
+    ssdeep?: string | null,
+    tlsh?: string | null,
+    first_submission_date?: number | null,
+    last_submission_date?: number | null,
+    last_analysis_date?: number | null,
+    reputation?: number | null,
+    tags?: string[] | null,
+    last_analysis_results?: Record<string, any> | null,
+    last_analysis_stats?: {
+      harmless?: number | null,
+      type_unsupported?: number | null,
+      suspicious?: number | null,
+      undetected?: number | null,
+      timeout?: number | null,
+      failure?: number | null,
+      malicious?: number | null
+    } | null
+  } | null,
+  relationships?: Record<string, any> | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rescan
+
+`files.rescan`
+
+Ask VirusTotal to reanalyse a file already uploaded; answers an analysis id to poll, and counts against the scan quota
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.files.rescan({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### vote
+
+`files.vote`
+
+Vote a file harmless or malicious as your account
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.files.vote({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f', verdict: 'malicious' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+| `verdict` | `malicious \| harmless` | Yes | Which way to vote on the file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: vote | null,
+  id?: string | null,
+  attributes?: {
+    verdict?: malicious | harmless | null,
+    date?: number | null
+  } | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### votes
+
+`files.votes`
+
+List the votes on a file with their verdicts
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.files.votes({ id: '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A SHA-256, SHA-1 or MD5 hash identifying the file. |
+| `limit` | `number` | No | Items per page. VirusTotal caps this at 40. |
+| `cursor` | `string` | No | The `meta.cursor` from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `links` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: vote | null,
+  id?: string | null,
+  attributes?: {
+    verdict?: malicious | harmless | null,
+    date?: number | null
+  } | null,
+  links?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Addresses
+
+### get
+
+`ipAddresses.get`
+
+Read an IP report: ASN and owner, country, network and engine verdicts
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.ipAddresses.get({ ip: '203.0.113.10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | The IPv4 or IPv6 address. |
+| `relationships` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: ip_address | null,
+  id?: string | null,
+  attributes?: {
+    country?: string | null,
+    continent?: string | null,
+    as_owner?: string | null,
+    asn?: number | null,
+    network?: string | null,
+    regional_internet_registry?: string | null,
+    reputation?: number | null,
+    tags?: string[] | null,
+    last_analysis_date?: number | null,
+    last_analysis_results?: Record<string, any> | null,
+    last_analysis_stats?: {
+      harmless?: number | null,
+      suspicious?: number | null,
+      undetected?: number | null,
+      timeout?: number | null,
+      malicious?: number | null
+    } | null
+  } | null,
+  relationships?: Record<string, any> | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rescan
+
+`ipAddresses.rescan`
+
+Ask VirusTotal to reanalyse an IP address
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.ipAddresses.rescan({ id: '203.0.113.10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The IP address to reanalyse. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Urls
+
+### addComment
+
+`urls.addComment`
+
+Comment on a URL publicly
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.urls.addComment({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9naW4', text: 'Reported to the host' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### comments
+
+`urls.comments`
+
+List the comments on a URL, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.urls.comments({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9naW4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+| `limit` | `number` | No | Items per page. VirusTotal caps this at 40. |
+| `cursor` | `string` | No | The `meta.cursor` from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: comment | null,
+  id?: string | null,
+  attributes?: {
+    text?: string | null,
+    html?: string | null,
+    date?: number | null,
+    tags?: string[] | null,
+    votes?: {
+      positive?: number | null,
+      negative?: number | null,
+      abuse?: number | null
+    } | null
+  } | null,
+  links?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`urls.get`
+
+Read a URL report by its base64url identifier, which `urlId()` builds from a raw URL
+
+**Risk:** `read`
+
+```ts
+await corsair.virustotal.api.urls.get({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9naW4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URL identifier, as base64url. Pass `urls.get` a raw URL and it will not resolve — use `urlId()`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: url | null,
+  id?: string | null,
+  attributes?: {
+    url?: string | null,
+    final_url?: string | null,
+    title?: string | null,
+    first_submission_date?: number | null,
+    last_analysis_date?: number | null,
+    last_final_url?: string | null,
+    reputation?: number | null,
+    tags?: string[] | null,
+    threat_names?: string[] | null,
+    categories?: Record<string, string> | null,
+    last_analysis_results?: Record<string, any> | null,
+    last_analysis_stats?: {
+      harmless?: number | null,
+      suspicious?: number | null,
+      undetected?: number | null,
+      timeout?: number | null,
+      malicious?: number | null
+    } | null
+  } | null,
+  relationships?: Record<string, any> | null,
+  links?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rescan
+
+`urls.rescan`
+
+Ask VirusTotal to reanalyse a URL already submitted
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.urls.rescan({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9naW4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scan
+
+`urls.scan`
+
+Submit a URL for analysis; it is added to the public dataset, answers an analysis id to poll, and cannot be withdrawn
+
+**Risk:** `write`
+
+```ts
+await corsair.virustotal.api.urls.scan({ url: 'https://acme.example/login' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The address to scan. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
