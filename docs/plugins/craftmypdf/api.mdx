@@ -353,7 +353,7 @@ await corsair.craftmypdf.api.pdf.createAsync({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `template_id` | `string` | Yes | Template to generate from. |
-| `data` | `string \| Record<string, JsonValue>` | No | Template JSON data, either an object or a stringified JSON string. |
+| `data` | `string \| Record<string, JsonValue>` | Yes | Template JSON data, either an object or a stringified JSON string. |
 | `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
 | `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
 | `webhook_url` | `string` | No | CraftMyPDF calls this URL with a GET once the PDF is ready, adding file, transaction_ref, status, message and details as query parameters. Without it the result is only recorded in transactions.list. |
