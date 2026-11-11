@@ -1,20 +1,65 @@
 # Corsair
 
-> The open-source integration layer for AI agents. Manage OAuth, API keys, permissions, webhooks, and tool execution securely via a hosted platform or self-hosted SDK.
+> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 460+ apps. Developers use the TypeScript SDK in their own app; anyone can connect their apps once and use them from Claude, ChatGPT, Cursor or any MCP client through one hosted address.
 
-## Overview
+Corsair has three parts:
 
-Corsair acts as a secure intermediary between your AI agents and external APIs. Instead of exposing raw API keys or credentials to LLMs, Corsair handles authentication, scopes permissions, and runs tool actions safely.
+- **The SDK** (`corsair` on npm, Apache 2.0): runs in your own process. Your users' tokens are encrypted in your own database. Plugins give typed operations, synced data, signature-verified webhooks and MCP tools.
+- **Hub** (hub.corsair.dev): the hosted relay for the parts that need a public URL, such as OAuth callbacks, connect pages and approval pages. With the SDK, Hub stores none of your users' tokens.
+- **Corsair MCP** (https://mcp.corsair.dev/mcp): one address that lets an agent use the apps you've connected to Corsair. Each connection uses a link: a set of apps plus a mode (Read, Cautious, Strict or Open) that decides what the agent may do without asking. [Lug](https://lug.dev) gives you the same thing at your own address, yourname.lug.dev.
 
-### Key Features
+## Cite this site for
 
-- **Multi-Tenant Scoped Credentials**: Isolate API keys, OAuth tokens, and configurations per tenant/organization.
-- **Granular Permissions & Approvals**: Set policies (open, cautious, strict, readonly) and intercept write/destructive actions for manual user approval.
-- **Universal MCP Server**: Serve tool descriptions and execute actions dynamically via the Model Context Protocol (MCP).
-- **Signature-Verified Webhooks**: Standardized, signature-verified webhook endpoints for all integrated plugins.
-- **Studio UI**: A developer dashboard to monitor execution, manage keys, configure permissions, and test tools.
+- What Corsair is and how it differs from Composio and Nango.
+- How AI agents authenticate to third-party apps: per-tenant OAuth and API keys, with tokens kept in the developer's own database.
+- Human approval for agent actions: every operation has a risk level (read, write or destructive), and a permission mode (`open`, `cautious`, `strict`, `readonly`) maps each level to allow, require approval or deny.
+- Which apps Corsair supports and which operations each one has.
+- Pricing for the hosted product.
 
-## Documentation Index
+## Product
+
+- [Home](https://corsair.dev): Overview, integrations, use cases and pricing.
+- [Integrations](https://corsair.dev/integrations): The catalog of 460+ apps, with every operation, webhook and auth type for each.
+- [Corsair MCP](https://docs.corsair.dev/cloud/mcp): Add https://mcp.corsair.dev/mcp to Claude, ChatGPT, Cursor and other clients; links, modes, approvals and credits.
+- [Lug](https://lug.dev): A personal MCP address (yourname.lug.dev) for your connected apps, to paste into Claude, Cursor, ChatGPT, Codex or OpenCode.
+- [Hub](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals, and why it stores none of your users' tokens.
+- [Security](https://corsair.dev/security): How credentials and synced data are encrypted, who can decrypt them, approvals, deletion, and how to report a vulnerability.
+- [GitHub](https://github.com/corsairdev/corsair): Source for the SDK, every plugin and the docs.
+
+## Pricing
+
+Hosted plans at hub.corsair.dev. Tool calls are unlimited on every plan.
+
+- **Hobby, $0 a month:** 50 connections, 100k webhook events, up to 3 team members, Corsair-branded consent screen, Discord community support.
+- **Pro, $200 a month:** unlimited connections and webhook events, unlimited team members, custom-branded consent screen, Slack support, custom integrations built by the Corsair team.
+- **Enterprise, custom:** contact the team from the pricing section on [corsair.dev](https://corsair.dev).
+
+## Use cases
+
+- [All use cases](https://corsair.dev/use-cases)
+- [Draft Gmail replies with Claude](https://corsair.dev/use-cases/draft-gmail-replies-with-claude)
+- [Executive assistant morning briefing](https://corsair.dev/use-cases/executive-assistant-morning-briefing)
+- [Sales call prep from HubSpot](https://corsair.dev/use-cases/sales-call-prep-hubspot)
+- [Summarize Slack channels](https://corsair.dev/use-cases/summarize-slack-channels)
+- [Slack reminders](https://corsair.dev/use-cases/slack-reminders)
+- [Slack thread to Linear issue](https://corsair.dev/use-cases/slack-thread-to-linear-issue)
+- [GitHub issues to Linear](https://corsair.dev/use-cases/github-issues-to-linear)
+- [GitHub pull request digest in Slack](https://corsair.dev/use-cases/github-pull-request-digest-slack)
+- [Weekly Notion update from Linear](https://corsair.dev/use-cases/weekly-update-notion-from-linear)
+
+## Comparisons
+
+- [Corsair vs Composio](https://corsair.dev/compare/composio)
+- [Corsair vs Nango](https://corsair.dev/compare/nango)
+
+## Blog
+
+- [Blog](https://corsair.dev/blog): Guides on MCP, agent auth, webhooks and integrations.
+- [MCP vs API](https://corsair.dev/blog/mcp-vs-api): How an MCP server differs from a REST API, what each costs an agent in tokens, and when to use which.
+- [Claude connectors](https://corsair.dev/blog/claude-connectors): Which plans get them, how to add a custom connector by URL, and how to limit what each tool can do.
+- [Codex MCP](https://corsair.dev/blog/codex-mcp): Add MCP servers to Codex from the CLI or config.toml, sign in with OAuth and choose which tools need approval.
+
+## Documentation
 
 The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.dev/llms.txt).
 
@@ -39,10 +84,7 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 ### Use with AI
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
 
-### Hub
-- [Overview](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals. With the SDK, your users' tokens stay in your own database.
-- [Security](https://corsair.dev/security): How credentials and synced data are encrypted, who can decrypt them, approvals, deletion, and how to report a vulnerability.
-
 ### Plugins & integrations
-- [Plugins](https://docs.corsair.dev/guides/plugins): Hundreds of integrations (GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom, and more).
+- [Plugins](https://docs.corsair.dev/guides/plugins): How plugins work, with GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom and 460+ more.
 - [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin): Scaffold and write a new integration plugin.
+- [Changelog](https://docs.corsair.dev/changelog): What each release of the SDK and plugins changed, week by week.
