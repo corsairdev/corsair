@@ -1134,10 +1134,12 @@ export const OnedeskTimesheetSchema = z
 		created: z.string().nullish(),
 		work: z.number().nullish(),
 		invoiceWork: z.number().nullish(),
-		percentCompletedReported: z.number().nullish(),
+		// Live API spelling; the spec says percentCompletedReported.
+		percentCompleteReported: z.number().nullish(),
 		comments: z.string().nullish(),
 		status: z.string().nullish(),
-		assignees: z.array(OnedeskUserRefSchema).nullish(),
+		// Live API: one assignee object; the spec says an assignees array.
+		assignee: OnedeskUserRefSchema.nullish(),
 		taskExternalId: z.string().nullish(),
 		projectExternalId: z.string().nullish(),
 		billable: z.union([z.string(), z.boolean()]).nullish(),

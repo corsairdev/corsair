@@ -212,6 +212,44 @@ export const timesheet = {
 	customFields: [],
 };
 
+/**
+ * A timesheet as the live API returns it (11-11, trimmed): it spells
+ * `percentCompleteReported` and sends one `assignee`, where the spec says
+ * `percentCompletedReported` and `assignees`; `billable` is a boolean.
+ */
+export const timesheetLive = {
+	id: '5-1',
+	externalId: '79dc804d-d439-4f05-9f85-beb4b954cf9c',
+	start: '2026-11-11T10:52:15.657+00:00',
+	finish: '2026-11-11T10:52:15.657+00:00',
+	created: '2026-11-11T10:52:15.657+00:00',
+	work: 1.0,
+	invoiceWork: 1.0,
+	percentCompleteReported: 50.0,
+	comments: 'this is an example timesheet note',
+	status: 'not approved yet',
+	assignee: {
+		typeName: 'full-time',
+		displayName: 'Sample User',
+		email: 'user@example.com',
+		teamName: 'sample team',
+		externalId: 'a4d3f8fb-4e9a-4e81-8fc3-255f95fcd8b7',
+	},
+	taskName: 'Sample Ticket 2',
+	taskExternalId: 'f5bbaed2-e519-4d12-b508-549a5ffa446c',
+	projectExternalId: '942dd4d1-80f7-4941-984b-95e932a3a145',
+	billable: true,
+	serviceType: 'Services',
+	invoiceableCustomerOrganizationExternalId:
+		'cb0535b6-e872-414f-acfa-c8d83709c532',
+	linkedInvoiceExternalId: null,
+	userRequesters: [],
+	customerRequesters: [],
+	teamRequesters: [],
+	customerOrganizationRequesters: [],
+	customFields: [],
+};
+
 export const timesheetDetailsPage = {
 	code: 'SUCCESS',
 	data: [timesheet],

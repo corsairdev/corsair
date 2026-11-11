@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { Attachments, Crm, Records } from './endpoints';
+import { Attachments, Crm, OnedeskTimesheetSchema, Records } from './endpoints';
 import {
 	activity,
 	activityDetailsPage,
@@ -37,6 +37,7 @@ import {
 	timerDetailsPage,
 	timesheet,
 	timesheetDetailsPage,
+	timesheetLive,
 	updateCodeString,
 	user,
 	userDetailsPage,
@@ -875,8 +876,29 @@ describe('timesheets and timers', () => {
 		expect(result.data[0]?.billable).toBe('true');
 	});
 
+	it('timesheets.filterDetails reads the field names the live API sends', async () => {
+		respond({ ...timesheetDetailsPage, data: [timesheetLive] });
+
+		const result = (await invoke(Crm.timesheetsFilterDetails, {})) as {
+			data: {
+				percentCompleteReported?: number;
+				assignee?: { externalId?: string };
+			}[];
+		};
+
+		// Every field the live record carries is named, so it is typed rather
+		// than passed through as an unknown key.
+		expect(Object.keys(OnedeskTimesheetSchema.shape)).toEqual(
+			expect.arrayContaining(Object.keys(timesheetLive)),
+		);
+		expect(result.data[0]?.percentCompleteReported).toBe(50);
+		expect(result.data[0]?.assignee?.externalId).toBe(
+			timesheetLive.assignee.externalId,
+		);
+	});
+
 	it('timesheets.get reads by the id OneDesk sends, such as 5-1', async () => {
-		respond({ code: 'SUCCESS', data: timesheet });
+		respond({ code: 'SUCCESS', data: timesheetLive });
 
 		await invoke(Crm.timesheetsGet, { id: '5-1' });
 
