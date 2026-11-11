@@ -223,6 +223,14 @@
                 ]
               },
               {
+                "group": "Adyntel",
+                "pages": [
+                  "plugins/adyntel/overview",
+                  "plugins/adyntel/api",
+                  "plugins/adyntel/database"
+                ]
+              },
+              {
                 "group": "AeroLeads",
                 "pages": [
                   "plugins/aeroleads/overview",
