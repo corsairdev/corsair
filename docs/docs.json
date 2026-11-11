@@ -1913,6 +1913,14 @@
                 ]
               },
               {
+                "group": "eTermin",
+                "pages": [
+                  "plugins/etermin/overview",
+                  "plugins/etermin/api",
+                  "plugins/etermin/database"
+                ]
+              },
+              {
                 "group": "Eventbrite",
                 "pages": [
                   "plugins/eventbrite/overview",
