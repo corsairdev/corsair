@@ -1,0 +1,3574 @@
+{
+  "id": "salesflare",
+  "displayName": "Salesflare",
+  "description": "CRM for small-to-medium B2B companies with automated data entry, pipeline management, and customer relationships.",
+  "npmPackageName": "@corsair-dev/salesflare",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "salesflare.api.accounts.addAccountContacts",
+      "shortPath": "accounts.addAccountContacts",
+      "description": "Link contacts to an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.addAccountUsers",
+      "shortPath": "accounts.addAccountUsers",
+      "description": "Add users to an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.createAccount",
+      "shortPath": "accounts.createAccount",
+      "description": "Create a new account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update_if_exists",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ city?: string, country?: string, region?: string, state_region?: string, street?: string, zip?: string, _dirty?: boolean }[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_addresses",
+            "optional": true,
+            "type": "{ email: string, _dirty?: boolean }[]"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "{ number: string, type?: string, _dirty?: boolean }[]"
+          },
+          {
+            "key": "social_profiles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "{ id: number, email?: string, name?: string }[]"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent_account",
+            "optional": true,
+            "type": "number | { id: number }"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.deleteAccount",
+      "shortPath": "accounts.deleteAccount",
+      "description": "Delete a account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.listAccountFeed",
+      "shortPath": "accounts.listAccountFeed",
+      "description": "List the activity feed of an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "(email | message | meeting-live | meeting-phone | forward | webpage | user_added | user_removed | account_created)[]"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.listAccountMessages",
+      "shortPath": "accounts.listAccountMessages",
+      "description": "List messages on an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.listAccounts",
+      "shortPath": "accounts.listAccounts",
+      "description": "List Accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag.name",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.country",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.city",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.state_region",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hotness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "export",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.retrieveAccount",
+      "shortPath": "accounts.retrieveAccount",
+      "description": "Retrieve a single account by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.updateAccount",
+      "shortPath": "accounts.updateAccount",
+      "description": "Update a account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ id?: number, city?: string, country?: string, region?: string, state_region?: string, street?: string, zip?: string, archived?: boolean, _dirty?: boolean }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ id?: number, city?: string, country?: string, region?: string, state_region?: string, street?: string, zip?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_addresses",
+            "optional": true,
+            "type": "{ id?: number, email?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "{ id?: number, number?: string, type?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "social_profiles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent_account",
+            "optional": true,
+            "type": "number | { id: number }"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "{ condition: AND | OR, rules: Record<string, any>[], order_by?: string, not?: boolean, valid?: boolean, search?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.updateAccountContacts",
+      "shortPath": "accounts.updateAccountContacts",
+      "description": "Update the contact links of an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.accounts.updateAccountUsers",
+      "shortPath": "accounts.updateAccountUsers",
+      "description": "Update the users assigned to an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.calls.createCall",
+      "shortPath": "calls.createCall",
+      "description": "Create a new call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participants",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.calls.updateCall",
+      "shortPath": "calls.updateCall",
+      "description": "Update a logged call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "edited_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "meeting-live | meeting-phone"
+          },
+          {
+            "key": "phone_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.campaigns.listCampaignMergeFields",
+      "shortPath": "campaigns.listCampaignMergeFields",
+      "description": "List the merge fields available for campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.contacts.createContact",
+      "shortPath": "contacts.createContact",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt-out",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opt-out_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt-out_campaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bounced",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bounced_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ city?: string, country?: string, region?: string, state_region?: string, street?: string, type?: string, zip?: string }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ city?: string, country?: string, region?: string, state_region?: string, street?: string, type?: string, zip?: string }[]"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "{ number: string, type?: string }[]"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ organisation?: string, role?: string }"
+          },
+          {
+            "key": "positions",
+            "optional": true,
+            "type": "{ end_date?: string, start_date?: string, current?: boolean, primary?: boolean, organisation?: string, role?: string }[]"
+          },
+          {
+            "key": "social_profiles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.contacts.deleteContact",
+      "shortPath": "contacts.deleteContact",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.contacts.listContacts",
+      "shortPath": "contacts.listContacts",
+      "description": "List Contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modification_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modification_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag.name",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "position.role",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.country",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.state_region",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.city",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "customer | mycontacts"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "export",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.contacts.retrieveContact",
+      "shortPath": "contacts.retrieveContact",
+      "description": "Retrieve a single contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.contacts.updateContact",
+      "shortPath": "contacts.updateContact",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt-out",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opt-out_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt-out_campaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bounced",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bounced_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ id?: number, city?: string, country?: string, region?: string, state_region?: string, street?: string, type?: string, zip?: string, archived?: boolean, _dirty?: boolean }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ id?: number, city?: string, country?: string, region?: string, state_region?: string, street?: string, type?: string, zip?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "{ id?: number, number?: string, type?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ id?: number, organisation?: string, role?: string, archived?: boolean, _dirty?: boolean }"
+          },
+          {
+            "key": "positions",
+            "optional": true,
+            "type": "{ id?: number, organisation?: string, role?: string, archived?: boolean, _dirty?: boolean }[]"
+          },
+          {
+            "key": "social_profiles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "_dirty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.currencies.listCurrencies",
+      "shortPath": "currencies.listCurrencies",
+      "description": "List Currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.createCustomFieldSub",
+      "shortPath": "customfields.createCustomFieldSub",
+      "description": "Create a new customField sub-resource",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "predefined_customfield",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "users_can_add_options",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ id?: number, order?: number, archived?: boolean, name: string }[]"
+          },
+          {
+            "key": "order_alphabetically",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_boolean_value",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.deleteCustomField",
+      "shortPath": "customfields.deleteCustomField",
+      "description": "Delete a customField",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.listCustomFieldOptions",
+      "shortPath": "customfields.listCustomFieldOptions",
+      "description": "List the options of a custom field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFieldApiField",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.listCustomFields",
+      "shortPath": "customfields.listCustomFields",
+      "description": "List the custom fields of an item class",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeDisabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.listCustomFieldTypes",
+      "shortPath": "customfields.listCustomFieldTypes",
+      "description": "List the custom field types supported by Salesflare",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.retrieveCustomField",
+      "shortPath": "customfields.retrieveCustomField",
+      "description": "Retrieve a single customField by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.customfields.updateCustomField",
+      "shortPath": "customfields.updateCustomField",
+      "description": "Update a customField",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemClass",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipelineName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "predefined_customfield",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "users_can_add_options",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ id?: number, order?: number, archived?: boolean, name: string }[]"
+          },
+          {
+            "key": "order_alphabetically",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | number"
+      }
+    },
+    {
+      "path": "salesflare.api.datasources.listEmailDataSources",
+      "shortPath": "datasources.listEmailDataSources",
+      "description": "List the connected email data sources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeTeamDataSources",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.datasources.updateEmailDataSource",
+      "shortPath": "datasources.updateEmailDataSource",
+      "description": "Update a connected email data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_signature",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "add_signature_to_campaign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "add_signature_to_replies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_emails_day",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_emails_hour",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.filterfields.listFilterFields",
+      "shortPath": "filterfields.listFilterFields",
+      "description": "List the filter fields available for an entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includePipelineSpecificPredefinedFilterFields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.groups.listGroups",
+      "shortPath": "groups.listGroups",
+      "description": "List Groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.groups.retrieveGroup",
+      "shortPath": "groups.retrieveGroup",
+      "description": "Retrieve a single group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.me.listMyContacts",
+      "shortPath": "me.listMyContacts",
+      "description": "List contacts assigned to the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modification_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modification_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag.name",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "position.role",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.country",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.state_region",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "address.city",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "customer | mycontacts"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "export",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.me.retrieveCurrentUser",
+      "shortPath": "me.retrieveCurrentUser",
+      "description": "Retrieve the currently authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.meetings.createMeeting",
+      "shortPath": "meetings.createMeeting",
+      "description": "Create a new meeting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participants",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "meeting-live | meeting-phone"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | {}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.meetings.deleteMeeting",
+      "shortPath": "meetings.deleteMeeting",
+      "description": "Delete a meeting",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.meetings.retrieveMeeting",
+      "shortPath": "meetings.retrieveMeeting",
+      "description": "Retrieve a single meeting by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.meetings.updateMeeting",
+      "shortPath": "meetings.updateMeeting",
+      "description": "Update a meeting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "edited_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "meeting-live | meeting-phone",
+            "description": "Send 'meeting-live' when updating a logged live meeting; without it the API answers 422."
+          },
+          {
+            "key": "phone_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.messages.createMessage",
+      "shortPath": "messages.createMessage",
+      "description": "Create a new message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.messages.createMessageFeedback",
+      "shortPath": "messages.createMessageFeedback",
+      "description": "Submit feedback for a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedback",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.messages.deleteMessage",
+      "shortPath": "messages.deleteMessage",
+      "description": "Delete a message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.messages.updateMessage",
+      "shortPath": "messages.updateMessage",
+      "description": "Update a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.opportunities.createOpportunity",
+      "shortPath": "opportunities.createOpportunity",
+      "description": "Create a new opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lost_reason",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "lead_source",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurring_price_per_unit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "annually | weekly | monthly | daily"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contract_start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contract_end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "main_contact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.opportunities.deleteOpportunity",
+      "shortPath": "opportunities.deleteOpportunity",
+      "description": "Delete a opportunity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.opportunities.listOpportunities",
+      "shortPath": "opportunities.listOpportunities",
+      "description": "List Opportunities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "number | number[]"
+          },
+          {
+            "key": "stage.name",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team_member",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "owner_group",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_group",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team_member_group",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "close_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "close_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creation_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag.name",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "hotness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "export",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.opportunities.retrieveOpportunity",
+      "shortPath": "opportunities.retrieveOpportunity",
+      "description": "Retrieve a single opportunity by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.opportunities.updateOpportunity",
+      "shortPath": "opportunities.updateOpportunity",
+      "description": "Update a opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lost_reason",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "lead_source",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurring_price_per_unit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "annually | weekly | monthly | daily"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contract_start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contract_end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "main_contact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.persons.listPersons",
+      "shortPath": "persons.listPersons",
+      "description": "List persons resolved from email addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.pipelines.listPipelines",
+      "shortPath": "pipelines.listPipelines",
+      "description": "List Pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.settings.retrieveAiSettings",
+      "shortPath": "settings.retrieveAiSettings",
+      "description": "Retrieve the workspace's AI settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.settings.updateAiSettings",
+      "shortPath": "settings.updateAiSettings",
+      "description": "Update the workspace's AI settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string, summary?: string, generated?: boolean }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ name?: string, summary?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.stages.listStages",
+      "shortPath": "stages.listStages",
+      "description": "List Stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pipeline.id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipeline.name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.stages.retrieveStage",
+      "shortPath": "stages.retrieveStage",
+      "description": "Retrieve a single stage by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tags.createTag",
+      "shortPath": "tags.createTag",
+      "description": "Create a new tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tags.deleteTag",
+      "shortPath": "tags.deleteTag",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.tags.listTags",
+      "shortPath": "tags.listTags",
+      "description": "List Tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.tags.listTagUsage",
+      "shortPath": "tags.listTagUsage",
+      "description": "List the usage statistics of a tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tags.retrieveTag",
+      "shortPath": "tags.retrieveTag",
+      "description": "Retrieve a single tag by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tags.updateTag",
+      "shortPath": "tags.updateTag",
+      "description": "Update a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tasks.createTask",
+      "shortPath": "tasks.createTask",
+      "description": "Create a new task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reminder_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.tasks.deleteTask",
+      "shortPath": "tasks.deleteTask",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | string | undefined"
+      }
+    },
+    {
+      "path": "salesflare.api.tasks.listTasks",
+      "shortPath": "tasks.listTasks",
+      "description": "List Tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "export",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.tasks.updateTask",
+      "shortPath": "tasks.updateTask",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminder_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.users.listUsers",
+      "shortPath": "users.listUsers",
+      "description": "List Users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "onlyEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.users.retrieveUser",
+      "shortPath": "users.retrieveUser",
+      "description": "Retrieve a single user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.workflows.createWorkflow",
+      "shortPath": "workflows.createWorkflow",
+      "description": "Create a new workflow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ ids?: number[] }"
+          },
+          {
+            "key": "individual_record_filter",
+            "optional": true,
+            "type": "{ condition: AND | OR, rules: Record<string, any>[], order_by?: string, not?: boolean, valid?: boolean, search?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "live | paused | scheduled | draft"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "contact"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "opened | clicked | replied"
+          },
+          {
+            "key": "continuous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exit_after_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "schedule_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_time_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_time_end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_days",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, name?: string, order: number, filter?: Record<string, any>, trigger_step?: number, trigger_step_index?: number, trigger_after_days?: number, trigger?: sent | opened | clicked | replied | not_opened | not_replied | not_clicked, action_type?: send_email, action_config?: Record<string, any>, action_status?: string, action_source?: number, action_source_email?: string, analytics?: Record<string, any>, metrics_data?: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.workflows.listWorkflows",
+      "shortPath": "workflows.listWorkflows",
+      "description": "List Workflows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "salesflare.api.workflows.retrieveWorkflow",
+      "shortPath": "workflows.retrieveWorkflow",
+      "description": "Retrieve a single workflow by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.workflows.updateWorkflow",
+      "shortPath": "workflows.updateWorkflow",
+      "description": "Update a workflow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ ids?: number[] }"
+          },
+          {
+            "key": "individual_record_filter",
+            "optional": true,
+            "type": "{ condition: AND | OR, rules: Record<string, any>[], order_by?: string, not?: boolean, valid?: boolean, search?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "live | paused | scheduled | draft"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "contact"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "opened | clicked | replied"
+          },
+          {
+            "key": "continuous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exit_after_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "schedule_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_time_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_time_end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_days",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, name?: string, order: number, filter?: Record<string, any>, trigger_step?: number, trigger_step_index?: number, trigger_after_days?: number, trigger?: sent | opened | clicked | replied | not_opened | not_replied | not_clicked, action_type?: send_email, action_config?: Record<string, any>, action_status?: string, action_source?: number, action_source_email?: string, analytics?: Record<string, any>, metrics_data?: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "salesflare.api.workflows.updateWorkflowAudience",
+      "shortPath": "workflows.updateWorkflowAudience",
+      "description": "Update the audience record of a workflow",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "exited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "met_goal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1268,16 +1268,20 @@ ${bullets.map((b) => `- ${b}`).join('\n')}
 <Step title="Install">
 <CodeGroup>
 \`\`\`bash npm
-npm install corsair ${npmPackageName}
+npm install corsair ${npmPackageName} better-sqlite3
+npm install --save-dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash yarn
-yarn add corsair ${npmPackageName}
+yarn add corsair ${npmPackageName} better-sqlite3
+yarn add --dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash pnpm
-pnpm install corsair ${npmPackageName}
+pnpm install corsair ${npmPackageName} better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash bun
-bun add corsair ${npmPackageName}
+bun add corsair ${npmPackageName} better-sqlite3
+bun add --dev @types/better-sqlite3
 \`\`\`
 </CodeGroup>
 

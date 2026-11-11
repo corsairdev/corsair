@@ -297,6 +297,14 @@
                 ]
               },
               {
+                "group": "AI21 Studio",
+                "pages": [
+                  "plugins/studiobyai21labs/overview",
+                  "plugins/studiobyai21labs/api",
+                  "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
                 "group": "AIML API",
                 "pages": [
                   "plugins/aimlapi/overview",
@@ -1400,6 +1408,14 @@
                 ]
               },
               {
+                "group": "CodeREADr",
+                "pages": [
+                  "plugins/codereadr/overview",
+                  "plugins/codereadr/api",
+                  "plugins/codereadr/database"
+                ]
+              },
+              {
                 "group": "Cody",
                 "pages": [
                   "plugins/cody/overview",
@@ -1422,6 +1438,14 @@
                   "plugins/coinmarketcal/overview",
                   "plugins/coinmarketcal/api",
                   "plugins/coinmarketcal/database"
+                ]
+              },
+              {
+                "group": "CoinMarketCap",
+                "pages": [
+                  "plugins/coinmarketcap/overview",
+                  "plugins/coinmarketcap/api",
+                  "plugins/coinmarketcap/database"
                 ]
               },
               {
@@ -1627,6 +1651,14 @@
                 ]
               },
               {
+                "group": "DeskTime",
+                "pages": [
+                  "plugins/desktime/overview",
+                  "plugins/desktime/api",
+                  "plugins/desktime/database"
+                ]
+              },
+              {
                 "group": "Devin MCP",
                 "pages": [
                   "plugins/devinmcp/overview",
@@ -1776,11 +1808,12 @@
                 ]
               },
               {
-                "group": "ElevenLabs Studio",
+                "group": "ElevenLabs",
                 "pages": [
-                  "plugins/studiobyai21labs/overview",
-                  "plugins/studiobyai21labs/api",
-                  "plugins/studiobyai21labs/database"
+                  "plugins/elevenlabs/overview",
+                  "plugins/elevenlabs/api",
+                  "plugins/elevenlabs/database",
+                  "plugins/elevenlabs/webhooks"
                 ]
               },
               {
@@ -1840,6 +1873,23 @@
                 ]
               },
               {
+                "group": "Eventbrite",
+                "pages": [
+                  "plugins/eventbrite/overview",
+                  "plugins/eventbrite/api",
+                  "plugins/eventbrite/database",
+                  "plugins/eventbrite/webhooks"
+                ]
+              },
+              {
+                "group": "Eventzilla",
+                "pages": [
+                  "plugins/eventzilla/overview",
+                  "plugins/eventzilla/api",
+                  "plugins/eventzilla/database"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",
@@ -1856,6 +1906,14 @@
                   "plugins/exa/api",
                   "plugins/exa/database",
                   "plugins/exa/webhooks"
+                ]
+              },
+              {
+                "group": "Excel",
+                "pages": [
+                  "plugins/excel/overview",
+                  "plugins/excel/api",
+                  "plugins/excel/database"
                 ]
               },
               {
@@ -1883,11 +1941,28 @@
                 ]
               },
               {
+                "group": "fal",
+                "pages": [
+                  "plugins/fal/overview",
+                  "plugins/fal/api",
+                  "plugins/fal/database",
+                  "plugins/fal/webhooks"
+                ]
+              },
+              {
                 "group": "Faraday",
                 "pages": [
                   "plugins/faraday/overview",
                   "plugins/faraday/api",
                   "plugins/faraday/database"
+                ]
+              },
+              {
+                "group": "Fidel",
+                "pages": [
+                  "plugins/fidel/overview",
+                  "plugins/fidel/api",
+                  "plugins/fidel/database"
                 ]
               },
               {
@@ -1914,6 +1989,14 @@
                   "plugins/filloutforms/overview",
                   "plugins/filloutforms/api",
                   "plugins/filloutforms/database"
+                ]
+              },
+              {
+                "group": "Finage",
+                "pages": [
+                  "plugins/finage/overview",
+                  "plugins/finage/api",
+                  "plugins/finage/database"
                 ]
               },
               {
@@ -1968,11 +2051,36 @@
                 ]
               },
               {
+                "group": "Fluxguard",
+                "pages": [
+                  "plugins/fluxguard/overview",
+                  "plugins/fluxguard/api",
+                  "plugins/fluxguard/database",
+                  "plugins/fluxguard/webhooks"
+                ]
+              },
+              {
+                "group": "Follow Up Boss",
+                "pages": [
+                  "plugins/followupboss/overview",
+                  "plugins/followupboss/api",
+                  "plugins/followupboss/database"
+                ]
+              },
+              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",
                   "plugins/formbricks/api",
                   "plugins/formbricks/database"
+                ]
+              },
+              {
+                "group": "Foursquare",
+                "pages": [
+                  "plugins/foursquare/overview",
+                  "plugins/foursquare/api",
+                  "plugins/foursquare/database"
                 ]
               },
               {
@@ -2213,6 +2321,15 @@
                 ]
               },
               {
+                "group": "Higgsfield",
+                "pages": [
+                  "plugins/higgsfield/overview",
+                  "plugins/higgsfield/api",
+                  "plugins/higgsfield/database",
+                  "plugins/higgsfield/webhooks"
+                ]
+              },
+              {
                 "group": "Hookdeck",
                 "pages": [
                   "plugins/hookdeck/overview",
@@ -2284,6 +2401,15 @@
                   "plugins/imgbb/overview",
                   "plugins/imgbb/api",
                   "plugins/imgbb/database"
+                ]
+              },
+              {
+                "group": "InboxKit",
+                "pages": [
+                  "plugins/inboxkit/overview",
+                  "plugins/inboxkit/api",
+                  "plugins/inboxkit/database",
+                  "plugins/inboxkit/webhooks"
                 ]
               },
               {
@@ -2365,6 +2491,14 @@
                 ]
               },
               {
+                "group": "Klaviyo",
+                "pages": [
+                  "plugins/klaviyo/overview",
+                  "plugins/klaviyo/api",
+                  "plugins/klaviyo/database"
+                ]
+              },
+              {
                 "group": "Kling",
                 "pages": [
                   "plugins/kling/overview",
@@ -2378,6 +2512,22 @@
                   "plugins/leexi/overview",
                   "plugins/leexi/api",
                   "plugins/leexi/database"
+                ]
+              },
+              {
+                "group": "Leiga",
+                "pages": [
+                  "plugins/leiga/overview",
+                  "plugins/leiga/api",
+                  "plugins/leiga/database"
+                ]
+              },
+              {
+                "group": "Lemon Squeezy",
+                "pages": [
+                  "plugins/lemonsqueezy/overview",
+                  "plugins/lemonsqueezy/api",
+                  "plugins/lemonsqueezy/database"
                 ]
               },
               {
@@ -2396,6 +2546,14 @@
                   "plugins/linear/api",
                   "plugins/linear/database",
                   "plugins/linear/webhooks"
+                ]
+              },
+              {
+                "group": "Linguapop",
+                "pages": [
+                  "plugins/linguapop/overview",
+                  "plugins/linguapop/api",
+                  "plugins/linguapop/database"
                 ]
               },
               {
@@ -2505,6 +2663,30 @@
                 ]
               },
               {
+                "group": "Miro",
+                "pages": [
+                  "plugins/miro/overview",
+                  "plugins/miro/api",
+                  "plugins/miro/database"
+                ]
+              },
+              {
+                "group": "Missive",
+                "pages": [
+                  "plugins/missive/overview",
+                  "plugins/missive/api",
+                  "plugins/missive/database"
+                ]
+              },
+              {
+                "group": "Mixmax",
+                "pages": [
+                  "plugins/mixmax/overview",
+                  "plugins/mixmax/api",
+                  "plugins/mixmax/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -2520,6 +2702,14 @@
                   "plugins/mrscraper/overview",
                   "plugins/mrscraper/api",
                   "plugins/mrscraper/database"
+                ]
+              },
+              {
+                "group": "Nanonets",
+                "pages": [
+                  "plugins/nanonets/overview",
+                  "plugins/nanonets/api",
+                  "plugins/nanonets/database"
                 ]
               },
               {
@@ -2562,6 +2752,14 @@
                   "plugins/notion/api",
                   "plugins/notion/database",
                   "plugins/notion/webhooks"
+                ]
+              },
+              {
+                "group": "Nutshell",
+                "pages": [
+                  "plugins/nutshell/overview",
+                  "plugins/nutshell/api",
+                  "plugins/nutshell/database"
                 ]
               },
               {
@@ -2628,6 +2826,14 @@
                   "plugins/openrouter/overview",
                   "plugins/openrouter/api",
                   "plugins/openrouter/database"
+                ]
+              },
+              {
+                "group": "OpenSea",
+                "pages": [
+                  "plugins/opensea/overview",
+                  "plugins/opensea/api",
+                  "plugins/opensea/database"
                 ]
               },
               {
@@ -2793,12 +2999,28 @@
                 ]
               },
               {
+                "group": "Quaderno",
+                "pages": [
+                  "plugins/quaderno/overview",
+                  "plugins/quaderno/api",
+                  "plugins/quaderno/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",
                   "plugins/razorpay/api",
                   "plugins/razorpay/database",
                   "plugins/razorpay/webhooks"
+                ]
+              },
+              {
+                "group": "Re:amaze",
+                "pages": [
+                  "plugins/reamaze/overview",
+                  "plugins/reamaze/api",
+                  "plugins/reamaze/database"
                 ]
               },
               {
@@ -2917,12 +3139,29 @@
                 ]
               },
               {
+                "group": "Salesflare",
+                "pages": [
+                  "plugins/salesflare/overview",
+                  "plugins/salesflare/api",
+                  "plugins/salesflare/database"
+                ]
+              },
+              {
                 "group": "Salesforce",
                 "pages": [
                   "plugins/salesforce/overview",
                   "plugins/salesforce/api",
                   "plugins/salesforce/database",
                   "plugins/salesforce/webhooks"
+                ]
+              },
+              {
+                "group": "Sanity",
+                "pages": [
+                  "plugins/sanity/overview",
+                  "plugins/sanity/api",
+                  "plugins/sanity/database",
+                  "plugins/sanity/webhooks"
                 ]
               },
               {
@@ -3009,12 +3248,29 @@
                 ]
               },
               {
+                "group": "ServiceNow",
+                "pages": [
+                  "plugins/servicenow/overview",
+                  "plugins/servicenow/api",
+                  "plugins/servicenow/database"
+                ]
+              },
+              {
                 "group": "SharePoint",
                 "pages": [
                   "plugins/sharepoint/overview",
                   "plugins/sharepoint/api",
                   "plugins/sharepoint/database",
                   "plugins/sharepoint/webhooks"
+                ]
+              },
+              {
+                "group": "Shippo",
+                "pages": [
+                  "plugins/shippo/overview",
+                  "plugins/shippo/api",
+                  "plugins/shippo/database",
+                  "plugins/shippo/webhooks"
                 ]
               },
               {
@@ -3154,6 +3410,14 @@
                 ]
               },
               {
+                "group": "Taggun",
+                "pages": [
+                  "plugins/taggun/overview",
+                  "plugins/taggun/api",
+                  "plugins/taggun/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
@@ -3177,6 +3441,14 @@
                   "plugins/tavilymcp/overview",
                   "plugins/tavilymcp/api",
                   "plugins/tavilymcp/database"
+                ]
+              },
+              {
+                "group": "Teamcamp",
+                "pages": [
+                  "plugins/teamcamp/overview",
+                  "plugins/teamcamp/api",
+                  "plugins/teamcamp/database"
                 ]
               },
               {
@@ -3277,6 +3549,15 @@
                   "plugins/tisane/overview",
                   "plugins/tisane/api",
                   "plugins/tisane/database"
+                ]
+              },
+              {
+                "group": "tl;dv",
+                "pages": [
+                  "plugins/tldv/overview",
+                  "plugins/tldv/api",
+                  "plugins/tldv/database",
+                  "plugins/tldv/webhooks"
                 ]
               },
               {
@@ -3684,6 +3965,14 @@
                 ]
               },
               {
+                "group": "ZenRows",
+                "pages": [
+                  "plugins/zenrows/overview",
+                  "plugins/zenrows/api",
+                  "plugins/zenrows/database"
+                ]
+              },
+              {
                 "group": "Zenserp",
                 "pages": [
                   "plugins/zenserp/overview",
@@ -3759,6 +4048,15 @@
               "guides/webhooks",
               "guides/workflows"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
           }
         ]
       }

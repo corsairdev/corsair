@@ -1,0 +1,51 @@
+displayName: DeskTime
+description: Time tracking and productivity reporting with DeskTime - read account settings, list employees for a day, week or month, and fetch one employee's tracked apps and projects.
+domain: desktime.com
+recommendedAuth: api_key
+overviewNote: |
+  Find your API key at https://desktime.com/app/api, under Settings, API. The same page regenerates or deactivates it. API access is generally tied to a paid plan, so a free account may return 403.
+
+  Things to know before you call:
+
+  - **Every operation reads.** This plugin covers DeskTime's read actions, so nothing here can change an account. All seven operations are `read` and none is irreversible. DeskTime also has `create-project`, `start-project` and `stop-project`, which do change an account; they are not part of this plugin.
+  - **Every call needs a key.** `ping` is served openly by DeskTime, but the Corsair runtime resolves the account key before any endpoint runs, so a call without one raises `AuthMissingError` like the rest.
+  - **Keys are per tenant.** Each tenant saves the key of its own DeskTime account, through a connect link or with `corsair.withTenant(id).desktime.keys.set_api_key(key)`. `desktime({ key })` at registration is sent for every tenant and takes priority over their saved keys, so every tenant would read that one account's employees. Pass it only when the whole app reads a single DeskTime account.
+  - **The API returns mixed field casing.** `groupId` and `onlineTime` are camelCase while `work_starts` and `notes` are snake_case, and this plugin keeps the names exactly as sent.
+  - **`arrived`, `left`, `work_starts` and `work_ends` are timestamps or the boolean `false`.** The help-center examples only show the timestamp form, so a schema that assumes a string rejects every response for an employee who has not clocked in yet.
+  - **A bad date or period is ignored, not rejected.** DeskTime answers with today's data instead of an error, so this plugin validates both before sending. Dates must be real calendar days, not just the right shape.
+  - **`employees.list` nests two levels deep.** The response is keyed by date, then by employee id, so a week request returns seven buckets. `period` accepts `day`, `week` or `month`. This plugin also exposes a flattened `buckets` array, newest first, with the date kept on each entry.
+  - **`employee.apps` groups by productivity class.** The raw keys are `-1` unrated, `0` neutral and `1` productive; a labelled `apps_by_productivity` map is returned alongside them.
+  - **Rate limits.** DeskTime sends `x-ratelimit-limit: 600` and no `Retry-After`. A 429 is retried after the header if present, otherwise after one minute. A 401 or 403 is never retried, because only a person can fix a key.
+  - **No webhooks.** DeskTime sends none, so the plugin declares no webhook surface.
+examples:
+  read:
+    path: employees.list
+    title: List one day of tracked time
+    # Omitting `period` leaves DeskTime's one-day default in place. The validator
+    # compares example args against the unquoted enum render, and a string never
+    # matches `day | week | month`, so the weekly call is shown in apiExamples
+    # instead, where the value may be quoted.
+    args:
+      date: '2026-11-02'
+  # Every operation is a read, so the second example is a narrower read rather
+  # than a write.
+  write:
+    path: employee.apps
+    title: Read one employee's tracked apps
+    args:
+      id: 789760
+apiExamples:
+  ping.get:
+    call: "{}"
+  company.get:
+    call: "{}"
+  employees.list:
+    call: "{ date: '2026-11-02', period: 'week' }"
+  employee.basic:
+    call: "{ id: 789760, date: '2026-11-08' }"
+  employee.apps:
+    call: "{ id: 789760 }"
+  employee.projects:
+    call: "{ id: 789760, date: '2026-11-08' }"
+  projects.list:
+    call: "{}"

@@ -1,0 +1,689 @@
+---
+title: API
+description: "API reference for Foursquare: every `foursquare.api.*` operation with input and output types."
+---
+
+Every `foursquare.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Places
+
+### autocomplete
+
+`places.autocomplete`
+
+Suggest places, searches or geos for a partial query
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.autocomplete({ query: 'sta', ll: '41.8781,-87.6298' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | At least 3 characters |
+| `ll` | `string` | No | — |
+| `radius` | `number` | No | — |
+| `types` | `(place \| search \| geo)[]` | No | Any combination of result types |
+| `bias` | `place \| search \| geo` | No | Prefer one result type |
+| `session_token` | `string` | No | Groups a query with the selection it leads to |
+| `limit` | `number` | No | — |
+
+`query` must be at least 3 characters. This endpoint takes `ll` for a location; unlike Place Search it has no `near` parameter, so a locality name cannot bias it. `types` and `bias` accept place, search or geo. Each result carries a `type` and a `text`. A place result nests the whole place under `place`, so its id is `result.place.fsq_place_id`; a geo or search result has no `place`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type: string,
+  text?: {
+    primary?: string | null,
+    secondary?: string | null,
+    highlight?: {
+      start?: number | null,
+      length?: number | null
+    }[] | null
+  } | null,
+  link?: string | null,
+  place?: {
+    fsq_place_id: string,
+    name?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    distance?: number | null,
+    categories?: {
+      fsq_category_id?: string | null,
+      name?: string | null,
+      short_name?: string | null,
+      plural_name?: string | null,
+      icon?: {
+        id?: string | null,
+        prefix?: string | null,
+        suffix?: string | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    }[] | null,
+    chains?: {
+      fsq_chain_id?: string | null,
+      name?: string | null
+    }[] | null,
+    location?: {
+      address?: string | null,
+      locality?: string | null,
+      region?: string | null,
+      postcode?: string | null,
+      country?: string | null,
+      admin_region?: string | null,
+      post_town?: string | null,
+      po_box?: string | null,
+      formatted_address?: string | null
+    } | null,
+    tel?: string | null,
+    email?: string | null,
+    website?: string | null,
+    social_media?: {
+      facebook_id?: string | null,
+      instagram?: string | null,
+      twitter?: string | null
+    } | null,
+    link?: string | null,
+    description?: string | null,
+    price?: number | null,
+    rating?: number | null,
+    popularity?: number | null,
+    stats?: {
+      total_photos?: number | null,
+      total_ratings?: number | null,
+      total_tips?: number | null
+    } | null,
+    related_places?: {
+      parent?: Record<string, any> | null,
+      children?: Record<string, any>[] | null
+    } | null,
+    hours?: {
+      display?: string | null,
+      is_local_holiday?: boolean | null,
+      open_now?: boolean | null,
+      regular?: Record<string, any>[] | null
+    } | null,
+    extended_location?: {
+      dma?: string | null,
+      census_block_id?: string | null
+    } | null,
+    date_created?: string | null,
+    date_refreshed?: string | null,
+    date_closed?: string | null,
+    placemaker_url?: string | null,
+    store_id?: string | null,
+    tastes?: string[] | null,
+    menu?: string | null,
+    attributes?: Record<string, any> | null,
+    veracity_rating?: Record<string, any> | null,
+    unresolved_flags?: string[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`places.get`
+
+Get one place by its fsq_place_id, with all its details
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.get({ fsq_place_id: '4b28f2aef964a520f9d024e3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fsq_place_id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+Answers the place object directly, not wrapped. `fields` narrows it; omitting it returns every Pro field.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fsq_place_id` | `string` | Yes | The place id used by every other call |
+| `name` | `string \| null` | No | — |
+| `latitude` | `number \| null` | No | — |
+| `longitude` | `number \| null` | No | — |
+| `distance` | `number \| null` | No | Metres from the search location; Place Search only |
+| `categories` | `object[] \| null` | No | — |
+| `chains` | `object[] \| null` | No | — |
+| `location` | `object \| null` | No | — |
+| `tel` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `social_media` | `object \| null` | No | — |
+| `link` | `string \| null` | No | The Place Details URL for this place |
+| `description` | `string \| null` | No | — |
+| `price` | `number \| null` | No | 1 to 4 |
+| `rating` | `number \| null` | No | 0.0 to 10.0 |
+| `popularity` | `number \| null` | No | — |
+| `stats` | `object \| null` | No | — |
+| `related_places` | `object \| null` | No | — |
+| `hours` | `object \| null` | No | — |
+| `extended_location` | `object \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_refreshed` | `string \| null` | No | — |
+| `date_closed` | `string \| null` | No | — |
+| `placemaker_url` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `tastes` | `string[] \| null` | No | — |
+| `menu` | `string \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `veracity_rating` | `Record<string, any> \| null` | No | — |
+| `unresolved_flags` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  fsq_category_id?: string | null,
+  name?: string | null,
+  short_name?: string | null,
+  plural_name?: string | null,
+  icon?: {
+    id?: string | null,
+    prefix?: string | null,
+    suffix?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chains full type">
+
+```ts
+{
+  fsq_chain_id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  address?: string | null,
+  locality?: string | null,
+  region?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  admin_region?: string | null,
+  post_town?: string | null,
+  po_box?: string | null,
+  formatted_address?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="social_media full type">
+
+```ts
+{
+  facebook_id?: string | null,
+  instagram?: string | null,
+  twitter?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  total_photos?: number | null,
+  total_ratings?: number | null,
+  total_tips?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="related_places full type">
+
+```ts
+{
+  parent?: Record<string, any> | null,
+  children?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hours full type">
+
+```ts
+{
+  display?: string | null,
+  is_local_holiday?: boolean | null,
+  open_now?: boolean | null,
+  regular?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="extended_location full type">
+
+```ts
+{
+  dma?: string | null,
+  census_block_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### match
+
+`places.match`
+
+Resolve a name and address to a Foursquare place, with a match score
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.match({ name: 'Wrigley Field', address: '1060 W Addison St', city: 'Chicago', state: 'IL', cc: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the place to match |
+| `address` | `string` | Yes | Street address |
+| `city` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `cc` | `string` | Yes | 2-letter country code, e.g. US. Foursquare supports English-speaking countries only |
+| `ll` | `string` | No | latitude,longitude |
+| `fields` | `string[]` | No | — |
+
+Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only. Its reference lists 422 `Unsupported country` for a code outside that set, and the call can also answer 404 `Match not found` or a 400 asking for `ll`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place` | `object \| null` | No | — |
+| `match_score` | `number \| null` | No | How confident the match is, from 0 to 1 |
+| `context` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="place full type">
+
+```ts
+{
+  fsq_place_id: string,
+  name?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  distance?: number | null,
+  categories?: {
+    fsq_category_id?: string | null,
+    name?: string | null,
+    short_name?: string | null,
+    plural_name?: string | null,
+    icon?: {
+      id?: string | null,
+      prefix?: string | null,
+      suffix?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  }[] | null,
+  chains?: {
+    fsq_chain_id?: string | null,
+    name?: string | null
+  }[] | null,
+  location?: {
+    address?: string | null,
+    locality?: string | null,
+    region?: string | null,
+    postcode?: string | null,
+    country?: string | null,
+    admin_region?: string | null,
+    post_town?: string | null,
+    po_box?: string | null,
+    formatted_address?: string | null
+  } | null,
+  tel?: string | null,
+  email?: string | null,
+  website?: string | null,
+  social_media?: {
+    facebook_id?: string | null,
+    instagram?: string | null,
+    twitter?: string | null
+  } | null,
+  link?: string | null,
+  description?: string | null,
+  price?: number | null,
+  rating?: number | null,
+  popularity?: number | null,
+  stats?: {
+    total_photos?: number | null,
+    total_ratings?: number | null,
+    total_tips?: number | null
+  } | null,
+  related_places?: {
+    parent?: Record<string, any> | null,
+    children?: Record<string, any>[] | null
+  } | null,
+  hours?: {
+    display?: string | null,
+    is_local_holiday?: boolean | null,
+    open_now?: boolean | null,
+    regular?: Record<string, any>[] | null
+  } | null,
+  extended_location?: {
+    dma?: string | null,
+    census_block_id?: string | null
+  } | null,
+  date_created?: string | null,
+  date_refreshed?: string | null,
+  date_closed?: string | null,
+  placemaker_url?: string | null,
+  store_id?: string | null,
+  tastes?: string[] | null,
+  menu?: string | null,
+  attributes?: Record<string, any> | null,
+  veracity_rating?: Record<string, any> | null,
+  unresolved_flags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### photos
+
+`places.photos`
+
+List the photos attached to a place
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.photos({ fsq_place_id: '4b28f2aef964a520f9d024e3', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fsq_place_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `POPULAR \| NEWEST` | No | Defaults to POPULAR |
+| `classifications` | `string[]` | No | Restrict to these photo classifications |
+
+Returns `{ photos: [...] }`: Foursquare answers a bare array and the plugin wraps it. `sort` accepts POPULAR or NEWEST. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photos` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="photos full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  prefix: string,
+  suffix: string,
+  width?: number | null,
+  height?: number | null,
+  classifications?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`places.search`
+
+Search the Foursquare places database by text, category or location
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.search({ query: 'coffee', near: 'Chicago, IL', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Text to match against a place |
+| `ll` | `string` | No | latitude,longitude, e.g. 41.8781,-87.6298 |
+| `near` | `string` | No | A geocodable locality, e.g. Chicago, IL |
+| `ne` | `string` | No | North-east corner of a rectangle |
+| `sw` | `string` | No | South-west corner of a rectangle |
+| `radius` | `number` | No | Metres; only with ll or ip bias. Default 22000 |
+| `fsq_category_ids` | `string[]` | No | Category ids, comma-joined before sending |
+| `fsq_chain_ids` | `string[]` | No | — |
+| `exclude_fsq_chain_ids` | `string[]` | No | — |
+| `exclude_all_chains` | `boolean` | No | — |
+| `min_price` | `number` | No | — |
+| `max_price` | `number` | No | — |
+| `open_now` | `boolean` | No | — |
+| `open_at` | `string` | No | A local day and time window |
+| `sort` | `RELEVANCE \| RATING \| DISTANCE \| POPULARITY` | No | Defaults to RELEVANCE |
+| `tel_format` | `NATIONAL \| E164` | No | Format of the returned telephone number |
+| `fields` | `string[]` | No | Response fields; all Pro fields when omitted |
+| `cursor` | `string` | No | Next-page cursor from a previous response. Omit it for the first page |
+| `limit` | `number` | No | Results per page, max 50, default 10 |
+
+Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw`. With none of them the search falls back to IP biasing. Array filters such as `fsq_category_ids` and `fields` are comma-joined before sending. `limit` caps at 50 and defaults to 10. Each response carries `nextCursor` when more results exist; pass it back as `cursor` to fetch the next page of the same search.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `context` | `object \| null` | No | — |
+| `nextCursor` | `string \| null` | No | Pass this back as cursor to fetch the next page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  fsq_place_id: string,
+  name?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  distance?: number | null,
+  categories?: {
+    fsq_category_id?: string | null,
+    name?: string | null,
+    short_name?: string | null,
+    plural_name?: string | null,
+    icon?: {
+      id?: string | null,
+      prefix?: string | null,
+      suffix?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  }[] | null,
+  chains?: {
+    fsq_chain_id?: string | null,
+    name?: string | null
+  }[] | null,
+  location?: {
+    address?: string | null,
+    locality?: string | null,
+    region?: string | null,
+    postcode?: string | null,
+    country?: string | null,
+    admin_region?: string | null,
+    post_town?: string | null,
+    po_box?: string | null,
+    formatted_address?: string | null
+  } | null,
+  tel?: string | null,
+  email?: string | null,
+  website?: string | null,
+  social_media?: {
+    facebook_id?: string | null,
+    instagram?: string | null,
+    twitter?: string | null
+  } | null,
+  link?: string | null,
+  description?: string | null,
+  price?: number | null,
+  rating?: number | null,
+  popularity?: number | null,
+  stats?: {
+    total_photos?: number | null,
+    total_ratings?: number | null,
+    total_tips?: number | null
+  } | null,
+  related_places?: {
+    parent?: Record<string, any> | null,
+    children?: Record<string, any>[] | null
+  } | null,
+  hours?: {
+    display?: string | null,
+    is_local_holiday?: boolean | null,
+    open_now?: boolean | null,
+    regular?: Record<string, any>[] | null
+  } | null,
+  extended_location?: {
+    dma?: string | null,
+    census_block_id?: string | null
+  } | null,
+  date_created?: string | null,
+  date_refreshed?: string | null,
+  date_closed?: string | null,
+  placemaker_url?: string | null,
+  store_id?: string | null,
+  tastes?: string[] | null,
+  menu?: string | null,
+  attributes?: Record<string, any> | null,
+  veracity_rating?: Record<string, any> | null,
+  unresolved_flags?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="context full type">
+
+```ts
+{
+  geo_bounds?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tips
+
+`places.tips`
+
+List the user tips left on a place
+
+**Risk:** `read`
+
+```ts
+await corsair.foursquare.api.places.tips({ fsq_place_id: '4b28f2aef964a520f9d024e3', sort: 'POPULAR', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fsq_place_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `POPULAR \| NEWEST` | No | Defaults to POPULAR |
+| `fields` | `string[]` | No | — |
+
+Returns `{ tips: [...] }`: Foursquare answers a bare array and the plugin wraps it. A tip carries `fsq_tip_id`, `created_at` and `text` by default; ask for `agree_count`, `disagree_count`, `lang` or `url` through `fields`. `sort` accepts POPULAR or NEWEST.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tips` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tips full type">
+
+```ts
+{
+  fsq_tip_id: string,
+  created_at?: string | null,
+  text?: string | null,
+  url?: string | null,
+  lang?: string | null,
+  agree_count?: number | null,
+  disagree_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

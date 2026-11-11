@@ -1,0 +1,776 @@
+---
+title: API
+description: "API reference for fal: every `fal.api.*` operation with input and output types."
+---
+
+Every `fal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### billing
+
+`account.billing`
+
+The account's credit balance (needs a key with billing read access)
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.account.billing({});
+```
+
+**Input:** _empty object_
+
+Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `credits` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  current_balance: number,
+  currency: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### upload
+
+`files.upload`
+
+Upload a file to fal storage and get a public URL to pass as a model input
+
+**Risk:** `write`
+
+```ts
+await corsair.fal.api.files.upload({ contentBase64: '<base64 bytes>', contentType: 'image/png', fileName: 'reference.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | Yes | The file’s bytes, base64 encoded (a data: URL prefix is fine). |
+| `contentType` | `string` | Yes | MIME type, for example image/png or audio/wav. |
+| `fileName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | Public fal CDN URL to pass as a model input (image_url, audio_url...). |
+| `file_name` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+---
+
+## Models
+
+### estimateCost
+
+`models.estimateCost`
+
+Estimate what a number of calls or output units will cost
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.models.estimateCost({ estimateType: 'unit_price', endpoints: { 'fal-ai/flux/dev': { quantity: 100 } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimateType` | `historical_api_price \| unit_price` | Yes | historical_api_price: quantity = number of calls, priced from past calls. unit_price: quantity = billing units (images, seconds, megapixels). |
+| `endpoints` | `object` | Yes | Endpoint id to quantity, for example &#123; "fal-ai/flux/dev": &#123; quantity: 100 &#125; &#125;. |
+
+<AccordionGroup>
+<Accordion title="endpoints full type">
+
+```ts
+Record<string, {
+  quantity: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_type` | `string` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+
+
+
+---
+
+### pricing
+
+`models.pricing`
+
+Unit price of fal models (per image, megapixel, second…)
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.models.pricing({ endpointIds: ['fal-ai/flux/schnell', 'fal-ai/flux/dev'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointIds` | `string[]` | Yes | 1 to 50 fal endpoint ids, for example ["fal-ai/flux/dev"]. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prices` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="prices full type">
+
+```ts
+{
+  endpoint_id: string,
+  unit_price: number,
+  unit: string,
+  currency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`models.run`
+
+Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. SUCCEEDED and FAILED are final. IN_QUEUE or IN_PROGRESS is a job to follow with queue.status; video, audio and training usually take longer than the wait.
+
+**Risk:** `write`
+
+```ts
+await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' }, waitSeconds: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | fal model endpoint id, for example fal-ai/flux/schnell or fal-ai/kling-video/v2.1/master/text-to-video. Find ids with models.search. |
+| `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a lighthouse at dawn' &#125;. Each model has its own; read them with models.search(&#123; endpointIds: [id], includeOpenApi: true &#125;). |
+| `webhookUrl` | `string` | No | An https URL fal POSTs the result to when the request completes (signed; see the requests.completed webhook). |
+| `priority` | `normal \| low` | No | low puts it behind your other requests to this endpoint. |
+| `startTimeout` | `number` | No | Seconds fal may wait for a runner before giving up (504). Does not limit run time. |
+| `hint` | `string` | No | Routing hint: requests with the same hint go to the same runner. |
+| `noRetry` | `boolean` | No | true turns off fal’s automatic retries for this request. |
+| `maxQueueLength` | `number` | No | Reject with 429 if this many requests are already queued. |
+| `waitSeconds` | `number` | No | How long models.run waits after submitting, default 10 and at most 15 seconds. |
+
+Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`. SUCCEEDED and FAILED are final; only IN_QUEUE or IN_PROGRESS need following, with `queue.status({ responseUrl })`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
+| `request_id` | `string` | Yes | — |
+| `response_url` | `string` | Yes | Pass to queue.status as responseUrl to follow a run still going. |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `queue_position` | `number \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+| `metrics` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `error_type` | `string \| null` | No | — |
+| `state` | `IN_QUEUE \| IN_PROGRESS \| SUCCEEDED \| FAILED` | Yes | IN_QUEUE or IN_PROGRESS while it runs; SUCCEEDED with output, or FAILED with error, once it is done. |
+| `output` | `Record<string, any>` | No | The model output. Its shape is model-specific: image models return images[].url, video models video.url, audio models audio.url. fal media URLs expire, so save files you want to keep. |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  timestamp: string,
+  level?: string,
+  labels?: Record<string, any>
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  inference_time?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`models.search`
+
+Find fal models by text, category or endpoint id; includeOpenApi returns their input and output fields
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.models.search({ query: 'upscale', category: 'image-to-image', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Free text, for example "text to video" or "upscale". |
+| `category` | `string` | No | For example text-to-image, image-to-image, image-to-video, text-to-video, text-to-speech, speech-to-text, training. |
+| `status` | `active \| deprecated` | No | — |
+| `endpointIds` | `string[]` | No | Look up these endpoints instead of searching. |
+| `sort` | `relevant \| recent` | No | — |
+| `includeOpenApi` | `boolean` | No | Include each model's OpenAPI document (its input and output fields). Large: use with endpointIds. |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  endpoint_id: string,
+  metadata?: {
+    display_name?: string,
+    category?: string,
+    description?: string,
+    status?: string,
+    tags?: string[],
+    updated_at?: string,
+    thumbnail_url?: string,
+    model_url?: string,
+    license_type?: string,
+    kind?: string,
+    duration_estimate?: number | null
+  },
+  retires_at?: string | null,
+  replacement?: string | null,
+  openapi?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Queue
+
+### cancel
+
+`queue.cancel`
+
+Cancel a queued request: removed if still waiting, asked to stop if running
+
+**Risk:** `write`
+
+```ts
+await corsair.fal.api.queue.cancel({ endpointId: 'fal-ai/flux/schnell', requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | No | The endpoint id the request was submitted to. Pass it with requestId. |
+| `requestId` | `string` | No | The request_id queue.submit returned. Pass it with endpointId. |
+| `responseUrl` | `string` | No | Instead of endpointId + requestId: the response_url queue.submit returned. |
+
+Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. A request that already finished answers ALREADY_COMPLETED instead of an error.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `OK \| CANCELLATION_REQUESTED \| ALREADY_COMPLETED \| NOT_FOUND` | Yes | OK: removed from the queue, never runs. CANCELLATION_REQUESTED: running, fal asked the runner to stop (it may still finish). ALREADY_COMPLETED or NOT_FOUND: nothing to cancel. |
+
+
+
+---
+
+### result
+
+`queue.result`
+
+The output of a completed queued request
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.queue.result({ responseUrl: 'https://queue.fal.run/fal-ai/flux/requests/<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | No | The endpoint id the request was submitted to. Pass it with requestId. |
+| `requestId` | `string` | No | The request_id queue.submit returned. Pass it with endpointId. |
+| `responseUrl` | `string` | No | Instead of endpointId + requestId: the response_url queue.submit returned. |
+
+Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. Errors with the model's own error (422 for bad input) when the request failed.
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### status
+
+`queue.status`
+
+Where a queued request stands. Once done it returns state SUCCEEDED with the output, or FAILED with the error.
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.queue.status({ endpointId: 'fal-ai/flux/schnell', requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | No | The endpoint id the request was submitted to. Pass it with requestId. |
+| `requestId` | `string` | No | The request_id queue.submit returned. Pass it with endpointId. |
+| `responseUrl` | `string` | No | Instead of endpointId + requestId: the response_url queue.submit returned. |
+| `logs` | `boolean` | No | Include runner logs (only the app owner receives them). |
+
+Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. fal marks failed requests COMPLETED as well, so once it does this reads the result and answers `state` SUCCEEDED with `output`, or FAILED with `error`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
+| `request_id` | `string` | Yes | — |
+| `response_url` | `string \| null` | No | — |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `queue_position` | `number \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+| `metrics` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `error_type` | `string \| null` | No | — |
+| `state` | `IN_QUEUE \| IN_PROGRESS \| SUCCEEDED \| FAILED` | Yes | IN_QUEUE or IN_PROGRESS while it runs; SUCCEEDED with output, or FAILED with error, once it is done. |
+| `output` | `Record<string, any>` | No | The model output. Its shape is model-specific: image models return images[].url, video models video.url, audio models audio.url. fal media URLs expire, so save files you want to keep. |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  timestamp: string,
+  level?: string,
+  labels?: Record<string, any>
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  inference_time?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`queue.submit`
+
+Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.
+
+**Risk:** `write`
+
+```ts
+await corsair.fal.api.queue.submit({ endpointId: 'fal-ai/kling-video/v2.1/master/text-to-video', input: { prompt: 'A red kite over a beach at sunset', duration: '5' }, webhookUrl: 'https://example.com/webhooks/fal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointId` | `string` | Yes | fal model endpoint id, for example fal-ai/flux/schnell or fal-ai/kling-video/v2.1/master/text-to-video. Find ids with models.search. |
+| `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a lighthouse at dawn' &#125;. Each model has its own; read them with models.search(&#123; endpointIds: [id], includeOpenApi: true &#125;). |
+| `webhookUrl` | `string` | No | An https URL fal POSTs the result to when the request completes (signed; see the requests.completed webhook). |
+| `priority` | `normal \| low` | No | low puts it behind your other requests to this endpoint. |
+| `startTimeout` | `number` | No | Seconds fal may wait for a runner before giving up (504). Does not limit run time. |
+| `hint` | `string` | No | Routing hint: requests with the same hint go to the same runner. |
+| `noRetry` | `boolean` | No | true turns off fal’s automatic retries for this request. |
+| `maxQueueLength` | `number` | No | Reject with 429 if this many requests are already queued. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
+| `request_id` | `string` | Yes | — |
+| `response_url` | `string` | Yes | Pass to queue.status as responseUrl to follow the request. |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `queue_position` | `number \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+| `metrics` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `error_type` | `string \| null` | No | — |
+| `user_queue_position` | `number \| null` | No | — |
+| `user_queued_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  timestamp: string,
+  level?: string,
+  labels?: Record<string, any>
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  inference_time?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Requests
+
+### deletePayloads
+
+`requests.deletePayloads`
+
+Delete a request's stored input and output payloads and the files it generated on fal's CDN (files it took as input stay)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fal.api.requests.deletePayloads({ requestId: '<request id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN. A file fal could not delete comes back with a non-null `exception` in `cdn_delete_results` rather than an error, so check each entry.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cdn_delete_results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cdn_delete_results full type">
+
+```ts
+{
+  link: string,
+  exception?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`requests.list`
+
+Past requests to given endpoints, with timing and status; optionally their inputs and outputs
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.requests.list({ endpointIds: ['fal-ai/flux/schnell'], status: 'success', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointIds` | `string[]` | Yes | 1 to 50 fal endpoint ids, for example ["fal-ai/flux/dev"]. |
+| `start` | `string` | No | ISO 8601 date or date-time, for example 2026-11-01. |
+| `end` | `string` | No | Exclusive end date. |
+| `status` | `success \| error \| user_error` | No | — |
+| `requestId` | `string` | No | — |
+| `includePayloads` | `boolean` | No | Include each request’s input and output. |
+| `sortBy` | `ended_at \| duration` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  request_id: string,
+  endpoint_id: string,
+  started_at?: string | null,
+  sent_at?: string | null,
+  ended_at?: string | null,
+  status_code?: number | null,
+  duration?: number | null,
+  json_input?: any,
+  json_output?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### billingEvents
+
+`usage.billingEvents`
+
+Billed requests one by one, with their cost
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.usage.billingEvents({ start: '2026-11-01', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | ISO 8601 date or date-time, for example 2026-11-01. |
+| `end` | `string` | No | Exclusive end date. |
+| `endpointIds` | `string[]` | No | 1 to 50 fal endpoint ids, for example ["fal-ai/flux/dev"]. |
+| `requestIds` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+
+Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billing_events` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="billing_events full type">
+
+```ts
+{
+  request_id: string,
+  endpoint_id: string,
+  timestamp: string,
+  quantity?: number | null,
+  unit?: string | null,
+  unit_price?: number | null,
+  cost_total: number,
+  cost_estimate_nano_usd?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`usage.get`
+
+Usage and cost by endpoint over a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.fal.api.usage.get({ start: '2026-11-01', end: '2026-12-01', expand: ['summary'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | ISO 8601 date or date-time, for example 2026-11-01. |
+| `end` | `string` | No | Exclusive end date. |
+| `endpointIds` | `string[]` | No | 1 to 50 fal endpoint ids, for example ["fal-ai/flux/dev"]. |
+| `timeframe` | `minute \| hour \| day \| week \| month` | No | — |
+| `timezone` | `string` | No | IANA time zone, default UTC. |
+| `expand` | `(time_series \| summary \| auth_method)[]` | No | Default time_series. summary adds totals per endpoint. |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+
+Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_series` | `object[]` | No | — |
+| `summary` | `object[]` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_series full type">
+
+```ts
+{
+  bucket: string,
+  results: {
+    endpoint_id: string,
+    unit: string,
+    quantity: number,
+    unit_price: number,
+    percent_discount?: number | null,
+    cost_subtotal?: number,
+    cost_discount?: number,
+    cost_total?: number,
+    cost?: number,
+    currency: string,
+    auth_method?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  endpoint_id: string,
+  unit: string,
+  quantity: number,
+  unit_price: number,
+  percent_discount?: number | null,
+  cost_subtotal?: number,
+  cost_discount?: number,
+  cost_total?: number,
+  cost?: number,
+  currency: string,
+  auth_method?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

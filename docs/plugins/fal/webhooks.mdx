@@ -1,0 +1,94 @@
+---
+title: Webhooks
+description: "fal incoming webhooks: event paths, payloads, and response data."
+---
+
+The fal plugin handles incoming webhooks. fal has no account-wide subscription. Pass your Corsair HTTP handler URL as `webhookUrl` to `queue.submit` for each request, and fal POSTs the result there when the request finishes (see [Overview](/plugins/fal/overview) for setup).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `requests`
+  - `completed` (`requests.completed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // The raw text: fal signs the exact bytes it sent, so don't parse it first.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body);
+    // Answer non-2xx when processing failed (fal's signing keys didn't load),
+    // so fal delivers again.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
+}
+```
+
+## Events
+
+## Requests
+
+### Completed
+
+`requests.completed`
+
+A queued request finished: status OK with the model output, or ERROR with the error. Signed by fal (Ed25519).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `gateway_request_id` | `string \| null` | No | The last attempt’s id; differs from request_id when fal retried. |
+| `status` | `OK \| ERROR` | Yes | OK: payload is the model output. ERROR: payload is the error body. |
+| `payload` | `Record<string, any> \| null` | Yes | — |
+| `error` | `string \| null` | No | — |
+| `payload_error` | `string \| null` | No | Set when fal could not include the output; read it with queue.result. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  request_id: string,
+  gateway_request_id?: string | null,
+  status: OK | ERROR,
+  payload: Record<string, any> | null,
+  error?: string | null,
+  payload_error?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fal({
+    webhookHooks: {
+        requests: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
