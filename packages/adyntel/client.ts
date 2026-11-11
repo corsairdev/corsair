@@ -34,7 +34,35 @@ const NO_CONTENT = 'No Content';
 // unknown: the body is an untyped error body until asRecord narrows it.
 function readMessage(body: unknown): string | undefined {
 	const record = asRecord(body);
-	return readString(record, 'message') ?? readString(record, 'detail');
+	return (
+		readString(record, 'message') ??
+		readString(record, 'detail') ??
+		readValidationDetail(record?.detail)
+	);
+}
+
+/**
+ * Adyntel's request validation answers 422 with FastAPI's list form,
+ * `{ detail: [{ loc: ['body', 'company_domain'], msg: 'Field required' }] }`.
+ * Only `loc` and `msg` are read: each entry's `input` can echo the request
+ * body, which holds the API key and the account email.
+ */
+// unknown: `detail` is a string, a list or absent depending on the endpoint.
+function readValidationDetail(detail: unknown): string | undefined {
+	if (!Array.isArray(detail)) return undefined;
+	const parts = detail.flatMap((entry) => {
+		const record = asRecord(entry);
+		const msg = readString(record, 'msg');
+		if (!msg) return [];
+		const loc = Array.isArray(record?.loc)
+			? record.loc
+					.filter((part) => part !== 'body')
+					.map((part) => String(part))
+					.join('.')
+			: '';
+		return [loc ? `${loc}: ${msg}` : msg];
+	});
+	return parts.length > 0 ? parts.join('; ') : undefined;
 }
 
 function readString(

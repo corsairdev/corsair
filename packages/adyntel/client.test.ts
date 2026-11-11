@@ -356,6 +356,43 @@ describe('describeAdyntelError', () => {
 		);
 	});
 
+	it('reads the field list of a 422 validation error', async () => {
+		// The shape api.adyntel.com sends for a request that fails validation.
+		respond(
+			{
+				detail: [
+					{
+						type: 'missing',
+						loc: ['body', 'company_domain'],
+						msg: 'Field required',
+						input: { api_key: CREDENTIALS.apiKey, email: CREDENTIALS.email },
+					},
+					{
+						type: 'value_error',
+						loc: ['body', 'language'],
+						msg: 'Unknown language',
+						input: 'Klingon',
+					},
+				],
+			},
+			422,
+		);
+
+		const error = await failure(
+			makeAdyntelRequest(CREDENTIALS, {
+				path: 'google',
+				operation: 'googleAds',
+				body: {},
+			}),
+		);
+
+		expect(error.message).toBe(
+			'Adyntel 422: company_domain: Field required; language: Unknown language',
+		);
+		expect(error.message).not.toContain(CREDENTIALS.apiKey);
+		expect(error.message).not.toContain(CREDENTIALS.email);
+	});
+
 	it('falls back when the body has no error text', () => {
 		expect(describeAdyntelError(503, '<html>down</html>', 'Unavailable')).toBe(
 			'Adyntel 503: Unavailable',
