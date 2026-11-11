@@ -64,7 +64,10 @@ function bodyOf(index = 0): Record<string, unknown> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call with no queued response throws instead of reaching MemberSpot.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
