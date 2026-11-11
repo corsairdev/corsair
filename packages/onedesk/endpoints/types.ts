@@ -1821,8 +1821,9 @@ export const OnedeskActivitySchema = z
 		// Free text such as 'updated lifecycle status'; the spec lists over a
 		// hundred values, so it is not an enum.
 		activityType: z.string().nullish(),
-		automationType: z.string().nullish(),
-		creationDate: z.string().nullish(),
+		// Live API names; the spec says automationType and creationDate.
+		automationTypeName: z.string().nullish(),
+		timestamp: z.string().nullish(),
 		itemType: z.string().nullish(),
 		itemName: z.string().nullish(),
 		newValue: z.string().nullish(),

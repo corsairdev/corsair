@@ -1,8 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
-import { Attachments, Crm, OnedeskTimesheetSchema, Records } from './endpoints';
+import {
+	Attachments,
+	Crm,
+	OnedeskActivitySchema,
+	OnedeskTimesheetSchema,
+	Records,
+} from './endpoints';
 import {
 	activity,
 	activityDetailsPage,
+	activityLive,
 	attachment,
 	attachmentDetailsPage,
 	conversation,
@@ -1183,6 +1190,19 @@ describe('conversations and messages', () => {
 });
 
 describe('activities and attachments', () => {
+	it('activities.filterDetails reads the field names the live API sends', async () => {
+		respond({ ...activityDetailsPage, data: [activityLive] });
+
+		const result = (await invoke(Crm.activitiesFilterDetails, {})) as {
+			data: { timestamp?: string }[];
+		};
+
+		expect(Object.keys(OnedeskActivitySchema.shape)).toEqual(
+			expect.arrayContaining(Object.keys(activityLive)),
+		);
+		expect(result.data[0]?.timestamp).toBe(activityLive.timestamp);
+	});
+
 	it('activities.filterDetails posts the filter', async () => {
 		respond(activityDetailsPage);
 

@@ -362,6 +362,23 @@ export const activity = {
 	newValue: 'portfolio name updated v2',
 };
 
+/**
+ * An activity as the live API returns it (11-11): it sends
+ * `automationTypeName` and `timestamp`, where the spec says `automationType`
+ * and `creationDate`.
+ */
+export const activityLive = {
+	projectExternalId: null,
+	authorExternalId: null,
+	itemExternalId: null,
+	activityType: 'update organization financial',
+	automationTypeName: null,
+	timestamp: '2026-11-11T10:46:49.477+00:00',
+	itemType: 'Budgeting',
+	itemName: null,
+	newValue: null,
+};
+
 export const activityDetailsPage = {
 	code: 'SUCCESS',
 	data: [activity],
