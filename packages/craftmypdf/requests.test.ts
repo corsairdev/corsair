@@ -162,6 +162,14 @@ describe('pdf generation', () => {
 		});
 	});
 
+	it('pdf.createAsync requires data, since it has no load_data_from to fall back on', async () => {
+		// Sending {} in its place would spend a credit on a blank PDF.
+		await expect(
+			invoke(Pdf.createAsync, { template_id: '05f77b2b18ad809a' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('pdf.createAsync rejects a webhook URL that is not a URL', async () => {
 		await expect(
 			invoke(Pdf.createAsync, {

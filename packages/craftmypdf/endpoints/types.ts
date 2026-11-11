@@ -251,9 +251,11 @@ export type PdfCreateResponse = z.infer<typeof PdfCreateResponseSchema>;
 
 // ── pdf.createAsync ───────────────────────────────────────────────────────
 
+// create-async takes no load_data_from, so data is required here: an empty
+// object in its place would spend a credit on a blank PDF.
 const PdfCreateAsyncInputSchema = z.object({
 	template_id: z.string().min(1).describe('Template to generate from.'),
-	data: TemplateDataSchema.optional(),
+	data: TemplateDataSchema,
 	version: VersionSchema.optional(),
 	expiration: ExpirationSchema,
 	webhook_url: z

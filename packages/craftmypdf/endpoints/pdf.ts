@@ -55,7 +55,7 @@ export const createAsync: CraftmypdfEndpoints['pdfCreateAsync'] = (
 		(parsed) => ({
 			method: 'POST',
 			path: '/create-async',
-			body: { ...parsed, data: dataOrEmpty(parsed.data) },
+			body: parsed,
 		}),
 		{
 			log: (_, result) => ({
