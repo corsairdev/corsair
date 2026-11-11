@@ -451,6 +451,7 @@ export const BaseProviders = [
 	'vestaboard',
 	'waboxapp',
 	'wakatime',
+	'webex',
 	'webflow',
 	'webscrapingai',
 	'webvizio',
@@ -921,6 +922,7 @@ export const ProviderDisplayNames = {
 	vestaboard: 'Vestaboard',
 	waboxapp: 'Waboxapp',
 	wakatime: 'WakaTime',
+	webex: 'Webex',
 	webflow: 'Webflow',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
@@ -1398,6 +1400,7 @@ export type AllProviders =
 	| 'vestaboard'
 	| 'waboxapp'
 	| 'wakatime'
+	| 'webex'
 	| 'webflow'
 	| 'webscrapingai'
 	| 'webvizio'
