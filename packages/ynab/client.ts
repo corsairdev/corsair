@@ -93,9 +93,22 @@ export class YnabAPIError extends Error {
 		);
 	}
 
-	/** True when the subscription lapsed, which YNAB reports as a 403. */
+	/**
+	 * True when the subscription lapsed. A 403 alone is not enough: YNAB also uses
+	 * it for `unauthorized_scope`, `data_limit_reached` and `email_unconfirmed`,
+	 * none of which renewing a subscription fixes. The documented error id is what
+	 * separates them, so it is matched explicitly.
+	 */
 	get isSubscriptionLapsed(): boolean {
-		return this.status === 403;
+		return this.status === 403 && this.code === 'subscription_lapsed';
+	}
+
+	/**
+	 * A 403 that is not a lapsed subscription. Its own recovery applies, so it is
+	 * reported without the "renew your subscription" advice.
+	 */
+	get isForbidden(): boolean {
+		return this.status === 403 && !this.isSubscriptionLapsed;
 	}
 }
 

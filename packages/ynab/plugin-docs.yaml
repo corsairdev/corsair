@@ -11,7 +11,7 @@ overviewNote: |
   - **Dates are `yyyy-MM-dd`.** No time and no zone. A month is addressed by its first day, so `2024-06-01` is June.
   - **Everything is wrapped in `data`.** Every response is `{ data: … }`, and list endpoints add `server_knowledge` — a counter you can pass back as `last_knowledge_of_server` to receive only what changed since. That is worth using, because a full budget is very large.
   - **`budgets.get` returns the whole budget.** Every account, category, payee, month and transaction in one answer, which is huge for a real budget. `last-used` reaches the most recently opened one without listing first.
-  - **Transactions can be created 500 at a time.** The batch is validated together rather than one call each, and an `import_id` on each makes a repeat idempotent: a duplicate updates the existing transaction and is reported in `duplicate_import_ids`.
+  - **Transactions can be created 500 at a time.** The batch is validated together rather than one call each, and an `import_id` on each makes a repeat safe: a transaction whose import_id already exists on the same account is skipped, not updated, and is reported in `duplicate_import_ids`.
   - **A split transaction has a null parent category.** When `subtransactions` is non-empty, the parent's `category_id` and `category_name` are null and the amounts live on the splits.
   - **A 403 is a lapsed subscription, not a bad key.** YNAB makes the account read-only when the subscription expires, so that case has its own handler — only a 401 is a credential problem.
   - **A malformed delta request is rejected whole.** Nothing is partly applied, which is why a 400 is never retried.

@@ -15,9 +15,23 @@ const MilliunitsSchema = z
 	.int()
 	.describe('An amount in milliunits: the currency value times 1,000.');
 
+/**
+ * A calendar date, `yyyy-MM-dd`. YNAB rejects anything else, and a malformed date
+ * would otherwise be sent and come back as a 400 that names no field.
+ */
 const DateSchema = z
 	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Use `yyyy-MM-dd`, with no time or zone.')
 	.describe('A date as `yyyy-MM-dd`, with no time or zone.');
+
+/** A month, `yyyy-MM-01`: YNAB only accepts the first day of the month. */
+const MonthSchema = z
+	.string()
+	.regex(
+		/^\d{4}-\d{2}-01$/,
+		'Use `yyyy-MM-01`: month requests start on the 1st.',
+	)
+	.describe('A month as `yyyy-MM-01`.');
 
 /** YNAB wraps every answer in `{ data }`. */
 function envelope<T extends z.ZodType>(item: T) {
@@ -33,7 +47,10 @@ const BudgetSummarySchema = z
 		last_modified_on: z.string().nullish(),
 		first_month: z.string().nullish(),
 		last_month: z.string().nullish(),
+		// unknown: the format object names separators and patterns YNAB can extend;
+		// it is passed through rather than pinned to today's keys.
 		date_format: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: same as date_format; the keys belong to YNAB.
 		currency_format: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -206,7 +223,7 @@ export type YnabScheduledTransaction = z.infer<
 /** The plan for one month: its categories and the month's totals. */
 const MonthSummarySchema = z
 	.object({
-		month: z.string().nullish(),
+		month: MonthSchema.nullish(),
 		note: z.string().nullish(),
 		income: MilliunitsSchema.nullish(),
 		budgeted: MilliunitsSchema.nullish(),
@@ -351,20 +368,15 @@ const AccountsCreateInputSchema = z
 	.object({
 		budgetId: BudgetIdSchema,
 		name: z.string().min(1),
+		// Only the six write-side types are valid here. The read-side enum also has
+		// lineOfCredit and the loan and debt types, which YNAB rejects on create.
 		type: z.enum([
 			'checking',
 			'savings',
 			'cash',
 			'creditCard',
-			'lineOfCredit',
 			'otherAsset',
 			'otherLiability',
-			'mortgage',
-			'autoLoan',
-			'studentLoan',
-			'personalLoan',
-			'medicalDebt',
-			'otherDebt',
 		]),
 		balance: MilliunitsSchema,
 	})
@@ -431,7 +443,7 @@ export type CategoriesGetResponse = z.infer<typeof CategoriesGetResponseSchema>;
  */
 const CategoriesUpdateInputSchema = z.object({
 	budgetId: BudgetIdSchema,
-	month: DateSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
+	month: MonthSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
 	categoryId: IdSchema,
 	budgeted: MilliunitsSchema.describe(
 		'The new budgeted amount for the month, in milliunits. This replaces the value rather than adding to it.',
@@ -528,7 +540,7 @@ export type MonthsListResponse = z.infer<typeof MonthsListResponseSchema>;
 
 const MonthsGetInputSchema = z.object({
 	budgetId: BudgetIdSchema,
-	month: DateSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
+	month: MonthSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
 });
 
 export type MonthsGetInput = z.infer<typeof MonthsGetInputSchema>;
@@ -588,21 +600,24 @@ const TransactionInputShape = {
 	amount: MilliunitsSchema.describe(
 		'Negative for an outflow, positive for an inflow, in milliunits.',
 	),
-	payee_id: z.string().optional(),
+	payee_id: z.string().nullish(),
 	payee_name: z
 		.string()
-		.optional()
+		.nullish()
 		.describe('A new payee, created if it does not already exist.'),
-	category_id: z.string().optional(),
-	memo: z.string().optional(),
+	category_id: z
+		.string()
+		.nullish()
+		.describe('The category, or null to clear it.'),
+	memo: z.string().nullish().describe('The memo, or null to clear it.'),
 	cleared: z.enum(['cleared', 'uncleared', 'reconciled']).optional(),
 	approved: z.boolean().optional(),
-	flag_color: z.string().optional(),
+	flag_color: z.string().nullish().describe('The flag, or null to clear it.'),
 	import_id: z
 		.string()
 		.optional()
 		.describe(
-			'An idempotency key: a duplicate import_id updates the existing transaction rather than adding another.',
+			'An idempotency key. A transaction whose import_id already exists on the same account is skipped, not updated, and is reported in `duplicate_import_ids`.',
 		),
 };
 
@@ -639,13 +654,16 @@ const TransactionsUpdateInputSchema = z.object({
 	account_id: IdSchema.optional(),
 	date: DateSchema.optional(),
 	amount: MilliunitsSchema.optional(),
-	payee_id: z.string().optional(),
-	payee_name: z.string().optional(),
-	category_id: z.string().optional(),
-	memo: z.string().optional(),
+	payee_id: z.string().nullish(),
+	payee_name: z.string().nullish(),
+	category_id: z
+		.string()
+		.nullish()
+		.describe('The category, or null to clear it.'),
+	memo: z.string().nullish().describe('The memo, or null to clear it.'),
 	cleared: z.enum(['cleared', 'uncleared', 'reconciled']).optional(),
 	approved: z.boolean().optional(),
-	flag_color: z.string().optional(),
+	flag_color: z.string().nullish().describe('The flag, or null to clear it.'),
 });
 
 export type TransactionsUpdateInput = z.infer<

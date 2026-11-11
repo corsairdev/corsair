@@ -358,6 +358,7 @@ describe('transactions', () => {
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe(`/v1/budgets/${budgetId}/transactions`);
 		expect(
+			// unknown: only the length is asserted here.
 			(sent.body as { transactions: unknown[] }).transactions,
 		).toHaveLength(2);
 		expect(mockLog).toHaveBeenCalledWith(
@@ -542,5 +543,49 @@ describe('user', () => {
 
 		expect(result.data.user?.id).toBe(userId);
 		expect(lastRequest(fetchMock).path).toBe('/v1/user');
+	});
+});
+
+describe('review fixes', () => {
+	it('rejects a malformed transaction date before sending', async () => {
+		await expect(
+			invoke(Transactions.create, {
+				budgetId: 'b-1',
+				transactions: [
+					{ account_id: 'a-1', date: '11/11/2026', amount: -1000 },
+				],
+			}),
+		).rejects.toThrow(/yyyy-MM-dd/);
+	});
+
+	it('rejects a month that is not the first of the month', async () => {
+		await expect(
+			invoke(Months.get, { budgetId: 'b-1', month: '2026-11-15' }),
+		).rejects.toThrow(/yyyy-MM-01/);
+	});
+
+	it('accepts null to clear a category on update', async () => {
+		respond(fetchMock, { data: { transaction } });
+
+		await invoke(Transactions.update, {
+			budgetId: 'b-1',
+			transactionId: 't-1',
+			category_id: null,
+		});
+
+		// unknown: only the one field sent is asserted on.
+		const body = lastRequest(fetchMock).body as { transaction?: unknown };
+		expect(body.transaction).toMatchObject({ category_id: null });
+	});
+
+	it('rejects a loan account type on create, which is read-side only', async () => {
+		await expect(
+			invoke(Accounts.create, {
+				budgetId: 'b-1',
+				name: 'Car',
+				type: 'autoLoan',
+				balance: 0,
+			}),
+		).rejects.toThrow();
 	});
 });

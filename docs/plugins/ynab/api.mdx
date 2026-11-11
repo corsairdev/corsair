@@ -29,7 +29,7 @@ await corsair.ynab.api.accounts.create({ budgetId: 'last-used', name: 'Checking'
 |------|------|----------|-------------|
 | `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
 | `name` | `string` | Yes | — |
-| `type` | `checking \| savings \| cash \| creditCard \| lineOfCredit \| otherAsset \| otherLiability \| mortgage \| autoLoan \| studentLoan \| personalLoan \| medicalDebt \| otherDebt` | Yes | — |
+| `type` | `checking \| savings \| cash \| creditCard \| otherAsset \| otherLiability` | Yes | — |
 | `balance` | `number` | Yes | An amount in milliunits: the currency value times 1,000. |
 
 
@@ -968,13 +968,13 @@ await corsair.ynab.api.transactions.create({ budgetId: 'last-used', transactions
   account_id: string,
   date: string,
   amount: number,
-  payee_id?: string,
-  payee_name?: string,
-  category_id?: string,
-  memo?: string,
+  payee_id?: string | null,
+  payee_name?: string | null,
+  category_id?: string | null,
+  memo?: string | null,
   cleared?: cleared | uncleared | reconciled,
   approved?: boolean,
-  flag_color?: string,
+  flag_color?: string | null,
   import_id?: string
 }[]
 ```
@@ -1290,13 +1290,13 @@ await corsair.ynab.api.transactions.scheduledCreate({ budgetId: 'last-used', sch
   account_id: string,
   date: string,
   amount: number,
-  payee_id?: string,
-  payee_name?: string,
-  category_id?: string,
-  memo?: string,
+  payee_id?: string | null,
+  payee_name?: string | null,
+  category_id?: string | null,
+  memo?: string | null,
   cleared?: cleared | uncleared | reconciled,
   approved?: boolean,
-  flag_color?: string,
+  flag_color?: string | null,
   import_id?: string,
   frequency: never | daily | weekly | everyOtherWeek | twiceAMonth | every4Weeks | monthly | everyOtherMonth | every3Months | every4Months | twiceAYear | yearly | everyOtherYear
 }
@@ -1587,13 +1587,13 @@ await corsair.ynab.api.transactions.update({ budgetId: 'last-used', transactionI
 | `account_id` | `string` | No | — |
 | `date` | `string` | No | A date as `yyyy-MM-dd`, with no time or zone. |
 | `amount` | `number` | No | An amount in milliunits: the currency value times 1,000. |
-| `payee_id` | `string` | No | — |
-| `payee_name` | `string` | No | — |
-| `category_id` | `string` | No | — |
-| `memo` | `string` | No | — |
+| `payee_id` | `string \| null` | No | — |
+| `payee_name` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | The category, or null to clear it. |
+| `memo` | `string \| null` | No | The memo, or null to clear it. |
 | `cleared` | `cleared \| uncleared \| reconciled` | No | — |
 | `approved` | `boolean` | No | — |
-| `flag_color` | `string` | No | — |
+| `flag_color` | `string \| null` | No | The flag, or null to clear it. |
 
 
 

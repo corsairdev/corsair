@@ -34,6 +34,12 @@ export const errorHandlers = {
 			error instanceof YnabAPIError && error.isSubscriptionLapsed,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// A 403 that is not a lapsed subscription: a bad scope, a data limit or an
+	// unconfirmed email. Renewing does not fix any of them.
+	FORBIDDEN_ERROR: {
+		match: (error: Error) => error instanceof YnabAPIError && error.isForbidden,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => error instanceof YnabAPIError && error.isNotFound,
 		handler: async () => ({ maxRetries: 0 }),
