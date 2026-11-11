@@ -1,0 +1,94 @@
+displayName: WaiverFile
+description: Electronic waivers and booking with WaiverFile - read signed waivers and their PDFs, search and page through waiver data, manage events and event categories, list waiver forms, and subscribe URLs to the triggers WaiverFile posts to.
+domain: waiverfile.com
+recommendedAuth: api_key
+overviewNote: |
+  Create the key in the WaiverFile admin under **Settings > API Keys**. Every call needs that key **and the site ID it belongs to**, so store the pair in the key slot as `<apiKey>\n<siteID>` — the plugin splits it and reports a configuration error before any request if it is malformed.
+
+  - **Credentials travel in the query string, not a header.** Every route takes `apiKey` and `siteID` as query parameters; there is no bearer token. The plugin adds both to every call, so a bare key is rejected up front rather than failing with an obscure 404.
+  - **`InsertEvent` is the exception.** It carries the credentials in the **body** as `APIKey` and `SiteID`, which the plugin fills in from the same packed key. The query still holds them, but the body's copy is what the route reads.
+  - **A bad key is a 400, not a 401.** WaiverFile answers `{"Message":"Invalid…"}` with HTTP 400 for a wrong key or a site the key does not belong to — the same status as a genuine validation failure. The plugin reads the message to tell them apart, so a credential problem is reported as an auth error and a real 400 stays a validation error.
+  - **Errors have no code.** The body is `{"Message": "..."}` with a capital M. There is nothing else to branch on, which is why the handlers rely on the status plus that one message.
+  - **A missing route is also a 404.** Because everything is addressed by query parameter, a 404 means the *path* is wrong rather than the object missing — a misspelled endpoint reads exactly like a deleted waiver.
+  - **`pageIndex` conventions differ.** The waiver lists (`waivers.list`, `waivers.listLite`) are **zero-based** and cap `pageSize` at 500. `waivers.data` is **one-based** and allows up to 1000. Getting this wrong silently returns the wrong page, so each schema documents and enforces its own.
+  - **`consolidateParticipants` is reserved.** The API accepts it and ignores it; rows still come back one per participant.
+  - **Two deletes are not `DELETE`.** `events.delete` is a `GET /DeleteEvent` and `eventCategories.delete` is a `POST /DeleteEventCategory` — so neither is safe to replay on a timeout, despite one looking like a read.
+  - **`/task`-style PascalCase is the norm.** Responses use `WaiverID`, `DateSigned`, `SignedName`, and participants are spelled `Particpants` — WaiverFile's own typo, kept as-is so a caller reading the docs finds the field.
+  - **The webhook triggers are path segments.** Subscribing is `POST /subscribe/<trigger>?targetUrl=…` and unsubscribing is `DELETE /deletesubscribe/<trigger>` with the same URL, one route per trigger. The twelve triggers are `newwaiver`, `newevent`, `newcheckin`, `newqrscan`, `newbookingcheckin`, `bookingcheckinundone`, `bookingcheckedin`, `newmembercheckin`, `membercheckinundone`, `editwaiver`, `editevent` and `editcheckin`. There is no signing secret, so the receiving host verifies by its own means.
+  - **A waiver PDF is a file, not JSON.** `waivers.pdf` returns the document itself, so the plugin reports the waiver id and the byte length rather than pretending to parse it.
+  - **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log — only counts and flags.
+examples:
+  read:
+    path: waivers.get
+    title: Read a signed waiver
+    args:
+      waiverID: 4e5c5176-1238-45a3-8a87-35435baecaa2
+  write:
+    path: events.create
+    title: Create an event
+    args:
+      eventName: Saturday open jump
+      dateStart: 2024-06-02T09:00:00Z
+      dateEnd: 2024-06-02T17:00:00Z
+      isAllDay: false
+apiExamples:
+  ping.check: {}
+  site.get: {}
+  waivers.get:
+    call: "{ waiverID: '4e5c5176-1238-45a3-8a87-35435baecaa2' }"
+  waivers.getLite:
+    call: "{ waiverID: '4e5c5176-1238-45a3-8a87-35435baecaa2' }"
+  waivers.search:
+    call: "{ terms: 'Jordan Ruiz' }"
+  waivers.byReference:
+    call: "{ refID1: 'ORDER-42' }"
+  waivers.list:
+    call: "{ startDate: '2024-06-01', endDate: '2024-06-30', pageIndex: 0, pageSize: 50 }"
+  waivers.listLite:
+    call: "{ startDate: '2024-06-01', endDate: '2024-06-30', pageIndex: 0, pageSize: 50 }"
+  waivers.pageCount:
+    call: "{ startDate: '2024-06-01', endDate: '2024-06-30' }"
+  waivers.data:
+    call: "{ startDate: '2024-06-01', endDate: '2024-06-30', includeCustomColumns: true, consolidateParticipants: false, pageIndex: 1, pageSize: 100 }"
+  waivers.dataCount:
+    call: "{ startDate: '2024-06-01', endDate: '2024-06-30' }"
+  waivers.pdf:
+    call: "{ waiverID: '4e5c5176-1238-45a3-8a87-35435baecaa2' }"
+  forms.active: {}
+  forms.all: {}
+  events.byDateRange:
+    call: "{ startDateUTC: '2024-06-01T00:00:00Z', endDateUTC: '2024-06-30T23:59:59Z' }"
+  events.byCategory:
+    call: "{ eventCategoryID: '9a3c5e3e-7c4f-4a83-88be-86a3c85fa0e4', startDateUTC: '2024-06-01T00:00:00Z', endDateUTC: '2024-06-30T23:59:59Z' }"
+  events.upcoming:
+    call: "{ startDateUTC: '2024-06-01T00:00:00Z', endDateUTC: '2024-06-30T23:59:59Z' }"
+  events.waivers:
+    call: "{ waiverEventID: 'c0a1b2c3-1111-2222-3333-444455556666' }"
+  events.get:
+    call: "{ eventID: 'c0a1b2c3-1111-2222-3333-444455556666' }"
+  events.create:
+    call: "{ eventName: 'Saturday open jump', dateStart: '2024-06-02T09:00:00Z', dateEnd: '2024-06-02T17:00:00Z', isAllDay: false, eventCategoryID: '9a3c5e3e-7c4f-4a83-88be-86a3c85fa0e4' }"
+  events.update:
+    call: "{ eventID: 'c0a1b2c3-1111-2222-3333-444455556666', eventName: 'Saturday open jump', dateStart: '2024-06-02T09:00:00Z', dateEnd: '2024-06-02T17:00:00Z', isAllDay: false, eventCategoryID: '9a3c5e3e-7c4f-4a83-88be-86a3c85fa0e4', waiverFormIDs: ['152a63cc-0a49-475a-a8e4-5f89bee94fe6'] }"
+  events.delete:
+    call: "{ eventID: 'c0a1b2c3-1111-2222-3333-444455556666' }"
+  events.inviteManagers:
+    call: "{ eventID: 'c0a1b2c3-1111-2222-3333-444455556666', emailAddresses: 'manager@example.com' }"
+  events.removeManagers:
+    call: "{ eventID: 'c0a1b2c3-1111-2222-3333-444455556666', emailAddresses: 'manager@example.com' }"
+  eventCategories.list:
+    call: "{ includeDisabledCategories: true }"
+  eventCategories.create:
+    call: "{ name: 'Open jump', active: true }"
+  eventCategories.update:
+    call: "{ eventCategoryID: '9a3c5e3e-7c4f-4a83-88be-86a3c85fa0e4', name: 'Open jump (renamed)', active: false }"
+  eventCategories.delete:
+    call: "{ eventCategoryID: '9a3c5e3e-7c4f-4a83-88be-86a3c85fa0e4' }"
+  subscribers.list:
+    call: "{ startDateUTC: '2024-06-01T00:00:00Z', endDateUTC: '2024-06-30T23:59:59Z' }"
+  subscribers.optedOut:
+    call: "{ startDateUTC: '2024-06-01T00:00:00Z', endDateUTC: '2024-06-30T23:59:59Z' }"
+  webhooks.subscribe:
+    call: "{ trigger: 'newwaiver', targetUrl: 'https://acme.example/hooks/waiverfile' }"
+  webhooks.unsubscribe:
+    call: "{ trigger: 'newwaiver', targetUrl: 'https://acme.example/hooks/waiverfile' }"

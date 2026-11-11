@@ -450,6 +450,7 @@ export const BaseProviders = [
 	'veriphone',
 	'vestaboard',
 	'waboxapp',
+	'waiverfile',
 	'wakatime',
 	'webflow',
 	'webscrapingai',
@@ -920,6 +921,7 @@ export const ProviderDisplayNames = {
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
 	waboxapp: 'Waboxapp',
+	waiverfile: 'WaiverFile',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
 	webscrapingai: 'WebScraping.AI',
@@ -1397,6 +1399,7 @@ export type AllProviders =
 	| 'veriphone'
 	| 'vestaboard'
 	| 'waboxapp'
+	| 'waiverfile'
 	| 'wakatime'
 	| 'webflow'
 	| 'webscrapingai'
