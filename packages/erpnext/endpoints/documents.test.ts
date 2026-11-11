@@ -1,4 +1,3 @@
-
 import { createCorsair } from 'corsair/core';
 import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
@@ -788,8 +787,13 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 
-	it('mirrors fetched documents into the stored documents entity', async () => {
+	it('mirrors fetched documents and merges them with the stored row', async () => {
 		const upsertByEntityId = jest.fn();
+		const existingRow = {
+			doctype: 'Customer',
+			name: 'CUST-002',
+			phone_number: '+1 555 0100',
+		};
 		const mockFetch = jest
 			.spyOn(global, 'fetch')
 			.mockImplementation(async () => {
@@ -809,15 +813,75 @@ describe('ERPNext tenant host and local document sync', () => {
 				{
 					key: 'test-key:test-secret',
 					options: { baseUrl: BASE_URL },
-					db: { documents: { upsertByEntityId, deleteByEntityId: jest.fn() } },
+					db: {
+						documents: {
+							// The core ORM returns the entity row with the stored
+							// document under `data`.
+							findByEntityId: jest
+								.fn()
+								.mockResolvedValue({ data: existingRow }),
+							upsertByEntityId,
+							deleteByEntityId: jest.fn(),
+						},
+					},
 				},
 				{ doctype: 'Customer', name: 'CUST-002' },
 			);
 			expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+			// The merge keeps fields saved by an earlier fetch that this
+			// response does not carry, so a name-only list page can never
+			// wipe previously stored fields.
 			expect(upsertByEntityId).toHaveBeenCalledWith('Customer:CUST-002', {
 				doctype: 'Customer',
 				name: 'CUST-002',
 				customer_name: 'Acme',
+				phone_number: '+1 555 0100',
+			});
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('keeps full document fields when a later list selects only the name', async () => {
+		const upsertByEntityId = jest.fn();
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => {
+				// A list page that asked for `fields=["name"]` carries no business
+				// fields at all — the shape that used to erase the stored row.
+				return new Response(JSON.stringify({ data: [{ name: 'CUST-006' }] }), {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				});
+			});
+		try {
+			await documentsEndpoints.list(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: {
+						documents: {
+							findByEntityId: jest.fn().mockResolvedValue({
+								data: {
+									doctype: 'Customer',
+									name: 'CUST-006',
+									customer_name: 'Acme',
+									phone_number: '+1 555 0100',
+								},
+							}),
+							upsertByEntityId,
+							deleteByEntityId: jest.fn(),
+						},
+					},
+				},
+				{ doctype: 'Customer', fields: '["name"]' },
+			);
+			expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+			expect(upsertByEntityId).toHaveBeenCalledWith('Customer:CUST-006', {
+				doctype: 'Customer',
+				name: 'CUST-006',
+				customer_name: 'Acme',
+				phone_number: '+1 555 0100',
 			});
 		} finally {
 			mockFetch.mockRestore();
@@ -839,7 +903,13 @@ describe('ERPNext tenant host and local document sync', () => {
 				{
 					key: 'test-key:test-secret',
 					options: { baseUrl: BASE_URL },
-					db: { documents: { upsertByEntityId: jest.fn(), deleteByEntityId } },
+					db: {
+						documents: {
+							findByEntityId: jest.fn().mockResolvedValue(null),
+							upsertByEntityId: jest.fn(),
+							deleteByEntityId,
+						},
+					},
 				},
 				{ doctype: 'Customer', name: 'CUST-003' },
 			);
@@ -849,6 +919,7 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 });
+
 // Greptile round-3: explicit credentials and the site host must come from
 // the same source — an explicitly configured key pair never travels to a
 // tenant-stored base_url from another account.

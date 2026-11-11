@@ -56,7 +56,21 @@ async function syncDocuments(
 		for (const doc of docsFromEnvelope(result)) {
 			const name = doc.name;
 			if (typeof name === 'string' && name.length > 0) {
-				await db.upsertByEntityId(`${doctype}:${name}`, { doctype, ...doc });
+				// Upsert replaces the stored row, and list results carry only the
+				// fields the caller selected: merge with the document a previous
+				// fetch stored so a name-only list page never wipes saved fields.
+				// The core ORM returns the entity row, so the document fields
+				// live under `data` beside the row metadata.
+				const existing = await db.findByEntityId(`${doctype}:${name}`);
+				const prior =
+					existing?.data && typeof existing.data === 'object'
+						? (existing.data as ErpnextAnyDoc)
+						: {};
+				await db.upsertByEntityId(`${doctype}:${name}`, {
+					doctype,
+					...prior,
+					...doc,
+				});
 			}
 		}
 	} catch (error) {
