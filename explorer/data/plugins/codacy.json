@@ -1,0 +1,756 @@
+{
+  "id": "codacy",
+  "displayName": "Codacy",
+  "description": "Read Codacy code quality data - your account, organizations, repositories and their language and analysis tool settings, plus the catalog of analysis tools and their code patterns.",
+  "npmPackageName": "@corsair-dev/codacy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "codacy.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get account details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string, mainEmail: string, otherEmails: string[], isAdmin: boolean, isActive: boolean, created: string, intercomHash?: string, zendeskHash?: string, pylonHash?: string, shouldDoClientQualification?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.analysis.getConfig",
+      "shortPath": "analysis.getConfig",
+      "description": "Get repository analysis configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Git provider (e.g. gh, gl, bb)"
+          },
+          {
+            "key": "organization_name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name on the Git provider"
+          },
+          {
+            "key": "repository_name",
+            "optional": false,
+            "type": "string",
+            "description": "Repository name on the Git provider"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name: string, isClientSide: boolean, settings?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Git provider (e.g. gh, gl, bb)"
+          },
+          {
+            "key": "organization_name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name on the Git provider"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ organization: { identifier?: number, remoteIdentifier: string, name: string, avatar?: string, created?: string, provider: string, joinMode?: string, type?: string, joinStatus?: string, singleProviderLogin: boolean, hasDastAccess: boolean, hasScaEnabled: boolean, imageSbomEnabled: boolean, hasAiInventoryEnabled?: boolean, hasFalsePositiveAccess?: boolean, hasSilentFalsePositiveDetection?: boolean }, membership?: { userRole: string }, analysisConfigurationMinimumPermission?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "Restrict to a single Git provider (e.g. gh). Omit to list across providers."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 1000, default 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ identifier?: number, remoteIdentifier: string, name: string, avatar?: string, created?: string, provider: string, joinMode?: string, type?: string, joinStatus?: string, singleProviderLogin: boolean, hasDastAccess: boolean, hasScaEnabled: boolean, imageSbomEnabled: boolean, hasAiInventoryEnabled?: boolean, hasFalsePositiveAccess?: boolean, hasSilentFalsePositiveDetection?: boolean }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string, limit?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.patterns.get",
+      "shortPath": "patterns.get",
+      "description": "Get tool pattern",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "Tool UUID"
+          },
+          {
+            "key": "pattern_id",
+            "optional": false,
+            "type": "string",
+            "description": "Pattern ID (unique per tool)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string, category: string, subCategory?: string, level: string, severityLevel: string, description?: string, explanation?: string, enabled?: boolean, languages?: string[], timeToFix?: number, parameters?: any, rationale?: string, solution?: string, goodExamples?: string[], badExamples?: string[], tags?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.patterns.list",
+      "shortPath": "patterns.list",
+      "description": "List tool patterns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "Tool UUID"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only patterns on by default; false: only those off"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 1000, default 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string, category: string, subCategory?: string, level: string, severityLevel: string, description?: string, explanation?: string, enabled?: boolean, languages?: string[], timeToFix?: number, parameters?: any, rationale?: string, solution?: string, goodExamples?: string[], badExamples?: string[], tags?: string[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string, limit?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.repositories.get",
+      "shortPath": "repositories.get",
+      "description": "Get repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Git provider (e.g. gh, gl, bb)"
+          },
+          {
+            "key": "organization_name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name on the Git provider"
+          },
+          {
+            "key": "repository_name",
+            "optional": false,
+            "type": "string",
+            "description": "Repository name on the Git provider"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ repositoryId?: number, provider: string, owner: string, name: string, fullPath?: string, visibility?: string, remoteIdentifier?: string, lastUpdated?: string, permission?: string, languages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.repositories.languages",
+      "shortPath": "repositories.languages",
+      "description": "Get repository languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Git provider (e.g. gh, gl, bb)"
+          },
+          {
+            "key": "organization_name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name on the Git provider"
+          },
+          {
+            "key": "repository_name",
+            "optional": false,
+            "type": "string",
+            "description": "Repository name on the Git provider"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languages",
+            "optional": false,
+            "type": "{ name: string, codacyDefaults: string[], extensions: string[], defaultFiles: string[], enabled: boolean, detected: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.repositories.list",
+      "shortPath": "repositories.list",
+      "description": "List repositories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Git provider (e.g. gh, gl, bb)"
+          },
+          {
+            "key": "organization_name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name on the Git provider"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Filter repositories by name"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 1000, default 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ repositoryId?: number, provider: string, owner: string, name: string, fullPath?: string, visibility?: string, remoteIdentifier?: string, lastUpdated?: string, permission?: string, languages?: string[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string, limit?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "codacy.api.tools.list",
+      "shortPath": "tools.list",
+      "description": "List analysis tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 1000, default 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name: string, version?: string, shortName?: string, documentationUrl?: string, sourceCodeUrl?: string, prefix?: string, needsCompilation?: boolean, configurationFilenames?: string[], description?: string, dockerImage?: string, languages?: string[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string, limit?: number, total?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "codacy.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mainEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isAdmin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isActive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "intercomHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zendeskHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pylonHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shouldDoClientQualification",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "codacy.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remoteIdentifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "joinMode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "joinStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "singleProviderLogin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasDastAccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasScaEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "imageSbomEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasAiInventoryEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasFalsePositiveAccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasSilentFalsePositiveDetection",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "codacy.db.patterns.search",
+      "entityName": "patterns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subCategory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "level",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "severityLevel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "explanation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timeToFix",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rationale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "solution",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "codacy.db.repositories.search",
+      "entityName": "repositories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "repositoryId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "owner",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullPath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "remoteIdentifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permission",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "codacy.db.tools.search",
+      "entityName": "tools",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "documentationUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceCodeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "needsCompilation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dockerImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

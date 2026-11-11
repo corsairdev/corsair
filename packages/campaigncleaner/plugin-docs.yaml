@@ -1,0 +1,17 @@
+displayName: Campaign Cleaner
+description: Email campaign checking tool for listing campaigns, reading status and PDF analysis, deleting campaigns, and checking credits.
+domain: campaigncleaner.com
+examples:
+  read:
+    path: campaign.list
+    title: List campaigns
+  write:
+    path: campaign.pdfAnalysis
+    title: Get a campaign PDF analysis
+    args:
+      campaignId: "12345"
+dbExample:
+  entity: campaigns
+  note: >-
+    These tables exist, but Campaign Cleaner calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

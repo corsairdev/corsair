@@ -1490,8 +1490,7 @@ await corsair.customgpt.api.projects.plugins({});
     key?: string,
     name?: string,
     is_enabled?: boolean,
-    settings?: {
-    } | null
+    settings?: Record<string, any> | null
   }[]
 }
 ```
@@ -1699,10 +1698,8 @@ await corsair.customgpt.api.reports.exportLeads({});
     phone_number?: string | null,
     company?: string | null,
     captured_at?: string | null,
-    other_data?: {
-    } | null,
-    user_defined?: {
-    } | null,
+    other_data?: Record<string, any> | null,
+    user_defined?: Record<string, any> | null,
     tags?: string[] | null,
     syncedAt?: Date
   }[],
@@ -1742,7 +1739,7 @@ await corsair.customgpt.api.reports.getAnalysis({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | — |
-| `filters` | `queries \| conversations \| queries_per_conversation[]` | Yes | — |
+| `filters` | `(queries \| conversations \| queries_per_conversation)[]` | Yes | — |
 | `interval` | `daily \| weekly` | No | — |
 
 
@@ -1797,7 +1794,7 @@ await corsair.customgpt.api.reports.getConversations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | — |
-| `filters` | `total \| average_queries_per_conversation[]` | Yes | — |
+| `filters` | `(total \| average_queries_per_conversation)[]` | Yes | — |
 
 
 
@@ -1845,12 +1842,12 @@ await corsair.customgpt.api.reports.getIntelligence({});
 | `limit` | `number` | No | — |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
-| `content_source` | `in-context \| out-of-context \| not-used[]` | No | — |
+| `content_source` | `(in-context \| out-of-context \| not-used)[]` | No | — |
 | `accuracy` | `string` | No | — |
-| `stakeholder_status` | `APPROVED \| FLAGGED \| BLOCKED[]` | No | — |
-| `user_emotion` | `positive \| neutral \| frustration \| dissatisfaction \| confusion \| unclear[]` | No | — |
-| `user_intent` | `informational \| troubleshooting \| instructional \| greetings \| transactional \| navigational \| follow-up \| unclear[]` | No | — |
-| `human_request` | `true \| false \| unclear[]` | No | — |
+| `stakeholder_status` | `(APPROVED \| FLAGGED \| BLOCKED)[]` | No | — |
+| `user_emotion` | `(positive \| neutral \| frustration \| dissatisfaction \| confusion \| unclear)[]` | No | — |
+| `user_intent` | `(informational \| troubleshooting \| instructional \| greetings \| transactional \| navigational \| follow-up \| unclear)[]` | No | — |
+| `human_request` | `(true \| false \| unclear)[]` | No | — |
 | `language` | `string[]` | No | — |
 | `external_id` | `string[]` | No | — |
 | `country` | `string[]` | No | — |
@@ -1938,7 +1935,7 @@ await corsair.customgpt.api.reports.getTraffic({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | — |
-| `filters` | `sources[]` | Yes | — |
+| `filters` | `sources[]` | No | Defaults to ["sources"]. |
 
 
 
@@ -2120,59 +2117,59 @@ await corsair.customgpt.api.settings.update({});
 | `chatbot_msg_lang` | `sq \| ar \| hy \| az \| ba \| eu \| be \| bn \| bh \| bs \| pt-BR \| bg \| yue \| ca \| hne \| hr \| cs \| da \| doi \| nl \| en \| et \| fo \| fi \| fr \| gl \| ka \| de \| el \| gu \| hry \| he \| hi \| hu \| id \| ga \| it \| ja \| jv \| kn \| ks \| kk \| kok \| ko \| ky \| lv \| lt \| mk \| mai \| ms \| mt \| cmn \| mr \| mwr \| nan \| mo \| mn \| me \| ne \| no \| or \| ps \| fa \| pl \| pt \| pa \| raj \| ro \| ru \| sa \| sat \| sr \| sd \| si \| sk \| sl \| es \| sw \| sv \| tg \| ta \| tt \| te \| th \| tr \| tk \| uk \| ur \| uz \| vi \| cy \| wuu` | No | — |
 | `chatbot_color` | `string` | No | — |
 | `chatbot_toolbar_color` | `string` | No | — |
-| `persona_instructions` | `string` | No | — |
-| `citations_answer_source_label_msg` | `string` | No | — |
-| `citations_sources_label_msg` | `string` | No | — |
-| `hang_in_there_msg` | `string` | No | — |
-| `chatbot_siesta_msg` | `string` | No | — |
-| `chatbot_failed_moderation_msg` | `string` | No | — |
-| `account_out_of_queries_msg` | `string` | No | — |
-| `is_loading_indicator_enabled` | `boolean` | No | — |
-| `enable_citations` | `0 \| 1 \| 2 \| 3` | No | — |
-| `enable_feedbacks` | `boolean` | No | — |
-| `enable_copy_button` | `boolean` | No | — |
-| `citations_view_type` | `user \| show \| hide` | No | — |
-| `image_citation_display` | `default \| first_only` | No | — |
-| `limit_image_citation_height` | `boolean` | No | — |
-| `use_opengraph_image_citation` | `boolean` | No | — |
+| `persona_instructions` | `string \| null` | No | — |
+| `citations_answer_source_label_msg` | `string \| null` | No | — |
+| `citations_sources_label_msg` | `string \| null` | No | — |
+| `hang_in_there_msg` | `string \| null` | No | — |
+| `chatbot_siesta_msg` | `string \| null` | No | — |
+| `chatbot_failed_moderation_msg` | `string \| null` | No | — |
+| `account_out_of_queries_msg` | `string \| null` | No | — |
+| `is_loading_indicator_enabled` | `boolean \| null` | No | — |
+| `enable_citations` | `0 \| 1 \| 2 \| 3 \| null` | No | — |
+| `enable_feedbacks` | `boolean \| null` | No | — |
+| `enable_copy_button` | `boolean \| null` | No | — |
+| `citations_view_type` | `user \| show \| hide \| null` | No | — |
+| `image_citation_display` | `default \| first_only \| null` | No | — |
+| `limit_image_citation_height` | `boolean \| null` | No | — |
+| `use_opengraph_image_citation` | `boolean \| null` | No | — |
 | `max_inline_images_per_response` | `0 \| 1 \| 2 \| 3` | No | — |
-| `no_answer_message` | `string` | No | — |
-| `ending_message` | `string` | No | — |
-| `try_asking_questions_msg` | `string` | No | — |
-| `view_more_msg` | `string` | No | — |
-| `view_less_msg` | `string` | No | — |
-| `remove_branding` | `boolean` | No | — |
-| `enable_recaptcha_for_public_chatbots` | `boolean` | No | — |
-| `chatbot_model` | `gpt-4-1 \| gpt-4-o \| gpt-5.1-none \| gpt-5.1-low \| gpt-5.2-none \| gpt-5.2-low \| gpt-5.4-low \| gpt-4-1-mini \| gpt-4o-mini \| claude-4.8-opus \| claude-4.6-opus \| claude-4.5-opus \| claude-4.6-sonnet \| claude-4.6-sonnet-thinking \| claude-4.5-sonnet \| claude-4.5-haiku \| gpt-o4-mini-low \| gpt-o4-mini-medium \| gpt-o4-mini-high \| gemini-3.1-pro \| gemini-3-pro \| gemini-3.5-flash` | No | — |
-| `is_selling_enabled` | `boolean` | No | — |
-| `can_share_conversation` | `boolean` | No | — |
-| `can_export_conversation` | `boolean` | No | — |
-| `hide_sources_from_responses` | `boolean` | No | — |
-| `agent_capability` | `fastest-responses \| optimal-choice \| advanced-reasoning \| complex-tasks` | No | — |
-| `input_field_addendum` | `string` | No | — |
-| `ai_disclaimer` | `string` | No | — |
+| `no_answer_message` | `string \| null` | No | — |
+| `ending_message` | `string \| null` | No | — |
+| `try_asking_questions_msg` | `string \| null` | No | — |
+| `view_more_msg` | `string \| null` | No | — |
+| `view_less_msg` | `string \| null` | No | — |
+| `remove_branding` | `boolean \| null` | No | — |
+| `enable_recaptcha_for_public_chatbots` | `boolean \| null` | No | — |
+| `chatbot_model` | `gpt-4-1 \| gpt-4-o \| gpt-5.1-none \| gpt-5.1-low \| gpt-5.2-none \| gpt-5.2-low \| gpt-5.4-low \| gpt-4-1-mini \| gpt-4o-mini \| claude-4.8-opus \| claude-4.6-opus \| claude-4.5-opus \| claude-4.6-sonnet \| claude-4.6-sonnet-thinking \| claude-4.5-sonnet \| claude-4.5-haiku \| gpt-o4-mini-low \| gpt-o4-mini-medium \| gpt-o4-mini-high \| gemini-3.1-pro \| gemini-3-pro \| gemini-3.5-flash \| null` | No | — |
+| `is_selling_enabled` | `boolean \| null` | No | — |
+| `can_share_conversation` | `boolean \| null` | No | — |
+| `can_export_conversation` | `boolean \| null` | No | — |
+| `hide_sources_from_responses` | `boolean \| null` | No | — |
+| `agent_capability` | `fastest-responses \| optimal-choice \| advanced-reasoning \| complex-tasks \| null` | No | — |
+| `input_field_addendum` | `string \| null` | No | — |
+| `ai_disclaimer` | `string \| null` | No | — |
 | `user_avatar_enabled` | `boolean` | No | — |
-| `user_avatar` | `string` | No | — |
+| `user_avatar` | `string \| null` | No | — |
 | `title_avatar_enabled` | `boolean` | No | — |
 | `spotlight_avatar_enabled` | `boolean` | No | — |
-| `spotlight_avatar` | `string` | No | — |
-| `spotlight_avatar_shape` | `circle \| rectangle` | No | — |
-| `spotlight_avatar_type` | `default \| image` | No | — |
-| `user_avatar_orientation` | `agent-left-user-right \| agent-right-user-right \| agent-right-user-left \| agent-left-user-left` | No | — |
+| `spotlight_avatar` | `string \| null` | No | — |
+| `spotlight_avatar_shape` | `circle \| rectangle \| null` | No | — |
+| `spotlight_avatar_type` | `default \| image \| null` | No | — |
+| `user_avatar_orientation` | `agent-left-user-right \| agent-right-user-right \| agent-right-user-left \| agent-left-user-left \| null` | No | — |
 | `agent_title_avatar_alignment` | `left \| center \| right` | No | — |
-| `chatbot_title` | `string` | No | — |
-| `chatbot_title_color` | `string` | No | — |
-| `enable_inline_citations_api` | `boolean` | No | — |
-| `conversation_time_window` | `0 \| 1 \| 2` | No | — |
+| `chatbot_title` | `string \| null` | No | — |
+| `chatbot_title_color` | `string \| null` | No | — |
+| `enable_inline_citations_api` | `boolean \| null` | No | — |
+| `conversation_time_window` | `0 \| 1 \| 2 \| null` | No | — |
 | `conversation_retention_period` | `custom \| year \| never` | No | — |
 | `conversation_retention_days` | `number` | No | — |
-| `use_context_aware_starter_question` | `boolean` | No | — |
+| `use_context_aware_starter_question` | `boolean \| null` | No | — |
 | `enable_agent_knowledge_base_awareness` | `boolean` | No | — |
-| `markdown_enabled` | `boolean` | No | — |
-| `is_hybrid_search` | `boolean` | No | — |
+| `markdown_enabled` | `boolean \| null` | No | — |
+| `is_hybrid_search` | `boolean \| null` | No | — |
 | `user_awareness` | `boolean` | No | — |
-| `context_depth` | `compact \| balanced \| extended \| rich \| max \| custom` | No | — |
-| `use_planner_mode` | `boolean` | No | — |
+| `context_depth` | `compact \| balanced \| extended \| rich \| max \| custom \| null` | No | — |
+| `use_planner_mode` | `boolean \| null` | No | — |
 | `master_project_smart_routing_mode` | `off \| start-only \| every-message` | No | — |
 | `master_project_user_agent_switching_enabled` | `boolean` | No | — |
 | `max_actions_per_query` | `number` | No | — |
@@ -2185,7 +2182,7 @@ await corsair.customgpt.api.settings.update({});
 | `is_pdf_page_visibility_limited` | `boolean` | No | — |
 | `pdf_limited_page_label` | `string` | No | — |
 | `is_pdf_limited_label_linked` | `boolean` | No | — |
-| `allowed_domains_for_embedding` | `string[]` | No | — |
+| `allowed_domains_for_embedding` | `string[] \| null` | No | — |
 | `projectId` | `number` | Yes | — |
 
 

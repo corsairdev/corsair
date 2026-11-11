@@ -38,15 +38,15 @@ await corsair.sentry.api.events.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `eventID` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `message` | `string` | No | — |
-| `platform` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `dateReceived` | `string` | No | — |
-| `type` | `string` | No | — |
-| `groupID` | `string` | No | — |
-| `tags` | `object[]` | No | — |
-| `context` | `object` | No | — |
+| `title` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `platform` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `dateReceived` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `groupID` | `string \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tags full type">
@@ -55,15 +55,7 @@ await corsair.sentry.api.events.get({});
 {
   key: string,
   value: string
-}[]
-```
-</Accordion>
-
-<Accordion title="context full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -113,8 +105,7 @@ await corsair.sentry.api.events.list({});
     key: string,
     value: string
   }[] | null,
-  context?: {
-  } | null
+  context?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -177,33 +168,25 @@ await corsair.sentry.api.issues.get({});
 | `id` | `string` | Yes | — |
 | `shortId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `culprit` | `string` | No | — |
-| `permalink` | `string` | No | — |
-| `level` | `string` | No | — |
+| `culprit` | `string \| null` | No | — |
+| `permalink` | `string \| null` | No | — |
+| `level` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `platform` | `string` | No | — |
-| `type` | `string` | No | — |
-| `count` | `string` | No | — |
-| `userCount` | `number` | No | — |
-| `firstSeen` | `string` | No | — |
-| `lastSeen` | `string` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `isBookmarked` | `boolean` | No | — |
-| `hasSeen` | `boolean` | No | — |
-| `isSubscribed` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-| `project` | `object` | No | — |
-| `assignedTo` | `object` | No | — |
+| `platform` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `count` | `string \| null` | No | — |
+| `userCount` | `number \| null` | No | — |
+| `firstSeen` | `string \| null` | No | — |
+| `lastSeen` | `string \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `isBookmarked` | `boolean \| null` | No | — |
+| `hasSeen` | `boolean \| null` | No | — |
+| `isSubscribed` | `boolean \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `assignedTo` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="project full type">
 
 ```ts
@@ -211,7 +194,7 @@ await corsair.sentry.api.issues.get({});
   id: string,
   name: string,
   slug: string
-}
+} | null
 ```
 </Accordion>
 
@@ -222,7 +205,7 @@ await corsair.sentry.api.issues.get({});
   id: string,
   name: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -278,8 +261,7 @@ await corsair.sentry.api.issues.list({});
   isBookmarked?: boolean | null,
   hasSeen?: boolean | null,
   isSubscribed?: boolean | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   project?: {
     id: string,
     name: string,
@@ -331,33 +313,25 @@ await corsair.sentry.api.issues.update({});
 | `id` | `string` | Yes | — |
 | `shortId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `culprit` | `string` | No | — |
-| `permalink` | `string` | No | — |
-| `level` | `string` | No | — |
+| `culprit` | `string \| null` | No | — |
+| `permalink` | `string \| null` | No | — |
+| `level` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `platform` | `string` | No | — |
-| `type` | `string` | No | — |
-| `count` | `string` | No | — |
-| `userCount` | `number` | No | — |
-| `firstSeen` | `string` | No | — |
-| `lastSeen` | `string` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `isBookmarked` | `boolean` | No | — |
-| `hasSeen` | `boolean` | No | — |
-| `isSubscribed` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-| `project` | `object` | No | — |
-| `assignedTo` | `object` | No | — |
+| `platform` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `count` | `string \| null` | No | — |
+| `userCount` | `number \| null` | No | — |
+| `firstSeen` | `string \| null` | No | — |
+| `lastSeen` | `string \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `isBookmarked` | `boolean \| null` | No | — |
+| `hasSeen` | `boolean \| null` | No | — |
+| `isSubscribed` | `boolean \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `assignedTo` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="project full type">
 
 ```ts
@@ -365,7 +339,7 @@ await corsair.sentry.api.issues.update({});
   id: string,
   name: string,
   slug: string
-}
+} | null
 ```
 </Accordion>
 
@@ -376,7 +350,7 @@ await corsair.sentry.api.issues.update({});
   id: string,
   name: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -416,11 +390,11 @@ await corsair.sentry.api.organizations.create({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `status` | `object` | No | — |
-| `isEarlyAdopter` | `boolean` | No | — |
-| `require2FA` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `isEarlyAdopter` | `boolean \| null` | No | — |
+| `require2FA` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -429,7 +403,7 @@ await corsair.sentry.api.organizations.create({});
 {
   id: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 
@@ -439,7 +413,7 @@ await corsair.sentry.api.organizations.create({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -475,11 +449,11 @@ await corsair.sentry.api.organizations.get({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `status` | `object` | No | — |
-| `isEarlyAdopter` | `boolean` | No | — |
-| `require2FA` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `isEarlyAdopter` | `boolean \| null` | No | — |
+| `require2FA` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -488,7 +462,7 @@ await corsair.sentry.api.organizations.get({});
 {
   id: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 
@@ -498,7 +472,7 @@ await corsair.sentry.api.organizations.get({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -585,11 +559,11 @@ await corsair.sentry.api.organizations.update({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `status` | `object` | No | — |
-| `isEarlyAdopter` | `boolean` | No | — |
-| `require2FA` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `isEarlyAdopter` | `boolean \| null` | No | — |
+| `require2FA` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -598,7 +572,7 @@ await corsair.sentry.api.organizations.update({});
 {
   id: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 
@@ -608,7 +582,7 @@ await corsair.sentry.api.organizations.update({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -650,13 +624,13 @@ await corsair.sentry.api.projects.create({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `platform` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `isBookmarked` | `boolean` | No | — |
-| `isMember` | `boolean` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `organization` | `object` | No | — |
-| `team` | `object` | No | — |
+| `platform` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isBookmarked` | `boolean \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `organization` | `object \| null` | No | — |
+| `team` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="organization full type">
@@ -677,7 +651,7 @@ await corsair.sentry.api.projects.create({});
     avatarType: string,
     avatarUuid?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -688,7 +662,7 @@ await corsair.sentry.api.projects.create({});
   id: string,
   slug: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -751,13 +725,13 @@ await corsair.sentry.api.projects.get({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `platform` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `isBookmarked` | `boolean` | No | — |
-| `isMember` | `boolean` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `organization` | `object` | No | — |
-| `team` | `object` | No | — |
+| `platform` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isBookmarked` | `boolean \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `organization` | `object \| null` | No | — |
+| `team` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="organization full type">
@@ -778,7 +752,7 @@ await corsair.sentry.api.projects.get({});
     avatarType: string,
     avatarUuid?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -789,7 +763,7 @@ await corsair.sentry.api.projects.get({});
   id: string,
   slug: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -895,13 +869,13 @@ await corsair.sentry.api.projects.update({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `platform` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `isBookmarked` | `boolean` | No | — |
-| `isMember` | `boolean` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `organization` | `object` | No | — |
-| `team` | `object` | No | — |
+| `platform` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isBookmarked` | `boolean \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `organization` | `object \| null` | No | — |
+| `team` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="organization full type">
@@ -922,7 +896,7 @@ await corsair.sentry.api.projects.update({});
     avatarType: string,
     avatarUuid?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -933,7 +907,7 @@ await corsair.sentry.api.projects.update({});
   id: string,
   slug: string,
   name: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -975,15 +949,15 @@ await corsair.sentry.api.releases.create({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
-| `shortVersion` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `dateReleased` | `string` | No | — |
-| `firstEvent` | `string` | No | — |
-| `lastEvent` | `string` | No | — |
-| `newGroups` | `number` | No | — |
-| `url` | `string` | No | — |
-| `ref` | `string` | No | — |
-| `projects` | `object[]` | No | — |
+| `shortVersion` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `dateReleased` | `string \| null` | No | — |
+| `firstEvent` | `string \| null` | No | — |
+| `lastEvent` | `string \| null` | No | — |
+| `newGroups` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `projects` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -993,7 +967,7 @@ await corsair.sentry.api.releases.create({});
   id: number,
   slug: string,
   name: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1055,15 +1029,15 @@ await corsair.sentry.api.releases.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
-| `shortVersion` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `dateReleased` | `string` | No | — |
-| `firstEvent` | `string` | No | — |
-| `lastEvent` | `string` | No | — |
-| `newGroups` | `number` | No | — |
-| `url` | `string` | No | — |
-| `ref` | `string` | No | — |
-| `projects` | `object[]` | No | — |
+| `shortVersion` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `dateReleased` | `string \| null` | No | — |
+| `firstEvent` | `string \| null` | No | — |
+| `lastEvent` | `string \| null` | No | — |
+| `newGroups` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `projects` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -1073,7 +1047,7 @@ await corsair.sentry.api.releases.get({});
   id: number,
   slug: string,
   name: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1164,15 +1138,15 @@ await corsair.sentry.api.releases.update({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
-| `shortVersion` | `string` | No | — |
-| `dateCreated` | `string` | No | — |
-| `dateReleased` | `string` | No | — |
-| `firstEvent` | `string` | No | — |
-| `lastEvent` | `string` | No | — |
-| `newGroups` | `number` | No | — |
-| `url` | `string` | No | — |
-| `ref` | `string` | No | — |
-| `projects` | `object[]` | No | — |
+| `shortVersion` | `string \| null` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `dateReleased` | `string \| null` | No | — |
+| `firstEvent` | `string \| null` | No | — |
+| `lastEvent` | `string \| null` | No | — |
+| `newGroups` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `projects` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -1182,7 +1156,7 @@ await corsair.sentry.api.releases.update({});
   id: number,
   slug: string,
   name: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1222,12 +1196,12 @@ await corsair.sentry.api.teams.create({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `isMember` | `boolean` | No | — |
-| `memberCount` | `number` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `isPending` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `memberCount` | `number \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `isPending` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="avatar full type">
@@ -1236,7 +1210,7 @@ await corsair.sentry.api.teams.create({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1299,12 +1273,12 @@ await corsair.sentry.api.teams.get({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `isMember` | `boolean` | No | — |
-| `memberCount` | `number` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `isPending` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `memberCount` | `number \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `isPending` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="avatar full type">
@@ -1313,7 +1287,7 @@ await corsair.sentry.api.teams.get({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1400,12 +1374,12 @@ await corsair.sentry.api.teams.update({});
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `dateCreated` | `string` | No | — |
-| `isMember` | `boolean` | No | — |
-| `memberCount` | `number` | No | — |
-| `hasAccess` | `boolean` | No | — |
-| `isPending` | `boolean` | No | — |
-| `avatar` | `object` | No | — |
+| `dateCreated` | `string \| null` | No | — |
+| `isMember` | `boolean \| null` | No | — |
+| `memberCount` | `number \| null` | No | — |
+| `hasAccess` | `boolean \| null` | No | — |
+| `isPending` | `boolean \| null` | No | — |
+| `avatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="avatar full type">
@@ -1414,7 +1388,7 @@ await corsair.sentry.api.teams.update({});
 {
   avatarType: string,
   avatarUuid?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

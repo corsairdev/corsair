@@ -149,7 +149,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -200,7 +200,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -271,7 +271,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -313,7 +313,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: {} | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] | { object?: string, data: { id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: {} | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] }"
+        "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: Record<string, any> | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] | { object?: string, data: { id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: Record<string, any> | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] }"
       }
     },
     {
@@ -352,7 +352,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, abortable?: boolean | null, moderationRequired?: boolean | null, supports_multipart?: boolean | null, input_modalities?: string[] | null, output_modalities?: string[] | null, instruct_type?: string | null, quantization?: string | null, pool?: string | null, mmlu?: number | null, output_vector_size?: number | null, max_tokens?: number | null, max_response_tokens?: number | null, max_images_per_prompt?: number | null, max_audio_per_prompt?: number | null, max_audio_length_hours?: number | null, max_videos_per_prompt?: number | null, max_video_length?: number | null, max_pdf_size_mb?: number | null, latency?: string | null, query_count?: string | null, pricing?: {} | null, supported_input_parameters?: {} | null }[]"
+            "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, abortable?: boolean | null, moderationRequired?: boolean | null, supports_multipart?: boolean | null, input_modalities?: string[] | null, output_modalities?: string[] | null, instruct_type?: string | null, quantization?: string | null, pool?: string | null, mmlu?: number | null, output_vector_size?: number | null, max_tokens?: number | null, max_response_tokens?: number | null, max_images_per_prompt?: number | null, max_audio_per_prompt?: number | null, max_audio_length_hours?: number | null, max_videos_per_prompt?: number | null, max_video_length?: number | null, max_pdf_size_mb?: number | null, latency?: string | null, query_count?: string | null, pricing?: Record<string, any> | null, supported_input_parameters?: Record<string, any> | null }[]"
           }
         ]
       }

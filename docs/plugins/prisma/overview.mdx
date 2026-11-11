@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Prisma plugin for Corsair"
+description: "Database platform API. Manage Prisma Postgres projects, databases, connection strings and backups, list workspaces, regions and integrations, and run read-only queries, writes and schema inspection over Postgres."
 ---
 
 Use **Prisma** through Corsair: one client, typed API calls, local DB sync.
@@ -53,6 +53,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -60,7 +61,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 

@@ -1,0 +1,586 @@
+---
+title: API
+description: "API reference for eSignatures: every `esignatures.api.*` operation with input and output types."
+---
+
+Every `esignatures.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contracts
+
+### addSigner
+
+`contracts.addSigner`
+
+Add a signer to a contract without sending a sign request; use contracts.resendToSigner to send one
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.contracts.addSigner({ contract_id: '1contr11-2222', signer: { name: 'Sam Signer', email: 'sam@tenants.com' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract ID. |
+| `signer` | `object` | Yes | The signer to add. No sign request email is sent; use `contracts.resendToSigner`. |
+
+<AccordionGroup>
+<Accordion title="signer full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  mobile?: string,
+  company_name?: string,
+  signing_order?: string,
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
+  redirect_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`contracts.create`
+
+Create and send a contract from a template, filling placeholder fields; set save_as_draft to create without sending
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', signers: [{ name: 'Sam Signer', email: 'sam@tenants.com' }], placeholder_fields: [{ placeholder_key: 'tenant_name', replace_with_text: 'Sam Signer' }], test: 'yes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | The template ID. |
+| `signers` | `object[]` | Yes | — |
+| `title` | `string` | No | — |
+| `locale` | `cz \| da \| de \| el \| en \| en-GB \| es \| fi \| fr \| hr \| hu \| id \| it \| ja \| nl \| no \| pl \| pt \| ro \| rs \| sk \| sl \| sv \| vi \| zh-CN \| zh-TW` | No | Language of the sign request emails and sign page. |
+| `metadata` | `string` | No | Custom data attached to the contract, echoed by webhooks. |
+| `expires_in_hours` | `string` | No | Hours before the sign request expires, such as "48". |
+| `custom_webhook_url` | `string` | No | — |
+| `assigned_user_email` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `test` | `yes \| no` | No | When yes, the contract is a demo and no sending fees are charged. |
+| `save_as_draft` | `yes \| no` | No | When yes, the contract is a draft until `contracts.sendDraft` sends it. |
+| `placeholder_fields` | `object[]` | No | — |
+| `signer_fields` | `object[]` | No | Pre-fills Signer fields the signer completes. |
+| `emails` | `object` | No | Overrides for the sign request and signed-contract emails. |
+| `custom_branding` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  name: string,
+  email?: string,
+  mobile?: string,
+  company_name?: string,
+  signing_order?: string,
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
+  redirect_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="placeholder_fields full type">
+
+```ts
+{
+  placeholder_key: string,
+  replace_with_text?: string,
+  replace_with_markdown?: string,
+  replace_with_template?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="signer_fields full type">
+
+```ts
+{
+  signer_field_id: string,
+  default_value?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  signature_request_subject?: string,
+  signature_request_text?: string,
+  final_contract_subject?: string,
+  final_contract_text?: string,
+  cc_email_addresses?: string[],
+  reply_to?: string
+}
+```
+</Accordion>
+
+<Accordion title="custom_branding full type">
+
+```ts
+{
+  company_name?: string,
+  logo_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `contract` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contract full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  title?: string | null,
+  metadata?: string | null,
+  source?: string | null,
+  test?: string | null,
+  labels?: string[] | null,
+  contract_pdf_url?: string | null,
+  signers?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    mobile?: string | null,
+    company_name?: string | null,
+    sign_page_url?: string | null,
+    signing_order?: string | null,
+    auto_sign?: string | null,
+    signer_field_values?: Record<string, any> | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSigner
+
+`contracts.deleteSigner`
+
+Remove a signer from a contract
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esignatures.api.contracts.deleteSigner({ contract_id: '1contr11-2222', signer_id: '6signer6-9999' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract ID. |
+| `signer_id` | `string` | Yes | The signer's `id` from the contract's `signers`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contracts.get`
+
+Read a contract's status, signers, labels and, once signed, an expiring PDF URL; contracts older than two weeks may return incomplete data
+
+**Risk:** `read`
+
+```ts
+await corsair.esignatures.api.contracts.get({ contract_id: '1contr11-2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contract full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  title?: string | null,
+  metadata?: string | null,
+  source?: string | null,
+  test?: string | null,
+  labels?: string[] | null,
+  contract_pdf_url?: string | null,
+  signers?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    mobile?: string | null,
+    company_name?: string | null,
+    sign_page_url?: string | null,
+    signing_order?: string | null,
+    auto_sign?: string | null,
+    signer_field_values?: Record<string, any> | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resendToSigner
+
+`contracts.resendToSigner`
+
+Send or resend the sign request to one signer
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.contracts.resendToSigner({ contract_id: '1contr11-2222', signer_id: '6signer6-9999' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract ID. |
+| `signer_id` | `string` | Yes | The signer's `id` from the contract's `signers`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### sendDraft
+
+`contracts.sendDraft`
+
+Send a draft contract to its signers
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.contracts.sendDraft({ contract_id: '1contr11-2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract. `contracts.withdraw` refuses signed contracts; `contracts.sendDraft` needs a draft. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### updateSigner
+
+`contracts.updateSigner`
+
+Update a signer's contact details or signing settings
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.contracts.updateSigner({ contract_id: '1contr11-2222', signer_id: '6signer6-9999', signer: { name: 'Sam Signer-Smith' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract ID. |
+| `signer_id` | `string` | Yes | The signer's `id` from the contract's `signers`. |
+| `signer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="signer full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  mobile?: string,
+  company_name?: string,
+  signing_order?: string,
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
+  redirect_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### withdraw
+
+`contracts.withdraw`
+
+Withdraw a sent contract so it can no longer be signed; signed contracts cannot be withdrawn
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esignatures.api.contracts.withdraw({ contract_id: '1contr11-2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract_id` | `string` | Yes | The contract. `contracts.withdraw` refuses signed contracts; `contracts.sendDraft` needs a draft. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a template from markdown with placeholder fields
+
+**Risk:** `write`
+
+```ts
+await corsair.esignatures.api.templates.create({ title: 'Rental agreement', markdown: '# Rental agreement\n\n{{tenant_name}} agrees to the terms.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | The template title. |
+| `markdown` | `string` | Yes | The contract markdown, with `{{placeholder_key}}` fields and signer fields. |
+| `labels` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete a template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esignatures.api.templates.delete({ template_id: '4templ44-8888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | The template ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read a template's title, creation time, placeholder fields and signer field IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.esignatures.api.templates.get({ template_id: '4templ44-8888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | The template ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string | null,
+  title?: string | null,
+  created_at?: string | null,
+  labels?: string[] | null,
+  last_contract_created_at?: string | null,
+  placeholder_keys?: string[] | null,
+  placeholder_fields?: string[] | null,
+  signer_field_ids?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the templates with their IDs and titles
+
+**Risk:** `read`
+
+```ts
+await corsair.esignatures.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  template_id?: string | null,
+  title?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

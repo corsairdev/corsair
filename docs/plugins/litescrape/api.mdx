@@ -1225,7 +1225,7 @@ await corsair.litescrape.api.google.aiOverview({});
 | `search_metadata` | `object` | No | — |
 | `search_parameters` | `object` | No | — |
 | `search_information` | `object` | No | — |
-| `ai_overview` | `object` | No | — |
+| `ai_overview` | `object \| null` | No | — |
 | `pagination` | `object` | No | — |
 | `litescrape_pagination` | `object` | No | — |
 
@@ -1267,7 +1267,7 @@ await corsair.litescrape.api.google.aiOverview({});
   }[],
   references?: {
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -1489,7 +1489,7 @@ await corsair.litescrape.api.google.search({});
 | `search_information` | `object` | No | — |
 | `organic_results` | `object[]` | No | — |
 | `knowledge_graph` | `object` | No | — |
-| `ai_overview` | `object` | No | — |
+| `ai_overview` | `object \| null` | No | — |
 | `related_questions` | `object[]` | No | — |
 | `related_searches` | `object[]` | No | — |
 | `shopping_results` | `object[]` | No | — |
@@ -1563,7 +1563,7 @@ await corsair.litescrape.api.google.search({});
   }[],
   references?: {
   }[]
-}
+} | null
 ```
 </Accordion>
 

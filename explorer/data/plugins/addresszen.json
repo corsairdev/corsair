@@ -60,7 +60,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ hits: { id: string, suggestion: string, urls?: {} | null, udprn?: number }[] }"
+            "type": "{ hits: { id: string, suggestion: string, urls?: Record<string, any> | null, udprn?: number }[] }"
           }
         ]
       }
@@ -90,7 +90,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ available: boolean, context?: string, contexts?: {}[] }"
+            "type": "{ available: boolean, context?: string, contexts?: Record<string, any>[] }"
           }
         ]
       }

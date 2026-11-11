@@ -1,0 +1,178 @@
+---
+title: Database
+description: "Codacy local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Codacy plugin syncs data locally. Use `corsair.codacy.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `codacy.db.accounts.search`
+
+```ts
+const rows = await corsair.codacy.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `mainEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `isAdmin` | `boolean` | equals |
+| `isActive` | `boolean` | equals |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `intercomHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `zendeskHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `pylonHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `shouldDoClientQualification` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `codacy.db.organizations.search`
+
+```ts
+const rows = await corsair.codacy.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `identifier` | `number` | equals, gt, gte, lt, lte, in |
+| `remoteIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `provider` | `string` | equals, contains, startsWith, endsWith, in |
+| `joinMode` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `joinStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `singleProviderLogin` | `boolean` | equals |
+| `hasDastAccess` | `boolean` | equals |
+| `hasScaEnabled` | `boolean` | equals |
+| `imageSbomEnabled` | `boolean` | equals |
+| `hasAiInventoryEnabled` | `boolean` | equals |
+| `hasFalsePositiveAccess` | `boolean` | equals |
+| `hasSilentFalsePositiveDetection` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Patterns
+
+Path: `codacy.db.patterns.search`
+
+```ts
+const rows = await corsair.codacy.db.patterns.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `subCategory` | `string` | equals, contains, startsWith, endsWith, in |
+| `level` | `string` | equals, contains, startsWith, endsWith, in |
+| `severityLevel` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `explanation` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `timeToFix` | `number` | equals, gt, gte, lt, lte, in |
+| `rationale` | `string` | equals, contains, startsWith, endsWith, in |
+| `solution` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Repositories
+
+Path: `codacy.db.repositories.search`
+
+```ts
+const rows = await corsair.codacy.db.repositories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `repositoryId` | `number` | equals, gt, gte, lt, lte, in |
+| `provider` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullPath` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `remoteIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+| `permission` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tools
+
+Path: `codacy.db.tools.search`
+
+```ts
+const rows = await corsair.codacy.db.tools.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortName` | `string` | equals, contains, startsWith, endsWith, in |
+| `documentationUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceCodeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `prefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `needsCompilation` | `boolean` | equals |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `dockerImage` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

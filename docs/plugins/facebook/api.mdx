@@ -283,8 +283,7 @@ await corsair.facebook.api.conversations.getMessages({});
     }[]
   },
   attachments?: {
-    data?: {
-    }[]
+    data?: Record<string, any>[]
   }
 }[]
 ```
@@ -446,8 +445,7 @@ await corsair.facebook.api.messages.getDetails({});
 
 ```ts
 {
-  data?: {
-  }[]
+  data?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -732,8 +730,7 @@ await corsair.facebook.api.pages.getInsights({});
   name: string,
   period?: string,
   values?: {
-    value: number | string | {
-    },
+    value: number | string | Record<string, any>,
     end_time?: string
   }[],
   title?: string,
@@ -1336,7 +1333,7 @@ await corsair.facebook.api.posts.create({});
 | `scheduled_publish_time` | `number` | No | — |
 | `unpublished_content_type` | `SCHEDULED \| DRAFT \| ADS_POST` | No | Required by Graph for some unpublished/scheduled media attach flows. |
 | `attached_media` | `object[]` | No | Multi-photo/video attach. Upload unpublished media first, then pass media_fbid values. |
-| `targeting` | `object` | No | — |
+| `targeting` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="attached_media full type">
@@ -1345,14 +1342,6 @@ await corsair.facebook.api.posts.create({});
 {
   media_fbid: string
 }[]
-```
-</Accordion>
-
-<Accordion title="targeting full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1477,8 +1466,7 @@ await corsair.facebook.api.posts.getInsights({});
   name: string,
   period?: string,
   values?: {
-    value: number | string | {
-    },
+    value: number | string | Record<string, any>,
     end_time?: string
   }[],
   title?: string,
@@ -2087,7 +2075,7 @@ await corsair.facebook.api.videos.createPost({});
 
 `videos.list`
 
-List Page videos via GET /{page-id}/videos (Video API; needs pages_read_engagement + MANAGE).
+List Page videos via GET /&#123;page-id&#125;/videos (Video API; needs pages_read_engagement + MANAGE).
 
 **Risk:** `read`
 

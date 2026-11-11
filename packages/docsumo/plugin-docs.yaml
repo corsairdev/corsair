@@ -1,0 +1,13 @@
+displayName: Docsumo
+description: Document AI platform for extracting data from uploaded documents, with endpoints for documents, document types, folders, tables, analytics, and agents.
+domain: docsumo.com
+examples:
+  read:
+    path: documents.listAll
+    title: List documents
+  write:
+    path: folders.create
+    title: Create a folder
+    args:
+      folder_name: Invoices
+      type: general

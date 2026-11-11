@@ -29,7 +29,7 @@ await corsair.vercel.api.aliases.assignAlias({});
 |------|------|----------|-------------|
 | `deploymentId` | `string` | Yes | — |
 | `alias` | `string` | Yes | — |
-| `redirect` | `string` | No | — |
+| `redirect` | `string \| null` | No | — |
 | `teamId` | `string` | No | — |
 
 
@@ -41,7 +41,7 @@ await corsair.vercel.api.aliases.assignAlias({});
 | `uid` | `string` | Yes | — |
 | `alias` | `string` | Yes | — |
 | `created` | `string` | Yes | — |
-| `oldDeploymentId` | `string` | No | — |
+| `oldDeploymentId` | `string \| null` | Yes | — |
 
 
 
@@ -86,9 +86,9 @@ await corsair.vercel.api.aliases.getAliases({});
   alias: string,
   created: string,
   createdAt: number,
-  deploymentId?: string | null,
-  projectId?: string | null,
-  redirect?: string | null
+  deploymentId: string | null,
+  projectId: string | null,
+  redirect: string | null
 }[]
 ```
 </Accordion>
@@ -98,8 +98,8 @@ await corsair.vercel.api.aliases.getAliases({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -132,8 +132,8 @@ await corsair.vercel.api.deployments.createDeployment({});
 | `target` | `production \| staging` | No | — |
 | `gitSource` | `object` | No | — |
 | `files` | `any[]` | No | — |
-| `meta` | `object` | No | — |
-| `env` | `object` | No | — |
+| `meta` | `Record<string, string>` | No | — |
+| `env` | `Record<string, string>` | No | — |
 | `teamId` | `string` | No | — |
 
 <AccordionGroup>
@@ -145,22 +145,6 @@ await corsair.vercel.api.deployments.createDeployment({});
   ref?: string,
   repoId?: string | number,
   sha?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="env full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -178,12 +162,12 @@ await corsair.vercel.api.deployments.createDeployment({});
 | `created` | `number` | Yes | — |
 | `readyState` | `string` | Yes | — |
 | `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `production \| staging \| string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
+| `creator` | `object \| null` | No | — |
+| `meta` | `Record<string, string> \| null` | No | — |
+| `target` | `production \| staging \| string \| null` | Yes | — |
+| `aliasError` | `object \| null` | No | — |
+| `aliasAssigned` | `number \| null` | No | — |
+| `inspectorUrl` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -193,15 +177,7 @@ await corsair.vercel.api.deployments.createDeployment({});
   uid: string,
   email: string,
   username: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -211,7 +187,7 @@ await corsair.vercel.api.deployments.createDeployment({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -251,12 +227,12 @@ await corsair.vercel.api.deployments.getDeployment({});
 | `created` | `number` | Yes | — |
 | `readyState` | `string` | Yes | — |
 | `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `production \| staging \| string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
+| `creator` | `object \| null` | No | — |
+| `meta` | `Record<string, string> \| null` | No | — |
+| `target` | `production \| staging \| string \| null` | Yes | — |
+| `aliasError` | `object \| null` | No | — |
+| `aliasAssigned` | `number \| null` | No | — |
+| `inspectorUrl` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -266,15 +242,7 @@ await corsair.vercel.api.deployments.getDeployment({});
   uid: string,
   email: string,
   username: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -284,7 +252,7 @@ await corsair.vercel.api.deployments.getDeployment({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -339,9 +307,8 @@ await corsair.vercel.api.deployments.getDeployments({});
     email: string,
     username: string
   } | null,
-  meta?: {
-  } | null,
-  target?: production | staging | string | null,
+  meta?: Record<string, string> | null,
+  target: production | staging | string | null,
   aliasError?: {
     code: string,
     message: string
@@ -357,8 +324,8 @@ await corsair.vercel.api.deployments.getDeployments({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -408,9 +375,9 @@ await corsair.vercel.api.domains.getDomains({});
   id: string,
   name: string,
   createdAt: number,
-  boughtAt?: number | null,
-  expiresAt?: number | null,
-  transferredAt?: number | null,
+  boughtAt: number | null,
+  expiresAt: number | null,
+  transferredAt: number | null,
   verified: boolean,
   nameservers: string[],
   intendedNameservers: string[]
@@ -423,8 +390,8 @@ await corsair.vercel.api.domains.getDomains({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -473,9 +440,9 @@ await corsair.vercel.api.domains.getProjectDomains({});
   name: string,
   apexName: string,
   projectId: string,
-  redirect?: string | null,
-  redirectStatusCode?: number | null,
-  gitBranch?: string | null,
+  redirect: string | null,
+  redirectStatusCode: number | null,
+  gitBranch: string | null,
   updatedAt: number,
   createdAt: number,
   verified: boolean
@@ -488,8 +455,8 @@ await corsair.vercel.api.domains.getProjectDomains({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -521,8 +488,8 @@ await corsair.vercel.api.envs.createEnvVariable({});
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
 | `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
-| `target` | `production \| preview \| development[]` | Yes | — |
-| `gitBranch` | `string` | No | — |
+| `target` | `(production \| preview \| development)[]` | Yes | — |
+| `gitBranch` | `string \| null` | No | — |
 | `comment` | `string` | No | — |
 | `teamId` | `string` | No | — |
 
@@ -536,13 +503,13 @@ await corsair.vercel.api.envs.createEnvVariable({});
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
 | `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
-| `target` | `production \| preview \| development[]` | Yes | — |
-| `gitBranch` | `string` | No | — |
-| `configurationId` | `string` | No | — |
+| `target` | `(production \| preview \| development)[]` | Yes | — |
+| `gitBranch` | `string \| null` | Yes | — |
+| `configurationId` | `string \| null` | No | — |
 | `createdAt` | `number` | Yes | — |
 | `updatedAt` | `number` | Yes | — |
-| `createdBy` | `string` | No | — |
-| `updatedBy` | `string` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `updatedBy` | `string \| null` | No | — |
 
 
 
@@ -584,8 +551,8 @@ await corsair.vercel.api.envs.getEnvVariables({});
   key: string,
   value: string,
   type: plain | secret | encrypted | sensitive,
-  target: production | preview | development[],
-  gitBranch?: string | null,
+  target: (production | preview | development)[],
+  gitBranch: string | null,
   configurationId?: string | null,
   createdAt: number,
   updatedAt: number,
@@ -632,10 +599,10 @@ await corsair.vercel.api.projects.getProject({});
 | `accountId` | `string` | Yes | — |
 | `createdAt` | `number` | Yes | — |
 | `updatedAt` | `number` | Yes | — |
-| `framework` | `string` | No | — |
-| `link` | `object` | No | — |
-| `latestDeployments` | `any[]` | No | — |
-| `targets` | `object` | No | — |
+| `framework` | `string \| null` | Yes | — |
+| `link` | `object \| null` | No | — |
+| `latestDeployments` | `any[] \| null` | No | — |
+| `targets` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="link full type">
@@ -651,15 +618,7 @@ await corsair.vercel.api.projects.getProject({});
   createdAt?: number | null,
   updatedAt?: number | null,
   deployHooks?: any[] | null
-}
-```
-</Accordion>
-
-<Accordion title="targets full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -708,7 +667,7 @@ await corsair.vercel.api.projects.getProjects({});
   accountId: string,
   createdAt: number,
   updatedAt: number,
-  framework?: string | null,
+  framework: string | null,
   link?: {
     type: string,
     repo: string,
@@ -721,8 +680,7 @@ await corsair.vercel.api.projects.getProjects({});
     deployHooks?: any[] | null
   } | null,
   latestDeployments?: any[] | null,
-  targets?: {
-  } | null
+  targets?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -732,8 +690,8 @@ await corsair.vercel.api.projects.getProjects({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -782,7 +740,7 @@ await corsair.vercel.api.teams.getTeams({});
   name: string,
   createdAt: number,
   updatedAt?: number | null,
-  avatar?: string | null,
+  avatar: string | null,
   membership: {
     uid: string,
     role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string,
@@ -797,8 +755,8 @@ await corsair.vercel.api.teams.getTeams({});
 ```ts
 {
   count: number,
-  next?: number | null,
-  prev?: number | null
+  next: number | null,
+  prev: number | null
 }
 ```
 </Accordion>
@@ -878,9 +836,7 @@ await corsair.vercel.api.webhooks.getWebhooks({});
 {
   id: string,
   url: string,
-  events: (
-    deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string
-  )[],
+  events: (deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[],
   ownerId: string,
   projectIds?: string[],
   createdAt: number,

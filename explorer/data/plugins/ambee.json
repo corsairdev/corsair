@@ -403,12 +403,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -486,12 +486,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -563,12 +563,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -652,12 +652,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -723,12 +723,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -794,12 +794,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -871,12 +871,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: Record<string, any> }[]"
           },
           {
             "key": "page",
@@ -1246,7 +1246,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ date?: string | null, time?: number | null, risk?: string | number | null, riskCategory?: string | null, details?: {} }[]"
+            "type": "{ date?: string | null, time?: number | null, risk?: string | number | null, riskCategory?: string | null, details?: Record<string, any> }[]"
           }
         ]
       }
@@ -1282,7 +1282,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: Record<string, any>, Risks?: Record<string, any> }[]"
           }
         ]
       }
@@ -1318,7 +1318,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: Record<string, any>, Risks?: Record<string, any> }[]"
           }
         ]
       }
@@ -1354,7 +1354,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: Record<string, any>, Risks?: Record<string, any> }[]"
           }
         ]
       }

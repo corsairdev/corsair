@@ -230,20 +230,20 @@
           {
             "key": "import",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Import definition to run without saving it"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Records to send through the import"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "any[] | {}"
+        "type": "any[] | Record<string, any>"
       }
     },
     {
@@ -263,7 +263,7 @@
           {
             "key": "export",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Export definition to run without saving it"
           }
         ]
@@ -274,12 +274,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "dataURIs",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[]"
           }
         ]
       }
@@ -301,13 +301,13 @@
           {
             "key": "export",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Export definition to run without saving it"
           },
           {
             "key": "pagedExportState",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "pagedExportState from the previous page; omit for the first page"
           }
         ]
@@ -318,17 +318,17 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "dataURIs",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[]"
           },
           {
             "key": "pagedExportState",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -350,20 +350,20 @@
           {
             "key": "import",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Import definition to run without saving it"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Records to send through the import"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ statusCode?: number, id?: string, _json?: {}, ignored?: boolean, stage?: string, errors?: {}[] }[]"
+        "type": "{ statusCode?: number, id?: string, _json?: Record<string, any>, ignored?: boolean, stage?: string, errors?: Record<string, any>[] }[]"
       }
     },
     {
@@ -513,7 +513,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -615,7 +615,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ code: number } | { errors: {}[] }"
+        "type": "{ code: number } | { errors: Record<string, any>[] }"
       }
     },
     {
@@ -651,7 +651,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ code: number } | { errors: {}[] }"
+        "type": "{ code: number } | { errors: Record<string, any>[] }"
       }
     },
     {
@@ -1105,7 +1105,7 @@
           {
             "key": "errorsToReturn",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1132,7 +1132,7 @@
           {
             "key": "connectionMap",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Maps source connection _id to target connection _id"
           }
         ]
@@ -1579,7 +1579,7 @@
           {
             "key": "connectionMap",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Maps source connection _id to target connection _id"
           },
           {
@@ -1788,7 +1788,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1849,8 +1849,8 @@
         "fields": [
           {
             "key": "lastExportDateTime",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -2312,7 +2312,7 @@
           {
             "key": "connectionMap",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Maps source connection _id to target connection _id"
           }
         ]
@@ -2511,7 +2511,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2531,13 +2531,13 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ statusCode?: number, id?: string, _json?: {}, ignored?: boolean, stage?: string, errors?: {}[] }[]"
+        "type": "{ statusCode?: number, id?: string, _json?: Record<string, any>, ignored?: boolean, stage?: string, errors?: Record<string, any>[] }[]"
       }
     },
     {
@@ -2683,7 +2683,7 @@
           {
             "key": "connectionMap",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Maps source connection _id to target connection _id"
           }
         ]
@@ -2929,7 +2929,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3463,17 +3463,17 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "rules",
             "optional": false,
-            "type": "{ name: string, version: 1 | 2, format: delimited | delimited/x12 | delimited/edifact | fixed, rules: {}[] }"
+            "type": "{ name: string, version: 1 | 2, format: delimited | delimited/x12 | delimited/edifact | fixed, rules: Record<string, any>[] }"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3514,7 +3514,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "columnDelimiter, rowDelimiter, hasHeaderRow, rowsToSkip, keyColumns, ..."
           },
           {
@@ -3561,13 +3561,13 @@
           {
             "key": "rules",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "fileDefinition or _fileDefinitionId, resourcePath"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3608,7 +3608,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "resourcePath, groupByFields, sortByFields, doc"
           }
         ]
@@ -3830,7 +3830,7 @@
           {
             "key": "logs",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextPageURL",
@@ -4052,7 +4052,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4084,7 +4084,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4156,7 +4156,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           }
         ]
       },
@@ -4200,7 +4200,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           }
         ]
       },

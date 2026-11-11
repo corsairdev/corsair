@@ -92,21 +92,11 @@ await corsair.browserless.api.download.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
-| `context` | `object` | No | — |
+| `context` | `Record<string, any>` | No | — |
 | `stealth` | `boolean` | No | — |
 | `timeout` | `number` | No | — |
 | `proxy` | `string` | No | — |
 | `blockAds` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="context full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -141,21 +131,11 @@ await corsair.browserless.api.function.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
-| `context` | `object` | No | — |
+| `context` | `Record<string, any>` | No | — |
 | `stealth` | `boolean` | No | — |
 | `timeout` | `number` | No | — |
 | `proxy` | `string` | No | — |
 | `blockAds` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="context full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -490,10 +470,10 @@ await corsair.browserless.api.unblock.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | No | — |
-| `cookies` | `object[]` | No | — |
-| `screenshot` | `string` | No | — |
-| `browserWSEndpoint` | `string` | No | — |
+| `content` | `string \| null` | No | — |
+| `cookies` | `object[] \| null` | No | — |
+| `screenshot` | `string \| null` | No | — |
+| `browserWSEndpoint` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="cookies full type">
@@ -509,7 +489,7 @@ await corsair.browserless.api.unblock.create({});
   expires?: number,
   sameSite?: Strict | Lax | None,
   url?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

@@ -60,12 +60,12 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "{ id: string, type: string }"
+            "type": "{ id: string, type: string } | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -75,12 +75,12 @@
           {
             "key": "partial_key_hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "principal",
             "optional": true,
-            "type": "{ id: string, type: string }"
+            "type": "{ id: string, type: string } | null"
           },
           {
             "key": "status",
@@ -95,7 +95,7 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -153,8 +153,8 @@
           },
           {
             "key": "first_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -163,8 +163,8 @@
           },
           {
             "key": "last_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -185,12 +185,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "active | archived | inactive"
+            "type": "active | archived | inactive | null"
           }
         ]
       },
@@ -210,12 +210,12 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "{ id: string, type: string }"
+            "type": "{ id: string, type: string } | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -225,12 +225,12 @@
           {
             "key": "partial_key_hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "principal",
             "optional": true,
-            "type": "{ id: string, type: string }"
+            "type": "{ id: string, type: string } | null"
           },
           {
             "key": "status",
@@ -245,7 +245,7 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -286,8 +286,8 @@
           },
           {
             "key": "accepted_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "email",
@@ -384,8 +384,8 @@
           },
           {
             "key": "accepted_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "email",
@@ -459,12 +459,12 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user[]"
+            "type": "(admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user)[]"
           },
           {
             "key": "statuses",
             "optional": true,
-            "type": "accepted | expired | pending[]"
+            "type": "(accepted | expired | pending)[]"
           }
         ]
       },
@@ -474,12 +474,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, accepted_at?: string | null, email: string, expires_at: string, invited_at: string, rbac_group_ids?: string[], role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user, status: accepted | deleted | expired | pending, type: invite }[]"
+            "type": "{ id: string, accepted_at: string | null, email: string, expires_at: string, invited_at: string, rbac_group_ids?: string[], role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user, status: accepted | deleted | expired | pending, type: invite }[]"
           },
           {
             "key": "first_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -488,8 +488,8 @@
           },
           {
             "key": "last_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -610,7 +610,7 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user[]",
+            "type": "(admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user)[]",
             "description": "Filter to users whose role matches any supplied value"
           }
         ]
@@ -625,8 +625,8 @@
           },
           {
             "key": "first_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -635,8 +635,8 @@
           },
           {
             "key": "last_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -912,8 +912,8 @@
           },
           {
             "key": "first_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -922,8 +922,8 @@
           },
           {
             "key": "last_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -1005,8 +1005,8 @@
           },
           {
             "key": "archived_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "compartment_id",
@@ -1021,7 +1021,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
+            "type": "{ allowed_inference_geos: (global | us)[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null"
           },
           {
             "key": "display_color",
@@ -1031,7 +1031,7 @@
           {
             "key": "external_key_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1041,7 +1041,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "type",
@@ -1068,17 +1068,17 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos?: global | us[] | unrestricted | null, default_inference_geo?: global | us | null, workspace_geo?: us | null }"
+            "type": "{ allowed_inference_geos?: (global | us)[] | unrestricted | null, default_inference_geo?: global | us | null, workspace_geo?: us | null } | null"
           },
           {
             "key": "external_key_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -1092,8 +1092,8 @@
           },
           {
             "key": "archived_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "compartment_id",
@@ -1108,7 +1108,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
+            "type": "{ allowed_inference_geos: (global | us)[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null"
           },
           {
             "key": "display_color",
@@ -1118,7 +1118,7 @@
           {
             "key": "external_key_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1128,7 +1128,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "type",
@@ -1163,8 +1163,8 @@
           },
           {
             "key": "archived_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "compartment_id",
@@ -1179,7 +1179,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
+            "type": "{ allowed_inference_geos: (global | us)[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null"
           },
           {
             "key": "display_color",
@@ -1189,7 +1189,7 @@
           {
             "key": "external_key_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1199,7 +1199,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "type",
@@ -1249,12 +1249,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, archived_at?: string | null, compartment_id?: string, created_at: string, data_residency?: { allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null, display_color?: string, external_key_id?: string | null, name: string, tags?: {} | null, type: workspace }[]"
+            "type": "{ id: string, archived_at: string | null, compartment_id?: string, created_at: string, data_residency?: { allowed_inference_geos: (global | us)[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null, display_color?: string, external_key_id?: string | null, name: string, tags?: Record<string, string> | null, type: workspace }[]"
           },
           {
             "key": "first_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -1263,8 +1263,8 @@
           },
           {
             "key": "last_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -1290,7 +1290,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos?: global | us[] | unrestricted | null, default_inference_geo?: global | us | null }"
+            "type": "{ allowed_inference_geos?: (global | us)[] | unrestricted | null, default_inference_geo?: global | us | null } | null"
           },
           {
             "key": "external_key_id",
@@ -1300,7 +1300,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -1314,8 +1314,8 @@
           },
           {
             "key": "archived_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "compartment_id",
@@ -1330,7 +1330,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
+            "type": "{ allowed_inference_geos: (global | us)[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null"
           },
           {
             "key": "display_color",
@@ -1340,7 +1340,7 @@
           {
             "key": "external_key_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1350,7 +1350,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "type",
@@ -1398,6 +1398,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "workspace_id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1437,6 +1447,21 @@
           "field": "invited_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -1468,6 +1493,16 @@
           "field": "name",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -1481,12 +1516,22 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "user_id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "workspace_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspace_role",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
@@ -1533,6 +1578,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

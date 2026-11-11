@@ -61,6 +61,7 @@ const rows = await corsair.filevine.db.deadlines.search({
 | `projectId` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `assigneeId` | `number` | equals, gt, gte, lt, lte, in |
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -123,6 +124,7 @@ const rows = await corsair.filevine.db.notes.search({
 | `noteId` | `number` | equals, gt, gte, lt, lte, in |
 | `projectId` | `number` | equals, gt, gte, lt, lte, in |
 | `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
 | `pinned` | `boolean` | equals |
 | `authorId` | `number` | equals, gt, gte, lt, lte, in |
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
@@ -216,6 +218,8 @@ const rows = await corsair.filevine.db.tasks.search({
 | `projectId` | `number` | equals, gt, gte, lt, lte, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
 | `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `assigneeId` | `number` | equals, gt, gte, lt, lte, in |
 | `completedDate` | `string` | equals, contains, startsWith, endsWith, in |

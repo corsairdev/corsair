@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/anthropicadministrator",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys",
   "type": "module",
   "main": "./dist/index.js",

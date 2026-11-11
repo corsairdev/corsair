@@ -40,7 +40,7 @@ await corsair.surf.api.dex.tokenPrice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -54,7 +54,7 @@ await corsair.surf.api.dex.tokenPrice({});
   open: number,
   timestamp: number,
   volume_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -103,7 +103,7 @@ await corsair.surf.api.equity.balanceSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -131,7 +131,7 @@ await corsair.surf.api.equity.balanceSheet({});
   },
   duration_days?: number,
   duration_months?: number,
-  fiscal_period?: string | null,
+  fiscal_period: string | null,
   fiscal_quarter?: number,
   fiscal_year?: number,
   formula_version?: string,
@@ -186,7 +186,7 @@ await corsair.surf.api.equity.balanceSheet({});
   },
   working_capital: {
   }
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -247,7 +247,7 @@ await corsair.surf.api.equity.candles({});
 
 ```ts
 {
-  candles?: {
+  candles: {
   }[] | null,
   end_date?: string,
   interval: string,
@@ -308,7 +308,7 @@ await corsair.surf.api.equity.cashFlow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -340,7 +340,7 @@ await corsair.surf.api.equity.cashFlow({});
   },
   financing_cash_flow: {
   },
-  fiscal_period?: string | null,
+  fiscal_period: string | null,
   fiscal_quarter?: number,
   fiscal_year?: number,
   formula_version?: string,
@@ -363,7 +363,7 @@ await corsair.surf.api.equity.cashFlow({});
   },
   source_updated_at?: number,
   symbol: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -424,9 +424,9 @@ await corsair.surf.api.equity.etfHoldings({});
 
 ```ts
 {
-  available_periods?: {
+  available_periods: {
   }[] | null,
-  snapshots?: {
+  snapshots: {
   }[] | null,
   symbol: string
 }
@@ -475,7 +475,7 @@ await corsair.surf.api.equity.filings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -489,13 +489,13 @@ await corsair.surf.api.equity.filings({});
   financial_metric_count: number,
   form_type: string,
   normalized_statement_field_count: number,
-  report_periods?: string[] | null,
+  report_periods: string[] | null,
   sec_url: string,
   source_observed_at?: number,
-  source_revision_ids?: string[] | null,
-  source_statement_ids?: string[] | null,
-  statement_types?: string[] | null
-}[]
+  source_revision_ids: string[] | null,
+  source_statement_ids: string[] | null,
+  statement_types: string[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -547,7 +547,7 @@ await corsair.surf.api.equity.incomeStatement({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -572,7 +572,7 @@ await corsair.surf.api.equity.incomeStatement({});
   eps_calculation_method?: string,
   eps_diluted: {
   },
-  fiscal_period?: string | null,
+  fiscal_period: string | null,
   fiscal_quarter?: number,
   fiscal_year?: number,
   formula_version?: string,
@@ -617,7 +617,7 @@ await corsair.surf.api.equity.incomeStatement({});
   },
   weighted_average_shares_diluted: {
   }
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -666,7 +666,7 @@ await corsair.surf.api.equity.latestFilings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -684,7 +684,7 @@ await corsair.surf.api.equity.latestFilings({});
   report_period: string,
   sec_url: string,
   symbol: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -726,7 +726,7 @@ await corsair.surf.api.equity.latestFinancials({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `market_cap_min` | `number` | No | — |
+| `market_cap_min` | `number \| null` | No | — |
 
 
 
@@ -734,7 +734,7 @@ await corsair.surf.api.equity.latestFinancials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -763,7 +763,7 @@ await corsair.surf.api.equity.latestFinancials({});
   },
   source_updated_at?: number,
   symbol: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -814,7 +814,7 @@ await corsair.surf.api.equity.listings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -846,7 +846,7 @@ await corsair.surf.api.equity.listings({});
   ticker: string,
   valid_from?: string,
   valid_to?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -896,7 +896,7 @@ await corsair.surf.api.equity.meta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -914,7 +914,7 @@ await corsair.surf.api.equity.meta({});
   symbol: string,
   tokenized?: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -961,7 +961,7 @@ await corsair.surf.api.equity.metrics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1011,7 +1011,7 @@ await corsair.surf.api.equity.metrics({});
   },
   enterprise_value_to_revenue_ratio: {
   },
-  fiscal_period?: string | null,
+  fiscal_period: string | null,
   fiscal_quarter?: number,
   fiscal_year?: number,
   free_cash_flow_growth: {
@@ -1075,7 +1075,7 @@ await corsair.surf.api.equity.metrics({});
   symbol: string,
   working_capital_turnover: {
   }
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1127,7 +1127,7 @@ await corsair.surf.api.equity.overview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1159,7 +1159,7 @@ await corsair.surf.api.equity.overview({});
   eps_diluted: {
   },
   exchange: string,
-  fiscal_period?: string | null,
+  fiscal_period: string | null,
   fiscal_quarter?: number,
   fiscal_year?: number,
   formula_version?: string,
@@ -1216,7 +1216,7 @@ await corsair.surf.api.equity.overview({});
   },
   total_liabilities: {
   }
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1343,7 +1343,7 @@ await corsair.surf.api.equity.segments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1371,8 +1371,8 @@ await corsair.surf.api.equity.segments({});
   status: reported | source_null | source_missing,
   symbol: string,
   unit?: string,
-  value?: number | null
-}[]
+  value: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -1430,7 +1430,7 @@ await corsair.surf.api.exchange.candles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1452,7 +1452,7 @@ await corsair.surf.api.exchange.candles({});
   trade_count?: number,
   volume_base?: number,
   volume_quote?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1510,7 +1510,7 @@ await corsair.surf.api.exchange.coverage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1546,7 +1546,7 @@ await corsair.surf.api.exchange.coverage({});
   type: string,
   volume_24h_base?: number,
   volume_24h_quote?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1598,7 +1598,7 @@ await corsair.surf.api.exchange.depth({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1606,18 +1606,18 @@ await corsair.surf.api.exchange.depth({});
 
 ```ts
 {
-  ask_depth?: number | null,
-  asks?: {
+  ask_depth: number | null,
+  asks: {
   }[] | null,
-  bid_depth?: number | null,
-  bids?: {
+  bid_depth: number | null,
+  bids: {
   }[] | null,
   exchange: string,
-  mid_price?: number | null,
+  mid_price: number | null,
   pair: string,
-  spread?: number | null,
-  spread_pct?: number | null
-}[]
+  spread: number | null,
+  spread_pct: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -1664,7 +1664,7 @@ await corsair.surf.api.exchange.fundingHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1673,15 +1673,15 @@ await corsair.surf.api.exchange.fundingHistory({});
 ```ts
 {
   exchange: string,
-  funding_interval_hours?: number | null,
-  funding_rate?: number | null,
+  funding_interval_hours: number | null,
+  funding_rate: number | null,
   funding_rate_1h?: number,
   funding_rate_8h?: number,
   funding_rate_annualized?: number,
   funding_rate_raw?: number,
   pair: string,
-  timestamp?: number | null
-}[]
+  timestamp: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -1730,7 +1730,7 @@ await corsair.surf.api.exchange.klines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1738,18 +1738,18 @@ await corsair.surf.api.exchange.klines({});
 
 ```ts
 {
-  candles?: {
+  candles: {
   }[] | null,
   count: number,
   exchange: string,
   interval: string,
   pair: string,
-  period_end?: string | null,
-  period_high?: number | null,
-  period_low?: number | null,
-  period_start?: string | null,
-  period_volume?: number | null
-}[]
+  period_end: string | null,
+  period_high: number | null,
+  period_low: number | null,
+  period_start: string | null,
+  period_volume: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -1797,7 +1797,7 @@ await corsair.surf.api.exchange.longShortRatio({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1806,10 +1806,10 @@ await corsair.surf.api.exchange.longShortRatio({});
 ```ts
 {
   exchange: string,
-  long_short_ratio?: number | null,
+  long_short_ratio: number | null,
   pair: string,
-  timestamp?: number | null
-}[]
+  timestamp: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -1858,7 +1858,7 @@ await corsair.surf.api.exchange.markets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1866,15 +1866,15 @@ await corsair.surf.api.exchange.markets({});
 
 ```ts
 {
-  active?: boolean | null,
-  base?: string | null,
+  active: boolean | null,
+  base: string | null,
   exchange: string,
-  maker_fee?: number | null,
+  maker_fee: number | null,
   pair: string,
-  quote?: string | null,
-  taker_fee?: number | null,
-  type?: string | null
-}[]
+  quote: string | null,
+  taker_fee: number | null,
+  type: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -1931,24 +1931,24 @@ await corsair.surf.api.exchange.perp({});
   exchange: string,
   funding: {
     exchange: string,
-    funding_interval_hours?: number | null,
-    funding_rate?: number | null,
+    funding_interval_hours: number | null,
+    funding_rate: number | null,
     funding_rate_1h?: number,
     funding_rate_8h?: number,
     funding_rate_annualized?: number,
     funding_rate_raw?: number,
-    index_price?: number | null,
-    interval?: string | null,
-    mark_price?: number | null,
-    next_funding?: string | null,
+    index_price: number | null,
+    interval: string | null,
+    mark_price: number | null,
+    next_funding: string | null,
     pair: string
   },
   open_interest: {
     exchange: string,
-    open_interest_amount?: number | null,
-    open_interest_usd?: number | null,
+    open_interest_amount: number | null,
+    open_interest_usd: number | null,
     pair: string,
-    timestamp?: number | null
+    timestamp: number | null
   },
   pair: string
 }
@@ -1997,7 +1997,7 @@ await corsair.surf.api.exchange.price({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2005,17 +2005,17 @@ await corsair.surf.api.exchange.price({});
 
 ```ts
 {
-  ask?: number | null,
-  bid?: number | null,
-  change_24h_pct?: number | null,
+  ask: number | null,
+  bid: number | null,
+  change_24h_pct: number | null,
   exchange: string,
-  high_24h?: number | null,
-  last?: number | null,
-  low_24h?: number | null,
+  high_24h: number | null,
+  last: number | null,
+  low_24h: number | null,
   pair: string,
-  timestamp?: number | null,
-  volume_24h_base?: number | null
-}[]
+  timestamp: number | null,
+  volume_24h_base: number | null
+}[] | null
 ```
 </Accordion>
 
@@ -2075,16 +2075,16 @@ await corsair.surf.api.fund.detail({});
   image?: string,
   invested_projects_count: number,
   jurisdiction?: string,
-  links?: {
+  links: {
   }[] | null,
-  members?: {
+  members: {
   }[] | null,
   name: string,
-  recent_researches?: {
+  recent_researches: {
   }[] | null,
   tier: number,
   type?: string,
-  x_accounts?: {
+  x_accounts: {
   }[] | null
 }
 ```
@@ -2126,7 +2126,7 @@ await corsair.surf.api.fund.portfolio({});
 | `q` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `is_lead` | `true \| false \| ` | No | — |
+| `is_lead` | `true \| false \| ""` | No | — |
 | `invested_after` | `number` | No | — |
 | `invested_before` | `number` | No | — |
 | `sort_by` | `invested_at \| recent_raise \| total_raise` | No | — |
@@ -2138,7 +2138,7 @@ await corsair.surf.api.fund.portfolio({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2154,7 +2154,7 @@ await corsair.surf.api.fund.portfolio({});
   project_slug?: string,
   recent_raise?: number,
   total_raise?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2205,7 +2205,7 @@ await corsair.surf.api.fund.ranking({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2218,10 +2218,10 @@ await corsair.surf.api.fund.ranking({});
   invested_projects_count: number,
   name: string,
   tier: number,
-  top_projects?: {
+  top_projects: {
   }[] | null,
   type?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2389,7 +2389,7 @@ await corsair.surf.api.heatscore.projects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2443,7 +2443,7 @@ await corsair.surf.api.heatscore.projects({});
   value?: number,
   volume_24h?: number,
   volume_24h_change_percent?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2493,7 +2493,7 @@ await corsair.surf.api.heatscore.tokenOfTheDay({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2547,7 +2547,7 @@ await corsair.surf.api.heatscore.tokenOfTheDay({});
   value?: number,
   volume_24h?: number,
   volume_24h_change_percent?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2597,7 +2597,7 @@ await corsair.surf.api.heatscore.tokenOfWeek({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2651,7 +2651,7 @@ await corsair.surf.api.heatscore.tokenOfWeek({});
   value?: number,
   volume_24h?: number,
   volume_24h_change_percent?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2721,7 +2721,7 @@ await corsair.surf.api.hyperliquid.account({});
     withdrawable: number
   },
   spot?: {
-    balances?: {
+    balances: {
     }[] | null
   },
   staking?: {
@@ -2733,7 +2733,7 @@ await corsair.surf.api.hyperliquid.account({});
   total_value_usd?: number,
   unpriced_token_count: number,
   vaults?: {
-    positions?: {
+    positions: {
     }[] | null,
     total_equity: number
   }
@@ -2784,7 +2784,7 @@ await corsair.surf.api.hyperliquid.candles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2800,11 +2800,11 @@ await corsair.surf.api.hyperliquid.candles({});
   low: number,
   open: number,
   open_time: number,
-  quote?: number | null,
+  quote: number | null,
   symbol: string,
   trades: number,
   volume: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2861,7 +2861,7 @@ await corsair.surf.api.hyperliquid.fills({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2885,7 +2885,7 @@ await corsair.surf.api.hyperliquid.fills({});
   time: number,
   time_ms: number,
   tx_index: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2941,7 +2941,7 @@ await corsair.surf.api.hyperliquid.leaderboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2958,10 +2958,10 @@ await corsair.surf.api.hyperliquid.leaderboard({});
   total_funding: number,
   total_pnl: number,
   total_trades: number,
-  traded_pairs?: string[] | null,
+  traded_pairs: string[] | null,
   volume_traded: number,
   win_rate: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3024,10 +3024,10 @@ await corsair.surf.api.hyperliquid.orders({});
   as_of: number,
   errors?: {
   }[] | null,
-  historical?: {
+  historical: {
   }[] | null,
   historical_total: number,
-  open?: {
+  open: {
   }[] | null,
   open_total: number
 }
@@ -3087,7 +3087,7 @@ await corsair.surf.api.hyperliquid.performance({});
   address: string,
   errors?: {
   }[] | null,
-  open_positions?: {
+  open_positions: {
   }[] | null,
   partial: boolean,
   performance?: {
@@ -3166,7 +3166,7 @@ await corsair.surf.api.hyperliquid.positions({});
   address: string,
   cross_maintenance_margin_used: number,
   margin_ratio: number,
-  positions?: {
+  positions: {
   }[] | null,
   timestamp: number,
   total_margin_used: number,
@@ -3224,7 +3224,7 @@ await corsair.surf.api.hyperliquid.trades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3254,7 +3254,7 @@ await corsair.surf.api.hyperliquid.trades({});
   reported_leverage_type?: cross | isolated,
   source: string,
   symbol: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3307,7 +3307,7 @@ await corsair.surf.api.hyperliquid.tradesAggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3326,7 +3326,7 @@ await corsair.surf.api.hyperliquid.tradesAggregate({});
   trade_count: number,
   volume_usd: number,
   win_rate: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3444,7 +3444,7 @@ await corsair.surf.api.market.etf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3460,7 +3460,7 @@ await corsair.surf.api.market.etf({});
   settled: boolean,
   symbol?: string,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3506,7 +3506,7 @@ await corsair.surf.api.market.exchangeFlowExchanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3518,7 +3518,7 @@ await corsair.surf.api.market.exchangeFlowExchanges({});
   supported_flow_filter: boolean,
   symbol: string,
   type: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3568,7 +3568,7 @@ await corsair.surf.api.market.fearGreed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3580,7 +3580,7 @@ await corsair.surf.api.market.fearGreed({});
   price: number,
   timestamp: number,
   value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3625,7 +3625,7 @@ await corsair.surf.api.market.futures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3641,7 +3641,7 @@ await corsair.surf.api.market.futures({});
   updated_at: number,
   volume_24h: number,
   volume_change_24h: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3690,7 +3690,7 @@ await corsair.surf.api.market.liquidationChart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3703,7 +3703,7 @@ await corsair.surf.api.market.liquidationChart({});
   long_liquidation_usd: number,
   short_liquidation_usd: number,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3750,7 +3750,7 @@ await corsair.surf.api.market.liquidationExchangeList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3762,7 +3762,7 @@ await corsair.surf.api.market.liquidationExchangeList({});
   liquidation_usd: number,
   long_liquidation_usd: number,
   short_liquidation_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3815,7 +3815,7 @@ await corsair.surf.api.market.liquidationOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3831,7 +3831,7 @@ await corsair.surf.api.market.liquidationOrder({});
   symbol: string,
   timestamp: number,
   usd_value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3887,7 +3887,7 @@ await corsair.surf.api.market.listing({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3903,7 +3903,7 @@ await corsair.surf.api.market.listing({});
   published_at?: number,
   quote_symbol?: string,
   trading_pair: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3957,7 +3957,7 @@ await corsair.surf.api.market.onchainIndicator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3972,7 +3972,7 @@ await corsair.surf.api.market.onchainIndicator({});
   symbol?: string,
   timestamp: number,
   value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4023,7 +4023,7 @@ await corsair.surf.api.market.options({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4039,7 +4039,7 @@ await corsair.surf.api.market.options({});
   symbol: string,
   updated_at: number,
   volume_24h: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4087,7 +4087,7 @@ await corsair.surf.api.market.price({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 | `project_id` | `string` | No | — |
 | `summary` | `object` | Yes | — |
@@ -4105,7 +4105,7 @@ await corsair.surf.api.market.price({});
   symbol?: string,
   timestamp: number,
   value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4171,7 +4171,7 @@ await corsair.surf.api.market.priceIndicator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4188,7 +4188,7 @@ await corsair.surf.api.market.priceIndicator({});
   value: number,
   values?: {
   }
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4238,7 +4238,7 @@ await corsair.surf.api.market.publicSale({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4258,7 +4258,7 @@ await corsair.surf.api.market.publicSale({});
   name?: string,
   project_id?: string,
   symbol?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4311,7 +4311,7 @@ await corsair.surf.api.market.ranking({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4339,7 +4339,7 @@ await corsair.surf.api.market.ranking({});
   symbol: string,
   total_supply?: number,
   volume_24h_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4515,7 +4515,7 @@ await corsair.surf.api.news.feed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4533,7 +4533,7 @@ await corsair.surf.api.news.feed({});
   summary?: string,
   title: string,
   url?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4586,7 +4586,7 @@ await corsair.surf.api.onchain.bridgeRanking({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4597,7 +4597,7 @@ await corsair.surf.api.onchain.bridgeRanking({});
   project: string,
   tx_count: number,
   volume_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4652,7 +4652,7 @@ await corsair.surf.api.onchain.dexActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4665,7 +4665,7 @@ await corsair.surf.api.onchain.dexActivity({});
   timestamp?: number,
   trades: number,
   volume_usd?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4845,11 +4845,11 @@ await corsair.surf.api.onchain.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `string[]` | No | — |
-| `filters` | `object[]` | No | — |
+| `fields` | `string[] \| null` | No | — |
+| `filters` | `object[] \| null` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `sort` | `object[]` | No | — |
+| `sort` | `object[] \| null` | No | — |
 | `source` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -4860,7 +4860,7 @@ await corsair.surf.api.onchain.query({});
   field: string,
   op: string,
   value: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4870,7 +4870,7 @@ await corsair.surf.api.onchain.query({});
 {
   field: string,
   order?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4881,7 +4881,7 @@ await corsair.surf.api.onchain.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4889,7 +4889,7 @@ await corsair.surf.api.onchain.query({});
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4938,7 +4938,7 @@ await corsair.surf.api.onchain.schema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4946,7 +4946,7 @@ await corsair.surf.api.onchain.schema({});
 
 ```ts
 {
-  columns?: {
+  columns: {
   }[] | null,
   database: string,
   engine?: string,
@@ -4958,7 +4958,7 @@ await corsair.surf.api.onchain.schema({});
   table: string,
   total_bytes?: number,
   total_rows?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5008,7 +5008,7 @@ await corsair.surf.api.onchain.sql({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5016,7 +5016,7 @@ await corsair.surf.api.onchain.sql({});
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5231,14 +5231,14 @@ await corsair.surf.api.onchain.sqlJobsJobIdResults({});
 
 
 
-**Output:** `object`
+**Output:** `object \| string`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-  data?: {
+  data: {
   }[] | null,
   meta: {
     cached: boolean,
@@ -5298,7 +5298,7 @@ await corsair.surf.api.onchain.sqlPreflight({});
     max_rows_to_read: number
   },
   estimate: {
-    by_table?: {
+    by_table: {
     }[] | null,
     bytes: number,
     marks: number,
@@ -5309,9 +5309,9 @@ await corsair.surf.api.onchain.sqlPreflight({});
   query_id: string,
   request_id: string,
   sql: string,
-  tables?: {
+  tables: {
   }[] | null,
-  warnings?: {
+  warnings: {
   }[] | null
 }
 ```
@@ -5359,7 +5359,7 @@ await corsair.surf.api.onchain.tx({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5367,11 +5367,11 @@ await corsair.surf.api.onchain.tx({});
 
 ```ts
 {
-  accessList?: {
+  accessList: {
   }[] | null,
   blobVersionedHashes?: string[] | null,
-  blockHash?: string | null,
-  blockNumber?: string | null,
+  blockHash: string | null,
+  blockNumber: string | null,
   chainId?: string,
   from: string,
   from_label?: {
@@ -5386,15 +5386,15 @@ await corsair.surf.api.onchain.tx({});
   nonce: string,
   r: string,
   s: string,
-  to?: string | null,
+  to: string | null,
   to_label?: {
   },
-  transactionIndex?: string | null,
+  transactionIndex: string | null,
   type: string,
   v: string,
   value: string,
   yParity?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5447,7 +5447,7 @@ await corsair.surf.api.onchain.yieldRanking({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5464,7 +5464,7 @@ await corsair.surf.api.onchain.yieldRanking({});
   token_address: string,
   tvl_usd: number,
   version: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5518,7 +5518,7 @@ await corsair.surf.api.portfolio.wallets({});
 
 ```ts
 {
-  wallets?: {
+  wallets: {
   }[] | null
 }
 ```
@@ -5581,9 +5581,9 @@ await corsair.surf.api.predictionMarket.analytics({});
 
 ```ts
 {
-  category_trends?: {
+  category_trends: {
   }[] | null,
-  momentum_markets?: {
+  momentum_markets: {
   }[] | null,
   momentum_summary: {
     confirming_down: number,
@@ -5595,7 +5595,7 @@ await corsair.surf.api.predictionMarket.analytics({});
     volume_decreasing: number,
     volume_increasing: number
   },
-  top_markets?: {
+  top_markets: {
   }[] | null
 }
 ```
@@ -5645,7 +5645,7 @@ await corsair.surf.api.predictionMarket.correlations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5660,7 +5660,7 @@ await corsair.surf.api.predictionMarket.correlations({});
   market_b_condition_id: string,
   market_b_question?: string,
   overlapping_days: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5711,7 +5711,7 @@ await corsair.surf.api.predictionMarket.kalshiEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5723,9 +5723,9 @@ await corsair.surf.api.predictionMarket.kalshiEvents({});
   event_ticker: string,
   event_title: string,
   market_count: number,
-  markets?: {
+  markets: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5776,7 +5776,7 @@ await corsair.surf.api.predictionMarket.kalshiMarkets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5800,7 +5800,7 @@ await corsair.surf.api.predictionMarket.kalshiMarkets({});
   subcategory?: string,
   title: string,
   total_volume: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5850,7 +5850,7 @@ await corsair.surf.api.predictionMarket.kalshiOpenInterest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5860,7 +5860,7 @@ await corsair.surf.api.predictionMarket.kalshiOpenInterest({});
 {
   open_interest: number,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5914,7 +5914,7 @@ await corsair.surf.api.predictionMarket.kalshiOrderbooks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `pagination` | `object` | Yes | — |
-| `snapshots` | `object[]` | No | — |
+| `snapshots` | `object[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -5940,11 +5940,11 @@ await corsair.surf.api.predictionMarket.kalshiOrderbooks({});
   sequence: number,
   ticker: string,
   timestamp: number,
-  yes_asks?: {
+  yes_asks: {
   }[] | null,
-  yes_bids?: {
+  yes_bids: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5979,7 +5979,7 @@ await corsair.surf.api.predictionMarket.kalshiPrices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5995,7 +5995,7 @@ await corsair.surf.api.predictionMarket.kalshiPrices({});
   side_b: {
   },
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6052,7 +6052,7 @@ await corsair.surf.api.predictionMarket.kalshiTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6067,7 +6067,7 @@ await corsair.surf.api.predictionMarket.kalshiTrades({});
   timestamp: number,
   trade_id: string,
   yes_price: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6117,7 +6117,7 @@ await corsair.surf.api.predictionMarket.kalshiVolumes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6127,7 +6127,7 @@ await corsair.surf.api.predictionMarket.kalshiVolumes({});
 {
   notional_volume_usd: number,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6180,7 +6180,7 @@ await corsair.surf.api.predictionMarket.matchingDaily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6193,7 +6193,7 @@ await corsair.surf.api.predictionMarket.matchingDaily({});
   polymarket_oi_usd: number,
   polymarket_volume_usd: number,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6251,7 +6251,7 @@ await corsair.surf.api.predictionMarket.matchingPairs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6269,7 +6269,7 @@ await corsair.surf.api.predictionMarket.matchingPairs({});
   },
   polymarket_price?: number,
   spread_pct?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6320,7 +6320,7 @@ await corsair.surf.api.predictionMarket.polymarketEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6334,7 +6334,7 @@ await corsair.surf.api.predictionMarket.polymarketEvents({});
   event_slug: string,
   image?: string,
   market_count: number,
-  markets?: {
+  markets: {
   }[] | null,
   settlement_sources?: string,
   start_time?: number,
@@ -6343,7 +6343,7 @@ await corsair.surf.api.predictionMarket.polymarketEvents({});
   tags?: string[] | null,
   title: string,
   volume_total: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6395,7 +6395,7 @@ await corsair.surf.api.predictionMarket.polymarketLeaderboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6411,7 +6411,7 @@ await corsair.surf.api.predictionMarket.polymarketLeaderboard({});
   positions_won: number,
   trade_count: number,
   volume: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6462,7 +6462,7 @@ await corsair.surf.api.predictionMarket.polymarketMarkets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6497,7 +6497,7 @@ await corsair.surf.api.predictionMarket.polymarketMarkets({});
   volume_1_year: number,
   volume_total: number,
   winning_side?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6547,7 +6547,7 @@ await corsair.surf.api.predictionMarket.polymarketOpenInterest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6558,7 +6558,7 @@ await corsair.surf.api.predictionMarket.polymarketOpenInterest({});
   daily_net_change_usd: number,
   open_interest_usd: number,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6612,7 +6612,7 @@ await corsair.surf.api.predictionMarket.polymarketOrderbooks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `pagination` | `object` | Yes | — |
-| `snapshots` | `object[]` | No | — |
+| `snapshots` | `object[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -6631,17 +6631,17 @@ await corsair.surf.api.predictionMarket.polymarketOrderbooks({});
 
 ```ts
 {
-  asks?: {
+  asks: {
   }[] | null,
   assetId: string,
-  bids?: {
+  bids: {
   }[] | null,
   hash: string,
   indexedAt: number,
   market: string,
   tickSize: string,
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6676,7 +6676,7 @@ await corsair.surf.api.predictionMarket.polymarketPositions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6694,7 +6694,7 @@ await corsair.surf.api.predictionMarket.polymarketPositions({});
   realized_pnl: number,
   redeemable: boolean,
   size: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6746,7 +6746,7 @@ await corsair.surf.api.predictionMarket.polymarketPriceOhlcvConditionId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `candles` | `object[]` | No | — |
+| `candles` | `object[] \| null` | Yes | — |
 | `condition_id` | `string` | Yes | — |
 | `interval` | `number` | Yes | — |
 
@@ -6763,7 +6763,7 @@ await corsair.surf.api.predictionMarket.polymarketPriceOhlcvConditionId({});
   timestamp: number,
   trades_count: number,
   volume: number
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6798,7 +6798,7 @@ await corsair.surf.api.predictionMarket.polymarketPrices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6811,7 +6811,7 @@ await corsair.surf.api.predictionMarket.polymarketPrices({});
   side_b?: {
   },
   timestamp: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6870,7 +6870,7 @@ await corsair.surf.api.predictionMarket.polymarketSmartMoney({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `string[]` | No | — |
+| `data` | `string[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6928,7 +6928,7 @@ await corsair.surf.api.predictionMarket.polymarketTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `string[]` | No | — |
+| `data` | `string[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6983,7 +6983,7 @@ await corsair.surf.api.predictionMarket.polymarketVolumes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6996,7 +6996,7 @@ await corsair.surf.api.predictionMarket.polymarketVolumes({});
   sell_volume?: number,
   timestamp: number,
   trade_count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7049,7 +7049,7 @@ await corsair.surf.api.predictionMarket.polymarketVolumeSplitConditionId({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `condition_id` | `string` | Yes | — |
-| `data_points` | `object[]` | No | — |
+| `data_points` | `object[] \| null` | Yes | — |
 | `end_time` | `number` | Yes | — |
 | `granularity` | `string` | Yes | — |
 | `start_time` | `number` | Yes | — |
@@ -7064,7 +7064,7 @@ await corsair.surf.api.predictionMarket.polymarketVolumeSplitConditionId({});
   total_volume: number,
   trades_count: number,
   yes_volume: number
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7103,7 +7103,7 @@ await corsair.surf.api.project.aiNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7119,7 +7119,7 @@ await corsair.surf.api.project.aiNews({});
   timestamp: number,
   title: string,
   tldr?: string[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7175,7 +7175,7 @@ await corsair.surf.api.project.defiMetrics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7185,7 +7185,7 @@ await corsair.surf.api.project.defiMetrics({});
 {
   timestamp: number,
   value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7236,7 +7236,7 @@ await corsair.surf.api.project.defiRanking({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7254,7 +7254,7 @@ await corsair.surf.api.project.defiRanking({});
   tvl?: number,
   users?: number,
   volume?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7440,7 +7440,7 @@ await corsair.surf.api.search.airdrop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7463,7 +7463,7 @@ await corsair.surf.api.search.airdrop({});
   }[] | null,
   total_raise: number,
   xscore: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7513,7 +7513,7 @@ await corsair.surf.api.search.airdropActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7533,7 +7533,7 @@ await corsair.surf.api.search.airdropActivities({});
   total_raise?: number,
   updated_at: number,
   xscore?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7586,7 +7586,7 @@ await corsair.surf.api.search.events({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7599,7 +7599,7 @@ await corsair.surf.api.search.events({});
   logo_url?: string,
   title: string,
   type: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7650,7 +7650,7 @@ await corsair.surf.api.search.fund({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7663,10 +7663,10 @@ await corsair.surf.api.search.fund({});
   invested_projects_count: number,
   name: string,
   tier: number,
-  top_projects?: {
+  top_projects: {
   }[] | null,
   type?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7724,7 +7724,7 @@ await corsair.surf.api.search.fundraising({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7741,7 +7741,7 @@ await corsair.surf.api.search.fundraising({});
   source_count: number,
   summary: string,
   title: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7792,7 +7792,7 @@ await corsair.surf.api.search.news({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7810,7 +7810,7 @@ await corsair.surf.api.search.news({});
   summary?: string,
   title: string,
   url?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7869,7 +7869,7 @@ await corsair.surf.api.search.predictionMarket({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7901,7 +7901,7 @@ await corsair.surf.api.search.predictionMarket({});
   volume_1d: number,
   volume_30d: number,
   volume_7d: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7952,7 +7952,7 @@ await corsair.surf.api.search.project({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7970,7 +7970,7 @@ await corsair.surf.api.search.project({});
   tags?: string[] | null,
   tokens?: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8022,7 +8022,7 @@ await corsair.surf.api.search.token({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8035,7 +8035,7 @@ await corsair.surf.api.search.token({});
   decimals: number,
   symbol: string,
   volume_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8086,7 +8086,7 @@ await corsair.surf.api.search.wallet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8103,7 +8103,7 @@ await corsair.surf.api.search.wallet({});
   label?: string,
   num_addresses?: number,
   twitter?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8156,7 +8156,7 @@ await corsair.surf.api.search.web({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8168,7 +8168,7 @@ await corsair.surf.api.search.web({});
   description: string,
   title: string,
   url: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8223,7 +8223,7 @@ await corsair.surf.api.token.dexTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8246,7 +8246,7 @@ await corsair.surf.api.token.dexTrades({});
   token_sold_symbol: string,
   tx_hash: string,
   version: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8299,7 +8299,7 @@ await corsair.surf.api.token.holders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8314,7 +8314,7 @@ await corsair.surf.api.token.holders({});
   label?: {
   },
   percentage?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8366,7 +8366,7 @@ await corsair.surf.api.token.tokenomics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8381,7 +8381,7 @@ await corsair.surf.api.token.tokenomics({});
   total_supply?: number,
   unlock_amount: number,
   unlocked_percentage_of_total_supply?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8438,7 +8438,7 @@ await corsair.surf.api.token.transferCounterparties({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8454,7 +8454,7 @@ await corsair.surf.api.token.transferCounterparties({});
   },
   last_transfer_at: number,
   transfer_count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8509,7 +8509,7 @@ await corsair.surf.api.token.transfers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8529,7 +8529,7 @@ await corsair.surf.api.token.transfers({});
   to_label?: {
   },
   tx_hash: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8674,7 +8674,7 @@ await corsair.surf.api.wallet.detail({});
     address: string,
     entity_name?: string,
     entity_type?: string,
-    labels?: {
+    labels: {
     }[] | null
   },
   nft?: {
@@ -8736,7 +8736,7 @@ await corsair.surf.api.wallet.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8754,7 +8754,7 @@ await corsair.surf.api.wallet.history({});
   tx_hash: string,
   tx_type?: string,
   value: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8803,7 +8803,7 @@ await corsair.surf.api.wallet.labelsBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8814,9 +8814,9 @@ await corsair.surf.api.wallet.labelsBatch({});
   address: string,
   entity_name?: string,
   entity_type?: string,
-  labels?: {
+  labels: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8865,7 +8865,7 @@ await corsair.surf.api.wallet.netWorth({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8875,7 +8875,7 @@ await corsair.surf.api.wallet.netWorth({});
 {
   timestamp: number,
   usd_value: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8926,7 +8926,7 @@ await corsair.surf.api.wallet.protocols({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -8936,12 +8936,12 @@ await corsair.surf.api.wallet.protocols({});
 {
   chain: string,
   logo_url?: string,
-  positions?: {
+  positions: {
   }[] | null,
   protocol_name: string,
   site_url?: string,
   total_usd: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8996,7 +8996,7 @@ await corsair.surf.api.wallet.transfers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -9018,7 +9018,7 @@ await corsair.surf.api.wallet.transfers({});
   token_address?: string,
   token_symbol?: string,
   tx_hash: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -9130,7 +9130,7 @@ await corsair.surf.api.x.tweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -9152,7 +9152,7 @@ await corsair.surf.api.x.tweets({});
   tweet_id: string,
   type?: string,
   url: string
-}[]
+}[] | null
 ```
 </Accordion>
 

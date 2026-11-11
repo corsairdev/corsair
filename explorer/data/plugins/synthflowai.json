@@ -44,7 +44,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -75,52 +75,52 @@
           {
             "key": "REAL_TIME_BOOKING",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CALCOM",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "GHL",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INFORMATION_EXTRACTOR",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "LIVE_TRANSFER",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "SEND_SMS",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INCALL_SMS",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INCALL_WHATSAPP",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CUSTOM_ACTION",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CUSTOM_EVAL",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -295,52 +295,52 @@
           {
             "key": "REAL_TIME_BOOKING",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CALCOM",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "GHL",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INFORMATION_EXTRACTOR",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "LIVE_TRANSFER",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "SEND_SMS",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INCALL_SMS",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "INCALL_WHATSAPP",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CUSTOM_ACTION",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "CUSTOM_EVAL",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -529,7 +529,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{ pagination?: { total_records?: number, limit?: number, offset?: number }, assistants?: {}[] | {} }"
+            "type": "{ pagination?: { total_records?: number, limit?: number, offset?: number }, assistants?: Record<string, any>[] | Record<string, any> }"
           }
         ]
       }
@@ -585,7 +585,7 @@
           {
             "key": "agent",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -636,7 +636,7 @@
           {
             "key": "custom_variables",
             "optional": true,
-            "type": "{ key: string, value: string }[] | {}"
+            "type": "{ key: string, value: string }[] | Record<string, any>"
           },
           {
             "key": "lead_email",
@@ -778,7 +778,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{ pagination?: {}, calls?: {}[] }"
+            "type": "{ pagination?: Record<string, any>, calls?: Record<string, any>[] }"
           }
         ]
       }
@@ -814,7 +814,7 @@
           {
             "key": "contact_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -932,7 +932,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{ pagination?: {}, contacts?: {}[] }"
+            "type": "{ pagination?: Record<string, any>, contacts?: Record<string, any>[] }"
           }
         ]
       }
@@ -968,7 +968,7 @@
           {
             "key": "contact_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1846,6 +1846,11 @@
         },
         {
           "field": "workspace",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

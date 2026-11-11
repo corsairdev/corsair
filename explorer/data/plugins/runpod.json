@@ -1,7 +1,7 @@
 {
   "id": "runpod",
   "displayName": "Runpod",
-  "description": "Runpod plugin for Corsair",
+  "description": "GPU cloud platform for managing Pods, Serverless endpoints, templates, clusters, secrets, and registry credentials, and for browsing GPU and CPU types.",
   "npmPackageName": "@corsair-dev/runpod",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -48,7 +48,7 @@
           {
             "key": "pubKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -79,7 +79,7 @@
           {
             "key": "pubKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "keys",
@@ -186,7 +186,7 @@
           {
             "key": "env",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "ports",
@@ -352,12 +352,12 @@
           {
             "key": "locations",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "flashBootType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scalerType",
@@ -717,7 +717,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -783,8 +783,9 @@
           },
           {
             "key": "dockerArgs",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           },
           {
             "key": "env",
@@ -854,22 +855,22 @@
           {
             "key": "dockerArgs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ports",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "readme",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "volumeMountPath",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "env",
@@ -898,6 +899,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -965,6 +971,11 @@
         },
         {
           "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "desiredStatus",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

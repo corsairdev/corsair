@@ -32,7 +32,7 @@ await corsair.amcards.api.cards.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -92,8 +92,8 @@ await corsair.amcards.api.categories.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `title` | `string` | No | — |
-| `priority` | `number` | No | — |
+| `title` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | — |
 | `parent` | `any` | No | — |
 | `hierarchy` | `any` | No | — |
 
@@ -123,7 +123,7 @@ await corsair.amcards.api.categories.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -194,7 +194,7 @@ await corsair.amcards.api.contacts.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -269,10 +269,10 @@ await corsair.amcards.api.gifts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `price` | `string \| number` | No | — |
-| `shipping_cost` | `string \| number` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `price` | `string \| number \| null` | No | — |
+| `shipping_cost` | `string \| number \| null` | No | — |
 | `available` | `boolean` | No | — |
 | `availability` | `string \| boolean` | No | — |
 
@@ -295,7 +295,7 @@ await corsair.amcards.api.gifts.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -363,17 +363,7 @@ await corsair.amcards.api.schema.getApi({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -393,17 +383,7 @@ await corsair.amcards.api.schema.getCategory({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -435,7 +415,7 @@ await corsair.amcards.api.templates.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `category` | `any` | No | — |
 | `configuration` | `any` | No | — |
 | `panels` | `any` | No | — |
@@ -466,7 +446,7 @@ await corsair.amcards.api.templates.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

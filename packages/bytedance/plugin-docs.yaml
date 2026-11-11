@@ -1,0 +1,19 @@
+displayName: ByteDance
+description: Video generation API for starting Seedance video tasks and listing, reading, and canceling or deleting them.
+domain: byteplus.com
+examples:
+  read:
+    path: tasks.list
+    title: List video tasks
+  write:
+    path: video.create
+    title: Start a video task
+    args:
+      model: seedance-1-0-pro-250528
+      content:
+        - type: text
+          text: A paper boat drifting down a rainy street
+dbExample:
+  entity: videoTasks
+  note: Search synced video tasks without hitting ByteDance.
+  limit: 50

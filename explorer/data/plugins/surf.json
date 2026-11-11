@@ -63,8 +63,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ close: number, high: number, low: number, open: number, timestamp: number, volume_usd: number }[]"
+            "optional": false,
+            "type": "{ close: number, high: number, low: number, open: number, timestamp: number, volume_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -109,8 +109,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ accumulated_oci: {}, calculated_at?: number, cash_and_equivalents: {}, currency: string, current_assets: {}, current_debt: {}, current_investments: {}, current_liabilities: {}, deferred_revenue: {}, deposit_liabilities: {}, duration_days?: number, duration_months?: number, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, goodwill_and_intangible_assets: {}, inventory: {}, liabilities_and_equity: {}, net_debt: {}, non_current_assets: {}, non_current_debt: {}, non_current_investments: {}, non_current_liabilities: {}, other_current_liabilities: {}, other_non_current_assets: {}, other_non_current_liabilities: {}, outstanding_shares: {}, payables: {}, period: quarterly | ytd | annual | ttm, period_start?: string, property_plant_and_equipment: {}, receivables: {}, report_period: string, retained_earnings: {}, shareholders_equity: {}, source_updated_at?: number, symbol: string, tax_assets: {}, tax_liabilities: {}, total_assets: {}, total_debt: {}, total_liabilities: {}, working_capital: {} }[]"
+            "optional": false,
+            "type": "{ accumulated_oci: {}, calculated_at?: number, cash_and_equivalents: {}, currency: string, current_assets: {}, current_debt: {}, current_investments: {}, current_liabilities: {}, deferred_revenue: {}, deposit_liabilities: {}, duration_days?: number, duration_months?: number, fiscal_period: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, goodwill_and_intangible_assets: {}, inventory: {}, liabilities_and_equity: {}, net_debt: {}, non_current_assets: {}, non_current_debt: {}, non_current_investments: {}, non_current_liabilities: {}, other_current_liabilities: {}, other_non_current_assets: {}, other_non_current_liabilities: {}, outstanding_shares: {}, payables: {}, period: quarterly | ytd | annual | ttm, period_start?: string, property_plant_and_equipment: {}, receivables: {}, report_period: string, retained_earnings: {}, shareholders_equity: {}, source_updated_at?: number, symbol: string, tax_assets: {}, tax_liabilities: {}, total_assets: {}, total_debt: {}, total_liabilities: {}, working_capital: {} }[] | null"
           },
           {
             "key": "meta",
@@ -161,7 +161,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ candles?: {}[] | null, end_date?: string, interval: string, interval_multiplier: number, latest_price: { day_change?: number, day_change_percent?: number, price: number, timestamp: number }, latest_price_available: boolean, start_date?: string, symbol: string }"
+            "type": "{ candles: {}[] | null, end_date?: string, interval: string, interval_multiplier: number, latest_price: { day_change?: number, day_change_percent?: number, price: number, timestamp: number }, latest_price_available: boolean, start_date?: string, symbol: string }"
           },
           {
             "key": "meta",
@@ -206,8 +206,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ beginning_cash: {}, business_acquisitions_and_disposals: {}, calculated_at?: number, capital_expenditure: {}, change_in_cash: {}, currency: string, debt_issuance_repayment: {}, depreciation_and_amortization: {}, dividends_and_distributions: {}, duration_days?: number, duration_months?: number, ending_cash: {}, equity_issuance_purchase: {}, financing_cash_flow: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, fx_effect: {}, investing_cash_flow: {}, investment_acquisitions_and_disposals: {}, net_income: {}, operating_cash_flow: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, share_based_compensation: {}, source_updated_at?: number, symbol: string }[]"
+            "optional": false,
+            "type": "{ beginning_cash: {}, business_acquisitions_and_disposals: {}, calculated_at?: number, capital_expenditure: {}, change_in_cash: {}, currency: string, debt_issuance_repayment: {}, depreciation_and_amortization: {}, dividends_and_distributions: {}, duration_days?: number, duration_months?: number, ending_cash: {}, equity_issuance_purchase: {}, financing_cash_flow: {}, fiscal_period: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, fx_effect: {}, investing_cash_flow: {}, investment_acquisitions_and_disposals: {}, net_income: {}, operating_cash_flow: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, share_based_compensation: {}, source_updated_at?: number, symbol: string }[] | null"
           },
           {
             "key": "meta",
@@ -258,7 +258,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ available_periods?: {}[] | null, snapshots?: {}[] | null, symbol: string }"
+            "type": "{ available_periods: {}[] | null, snapshots: {}[] | null, symbol: string }"
           },
           {
             "key": "meta",
@@ -298,8 +298,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ accepted_at?: number, accession: string, filed_on: string, financial_metric_count: number, form_type: string, normalized_statement_field_count: number, report_periods?: string[] | null, sec_url: string, source_observed_at?: number, source_revision_ids?: string[] | null, source_statement_ids?: string[] | null, statement_types?: string[] | null }[]"
+            "optional": false,
+            "type": "{ accepted_at?: number, accession: string, filed_on: string, financial_metric_count: number, form_type: string, normalized_statement_field_count: number, report_periods: string[] | null, sec_url: string, source_observed_at?: number, source_revision_ids: string[] | null, source_statement_ids: string[] | null, statement_types: string[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -344,8 +344,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ calculated_at?: number, cost_of_revenue: {}, currency: string, dividends_per_common_share: {}, duration_days?: number, duration_months?: number, ebit: {}, ebitda: {}, eps_basic: {}, eps_calculation_method?: string, eps_diluted: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, gross_profit: {}, income_tax_expense: {}, interest_expense: {}, net_income: {}, net_income_common_stock: {}, net_income_discontinued_operations: {}, net_income_non_controlling_interests: {}, net_income_yoy: {}, operating_expense: {}, operating_income: {}, operating_income_yoy: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, research_and_development: {}, revenue: {}, revenue_yoy: {}, sga_expense: {}, source_updated_at?: number, symbol: string, total_operating_costs: {}, weighted_average_shares: {}, weighted_average_shares_diluted: {} }[]"
+            "optional": false,
+            "type": "{ calculated_at?: number, cost_of_revenue: {}, currency: string, dividends_per_common_share: {}, duration_days?: number, duration_months?: number, ebit: {}, ebitda: {}, eps_basic: {}, eps_calculation_method?: string, eps_diluted: {}, fiscal_period: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, gross_profit: {}, income_tax_expense: {}, interest_expense: {}, net_income: {}, net_income_common_stock: {}, net_income_discontinued_operations: {}, net_income_non_controlling_interests: {}, net_income_yoy: {}, operating_expense: {}, operating_income: {}, operating_income_yoy: {}, period: quarterly | ytd | annual | ttm, period_start?: string, report_period: string, research_and_development: {}, revenue: {}, revenue_yoy: {}, sga_expense: {}, source_updated_at?: number, symbol: string, total_operating_costs: {}, weighted_average_shares: {}, weighted_average_shares_diluted: {} }[] | null"
           },
           {
             "key": "meta",
@@ -375,8 +375,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ accepted_at?: number, company_name: string, coverage_fields: number, filed_on: string, financial_metric_count: number, form_type: string, logo_url: string, report_period: string, sec_url: string, symbol: string }[]"
+            "optional": false,
+            "type": "{ accepted_at?: number, company_name: string, coverage_fields: number, filed_on: string, financial_metric_count: number, form_type: string, logo_url: string, report_period: string, sec_url: string, symbol: string }[] | null"
           },
           {
             "key": "meta",
@@ -402,7 +402,7 @@
           {
             "key": "market_cap_min",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       },
@@ -411,8 +411,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ company_name: string, duration_days?: number, duration_months?: number, filed_on: string, free_cash_flow: {}, gross_margin: {}, logo_url: string, operating_margin: {}, pe_ttm: {}, period_start?: string, report_period: string, return_on_equity: {}, revenue_growth: {}, source_updated_at?: number, symbol: string }[]"
+            "optional": false,
+            "type": "{ company_name: string, duration_days?: number, duration_months?: number, filed_on: string, free_cash_flow: {}, gross_margin: {}, logo_url: string, operating_margin: {}, pe_ttm: {}, period_start?: string, report_period: string, return_on_equity: {}, revenue_growth: {}, source_updated_at?: number, symbol: string }[] | null"
           },
           {
             "key": "meta",
@@ -452,8 +452,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ financial_serving_reason?: reporting_series_missing | publication_missing | publication_terminal_excluded, financial_serving_status: string, is_current: boolean, is_primary: boolean, issuer_cik: string, issuer_company_id: string, issuer_legal_name: string, listing_currency?: string, listing_exchange_code?: string, listing_id: string, listing_lifecycle_status: string, listing_symbol_id: string, reporting_series_display_name?: string, reporting_series_id?: string, security_id: string, security_name?: string, security_type: string, share_class?: string, stock_type: string, symbol_exchange_code?: string, symbol_identity_status: string, ticker: string, valid_from?: string, valid_to?: string }[]"
+            "optional": false,
+            "type": "{ financial_serving_reason?: reporting_series_missing | publication_missing | publication_terminal_excluded, financial_serving_status: string, is_current: boolean, is_primary: boolean, issuer_cik: string, issuer_company_id: string, issuer_legal_name: string, listing_currency?: string, listing_exchange_code?: string, listing_id: string, listing_lifecycle_status: string, listing_symbol_id: string, reporting_series_display_name?: string, reporting_series_id?: string, security_id: string, security_name?: string, security_type: string, share_class?: string, stock_type: string, symbol_exchange_code?: string, symbol_identity_status: string, ticker: string, valid_from?: string, valid_to?: string }[] | null"
           },
           {
             "key": "meta",
@@ -488,8 +488,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ currency: string, day_change?: number, day_change_percent?: number, logo_url: string, name: string, price: number, price_timestamp: number, symbol: string, tokenized?: {}[] | null }[]"
+            "optional": false,
+            "type": "{ currency: string, day_change?: number, day_change_percent?: number, logo_url: string, name: string, price: number, price_timestamp: number, symbol: string, tokenized?: {}[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -534,8 +534,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ asset_turnover: {}, book_value_growth: {}, book_value_per_share: {}, calculated_at?: number, cash_ratio: {}, change_in_cash_per_share: {}, currency: string, current_ratio: {}, days_sales_outstanding: {}, debt_to_assets: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, earnings_growth: {}, earnings_per_share: {}, earnings_per_share_growth: {}, ebit_margin: {}, ebitda: {}, ebitda_growth: {}, ebitda_margin: {}, enterprise_value: {}, enterprise_value_to_ebitda_ratio: {}, enterprise_value_to_revenue_ratio: {}, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, free_cash_flow_growth: {}, free_cash_flow_margin: {}, free_cash_flow_per_share: {}, free_cash_flow_yield: {}, gross_margin: {}, interest_coverage: {}, inventory_turnover: {}, liabilities_to_assets: {}, market_cap: {}, net_debt: {}, net_margin: {}, operating_cash_flow_per_share: {}, operating_cash_flow_ratio: {}, operating_cycle: {}, operating_income_growth: {}, operating_margin: {}, payout_ratio: {}, peg_ratio: {}, period: quarterly | annual | ttm, period_start?: string, price_to_book_ratio: {}, price_to_earnings_ratio: {}, price_to_sales_ratio: {}, quick_ratio: {}, receivables_turnover: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue_growth: {}, source_updated_at?: number, symbol: string, working_capital_turnover: {} }[]"
+            "optional": false,
+            "type": "{ asset_turnover: {}, book_value_growth: {}, book_value_per_share: {}, calculated_at?: number, cash_ratio: {}, change_in_cash_per_share: {}, currency: string, current_ratio: {}, days_sales_outstanding: {}, debt_to_assets: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, earnings_growth: {}, earnings_per_share: {}, earnings_per_share_growth: {}, ebit_margin: {}, ebitda: {}, ebitda_growth: {}, ebitda_margin: {}, enterprise_value: {}, enterprise_value_to_ebitda_ratio: {}, enterprise_value_to_revenue_ratio: {}, fiscal_period: string | null, fiscal_quarter?: number, fiscal_year?: number, free_cash_flow_growth: {}, free_cash_flow_margin: {}, free_cash_flow_per_share: {}, free_cash_flow_yield: {}, gross_margin: {}, interest_coverage: {}, inventory_turnover: {}, liabilities_to_assets: {}, market_cap: {}, net_debt: {}, net_margin: {}, operating_cash_flow_per_share: {}, operating_cash_flow_ratio: {}, operating_cycle: {}, operating_income_growth: {}, operating_margin: {}, payout_ratio: {}, peg_ratio: {}, period: quarterly | annual | ttm, period_start?: string, price_to_book_ratio: {}, price_to_earnings_ratio: {}, price_to_sales_ratio: {}, quick_ratio: {}, receivables_turnover: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue_growth: {}, source_updated_at?: number, symbol: string, working_capital_turnover: {} }[] | null"
           },
           {
             "key": "meta",
@@ -580,8 +580,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ calculated_at?: number, cash_and_equivalents: {}, company_name: string, currency: string, current_ratio: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, ebit: {}, ebit_margin: {}, ebitda: {}, ebitda_margin: {}, eps_basic: {}, eps_diluted: {}, exchange: string, fiscal_period?: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, gross_margin: {}, gross_profit: {}, industry?: string, liabilities_to_assets: {}, net_debt: {}, net_income: {}, net_margin: {}, operating_cash_flow: {}, operating_income: {}, operating_margin: {}, pb_mrq: {}, pe_lyr: {}, pe_ttm: {}, period: quarterly | ytd | annual | ttm, period_start?: string, ps_ttm: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue: {}, revenue_yoy: {}, sector?: string, shareholders_equity: {}, source_updated_at?: number, symbol: string, total_assets: {}, total_debt: {}, total_liabilities: {} }[]"
+            "optional": false,
+            "type": "{ calculated_at?: number, cash_and_equivalents: {}, company_name: string, currency: string, current_ratio: {}, debt_to_equity: {}, duration_days?: number, duration_months?: number, ebit: {}, ebit_margin: {}, ebitda: {}, ebitda_margin: {}, eps_basic: {}, eps_diluted: {}, exchange: string, fiscal_period: string | null, fiscal_quarter?: number, fiscal_year?: number, formula_version?: string, free_cash_flow: {}, gross_margin: {}, gross_profit: {}, industry?: string, liabilities_to_assets: {}, net_debt: {}, net_income: {}, net_margin: {}, operating_cash_flow: {}, operating_income: {}, operating_margin: {}, pb_mrq: {}, pe_lyr: {}, pe_ttm: {}, period: quarterly | ytd | annual | ttm, period_start?: string, ps_ttm: {}, report_period: string, return_on_assets: {}, return_on_equity: {}, return_on_invested_capital: {}, revenue: {}, revenue_yoy: {}, sector?: string, shareholders_equity: {}, source_updated_at?: number, symbol: string, total_assets: {}, total_debt: {}, total_liabilities: {} }[] | null"
           },
           {
             "key": "meta",
@@ -687,8 +687,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ calculated_at?: number, currency?: string, dimension_type: product | segment, fiscal_quarter?: number, fiscal_year?: number, label: string, label_key: string, materialized_at?: number, metric_code: string, period: quarterly | annual, presentation_period: single_quarter | annual, reason_code?: string, report_period: string, source_accessions?: string[] | null, source_observed_at?: number, source_provider_tickers?: string[] | null, statement_type: income | balance_sheet | cash_flow, status: reported | source_null | source_missing, symbol: string, unit?: string, value?: number | null }[]"
+            "optional": false,
+            "type": "{ calculated_at?: number, currency?: string, dimension_type: product | segment, fiscal_quarter?: number, fiscal_year?: number, label: string, label_key: string, materialized_at?: number, metric_code: string, period: quarterly | annual, presentation_period: single_quarter | annual, reason_code?: string, report_period: string, source_accessions?: string[] | null, source_observed_at?: number, source_provider_tickers?: string[] | null, statement_type: income | balance_sheet | cash_flow, status: reported | source_null | source_missing, symbol: string, unit?: string, value: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -753,8 +753,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ close: number, close_time: number, exchange: string, high: number, interval: string, is_synthetic: boolean, low: number, open: number, pair: string, region: string, timestamp: number, trade_count?: number, volume_base?: number, volume_quote?: number }[]"
+            "optional": false,
+            "type": "{ close: number, close_time: number, exchange: string, high: number, interval: string, is_synthetic: boolean, low: number, open: number, pair: string, region: string, timestamp: number, trade_count?: number, volume_base?: number, volume_quote?: number }[] | null"
           },
           {
             "key": "meta",
@@ -829,8 +829,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ active: boolean, base: string, change_24h_abs?: number, change_24h_pct?: number, data_actionability?: string, data_status?: string, exchange: string, high_24h?: number, latest_4h_candle_at?: number, latest_5m_candle_at?: number, latest_candle_at?: number, latest_price?: number, latest_ticker_at?: number, latest_weekly_candle_at?: number, listing_date?: number, low_24h?: number, open_24h?: number, pair: string, prev_close?: number, quote: string, region: string, status: string, technical_score?: number, technical_score_at?: number, technical_score_label?: string, type: string, volume_24h_base?: number, volume_24h_quote?: number }[]"
+            "optional": false,
+            "type": "{ active: boolean, base: string, change_24h_abs?: number, change_24h_pct?: number, data_actionability?: string, data_status?: string, exchange: string, high_24h?: number, latest_4h_candle_at?: number, latest_5m_candle_at?: number, latest_candle_at?: number, latest_price?: number, latest_ticker_at?: number, latest_weekly_candle_at?: number, listing_date?: number, low_24h?: number, open_24h?: number, pair: string, prev_close?: number, quote: string, region: string, status: string, technical_score?: number, technical_score_at?: number, technical_score_label?: string, type: string, volume_24h_base?: number, volume_24h_quote?: number }[] | null"
           },
           {
             "key": "meta",
@@ -875,8 +875,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ask_depth?: number | null, asks?: {}[] | null, bid_depth?: number | null, bids?: {}[] | null, exchange: string, mid_price?: number | null, pair: string, spread?: number | null, spread_pct?: number | null }[]"
+            "optional": false,
+            "type": "{ ask_depth: number | null, asks: {}[] | null, bid_depth: number | null, bids: {}[] | null, exchange: string, mid_price: number | null, pair: string, spread: number | null, spread_pct: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -921,8 +921,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange: string, funding_interval_hours?: number | null, funding_rate?: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, pair: string, timestamp?: number | null }[]"
+            "optional": false,
+            "type": "{ exchange: string, funding_interval_hours: number | null, funding_rate: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, pair: string, timestamp: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -977,8 +977,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ candles?: {}[] | null, count: number, exchange: string, interval: string, pair: string, period_end?: string | null, period_high?: number | null, period_low?: number | null, period_start?: string | null, period_volume?: number | null }[]"
+            "optional": false,
+            "type": "{ candles: {}[] | null, count: number, exchange: string, interval: string, pair: string, period_end: string | null, period_high: number | null, period_low: number | null, period_start: string | null, period_volume: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -1028,8 +1028,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange: string, long_short_ratio?: number | null, pair: string, timestamp?: number | null }[]"
+            "optional": false,
+            "type": "{ exchange: string, long_short_ratio: number | null, pair: string, timestamp: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -1084,8 +1084,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ active?: boolean | null, base?: string | null, exchange: string, maker_fee?: number | null, pair: string, quote?: string | null, taker_fee?: number | null, type?: string | null }[]"
+            "optional": false,
+            "type": "{ active: boolean | null, base: string | null, exchange: string, maker_fee: number | null, pair: string, quote: string | null, taker_fee: number | null, type: string | null }[] | null"
           },
           {
             "key": "meta",
@@ -1126,7 +1126,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ exchange: string, funding: { exchange: string, funding_interval_hours?: number | null, funding_rate?: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, index_price?: number | null, interval?: string | null, mark_price?: number | null, next_funding?: string | null, pair: string }, open_interest: { exchange: string, open_interest_amount?: number | null, open_interest_usd?: number | null, pair: string, timestamp?: number | null }, pair: string }"
+            "type": "{ exchange: string, funding: { exchange: string, funding_interval_hours: number | null, funding_rate: number | null, funding_rate_1h?: number, funding_rate_8h?: number, funding_rate_annualized?: number, funding_rate_raw?: number, index_price: number | null, interval: string | null, mark_price: number | null, next_funding: string | null, pair: string }, open_interest: { exchange: string, open_interest_amount: number | null, open_interest_usd: number | null, pair: string, timestamp: number | null }, pair: string }"
           },
           {
             "key": "meta",
@@ -1166,8 +1166,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ask?: number | null, bid?: number | null, change_24h_pct?: number | null, exchange: string, high_24h?: number | null, last?: number | null, low_24h?: number | null, pair: string, timestamp?: number | null, volume_24h_base?: number | null }[]"
+            "optional": false,
+            "type": "{ ask: number | null, bid: number | null, change_24h_pct: number | null, exchange: string, high_24h: number | null, last: number | null, low_24h: number | null, pair: string, timestamp: number | null, volume_24h_base: number | null }[] | null"
           },
           {
             "key": "meta",
@@ -1203,7 +1203,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ description?: string, id: string, image?: string, invested_projects_count: number, jurisdiction?: string, links?: {}[] | null, members?: {}[] | null, name: string, recent_researches?: {}[] | null, tier: number, type?: string, x_accounts?: {}[] | null }"
+            "type": "{ description?: string, id: string, image?: string, invested_projects_count: number, jurisdiction?: string, links: {}[] | null, members: {}[] | null, name: string, recent_researches: {}[] | null, tier: number, type?: string, x_accounts: {}[] | null }"
           },
           {
             "key": "meta",
@@ -1244,7 +1244,7 @@
           {
             "key": "is_lead",
             "optional": true,
-            "type": "true | false | "
+            "type": "true | false | \"\""
           },
           {
             "key": "invested_after",
@@ -1273,8 +1273,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ invested_at?: number, is_lead: boolean, project_id: string, project_logo?: string, project_name: string, project_slug?: string, recent_raise?: number, total_raise?: number }[]"
+            "optional": false,
+            "type": "{ invested_at?: number, is_lead: boolean, project_id: string, project_logo?: string, project_name: string, project_slug?: string, recent_raise?: number, total_raise?: number }[] | null"
           },
           {
             "key": "meta",
@@ -1314,8 +1314,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects?: {}[] | null, type?: string }[]"
+            "optional": false,
+            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects: {}[] | null, type?: string }[] | null"
           },
           {
             "key": "meta",
@@ -1396,8 +1396,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+            "optional": false,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[] | null"
           },
           {
             "key": "meta",
@@ -1432,8 +1432,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+            "optional": false,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[] | null"
           },
           {
             "key": "meta",
@@ -1468,8 +1468,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[]"
+            "optional": false,
+            "type": "{ ai_summary?: {}, baseline?: number, change_percent?: number, change_vs_previous_percent?: number, computed_hour?: number, core_state: {}, driver?: string, evidence_score?: number, heat_dimensions: {}, heat_score?: number, heat_score_by_range?: {}, heat_score_change_vs_previous_percent_by_range?: {}, heat_score_previous_by_range?: {}, liquidation_long_24h?: number, liquidation_long_short_ratio_24h?: number, liquidation_short_24h?: number, logo?: string, market_relevance?: number, metric?: string, name?: string, open_interest?: number, points_used?: number, previous_value?: number, price?: number, price_change_percent: {}, project_id?: string, project_slug?: string, rank?: number, score?: number, signed_z?: number, symbol?: string, time_range?: string, token_id?: string, token_signals?: {}, updated_at?: number, value?: number, volume_24h?: number, volume_24h_change_percent?: number }[] | null"
           },
           {
             "key": "meta",
@@ -1500,7 +1500,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ address: string, as_of: number, errors?: {}[] | null, perp?: { account_value: number, open_position_count: number, total_margin_used: number, withdrawable: number }, spot?: { balances?: {}[] | null }, staking?: { delegated_hype: number, pending_withdrawal_count: number, total_pending_withdrawal_hype: number, undelegated_hype: number }, total_value_usd?: number, unpriced_token_count: number, vaults?: { positions?: {}[] | null, total_equity: number } }"
+            "type": "{ address: string, as_of: number, errors?: {}[] | null, perp?: { account_value: number, open_position_count: number, total_margin_used: number, withdrawable: number }, spot?: { balances: {}[] | null }, staking?: { delegated_hype: number, pending_withdrawal_count: number, total_pending_withdrawal_hype: number, undelegated_hype: number }, total_value_usd?: number, unpriced_token_count: number, vaults?: { positions: {}[] | null, total_equity: number } }"
           },
           {
             "key": "meta",
@@ -1545,8 +1545,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ close: number, close_time: number, closed: boolean, high: number, interval: string, low: number, open: number, open_time: number, quote?: number | null, symbol: string, trades: number, volume: number }[]"
+            "optional": false,
+            "type": "{ close: number, close_time: number, closed: boolean, high: number, interval: string, low: number, open: number, open_time: number, quote: number | null, symbol: string, trades: number, volume: number }[] | null"
           },
           {
             "key": "meta",
@@ -1616,8 +1616,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ closed_pnl: number, crossed: boolean, direction: string, fee: number, fee_token: string, fill_id: string, hash: string, is_internal: boolean, price: number, side: string, size: number, start_position: number, symbol: string, time: number, time_ms: number, tx_index: number }[]"
+            "optional": false,
+            "type": "{ closed_pnl: number, crossed: boolean, direction: string, fee: number, fee_token: string, fill_id: string, hash: string, is_internal: boolean, price: number, side: string, size: number, start_position: number, symbol: string, time: number, time_ms: number, tx_index: number }[] | null"
           },
           {
             "key": "meta",
@@ -1687,8 +1687,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ account_age_days?: number, address: string, days_active: number, human_score: number, rank: number, total_fees: number, total_funding: number, total_pnl: number, total_trades: number, traded_pairs?: string[] | null, volume_traded: number, win_rate: number }[]"
+            "optional": false,
+            "type": "{ account_age_days?: number, address: string, days_active: number, human_score: number, rank: number, total_fees: number, total_funding: number, total_pnl: number, total_trades: number, traded_pairs: string[] | null, volume_traded: number, win_rate: number }[] | null"
           },
           {
             "key": "meta",
@@ -1729,7 +1729,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ address: string, as_of: number, errors?: {}[] | null, historical?: {}[] | null, historical_total: number, open?: {}[] | null, open_total: number }"
+            "type": "{ address: string, as_of: number, errors?: {}[] | null, historical: {}[] | null, historical_total: number, open: {}[] | null, open_total: number }"
           },
           {
             "key": "meta",
@@ -1765,7 +1765,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ account_value?: number, address: string, errors?: {}[] | null, open_positions?: {}[] | null, partial: boolean, performance?: { avg_loss?: number, avg_win?: number, fees: number, first_trade: number, gross_pnl: number, last_trade: number, losses: number, net_pnl: number, profit_factor?: number, scratches: number, trades: number, volume_usd: number, win_rate: number, wins: number }, total_unrealized_pnl?: number, traded_pairs: number, watermark: number }"
+            "type": "{ account_value?: number, address: string, errors?: {}[] | null, open_positions: {}[] | null, partial: boolean, performance?: { avg_loss?: number, avg_win?: number, fees: number, first_trade: number, gross_pnl: number, last_trade: number, losses: number, net_pnl: number, profit_factor?: number, scratches: number, trades: number, volume_usd: number, win_rate: number, wins: number }, total_unrealized_pnl?: number, traded_pairs: number, watermark: number }"
           },
           {
             "key": "meta",
@@ -1801,7 +1801,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ account_value: number, address: string, cross_maintenance_margin_used: number, margin_ratio: number, positions?: {}[] | null, timestamp: number, total_margin_used: number, total_notional_pos: number, total_raw_usd: number, withdrawable: number }"
+            "type": "{ account_value: number, address: string, cross_maintenance_margin_used: number, margin_ratio: number, positions: {}[] | null, timestamp: number, total_margin_used: number, total_notional_pos: number, total_raw_usd: number, withdrawable: number }"
           },
           {
             "key": "meta",
@@ -1866,8 +1866,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ close_time: number, direction: string, entry_px: number, episode_id?: string, exit_px: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, hold_seconds: number, is_win: boolean, leverage?: number, leverage_semantics?: completed_trade_reported, leverage_type?: cross | isolated, net_pnl: number, notional_usd: number, open_time: number, opened_sz: number, reported_leverage?: number, reported_leverage_type?: cross | isolated, source: string, symbol: string }[]"
+            "optional": false,
+            "type": "{ close_time: number, direction: string, entry_px: number, episode_id?: string, exit_px: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, hold_seconds: number, is_win: boolean, leverage?: number, leverage_semantics?: completed_trade_reported, leverage_type?: cross | isolated, net_pnl: number, notional_usd: number, open_time: number, opened_sz: number, reported_leverage?: number, reported_leverage_type?: cross | isolated, source: string, symbol: string }[] | null"
           },
           {
             "key": "meta",
@@ -1922,8 +1922,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ avg_loss?: number, avg_win?: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, key: string, net_pnl: number, trade_count: number, volume_usd: number, win_rate: number }[]"
+            "optional": false,
+            "type": "{ avg_loss?: number, avg_win?: number, fees: number, funding_pnl: number, funding_status: complete | partial | unavailable, gross_pnl: number, key: string, net_pnl: number, trade_count: number, volume_usd: number, win_rate: number }[] | null"
           },
           {
             "key": "meta",
@@ -2024,8 +2024,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ etfs?: {}[] | null, flow_usd: number, price_usd: number, project_id?: string, settled: boolean, symbol?: string, timestamp: number }[]"
+            "optional": false,
+            "type": "{ etfs?: {}[] | null, flow_usd: number, price_usd: number, project_id?: string, settled: boolean, symbol?: string, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -2065,8 +2065,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ name: string, supported_flow_filter: boolean, symbol: string, type: string }[]"
+            "optional": false,
+            "type": "{ name: string, supported_flow_filter: boolean, symbol: string, type: string }[] | null"
           },
           {
             "key": "meta",
@@ -2101,8 +2101,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ classification: string, price: number, timestamp: number, value: number }[]"
+            "optional": false,
+            "type": "{ classification: string, price: number, timestamp: number, value: number }[] | null"
           },
           {
             "key": "meta",
@@ -2137,8 +2137,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ funding_rate: number, long_short_ratio: number, open_interest: number, project_id?: string, symbol: string, updated_at: number, volume_24h: number, volume_change_24h: number }[]"
+            "optional": false,
+            "type": "{ funding_rate: number, long_short_ratio: number, open_interest: number, project_id?: string, symbol: string, updated_at: number, volume_24h: number, volume_change_24h: number }[] | null"
           },
           {
             "key": "meta",
@@ -2193,8 +2193,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ contributing_exchanges?: string[] | null, excluded_exchanges?: string[] | null, long_liquidation_usd: number, short_liquidation_usd: number, timestamp: number }[]"
+            "optional": false,
+            "type": "{ contributing_exchanges?: string[] | null, excluded_exchanges?: string[] | null, long_liquidation_usd: number, short_liquidation_usd: number, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -2239,8 +2239,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange: string, liquidation_usd: number, long_liquidation_usd: number, short_liquidation_usd: number }[]"
+            "optional": false,
+            "type": "{ exchange: string, liquidation_usd: number, long_liquidation_usd: number, short_liquidation_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -2315,8 +2315,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ base_asset: string, exchange: string, order_id: string, price: number, side: string, symbol: string, timestamp: number, usd_value: number }[]"
+            "optional": false,
+            "type": "{ base_asset: string, exchange: string, order_id: string, price: number, side: string, symbol: string, timestamp: number, usd_value: number }[] | null"
           },
           {
             "key": "meta",
@@ -2381,8 +2381,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ base_symbol?: string, effective_at: number, event_type: string, exchange_name: string, product: string, published_at?: number, quote_symbol?: string, trading_pair: string }[]"
+            "optional": false,
+            "type": "{ base_symbol?: string, effective_at: number, event_type: string, exchange_name: string, product: string, published_at?: number, quote_symbol?: string, trading_pair: string }[] | null"
           },
           {
             "key": "meta",
@@ -2437,8 +2437,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[]"
+            "optional": false,
+            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[] | null"
           },
           {
             "key": "meta",
@@ -2478,8 +2478,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange: string, max_pain_price?: number, open_interest: number, project_id?: string, put_call_ratio?: number, symbol: string, updated_at: number, volume_24h: number }[]"
+            "optional": false,
+            "type": "{ exchange: string, max_pain_price?: number, open_interest: number, project_id?: string, put_call_ratio?: number, symbol: string, updated_at: number, volume_24h: number }[] | null"
           },
           {
             "key": "meta",
@@ -2529,8 +2529,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[]"
+            "optional": false,
+            "type": "{ exchange?: string, exchange_name?: string, metric?: string, project_id?: string, symbol?: string, timestamp: number, value: number }[] | null"
           },
           {
             "key": "meta",
@@ -2605,8 +2605,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ interval: string, name: string, project_id?: string, symbol: string, timestamp?: number, updated_at?: number, value: number, values?: {} }[]"
+            "optional": false,
+            "type": "{ interval: string, name: string, project_id?: string, symbol: string, timestamp?: number, updated_at?: number, value: number, values?: {} }[] | null"
           },
           {
             "key": "meta",
@@ -2641,8 +2641,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ allocation_of_supply?: number, ath_roi?: number, crowdsale_end_date?: number, crowdsale_price?: number, crowdsale_raise?: number, crowdsale_start_date?: number, crowdsale_status?: string, crowdsale_type?: string, launchpad_name?: string, name?: string, project_id?: string, symbol?: string }[]"
+            "optional": false,
+            "type": "{ allocation_of_supply?: number, ath_roi?: number, crowdsale_end_date?: number, crowdsale_price?: number, crowdsale_raise?: number, crowdsale_start_date?: number, crowdsale_status?: string, crowdsale_type?: string, launchpad_name?: string, name?: string, project_id?: string, symbol?: string }[] | null"
           },
           {
             "key": "meta",
@@ -2692,8 +2692,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ ath?: number, ath_date?: number, atl?: number, atl_date?: number, change_24h_pct: number, circulating_supply?: number, fdv?: number, high_24h: number, id?: string, image?: string, low_24h: number, market_cap_usd: number, max_supply?: number, name: string, price_usd: number, rank: number, slug?: string, symbol: string, total_supply?: number, volume_24h_usd: number }[]"
+            "optional": false,
+            "type": "{ ath?: number, ath_date?: number, atl?: number, atl_date?: number, change_24h_pct: number, circulating_supply?: number, fdv?: number, high_24h: number, id?: string, image?: string, low_24h: number, market_cap_usd: number, max_supply?: number, name: string, price_usd: number, rank: number, slug?: string, symbol: string, total_supply?: number, volume_24h_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -2820,8 +2820,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[]"
+            "optional": false,
+            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[] | null"
           },
           {
             "key": "meta",
@@ -2861,8 +2861,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ project: string, tx_count: number, volume_usd: number }[]"
+            "optional": false,
+            "type": "{ project: string, tx_count: number, volume_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -2922,8 +2922,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ active_traders: number, enriched_ratio?: number, timestamp?: number, trades: number, volume_usd?: number }[]"
+            "optional": false,
+            "type": "{ active_traders: number, enriched_ratio?: number, timestamp?: number, trades: number, volume_usd?: number }[] | null"
           },
           {
             "key": "meta",
@@ -3006,12 +3006,12 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "filters",
             "optional": true,
-            "type": "{ field: string, op: string, value: string }[]"
+            "type": "{ field: string, op: string, value: string }[] | null"
           },
           {
             "key": "limit",
@@ -3026,7 +3026,7 @@
           {
             "key": "sort",
             "optional": true,
-            "type": "{ field: string, order?: string }[]"
+            "type": "{ field: string, order?: string }[] | null"
           },
           {
             "key": "source",
@@ -3040,8 +3040,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{}[]"
+            "optional": false,
+            "type": "{}[] | null"
           },
           {
             "key": "meta",
@@ -3071,8 +3071,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ columns?: {}[] | null, database: string, engine?: string, partition_key?: string, physical_sources?: {}[] | null, primary_key?: string, sorting_key?: string, table: string, total_bytes?: number, total_rows?: number }[]"
+            "optional": false,
+            "type": "{ columns: {}[] | null, database: string, engine?: string, partition_key?: string, physical_sources?: {}[] | null, primary_key?: string, sorting_key?: string, table: string, total_bytes?: number, total_rows?: number }[] | null"
           },
           {
             "key": "meta",
@@ -3107,8 +3107,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{}[]"
+            "optional": false,
+            "type": "{}[] | null"
           },
           {
             "key": "meta",
@@ -3207,7 +3207,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ data?: {}[] | null, meta: { cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number } } | string"
+        "type": "{ data: {}[] | null, meta: { cached: boolean, credits_used: number, empty_reason?: string, has_more?: boolean, limit: number, offset: number, total?: number, watermark?: number } } | string"
       }
     },
     {
@@ -3236,7 +3236,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ accepted: boolean, budget: { max_bytes_to_read: number, max_execution_time_seconds: number, max_rows_to_read: number }, estimate: { by_table?: {}[] | null, bytes: number, marks: number, parts: number, rows: number }, executed_sql: string, query_id: string, request_id: string, sql: string, tables?: {}[] | null, warnings?: {}[] | null }"
+            "type": "{ accepted: boolean, budget: { max_bytes_to_read: number, max_execution_time_seconds: number, max_rows_to_read: number }, estimate: { by_table: {}[] | null, bytes: number, marks: number, parts: number, rows: number }, executed_sql: string, query_id: string, request_id: string, sql: string, tables: {}[] | null, warnings: {}[] | null }"
           },
           {
             "key": "meta",
@@ -3276,8 +3276,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ accessList?: {}[] | null, blobVersionedHashes?: string[] | null, blockHash?: string | null, blockNumber?: string | null, chainId?: string, from: string, from_label?: {}, gas: string, gasPrice?: string, hash: string, input: string, maxFeePerBlobGas?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, nonce: string, r: string, s: string, to?: string | null, to_label?: {}, transactionIndex?: string | null, type: string, v: string, value: string, yParity?: string }[]"
+            "optional": false,
+            "type": "{ accessList: {}[] | null, blobVersionedHashes?: string[] | null, blockHash: string | null, blockNumber: string | null, chainId?: string, from: string, from_label?: {}, gas: string, gasPrice?: string, hash: string, input: string, maxFeePerBlobGas?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, nonce: string, r: string, s: string, to: string | null, to_label?: {}, transactionIndex: string | null, type: string, v: string, value: string, yParity?: string }[] | null"
           },
           {
             "key": "meta",
@@ -3327,8 +3327,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ apy: number, apy_base: number, apy_reward: number, pool_address: string, project: string, symbol: string, token_address: string, tvl_usd: number, version: string }[]"
+            "optional": false,
+            "type": "{ apy: number, apy_base: number, apy_reward: number, pool_address: string, project: string, symbol: string, token_address: string, tvl_usd: number, version: string }[] | null"
           },
           {
             "key": "meta",
@@ -3353,7 +3353,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ wallets?: {}[] | null }"
+            "type": "{ wallets: {}[] | null }"
           },
           {
             "key": "meta",
@@ -3419,7 +3419,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ category_trends?: {}[] | null, momentum_markets?: {}[] | null, momentum_summary: { confirming_down: number, confirming_up: number, diverging_down: number, diverging_up: number, neutral: number, total_active: number, volume_decreasing: number, volume_increasing: number }, top_markets?: {}[] | null }"
+            "type": "{ category_trends: {}[] | null, momentum_markets: {}[] | null, momentum_summary: { confirming_down: number, confirming_up: number, diverging_down: number, diverging_up: number, neutral: number, total_active: number, volume_decreasing: number, volume_increasing: number }, top_markets: {}[] | null }"
           },
           {
             "key": "meta",
@@ -3469,8 +3469,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category: string, correlation: number, market_a_condition_id: string, market_a_question?: string, market_b_condition_id: string, market_b_question?: string, overlapping_days: number }[]"
+            "optional": false,
+            "type": "{ category: string, correlation: number, market_a_condition_id: string, market_a_question?: string, market_b_condition_id: string, market_b_question?: string, overlapping_days: number }[] | null"
           },
           {
             "key": "meta",
@@ -3510,8 +3510,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ event_subtitle?: string, event_ticker: string, event_title: string, market_count: number, markets?: {}[] | null }[]"
+            "optional": false,
+            "type": "{ event_subtitle?: string, event_ticker: string, event_title: string, market_count: number, markets: {}[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -3551,8 +3551,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category?: string, close_time?: number, end_time?: number, event_ticker: string, event_title?: string, last_day_open_interest: number, market_ticker: string, notional_volume_usd: number, open_interest: number, payout_type: string, result?: string, start_time?: number, status: string, subcategory?: string, title: string, total_volume: number }[]"
+            "optional": false,
+            "type": "{ category?: string, close_time?: number, end_time?: number, event_ticker: string, event_title?: string, last_day_open_interest: number, market_ticker: string, notional_volume_usd: number, open_interest: number, payout_type: string, result?: string, start_time?: number, status: string, subcategory?: string, title: string, total_volume: number }[] | null"
           },
           {
             "key": "meta",
@@ -3587,8 +3587,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ open_interest: number, timestamp: number }[]"
+            "optional": false,
+            "type": "{ open_interest: number, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -3643,8 +3643,8 @@
           },
           {
             "key": "snapshots",
-            "optional": true,
-            "type": "{ ask_depth: number, best_ask: number, best_bid: number, bid_depth: number, sequence: number, ticker: string, timestamp: number, yes_asks?: {}[] | null, yes_bids?: {}[] | null }[]"
+            "optional": false,
+            "type": "{ ask_depth: number, best_ask: number, best_bid: number, bid_depth: number, sequence: number, ticker: string, timestamp: number, yes_asks: {}[] | null, yes_bids: {}[] | null }[] | null"
           }
         ]
       }
@@ -3679,8 +3679,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ high: number, low: number, open?: number, side_a: {}, side_b: {}, timestamp: number }[]"
+            "optional": false,
+            "type": "{ high: number, low: number, open?: number, side_a: {}, side_b: {}, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -3750,8 +3750,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ market_ticker: string, no_price: number, notional_volume_usd: number, taker_side: string, timestamp: number, trade_id: string, yes_price: number }[]"
+            "optional": false,
+            "type": "{ market_ticker: string, no_price: number, notional_volume_usd: number, taker_side: string, timestamp: number, trade_id: string, yes_price: number }[] | null"
           },
           {
             "key": "meta",
@@ -3786,8 +3786,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ notional_volume_usd: number, timestamp: number }[]"
+            "optional": false,
+            "type": "{ notional_volume_usd: number, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -3837,8 +3837,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ kalshi_oi_contracts: number, kalshi_volume_contracts: number, polymarket_oi_usd: number, polymarket_volume_usd: number, timestamp: number }[]"
+            "optional": false,
+            "type": "{ kalshi_oi_contracts: number, kalshi_volume_contracts: number, polymarket_oi_usd: number, polymarket_volume_usd: number, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -3913,8 +3913,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category: string, confidence: number, kalshi: {}, kalshi_price?: number, match_type: string, polymarket: {}, polymarket_price?: number, spread_pct?: number }[]"
+            "optional": false,
+            "type": "{ category: string, confidence: number, kalshi: {}, kalshi_price?: number, match_type: string, polymarket: {}, polymarket_price?: number, spread_pct?: number }[] | null"
           },
           {
             "key": "meta",
@@ -3954,8 +3954,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category?: string, description?: string, end_time?: number, event_slug: string, image?: string, market_count: number, markets?: {}[] | null, settlement_sources?: string, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_total: number }[]"
+            "optional": false,
+            "type": "{ category?: string, description?: string, end_time?: number, event_slug: string, image?: string, market_count: number, markets: {}[] | null, settlement_sources?: string, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_total: number }[] | null"
           },
           {
             "key": "meta",
@@ -4000,8 +4000,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ address: string, pnl: number, positions: number, positions_lost: number, positions_open: number, positions_won: number, trade_count: number, volume: number }[]"
+            "optional": false,
+            "type": "{ address: string, pnl: number, positions: number, positions_lost: number, positions_open: number, positions_won: number, trade_count: number, volume: number }[] | null"
           },
           {
             "key": "meta",
@@ -4041,8 +4041,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category?: string, close_time?: number, completed_time?: number, condition_id: string, description?: string, end_time?: number, event_slug?: string, game_start_time?: number, image?: string, market_slug: string, negative_risk_id?: string, polymarket_link?: string, resolution_source?: string, side_a?: {}, side_b?: {}, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_1_month: number, volume_1_week: number, volume_1_year: number, volume_total: number, winning_side?: string }[]"
+            "optional": false,
+            "type": "{ category?: string, close_time?: number, completed_time?: number, condition_id: string, description?: string, end_time?: number, event_slug?: string, game_start_time?: number, image?: string, market_slug: string, negative_risk_id?: string, polymarket_link?: string, resolution_source?: string, side_a?: {}, side_b?: {}, start_time?: number, status: string, subcategory?: string, tags?: string[] | null, title: string, volume_1_month: number, volume_1_week: number, volume_1_year: number, volume_total: number, winning_side?: string }[] | null"
           },
           {
             "key": "meta",
@@ -4077,8 +4077,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ daily_net_change_usd: number, open_interest_usd: number, timestamp: number }[]"
+            "optional": false,
+            "type": "{ daily_net_change_usd: number, open_interest_usd: number, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -4133,8 +4133,8 @@
           },
           {
             "key": "snapshots",
-            "optional": true,
-            "type": "{ asks?: {}[] | null, assetId: string, bids?: {}[] | null, hash: string, indexedAt: number, market: string, tickSize: string, timestamp: number }[]"
+            "optional": false,
+            "type": "{ asks: {}[] | null, assetId: string, bids: {}[] | null, hash: string, indexedAt: number, market: string, tickSize: string, timestamp: number }[] | null"
           }
         ]
       }
@@ -4169,8 +4169,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ avg_price: number, cash_pnl: number, condition_id: string, cur_price: number, current_value: number, outcome_label: string, question: string, realized_pnl: number, redeemable: boolean, size: number }[]"
+            "optional": false,
+            "type": "{ avg_price: number, cash_pnl: number, condition_id: string, cur_price: number, current_value: number, outcome_label: string, question: string, realized_pnl: number, redeemable: boolean, size: number }[] | null"
           },
           {
             "key": "meta",
@@ -4215,8 +4215,8 @@
         "fields": [
           {
             "key": "candles",
-            "optional": true,
-            "type": "{ close: number, end_period_ts: number, high: number, low: number, open: number, timestamp: number, trades_count: number, volume: number }[]"
+            "optional": false,
+            "type": "{ close: number, end_period_ts: number, high: number, low: number, open: number, timestamp: number, trades_count: number, volume: number }[] | null"
           },
           {
             "key": "condition_id",
@@ -4261,8 +4261,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ side_a?: {}, side_b?: {}, timestamp: number }[]"
+            "optional": false,
+            "type": "{ side_a?: {}, side_b?: {}, timestamp: number }[] | null"
           },
           {
             "key": "meta",
@@ -4342,8 +4342,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "string[]"
+            "optional": false,
+            "type": "string[] | null"
           },
           {
             "key": "meta",
@@ -4418,8 +4418,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "string[]"
+            "optional": false,
+            "type": "string[] | null"
           },
           {
             "key": "meta",
@@ -4479,8 +4479,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ buy_volume?: number, notional_volume_usd: number, sell_volume?: number, timestamp: number, trade_count: number }[]"
+            "optional": false,
+            "type": "{ buy_volume?: number, notional_volume_usd: number, sell_volume?: number, timestamp: number, trade_count: number }[] | null"
           },
           {
             "key": "meta",
@@ -4530,8 +4530,8 @@
           },
           {
             "key": "data_points",
-            "optional": true,
-            "type": "{ no_volume: number, timestamp: number, total_volume: number, trades_count: number, yes_volume: number }[]"
+            "optional": false,
+            "type": "{ no_volume: number, timestamp: number, total_volume: number, trades_count: number, yes_volume: number }[] | null"
           },
           {
             "key": "end_time",
@@ -4591,8 +4591,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ id: string, signal_type: string, slug?: string, sources?: string[] | null, subtitle?: string, timestamp: number, title: string, tldr?: string[] | null }[]"
+            "optional": false,
+            "type": "{ id: string, signal_type: string, slug?: string, sources?: string[] | null, subtitle?: string, timestamp: number, title: string, tldr?: string[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -4657,8 +4657,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ timestamp: number, value: number }[]"
+            "optional": false,
+            "type": "{ timestamp: number, value: number }[] | null"
           },
           {
             "key": "meta",
@@ -4698,8 +4698,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ fees?: number, id?: string, logo_url?: string, name: string, revenue?: number, slug?: string, symbol?: string, tvl?: number, users?: number, volume?: number }[]"
+            "optional": false,
+            "type": "{ fees?: number, id?: string, logo_url?: string, name: string, revenue?: number, slug?: string, symbol?: string, tvl?: number, users?: number, volume?: number }[] | null"
           },
           {
             "key": "meta",
@@ -4825,8 +4825,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ coin_symbol?: string, followers_count: number, last_status_update: number, logo_url?: string, project_id?: string, project_name: string, reward_date: number, reward_type?: string, status: string, task_summary?: {}, tasks?: {}[] | null, total_raise: number, xscore: number }[]"
+            "optional": false,
+            "type": "{ coin_symbol?: string, followers_count: number, last_status_update: number, logo_url?: string, project_id?: string, project_name: string, reward_date: number, reward_type?: string, status: string, task_summary?: {}, tasks?: {}[] | null, total_raise: number, xscore: number }[] | null"
           },
           {
             "key": "meta",
@@ -4861,8 +4861,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ coin_name: string, coin_symbol?: string, created_at: number, followers_count?: string, id: string, reward: string, reward_date?: string, reward_type: string, status: string, total_raise?: number, updated_at: number, xscore?: string }[]"
+            "optional": false,
+            "type": "{ coin_name: string, coin_symbol?: string, created_at: number, followers_count?: string, id: string, reward: string, reward_date?: string, reward_type: string, status: string, total_raise?: number, updated_at: number, xscore?: string }[] | null"
           },
           {
             "key": "meta",
@@ -4912,8 +4912,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ date?: string, description?: string, logo_url?: string, title: string, type: string }[]"
+            "optional": false,
+            "type": "{ date?: string, description?: string, logo_url?: string, title: string, type: string }[] | null"
           },
           {
             "key": "meta",
@@ -4953,8 +4953,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects?: {}[] | null, type?: string }[]"
+            "optional": false,
+            "type": "{ id: string, image?: string, invested_projects_count: number, name: string, tier: number, top_projects: {}[] | null, type?: string }[] | null"
           },
           {
             "key": "meta",
@@ -5029,8 +5029,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ event_at: number, id: string, importance?: number, published_at: number, source: {}, source_count: number, summary: string, title: string }[]"
+            "optional": false,
+            "type": "{ event_at: number, id: string, importance?: number, published_at: number, source: {}, source_count: number, summary: string, title: string }[] | null"
           },
           {
             "key": "meta",
@@ -5070,8 +5070,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[]"
+            "optional": false,
+            "type": "{ highlights?: {}, id: string, project_id?: string, project_name?: string, published_at: number, source?: string, summary?: string, title: string, url?: string }[] | null"
           },
           {
             "key": "meta",
@@ -5151,8 +5151,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ category: string, condition_id?: string, days_to_resolution?: number, event_group_slug?: string, event_slug?: string, event_ticker?: string, event_title?: string, latest_price?: number, market_link?: string, market_slug?: string, market_ticker?: string, matched_counterpart?: string, open_interest_usd: number, outcome_label?: string, platform: string, question: string, smart_money_direction?: string, status: string, subcategory?: string, token_id?: string, trade_count_7d: number, volume_1d: number, volume_30d: number, volume_7d: number }[]"
+            "optional": false,
+            "type": "{ category: string, condition_id?: string, days_to_resolution?: number, event_group_slug?: string, event_slug?: string, event_ticker?: string, event_title?: string, latest_price?: number, market_link?: string, market_slug?: string, market_ticker?: string, matched_counterpart?: string, open_interest_usd: number, outcome_label?: string, platform: string, question: string, smart_money_direction?: string, status: string, subcategory?: string, token_id?: string, trade_count_7d: number, volume_1d: number, volume_30d: number, volume_7d: number }[] | null"
           },
           {
             "key": "meta",
@@ -5192,8 +5192,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ chains?: string[] | null, description?: string, id: string, logo_url?: string, name: string, slug?: string, symbol?: string, tags?: string[] | null, tokens?: {}[] | null }[]"
+            "optional": false,
+            "type": "{ chains?: string[] | null, description?: string, id: string, logo_url?: string, name: string, slug?: string, symbol?: string, tags?: string[] | null, tokens?: {}[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -5238,8 +5238,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ address: string, chain: string, decimals: number, symbol: string, volume_usd: number }[]"
+            "optional": false,
+            "type": "{ address: string, chain: string, decimals: number, symbol: string, volume_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -5279,8 +5279,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ address?: string, addresses?: {}[] | null, chain?: string, entity_name?: string, entity_type?: string, label?: string, num_addresses?: number, twitter?: string }[]"
+            "optional": false,
+            "type": "{ address?: string, addresses?: {}[] | null, chain?: string, entity_name?: string, entity_type?: string, label?: string, num_addresses?: number, twitter?: string }[] | null"
           },
           {
             "key": "meta",
@@ -5330,8 +5330,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ content: string, description: string, title: string, url: string }[]"
+            "optional": false,
+            "type": "{ content: string, description: string, title: string, url: string }[] | null"
           },
           {
             "key": "meta",
@@ -5381,8 +5381,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ amount_usd: number, block_time: number, project: string, taker: string, taker_label?: {}, token_bought_address?: string, token_bought_amount: number, token_bought_symbol: string, token_pair: string, token_sold_address?: string, token_sold_amount: number, token_sold_symbol: string, tx_hash: string, version: string }[]"
+            "optional": false,
+            "type": "{ amount_usd: number, block_time: number, project: string, taker: string, taker_label?: {}, token_bought_address?: string, token_bought_amount: number, token_bought_symbol: string, token_pair: string, token_sold_address?: string, token_sold_amount: number, token_sold_symbol: string, tx_hash: string, version: string }[] | null"
           },
           {
             "key": "meta",
@@ -5432,8 +5432,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ address: string, balance: string, entity_name?: string, entity_type?: string, label?: {}, percentage?: number }[]"
+            "optional": false,
+            "type": "{ address: string, balance: string, entity_name?: string, entity_type?: string, label?: {}, percentage?: number }[] | null"
           },
           {
             "key": "meta",
@@ -5478,8 +5478,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ allocations?: {}[] | null, cumulative_unlocked_amount: number, timestamp: number, total_supply?: number, unlock_amount: number, unlocked_percentage_of_total_supply?: number }[]"
+            "optional": false,
+            "type": "{ allocations?: {}[] | null, cumulative_unlocked_amount: number, timestamp: number, total_supply?: number, unlock_amount: number, unlocked_percentage_of_total_supply?: number }[] | null"
           },
           {
             "key": "meta",
@@ -5549,8 +5549,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ amount: string, amount_usd?: number, counterparty_address: string, first_transfer_at: number, label?: {}, last_transfer_at: number, transfer_count: number }[]"
+            "optional": false,
+            "type": "{ amount: string, amount_usd?: number, counterparty_address: string, first_transfer_at: number, label?: {}, last_transfer_at: number, transfer_count: number }[] | null"
           },
           {
             "key": "meta",
@@ -5610,8 +5610,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ amount: string, amount_usd?: number, block_number: number, from_address: string, from_label?: {}, symbol?: string, timestamp: number, to_address: string, to_label?: {}, tx_hash: string }[]"
+            "optional": false,
+            "type": "{ amount: string, amount_usd?: number, block_number: number, from_address: string, from_label?: {}, symbol?: string, timestamp: number, to_address: string, to_label?: {}, tx_hash: string }[] | null"
           },
           {
             "key": "meta",
@@ -5698,7 +5698,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ active_chains?: {}[] | null, approvals?: {}[] | null, errors?: {}[] | null, evm_balance?: { address: string, chain_balances?: {}[] | null, total_usd: number }, evm_tokens?: {}[] | null, labels?: { address: string, entity_name?: string, entity_type?: string, labels?: {}[] | null }, nft?: {}[] | null, sol_balance?: { address: string, sol_balance: string }, sol_tokens?: {}[] | null }"
+            "type": "{ active_chains?: {}[] | null, approvals?: {}[] | null, errors?: {}[] | null, evm_balance?: { address: string, chain_balances?: {}[] | null, total_usd: number }, evm_tokens?: {}[] | null, labels?: { address: string, entity_name?: string, entity_type?: string, labels: {}[] | null }, nft?: {}[] | null, sol_balance?: { address: string, sol_balance: string }, sol_tokens?: {}[] | null }"
           },
           {
             "key": "meta",
@@ -5763,8 +5763,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, tx_hash: string, tx_type?: string, value: string }[]"
+            "optional": false,
+            "type": "{ from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, tx_hash: string, tx_type?: string, value: string }[] | null"
           },
           {
             "key": "meta",
@@ -5794,8 +5794,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ address: string, entity_name?: string, entity_type?: string, labels?: {}[] | null }[]"
+            "optional": false,
+            "type": "{ address: string, entity_name?: string, entity_type?: string, labels: {}[] | null }[] | null"
           },
           {
             "key": "meta",
@@ -5825,8 +5825,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ timestamp: number, usd_value: number }[]"
+            "optional": false,
+            "type": "{ timestamp: number, usd_value: number }[] | null"
           },
           {
             "key": "meta",
@@ -5866,8 +5866,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ chain: string, logo_url?: string, positions?: {}[] | null, protocol_name: string, site_url?: string, total_usd: number }[]"
+            "optional": false,
+            "type": "{ chain: string, logo_url?: string, positions: {}[] | null, protocol_name: string, site_url?: string, total_usd: number }[] | null"
           },
           {
             "key": "meta",
@@ -5927,8 +5927,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ activity_type?: string, amount: string, amount_usd?: number, flow?: string, from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, token_address?: string, token_symbol?: string, tx_hash: string }[]"
+            "optional": false,
+            "type": "{ activity_type?: string, amount: string, amount_usd?: number, flow?: string, from_address: string, from_label?: {}, timestamp: number, to_address: string, to_label?: {}, token_address?: string, token_symbol?: string, tx_hash: string }[] | null"
           },
           {
             "key": "meta",
@@ -6009,8 +6009,8 @@
         "fields": [
           {
             "key": "data",
-            "optional": true,
-            "type": "{ author: {}, cover_image_url?: string, created_at: number, lang?: string, media?: {}[] | null, stats: {}, text: string, title?: string, tweet_id: string, type?: string, url: string }[]"
+            "optional": false,
+            "type": "{ author: {}, cover_image_url?: string, created_at: number, lang?: string, media?: {}[] | null, stats: {}, text: string, title?: string, tweet_id: string, type?: string, url: string }[] | null"
           },
           {
             "key": "meta",

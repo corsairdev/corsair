@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Slackbot plugin for Corsair"
+description: "Slack workspace access with a bot token for messages, conversations, files, users, user groups, reminders, calls, canvases, and team info, plus Events API webhooks."
 ---
 
-Use **Slackbot** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Slack Bot** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -45,6 +45,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -52,7 +53,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -60,7 +61,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="OAuth 2.0 (Recommended)">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Slackbot OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Slack Bot OAuth app.
 
 ```ts
 slackbot()
@@ -90,19 +91,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calls.info`**
+**List channels**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.slackbot.api.calls.info({});
+await tenant.slackbot.api.conversations.list({});
 ```
 
 
-**`calls.add`**
+**Post a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.slackbot.api.calls.add({});
+await tenant.slackbot.api.messages.post({ channel: 'C01234567', text: 'Hello from Corsair' });
 ```
 
 
@@ -110,15 +111,37 @@ See the full list on the [API](/plugins/slackbot/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.slackbot.db.<entity>.search()` and `.list()`: `channels`, `files`, `messages`, `reminders`, `scheduled_messages`, `users`.
+Search synced channels without hitting Slack's API.
 
-See [Database](/plugins/slackbot/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slackbot.db.channels.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `channels`, `files`, `messages`, `reminders`, `scheduled_messages`, `users`. See [Database](/plugins/slackbot/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **10** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when someone posts in a public channel the bot can see.
 
-See [Webhooks](/plugins/slackbot/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            message: {
+                after: async (ctx, result) => {
+                    console.log('Slack message:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/slackbot/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

@@ -1,0 +1,753 @@
+{
+  "id": "nanonets",
+  "displayName": "Nanonets",
+  "description": "AI document processing with Nanonets - extract fields from images and URLs with OCR models, train models, review and correct predicted files, approve or delete them, and query connected data stores.",
+  "npmPackageName": "@corsair-dev/nanonets",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nanonets.api.files.approve",
+      "shortPath": "files.approve",
+      "description": "Approve a validated file from an approval stage, which can trigger exports",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "request_file_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets file ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.files.assign",
+      "shortPath": "files.assign",
+      "description": "Assign files to a team member by email for review",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "member",
+            "optional": false,
+            "type": "string",
+            "description": "Team member email to assign to."
+          },
+          {
+            "key": "file_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "File IDs to assign."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Permanently delete a file and its predictions from a model",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets file ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.files.retryExports",
+      "shortPath": "files.retryExports",
+      "description": "Re-run the export integrations for the given files",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "file_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "File IDs to re-export."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, message?: string | null }[]",
+            "description": "One entry per file whose export was retried."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.files.retryPredictions",
+      "shortPath": "files.retryPredictions",
+      "description": "Re-run OCR prediction for the given files",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "file_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "File IDs to re-run OCR on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.files.unapprove",
+      "shortPath": "files.unapprove",
+      "description": "Reopen a previously approved file; it cannot be rejected here",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "request_file_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets file ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.files.updateFields",
+      "shortPath": "files.updateFields",
+      "description": "Replace the field set of one page of a file: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The page ID whose fields are replaced, as returned by predictions.getFileByPageId or predictions.listFiles."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page number of that page, copied from the read."
+          },
+          {
+            "key": "day_since_epoch",
+            "optional": false,
+            "type": "number",
+            "description": "The day_since_epoch of that page, copied from the read. Required: Nanonets looks the page up by it."
+          },
+          {
+            "key": "hour_of_day",
+            "optional": false,
+            "type": "number",
+            "description": "The hour_of_day of that page, copied from the read. Required: Nanonets looks the page up by it."
+          },
+          {
+            "key": "is_moderated",
+            "optional": true,
+            "type": "boolean",
+            "description": "The is_moderated flag of that page, copied from the read."
+          },
+          {
+            "key": "moderated_boxes",
+            "optional": false,
+            "type": "{ id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[]",
+            "description": "The full field list: existing boxes unchanged, new boxes with is_new: true, any omitted field is deleted, and an empty array removes every field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.integrations.executeQuery",
+      "shortPath": "integrations.executeQuery",
+      "description": "Run arbitrary SQL against a connected store; documented examples include UPDATE, which cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_integration_id",
+            "optional": false,
+            "type": "string",
+            "description": "The integration to query, from integrations.list."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "SQL to run against the connected store; documented examples include UPDATE, which cannot be undone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List external integrations with their IDs, types and masked connection info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null, type?: string | null, info?: Record<string, any> | null, status?: string | null, is_internal?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.models.train",
+      "shortPath": "models.train",
+      "description": "Train or retrain a model from its uploaded images; the model state moves through the training queue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.models.updateGuidelines",
+      "shortPath": "models.updateGuidelines",
+      "description": "Add or update the natural-language field and table extraction guidelines of an Instant Learning model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "field_instructions",
+            "optional": false,
+            "type": "string",
+            "description": "Natural-language extraction instructions for fields."
+          },
+          {
+            "key": "table_instructions",
+            "optional": false,
+            "type": "string",
+            "description": "Natural-language extraction instructions for tables."
+          },
+          {
+            "key": "ai_guidelines",
+            "optional": false,
+            "type": "true",
+            "description": "Must be true to apply the guidelines."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "nanonets.api.models.uploadTrainingUrls",
+      "shortPath": "models.uploadTrainingUrls",
+      "description": "Add training images to a model by URL, with optional box annotations, before (re)training",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Training image URLs."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ filename: string, object: { name: string, ocr_text?: string, bndbox: { xmin: number, ymin: number, xmax: number, ymax: number } }[] }[]",
+            "description": "Annotations for the images, one entry per labelled image; omit to upload the images without boxes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Meta",
+            "optional": true,
+            "type": "{ ModelID?: string | null, ModelType?: string | null, State?: string | number | null, Categories?: { name?: string | null, count?: number | null }[] | null, Accuracy?: number | null, Status?: string | null } | null"
+          },
+          {
+            "key": "Data",
+            "optional": true,
+            "type": "{ id?: string | null, filename?: string | null, size?: { width?: number | null, height?: number | null } | null, object?: Record<string, any>[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.predictions.createFromFile",
+      "shortPath": "predictions.createFromFile",
+      "description": "Upload a base64 PNG or JPEG to an OCR model and extract fields synchronously or, with async, as a pollable request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "base64_data",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded PNG or JPEG image to extract fields from."
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "string",
+            "description": "Your identifier for the request, returned with the result."
+          },
+          {
+            "key": "pages_to_process",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated page numbers to process, e.g. \"1,2\"."
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string",
+            "description": "ISO language code of the document; omit for best results."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously: returns pending with a request_file_id to poll. Recommended above 3 pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ message?: string | null, input?: string | null, prediction?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, page?: number | string | null, request_file_id?: string | null, id?: string | null, is_moderated?: boolean | null, request_metadata?: string | null, processing_type?: string | null, size?: { width?: number | null, height?: number | null } | null, rotation?: number | null, file_url?: string | null, filepath?: string | null, approval_status?: string | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, original_file_name?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, url?: string | null, file_metadata?: Record<string, any> | null, raw_ocr_api_response?: any | null }[] | null"
+          },
+          {
+            "key": "signed_urls",
+            "optional": true,
+            "type": "Record<string, Record<string, string>> | (Record<string, string> | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.predictions.createFromUrls",
+      "shortPath": "predictions.createFromUrls",
+      "description": "Extract fields from public image URLs with an OCR model, synchronously or as a pollable async request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Public image URLs to extract fields from."
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "string",
+            "description": "Your identifier for the request, returned with the result."
+          },
+          {
+            "key": "pages_to_process",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated page numbers to process, e.g. \"1,2\"."
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string",
+            "description": "ISO language code of the document; omit for best results."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously: returns pending with a request_file_id to poll."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ message?: string | null, input?: string | null, prediction?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, page?: number | string | null, request_file_id?: string | null, id?: string | null, is_moderated?: boolean | null, request_metadata?: string | null, processing_type?: string | null, size?: { width?: number | null, height?: number | null } | null, rotation?: number | null, file_url?: string | null, filepath?: string | null, approval_status?: string | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, original_file_name?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, url?: string | null, file_metadata?: Record<string, any> | null, raw_ocr_api_response?: any | null }[] | null"
+          },
+          {
+            "key": "signed_urls",
+            "optional": true,
+            "type": "Record<string, Record<string, string>> | (Record<string, string> | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.predictions.getFileByFileId",
+      "shortPath": "predictions.getFileByFileId",
+      "description": "Fetch every page of a prediction file by request file ID, listed as moderated and unmoderated; the poll target for async requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "request_file_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets file ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ message?: string | null, input?: string | null, prediction?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, page?: number | string | null, request_file_id?: string | null, id?: string | null, is_moderated?: boolean | null, request_metadata?: string | null, processing_type?: string | null, size?: { width?: number | null, height?: number | null } | null, rotation?: number | null, file_url?: string | null, filepath?: string | null, approval_status?: string | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, original_file_name?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, url?: string | null, file_metadata?: Record<string, any> | null, raw_ocr_api_response?: any | null }[] | null"
+          },
+          {
+            "key": "signed_urls",
+            "optional": true,
+            "type": "Record<string, Record<string, string>> | (Record<string, string> | null)[] | null"
+          },
+          {
+            "key": "moderated_images_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unmoderated_images_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "moderated_images",
+            "optional": true,
+            "type": "({ model_id?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, is_moderated?: boolean | null, id?: string | null, url?: string | null, predicted_boxes?: ({ id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null } | null)[] | null, moderated_boxes?: ({ id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null } | null)[] | null, size?: { width?: number | null, height?: number | null } | null, page?: number | string | null, request_file_id?: string | null, original_file_name?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, file_url?: string | null, request_metadata?: string | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, approval_status?: string | null, processing_type?: string | null, status?: string | null } | null)[] | null"
+          },
+          {
+            "key": "unmoderated_images",
+            "optional": true,
+            "type": "({ model_id?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, is_moderated?: boolean | null, id?: string | null, url?: string | null, predicted_boxes?: ({ id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null } | null)[] | null, moderated_boxes?: ({ id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null } | null)[] | null, size?: { width?: number | null, height?: number | null } | null, page?: number | string | null, request_file_id?: string | null, original_file_name?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, file_url?: string | null, request_metadata?: string | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, approval_status?: string | null, processing_type?: string | null, status?: string | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.predictions.getFileByPageId",
+      "shortPath": "predictions.getFileByPageId",
+      "description": "Fetch one prediction page with its boxes and raw OCR output",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The page ID, from a list or async response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ message?: string | null, input?: string | null, prediction?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, page?: number | string | null, request_file_id?: string | null, id?: string | null, is_moderated?: boolean | null, request_metadata?: string | null, processing_type?: string | null, size?: { width?: number | null, height?: number | null } | null, rotation?: number | null, file_url?: string | null, filepath?: string | null, approval_status?: string | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, original_file_name?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, url?: string | null, file_metadata?: Record<string, any> | null, raw_ocr_api_response?: any | null }[] | null"
+          },
+          {
+            "key": "signed_urls",
+            "optional": true,
+            "type": "Record<string, Record<string, string>> | (Record<string, string> | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nanonets.api.predictions.listFiles",
+      "shortPath": "predictions.listFiles",
+      "description": "List a model prediction files in a day-since-epoch window, split into moderated and unmoderated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Nanonets model ID."
+          },
+          {
+            "key": "start_day_interval",
+            "optional": false,
+            "type": "number",
+            "description": "Window start as days since 1970-01-01 GMT."
+          },
+          {
+            "key": "current_batch_day",
+            "optional": false,
+            "type": "number",
+            "description": "Window end as days since 1970-01-01 GMT."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "moderated_images_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unmoderated_images_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "moderated_images",
+            "optional": true,
+            "type": "{ model_id?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, is_moderated?: boolean | null, id?: string | null, url?: string | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, size?: { width?: number | null, height?: number | null } | null, page?: number | string | null, request_file_id?: string | null, original_file_name?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, file_url?: string | null, request_metadata?: string | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, approval_status?: string | null, processing_type?: string | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "unmoderated_images",
+            "optional": true,
+            "type": "{ model_id?: string | null, day_since_epoch?: number | null, hour_of_day?: number | null, is_moderated?: boolean | null, id?: string | null, url?: string | null, predicted_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, moderated_boxes?: { id?: string | null, label?: string | null, xmin?: number | null, ymin?: number | null, xmax?: number | null, ymax?: number | null, score?: string | number | null, ocr_text?: string | null, type?: string | null, status?: string | null, validation_status?: string | null, validation_message?: string | null, page?: number | string | null, page_no?: number | null, label_id?: string | null, verification_status?: string | null, failed_validation?: boolean | null, row?: number | null, col?: number | null, row_span?: number | null, col_span?: number | null, text?: string | null, lookup_edited?: boolean | null, lookup_parent_box_ids?: string[] | null, is_new?: boolean | null, cells?: Record<string, any>[] | null }[] | null, size?: { width?: number | null, height?: number | null } | null, page?: number | string | null, request_file_id?: string | null, original_file_name?: string | null, assigned_member?: string | null, assigned_members?: string[] | null, no_of_fields?: number | null, export_status?: string | null, exported_at?: string | null, updated_at?: string | null, verified_at?: string | null, verified_by?: string | null, current_stage_id?: string | null, uploaded_by?: string | null, upload_channel?: string | null, file_url?: string | null, request_metadata?: string | null, raw_ocr?: Record<string, any>[] | Record<string, any> | null, approval_status?: string | null, processing_type?: string | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "signed_urls",
+            "optional": true,
+            "type": "Record<string, Record<string, string>> | (Record<string, string> | null)[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

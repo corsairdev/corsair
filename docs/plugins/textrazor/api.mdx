@@ -92,7 +92,7 @@ await corsair.textrazor.api.analysis.analyzeContent({});
 | `rules` | `string` | No | — |
 | `classifiers` | `string[]` | No | — |
 | `classifierMaxCategories` | `number` | No | — |
-| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | Yes | — |
+| `extractors` | `(entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling)[]` | Yes | — |
 
 
 
@@ -244,7 +244,7 @@ await corsair.textrazor.api.analysis.classifyText({});
 | `rules` | `string` | No | — |
 | `classifiers` | `string[]` | Yes | — |
 | `classifierMaxCategories` | `number` | No | — |
-| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | No | — |
+| `extractors` | `(entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling)[]` | No | — |
 
 
 
@@ -396,7 +396,7 @@ await corsair.textrazor.api.analysis.extractEntities({});
 | `rules` | `string` | No | — |
 | `classifiers` | `string[]` | No | — |
 | `classifierMaxCategories` | `number` | No | — |
-| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | No | — |
+| `extractors` | `(entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling)[]` | No | — |
 | `minRelevanceScore` | `number` | No | — |
 | `minConfidenceScore` | `number` | No | — |
 
@@ -662,7 +662,7 @@ await corsair.textrazor.api.classifiers.listCategories({});
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
 | `message` | `string` | No | — |
-| `response` | `object` | No | — |
+| `response` | `object[] \| object` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -765,8 +765,7 @@ await corsair.textrazor.api.dictionaries.addEntries({});
 {
   id?: string,
   text: string,
-  data?: {
-  }
+  data?: Record<string, string[]>
 }[]
 ```
 </Accordion>
@@ -991,8 +990,7 @@ await corsair.textrazor.api.dictionaries.getEntry({});
 {
   id: string,
   text?: string,
-  data?: {
-  }
+  data?: Record<string, string[]>
 }
 ```
 </Accordion>
@@ -1025,7 +1023,7 @@ await corsair.textrazor.api.dictionaries.list({});
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
 | `message` | `string` | No | — |
-| `response` | `object` | No | — |
+| `response` | `object[] \| object` | No | — |
 | `dictionaries` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1095,7 +1093,7 @@ await corsair.textrazor.api.dictionaries.listEntries({});
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
 | `message` | `string` | No | — |
-| `response` | `object` | No | — |
+| `response` | `object[] \| object` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -1107,14 +1105,12 @@ await corsair.textrazor.api.dictionaries.listEntries({});
 {
   id: string,
   text?: string,
-  data?: {
-  }
+  data?: Record<string, string[]>
 }[] | {
   entries: {
     id: string,
     text?: string,
-    data?: {
-    }
+    data?: Record<string, string[]>
   }[]
 }
 ```

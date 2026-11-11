@@ -41,8 +41,7 @@ await corsair.coassemble.api.clients.get({});
 {
   clientIdentifier: string,
   userCount?: number | null,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created?: string | number | null,
   updated?: string | number | null
 }[]
@@ -96,13 +95,10 @@ await corsair.coassemble.api.courses.get({});
   thumbnail?: string | null,
   thumbnailRevision?: string | null,
   thumbnailOutdated?: boolean | null,
-  start?: {
-  } | null,
+  start?: Record<string, any> | null,
   timeEstimateMinutes?: number | null,
-  finish?: {
-  } | null,
-  theme?: {
-  } | null,
+  finish?: Record<string, any> | null,
+  theme?: Record<string, any> | null,
   clientId?: number | null,
   active?: boolean | null,
   identified?: boolean | null,
@@ -237,8 +233,7 @@ await corsair.coassemble.api.users.get({});
 {
   identifier?: string | null,
   clientIdentifier?: string | null,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   name?: string | null,
   avatar?: string | null,
   testMode?: boolean | null,

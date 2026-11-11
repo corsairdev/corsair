@@ -157,7 +157,7 @@ await corsair.minimax.api.chat.createResponse({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
 | `instructions` | `string` | No | — |
 | `max_output_tokens` | `number` | No | — |
 | `temperature` | `number` | No | — |
@@ -165,7 +165,7 @@ await corsair.minimax.api.chat.createResponse({});
 | `service_tier` | `standard \| priority` | No | — |
 | `tools` | `object[]` | No | — |
 | `tool_choice` | `none \| auto` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `prompt_cache_key` | `string` | No | — |
 | `text` | `object` | No | — |
 | `reasoning` | `object` | No | — |
@@ -199,14 +199,6 @@ string | {
 {
   type: string
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -244,8 +236,8 @@ string | {
 | `output` | `object[]` | No | — |
 | `output_text` | `string` | No | — |
 | `usage` | `object` | No | — |
-| `error` | `object` | No | — |
-| `incomplete_details` | `object` | No | — |
+| `error` | `object \| null` | No | — |
+| `incomplete_details` | `object \| null` | No | — |
 | `parallel_tool_calls` | `boolean` | No | — |
 | `store` | `boolean` | No | — |
 | `truncation` | `string` | No | — |
@@ -274,7 +266,7 @@ string | {
 {
   code?: string,
   message?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -283,7 +275,7 @@ string | {
 ```ts
 {
   reason?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -309,7 +301,7 @@ await corsair.minimax.api.chat.estimateInputTokens({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
 | `tool_choice` | `none \| auto` | No | — |

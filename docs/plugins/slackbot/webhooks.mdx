@@ -1,9 +1,9 @@
 ---
 title: Webhooks
-description: "Slackbot incoming webhooks: event paths, payloads, and response data."
+description: "Slack Bot incoming webhooks: event paths, payloads, and response data."
 ---
 
-The Slackbot plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slackbot/overview) for setup context and the exact URL shape).
+The Slack Bot plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slackbot/overview) for setup context and the exact URL shape).
 
 <Info>
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
@@ -135,41 +135,15 @@ A message posted by another bot or app
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -185,18 +159,15 @@ A message posted by another bot or app
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -239,41 +210,15 @@ A direct message sent to the bot
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -289,18 +234,15 @@ A direct message sent to the bot
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -343,41 +285,15 @@ A message in a multi-person direct message
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -393,18 +309,15 @@ A message in a multi-person direct message
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -447,41 +360,15 @@ A message posted by a person in a public channel
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -497,18 +384,15 @@ A message posted by a person in a public channel
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -551,41 +435,15 @@ A message posted by a person in a private channel
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -601,18 +459,15 @@ A message posted by a person in a private channel
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -655,41 +510,15 @@ A reply posted inside a message thread
 | `user` | `string` | No | — |
 | `bot_id` | `string` | No | — |
 | `app_id` | `string` | No | — |
-| `bot_profile` | `object` | No | — |
+| `bot_profile` | `Record<string, any>` | No | — |
 | `text` | `string` | No | — |
 | `ts` | `string` | Yes | — |
 | `thread_ts` | `string` | No | — |
 | `parent_user_id` | `string` | No | — |
 | `team` | `string` | No | — |
 | `event_ts` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="bot_profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `blocks` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
@@ -705,18 +534,15 @@ A reply posted inside a message thread
   user?: string,
   bot_id?: string,
   app_id?: string,
-  bot_profile?: {
-  },
+  bot_profile?: Record<string, any>,
   text?: string,
   ts: string,
   thread_ts?: string,
   parent_user_id?: string,
   team?: string,
   event_ts?: string,
-  blocks?: {
-  }[],
-  files?: {
-  }[]
+  blocks?: Record<string, any>[],
+  files?: Record<string, any>[]
 }
 ```
 </Accordion>

@@ -59,13 +59,13 @@
           {
             "key": "format",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, any>",
             "description": "Output format, e.g. \"json\" or a JSON schema"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Model configuration options (temperature, top_p, etc.)"
           },
           {
@@ -173,13 +173,13 @@
           {
             "key": "format",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, any>",
             "description": "Format of the response"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Model configuration options"
           },
           {
@@ -324,7 +324,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Options override"
           }
         ]
@@ -355,7 +355,7 @@
           {
             "key": "model_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "modified_at",
@@ -561,7 +561,7 @@
           {
             "key": "logprobs",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Include log probabilities"
           },
           {

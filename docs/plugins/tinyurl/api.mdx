@@ -47,7 +47,7 @@ await corsair.tinyurl.api.urls.create({});
 | `analytics` | `object` | No | — |
 | `tags` | `string[]` | No | — |
 | `created_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `tiny_url` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -84,7 +84,7 @@ await corsair.tinyurl.api.urls.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `available \| archived` | Yes | URL list type for GET /urls/{type} |
+| `type` | `available \| archived` | Yes | URL list type for GET /urls/&#123;type&#125; |
 | `page` | `number` | No | Page number for pagination |
 | `limit` | `number` | No | Results per page (1-100) |
 | `from` | `string` | No | Start of time period filter |

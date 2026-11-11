@@ -156,23 +156,23 @@ await corsair.campayn.api.contacts.getContact({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `title` | `string` | No | — |
-| `company` | `string` | No | — |
-| `address` | `string` | No | — |
-| `country_id` | `string` | No | — |
-| `country` | `string` | No | — |
-| `city` | `string` | No | — |
-| `state` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `birthday` | `string` | No | — |
-| `tags` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `country_id` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `tags` | `string \| null` | No | — |
 | `phones` | `object[]` | No | — |
 | `sites` | `object[]` | No | — |
 | `social` | `object[]` | No | — |
 | `custom_fields` | `object[]` | No | — |
-| `image_url` | `string` | No | — |
+| `image_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="phones full type">
@@ -479,10 +479,10 @@ await corsair.campayn.api.messages.getMessageStatistics({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `scheduled_date` | `string` | No | — |
+| `scheduled_date` | `string \| null` | No | — |
 | `send_now` | `string \| number` | No | — |
 | `send_count` | `string \| number` | No | — |
-| `campaign_title` | `string` | No | — |
+| `campaign_title` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `unique_views` | `number \| string` | No | — |
 | `unique_responses` | `number \| string` | No | — |
@@ -490,7 +490,7 @@ await corsair.campayn.api.messages.getMessageStatistics({});
 | `percent_responses` | `number \| string` | No | — |
 | `preview_url` | `string` | No | — |
 | `preview_thumb` | `string` | No | — |
-| `report_url` | `string` | No | — |
+| `report_url` | `string \| null` | No | — |
 
 
 
@@ -528,10 +528,10 @@ await corsair.campayn.api.reports.getReports({});
 {
   id: string,
   name: string,
-  scheduled_date?: string | null,
+  scheduled_date: string | null,
   status: string,
   preview_url: string,
-  report_url?: string | null
+  report_url: string | null
 }[]
 ```
 </Accordion>

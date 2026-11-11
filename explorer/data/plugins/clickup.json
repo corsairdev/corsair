@@ -3807,7 +3807,7 @@
           {
             "key": "custom_fields",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -4883,7 +4883,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           }
         ]
       }

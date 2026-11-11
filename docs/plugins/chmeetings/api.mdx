@@ -107,14 +107,14 @@ await corsair.chmeetings.api.events.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `start_date` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
 | `schedule` | `object` | No | — |
-| `recurrence` | `object` | No | — |
-| `location` | `object` | No | — |
-| `visibility` | `string` | No | — |
-| `image_url` | `string` | No | — |
+| `recurrence` | `object \| null` | No | — |
+| `location` | `object \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="schedule full type">
@@ -133,7 +133,7 @@ await corsair.chmeetings.api.events.get({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 
@@ -145,7 +145,7 @@ await corsair.chmeetings.api.events.get({});
   formatted_address?: string | null,
   latitude?: number | string | null,
   longitude?: number | string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -332,7 +332,7 @@ await corsair.chmeetings.api.families.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `family_id` | `string \| number` | No | — |
-| `members` | `object[]` | No | — |
+| `members` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="members full type">
@@ -345,7 +345,7 @@ await corsair.chmeetings.api.families.create({});
   last_name?: string | null,
   full_name?: string | null,
   family_role?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -409,7 +409,7 @@ await corsair.chmeetings.api.families.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `family_id` | `string \| number` | No | — |
-| `members` | `object[]` | No | — |
+| `members` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="members full type">
@@ -422,7 +422,7 @@ await corsair.chmeetings.api.families.get({});
   last_name?: string | null,
   full_name?: string | null,
   family_role?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -559,15 +559,15 @@ await corsair.chmeetings.api.groups.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `privacy` | `internal \| members \| public` | No | — |
 | `join_request_option` | `open \| closed \| approval_required` | No | — |
 | `is_visible_to_non_members` | `boolean` | No | — |
 | `is_members_visible` | `boolean` | No | — |
 | `is_group_leaders_visible` | `boolean` | No | — |
 | `is_chat_enabled` | `boolean` | No | — |
-| `created_on` | `string` | No | — |
+| `created_on` | `string \| null` | No | — |
 
 
 
@@ -628,15 +628,15 @@ await corsair.chmeetings.api.groups.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `privacy` | `internal \| members \| public` | No | — |
 | `join_request_option` | `open \| closed \| approval_required` | No | — |
 | `is_visible_to_non_members` | `boolean` | No | — |
 | `is_members_visible` | `boolean` | No | — |
 | `is_group_leaders_visible` | `boolean` | No | — |
 | `is_chat_enabled` | `boolean` | No | — |
-| `created_on` | `string` | No | — |
+| `created_on` | `string \| null` | No | — |
 
 
 
@@ -751,15 +751,15 @@ await corsair.chmeetings.api.groups.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `privacy` | `internal \| members \| public` | No | — |
 | `join_request_option` | `open \| closed \| approval_required` | No | — |
 | `is_visible_to_non_members` | `boolean` | No | — |
 | `is_members_visible` | `boolean` | No | — |
 | `is_group_leaders_visible` | `boolean` | No | — |
 | `is_chat_enabled` | `boolean` | No | — |
-| `created_on` | `string` | No | — |
+| `created_on` | `string \| null` | No | — |
 
 
 
@@ -883,11 +883,11 @@ await corsair.chmeetings.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `string \| null` | No | — |
 | `type` | `diocese \| church \| ministry` | No | — |
-| `name` | `string` | No | — |
-| `parent_id` | `string` | No | — |
-| `created_on` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
 | `is_main` | `boolean` | No | — |
 
 
@@ -1191,47 +1191,47 @@ await corsair.chmeetings.api.people.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `first_name` | `string` | No | — |
-| `middle_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `full_name` | `string` | No | — |
-| `nick_name` | `string` | No | — |
-| `native_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `photo` | `string` | No | — |
-| `birth_date` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `do_not_text` | `boolean` | No | — |
-| `do_not_email` | `boolean` | No | — |
-| `created_on` | `string` | No | — |
-| `updated_on` | `string` | No | — |
-| `facebook` | `string` | No | — |
-| `gender` | `string` | No | — |
-| `social_status` | `string` | No | — |
-| `marriage_date` | `string` | No | — |
-| `engagement_date` | `string` | No | — |
-| `job_title` | `string` | No | — |
-| `work_place` | `string` | No | — |
-| `qualification` | `string` | No | — |
-| `education_level` | `string` | No | — |
-| `school` | `string` | No | — |
-| `father_name` | `string` | No | — |
-| `church` | `string` | No | — |
-| `is_deacon` | `boolean` | No | — |
-| `rank` | `string` | No | — |
-| `bishop_donor` | `string` | No | — |
-| `family_role` | `string` | No | — |
-| `family` | `object[]` | No | — |
-| `baptism_date` | `string` | No | — |
-| `baptism_location` | `string` | No | — |
-| `grade` | `string` | No | — |
-| `graduation_year` | `string \| number` | No | — |
-| `telephone` | `string` | No | — |
-| `talents_and_hobbies` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `middle_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `nick_name` | `string \| null` | No | — |
+| `native_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `photo` | `string \| null` | No | — |
+| `birth_date` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `do_not_text` | `boolean \| null` | No | — |
+| `do_not_email` | `boolean \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `updated_on` | `string \| null` | No | — |
+| `facebook` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `social_status` | `string \| null` | No | — |
+| `marriage_date` | `string \| null` | No | — |
+| `engagement_date` | `string \| null` | No | — |
+| `job_title` | `string \| null` | No | — |
+| `work_place` | `string \| null` | No | — |
+| `qualification` | `string \| null` | No | — |
+| `education_level` | `string \| null` | No | — |
+| `school` | `string \| null` | No | — |
+| `father_name` | `string \| null` | No | — |
+| `church` | `string \| null` | No | — |
+| `is_deacon` | `boolean \| null` | No | — |
+| `rank` | `string \| null` | No | — |
+| `bishop_donor` | `string \| null` | No | — |
+| `family_role` | `string \| null` | No | — |
+| `family` | `object[] \| null` | No | — |
+| `baptism_date` | `string \| null` | No | — |
+| `baptism_location` | `string \| null` | No | — |
+| `grade` | `string \| null` | No | — |
+| `graduation_year` | `string \| number \| null` | No | — |
+| `telephone` | `string \| null` | No | — |
+| `talents_and_hobbies` | `string \| null` | No | — |
 | `is_archived` | `boolean` | No | — |
-| `archived_at` | `string` | No | — |
-| `address` | `object` | No | — |
-| `additional_fields` | `object[]` | No | — |
+| `archived_at` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `additional_fields` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="family full type">
@@ -1244,7 +1244,7 @@ await corsair.chmeetings.api.people.create({});
   last_name?: string | null,
   full_name?: string | null,
   family_role?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1261,7 +1261,7 @@ await corsair.chmeetings.api.people.create({});
   floor?: string | null,
   flat?: string | null,
   zip_code?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1270,7 +1270,7 @@ await corsair.chmeetings.api.people.create({});
 ```ts
 {
   field_type: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1283,7 +1283,7 @@ await corsair.chmeetings.api.people.create({});
 
 `people.delete`
 
-Delete a person via DELETE /api/v1/people/{id}
+Delete a person via DELETE /api/v1/people/&#123;id&#125;
 
 **Risk:** `destructive`
 
@@ -1313,7 +1313,7 @@ await corsair.chmeetings.api.people.delete({});
 
 `people.get`
 
-Get a person by ID from GET /api/v1/people/{id}
+Get a person by ID from GET /api/v1/people/&#123;id&#125;
 
 **Risk:** `read`
 
@@ -1334,47 +1334,47 @@ await corsair.chmeetings.api.people.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | No | — |
-| `first_name` | `string` | No | — |
-| `middle_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `full_name` | `string` | No | — |
-| `nick_name` | `string` | No | — |
-| `native_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `photo` | `string` | No | — |
-| `birth_date` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `do_not_text` | `boolean` | No | — |
-| `do_not_email` | `boolean` | No | — |
-| `created_on` | `string` | No | — |
-| `updated_on` | `string` | No | — |
-| `facebook` | `string` | No | — |
-| `gender` | `string` | No | — |
-| `social_status` | `string` | No | — |
-| `marriage_date` | `string` | No | — |
-| `engagement_date` | `string` | No | — |
-| `job_title` | `string` | No | — |
-| `work_place` | `string` | No | — |
-| `qualification` | `string` | No | — |
-| `education_level` | `string` | No | — |
-| `school` | `string` | No | — |
-| `father_name` | `string` | No | — |
-| `church` | `string` | No | — |
-| `is_deacon` | `boolean` | No | — |
-| `rank` | `string` | No | — |
-| `bishop_donor` | `string` | No | — |
-| `family_role` | `string` | No | — |
-| `family` | `object[]` | No | — |
-| `baptism_date` | `string` | No | — |
-| `baptism_location` | `string` | No | — |
-| `grade` | `string` | No | — |
-| `graduation_year` | `string \| number` | No | — |
-| `telephone` | `string` | No | — |
-| `talents_and_hobbies` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `middle_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `nick_name` | `string \| null` | No | — |
+| `native_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `photo` | `string \| null` | No | — |
+| `birth_date` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `do_not_text` | `boolean \| null` | No | — |
+| `do_not_email` | `boolean \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `updated_on` | `string \| null` | No | — |
+| `facebook` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `social_status` | `string \| null` | No | — |
+| `marriage_date` | `string \| null` | No | — |
+| `engagement_date` | `string \| null` | No | — |
+| `job_title` | `string \| null` | No | — |
+| `work_place` | `string \| null` | No | — |
+| `qualification` | `string \| null` | No | — |
+| `education_level` | `string \| null` | No | — |
+| `school` | `string \| null` | No | — |
+| `father_name` | `string \| null` | No | — |
+| `church` | `string \| null` | No | — |
+| `is_deacon` | `boolean \| null` | No | — |
+| `rank` | `string \| null` | No | — |
+| `bishop_donor` | `string \| null` | No | — |
+| `family_role` | `string \| null` | No | — |
+| `family` | `object[] \| null` | No | — |
+| `baptism_date` | `string \| null` | No | — |
+| `baptism_location` | `string \| null` | No | — |
+| `grade` | `string \| null` | No | — |
+| `graduation_year` | `string \| number \| null` | No | — |
+| `telephone` | `string \| null` | No | — |
+| `talents_and_hobbies` | `string \| null` | No | — |
 | `is_archived` | `boolean` | No | — |
-| `archived_at` | `string` | No | — |
-| `address` | `object` | No | — |
-| `additional_fields` | `object[]` | No | — |
+| `archived_at` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `additional_fields` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="family full type">
@@ -1387,7 +1387,7 @@ await corsair.chmeetings.api.people.get({});
   last_name?: string | null,
   full_name?: string | null,
   family_role?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1404,7 +1404,7 @@ await corsair.chmeetings.api.people.get({});
   floor?: string | null,
   flat?: string | null,
   zip_code?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1413,7 +1413,7 @@ await corsair.chmeetings.api.people.get({});
 ```ts
 {
   field_type: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1606,7 +1606,7 @@ await corsair.chmeetings.api.people.listOrganizations({});
 
 `people.update`
 
-Update a person via PUT /api/v1/people/{id}
+Update a person via PUT /api/v1/people/&#123;id&#125;
 
 **Risk:** `write`
 

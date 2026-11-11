@@ -61,7 +61,7 @@
           {
             "key": "campaign",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, status?: string | null, bounce_shield_autopaused_at?: string | null, email_account_ids?: number[] | null, settings?: {} | null, steps?: {} | null }",
+            "type": "{ id?: number | null, name?: string | null, status?: string | null, bounce_shield_autopaused_at?: string | null, email_account_ids?: number[] | null, settings?: Record<string, any> | null, steps?: Record<string, any> | null }",
             "description": "The campaign as it stands after the deletion."
           }
         ]
@@ -78,7 +78,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "RUNNING | DRAFT | EDITED | PAUSED | STOPPED | COMPLETED[]",
+            "type": "(RUNNING | DRAFT | EDITED | PAUSED | STOPPED | COMPLETED)[]",
             "description": "Only campaigns in these statuses."
           },
           {
@@ -95,7 +95,7 @@
           {
             "key": "campaigns",
             "optional": false,
-            "type": "{ id: number, name?: string | null, status?: string | null, created?: string | null, from_name?: string | null, from_names?: string[] | null, from_email?: string | null, from_emails?: string[] | null, gdpr_unsubscribe?: boolean | null, folder_name?: string | null, folder_id?: number | null, per_day?: number | null, bcc?: string | null, cc?: string | null, stats?: { prospects?: number | null, delivery?: number | null, invalid?: number | null, bounced?: number | null, queue?: number | null, sent?: number | null, check?: number | null, autoreplied?: number | null, opened?: number | null, optout?: number | null, clicked?: number | null, replied?: number | null, interested?: number | null, maybe_later?: number | null, not_interested?: number | null, emails?: {}[] | null } | null, timestamp?: string | null }[]"
+            "type": "{ id: number, name?: string | null, status?: string | null, created?: string | null, from_name?: string | null, from_names?: string[] | null, from_email?: string | null, from_emails?: string[] | null, gdpr_unsubscribe?: boolean | null, folder_name?: string | null, folder_id?: number | null, per_day?: number | null, bcc?: string | null, cc?: string | null, stats?: { prospects?: number | null, delivery?: number | null, invalid?: number | null, bounced?: number | null, queue?: number | null, sent?: number | null, check?: number | null, autoreplied?: number | null, opened?: number | null, optout?: number | null, clicked?: number | null, replied?: number | null, interested?: number | null, maybe_later?: number | null, not_interested?: number | null, emails?: Record<string, any>[] | null } | null, timestamp?: string | null }[]"
           }
         ]
       }
@@ -239,7 +239,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "{ status?: string | null, code?: string | null, msg?: string | null }"
+            "type": "{ status?: string | null, code?: string | null, msg?: string | null } | null"
           }
         ]
       }
@@ -317,7 +317,7 @@
           {
             "key": "prospects",
             "optional": false,
-            "type": "{ id?: number | null, email?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, organization_id?: number | null, industry?: string | null, website?: string | null, linkedin_url?: string | null, tags?: string | null, title?: string | null, phone?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, last_contacted?: string | null, last replied?: string | null, updated?: string | null, encrypted?: boolean | null, snippet_labels?: {} | null, status?: string | null, interested?: string | null, interest_level?: { level?: string | null, ai_detected?: boolean | null } | null, campaign_id?: number | null, campaign_name?: string | null, campaign_email?: string | null, campaign_emails?: string[] | null, followup_after?: string | null, campaign_status?: string | null, sent_mails?: number | null, last_open?: string | null, last_clicked?: string | null, click_url?: string | null }[]"
+            "type": "{ id?: number | null, email?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, organization_id?: number | null, industry?: string | null, website?: string | null, linkedin_url?: string | null, tags?: string | null, title?: string | null, phone?: string | null, address?: string | null, city?: string | null, state?: string | null, country?: string | null, last_contacted?: string | null, last replied?: string | null, updated?: string | null, encrypted?: boolean | null, snippet_labels?: Record<string, any> | null, status?: string | null, interested?: string | null, interest_level?: { level?: string | null, ai_detected?: boolean | null } | null, campaign_id?: number | null, campaign_name?: string | null, campaign_email?: string | null, campaign_emails?: string[] | null, followup_after?: string | null, campaign_status?: string | null, sent_mails?: number | null, last_open?: string | null, last_clicked?: string | null, click_url?: string | null }[]"
           },
           {
             "key": "page",
@@ -331,8 +331,8 @@
           },
           {
             "key": "next_page",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "The next page while this one is full; null once a page comes back short. A full last page leads to one empty page."
           },
           {

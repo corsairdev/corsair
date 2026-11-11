@@ -47,22 +47,12 @@ Fires when a Bannerbear animation finishes rendering
 | `uid` | `string` | Yes | — |
 | `status` | `completed` | Yes | — |
 | `template` | `string` | No | — |
-| `files` | `object` | No | — |
+| `files` | `Record<string, string \| null>` | No | — |
 | `progress` | `number` | No | — |
 | `metadata` | `string` | No | — |
 | `self` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -74,8 +64,7 @@ Fires when a Bannerbear animation finishes rendering
   uid: string,
   status: completed,
   template?: string,
-  files?: {
-  },
+  files?: Record<string, string | null>,
   progress?: number,
   metadata?: string,
   self?: string,
@@ -121,21 +110,11 @@ Fires when a Bannerbear image finishes rendering
 | `uid` | `string` | Yes | — |
 | `status` | `completed` | Yes | — |
 | `template` | `string` | No | — |
-| `files` | `object` | No | — |
+| `files` | `Record<string, string \| null>` | No | — |
 | `metadata` | `string` | No | — |
 | `self` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -147,8 +126,7 @@ Fires when a Bannerbear image finishes rendering
   uid: string,
   status: completed,
   template?: string,
-  files?: {
-  },
+  files?: Record<string, string | null>,
   metadata?: string,
   self?: string,
   created_at?: string,

@@ -45,15 +45,15 @@ await corsair.callingly.api.agents.create({});
 | `name` | `string` | No | — |
 | `fname` | `string` | No | — |
 | `lname` | `string` | No | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `phone_number` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `on_call_id` | `string \| number` | No | — |
-| `custom_id` | `string \| number` | No | — |
-| `fub_id` | `string \| number` | No | — |
-| `hubspot_id` | `string \| number` | No | — |
+| `ext` | `string \| null` | No | — |
+| `on_call_id` | `string \| number \| null` | No | — |
+| `custom_id` | `string \| number \| null` | No | — |
+| `fub_id` | `string \| number \| null` | No | — |
+| `hubspot_id` | `string \| number \| null` | No | — |
 | `donotdisturb` | `boolean \| number` | No | — |
-| `donotdisturb_until` | `string` | No | — |
+| `donotdisturb_until` | `string \| null` | No | — |
 | `priority` | `number` | No | — |
 | `timezone` | `string` | No | — |
 | `is_available` | `boolean` | No | — |
@@ -232,15 +232,15 @@ await corsair.callingly.api.agents.update({});
 | `name` | `string` | No | — |
 | `fname` | `string` | No | — |
 | `lname` | `string` | No | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `phone_number` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `on_call_id` | `string \| number` | No | — |
-| `custom_id` | `string \| number` | No | — |
-| `fub_id` | `string \| number` | No | — |
-| `hubspot_id` | `string \| number` | No | — |
+| `ext` | `string \| null` | No | — |
+| `on_call_id` | `string \| number \| null` | No | — |
+| `custom_id` | `string \| number \| null` | No | — |
+| `fub_id` | `string \| number \| null` | No | — |
+| `hubspot_id` | `string \| number \| null` | No | — |
 | `donotdisturb` | `boolean \| number` | No | — |
-| `donotdisturb_until` | `string` | No | — |
+| `donotdisturb_until` | `string \| null` | No | — |
 | `priority` | `number` | No | — |
 | `timezone` | `string` | No | — |
 | `is_available` | `boolean` | No | — |
@@ -349,9 +349,9 @@ await corsair.callingly.api.calls.create({});
 | `id` | `string \| number` | No | — |
 | `started_at` | `string` | No | — |
 | `direction` | `string` | No | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `status_formatted` | `string` | No | — |
-| `lead_status` | `string` | No | — |
+| `lead_status` | `string \| null` | No | — |
 | `lead_status_formatted` | `string` | No | — |
 | `ring_status` | `string` | No | — |
 | `seconds` | `number` | No | — |
@@ -360,22 +360,22 @@ await corsair.callingly.api.calls.create({});
 | `lead_retry` | `number` | No | — |
 | `time_formatted` | `string` | No | — |
 | `from_formatted` | `string` | No | — |
-| `source` | `string` | No | — |
-| `recording_url` | `string` | No | — |
-| `waveform_url` | `string` | No | — |
-| `error_message` | `string` | No | — |
+| `source` | `string \| null` | No | — |
+| `recording_url` | `string \| null` | No | — |
+| `waveform_url` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
 | `phone_number_formatted` | `string` | No | — |
-| `human_result` | `string` | No | — |
-| `user` | `object[]` | No | — |
-| `member` | `object[]` | No | — |
-| `lead` | `object[]` | No | — |
-| `profile` | `object[]` | No | — |
+| `human_result` | `string \| null` | No | — |
+| `user` | `object \| never[] \| null` | No | — |
+| `member` | `object \| never[] \| null` | No | — |
+| `lead` | `object \| never[] \| null` | No | — |
+| `profile` | `object \| never[] \| null` | No | — |
 | `is_voicemail` | `number` | No | — |
 | `is_queue` | `number` | No | — |
 | `is_team_offline` | `number` | No | — |
-| `scheduled_call_type` | `string` | No | — |
-| `old_lead_owner_id` | `string \| number` | No | — |
-| `transcript` | `string` | No | — |
+| `scheduled_call_type` | `string \| null` | No | — |
+| `old_lead_owner_id` | `string \| number \| null` | No | — |
+| `transcript` | `string \| null` | No | — |
 | `is_error` | `number` | No | — |
 | `error_code` | `string` | No | — |
 | `call_id` | `string \| number` | No | — |
@@ -391,7 +391,7 @@ await corsair.callingly.api.calls.create({});
   lname?: string,
   email?: string,
   phone_number?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -405,7 +405,7 @@ await corsair.callingly.api.calls.create({});
   lname?: string,
   email?: string,
   phone_number?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -425,7 +425,7 @@ await corsair.callingly.api.calls.create({});
   crm?: string | null,
   source_id?: string | number | null,
   deleted_at?: string | null
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -435,7 +435,7 @@ await corsair.callingly.api.calls.create({});
 {
   id?: string | number,
   name?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -472,9 +472,9 @@ await corsair.callingly.api.calls.get({});
 | `id` | `string \| number` | Yes | — |
 | `started_at` | `string` | No | — |
 | `direction` | `string` | No | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `status_formatted` | `string` | No | — |
-| `lead_status` | `string` | No | — |
+| `lead_status` | `string \| null` | No | — |
 | `lead_status_formatted` | `string` | No | — |
 | `ring_status` | `string` | No | — |
 | `seconds` | `number` | No | — |
@@ -483,22 +483,22 @@ await corsair.callingly.api.calls.get({});
 | `lead_retry` | `number` | No | — |
 | `time_formatted` | `string` | No | — |
 | `from_formatted` | `string` | No | — |
-| `source` | `string` | No | — |
-| `recording_url` | `string` | No | — |
-| `waveform_url` | `string` | No | — |
-| `error_message` | `string` | No | — |
+| `source` | `string \| null` | No | — |
+| `recording_url` | `string \| null` | No | — |
+| `waveform_url` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
 | `phone_number_formatted` | `string` | No | — |
-| `human_result` | `string` | No | — |
-| `user` | `object[]` | No | — |
-| `member` | `object[]` | No | — |
-| `lead` | `object[]` | No | — |
-| `profile` | `object[]` | No | — |
+| `human_result` | `string \| null` | No | — |
+| `user` | `object \| never[] \| null` | No | — |
+| `member` | `object \| never[] \| null` | No | — |
+| `lead` | `object \| never[] \| null` | No | — |
+| `profile` | `object \| never[] \| null` | No | — |
 | `is_voicemail` | `number` | No | — |
 | `is_queue` | `number` | No | — |
 | `is_team_offline` | `number` | No | — |
-| `scheduled_call_type` | `string` | No | — |
-| `old_lead_owner_id` | `string \| number` | No | — |
-| `transcript` | `string` | No | — |
+| `scheduled_call_type` | `string \| null` | No | — |
+| `old_lead_owner_id` | `string \| number \| null` | No | — |
+| `transcript` | `string \| null` | No | — |
 | `is_error` | `number` | No | — |
 | `error_code` | `string` | No | — |
 
@@ -513,7 +513,7 @@ await corsair.callingly.api.calls.get({});
   lname?: string,
   email?: string,
   phone_number?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -527,7 +527,7 @@ await corsair.callingly.api.calls.get({});
   lname?: string,
   email?: string,
   phone_number?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -547,7 +547,7 @@ await corsair.callingly.api.calls.get({});
   crm?: string | null,
   source_id?: string | number | null,
   deleted_at?: string | null
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 
@@ -557,7 +557,7 @@ await corsair.callingly.api.calls.get({});
 {
   id?: string | number,
   name?: string
-} | never[]
+} | never[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -882,24 +882,24 @@ await corsair.callingly.api.leads.get({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `account_id` | `string \| number` | No | — |
-| `lead_owner_id` | `string \| number` | No | — |
-| `fname` | `string` | No | — |
-| `lname` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `source` | `string` | No | — |
-| `source_id` | `string \| number` | No | — |
+| `lead_owner_id` | `string \| number \| null` | No | — |
+| `fname` | `string \| null` | No | — |
+| `lname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `source_id` | `string \| number \| null` | No | — |
 | `created_at` | `string` | No | — |
-| `company` | `string` | No | — |
-| `category` | `string` | No | — |
-| `status` | `string` | No | — |
-| `result` | `string` | No | — |
-| `team` | `object` | No | — |
+| `company` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `result` | `string \| null` | No | — |
+| `team` | `object \| null` | No | — |
 | `tags` | `object[]` | No | — |
-| `stage` | `string` | No | — |
+| `stage` | `string \| null` | No | — |
 | `calls` | `object[]` | No | — |
-| `scheduled_call_at` | `string` | No | — |
-| `lead_owner` | `object` | No | — |
+| `scheduled_call_at` | `string \| null` | No | — |
+| `lead_owner` | `object \| null` | No | — |
 | `is_stopped` | `number` | No | — |
 | `is_blocked` | `number` | No | — |
 
@@ -910,19 +910,17 @@ await corsair.callingly.api.leads.get({});
 {
   id?: string | number,
   name?: string
-}
+} | null
 ```
 </Accordion>
 
 <Accordion title="tags full type">
 
 ```ts
-(
-  string | {
-    id?: string | number,
-    name?: string
-  }
-)[]
+(string | {
+  id?: string | number,
+  name?: string
+})[]
 ```
 </Accordion>
 
@@ -951,7 +949,7 @@ await corsair.callingly.api.leads.get({});
   name?: string | null,
   phone_number?: string | null,
   custom_id?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1008,12 +1006,10 @@ await corsair.callingly.api.leads.list({});
     id?: string | number,
     name?: string
   } | null,
-  tags?: (
-    string | {
-      id?: string | number,
-      name?: string
-    }
-  )[],
+  tags?: (string | {
+    id?: string | number,
+    name?: string
+  })[],
   stage?: string | null,
   calls?: {
     id: string | number,
@@ -1067,8 +1063,8 @@ await corsair.callingly.api.leads.update({});
 | `source` | `string` | No | — |
 | `company` | `string` | No | — |
 | `status` | `string` | No | — |
-| `result` | `string` | No | — |
-| `stage` | `string` | No | — |
+| `result` | `string \| null` | No | — |
+| `stage` | `string \| null` | No | — |
 | `is_stopped` | `0 \| 1` | No | — |
 | `is_blocked` | `0 \| 1` | No | — |
 | `account_id` | `string \| number` | No | — |
@@ -1081,24 +1077,24 @@ await corsair.callingly.api.leads.update({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `account_id` | `string \| number` | No | — |
-| `lead_owner_id` | `string \| number` | No | — |
-| `fname` | `string` | No | — |
-| `lname` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `source` | `string` | No | — |
-| `source_id` | `string \| number` | No | — |
+| `lead_owner_id` | `string \| number \| null` | No | — |
+| `fname` | `string \| null` | No | — |
+| `lname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `source_id` | `string \| number \| null` | No | — |
 | `created_at` | `string` | No | — |
-| `company` | `string` | No | — |
-| `category` | `string` | No | — |
-| `status` | `string` | No | — |
-| `result` | `string` | No | — |
-| `team` | `object` | No | — |
+| `company` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `result` | `string \| null` | No | — |
+| `team` | `object \| null` | No | — |
 | `tags` | `object[]` | No | — |
-| `stage` | `string` | No | — |
+| `stage` | `string \| null` | No | — |
 | `calls` | `object[]` | No | — |
-| `scheduled_call_at` | `string` | No | — |
-| `lead_owner` | `object` | No | — |
+| `scheduled_call_at` | `string \| null` | No | — |
+| `lead_owner` | `object \| null` | No | — |
 | `is_stopped` | `number` | No | — |
 | `is_blocked` | `number` | No | — |
 
@@ -1109,19 +1105,17 @@ await corsair.callingly.api.leads.update({});
 {
   id?: string | number,
   name?: string
-}
+} | null
 ```
 </Accordion>
 
 <Accordion title="tags full type">
 
 ```ts
-(
-  string | {
-    id?: string | number,
-    name?: string
-  }
-)[]
+(string | {
+  id?: string | number,
+  name?: string
+})[]
 ```
 </Accordion>
 
@@ -1150,7 +1144,7 @@ await corsair.callingly.api.leads.update({});
   name?: string | null,
   phone_number?: string | null,
   custom_id?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1223,24 +1217,20 @@ await corsair.callingly.api.teams.create({});
 <Accordion title="retry_schedule full type">
 
 ```ts
-(
-  number | {
-    unit: string,
-    value: number
-  }
-)[]
+(number | {
+  unit: string,
+  value: number
+})[]
 ```
 </Accordion>
 
 <Accordion title="lead_retry_schedule full type">
 
 ```ts
-(
-  number | {
-    unit: string,
-    value: number
-  }
-)[]
+(number | {
+  unit: string,
+  value: number
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1299,24 +1289,20 @@ await corsair.callingly.api.teams.get({});
 <Accordion title="retry_schedule full type">
 
 ```ts
-(
-  number | {
-    unit: string,
-    value: number
-  }
-)[]
+(number | {
+  unit: string,
+  value: number
+})[]
 ```
 </Accordion>
 
 <Accordion title="lead_retry_schedule full type">
 
 ```ts
-(
-  number | {
-    unit: string,
-    value: number
-  }
-)[]
+(number | {
+  unit: string,
+  value: number
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1367,21 +1353,17 @@ await corsair.callingly.api.teams.list({});
   delay?: number,
   is_retry?: boolean | number,
   retries?: number,
-  retry_schedule?: (
-    number | {
-      unit: string,
-      value: number
-    }
-  )[],
+  retry_schedule?: (number | {
+    unit: string,
+    value: number
+  })[],
   is_reschedule?: boolean | number,
   is_retry_lead?: boolean | number,
   lead_retries?: number,
-  lead_retry_schedule?: (
-    number | {
-      unit: string,
-      value: number
-    }
-  )[],
+  lead_retry_schedule?: (number | {
+    unit: string,
+    value: number
+  })[],
   is_sms?: boolean | number,
   sms_body?: string,
   whispertext_voice?: string,
@@ -1495,7 +1477,7 @@ await corsair.callingly.api.teams.updateAgentSettings({});
 | `teamId` | `string \| number` | Yes | — |
 | `agentId` | `string \| number` | Yes | — |
 | `priority` | `number` | No | — |
-| `cap` | `number` | No | — |
+| `cap` | `number \| null` | No | — |
 | `account_id` | `string \| number` | No | — |
 
 
@@ -1507,10 +1489,10 @@ await corsair.callingly.api.teams.updateAgentSettings({});
 | `id` | `string \| number` | Yes | — |
 | `team_id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
-| `custom_id` | `string \| number` | No | — |
-| `fub_id` | `string \| number` | No | — |
+| `custom_id` | `string \| number \| null` | No | — |
+| `fub_id` | `string \| number \| null` | No | — |
 | `priority` | `number` | No | — |
-| `cap` | `number` | No | — |
+| `cap` | `number \| null` | No | — |
 
 
 
@@ -1586,13 +1568,13 @@ await corsair.callingly.api.webhooks.create({});
 | `name` | `string` | Yes | — |
 | `event` | `call_completed \| lead_created \| lead_updated` | Yes | — |
 | `target_url` | `string` | Yes | — |
-| `call_direction` | `outbound \| inbound` | No | call_completed only |
-| `call_status` | `completed \| missed \| offline` | No | call_completed only |
-| `call_lead_status` | `contacted \| missed \| removed \| voicemail` | No | call_completed only |
-| `team_id` | `string \| number` | No | Outbound call_completed only |
-| `number_id` | `string \| number` | No | Inbound call_completed only |
-| `field` | `lead_owner \| result \| stage \| status \| tags` | No | lead_created / lead_updated only: trigger when this field changes |
-| `filter` | `string` | No | lead_created / lead_updated only: required value of `field` |
+| `call_direction` | `outbound \| inbound \| null` | No | call_completed only |
+| `call_status` | `completed \| missed \| offline \| null` | No | call_completed only |
+| `call_lead_status` | `contacted \| missed \| removed \| voicemail \| null` | No | call_completed only |
+| `team_id` | `string \| number \| null` | No | Outbound call_completed only |
+| `number_id` | `string \| number \| null` | No | Inbound call_completed only |
+| `field` | `lead_owner \| result \| stage \| status \| tags \| null` | No | lead_created / lead_updated only: trigger when this field changes |
+| `filter` | `string \| null` | No | lead_created / lead_updated only: required value of `field` |
 | `account_id` | `string \| number` | No | — |
 
 
@@ -1606,17 +1588,17 @@ await corsair.callingly.api.webhooks.create({});
 | `name` | `string` | No | — |
 | `event` | `string` | No | — |
 | `target_url` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `call_direction` | `string` | No | — |
-| `call_status` | `string` | No | — |
-| `call_lead_status` | `string` | No | — |
-| `team_id` | `string \| number` | No | — |
-| `number_id` | `string \| number` | No | — |
-| `field` | `string` | No | — |
-| `filter` | `string` | No | — |
+| `direction` | `string \| null` | No | — |
+| `call_direction` | `string \| null` | No | — |
+| `call_status` | `string \| null` | No | — |
+| `call_lead_status` | `string \| null` | No | — |
+| `team_id` | `string \| number \| null` | No | — |
+| `number_id` | `string \| number \| null` | No | — |
+| `field` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
 | `is_active` | `boolean \| number` | No | — |
 | `consecutive_failures` | `number` | No | — |
-| `last_failed_at` | `string` | No | — |
+| `last_failed_at` | `string \| null` | No | — |
 | `is_auto_disabled` | `boolean \| number` | No | — |
 
 
@@ -1685,17 +1667,17 @@ await corsair.callingly.api.webhooks.get({});
 | `name` | `string` | No | — |
 | `event` | `string` | No | — |
 | `target_url` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `call_direction` | `string` | No | — |
-| `call_status` | `string` | No | — |
-| `call_lead_status` | `string` | No | — |
-| `team_id` | `string \| number` | No | — |
-| `number_id` | `string \| number` | No | — |
-| `field` | `string` | No | — |
-| `filter` | `string` | No | — |
+| `direction` | `string \| null` | No | — |
+| `call_direction` | `string \| null` | No | — |
+| `call_status` | `string \| null` | No | — |
+| `call_lead_status` | `string \| null` | No | — |
+| `team_id` | `string \| number \| null` | No | — |
+| `number_id` | `string \| number \| null` | No | — |
+| `field` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
 | `is_active` | `boolean \| number` | No | — |
 | `consecutive_failures` | `number` | No | — |
-| `last_failed_at` | `string` | No | — |
+| `last_failed_at` | `string \| null` | No | — |
 | `is_auto_disabled` | `boolean \| number` | No | — |
 
 
@@ -1774,13 +1756,13 @@ await corsair.callingly.api.webhooks.update({});
 | `name` | `string` | No | — |
 | `event` | `call_completed \| lead_created \| lead_updated` | No | — |
 | `target_url` | `string` | No | — |
-| `call_direction` | `outbound \| inbound` | No | call_completed only |
-| `call_status` | `completed \| missed \| offline` | No | call_completed only |
-| `call_lead_status` | `contacted \| missed \| removed \| voicemail` | No | call_completed only |
-| `team_id` | `string \| number` | No | Outbound call_completed only |
-| `number_id` | `string \| number` | No | Inbound call_completed only |
-| `field` | `lead_owner \| result \| stage \| status \| tags` | No | lead_created / lead_updated only: trigger when this field changes |
-| `filter` | `string` | No | lead_created / lead_updated only: required value of `field` |
+| `call_direction` | `outbound \| inbound \| null` | No | call_completed only |
+| `call_status` | `completed \| missed \| offline \| null` | No | call_completed only |
+| `call_lead_status` | `contacted \| missed \| removed \| voicemail \| null` | No | call_completed only |
+| `team_id` | `string \| number \| null` | No | Outbound call_completed only |
+| `number_id` | `string \| number \| null` | No | Inbound call_completed only |
+| `field` | `lead_owner \| result \| stage \| status \| tags \| null` | No | lead_created / lead_updated only: trigger when this field changes |
+| `filter` | `string \| null` | No | lead_created / lead_updated only: required value of `field` |
 | `account_id` | `string \| number` | No | — |
 
 
@@ -1794,17 +1776,17 @@ await corsair.callingly.api.webhooks.update({});
 | `name` | `string` | No | — |
 | `event` | `string` | No | — |
 | `target_url` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `call_direction` | `string` | No | — |
-| `call_status` | `string` | No | — |
-| `call_lead_status` | `string` | No | — |
-| `team_id` | `string \| number` | No | — |
-| `number_id` | `string \| number` | No | — |
-| `field` | `string` | No | — |
-| `filter` | `string` | No | — |
+| `direction` | `string \| null` | No | — |
+| `call_direction` | `string \| null` | No | — |
+| `call_status` | `string \| null` | No | — |
+| `call_lead_status` | `string \| null` | No | — |
+| `team_id` | `string \| number \| null` | No | — |
+| `number_id` | `string \| number \| null` | No | — |
+| `field` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
 | `is_active` | `boolean \| number` | No | — |
 | `consecutive_failures` | `number` | No | — |
-| `last_failed_at` | `string` | No | — |
+| `last_failed_at` | `string \| null` | No | — |
 | `is_auto_disabled` | `boolean \| number` | No | — |
 
 

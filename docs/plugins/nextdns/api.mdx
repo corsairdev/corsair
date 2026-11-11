@@ -1326,8 +1326,10 @@ await corsair.nextdns.api.parentalControl.get({});
 
 ```ts
 {
-  times?: {
-  } | null,
+  times?: Record<string, {
+    start: string,
+    end: string
+  }> | null,
   timezone?: string | null
 }
 ```
@@ -1579,8 +1581,10 @@ await corsair.nextdns.api.parentalControl.update({});
 
 ```ts
 {
-  times?: {
-  } | null,
+  times?: Record<string, {
+    start: string,
+    end: string
+  }> | null,
   timezone?: string | null
 }
 ```
@@ -2094,8 +2098,10 @@ await corsair.nextdns.api.profiles.create({});
     recreation?: boolean
   }[],
   recreation?: {
-    times?: {
-    } | null,
+    times?: Record<string, {
+      start: string,
+      end: string
+    }> | null,
     timezone?: string | null
   },
   safeSearch?: boolean,
@@ -2171,8 +2177,8 @@ await corsair.nextdns.api.profiles.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `fingerprint` | `string` | No | — |
-| `role` | `string` | No | — |
+| `fingerprint` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
 
 
@@ -2235,7 +2241,7 @@ await corsair.nextdns.api.profiles.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `fingerprint` | `string` | No | — |
+| `fingerprint` | `string \| null` | No | — |
 | `security` | `object` | No | — |
 | `privacy` | `object` | No | — |
 | `parentalControl` | `object` | No | — |
@@ -2305,8 +2311,10 @@ await corsair.nextdns.api.profiles.get({});
     recreation?: boolean
   }[],
   recreation?: {
-    times?: {
-    } | null,
+    times?: Record<string, {
+      start: string,
+      end: string
+    }> | null,
     timezone?: string | null
   },
   safeSearch?: boolean,
@@ -2547,8 +2555,10 @@ await corsair.nextdns.api.profiles.update({});
     recreation?: boolean
   }[],
   recreation?: {
-    times?: {
-    } | null,
+    times?: Record<string, {
+      start: string,
+      end: string
+    }> | null,
     timezone?: string | null
   },
   safeSearch?: boolean,
@@ -3120,8 +3130,8 @@ await corsair.nextdns.api.settings.getLogs({});
 |------|------|----------|-------------|
 | `enabled` | `boolean` | No | — |
 | `drop` | `object` | No | — |
-| `retention` | `number` | No | — |
-| `location` | `string` | No | — |
+| `retention` | `number \| null` | No | — |
+| `location` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="drop full type">
@@ -3198,8 +3208,8 @@ await corsair.nextdns.api.settings.logClientIps({});
 |------|------|----------|-------------|
 | `enabled` | `boolean` | No | — |
 | `drop` | `object` | No | — |
-| `retention` | `number` | No | — |
-| `location` | `string` | No | — |
+| `retention` | `number \| null` | No | — |
+| `location` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="drop full type">
@@ -3244,8 +3254,8 @@ await corsair.nextdns.api.settings.logDomains({});
 |------|------|----------|-------------|
 | `enabled` | `boolean` | No | — |
 | `drop` | `object` | No | — |
-| `retention` | `number` | No | — |
-| `location` | `string` | No | — |
+| `retention` | `number \| null` | No | — |
+| `location` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="drop full type">
@@ -3423,7 +3433,7 @@ await corsair.nextdns.api.settings.updateLogs({});
 |------|------|----------|-------------|
 | `profileId` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
-| `retention` | `3600` | No | — |
+| `retention` | `3600 \| 86400 \| 604800 \| 2592000 \| 7776000 \| 15552000 \| 31536000` | No | — |
 | `location` | `string` | No | — |
 
 
@@ -3434,8 +3444,8 @@ await corsair.nextdns.api.settings.updateLogs({});
 |------|------|----------|-------------|
 | `enabled` | `boolean` | No | — |
 | `drop` | `object` | No | — |
-| `retention` | `number` | No | — |
-| `location` | `string` | No | — |
+| `retention` | `number \| null` | No | — |
+| `location` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="drop full type">
@@ -3515,8 +3525,8 @@ await corsair.nextdns.api.setup.updateLinkedIp({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `servers` | `string[]` | No | — |
-| `ip` | `string` | No | — |
-| `ddns` | `string` | No | — |
+| `ip` | `string \| null` | No | — |
+| `ddns` | `string \| null` | No | — |
 | `updateToken` | `string` | No | — |
 
 

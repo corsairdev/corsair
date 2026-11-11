@@ -30,38 +30,12 @@ await corsair.parseur.api.bootstrap.getBootstrap({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `choices` | `object` | Yes | — |
-| `mappings` | `object` | Yes | — |
-| `max_field_lengths` | `object` | Yes | — |
+| `choices` | `Record<string, any>` | Yes | — |
+| `mappings` | `Record<string, any>` | Yes | — |
+| `max_field_lengths` | `Record<string, any>` | Yes | — |
 | `email_domain` | `string` | Yes | — |
 | `extra_fields` | `any[]` | Yes | — |
 | `master_parser_set` | `any[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="choices full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="mappings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="max_field_lengths full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -135,7 +109,7 @@ await corsair.parseur.api.documents.createEmailDocument({});
 | `bcc` | `string` | No | — |
 | `body_html` | `string` | No | — |
 | `body_plain` | `string` | No | — |
-| `message_headers` | `tuple[]` | No | — |
+| `message_headers` | `[string, string][]` | No | — |
 
 
 
@@ -223,21 +197,11 @@ await corsair.parseur.api.documents.getDocument({});
 | `parser` | `number` | No | — |
 | `status` | `INCOMING \| ANALYZING \| PROGRESS \| PARSEDOK \| PARSEDKO \| QUOTAEXC \| SKIPPED \| SPLIT \| EXPORTKO \| TRANSKO \| INVALID \| string` | No | — |
 | `received` | `string` | No | — |
-| `processed` | `string` | No | — |
-| `result` | `object` | No | — |
-| `json_download_url` | `string` | No | — |
-| `csv_download_url` | `string` | No | — |
-| `xls_download_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-string | {
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `processed` | `string \| null` | No | — |
+| `result` | `string \| Record<string, any> \| null` | No | — |
+| `json_download_url` | `string \| null` | No | — |
+| `csv_download_url` | `string \| null` | No | — |
+| `xls_download_url` | `string \| null` | No | — |
 
 
 
@@ -343,8 +307,7 @@ await corsair.parseur.api.documents.listDocuments({});
   status?: INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string,
   received?: string,
   processed?: string | null,
-  result?: string | {
-  } | null,
+  result?: string | Record<string, any> | null,
   json_download_url?: string | null,
   csv_download_url?: string | null,
   xls_download_url?: string | null
@@ -427,21 +390,11 @@ await corsair.parseur.api.documents.skipDocument({});
 | `parser` | `number` | No | — |
 | `status` | `INCOMING \| ANALYZING \| PROGRESS \| PARSEDOK \| PARSEDKO \| QUOTAEXC \| SKIPPED \| SPLIT \| EXPORTKO \| TRANSKO \| INVALID \| string` | No | — |
 | `received` | `string` | No | — |
-| `processed` | `string` | No | — |
-| `result` | `object` | No | — |
-| `json_download_url` | `string` | No | — |
-| `csv_download_url` | `string` | No | — |
-| `xls_download_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-string | {
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `processed` | `string \| null` | No | — |
+| `result` | `string \| Record<string, any> \| null` | No | — |
+| `json_download_url` | `string \| null` | No | — |
+| `csv_download_url` | `string \| null` | No | — |
+| `xls_download_url` | `string \| null` | No | — |
 
 
 
@@ -523,11 +476,11 @@ await corsair.parseur.api.exportConfigs.createExportConfig({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
 | `items` | `string[]` | No | — |
-| `parser_field_id` | `string` | No | — |
-| `parser_field_name` | `string` | No | — |
+| `parser_field_id` | `string \| null` | No | — |
+| `parser_field_name` | `string \| null` | No | — |
 | `csv_download` | `string` | No | — |
 | `xls_download` | `string` | No | — |
 
@@ -640,7 +593,7 @@ await corsair.parseur.api.exportConfigs.updateExportConfig({});
 | `name` | `string` | No | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
 | `items` | `string[]` | No | — |
-| `parser_field_id` | `string` | No | — |
+| `parser_field_id` | `string \| null` | No | — |
 
 
 
@@ -649,11 +602,11 @@ await corsair.parseur.api.exportConfigs.updateExportConfig({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
 | `items` | `string[]` | No | — |
-| `parser_field_id` | `string` | No | — |
-| `parser_field_name` | `string` | No | — |
+| `parser_field_id` | `string \| null` | No | — |
+| `parser_field_name` | `string \| null` | No | — |
 | `csv_download` | `string` | No | — |
 | `xls_download` | `string` | No | — |
 
@@ -722,13 +675,13 @@ await corsair.parseur.api.mailboxes.createMailbox({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
-| `attachments_only_override` | `boolean` | No | — |
+| `attachments_only_override` | `boolean \| null` | No | — |
 | `disable_deskew` | `boolean` | No | — |
 | `force_ocr` | `boolean` | No | — |
 | `decimal_separator` | `. \| ,` | No | — |
-| `input_date_format` | `MONTH_FIRST \| DAY_FIRST` | No | — |
+| `input_date_format` | `MONTH_FIRST \| DAY_FIRST \| null` | No | — |
 | `retention_policy` | `any` | No | — |
 
 
@@ -741,7 +694,7 @@ await corsair.parseur.api.mailboxes.createMailbox({});
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
 | `ai_engine` | `string` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
 | `document_count` | `number` | No | — |
 | `template_count` | `number` | No | — |
@@ -813,7 +766,7 @@ await corsair.parseur.api.mailboxes.getMailbox({});
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
 | `ai_engine` | `string` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
 | `document_count` | `number` | No | — |
 | `template_count` | `number` | No | — |
@@ -852,17 +805,7 @@ await corsair.parseur.api.mailboxes.getMailboxSchema({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | Yes | — |
 
 
 
@@ -945,13 +888,13 @@ await corsair.parseur.api.mailboxes.updateMailbox({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
-| `attachments_only_override` | `boolean` | No | — |
+| `attachments_only_override` | `boolean \| null` | No | — |
 | `disable_deskew` | `boolean` | No | — |
 | `force_ocr` | `boolean` | No | — |
 | `decimal_separator` | `. \| ,` | No | — |
-| `input_date_format` | `MONTH_FIRST \| DAY_FIRST` | No | — |
+| `input_date_format` | `MONTH_FIRST \| DAY_FIRST \| null` | No | — |
 | `retention_policy` | `any` | No | — |
 | `id` | `string \| number` | Yes | — |
 
@@ -965,7 +908,7 @@ await corsair.parseur.api.mailboxes.updateMailbox({});
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
 | `ai_engine` | `string` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
 | `document_count` | `number` | No | — |
 | `template_count` | `number` | No | — |
@@ -1163,19 +1106,9 @@ await corsair.parseur.api.webhooks.createWebhook({});
 | `target` | `string` | Yes | — |
 | `category` | `CUSTOM \| ZAPIER \| MAKE \| FLOW \| N8N` | No | — |
 | `name` | `string` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `parser` | `number` | No | — |
 | `parser_field` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1187,19 +1120,9 @@ await corsair.parseur.api.webhooks.createWebhook({});
 | `event` | `document.processed \| document.processed.flattened \| document.template_needed \| document.export_failed \| table.processed \| string` | Yes | — |
 | `target` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string> \| null` | No | — |
 | `category` | `CUSTOM \| ZAPIER \| MAKE \| FLOW \| N8N \| string` | Yes | — |
 | `parser_field_set` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1295,7 +1218,7 @@ await corsair.parseur.api.webhooks.enableWebhook({});
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
 | `ai_engine` | `string` | No | — |
-| `ai_instructions` | `string` | No | — |
+| `ai_instructions` | `string \| null` | No | — |
 | `email_prefix` | `string` | No | — |
 | `document_count` | `number` | No | — |
 | `template_count` | `number` | No | — |
@@ -1313,7 +1236,7 @@ await corsair.parseur.api.webhooks.enableWebhook({});
 
 `webhooks.listWebhooks`
 
-List active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via GET /parser/{id}.
+List active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via GET /parser/&#123;id&#125;.
 
 **Risk:** `read`
 
@@ -1345,8 +1268,7 @@ await corsair.parseur.api.webhooks.listWebhooks({});
   event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string,
   target: string,
   name?: string,
-  headers?: {
-  } | null,
+  headers?: Record<string, string> | null,
   category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string,
   parser_field_set?: string[]
 }[]
@@ -1361,8 +1283,7 @@ await corsair.parseur.api.webhooks.listWebhooks({});
   event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string,
   target: string,
   name?: string,
-  headers?: {
-  } | null,
+  headers?: Record<string, string> | null,
   category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string,
   parser_field_set?: string[]
 }[]

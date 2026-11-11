@@ -67,15 +67,11 @@ Sent when the active workflow node changes
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
-  node?: {
-  },
+  node?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -145,17 +141,12 @@ Sent to fetch assistant configuration for an incoming call
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
-  phoneNumber?: {
-  },
-  customer?: {
-  },
+  phoneNumber?: Record<string, any>,
+  customer?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -169,8 +160,7 @@ Sent to fetch assistant configuration for an incoming call
 
 ```ts
 {
-  assistant?: {
-  },
+  assistant?: Record<string, any>,
   assistantId?: string,
   error?: string
 }
@@ -227,22 +217,16 @@ Sent at the end of a call with transcript, summary, and analysis
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   endedReason?: string,
   transcript?: string,
   summary?: string,
-  messages?: {
-  }[],
-  analysis?: {
-  },
-  artifact?: {
-  },
+  messages?: Record<string, any>[],
+  analysis?: Record<string, any>,
+  artifact?: Record<string, any>,
   timestamp?: string
 }
 ```
@@ -310,12 +294,9 @@ Sent when the call status changes
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   status: string,
   timestamp?: string
@@ -385,12 +366,9 @@ Triggered when the assistant makes tool calls during a call
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   toolCallList: {
     id: string,
@@ -400,8 +378,7 @@ Triggered when the assistant makes tool calls during a call
       arguments: string
     }
   }[],
-  toolWithToolCallList?: {
-  }[],
+  toolWithToolCallList?: Record<string, any>[],
   timestamp?: string
 }
 ```
@@ -473,12 +450,9 @@ Triggered when processing a transfer destination request
     startedAt?: string | null,
     endedAt?: string | null,
     cost?: number,
-    messages?: {
-    }[],
-    artifact?: {
-    },
-    analysis?: {
-    }
+    messages?: Record<string, any>[],
+    artifact?: Record<string, any>,
+    analysis?: Record<string, any>
   },
   timestamp?: string
 }
@@ -493,8 +467,7 @@ Triggered when processing a transfer destination request
 
 ```ts
 {
-  destination?: {
-  },
+  destination?: Record<string, any>,
   error?: string
 }
 ```

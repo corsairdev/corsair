@@ -84,7 +84,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "work_email | personal_email | phone[]"
+            "type": "(work_email | personal_email | phone)[]"
           },
           {
             "key": "response_format",
@@ -99,7 +99,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ work_email?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, personal_email?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, phone?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null } }"
+            "type": "{ work_email?: { value: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, personal_email?: { value: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, phone?: { value: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null } }"
           },
           {
             "key": "meta",
@@ -157,7 +157,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data?: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
+        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
       }
     },
     {
@@ -177,7 +177,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data?: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
+        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
       }
     },
     {
@@ -236,7 +236,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ found: boolean, person?: { person_id: string, name: string, headline?: string | null, company?: string | null, location?: string | null, profiles?: { linkedin?: string, github?: string, x?: string }, identity_verified?: boolean } | null, confidence: number, summary?: string, sources?: string[] }"
+            "type": "{ found: boolean, person: { person_id: string, name: string, headline?: string | null, company?: string | null, location?: string | null, profiles?: { linkedin?: string, github?: string, x?: string }, identity_verified?: boolean } | null, confidence: number, summary?: string, sources?: string[] }"
           },
           {
             "key": "meta",
@@ -343,7 +343,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{ title?: string | { any_of?: string[], none_of?: string[] }, seniority?: string | { any_of?: string[], none_of?: string[] }, company?: string | { any_of?: string[], none_of?: string[], employee_count?: { gte?: number, lte?: number }, funding_stage?: { in: pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped[] } }, industry?: string | { any_of?: string[], none_of?: string[] }, location?: string | { any_of?: string[], none_of?: string[], countries?: string[], cities?: string[] }, company_size?: { min?: number, max?: number }, experience?: { past_companies: { any_of: string[] } }, education?: { schools: { any_of: string[] } } }"
+            "type": "{ title?: string | { any_of?: string[], none_of?: string[] }, seniority?: string | { any_of?: string[], none_of?: string[] }, company?: string | { any_of?: string[], none_of?: string[], employee_count?: { gte?: number, lte?: number }, funding_stage?: { in: (pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped)[] } }, industry?: string | { any_of?: string[], none_of?: string[] }, location?: string | { any_of?: string[], none_of?: string[], countries?: string[], cities?: string[] }, company_size?: { min?: number, max?: number }, experience?: { past_companies: { any_of: string[] } }, education?: { schools: { any_of: string[] } } }"
           },
           {
             "key": "freshness",
@@ -353,7 +353,7 @@
           {
             "key": "contents",
             "optional": true,
-            "type": "{ fields?: linkedin | title | company | location | name[] }"
+            "type": "{ fields?: (linkedin | title | company | location | name)[] }"
           }
         ]
       },

@@ -36,14 +36,17 @@ await corsair.openweathermap.api.airPollution.current({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `coord` | `object` | No | — |
+| `coord` | `[number, number] \| object` | No | — |
 | `list` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="coord full type">
 
 ```ts
-tuple | {
+[
+  number,
+  number
+] | {
 }
 ```
 </Accordion>
@@ -100,14 +103,17 @@ await corsair.openweathermap.api.airPollution.forecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `coord` | `object` | No | — |
+| `coord` | `[number, number] \| object` | No | — |
 | `list` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="coord full type">
 
 ```ts
-tuple | {
+[
+  number,
+  number
+] | {
 }
 ```
 </Accordion>
@@ -166,14 +172,17 @@ await corsair.openweathermap.api.airPollution.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `coord` | `object` | No | — |
+| `coord` | `[number, number] \| object` | No | — |
 | `list` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="coord full type">
 
 ```ts
-tuple | {
+[
+  number,
+  number
+] | {
 }
 ```
 </Accordion>
@@ -270,8 +279,7 @@ await corsair.openweathermap.api.geocoding.direct({});
 ```ts
 {
   name?: string,
-  local_names?: {
-  },
+  local_names?: Record<string, string>,
   lat: number,
   lon: number,
   country?: string,
@@ -314,8 +322,7 @@ await corsair.openweathermap.api.geocoding.reverse({});
 ```ts
 {
   name?: string,
-  local_names?: {
-  },
+  local_names?: Record<string, string>,
   lat: number,
   lon: number,
   country?: string,
@@ -1223,7 +1230,7 @@ await corsair.openweathermap.api.weather.oneCall({});
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
-| `exclude` | `current \| minutely \| hourly \| daily \| alerts[]` | No | Parts to exclude from the response: current, minutely, hourly, daily, alerts |
+| `exclude` | `(current \| minutely \| hourly \| daily \| alerts)[]` | No | Parts to exclude from the response: current, minutely, hourly, daily, alerts |
 | `units` | `standard \| metric \| imperial` | No | Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit) |
 | `lang` | `string` | No | Language code for weather descriptions |
 

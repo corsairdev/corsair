@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Cloro plugin for Corsair"
+description: "Search monitoring API. Run prompts on ChatGPT, Gemini, Copilot, Perplexity, and Google Search, AI Mode, and News, and check credits."
 ---
 
-Use **Cloro** through Corsair: one client, typed API calls, local DB sync.
+Use **cloro** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`utility.countries`**
+**Check your credits**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloro.api.utility.countries({});
+await tenant.cloro.api.utility.credits({});
 ```
 
 
-**`monitor.chatgpt`**
+**Monitor a ChatGPT answer**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloro.api.monitor.chatgpt({});
+await tenant.cloro.api.monitor.chatgpt({ prompt: 'What are the best project management tools?', country: 'US' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/cloro/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cloro.db.<entity>.search()` and `.list()`: `snapshots`.
+Search synced snapshots without hitting Cloro.
 
-See [Database](/plugins/cloro/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloro.db.snapshots.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `snapshots`. See [Database](/plugins/cloro/database) for filters and operators.
 
 ## What's next
 

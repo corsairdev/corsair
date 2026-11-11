@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Claid.ai plugin for Corsair"
+description: "Image editing and generation API. Remove or generate backgrounds, resize, polish, blur license plates, edit images with AI, and manage storage connections."
 ---
 
 Use **Claid.ai** through Corsair: one client, typed API calls, local DB sync.
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`storageDetails`**
+**List storage connections**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.claidai.api.storageDetails({});
+await tenant.claidai.api.storageList({});
 ```
 
 
-**`backgroundGenerate`**
+**Remove an image background**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.claidai.api.backgroundGenerate({});
+await tenant.claidai.api.backgroundRemove({ input: 'https://example.com/photo.jpg' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/claidai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.claidai.db.<entity>.search()` and `.list()`: `editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`.
+Search synced storages without hitting Claid.ai.
 
-See [Database](/plugins/claidai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.claidai.db.storages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`. See [Database](/plugins/claidai/database) for filters and operators.
 
 ## What's next
 

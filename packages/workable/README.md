@@ -19,7 +19,7 @@ pnpm add @corsair-dev/workable
 | `departments.create` | `workable.api.departments.create` | `write` | Create a department |
 | `departments.delete` | `workable.api.departments.delete` | `destructive` | Delete a department |
 | `departments.list` | `workable.api.departments.list` | `read` | List all departments |
-| `departments.merge` | `workable.api.departments.merge` | `write` | Merge a department into another department |
+| `departments.merge` | `workable.api.departments.merge` | `destructive` | Merge a department into another department |
 | `departments.update` | `workable.api.departments.update` | `write` | Update a department's name or parent |
 | `disqualificationReasons.list` | `workable.api.disqualificationReasons.list` | `read` | List disqualification reasons |
 | `employeeFields.list` | `workable.api.employeeFields.list` | `read` | List employee field definitions |

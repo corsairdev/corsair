@@ -29,7 +29,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -114,7 +114,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -124,7 +124,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -154,7 +154,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -179,7 +179,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -199,7 +199,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -229,7 +229,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -239,11 +239,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number } & {}"
+        "type": "{ id: number } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -253,11 +253,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number, language: string } & {}"
+        "type": "{ id: number, language: string } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -282,7 +282,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -312,7 +312,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -337,7 +337,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -357,7 +357,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -417,7 +417,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -437,7 +437,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -462,7 +462,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -491,7 +491,7 @@
           {
             "key": "channels",
             "optional": false,
-            "type": "{ type: string, value: string, device?: {}, webPushSubscription?: {} }[]"
+            "type": "{ type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[]"
           },
           {
             "key": "address",
@@ -558,7 +558,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -588,7 +588,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -613,7 +613,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -719,7 +719,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -779,7 +779,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -834,7 +834,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -844,11 +844,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -873,7 +873,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -898,14 +898,14 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
       "path": "esputnik.api.contacts.deleteFromUnsubscribed",
       "shortPath": "contacts.deleteFromUnsubscribed",
       "description": "Remove emails from the eSputnik unsubscribe list",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -918,7 +918,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -948,7 +948,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -958,11 +958,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -976,7 +976,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1026,7 +1026,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "lazy[]"
+            "type": "JsonValue[]"
           }
         ]
       }
@@ -1079,7 +1079,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1119,7 +1119,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1139,7 +1139,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1153,7 +1153,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1269,7 +1269,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1299,7 +1299,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1313,7 +1313,7 @@
           {
             "key": "contact",
             "optional": false,
-            "type": "{ id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: {}, webPushSubscription?: {} }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
+            "type": "{ id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
           },
           {
             "key": "groups",
@@ -1360,11 +1360,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number } & { id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: {}, webPushSubscription?: {} }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
+        "type": "{ id: number } & { id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1430,7 +1430,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1455,7 +1455,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1475,7 +1475,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1495,7 +1495,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1525,7 +1525,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1535,7 +1535,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -1543,7 +1543,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "lazy[]"
+            "type": "JsonValue[]"
           }
         ]
       }
@@ -1559,7 +1559,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1573,7 +1573,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1583,11 +1583,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1597,11 +1597,11 @@
       "riskLevel": "destructive",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1611,11 +1611,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1629,7 +1629,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1643,7 +1643,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1682,7 +1682,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "lazy[]"
+            "type": "JsonValue[]"
           }
         ]
       }
@@ -1719,7 +1719,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1820,7 +1820,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1845,7 +1845,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1865,7 +1865,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1895,7 +1895,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -1909,7 +1909,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1923,7 +1923,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -1933,11 +1933,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1957,14 +1957,14 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
       "path": "esputnik.api.preprocessor.updatePreprocessorFile",
       "shortPath": "preprocessor.updatePreprocessorFile",
       "description": "Replace the data of an eSputnik preprocessor file",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -1987,7 +1987,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2017,7 +2017,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2037,7 +2037,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2051,7 +2051,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2086,7 +2086,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2116,7 +2116,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2156,7 +2156,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2191,7 +2191,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2211,7 +2211,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2231,7 +2231,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2245,7 +2245,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -2273,7 +2273,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2293,7 +2293,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2303,7 +2303,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -2333,7 +2333,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2358,7 +2358,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2378,7 +2378,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2408,7 +2408,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -2418,7 +2418,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -2426,7 +2426,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "lazy[]"
+            "type": "JsonValue[]"
           }
         ]
       }
@@ -2438,11 +2438,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number } & {}"
+        "type": "{ id: number } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2452,11 +2452,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number, language: string } & {}"
+        "type": "{ id: number, language: string } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2466,7 +2466,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -2496,7 +2496,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2521,7 +2521,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2541,7 +2541,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2571,7 +2571,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -2581,11 +2581,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number } & {}"
+        "type": "{ id: number } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2595,11 +2595,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number, language: string } & {}"
+        "type": "{ id: number, language: string } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2609,7 +2609,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -2644,7 +2644,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2664,7 +2664,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2684,7 +2684,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -2714,7 +2714,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "JsonValue[]"
       }
     },
     {
@@ -2724,7 +2724,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "object",
@@ -2732,7 +2732,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "lazy[]"
+            "type": "JsonValue[]"
           }
         ]
       }
@@ -2744,11 +2744,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number } & {}"
+        "type": "{ id: number } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -2758,11 +2758,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ id: number, language: string } & {}"
+        "type": "{ id: number, language: string } & Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     }
   ],

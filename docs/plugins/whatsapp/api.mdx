@@ -263,8 +263,7 @@ await corsair.whatsapp.api.messages.send({});
       code: string,
       policy?: deterministic
     },
-    components?: {
-    }[]
+    components?: Record<string, any>[]
   }
 } | {
   phoneNumberId?: string,
@@ -378,17 +377,7 @@ await corsair.whatsapp.api.messageTemplates.create({});
 | `name` | `string` | Yes | — |
 | `language` | `string` | Yes | — |
 | `category` | `string` | Yes | — |
-| `components` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="components full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `components` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -460,17 +449,7 @@ await corsair.whatsapp.api.messageTemplates.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -500,17 +479,7 @@ await corsair.whatsapp.api.messageTemplates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -602,8 +571,7 @@ await corsair.whatsapp.api.phoneNumbers.list({});
   quality_rating?: string,
   code_verification_status?: string,
   platform_type?: string,
-  throughput?: {
-  }
+  throughput?: Record<string, any>
 }[]
 ```
 </Accordion>

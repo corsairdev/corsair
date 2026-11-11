@@ -26,7 +26,7 @@ await corsair.esputnik.api.account.generateApiToken({});
 **Input:** _empty object_
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -106,17 +106,7 @@ await corsair.esputnik.api.account.getOrganisationBalanceHistory({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -135,17 +125,7 @@ Create a eSputnik App Inbox message
 await corsair.esputnik.api.appInbox.addAppInboxMessage({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
@@ -178,7 +158,7 @@ await corsair.esputnik.api.appInbox.deleteAppInboxMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -204,7 +184,7 @@ await corsair.esputnik.api.appInbox.deleteTranslatedAppInboxMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -229,17 +209,7 @@ await corsair.esputnik.api.appInbox.getAppInboxMessage({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -266,7 +236,7 @@ await corsair.esputnik.api.appInbox.searchAppInboxMessages({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -291,14 +261,13 @@ await corsair.esputnik.api.appInbox.updateBaseAppInboxMessage({});
 ```ts
 {
   id: number
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -324,14 +293,13 @@ await corsair.esputnik.api.appInbox.updateTranslatedAppInboxMessage({});
 {
   id: number,
   language: string
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -374,7 +342,7 @@ await corsair.esputnik.api.apps.addAppTokens({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -401,7 +369,7 @@ await corsair.esputnik.api.apps.muteAppToken({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -427,7 +395,7 @@ await corsair.esputnik.api.apps.unmuteAppToken({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -454,7 +422,7 @@ await corsair.esputnik.api.broadcasts.cancelBroadcast({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -487,17 +455,7 @@ await corsair.esputnik.api.broadcasts.createBroadcast({ messageId: '4512', group
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -522,17 +480,7 @@ await corsair.esputnik.api.broadcasts.getBroadcast({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -558,7 +506,7 @@ await corsair.esputnik.api.broadcasts.getBroadcasts({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -600,10 +548,8 @@ await corsair.esputnik.api.contacts.addContact({ firstName: 'Ada', channels: [{ 
 {
   type: string,
   value: string,
-  device?: {
-  },
-  webPushSubscription?: {
-  }
+  device?: Record<string, JsonValue>,
+  webPushSubscription?: Record<string, JsonValue>
 }[]
 ```
 </Accordion>
@@ -664,7 +610,7 @@ await corsair.esputnik.api.contacts.addToUnsubscribed({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -691,7 +637,7 @@ await corsair.esputnik.api.contacts.attachContactsToGroup({ id: 200400, contactI
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -717,7 +663,7 @@ await corsair.esputnik.api.contacts.changeContactSubscriptionCategories({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -784,7 +730,7 @@ await corsair.esputnik.api.contacts.contactActivity({ dateFrom: '2026-10-01', da
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -817,7 +763,7 @@ await corsair.esputnik.api.contacts.contactMessages({ email: 'ada@example.com', 
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -849,7 +795,7 @@ await corsair.esputnik.api.contacts.contactRecoms({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -866,30 +812,10 @@ Bulk create or update eSputnik contacts
 await corsair.esputnik.api.contacts.contactsBulkUpdate({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -915,7 +841,7 @@ await corsair.esputnik.api.contacts.deleteContactByExternalCustomerId({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -941,7 +867,7 @@ await corsair.esputnik.api.contacts.deleteContactById({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -952,7 +878,7 @@ await corsair.esputnik.api.contacts.deleteContactById({});
 
 Remove emails from the eSputnik unsubscribe list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.esputnik.api.contacts.deleteFromUnsubscribed({});
@@ -966,7 +892,7 @@ await corsair.esputnik.api.contacts.deleteFromUnsubscribed({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -993,7 +919,7 @@ await corsair.esputnik.api.contacts.detachContactsFromGroup({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1010,30 +936,10 @@ Import eSputnik contacts from a file link
 await corsair.esputnik.api.contacts.fileContactsBulkUpdate({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1053,17 +959,7 @@ await corsair.esputnik.api.contacts.getAdditionalFields({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1122,7 +1018,7 @@ await corsair.esputnik.api.contacts.getContactEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `lazy[]` | Yes | — |
+| `results` | `JsonValue[]` | Yes | — |
 
 
 
@@ -1179,7 +1075,7 @@ await corsair.esputnik.api.contacts.getContactSubscriptionCategories({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1208,7 +1104,7 @@ await corsair.esputnik.api.contacts.getGroupContacts({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1233,17 +1129,7 @@ await corsair.esputnik.api.contacts.getImportSessionStatus({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1263,7 +1149,7 @@ await corsair.esputnik.api.contacts.getSubscriptionCategories({});
 **Input:** _empty object_
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1364,7 +1250,7 @@ await corsair.esputnik.api.contacts.searchGroups({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1391,7 +1277,7 @@ await corsair.esputnik.api.contacts.searchWorkflows({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1428,10 +1314,8 @@ await corsair.esputnik.api.contacts.subscribeContact({});
   channels: {
     type: string,
     value: string,
-    device?: {
-    },
-    webPushSubscription?: {
-    }
+    device?: Record<string, JsonValue>,
+    webPushSubscription?: Record<string, JsonValue>
   }[],
   address?: {
     region?: string,
@@ -1495,10 +1379,8 @@ await corsair.esputnik.api.contacts.updateContact({});
   channels: {
     type: string,
     value: string,
-    device?: {
-    },
-    webPushSubscription?: {
-    }
+    device?: Record<string, JsonValue>,
+    webPushSubscription?: Record<string, JsonValue>
   }[],
   address?: {
     region?: string,
@@ -1522,7 +1404,7 @@ await corsair.esputnik.api.contacts.updateContact({});
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1583,7 +1465,7 @@ await corsair.esputnik.api.emails.deleteEmail({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1609,7 +1491,7 @@ await corsair.esputnik.api.emails.deleteTranslatedEmail({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1634,17 +1516,7 @@ await corsair.esputnik.api.emails.getEmail({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1669,17 +1541,7 @@ await corsair.esputnik.api.emails.getEmailMessageViewLink({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1706,7 +1568,7 @@ await corsair.esputnik.api.emails.searchEmails({ search: 'welcome', maxrows: 20 
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1723,24 +1585,14 @@ Send an email to eSputnik recipients
 await corsair.esputnik.api.emails.sendEmail({ from: '"Shop" <news@shop.example.com>', subject: 'Your order', htmlText: '<p>Thanks!</p>', emails: ['ada@example.com'] });
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `lazy[]` | Yes | — |
+| `results` | `JsonValue[]` | Yes | — |
 
 
 
@@ -1778,7 +1630,7 @@ await corsair.esputnik.api.emails.updateMessage({});
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1816,7 +1668,7 @@ await corsair.esputnik.api.emails.updateTranslatedMessage({});
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1835,20 +1687,10 @@ Send an eSputnik event
 await corsair.esputnik.api.events.registerEvent({ eventTypeKey: 'cart_abandoned', params: { email: 'ada@example.com', cartUrl: 'https://shop.example.com/cart/42' } });
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1865,20 +1707,10 @@ Delete eSputnik events in a period
 await corsair.esputnik.api.events.removeHistoryEvents({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -1895,30 +1727,10 @@ Send past eSputnik events
 await corsair.esputnik.api.events.sendHistoryEvents({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -1940,7 +1752,7 @@ await corsair.esputnik.api.interfaces.getEmailInterfaces({});
 **Input:** _empty object_
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -1960,7 +1772,7 @@ await corsair.esputnik.api.interfaces.getSmsInterfaces({});
 **Input:** _empty object_
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -2010,7 +1822,7 @@ await corsair.esputnik.api.messages.sendPreparedMessage({ id: 4512, recipients: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `lazy[]` | Yes | — |
+| `results` | `JsonValue[]` | Yes | — |
 
 
 
@@ -2039,7 +1851,7 @@ await corsair.esputnik.api.messages.updateInteractionStatus({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2107,7 +1919,7 @@ await corsair.esputnik.api.mobilePush.deleteMobilePushMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2133,7 +1945,7 @@ await corsair.esputnik.api.mobilePush.deleteTranslatedMobilePushMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2158,17 +1970,7 @@ await corsair.esputnik.api.mobilePush.getMobilePushMessage({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2195,7 +1997,7 @@ await corsair.esputnik.api.mobilePush.searchMobilePushMessages({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -2239,7 +2041,7 @@ await corsair.esputnik.api.mobilePush.updateBaseMobilePushMessage({});
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2284,7 +2086,7 @@ await corsair.esputnik.api.mobilePush.updateTranslatedMobilePushMessage({});
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2303,30 +2105,10 @@ Add or update eSputnik orders
 await corsair.esputnik.api.orders.ordersBulkInsert({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2353,7 +2135,7 @@ await corsair.esputnik.api.preprocessor.getPreprocessorFileStatus({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2364,7 +2146,7 @@ await corsair.esputnik.api.preprocessor.getPreprocessorFileStatus({});
 
 Replace the data of an eSputnik preprocessor file
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.esputnik.api.preprocessor.updatePreprocessorFile({});
@@ -2380,17 +2162,7 @@ await corsair.esputnik.api.preprocessor.updatePreprocessorFile({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2417,17 +2189,7 @@ await corsair.esputnik.api.preprocessor.uploadPreprocessorFile({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2467,7 +2229,7 @@ await corsair.esputnik.api.productFeeds.configureProductFeeds({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2487,17 +2249,7 @@ await corsair.esputnik.api.productFeeds.getProductFeedsConfiguration({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2527,7 +2279,7 @@ await corsair.esputnik.api.promocodes.getPromocodes({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2554,7 +2306,7 @@ await corsair.esputnik.api.promocodes.getPromocodesCount({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2583,7 +2335,7 @@ await corsair.esputnik.api.promocodes.insertPromocodes({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2613,17 +2365,7 @@ await corsair.esputnik.api.site.addWebPushDomain({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2648,17 +2390,7 @@ await corsair.esputnik.api.site.createDomain({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2683,7 +2415,7 @@ await corsair.esputnik.api.site.deleteWebPushDomain({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2703,7 +2435,7 @@ await corsair.esputnik.api.site.getDomains({});
 **Input:** _empty object_
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -2743,17 +2475,7 @@ await corsair.esputnik.api.site.getWebPushDomains({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2778,17 +2500,7 @@ await corsair.esputnik.api.site.getWebPushScript({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2807,17 +2519,7 @@ Create a eSputnik SMS message
 await corsair.esputnik.api.sms.addSmsMessage({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
@@ -2850,7 +2552,7 @@ await corsair.esputnik.api.sms.deleteSmsMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2876,7 +2578,7 @@ await corsair.esputnik.api.sms.deleteTranslatedSmsMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -2901,17 +2603,7 @@ await corsair.esputnik.api.sms.getSms({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -2938,7 +2630,7 @@ await corsair.esputnik.api.sms.searchSmsMessages({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -2955,24 +2647,14 @@ Send an SMS to eSputnik recipients
 await corsair.esputnik.api.sms.sendSms({ from: 'Shop', text: 'Your code is 4821', phoneNumbers: ['380501234567'] });
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `lazy[]` | Yes | — |
+| `results` | `JsonValue[]` | Yes | — |
 
 
 
@@ -2998,14 +2680,13 @@ await corsair.esputnik.api.sms.updateBaseSmsMessage({});
 ```ts
 {
   id: number
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3031,14 +2712,13 @@ await corsair.esputnik.api.sms.updateTranslatedSmsMessage({});
 {
   id: number,
   language: string
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3057,17 +2737,7 @@ Create a eSputnik Telegram bot message
 await corsair.esputnik.api.telegramBot.addTelegramBotMessage({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
@@ -3100,7 +2770,7 @@ await corsair.esputnik.api.telegramBot.deleteTelegramBotMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3126,7 +2796,7 @@ await corsair.esputnik.api.telegramBot.deleteTranslatedTelegramMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3151,17 +2821,7 @@ await corsair.esputnik.api.telegramBot.getTelegramBotMessage({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -3188,7 +2848,7 @@ await corsair.esputnik.api.telegramBot.searchTelegramBotMessages({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -3213,14 +2873,13 @@ await corsair.esputnik.api.telegramBot.updateBaseTelegramBotMessage({});
 ```ts
 {
   id: number
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3246,14 +2905,13 @@ await corsair.esputnik.api.telegramBot.updateTranslatedTelegramMessage({});
 {
   id: number,
   language: string
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3272,17 +2930,7 @@ Create a eSputnik Viber message
 await corsair.esputnik.api.viber.addViberMessage({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
@@ -3316,7 +2964,7 @@ await corsair.esputnik.api.viber.deleteTranslatedViberMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3341,7 +2989,7 @@ await corsair.esputnik.api.viber.deleteViberMessage({});
 
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3366,17 +3014,7 @@ await corsair.esputnik.api.viber.getViberMessage({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -3403,7 +3041,7 @@ await corsair.esputnik.api.viber.searchViberMessages({});
 
 
 
-**Output:** `lazy[]`
+**Output:** `JsonValue[]`
 
 
 ---
@@ -3420,24 +3058,14 @@ Send a Viber message to eSputnik recipients
 await corsair.esputnik.api.viber.sendViber({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `lazy[]` | Yes | — |
+| `results` | `JsonValue[]` | Yes | — |
 
 
 
@@ -3463,14 +3091,13 @@ await corsair.esputnik.api.viber.updateBaseViberMessage({});
 ```ts
 {
   id: number
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -3496,14 +3123,13 @@ await corsair.esputnik.api.viber.updateTranslatedViberMessage({});
 {
   id: number,
   language: string
-}& {
-}
+}& Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
 
 
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---

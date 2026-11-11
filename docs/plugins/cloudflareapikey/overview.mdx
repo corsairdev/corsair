@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Cloudflare API token plugin for Corsair"
+description: "Cloudflare API access with an API token. Manage zones, DNS records, DNSSEC, rulesets, lockdowns, and cache settings."
 ---
 
-Use **Cloudflare API token** through Corsair: one client, typed API calls, local DB sync.
+Use **Cloudflare API Token** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`cache.getRegionalTieredCache`**
+**List zones**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloudflareapikey.api.cache.getRegionalTieredCache({});
+await tenant.cloudflareapikey.api.zones.list({});
 ```
 
 
-**`dns.create`**
+**Create a DNS record**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloudflareapikey.api.dns.create({});
+await tenant.cloudflareapikey.api.dns.create({
+	zone_id: '023e105f4ecef8ad9ca31a8372d0c353',
+	type: 'A',
+	name: 'www.example.com',
+	content: '203.0.113.10',
+});
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/cloudflareapikey/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cloudflareapikey.db.<entity>.search()` and `.list()`: `dnsRecords`, `dnssec`, `lockdowns`, `r2Objects`, `rulesets`, `zones`.
+Search synced zones without hitting Cloudflare.
 
-See [Database](/plugins/cloudflareapikey/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflareapikey.db.zones.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `dnsRecords`, `dnssec`, `lockdowns`, `r2Objects`, `rulesets`, `zones`. See [Database](/plugins/cloudflareapikey/database) for filters and operators.
 
 ## What's next
 

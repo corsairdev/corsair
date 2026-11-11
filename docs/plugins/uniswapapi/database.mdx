@@ -118,6 +118,7 @@ const rows = await corsair.uniswapapi.db.swapStatus.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `txHash` | `string` | equals, contains, startsWith, endsWith, in |
 | `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

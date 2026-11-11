@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Dovetail plugin for Corsair"
+description: "Customer research platform for managing projects, notes, highlights, insights, data, docs, folders, tags, contacts, channels, and files."
 ---
 
 Use **Dovetail** through Corsair: one client, typed API calls, local DB sync.
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`contacts.get`**
+**List projects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dovetail.api.contacts.get({});
+await tenant.dovetail.api.projects.list({});
 ```
 
 
-**`channels.create`**
+**Create a note**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dovetail.api.channels.create({});
+await tenant.dovetail.api.notes.create({ project_id: 'proj_123', title: 'Customer interview', content: 'Notes from the call.' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/dovetail/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.dovetail.db.<entity>.search()` and `.list()`: `channels`, `contacts`, `data`, `dataPoints`, `docs`, `files`, `folders`, `highlights`, `insights`, `notes`, `projects`, `tags`, `topics`.
+These tables exist, but Dovetail calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/dovetail/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dovetail.db.projects.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `channels`, `contacts`, `data`, `dataPoints`, `docs`, `files`, `folders`, `highlights`, `insights`, `notes`, `projects`, `tags`, `topics`. See [Database](/plugins/dovetail/database) for filters and operators.
 
 ## What's next
 

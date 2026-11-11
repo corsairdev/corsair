@@ -46,7 +46,7 @@
           {
             "key": "spec",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -238,7 +238,7 @@
           {
             "key": "options",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1898,7 +1898,7 @@
           {
             "key": "listings",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1924,7 +1924,7 @@
           {
             "key": "providers",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2520,7 +2520,7 @@
           {
             "key": "config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2602,7 +2602,7 @@
           {
             "key": "token_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2714,7 +2714,7 @@
           {
             "key": "config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3003,7 +3003,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3080,7 +3080,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3116,7 +3116,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3193,7 +3193,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

@@ -35,8 +35,8 @@ await corsair.borneo.api.accounts.getCloudAccountById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -50,7 +50,7 @@ await corsair.borneo.api.accounts.getCloudAccountById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -101,8 +101,8 @@ await corsair.borneo.api.accounts.postAccountsWithFilterAndSortOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -125,7 +125,7 @@ await corsair.borneo.api.accounts.postAccountsWithFilterAndSortOptions({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -167,8 +167,8 @@ await corsair.borneo.api.accounts.retrieveAccountDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -182,7 +182,7 @@ await corsair.borneo.api.accounts.retrieveAccountDetailsById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -231,8 +231,8 @@ await corsair.borneo.api.assets.createNewAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -247,7 +247,7 @@ await corsair.borneo.api.assets.createNewAsset({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -289,8 +289,8 @@ await corsair.borneo.api.assets.deleteAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -304,7 +304,7 @@ await corsair.borneo.api.assets.deleteAssetById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -341,7 +341,7 @@ await corsair.borneo.api.assets.filterAndSortAssetsList({});
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `maxResults` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `sort__order` | `ASC \| DESC` | No | Order |
-| `filter__type` | `applications \| cloudServices \| communications \| dataInformation \| externalStorage \| filingRoom \| furniture \| hardware \| hosting \| other \| paperDocumentation \| printer \| server \| shredder \| videoSurveillance[]` | No | Type |
+| `filter__type` | `(applications \| cloudServices \| communications \| dataInformation \| externalStorage \| filingRoom \| furniture \| hardware \| hosting \| other \| paperDocumentation \| printer \| server \| shredder \| videoSurveillance)[]` | No | Type |
 | `sort__column` | `string` | No | The column name to sort on. |
 | `filter__search` | `string` | No | Free-form text search to apply to the asset name. |
 
@@ -351,8 +351,8 @@ await corsair.borneo.api.assets.filterAndSortAssetsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -371,7 +371,7 @@ await corsair.borneo.api.assets.filterAndSortAssetsList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -413,8 +413,8 @@ await corsair.borneo.api.assets.retrieveAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -428,7 +428,7 @@ await corsair.borneo.api.assets.retrieveAssetById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -475,8 +475,8 @@ await corsair.borneo.api.assets.updateAssetInformationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -491,7 +491,7 @@ await corsair.borneo.api.assets.updateAssetInformationById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -547,8 +547,8 @@ await corsair.borneo.api.audit.listEventsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -565,7 +565,7 @@ await corsair.borneo.api.audit.listEventsWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -614,8 +614,8 @@ await corsair.borneo.api.audit.postFilteredAccessLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -637,7 +637,7 @@ await corsair.borneo.api.audit.postFilteredAccessLogs({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -692,8 +692,8 @@ await corsair.borneo.api.audit.postLogAuditRecordsWithFilterCriteria({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -721,7 +721,7 @@ await corsair.borneo.api.audit.postLogAuditRecordsWithFilterCriteria({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -765,8 +765,8 @@ await corsair.borneo.api.breaches.deleteDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -780,7 +780,7 @@ await corsair.borneo.api.breaches.deleteDataBreachById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -833,8 +833,8 @@ await corsair.borneo.api.breaches.evaluateDataBreachImpact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -853,7 +853,7 @@ await corsair.borneo.api.breaches.evaluateDataBreachImpact({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -895,8 +895,8 @@ await corsair.borneo.api.breaches.fetchDataBreachEvaluation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -910,7 +910,7 @@ await corsair.borneo.api.breaches.fetchDataBreachEvaluation({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -959,8 +959,8 @@ await corsair.borneo.api.breaches.listDataBreachesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -979,7 +979,7 @@ await corsair.borneo.api.breaches.listDataBreachesWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1021,8 +1021,8 @@ await corsair.borneo.api.breaches.listDataBreachFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1037,7 +1037,7 @@ await corsair.borneo.api.breaches.listDataBreachFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1100,8 +1100,8 @@ await corsair.borneo.api.breaches.postDataBreachInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1122,7 +1122,7 @@ await corsair.borneo.api.breaches.postDataBreachInformation({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1164,8 +1164,8 @@ await corsair.borneo.api.breaches.retrieveDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1179,7 +1179,7 @@ await corsair.borneo.api.breaches.retrieveDataBreachById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1241,8 +1241,8 @@ await corsair.borneo.api.breaches.updateDataBreachEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1262,7 +1262,7 @@ await corsair.borneo.api.breaches.updateDataBreachEntry({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1308,8 +1308,8 @@ await corsair.borneo.api.categories.createNewInfotypeCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1324,7 +1324,7 @@ await corsair.borneo.api.categories.createNewInfotypeCategory({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1366,8 +1366,8 @@ await corsair.borneo.api.categories.deleteCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1381,7 +1381,7 @@ await corsair.borneo.api.categories.deleteCategoryByLabel({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1423,8 +1423,8 @@ await corsair.borneo.api.categories.getCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1438,7 +1438,7 @@ await corsair.borneo.api.categories.getCategoryByLabel({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1482,8 +1482,8 @@ await corsair.borneo.api.categories.updateCategoryInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1498,7 +1498,7 @@ await corsair.borneo.api.categories.updateCategoryInfotypes({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1554,8 +1554,8 @@ await corsair.borneo.api.connectors.postConnectorWithFilteringOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1581,7 +1581,7 @@ await corsair.borneo.api.connectors.postConnectorWithFilteringOptions({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1623,8 +1623,8 @@ await corsair.borneo.api.connectors.retrieveConnectorById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1638,7 +1638,7 @@ await corsair.borneo.api.connectors.retrieveConnectorById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1676,7 +1676,7 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
 |------|------|----------|-------------|
 | `name` | `string` | No | Name |
 | `email` | `string` | Yes | Email |
-| `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
+| `roles` | `(borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor)[]` | No | Roles |
 | `filter__id` | `string` | No | Id |
 | `filter__type` | `GCP \| OKTA` | No | Type |
 | `organisations` | `object[]` | No | Organisations |
@@ -1686,7 +1686,7 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
 
 ```ts
 {
-  roles: borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[],
+  roles: (borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[],
   departments?: string[],
   organisationId?: number
 }[]
@@ -1700,8 +1700,8 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1716,7 +1716,7 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1758,8 +1758,8 @@ await corsair.borneo.api.dashboard.deleteDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1773,7 +1773,7 @@ await corsair.borneo.api.dashboard.deleteDashboardReportById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1815,8 +1815,8 @@ await corsair.borneo.api.dashboard.disableDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1830,7 +1830,7 @@ await corsair.borneo.api.dashboard.disableDashboardUserByUsername({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1872,8 +1872,8 @@ await corsair.borneo.api.dashboard.downloadDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1887,7 +1887,7 @@ await corsair.borneo.api.dashboard.downloadDashboardReport({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1929,8 +1929,8 @@ await corsair.borneo.api.dashboard.downloadDashboardReportEdition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -1944,7 +1944,7 @@ await corsair.borneo.api.dashboard.downloadDashboardReportEdition({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1986,8 +1986,8 @@ await corsair.borneo.api.dashboard.enableDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2001,7 +2001,7 @@ await corsair.borneo.api.dashboard.enableDashboardUser({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2043,8 +2043,8 @@ await corsair.borneo.api.dashboard.fetchDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2058,7 +2058,7 @@ await corsair.borneo.api.dashboard.fetchDashboardReportById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2100,8 +2100,8 @@ await corsair.borneo.api.dashboard.getDashboardReportEditionById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2115,7 +2115,7 @@ await corsair.borneo.api.dashboard.getDashboardReportEditionById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2161,8 +2161,8 @@ await corsair.borneo.api.dashboard.listDashboardReportEditions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2180,7 +2180,7 @@ await corsair.borneo.api.dashboard.listDashboardReportEditions({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2217,10 +2217,10 @@ await corsair.borneo.api.dashboard.listDashboardReportsWithFilters({});
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
-| `filter__type` | `DATA_DISCOVERY_DASHBOARD \| PRIVACY_OPS_DASHBOARD \| PRIVACY_OPS_DATA_FLOW[]` | No | Type |
+| `filter__type` | `(DATA_DISCOVERY_DASHBOARD \| PRIVACY_OPS_DASHBOARD \| PRIVACY_OPS_DATA_FLOW)[]` | No | Type |
 | `sort__column` | `string` | No | The column name to sort on. |
 | `filter__search` | `string` | No | Free-form text search to apply to the scan name. |
-| `filter__frequency` | `*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *[]` | No | Frequency |
+| `filter__frequency` | `(*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *)[]` | No | Frequency |
 
 
 
@@ -2228,8 +2228,8 @@ await corsair.borneo.api.dashboard.listDashboardReportsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2249,7 +2249,7 @@ await corsair.borneo.api.dashboard.listDashboardReportsWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2283,7 +2283,7 @@ await corsair.borneo.api.dashboard.listDashboardUsersWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter__roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
+| `filter__roles` | `(borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor)[]` | No | Roles |
 | `filter__tenantId` | `string` | No | Tenantid |
 | `filter__departments` | `string[]` | No | Departments |
 | `filter__organisationId` | `number` | No | Organisationid |
@@ -2294,8 +2294,8 @@ await corsair.borneo.api.dashboard.listDashboardUsersWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2313,7 +2313,7 @@ await corsair.borneo.api.dashboard.listDashboardUsersWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2350,8 +2350,8 @@ await corsair.borneo.api.dashboard.postCurrentDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2365,7 +2365,7 @@ await corsair.borneo.api.dashboard.postCurrentDashboardUser({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2400,11 +2400,11 @@ await corsair.borneo.api.dashboard.postDashboardReport({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Name |
-| `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
+| `roles` | `(borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor)[]` | No | Roles |
 | `status` | `DELETED \| ONCE \| SCHEDULED` | Yes | Status |
 | `createdBy` | `string` | No | Createdby |
 | `frequency` | `*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *` | No | The cron schedule expression to use for a recurring scan. Only a fixed set of cron expressions can be used to run scans at 30 minute, 1 hour, 1 day, or 1 week intervals. |
-| `reportTypes` | `DATA_DISCOVERY_DASHBOARD \| PRIVACY_OPS_DASHBOARD \| PRIVACY_OPS_DATA_FLOW[]` | Yes | Reporttypes |
+| `reportTypes` | `(DATA_DISCOVERY_DASHBOARD \| PRIVACY_OPS_DASHBOARD \| PRIVACY_OPS_DATA_FLOW)[]` | Yes | Reporttypes |
 | `externalEmail` | `string[]` | No | Externalemail |
 | `recipientsEmail` | `string[]` | No | Recipientsemail |
 | `triggerImmediately` | `boolean` | Yes | Triggerimmediately |
@@ -2415,8 +2415,8 @@ await corsair.borneo.api.dashboard.postDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2433,7 +2433,7 @@ await corsair.borneo.api.dashboard.postDashboardReport({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2475,8 +2475,8 @@ await corsair.borneo.api.dashboard.removeDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2490,7 +2490,7 @@ await corsair.borneo.api.dashboard.removeDashboardUserByUsername({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2532,8 +2532,8 @@ await corsair.borneo.api.dashboard.resetDashboardUserPassword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2547,7 +2547,7 @@ await corsair.borneo.api.dashboard.resetDashboardUserPassword({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2589,8 +2589,8 @@ await corsair.borneo.api.dashboard.triggerDashboardReportByReportId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2604,7 +2604,7 @@ await corsair.borneo.api.dashboard.triggerDashboardReportByReportId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2647,8 +2647,8 @@ await corsair.borneo.api.dashboard.updateDashboardUserDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2662,7 +2662,7 @@ await corsair.borneo.api.dashboard.updateDashboardUserDetails({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2704,7 +2704,7 @@ await corsair.borneo.api.dashboard.updateDashboardUserRoles({});
 
 ```ts
 {
-  roles: borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[],
+  roles: (borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[],
   departments?: string[],
   organisationId?: number
 }[]
@@ -2718,8 +2718,8 @@ await corsair.borneo.api.dashboard.updateDashboardUserRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2733,7 +2733,7 @@ await corsair.borneo.api.dashboard.updateDashboardUserRoles({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2790,8 +2790,8 @@ await corsair.borneo.api.departments.createDepartmentWithTranslations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2805,7 +2805,7 @@ await corsair.borneo.api.departments.createDepartmentWithTranslations({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2847,8 +2847,8 @@ await corsair.borneo.api.departments.deleteDepartmentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2862,7 +2862,7 @@ await corsair.borneo.api.departments.deleteDepartmentById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2899,8 +2899,8 @@ await corsair.borneo.api.departments.getDepartmentFilterList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2915,7 +2915,7 @@ await corsair.borneo.api.departments.getDepartmentFilterList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -2961,8 +2961,8 @@ await corsair.borneo.api.departments.listDepartmentsWithSortAndPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -2980,7 +2980,7 @@ await corsair.borneo.api.departments.listDepartmentsWithSortAndPagination({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3022,8 +3022,8 @@ await corsair.borneo.api.departments.retrieveDepartmentInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3037,7 +3037,7 @@ await corsair.borneo.api.departments.retrieveDepartmentInformation({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3080,8 +3080,8 @@ await corsair.borneo.api.departments.updateDepartmentName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3095,7 +3095,7 @@ await corsair.borneo.api.departments.updateDepartmentName({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3145,8 +3145,8 @@ await corsair.borneo.api.documents.createLegalDocumentEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3161,7 +3161,7 @@ await corsair.borneo.api.documents.createLegalDocumentEntry({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3203,8 +3203,8 @@ await corsair.borneo.api.documents.deleteLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3218,7 +3218,7 @@ await corsair.borneo.api.documents.deleteLegalDocumentById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3265,8 +3265,8 @@ await corsair.borneo.api.documents.listDiscoveredDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3285,7 +3285,7 @@ await corsair.borneo.api.documents.listDiscoveredDocument({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3332,8 +3332,8 @@ await corsair.borneo.api.documents.listLegalDocumentsWithPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3352,7 +3352,7 @@ await corsair.borneo.api.documents.listLegalDocumentsWithPagination({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3394,8 +3394,8 @@ await corsair.borneo.api.documents.retrieveDiscoveredDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3409,7 +3409,7 @@ await corsair.borneo.api.documents.retrieveDiscoveredDocumentById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3451,8 +3451,8 @@ await corsair.borneo.api.documents.retrieveLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3466,7 +3466,7 @@ await corsair.borneo.api.documents.retrieveLegalDocumentById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3509,8 +3509,8 @@ await corsair.borneo.api.documents.updateDiscoveredDocumentStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3524,7 +3524,7 @@ await corsair.borneo.api.documents.updateDiscoveredDocumentStatus({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3569,8 +3569,8 @@ await corsair.borneo.api.domains.createDomainWithPollingFrequency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3584,7 +3584,7 @@ await corsair.borneo.api.domains.createDomainWithPollingFrequency({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3626,8 +3626,8 @@ await corsair.borneo.api.domains.deleteDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3641,7 +3641,7 @@ await corsair.borneo.api.domains.deleteDomainById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3683,8 +3683,8 @@ await corsair.borneo.api.domains.getDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3698,7 +3698,7 @@ await corsair.borneo.api.domains.getDomainById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3743,8 +3743,8 @@ await corsair.borneo.api.domains.listDomainsWithPaginationAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3761,7 +3761,7 @@ await corsair.borneo.api.domains.listDomainsWithPaginationAndSorting({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3803,8 +3803,8 @@ await corsair.borneo.api.domains.pollDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3818,7 +3818,7 @@ await corsair.borneo.api.domains.pollDomainById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3862,8 +3862,8 @@ await corsair.borneo.api.domains.updateDomainDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3877,7 +3877,7 @@ await corsair.borneo.api.domains.updateDomainDetails({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3931,8 +3931,8 @@ await corsair.borneo.api.employees.createEmployeeWithJsonPayload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -3951,7 +3951,7 @@ await corsair.borneo.api.employees.createEmployeeWithJsonPayload({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -3993,8 +3993,8 @@ await corsair.borneo.api.employees.deleteEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4008,7 +4008,7 @@ await corsair.borneo.api.employees.deleteEmployeeById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4055,8 +4055,8 @@ await corsair.borneo.api.employees.filterEmployeeList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4074,7 +4074,7 @@ await corsair.borneo.api.employees.filterEmployeeList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4121,8 +4121,8 @@ await corsair.borneo.api.employees.listEmployeesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4140,7 +4140,7 @@ await corsair.borneo.api.employees.listEmployeesWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4182,8 +4182,8 @@ await corsair.borneo.api.employees.retrieveEmployeeDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4197,7 +4197,7 @@ await corsair.borneo.api.employees.retrieveEmployeeDetailsById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4248,8 +4248,8 @@ await corsair.borneo.api.employees.updateEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4268,7 +4268,7 @@ await corsair.borneo.api.employees.updateEmployeeById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4317,8 +4317,8 @@ await corsair.borneo.api.headquarters.createHeadquarterEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4332,7 +4332,7 @@ await corsair.borneo.api.headquarters.createHeadquarterEntry({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4374,8 +4374,8 @@ await corsair.borneo.api.headquarters.deleteHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4389,7 +4389,7 @@ await corsair.borneo.api.headquarters.deleteHeadquartersById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4431,8 +4431,8 @@ await corsair.borneo.api.headquarters.getHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4446,7 +4446,7 @@ await corsair.borneo.api.headquarters.getHeadquartersById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4491,8 +4491,8 @@ await corsair.borneo.api.headquarters.listHeadquartersWithSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4509,7 +4509,7 @@ await corsair.borneo.api.headquarters.listHeadquartersWithSorting({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4557,8 +4557,8 @@ await corsair.borneo.api.headquarters.updateHeadquarterDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4572,7 +4572,7 @@ await corsair.borneo.api.headquarters.updateHeadquarterDetailsById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4621,8 +4621,8 @@ await corsair.borneo.api.infotypes.listDiscoveredInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4641,7 +4641,7 @@ await corsair.borneo.api.infotypes.listDiscoveredInfotypes({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4683,8 +4683,8 @@ await corsair.borneo.api.infotypes.retrieveDiscoveredInfotypeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4698,7 +4698,7 @@ await corsair.borneo.api.infotypes.retrieveDiscoveredInfotypeById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4741,8 +4741,8 @@ await corsair.borneo.api.infotypes.updateDiscoveredInfotypeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4756,7 +4756,7 @@ await corsair.borneo.api.infotypes.updateDiscoveredInfotypeStatus({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4802,8 +4802,8 @@ await corsair.borneo.api.misc.listFilteredSortedCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4819,7 +4819,7 @@ await corsair.borneo.api.misc.listFilteredSortedCategories({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4885,8 +4885,8 @@ await corsair.borneo.api.misc.listIssuesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4913,7 +4913,7 @@ await corsair.borneo.api.misc.listIssuesWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -4955,8 +4955,8 @@ await corsair.borneo.api.misc.retrieveErrorDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -4970,7 +4970,7 @@ await corsair.borneo.api.misc.retrieveErrorDetailsById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5012,8 +5012,8 @@ await corsair.borneo.api.misc.retrieveIssueById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5027,7 +5027,7 @@ await corsair.borneo.api.misc.retrieveIssueById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5070,8 +5070,8 @@ await corsair.borneo.api.misc.submitChatFeedback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5085,7 +5085,7 @@ await corsair.borneo.api.misc.submitChatFeedback({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5294,8 +5294,8 @@ await corsair.borneo.api.processing.createDpiaForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5370,7 +5370,7 @@ await corsair.borneo.api.processing.createDpiaForProcessingActivity({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5416,7 +5416,7 @@ await corsair.borneo.api.processing.createProcessingActivity({});
 | `infotypes` | `string[]` | No | List of info types related with the processing activity. |
 | `updatedAt` | `number` | No | Updatedat |
 | `recipients` | `object[]` | No | List of recipients related with the processing activity. |
-| `companyRole` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Companyrole |
+| `companyRole` | `(controller \| independent_controller \| joint_controller \| processor \| sub_processor)[]` | No | Companyrole |
 | `dataSources` | `string[]` | No | Datasources |
 | `departments` | `string[]` | No | List departments related with the processing activity. |
 | `lawfulBasis` | `object[]` | No | List of Lawfulness types affected by a processing activity |
@@ -5444,7 +5444,7 @@ await corsair.borneo.api.processing.createProcessingActivity({});
 
 ```ts
 {
-  role: controller | independent_controller | joint_controller | processor | sub_processor[],
+  role: (controller | independent_controller | joint_controller | processor | sub_processor)[],
   comment?: string,
   recipientId: string
 }[]
@@ -5504,8 +5504,8 @@ await corsair.borneo.api.processing.createProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5542,7 +5542,7 @@ await corsair.borneo.api.processing.createProcessingActivity({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5596,8 +5596,8 @@ await corsair.borneo.api.processing.createProcessingActivityThreshold({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5622,7 +5622,7 @@ await corsair.borneo.api.processing.createProcessingActivityThreshold({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5694,8 +5694,8 @@ await corsair.borneo.api.processing.createThresholdForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5725,7 +5725,7 @@ await corsair.borneo.api.processing.createThresholdForProcessingActivity({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5767,8 +5767,8 @@ await corsair.borneo.api.processing.deleteDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5782,7 +5782,7 @@ await corsair.borneo.api.processing.deleteDpiaById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5824,8 +5824,8 @@ await corsair.borneo.api.processing.deleteLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5839,7 +5839,7 @@ await corsair.borneo.api.processing.deleteLopdpThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5881,8 +5881,8 @@ await corsair.borneo.api.processing.deleteProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5896,7 +5896,7 @@ await corsair.borneo.api.processing.deleteProcessingActivityById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5938,8 +5938,8 @@ await corsair.borneo.api.processing.deleteThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -5953,7 +5953,7 @@ await corsair.borneo.api.processing.deleteThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -5988,7 +5988,7 @@ await corsair.borneo.api.processing.exportProcessingActivitiesList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `language` | `ar \| de \| en \| es \| es-EC \| es-MX \| fr \| hi \| it \| ja \| pt \| zh` | Yes | Language |
-| `exportTypes` | `csv \| doc \| pdf[]` | Yes | Exporttypes |
+| `exportTypes` | `(csv \| doc \| pdf)[]` | Yes | Exporttypes |
 | `filter__owners` | `string[]` | No | Owners |
 | `filter__search` | `string` | No | Search |
 | `filter__status` | `string[]` | No | Status |
@@ -6005,8 +6005,8 @@ await corsair.borneo.api.processing.exportProcessingActivitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6026,7 +6026,7 @@ await corsair.borneo.api.processing.exportProcessingActivitiesList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6068,8 +6068,8 @@ await corsair.borneo.api.processing.getThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6083,7 +6083,7 @@ await corsair.borneo.api.processing.getThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6143,8 +6143,8 @@ await corsair.borneo.api.processing.listProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6168,7 +6168,7 @@ await corsair.borneo.api.processing.listProcessingActivities({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6210,8 +6210,8 @@ await corsair.borneo.api.processing.listProcessingActivitiesFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6227,7 +6227,7 @@ await corsair.borneo.api.processing.listProcessingActivitiesFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6279,8 +6279,8 @@ await corsair.borneo.api.processing.listTomsWithFilterAndPaginationOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6299,7 +6299,7 @@ await corsair.borneo.api.processing.listTomsWithFilterAndPaginationOptions({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6344,8 +6344,8 @@ await corsair.borneo.api.processing.putTomStatusAndNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6360,7 +6360,7 @@ await corsair.borneo.api.processing.putTomStatusAndNote({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6402,8 +6402,8 @@ await corsair.borneo.api.processing.retrieveDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6417,7 +6417,7 @@ await corsair.borneo.api.processing.retrieveDpiaById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6459,8 +6459,8 @@ await corsair.borneo.api.processing.retrieveLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6474,7 +6474,7 @@ await corsair.borneo.api.processing.retrieveLopdpThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6516,8 +6516,8 @@ await corsair.borneo.api.processing.retrieveProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6531,7 +6531,7 @@ await corsair.borneo.api.processing.retrieveProcessingActivityById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6573,8 +6573,8 @@ await corsair.borneo.api.processing.retrieveTomById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6588,7 +6588,7 @@ await corsair.borneo.api.processing.retrieveTomById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6793,8 +6793,8 @@ await corsair.borneo.api.processing.updateDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6868,7 +6868,7 @@ await corsair.borneo.api.processing.updateDpiaById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6922,8 +6922,8 @@ await corsair.borneo.api.processing.updateLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -6947,7 +6947,7 @@ await corsair.borneo.api.processing.updateLopdpThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -6990,7 +6990,7 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
 | `dataTypes` | `string[]` | No | Datatypes |
 | `infotypes` | `string[]` | No | List of info types related with the processing activity. |
 | `recipients` | `object[]` | No | List of recipients related with the processing activity. |
-| `companyRole` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Companyrole |
+| `companyRole` | `(controller \| independent_controller \| joint_controller \| processor \| sub_processor)[]` | No | Companyrole |
 | `dataSources` | `string[]` | No | Datasources |
 | `departments` | `string[]` | No | List departments related with the processing activity. |
 | `lawfulBasis` | `object[]` | No | List of Lawfulness types affected by a processing activity |
@@ -7019,7 +7019,7 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
 
 ```ts
 {
-  role: controller | independent_controller | joint_controller | processor | sub_processor[],
+  role: (controller | independent_controller | joint_controller | processor | sub_processor)[],
   comment?: string,
   recipientId: string
 }[]
@@ -7079,8 +7079,8 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7118,7 +7118,7 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7188,8 +7188,8 @@ await corsair.borneo.api.processing.updateThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7218,7 +7218,7 @@ await corsair.borneo.api.processing.updateThresholdById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7262,8 +7262,8 @@ await corsair.borneo.api.recipients.addDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7277,7 +7277,7 @@ await corsair.borneo.api.recipients.addDiscoveredRecipients({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7319,8 +7319,8 @@ await corsair.borneo.api.recipients.archiveDiscoveredRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7334,7 +7334,7 @@ await corsair.borneo.api.recipients.archiveDiscoveredRecipient({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7370,7 +7370,7 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
 |------|------|----------|-------------|
 | `dpa` | `string` | No | The url to the DPA of the recipient |
 | `name` | `string` | Yes | Name of the recipient. Has to be unique, 2 different recipients can"t have the same name. |
-| `role` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Role |
+| `role` | `(controller \| independent_controller \| joint_controller \| processor \| sub_processor)[]` | No | Role |
 | `state` | `AK \| AL \| AR \| AZ \| CA \| CO \| CT \| DC \| DE \| FL \| GA \| HI \| IA \| ID \| IL \| IN \| KS \| KY \| LA \| MA \| MD \| ME \| MI \| MN \| MO \| MS \| MT \| NC \| ND \| NE \| NH \| NJ \| NM \| NV \| NY \| OH \| OK \| OR \| PA \| RI \| SC \| SD \| TN \| TX \| UT \| VA \| VT \| WA \| WI \| WV \| WY` | No | 2 letter code that identifies the state of the recipient. It only applies when the recipient country is US |
 | `status` | `archived \| validated` | Yes | The status of the recipient. Can be archived or validated. |
 | `country` | `string` | No | 2 letter code that identifies a country. |
@@ -7378,7 +7378,7 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
 | `createdAt` | `number` | No | Createdat |
 | `dpaStatus` | `attached \| notRequired \| requested` | No | The status of the DPA of the recipient. Attached if the DPA is provided. Not required when it"s not necessary to provide the information. Requested when we ask for the DPA and we are waiting for it. |
 | `updatedAt` | `number` | No | Updatedat |
-| `categories` | `ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness[]` | No | list of recipient category |
+| `categories` | `(ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness)[]` | No | list of recipient category |
 | `businessName` | `string` | No | Business name of the recipient |
 | `recipientState` | `active \| assessment` | No | Recipientstate |
 | `subProcessorIds` | `string[]` | No | Subprocessorids |
@@ -7393,8 +7393,8 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7423,7 +7423,7 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7465,8 +7465,8 @@ await corsair.borneo.api.recipients.deleteRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7480,7 +7480,7 @@ await corsair.borneo.api.recipients.deleteRecipientById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7514,12 +7514,12 @@ await corsair.borneo.api.recipients.exportRecipientsListWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `exportTypes` | `csv \| doc \| pdf[]` | Yes | Exporttypes |
+| `exportTypes` | `(csv \| doc \| pdf)[]` | Yes | Exporttypes |
 | `filter__role` | `string[]` | No | Role |
 | `filter__search` | `string` | No | Free-form text search to apply to the Recipient name. |
 | `filter__status` | `archived \| validated` | No | The status of the recipient. Can be archived or validated. |
 | `filter__usedIn` | `object` | No | Usedin |
-| `filter__categories` | `ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness[]` | No | list of recipient category |
+| `filter__categories` | `(ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness)[]` | No | list of recipient category |
 | `filter__departments` | `string[]` | No | Departments |
 | `filter__recipientIds` | `string[]` | No | Recipientids |
 | `filter__recipientState` | `string[]` | No | Recipientstate |
@@ -7545,8 +7545,8 @@ await corsair.borneo.api.recipients.exportRecipientsListWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7573,7 +7573,7 @@ await corsair.borneo.api.recipients.exportRecipientsListWithFilter({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7610,8 +7610,8 @@ await corsair.borneo.api.recipients.filterRecipientsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7626,7 +7626,7 @@ await corsair.borneo.api.recipients.filterRecipientsList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7674,8 +7674,8 @@ await corsair.borneo.api.recipients.listDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7695,7 +7695,7 @@ await corsair.borneo.api.recipients.listDiscoveredRecipients({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7737,8 +7737,8 @@ await corsair.borneo.api.recipients.listFilterOptionsForRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7753,7 +7753,7 @@ await corsair.borneo.api.recipients.listFilterOptionsForRecipients({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7795,7 +7795,7 @@ await corsair.borneo.api.recipients.listOrFilterRecipients({});
 | `filter__search` | `string` | No | Free-form text search to apply to the Recipient name. |
 | `filter__status` | `archived \| validated` | No | The status of the recipient. Can be archived or validated. |
 | `filter__usedIn` | `object` | No | Usedin |
-| `filter__categories` | `ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness[]` | No | list of recipient category |
+| `filter__categories` | `(ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness)[]` | No | list of recipient category |
 | `filter__departments` | `string[]` | No | Departments |
 | `filter__recipientIds` | `string[]` | No | Recipientids |
 | `filter__recipientState` | `string[]` | No | Recipientstate |
@@ -7821,8 +7821,8 @@ await corsair.borneo.api.recipients.listOrFilterRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7850,7 +7850,7 @@ await corsair.borneo.api.recipients.listOrFilterRecipients({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7892,8 +7892,8 @@ await corsair.borneo.api.recipients.postDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7907,7 +7907,7 @@ await corsair.borneo.api.recipients.postDiscoveredRecipientById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -7949,8 +7949,8 @@ await corsair.borneo.api.recipients.retrieveDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -7964,7 +7964,7 @@ await corsair.borneo.api.recipients.retrieveDiscoveredRecipientById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8006,8 +8006,8 @@ await corsair.borneo.api.recipients.retrieveRecipientDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8021,7 +8021,7 @@ await corsair.borneo.api.recipients.retrieveRecipientDetails({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8067,8 +8067,8 @@ await corsair.borneo.api.recipients.retrieveRecipientProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8084,7 +8084,7 @@ await corsair.borneo.api.recipients.retrieveRecipientProcessingActivities({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8118,7 +8118,7 @@ await corsair.borneo.api.recipients.updateDashboardReportFrequencyAndRecipients(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
+| `roles` | `(borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor)[]` | No | Roles |
 | `frequency` | `*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *` | No | The cron schedule expression to use for a recurring scan. Only a fixed set of cron expressions can be used to run scans at 30 minute, 1 hour, 1 day, or 1 week intervals. |
 | `externalEmail` | `string[]` | No | Externalemail |
 | `recipientsEmail` | `string[]` | No | Recipientsemail |
@@ -8130,8 +8130,8 @@ await corsair.borneo.api.recipients.updateDashboardReportFrequencyAndRecipients(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8147,7 +8147,7 @@ await corsair.borneo.api.recipients.updateDashboardReportFrequencyAndRecipients(
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8183,13 +8183,13 @@ await corsair.borneo.api.recipients.updateRecipientDetailsById({});
 |------|------|----------|-------------|
 | `dpa` | `string` | No | The url to the DPA of the recipient |
 | `name` | `string` | Yes | Name of the recipient. Has to be unique, 2 different recipients can"t have the same name. |
-| `role` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Role |
+| `role` | `(controller \| independent_controller \| joint_controller \| processor \| sub_processor)[]` | No | Role |
 | `state` | `AK \| AL \| AR \| AZ \| CA \| CO \| CT \| DC \| DE \| FL \| GA \| HI \| IA \| ID \| IL \| IN \| KS \| KY \| LA \| MA \| MD \| ME \| MI \| MN \| MO \| MS \| MT \| NC \| ND \| NE \| NH \| NJ \| NM \| NV \| NY \| OH \| OK \| OR \| PA \| RI \| SC \| SD \| TN \| TX \| UT \| VA \| VT \| WA \| WI \| WV \| WY` | No | 2 letter code that identifies the state of the recipient. It only applies when the recipient country is US |
 | `status` | `archived \| validated` | Yes | The status of the recipient. Can be archived or validated. |
 | `country` | `string` | No | 2 letter code that identifies a country. |
 | `dpaFiles` | `string[]` | No | List of uploaded file ids. |
 | `dpaStatus` | `attached \| notRequired \| requested` | No | The status of the DPA of the recipient. Attached if the DPA is provided. Not required when it"s not necessary to provide the information. Requested when we ask for the DPA and we are waiting for it. |
-| `categories` | `ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness[]` | No | list of recipient category |
+| `categories` | `(ITInfrastructure \| accountingSoftware \| adminDepartment \| advertising \| airlines \| analytics \| apps \| artificialIntelligenceAi \| assetManagement \| audit \| automotive \| b2b \| bankCards \| bigData \| businessDevelopment \| businessIntelligence \| businessManagement \| chat \| cloudComputing \| cloudDataServices \| cloudManagement \| cloudSecurity \| cloudStorage \| communities \| compliance \| construction \| consulting \| consumerElectronics \| content \| coreBankingSystem \| crmSoftware \| cryptoCurrency \| customerServiceProvider \| customerSupport \| cyberSecurity \| dataIntegration \| dataManagement \| dataStorage \| dataVisualization \| database \| developerTools \| devops \| digitalMedia \| documentManagement \| e-learning \| eCommerce \| edtech \| education \| electronics \| emailMarketing \| emailServices \| energy \| enterprise \| enterpriseSoftware \| erpSoftware \| events \| eventsSoftware \| fileSharing \| financialCrime \| financialServices \| fintech \| fitness \| foodAndBeverage \| government \| healthCare \| hospitality \| hosting \| identityManagement \| informationTechnology \| insurance \| insurtech \| internalDepartment \| internetOfThings \| itDepartment \| lawEnforcement \| lawServices \| legalDepartment \| logistics \| machineLearning \| management \| marketResearch \| marketingAutomation \| marketingDepartment \| marketingSoftware \| marketingTools \| marketplace \| medical \| messagingServices \| mobileApps \| mobilityEquipment \| networkSecurity \| news \| nonProfit \| officeApplications \| officesApps \| onlinePortals \| orderingSoftware \| other \| outsourcing \| passwordManagement \| paymentPlatform \| payrollServices \| pharmaceuticals \| physicalSecurity \| physicalStorage \| prDepartment \| preventionRisks \| productionDepartment \| productivityTools \| professionalServices \| projectManagement \| propertyAdministration \| publicAdministration \| publishing \| realEstate \| regulatoryReporting \| retail \| riskManagement \| rrhhDepartment \| rrhhManagement \| rrhhSoftware \| saas \| searchEngine \| security \| securityServices \| sellDepartment \| servicesPlatform \| smallAndMediumBusinesses \| socialMedia \| supplyChainManagement \| taxManagement \| telecommunications \| ticServices \| tourism \| tracking \| trading \| training \| transportation \| travel \| ventureCapital \| video \| videoStreaming \| voip \| webDesign \| wellness)[]` | No | list of recipient category |
 | `recipientId` | `string` | Yes | Identifier of the Recipient |
 | `businessName` | `string` | No | Business name of the recipient |
 | `recipientState` | `active \| assessment` | No | Recipientstate |
@@ -8204,8 +8204,8 @@ await corsair.borneo.api.recipients.updateRecipientDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8233,7 +8233,7 @@ await corsair.borneo.api.recipients.updateRecipientDetailsById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8277,8 +8277,8 @@ await corsair.borneo.api.recipients.updateRecipientStatusViaId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8293,7 +8293,7 @@ await corsair.borneo.api.recipients.updateRecipientStatusViaId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8349,8 +8349,8 @@ await corsair.borneo.api.resources.deleteTagFromResource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8364,7 +8364,7 @@ await corsair.borneo.api.resources.deleteTagFromResource({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8424,7 +8424,7 @@ await corsair.borneo.api.resources.exportFilteredLeafResources({});
 | `filter__spaceStatus` | `string[]` | No | Filter conlfluences based on status |
 | `filter__resourceTags` | `object[]` | No | Filter the resources based on tags |
 | `filter__resourceType` | `string[]` | No | Filter the resources which can be scanned by Borneo. |
-| `filter__severityScore` | `CRITICAL \| HIGH \| INFORMATIONAL \| LOW \| MEDIUM[]` | No | Filter the resources based on the assigned risk severity score; "critical" = 4, "high" = 3, "medium" = 2, "low" = 1. |
+| `filter__severityScore` | `(CRITICAL \| HIGH \| INFORMATIONAL \| LOW \| MEDIUM)[]` | No | Filter the resources based on the assigned risk severity score; "critical" = 4, "high" = 3, "medium" = 2, "low" = 1. |
 | `filter__classification` | `string[]` | No | Filter the resources matching with the list of classifications. |
 | `filter__infoTypes__ops` | `AND \| OR` | No | Ops |
 | `filter__infoTypes__infoTypes` | `string[]` | No | The list of infotypes to filter on. |
@@ -8457,8 +8457,8 @@ await corsair.borneo.api.resources.exportFilteredLeafResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8501,7 +8501,7 @@ await corsair.borneo.api.resources.exportFilteredLeafResources({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8557,7 +8557,7 @@ await corsair.borneo.api.resources.exportInventoryResourceList({});
 | `filter__classification` | `string[]` | No | Filter the resources based on classification and are non-compliant. eg "PII_L1", "PII_L2", "PII_L3". Custom added classifications is also supported. |
 | `include__violationMetrics` | `boolean` | No | Include violation count by severity for resource and child resources. |
 | `filter__hideBorneoResources` | `boolean` | No | Whether to hide resources that are part of the Borneo data plane. |
-| `filter__dataSourceCategories` | `AWSDataStores \| AzureDataStores \| CloudApplications \| DiscoveredApplications \| GCPDataStores \| StandaloneDataStores[]` | No | Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS |
+| `filter__dataSourceCategories` | `(AWSDataStores \| AzureDataStores \| CloudApplications \| DiscoveredApplications \| GCPDataStores \| StandaloneDataStores)[]` | No | Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS |
 | `filter__scannableResourceTypes` | `boolean` | No | Filter the resources that are scannable |
 | `include__frameworkExceptionsCount` | `boolean` | No | Include framework exceptions count for the resource and its children |
 | `include__childResourceStats__scans` | `boolean` | No | Include aggregate scan stats from child resources. |
@@ -8591,8 +8591,8 @@ await corsair.borneo.api.resources.exportInventoryResourceList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8632,7 +8632,7 @@ await corsair.borneo.api.resources.exportInventoryResourceList({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8674,8 +8674,8 @@ await corsair.borneo.api.resources.getResourceInventoryById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8689,7 +8689,7 @@ await corsair.borneo.api.resources.getResourceInventoryById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8745,7 +8745,7 @@ await corsair.borneo.api.resources.listInventoryResourcesWithFilters({});
 | `filter__classification` | `string[]` | No | Filter the resources based on classification and are non-compliant. eg "PII_L1", "PII_L2", "PII_L3". Custom added classifications is also supported. |
 | `include__violationMetrics` | `boolean` | No | Include violation count by severity for resource and child resources. |
 | `filter__hideBorneoResources` | `boolean` | No | Whether to hide resources that are part of the Borneo data plane. |
-| `filter__dataSourceCategories` | `AWSDataStores \| AzureDataStores \| CloudApplications \| DiscoveredApplications \| GCPDataStores \| StandaloneDataStores[]` | No | Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS |
+| `filter__dataSourceCategories` | `(AWSDataStores \| AzureDataStores \| CloudApplications \| DiscoveredApplications \| GCPDataStores \| StandaloneDataStores)[]` | No | Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS |
 | `filter__scannableResourceTypes` | `boolean` | No | Filter the resources that are scannable |
 | `include__frameworkExceptionsCount` | `boolean` | No | Include framework exceptions count for the resource and its children |
 | `include__childResourceStats__scans` | `boolean` | No | Include aggregate scan stats from child resources. |
@@ -8779,8 +8779,8 @@ await corsair.borneo.api.resources.listInventoryResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8820,7 +8820,7 @@ await corsair.borneo.api.resources.listInventoryResourcesWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -8881,7 +8881,7 @@ await corsair.borneo.api.resources.listLeafResourcesWithFilters({});
 | `filter__spaceStatus` | `string[]` | No | Filter conlfluences based on status |
 | `filter__resourceTags` | `object[]` | No | Filter the resources based on tags |
 | `filter__resourceType` | `string[]` | No | Filter the resources which can be scanned by Borneo. |
-| `filter__severityScore` | `CRITICAL \| HIGH \| INFORMATIONAL \| LOW \| MEDIUM[]` | No | Filter the resources based on the assigned risk severity score; "critical" = 4, "high" = 3, "medium" = 2, "low" = 1. |
+| `filter__severityScore` | `(CRITICAL \| HIGH \| INFORMATIONAL \| LOW \| MEDIUM)[]` | No | Filter the resources based on the assigned risk severity score; "critical" = 4, "high" = 3, "medium" = 2, "low" = 1. |
 | `filter__classification` | `string[]` | No | Filter the resources matching with the list of classifications. |
 | `filter__infoTypes__ops` | `AND \| OR` | No | Ops |
 | `include__violationSummary` | `boolean` | No | Violationsummary |
@@ -8916,8 +8916,8 @@ await corsair.borneo.api.resources.listLeafResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -8962,7 +8962,7 @@ await corsair.borneo.api.resources.listLeafResourcesWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9004,8 +9004,8 @@ await corsair.borneo.api.resources.postClassificationStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9019,7 +9019,7 @@ await corsair.borneo.api.resources.postClassificationStats({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9063,8 +9063,8 @@ await corsair.borneo.api.resources.postResourceLineageFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9081,7 +9081,7 @@ await corsair.borneo.api.resources.postResourceLineageFilter({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9123,8 +9123,8 @@ await corsair.borneo.api.resources.postResourceStatsWithDeletedResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9138,7 +9138,7 @@ await corsair.borneo.api.resources.postResourceStatsWithDeletedResources({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9180,8 +9180,8 @@ await corsair.borneo.api.resources.retrieveDataResourceStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9195,7 +9195,7 @@ await corsair.borneo.api.resources.retrieveDataResourceStatistics({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9238,8 +9238,8 @@ await corsair.borneo.api.resources.retrieveResourceCatalogById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9253,7 +9253,7 @@ await corsair.borneo.api.resources.retrieveResourceCatalogById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9299,8 +9299,8 @@ await corsair.borneo.api.resources.retrieveResourceColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9314,7 +9314,7 @@ await corsair.borneo.api.resources.retrieveResourceColumns({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9358,8 +9358,8 @@ await corsair.borneo.api.scans.accessScanIterationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9373,7 +9373,7 @@ await corsair.borneo.api.scans.accessScanIterationById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9499,8 +9499,8 @@ await corsair.borneo.api.scans.createAndScheduleCloudResourceScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9559,7 +9559,7 @@ await corsair.borneo.api.scans.createAndScheduleCloudResourceScan({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9598,7 +9598,7 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
 | `filter__pageId` | `string` | No | Unique page ID. Only applicable to page-level results. |
 | `filter__scanId` | `string` | No | Unique scan ID. |
 | `filter__search` | `string` | No | Free-text search on the resource name. |
-| `filter__status` | `deleted \| failed \| paused \| scanning \| success \| terminated[]` | No | Status |
+| `filter__status` | `(deleted \| failed \| paused \| scanning \| success \| terminated)[]` | No | Status |
 | `filter__categories` | `string[]` | No | infotype categories |
 | `filter__userEmails` | `string[]` | No | Useremails |
 | `filter__resourceIds` | `string[]` | No | One or more resource IDs for which to retrieve results. Only applicable to page-level results. |
@@ -9606,7 +9606,7 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
 | `filter__fileExtension` | `string[]` | No | Fileextension |
 | `filter__infoTypes__ops` | `AND \| OR` | No | Ops |
 | `filter__scanIterationId` | `string` | No | Unique scan iteration ID to fetch results for a specific run of |
-| `filter__infotypeConfidence` | `certain \| likely \| potential[]` | No | Infotypeconfidence |
+| `filter__infotypeConfidence` | `(certain \| likely \| potential)[]` | No | Infotypeconfidence |
 | `filter__infoTypes__infoTypes` | `string[]` | No | The list of infotypes to filter on. |
 
 
@@ -9615,8 +9615,8 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9642,7 +9642,7 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9684,7 +9684,7 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
 | `filter__pageId` | `string` | No | Unique page ID. Only applicable to page-level results. |
 | `filter__scanId` | `string` | No | Unique scan ID. |
 | `filter__search` | `string` | No | Free-text search on the resource name. |
-| `filter__status` | `deleted \| failed \| paused \| scanning \| success \| terminated[]` | No | Status |
+| `filter__status` | `(deleted \| failed \| paused \| scanning \| success \| terminated)[]` | No | Status |
 | `filter__categories` | `string[]` | No | infotype categories |
 | `filter__userEmails` | `string[]` | No | Useremails |
 | `filter__resourceIds` | `string[]` | No | One or more resource IDs for which to retrieve results. Only applicable to page-level results. |
@@ -9692,7 +9692,7 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
 | `filter__fileExtension` | `string[]` | No | Fileextension |
 | `filter__infoTypes__ops` | `AND \| OR` | No | Ops |
 | `filter__scanIterationId` | `string` | No | Unique scan iteration ID to fetch results for a specific run of |
-| `filter__infotypeConfidence` | `certain \| likely \| potential[]` | No | Infotypeconfidence |
+| `filter__infotypeConfidence` | `(certain \| likely \| potential)[]` | No | Infotypeconfidence |
 | `filter__infoTypes__infoTypes` | `string[]` | No | The list of infotypes to filter on. |
 
 
@@ -9701,8 +9701,8 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9730,7 +9730,7 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9773,8 +9773,8 @@ await corsair.borneo.api.scans.getInsightByTypeAndId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9789,7 +9789,7 @@ await corsair.borneo.api.scans.getInsightByTypeAndId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9831,8 +9831,8 @@ await corsair.borneo.api.scans.getScanByScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9846,7 +9846,7 @@ await corsair.borneo.api.scans.getScanByScanId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9897,8 +9897,8 @@ await corsair.borneo.api.scans.listErrorDetailsFromFilteredScanIterations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9918,7 +9918,7 @@ await corsair.borneo.api.scans.listErrorDetailsFromFilteredScanIterations({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -9961,8 +9961,8 @@ await corsair.borneo.api.scans.listInsightFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -9977,7 +9977,7 @@ await corsair.borneo.api.scans.listInsightFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10017,11 +10017,11 @@ await corsair.borneo.api.scans.listScanExecutionResults({});
 | `sort__column` | `string` | No | The column name to sort on. |
 | `filter__scanId` | `string` | No | Unique scan ID. |
 | `filter__search` | `string` | No | Free-text search on the resource name. |
-| `filter__statuses` | `deleted \| failed \| paused \| scanning \| success \| terminated[]` | No | Statuses |
+| `filter__statuses` | `(deleted \| failed \| paused \| scanning \| success \| terminated)[]` | No | Statuses |
 | `filter__resourceIds` | `string[]` | No | One or more resource IDs for which to retrieve results. Only applicable to page-level results. |
 | `filter__infoTypes__ops` | `AND \| OR` | No | Ops |
 | `filter__scanIterationId` | `string` | No | Scaniterationid |
-| `filter__infotypeConfidence` | `certain \| likely \| potential[]` | No | One or more confidence matches for the scan. |
+| `filter__infotypeConfidence` | `(certain \| likely \| potential)[]` | No | One or more confidence matches for the scan. |
 | `filter__infoTypes__infoTypes` | `string[]` | No | The list of infotypes to filter on. |
 
 
@@ -10030,8 +10030,8 @@ await corsair.borneo.api.scans.listScanExecutionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10054,7 +10054,7 @@ await corsair.borneo.api.scans.listScanExecutionResults({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10103,8 +10103,8 @@ await corsair.borneo.api.scans.listScanIterationsWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10123,7 +10123,7 @@ await corsair.borneo.api.scans.listScanIterationsWithFilter({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10182,8 +10182,8 @@ await corsair.borneo.api.scans.listScansWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10213,7 +10213,7 @@ await corsair.borneo.api.scans.listScansWithFilters({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10256,8 +10256,8 @@ await corsair.borneo.api.scans.markScanFalsePositivesById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10271,7 +10271,7 @@ await corsair.borneo.api.scans.markScanFalsePositivesById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10313,8 +10313,8 @@ await corsair.borneo.api.scans.pauseScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10328,7 +10328,7 @@ await corsair.borneo.api.scans.pauseScanById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10373,8 +10373,8 @@ await corsair.borneo.api.scans.postScanResourceStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10389,7 +10389,7 @@ await corsair.borneo.api.scans.postScanResourceStatus({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10431,8 +10431,8 @@ await corsair.borneo.api.scans.resumeScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10446,7 +10446,7 @@ await corsair.borneo.api.scans.resumeScanById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10488,8 +10488,8 @@ await corsair.borneo.api.scans.scanLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10503,7 +10503,7 @@ await corsair.borneo.api.scans.scanLegalDocumentById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10545,8 +10545,8 @@ await corsair.borneo.api.scans.stopScanViaScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10560,7 +10560,7 @@ await corsair.borneo.api.scans.stopScanViaScanId({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10605,8 +10605,8 @@ await corsair.borneo.api.scans.submitDetailedScanResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10623,7 +10623,7 @@ await corsair.borneo.api.scans.submitDetailedScanResults({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10668,8 +10668,8 @@ await corsair.borneo.api.support.postSupportChatQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10683,7 +10683,7 @@ await corsair.borneo.api.support.postSupportChatQuery({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10727,8 +10727,8 @@ await corsair.borneo.api.users.getUserProfileById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10742,7 +10742,7 @@ await corsair.borneo.api.users.getUserProfileById({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10789,8 +10789,8 @@ await corsair.borneo.api.users.listUserProfileWithFiltersAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10806,7 +10806,7 @@ await corsair.borneo.api.users.listUserProfileWithFiltersAndSorting({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -10849,8 +10849,8 @@ await corsair.borneo.api.users.verifyEmailWithIdAndToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `error` | `object` | No | — |
+| `data` | `object \| null` | No | — |
+| `error` | `string \| object` | No | — |
 | `successful` | `true` | Yes | — |
 | `log_id` | `string` | No | — |
 
@@ -10864,7 +10864,7 @@ await corsair.borneo.api.users.verifyEmailWithIdAndToken({});
   },
   error?: string,
   successful?: boolean
-}
+} | null
 ```
 </Accordion>
 

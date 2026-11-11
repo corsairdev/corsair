@@ -340,7 +340,8 @@ const workableEndpointMeta = {
 		description: "Update a department's name or parent",
 	},
 	'departments.merge': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Merge a department into another department',
 	},
 	'departments.delete': {

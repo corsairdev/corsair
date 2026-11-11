@@ -37,11 +37,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -51,11 +51,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -65,11 +65,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -79,11 +79,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -93,11 +93,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -107,11 +107,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -121,11 +121,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -135,11 +135,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -149,11 +149,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -163,11 +163,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -177,11 +177,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -191,11 +191,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -205,11 +205,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -219,11 +219,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -233,11 +233,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -247,11 +247,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -261,11 +261,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -275,11 +275,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -289,11 +289,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -303,11 +303,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -317,11 +317,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -331,11 +331,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -345,11 +345,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -359,11 +359,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -373,11 +373,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -387,11 +387,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -401,11 +401,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -415,11 +415,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -429,11 +429,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -443,11 +443,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -457,11 +457,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -471,11 +471,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -485,11 +485,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -499,11 +499,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -513,11 +513,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -527,11 +527,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -541,11 +541,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -555,11 +555,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -569,11 +569,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -583,11 +583,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -597,11 +597,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -611,11 +611,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -625,11 +625,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -639,11 +639,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -653,11 +653,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -667,11 +667,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -681,11 +681,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -695,11 +695,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -709,11 +709,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -723,11 +723,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -737,11 +737,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -751,11 +751,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -765,11 +765,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -779,11 +779,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -793,11 +793,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -807,11 +807,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -821,11 +821,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -835,11 +835,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -849,11 +849,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -863,11 +863,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -877,11 +877,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -891,11 +891,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -905,11 +905,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -919,11 +919,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -933,11 +933,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -947,11 +947,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -961,11 +961,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -975,11 +975,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -989,11 +989,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1003,11 +1003,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1017,11 +1017,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1031,11 +1031,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1045,11 +1045,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1059,11 +1059,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1073,11 +1073,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1087,11 +1087,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1101,11 +1101,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1115,11 +1115,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1129,11 +1129,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1143,11 +1143,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1157,11 +1157,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1171,11 +1171,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1185,11 +1185,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1199,11 +1199,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1213,11 +1213,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1227,11 +1227,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1241,11 +1241,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1255,11 +1255,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1269,11 +1269,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1283,11 +1283,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1297,11 +1297,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1311,11 +1311,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1325,11 +1325,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1339,11 +1339,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1353,11 +1353,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1367,11 +1367,11 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1381,11 +1381,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1395,11 +1395,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1409,11 +1409,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1423,11 +1423,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1437,11 +1437,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1451,11 +1451,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1465,11 +1465,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1479,11 +1479,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1493,11 +1493,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1507,11 +1507,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1521,11 +1521,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1535,11 +1535,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1549,11 +1549,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1563,11 +1563,11 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     }
   ],

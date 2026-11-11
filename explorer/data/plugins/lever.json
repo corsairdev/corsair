@@ -1332,7 +1332,7 @@
           {
             "key": "conferenceData",
             "optional": true,
-            "type": "{ conferenceUrl: string, conferenceSolution?: string }"
+            "type": "{ conferenceUrl: string, conferenceSolution?: string } | null"
           },
           {
             "key": "perform_as",
@@ -1522,7 +1522,7 @@
           {
             "key": "conferenceData",
             "optional": true,
-            "type": "{ conferenceUrl: string, conferenceSolution?: string }"
+            "type": "{ conferenceUrl: string, conferenceSolution?: string } | null"
           },
           {
             "key": "perform_as",
@@ -2456,8 +2456,8 @@
           },
           {
             "key": "reason",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "cleanInterviews",
@@ -2783,7 +2783,7 @@
           {
             "key": "eeoResponses",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "urls",
@@ -2854,7 +2854,7 @@
           {
             "key": "distributionChannels",
             "optional": true,
-            "type": "public | internal[]"
+            "type": "(public | internal)[]"
           },
           {
             "key": "owner",
@@ -3182,7 +3182,7 @@
           {
             "key": "distributionChannels",
             "optional": true,
-            "type": "public | internal[]"
+            "type": "(public | internal)[]"
           },
           {
             "key": "owner",
@@ -3422,7 +3422,8 @@
       "path": "lever.api.requisitionFields.deleteOptions",
       "shortPath": "requisitionFields.deleteOptions",
       "description": "Remove dropdown option values from a requisition field",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -3499,7 +3500,7 @@
       "path": "lever.api.requisitionFields.replaceOptions",
       "shortPath": "requisitionFields.replaceOptions",
       "description": "Replace the dropdown options of a requisition field",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [

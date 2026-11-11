@@ -1,0 +1,15 @@
+displayName: Winston AI
+description: AI content detection API that scores text and images for AI generation, scans text for plagiarism, and compares two texts.
+domain: gowinston.ai
+examples:
+  read:
+    path: detect.aiText
+    title: Detect AI-written content on a page
+    args:
+      website: https://example.com/blog/post
+  write:
+    path: text.compare
+    title: Compare two texts
+    args:
+      first_text: The quick brown fox jumps over the lazy dog.
+      second_text: A fast brown fox leaps over a sleepy dog.

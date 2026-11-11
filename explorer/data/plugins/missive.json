@@ -1,0 +1,1384 @@
+{
+  "id": "missive",
+  "displayName": "Missive",
+  "description": "Team inbox integration for conversations, contacts, drafts, messages, tasks, teams, and analytics reports.",
+  "npmPackageName": "@corsair-dev/missive",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 42,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "missive.api.analytics.createReport",
+      "shortPath": "analytics.createReport",
+      "description": "Queue an analytics report for a period and optional team, user, label, and account filters, and get the report id to poll",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ organization: string, start: number, end: number, time_zone?: string, teams?: string[], users?: string[], accounts?: string[], account_types?: (custom | email | instagram | live_chat | messenger | sms | whatsapp)[], shared_labels?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reports",
+            "optional": false,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.analytics.getReport",
+      "shortPath": "analytics.getReport",
+      "description": "Fetch a queued analytics report by id; an empty 404 means it is still generating or already expired",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "missive.api.contactBooks.list",
+      "shortPath": "contactBooks.list",
+      "description": "List contact books the authenticated user has access to; a book id is required to create contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_books",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, user?: string | null, organization?: string | null, share_with_organization?: boolean | null, share_with_team?: string | null, share_with_users?: string[] | null, description?: string | null, importing?: boolean | null, import_error_text?: string | null, import_rows_count?: number | null, import_processed_rows_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.contactGroups.list",
+      "shortPath": "contactGroups.list",
+      "description": "List the groups or organizations linked to a contact book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_book",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "group | organization"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_groups",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create one or more contacts in a contact book",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ contact_book: string, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, infos?: ({ kind: email, value: string, label: home | work | personal | other, custom_label?: string } | { kind: phone_number, value: string, label: main | mobile | home | work | home_fax | work_fax | other_fax | pager | other, custom_label?: string } | { kind: twitter, value: string, label: work | personal | other, custom_label?: string } | { kind: facebook, name: string, label: work | personal | other, custom_label?: string } | { kind: physical_address, street?: string, extended_address?: string, city?: string, region?: string, postal_code?: string, po_box?: string, country?: string, label: work | home | other, custom_label?: string } | { kind: url, value: string, label: homepage | profile | blog | work | personal | other, custom_label?: string } | { kind: custom, value: string, label?: other, custom_label?: string })[], memberships?: { department?: string, title?: string, location?: string, description?: string, group: { kind: group | organization, id?: string, name?: string } }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, contact_book?: string | null, deleted?: boolean | null, modified_at?: number | null, infos?: { kind?: string | null, label?: string | null, custom_label?: string | null, value?: string | null, name?: string | null }[] | null, memberships?: { department?: string | null, title?: string | null, location?: string | null, description?: string | null, group?: { kind?: string | null, id?: string | null, name?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Fetch a contact by id; deleted contacts answer 404",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, contact_book?: string | null, deleted?: boolean | null, modified_at?: number | null, infos?: { kind?: string | null, label?: string | null, custom_label?: string | null, value?: string | null, name?: string | null }[] | null, memberships?: { department?: string | null, title?: string | null, location?: string | null, description?: string | null, group?: { kind?: string | null, id?: string | null, name?: string | null } | null }[] | null } | { id?: string | null, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, contact_book?: string | null, deleted?: boolean | null, modified_at?: number | null, infos?: { kind?: string | null, label?: string | null, custom_label?: string | null, value?: string | null, name?: string | null }[] | null, memberships?: { department?: string | null, title?: string | null, location?: string | null, description?: string | null, group?: { kind?: string | null, id?: string | null, name?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List or search the contacts of a contact book, ordered by last name unless order is last_modified",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_book",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "last_name | last_modified"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified_since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, contact_book?: string | null, deleted?: boolean | null, modified_at?: number | null, infos?: { kind?: string | null, label?: string | null, custom_label?: string | null, value?: string | null, name?: string | null }[] | null, memberships?: { department?: string | null, title?: string | null, location?: string | null, description?: string | null, group?: { kind?: string | null, id?: string | null, name?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update one or more contacts; infos and memberships replace the current ones when passed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, contact_book?: string, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, infos?: ({ kind: email, value: string, label: home | work | personal | other, custom_label?: string } | { kind: phone_number, value: string, label: main | mobile | home | work | home_fax | work_fax | other_fax | pager | other, custom_label?: string } | { kind: twitter, value: string, label: work | personal | other, custom_label?: string } | { kind: facebook, name: string, label: work | personal | other, custom_label?: string } | { kind: physical_address, street?: string, extended_address?: string, city?: string, region?: string, postal_code?: string, po_box?: string, country?: string, label: work | home | other, custom_label?: string } | { kind: url, value: string, label: homepage | profile | blog | work | personal | other, custom_label?: string } | { kind: custom, value: string, label?: other, custom_label?: string })[], memberships?: { department?: string, title?: string, location?: string, description?: string, group: { kind: group | organization, id?: string, name?: string } }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, middle_name?: string | null, phonetic_first_name?: string | null, phonetic_last_name?: string | null, phonetic_middle_name?: string | null, prefix?: string | null, suffix?: string | null, nickname?: string | null, file_as?: string | null, notes?: string | null, starred?: boolean | null, gender?: string | null, contact_book?: string | null, deleted?: boolean | null, modified_at?: number | null, infos?: { kind?: string | null, label?: string | null, custom_label?: string | null, value?: string | null, name?: string | null }[] | null, memberships?: { department?: string | null, title?: string | null, location?: string | null, description?: string | null, group?: { kind?: string | null, id?: string | null, name?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Fetch a conversation by id; a merged old id answers with the current conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id?: string | null, created_at?: number | null, subject?: string | null, latest_message_subject?: string | null, organization?: { id?: string | null, name?: string | null } | null, color?: string | null, assignees?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null }[] | null, users?: { id?: string | null, name?: string | null, email?: string | null, unassigned?: boolean | null, closed?: boolean | null, archived?: boolean | null, trashed?: boolean | null, junked?: boolean | null, assigned?: boolean | null, flagged?: boolean | null, snoozed?: boolean | null }[] | null, attachments_count?: number | null, messages_count?: number | null, authors?: { name?: string | null, address?: string | null }[] | null, external_authors?: { name?: string | null, address?: string | null }[] | null, drafts_count?: number | null, send_later_messages_count?: number | null, tasks_count?: number | null, completed_tasks_count?: number | null, web_url?: string | null, app_url?: string | null, assignee_names?: string | null, assignee_emails?: string | null, shared_label_names?: string | null, last_activity_at?: number | null, team?: { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: any[] | null } | null, shared_labels?: (string | { id?: string | null, name?: string | null })[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations of one mailbox, shared label, or team, newest activity first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "inbox",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "flagged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "junked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "drafts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_inbox",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_closed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_all",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_organization",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id?: string | null, created_at?: number | null, subject?: string | null, latest_message_subject?: string | null, organization?: { id?: string | null, name?: string | null } | null, color?: string | null, assignees?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null }[] | null, users?: { id?: string | null, name?: string | null, email?: string | null, unassigned?: boolean | null, closed?: boolean | null, archived?: boolean | null, trashed?: boolean | null, junked?: boolean | null, assigned?: boolean | null, flagged?: boolean | null, snoozed?: boolean | null }[] | null, attachments_count?: number | null, messages_count?: number | null, authors?: { name?: string | null, address?: string | null }[] | null, external_authors?: { name?: string | null, address?: string | null }[] | null, drafts_count?: number | null, send_later_messages_count?: number | null, tasks_count?: number | null, completed_tasks_count?: number | null, web_url?: string | null, app_url?: string | null, assignee_names?: string | null, assignee_emails?: string | null, shared_label_names?: string | null, last_activity_at?: number | null, team?: { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: any[] | null } | null, shared_labels?: (string | { id?: string | null, name?: string | null })[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.listComments",
+      "shortPath": "conversations.listComments",
+      "description": "List the internal comments of a conversation, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id?: string | null, body?: string | null, created_at?: number | null, mentions?: { id?: string | null, index?: number | null, length?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.listDrafts",
+      "shortPath": "conversations.listDrafts",
+      "description": "List the draft messages of a conversation, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "drafts",
+            "optional": false,
+            "type": "{ id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.listMessages",
+      "shortPath": "conversations.listMessages",
+      "description": "List the messages of a conversation, newest first; drafts are excluded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.listPosts",
+      "shortPath": "conversations.listPosts",
+      "description": "List the posts of a conversation, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id?: string | null, created_at?: number | null, username?: string | null, username_icon?: string | null, conversation_icon?: string | null, notification?: { title?: string | null, body?: string | null } | null, text?: string | null, markdown?: string | null, attachments?: Record<string, any>[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.merge",
+      "shortPath": "conversations.merge",
+      "description": "Merge a conversation into a target conversation; the source is marked as replaced",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ target: string, subject?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id?: string | null, created_at?: number | null, subject?: string | null, latest_message_subject?: string | null, organization?: { id?: string | null, name?: string | null } | null, color?: string | null, assignees?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null }[] | null, users?: { id?: string | null, name?: string | null, email?: string | null, unassigned?: boolean | null, closed?: boolean | null, archived?: boolean | null, trashed?: boolean | null, junked?: boolean | null, assigned?: boolean | null, flagged?: boolean | null, snoozed?: boolean | null }[] | null, attachments_count?: number | null, messages_count?: number | null, authors?: { name?: string | null, address?: string | null }[] | null, external_authors?: { name?: string | null, address?: string | null }[] | null, drafts_count?: number | null, send_later_messages_count?: number | null, tasks_count?: number | null, completed_tasks_count?: number | null, web_url?: string | null, app_url?: string | null, assignee_names?: string | null, assignee_emails?: string | null, shared_label_names?: string | null, last_activity_at?: number | null, team?: { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: any[] | null } | null, shared_labels?: (string | { id?: string | null, name?: string | null })[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Silently close, reopen, move, assign, label, recolor, or rename one or more conversations without adding a post",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, subject?: string, color?: string, conversation_color?: string, organization?: string, team?: string, force_team?: boolean, add_users?: string[], add_assignees?: string[], remove_assignees?: string[], add_shared_labels?: string[], remove_shared_labels?: string[], add_to_inbox?: boolean, add_to_team_inbox?: boolean, close?: boolean, reopen?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id?: string | null, created_at?: number | null, subject?: string | null, latest_message_subject?: string | null, organization?: { id?: string | null, name?: string | null } | null, color?: string | null, assignees?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null }[] | null, users?: { id?: string | null, name?: string | null, email?: string | null, unassigned?: boolean | null, closed?: boolean | null, archived?: boolean | null, trashed?: boolean | null, junked?: boolean | null, assigned?: boolean | null, flagged?: boolean | null, snoozed?: boolean | null }[] | null, attachments_count?: number | null, messages_count?: number | null, authors?: { name?: string | null, address?: string | null }[] | null, external_authors?: { name?: string | null, address?: string | null }[] | null, drafts_count?: number | null, send_later_messages_count?: number | null, tasks_count?: number | null, completed_tasks_count?: number | null, web_url?: string | null, app_url?: string | null, assignee_names?: string | null, assignee_emails?: string | null, shared_label_names?: string | null, last_activity_at?: number | null, team?: { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: any[] | null } | null, shared_labels?: (string | { id?: string | null, name?: string | null })[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.drafts.create",
+      "shortPath": "drafts.create",
+      "description": "Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; send true delivers it to the real recipients at once and send_at schedules it, and a delivered message cannot be recalled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ subject?: string | null, body?: string | null, quote_previous_message?: boolean, add_default_signature?: boolean, from_field?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null } | null, to_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], cc_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], bcc_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], account?: string, attachments?: { base64_data: string, filename: string }[], references?: string[], conversation?: string, team?: string, force_team?: boolean, organization?: string, add_users?: string[], add_assignees?: string[], remove_assignees?: string[], conversation_subject?: string, conversation_color?: string, add_shared_labels?: string[], remove_shared_labels?: string[], add_to_inbox?: boolean, add_to_team_inbox?: boolean, close?: boolean, reopen?: boolean, send?: boolean, send_at?: number, auto_followup?: boolean, external_response_id?: string, external_response_variables?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | { drafts: { id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null } | { id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[] }"
+      }
+    },
+    {
+      "path": "missive.api.drafts.delete",
+      "shortPath": "drafts.delete",
+      "description": "Delete a draft from its conversation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "missive.api.hooks.create",
+      "shortPath": "hooks.create",
+      "description": "Create a webhook subscription for incoming-message or new-comment events, backed by a Missive rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ type: incoming_email | incoming_sms_message | incoming_facebook_message | incoming_whatsapp_message | incoming_twilio_chat_message | new_comment, url: string, organization?: string, content_contains?: string | null, content_starts_with?: string | null, content_ends_with?: string | null, is_task?: boolean, author?: string | null, mention?: string | null, from_eq?: string | null, subject_contains?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hooks",
+            "optional": false,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.hooks.delete",
+      "shortPath": "hooks.delete",
+      "description": "Delete a webhook subscription and its backing rule",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "missive.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Create an incoming message in a custom channel to ingest an external conversation event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ account: string, subject?: string | null, body?: string | null, from_field: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }, to_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], cc_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], bcc_fields?: { name?: string | null, address?: string | null, phone_number?: string | null, type?: signalwire | twilio | twilio_whatsapp | whatsapp | null, id?: string | null, username?: string | null }[], delivered_at?: number, attachments?: { base64_data: string, filename: string }[], external_id?: string, references?: string[], conversation?: string, team?: string, force_team?: boolean, organization?: string, add_users?: string[], add_assignees?: string[], remove_assignees?: string[], conversation_subject?: string, conversation_color?: string, add_shared_labels?: string[], remove_shared_labels?: string[], add_to_inbox?: boolean, add_to_team_inbox?: boolean, close?: boolean, reopen?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | { messages: { id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null } | { id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[] }"
+      }
+    },
+    {
+      "path": "missive.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Fetch one or more messages with headers, body, and attachments by message id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null } | { id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "Fetch the messages matching an email Message-ID header, latest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id?: string | null, subject?: string | null, draft?: boolean | null, preview?: string | null, type?: string | null, delivered_at?: number | null, updated_at?: number | null, created_at?: number | null, email_message_id?: string | null, in_reply_to?: string[] | null, references?: string[] | null, from_field?: { name?: string | null, address?: string | null } | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, reply_to_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, author?: { id?: string | null, name?: string | null, email?: string | null, username?: string | null, avatar_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations the authenticated user is part of",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace; every teammate with access sees the post and gets its notification",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ conversation?: string, references?: string[], username?: string, username_icon?: string, conversation_icon?: string, text?: string, markdown?: string, notification: { title?: string, body?: string }, attachments?: Record<string, any>[], team?: string, force_team?: boolean, organization?: string, add_users?: string[], add_assignees?: string[], remove_assignees?: string[], conversation_subject?: string, conversation_color?: string, add_shared_labels?: string[], remove_shared_labels?: string[], add_to_inbox?: boolean, add_to_team_inbox?: boolean, close?: boolean, reopen?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ conversation?: string, id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a post from its conversation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "missive.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Create one or more saved response templates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title?: string, body?: string, subject?: string | null, organization?: string, user?: string, share_with_team?: string | null, shared_labels?: string[], to_fields?: { name?: string | null, address?: string | null }[], cc_fields?: { name?: string | null, address?: string | null }[], bcc_fields?: { name?: string | null, address?: string | null }[], external_id?: string | null, external_source?: string | null, attachments?: { id?: string, filename?: string, base64_data?: string }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, body?: string | null, subject?: string | null, modified_at?: number | null, organization?: string | null, user?: string | null, share_with_team?: string | null, shared_labels?: string[] | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, external_id?: string | null, external_source?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.responses.delete",
+      "shortPath": "responses.delete",
+      "description": "Delete one or more saved response templates",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "missive.api.responses.get",
+      "shortPath": "responses.get",
+      "description": "Fetch a saved response by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, body?: string | null, subject?: string | null, modified_at?: number | null, organization?: string | null, user?: string | null, share_with_team?: string | null, shared_labels?: string[] | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, external_id?: string | null, external_source?: string | null } | { id?: string | null, title?: string | null, body?: string | null, subject?: string | null, modified_at?: number | null, organization?: string | null, user?: string | null, share_with_team?: string | null, shared_labels?: string[] | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, external_id?: string | null, external_source?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.responses.list",
+      "shortPath": "responses.list",
+      "description": "List saved responses (canned replies) for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, body?: string | null, subject?: string | null, modified_at?: number | null, organization?: string | null, user?: string | null, share_with_team?: string | null, shared_labels?: string[] | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, external_id?: string | null, external_source?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.responses.update",
+      "shortPath": "responses.update",
+      "description": "Update one or more saved responses; attachments replace the current ones when passed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, title?: string, body?: string, subject?: string | null, organization?: string, user?: string, share_with_team?: string | null, shared_labels?: string[], to_fields?: { name?: string | null, address?: string | null }[], cc_fields?: { name?: string | null, address?: string | null }[], bcc_fields?: { name?: string | null, address?: string | null }[], external_id?: string | null, external_source?: string | null, attachments?: { id?: string, filename?: string, base64_data?: string }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, body?: string | null, subject?: string | null, modified_at?: number | null, organization?: string | null, user?: string | null, share_with_team?: string | null, shared_labels?: string[] | null, to_fields?: { name?: string | null, address?: string | null }[] | null, cc_fields?: { name?: string | null, address?: string | null }[] | null, bcc_fields?: { name?: string | null, address?: string | null }[] | null, attachments?: { id?: string | null, filename?: string | null, extension?: string | null, url?: string | null, media_type?: string | null, sub_type?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, external_id?: string | null, external_source?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.sharedLabels.create",
+      "shortPath": "sharedLabels.create",
+      "description": "Create one or more shared labels in an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, organization: string, color?: string, parent?: string, share_with_organization?: boolean, share_with_team?: string | null, share_with_users?: string[], visibility?: organization | delegates }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared_labels",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, name_with_parent_names?: string | null, organization?: string | null, color?: string | null, parent?: string | null, share_with_organization?: boolean | null, share_with_team?: string | null, share_with_users?: string[] | null, visibility?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.sharedLabels.list",
+      "shortPath": "sharedLabels.list",
+      "description": "List shared labels in organizations the authenticated user has access to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared_labels",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, name_with_parent_names?: string | null, organization?: string | null, color?: string | null, parent?: string | null, share_with_organization?: boolean | null, share_with_team?: string | null, share_with_users?: string[] | null, visibility?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.sharedLabels.update",
+      "shortPath": "sharedLabels.update",
+      "description": "Update one or more shared labels; visibility and sharing are admin-only fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, name?: string, organization?: string, color?: string, parent?: string, share_with_organization?: boolean, share_with_team?: string | null, share_with_users?: string[], visibility?: organization | delegates }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared_labels",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, name_with_parent_names?: string | null, organization?: string | null, color?: string | null, parent?: string | null, share_with_organization?: boolean | null, share_with_team?: string | null, share_with_users?: string[] | null, visibility?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a standalone task, tasked conversation, or conversation subtask",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title: string, description?: string, state?: todo | in_progress | closed, organization?: string, team?: string, assignees?: string[], due_at?: number, subtask?: boolean, conversation?: string, references?: string[], conversation_subject?: string, add_users?: string[], add_to_inbox?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, state?: string | null, type?: string | null, conversation?: string | null, due_at?: number | null, started_at?: number | null, closed_at?: number | null, assignees?: string[] | { id?: string | null, name?: string | null, email?: string | null, avatar_url?: string | null, me?: boolean | null }[] | null, team?: string | { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null } | null, last_activity_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Fetch a task with full assignee and team details by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, state?: string | null, type?: string | null, conversation?: string | null, due_at?: number | null, started_at?: number | null, closed_at?: number | null, assignees?: string[] | { id?: string | null, name?: string | null, email?: string | null, avatar_url?: string | null, me?: boolean | null }[] | null, team?: string | { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null } | null, last_activity_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks the token owner has access to, filtered by organization, team, assignee, state, type, or due window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "todo | in_progress | closed"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "task | conversation | all"
+          },
+          {
+            "key": "conversation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_at_gteq",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_at_lteq",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, state?: string | null, type?: string | null, conversation?: string | null, due_at?: number | null, started_at?: number | null, closed_at?: number | null, assignees?: string[] | { id?: string | null, name?: string | null, email?: string | null, avatar_url?: string | null, me?: boolean | null }[] | null, team?: string | { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null } | null, last_activity_at?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task title, description, state, assignees, team, or due date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title?: string, description?: string, state?: todo | in_progress | closed, assignees?: string[], team?: string, due_at?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, state?: string | null, type?: string | null, conversation?: string | null, due_at?: number | null, started_at?: number | null, closed_at?: number | null, assignees?: string[] | { id?: string | null, name?: string | null, email?: string | null, avatar_url?: string | null, me?: boolean | null }[] | null, team?: string | { id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null } | null, last_activity_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team in an organization; the token owner must be an admin or owner",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, organization: string, emoji?: string, color?: string, active_members?: string[], observers?: string[], business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] }, inactivity_period?: number, team_mention_behavior?: only_active_members | all_members, user_reply_behavior?: assign_user | leave_in_team_inbox, received_reply_behavior?: show_in_assignee_inbox | show_in_team_inbox, team_sidebar_behavior?: show_team_space | show_team_inbox, team_inbox_enabled?: boolean, chat_room_enabled?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams in organizations the authenticated user has access to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update one or more teams; the token owner must be an admin or owner",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, name?: string, organization?: string, emoji?: string, color?: string, active_members?: string[], observers?: string[], business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] }, inactivity_period?: number, team_mention_behavior?: only_active_members | all_members, user_reply_behavior?: assign_user | leave_in_team_inbox, received_reply_behavior?: show_in_assignee_inbox | show_in_team_inbox, team_sidebar_behavior?: show_team_space | show_team_inbox, team_inbox_enabled?: boolean, chat_room_enabled?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, organization?: string | null, active_members?: string[] | null, observers?: string[] | null, emoji?: string | null, color?: string | null, business_hours?: { tz?: string, t?: { d?: number, s?: number[] }[] } | null, inactivity_period?: number | null, team_mention_behavior?: string | null, user_reply_behavior?: string | null, received_reply_behavior?: string | null, team_sidebar_behavior?: string | null, team_inbox_enabled?: boolean | null, chat_room_enabled?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "missive.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in organizations the authenticated user is part of; user status is not exposed by the API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null, avatar_url?: string | null, me?: boolean | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

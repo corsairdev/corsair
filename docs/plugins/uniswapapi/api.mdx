@@ -39,8 +39,8 @@ await corsair.uniswapapi.api.approval.check({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requestId` | `string` | Yes | — |
-| `approval` | `object` | No | — |
-| `cancel` | `object` | No | — |
+| `approval` | `object \| null` | Yes | — |
+| `cancel` | `object \| null` | No | — |
 | `gasFee` | `string` | No | — |
 | `cancelGasFee` | `string` | No | — |
 
@@ -58,7 +58,7 @@ await corsair.uniswapapi.api.approval.check({});
   maxFeePerGas?: string,
   maxPriorityFeePerGas?: string,
   gasPrice?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -75,7 +75,7 @@ await corsair.uniswapapi.api.approval.check({});
   maxFeePerGas?: string,
   maxPriorityFeePerGas?: string,
   gasPrice?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -118,8 +118,11 @@ await corsair.uniswapapi.api.delegation.check({});
 <Accordion title="delegationDetails full type">
 
 ```ts
-{
-}
+Record<string, Record<string, {
+  isWalletDelegatedToUniswap: boolean,
+  currentDelegationAddress: string | null,
+  latestDelegationAddress: string
+}>>
 ```
 </Accordion>
 </AccordionGroup>
@@ -228,8 +231,8 @@ await corsair.uniswapapi.api.quote.get({});
 |------|------|----------|-------------|
 | `requestId` | `string` | Yes | — |
 | `routing` | `CLASSIC \| DUTCH_LIMIT \| DUTCH_V2 \| DUTCH_V3 \| BRIDGE \| LIMIT_ORDER \| PRIORITY \| WRAP \| UNWRAP \| CHAINED` | Yes | — |
-| `quote` | `object` | Yes | — |
-| `permitData` | `object` | No | — |
+| `quote` | `Record<string, any>` | Yes | — |
+| `permitData` | `Record<string, any> \| null` | Yes | — |
 | `quoteId` | `string` | No | — |
 | `tokenIn` | `string` | No | — |
 | `tokenOut` | `string` | No | — |
@@ -239,34 +242,8 @@ await corsair.uniswapapi.api.quote.get({});
 | `gasEstimate` | `string` | No | — |
 | `gasFee` | `string` | No | — |
 | `gasFeeUSD` | `string` | No | — |
-| `route` | `object[]` | No | — |
+| `route` | `Record<string, any>[][]` | No | — |
 | `routeString` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="quote full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="permitData full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="route full type">
-
-```ts
-{
-}[][]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -290,29 +267,11 @@ await corsair.uniswapapi.api.swap.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `quote` | `object` | Yes | The quote object returned from /v1/quote |
+| `quote` | `Record<string, any>` | Yes | The quote object returned from /v1/quote |
 | `signature` | `string` | No | Signed Permit2 message; required when the quote returned permitData |
-| `permitData` | `object` | No | Permit2 message from the quote; must be sent together with its signature |
+| `permitData` | `Record<string, any>` | No | Permit2 message from the quote; must be sent together with its signature |
 | `refreshGasPrice` | `boolean` | No | Whether to refresh gas price |
 | `simulateTransaction` | `boolean` | No | Whether to simulate the transaction |
-
-<AccordionGroup>
-<Accordion title="quote full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="permitData full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -438,8 +397,7 @@ await corsair.uniswapapi.api.swappableTokens.get({});
   symbol: string,
   decimals: number,
   project?: {
-    logo?: {
-    } | null,
+    logo?: Record<string, any> | null,
     safetyLevel?: string,
     isSpam?: boolean
   },

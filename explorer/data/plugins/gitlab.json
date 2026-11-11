@@ -495,7 +495,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -505,7 +505,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "web_url",
@@ -520,7 +520,7 @@
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -597,7 +597,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -607,7 +607,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "web_url",
@@ -622,7 +622,7 @@
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -808,7 +808,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -818,7 +818,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "web_url",
@@ -833,7 +833,7 @@
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -919,7 +919,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -939,12 +939,12 @@
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -954,7 +954,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -969,7 +969,7 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "web_url",
@@ -984,12 +984,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "references",
@@ -1152,7 +1152,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -1172,12 +1172,12 @@
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -1187,7 +1187,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -1202,7 +1202,7 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "web_url",
@@ -1217,12 +1217,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "references",
@@ -1443,7 +1443,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -1463,12 +1463,12 @@
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -1478,7 +1478,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -1493,7 +1493,7 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "web_url",
@@ -1508,12 +1508,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "references",
@@ -1584,7 +1584,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "open_issues_count",
@@ -1740,7 +1740,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "open_issues_count",
@@ -1896,7 +1896,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -1926,17 +1926,17 @@
           {
             "key": "merged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merged_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -1946,7 +1946,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -1966,12 +1966,12 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "merge_commit_sha",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sha",
@@ -2001,7 +2001,7 @@
           {
             "key": "changes_count",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "references",
@@ -2164,7 +2164,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -2194,17 +2194,17 @@
           {
             "key": "merged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merged_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -2214,7 +2214,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -2234,12 +2234,12 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "merge_commit_sha",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sha",
@@ -2269,7 +2269,7 @@
           {
             "key": "changes_count",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "references",
@@ -2490,7 +2490,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -2520,17 +2520,17 @@
           {
             "key": "merged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merged_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -2540,7 +2540,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -2560,12 +2560,12 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "merge_commit_sha",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sha",
@@ -2595,7 +2595,7 @@
           {
             "key": "changes_count",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "references",
@@ -2701,7 +2701,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -2731,17 +2731,17 @@
           {
             "key": "merged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merged_by",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "author",
@@ -2751,7 +2751,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null"
           },
           {
             "key": "assignees",
@@ -2771,12 +2771,12 @@
           {
             "key": "milestone",
             "optional": true,
-            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null"
           },
           {
             "key": "merge_commit_sha",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sha",
@@ -2806,7 +2806,7 @@
           {
             "key": "changes_count",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "references",
@@ -2877,7 +2877,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -2887,12 +2887,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2983,7 +2983,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -2993,12 +2993,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -3129,7 +3129,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -3139,12 +3139,12 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -3240,17 +3240,17 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -3341,17 +3341,17 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -3462,17 +3462,17 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -3658,17 +3658,17 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -3749,12 +3749,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -3921,12 +3921,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -4057,12 +4057,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -4278,12 +4278,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -4419,12 +4419,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -4515,12 +4515,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -4646,12 +4646,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -4898,7 +4898,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -4908,7 +4908,7 @@
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "web_url",
@@ -4918,17 +4918,17 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -4984,7 +4984,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -4994,7 +4994,7 @@
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "web_url",
@@ -5249,7 +5249,7 @@
           {
             "key": "checkout_sha",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",

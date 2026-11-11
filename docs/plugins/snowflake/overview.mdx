@@ -1,0 +1,126 @@
+---
+title: Overview
+description: "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution."
+---
+
+Use **Snowflake** through Corsair: one client, typed API calls.
+
+**What you get:**
+
+- 3 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/snowflake
+```
+```bash yarn
+yarn add corsair @corsair-dev/snowflake
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/snowflake
+```
+```bash bun
+bun add corsair @corsair-dev/snowflake
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { snowflake } from '@corsair-dev/snowflake';
+
+export const corsair = createCorsair({
+	plugins: [
+		snowflake({
+			account: 'acme-prod',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key and the account host. The account value is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. It can be passed as `account` on `snowflake()` or stored as the account credential.
+
+```ts
+snowflake({
+	account: 'acme-prod',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'snowflake',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Fetch a result partition**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.snowflake.api.statements.get({ statementHandle: '019c06a4-0000-df4f-0000-00100006589e', partition: 0 });
+```
+
+
+**Submit a SQL statement**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 10 });
+```
+
+
+See the full list on the [API](/plugins/snowflake/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/snowflake/api">
+    Every `snowflake.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

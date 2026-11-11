@@ -8,6 +8,7 @@
 - [Quick start](https://docs.corsair.dev/quick-start.md): A working integration in five steps, powered by Hub.
 - [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that takes your app from empty to a working, connected integration.
 - [Corsair MCP](https://docs.corsair.dev/cloud/mcp.md): Let Claude, ChatGPT, Cursor and other agents use your connected apps through one address, https://mcp.corsair.dev/mcp.
+- [Changelog](https://docs.corsair.dev/changelog.md): What each release of the SDK and plugins changed, week by week.
 
 ## Use cases
 

@@ -416,10 +416,8 @@ await corsair.instagram.api.conversations.get({});
       id?: string,
       mime_type?: string,
       name?: string,
-      image_data?: {
-      },
-      video_data?: {
-      },
+      image_data?: Record<string, any>,
+      video_data?: Record<string, any>,
       file_url?: string
     }[]
   }
@@ -696,8 +694,8 @@ await corsair.instagram.api.media.get({});
 | `id` | `string` | Yes | The unique Instagram Media ID. |
 | `caption` | `string` | No | The caption text associated with the media. |
 | `media_type` | `IMAGE \| VIDEO \| CAROUSEL_ALBUM` | No | The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM. |
-| `media_url` | `string` | No | The URL of the media asset. May be null or unavailable for certain media types. |
-| `thumbnail_url` | `string` | No | The URL of the media thumbnail image, typically available for videos and reels. |
+| `media_url` | `string \| null` | No | The URL of the media asset. May be null or unavailable for certain media types. |
+| `thumbnail_url` | `string \| null` | No | The URL of the media thumbnail image, typically available for videos and reels. |
 | `permalink` | `string` | No | The permanent public URL to view the media on Instagram. |
 | `timestamp` | `string` | No | The ISO 8601 timestamp indicating when the media was created. |
 | `username` | `string` | No | The Instagram username that published the media. |
@@ -705,8 +703,8 @@ await corsair.instagram.api.media.get({});
 | `comments_count` | `number` | Yes | The total number of comments on the media. |
 | `is_comment_enabled` | `boolean` | No | Indicates whether commenting is enabled for the media. |
 | `children` | `object` | No | Carousel child media items. Present only for carousel posts. |
-| `createdAt` | `Date` | No | The date and time when this record was created in the local system. |
-| `updatedAt` | `Date` | No | The date and time when this record was last updated in the local system. |
+| `createdAt` | `Date \| null` | No | The date and time when this record was created in the local system. |
+| `updatedAt` | `Date \| null` | No | The date and time when this record was last updated in the local system. |
 
 <AccordionGroup>
 <Accordion title="children full type">
@@ -766,8 +764,7 @@ await corsair.instagram.api.media.insights({});
   description?: string,
   id?: string,
   values?: {
-    value: number | string | {
-    },
+    value: number | string | Record<string, any>,
     end_time?: string
   }[]
 }[]
@@ -940,10 +937,8 @@ await corsair.instagram.api.messages.get({});
     id?: string,
     mime_type?: string,
     name?: string,
-    image_data?: {
-    },
-    video_data?: {
-    },
+    image_data?: Record<string, any>,
+    video_data?: Record<string, any>,
     file_url?: string
   }[]
 }
@@ -1016,13 +1011,11 @@ await corsair.instagram.api.messages.send({});
   text?: string,
   attachment?: {
     type: image | video | audio | file | template,
-    payload: {
-    }
+    payload: Record<string, any>
   },
   attachments?: {
     type: image | video | audio | file | template,
-    payload: {
-    }
+    payload: Record<string, any>
   }[],
   quick_replies?: {
     content_type: text,
@@ -1099,7 +1092,7 @@ await corsair.instagram.api.messenger.deleteProfile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page_id` | `string` | Yes | The Facebook Page ID. |
-| `fields` | `persistent_menu \| ice_breakers[]` | No | The Instagram Messenger Profile fields to delete. |
+| `fields` | `(persistent_menu \| ice_breakers)[]` | No | The Instagram Messenger Profile fields to delete. |
 
 
 
@@ -1130,7 +1123,7 @@ await corsair.instagram.api.messenger.getProfile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page_id` | `string` | Yes | The Facebook Page ID. |
-| `fields` | `persistent_menu \| ice_breakers[]` | No | Instagram Messenger Profile fields to query. |
+| `fields` | `(persistent_menu \| ice_breakers)[]` | No | Instagram Messenger Profile fields to query. |
 
 
 
@@ -1303,15 +1296,15 @@ await corsair.instagram.api.profile.get({});
 | `id` | `string` | Yes | — |
 | `ig_id` | `number` | No | — |
 | `username` | `string` | No | — |
-| `name` | `string` | No | — |
-| `biography` | `string` | No | — |
-| `profile_picture_url` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `biography` | `string \| null` | No | — |
+| `profile_picture_url` | `string \| null` | No | — |
 | `followers_count` | `number` | Yes | — |
 | `follows_count` | `number` | Yes | — |
 | `media_count` | `number` | Yes | — |
-| `website` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `website` | `string \| null` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 
 
@@ -1361,8 +1354,7 @@ await corsair.instagram.api.profile.insights({});
   description?: string,
   id?: string,
   values?: {
-    value: number | string | {
-    },
+    value: number | string | Record<string, any>,
     end_time?: string
   }[]
 }[]

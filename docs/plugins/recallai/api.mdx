@@ -1,0 +1,4446 @@
+---
+title: API
+description: "API reference for Recall.ai: every `recallai.api.*` operation with input and output types."
+---
+
+Every `recallai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audio Mixed
+
+### delete
+
+`audioMixed.delete`
+
+Delete a mixed audio artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.audioMixed.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`audioMixed.list`
+
+List mixed audio artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioMixed.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`audioMixed.retrieve`
+
+Retrieve a mixed audio artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioMixed.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`audioMixed.update`
+
+Update mixed audio artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.audioMixed.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Audio Separate
+
+### delete
+
+`audioSeparate.delete`
+
+Delete a separate audio artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.audioSeparate.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`audioSeparate.list`
+
+List separate audio artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioSeparate.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`audioSeparate.retrieve`
+
+Retrieve a separate audio artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioSeparate.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`audioSeparate.update`
+
+Update separate audio artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.audioSeparate.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Billing
+
+### retrieveUsage
+
+`billing.retrieveUsage`
+
+Retrieve Recall.ai billing usage
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.billing.retrieveUsage({ start: '2026-10-01T00:00:00Z', end: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_total` | `number` | Yes | — |
+
+
+
+---
+
+## Bot Actions
+
+### deleteBotMedia
+
+`botActions.deleteBotMedia`
+
+Delete stored media for a Recall.ai bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.botActions.deleteBotMedia({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### leaveBotCall
+
+`botActions.leaveBotCall`
+
+Remove a Recall.ai bot from its meeting
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.botActions.leaveBotCall({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### outputAudio
+
+`botActions.outputAudio`
+
+Output audio from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputAudio({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'mp3', b64_data: 'SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `mp3` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### outputMedia
+
+`botActions.outputMedia`
+
+Start media output from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputMedia({ id: '550e8400-e29b-41d4-a716-446655440000', camera: { kind: 'webpage', config: { url: 'https://example.com/avatar' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `camera` | `Record<string, JsonValue>` | No | — |
+| `screenshare` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### outputVideo
+
+`botActions.outputVideo`
+
+Output video from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputVideo({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `jpeg` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### pauseRecording
+
+`botActions.pauseRecording`
+
+Pause a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.pauseRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### pinParticipant
+
+`botActions.pinParticipant`
+
+Pin a participant for a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.pinParticipant({ bot_id: '550e8400-e29b-41d4-a716-446655440000', participant_id: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_id` | `string` | Yes | — |
+| `participant_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### resumeRecording
+
+`botActions.resumeRecording`
+
+Resume a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.resumeRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### sendChatMessage
+
+`botActions.sendChatMessage`
+
+Send a chat message from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.sendChatMessage({ id: '550e8400-e29b-41d4-a716-446655440000', message: 'This meeting is being recorded.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `message` | `string` | Yes | — |
+| `pin` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### startRecording
+
+`botActions.startRecording`
+
+Start a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.startRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording_config` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### startScreenshare
+
+`botActions.startScreenshare`
+
+Start bot screenshare in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.startScreenshare({ id: '550e8400-e29b-41d4-a716-446655440000', kind: 'jpeg', b64_data: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `jpeg` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### stopOutputAudio
+
+`botActions.stopOutputAudio`
+
+Stop bot audio output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputAudio({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopOutputMedia
+
+`botActions.stopOutputMedia`
+
+Stop bot media output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputMedia({ id: '550e8400-e29b-41d4-a716-446655440000', camera: true, screenshare: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `camera` | `boolean` | Yes | — |
+| `screenshare` | `boolean` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopOutputVideo
+
+`botActions.stopOutputVideo`
+
+Stop bot video output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputVideo({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopRecording
+
+`botActions.stopRecording`
+
+Stop a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### stopScreenshare
+
+`botActions.stopScreenshare`
+
+Stop bot screenshare in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopScreenshare({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Bots
+
+### create
+
+`bots.create`
+
+Create a Recall.ai meeting bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.bots.create({ meeting_url: 'https://meet.google.com/abc-defg-hij', bot_name: 'Meeting Notetaker', join_at: '2026-11-20T15:00:00Z', recording_config: { transcript: { provider: { recallai_streaming: {} } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meeting_url` | `string \| Record<string, JsonValue>` | Yes | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `recording_config` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`bots.delete`
+
+Delete a Recall.ai meeting bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.bots.delete({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`bots.list`
+
+List Recall.ai meeting bots
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.bots.list({ status: ['done'], join_at_after: '2026-11-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `join_at_after` | `string` | No | — |
+| `join_at_before` | `string` | No | — |
+| `meeting_url` | `string` | No | — |
+| `page` | `number` | No | — |
+| `platform` | `(chime_sdk \| google_meet \| google_meet_media_api \| goto_meeting \| microsoft_teams \| microsoft_teams_live \| slack_authenticator \| slack_huddle_observer \| webex \| zoom \| zoom_rtms)[]` | No | — |
+| `status` | `(analysis_done \| analysis_failed \| call_ended \| done \| fatal \| in_call_not_recording \| in_call_recording \| in_waiting_room \| joining_call \| media_expired \| ready \| recording_done \| recording_permission_allowed \| recording_permission_denied)[]` | No | — |
+| `use_cursor` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  meeting_url?: string | Record<string, JsonValue> | null,
+  bot_name?: string,
+  join_at?: string | null,
+  status_changes?: Record<string, JsonValue>[],
+  recordings?: Record<string, JsonValue>[],
+  metadata?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`bots.retrieve`
+
+Retrieve a Recall.ai meeting bot
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.bots.retrieve({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### update
+
+`bots.update`
+
+Update a Recall.ai meeting bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.bots.update({ id: '550e8400-e29b-41d4-a716-446655440000', join_at: '2026-11-20T16:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `bot_name` | `string` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `recording_config` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string \| Record<string, JsonValue> \| null` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status_changes` | `Record<string, JsonValue>[]` | No | — |
+| `recordings` | `Record<string, JsonValue>[]` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Calendar
+
+### authenticate
+
+`calendar.authenticate`
+
+Create a Recall.ai calendar auth token
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.authenticate({ user_id: 'user-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### deleteUser
+
+`calendar.deleteUser`
+
+Delete a Recall.ai calendar user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.deleteUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### disconnectPlatform
+
+`calendar.disconnectPlatform`
+
+Disconnect a Recall.ai calendar platform
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.disconnectPlatform({ calendar_auth_token: 'calendar-auth-token-from-authenticate', platform: 'google' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `platform` | `google \| microsoft` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### listEvents
+
+`calendar.listEvents`
+
+List Recall.ai calendar events
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listEvents({ calendar_id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', start_time__gte: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `ical_uid` | `string` | No | — |
+| `is_deleted` | `boolean` | No | — |
+| `start_time` | `string` | No | — |
+| `start_time__gte` | `string` | No | — |
+| `start_time__lte` | `string` | No | — |
+| `updated_at__gte` | `string` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### listMeetings
+
+`calendar.listMeetings`
+
+List Recall.ai calendar meetings
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listMeetings({ calendar_auth_token: 'calendar-auth-token-from-authenticate', start_time_after: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `ical_uid` | `string` | No | — |
+| `start_time_after` | `string` | No | — |
+| `start_time_before` | `string` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>[]`
+
+
+---
+
+### listUsers
+
+`calendar.listUsers`
+
+List Recall.ai calendar users
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listUsers({ paginate: true, page: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `paginate` | `boolean` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, JsonValue>[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results: Record<string, JsonValue>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### refreshMeetings
+
+`calendar.refreshMeetings`
+
+Refresh Recall.ai calendar meetings
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.refreshMeetings({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>[]`
+
+
+---
+
+### retrieveEvent
+
+`calendar.retrieveEvent`
+
+Retrieve a Recall.ai calendar event
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveEvent({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### retrieveMeeting
+
+`calendar.retrieveMeeting`
+
+Retrieve a Recall.ai calendar meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveMeeting({ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### retrieveUser
+
+`calendar.retrieveUser`
+
+Retrieve a Recall.ai calendar user
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### scheduleBot
+
+`calendar.scheduleBot`
+
+Schedule a Recall.ai bot for a calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.scheduleBot({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e', deduplication_key: 'standup-2026-11-20', bot_config: { bot_name: 'Meeting Notetaker' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deduplication_key` | `string` | Yes | — |
+| `bot_config` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### unscheduleBot
+
+`calendar.unscheduleBot`
+
+Remove a scheduled Recall.ai bot from a calendar event
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.unscheduleBot({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### updateMeeting
+
+`calendar.updateMeeting`
+
+Update a Recall.ai calendar meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.updateMeeting({ id: '9c0d1e2f-3a4b-4c5d-8e6f-7a8b9c0d1e2f', calendar_auth_token: 'calendar-auth-token-from-authenticate', override_should_record: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `calendar_auth_token` | `string` | Yes | — |
+| `override_should_record` | `boolean` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### updateUser
+
+`calendar.updateUser`
+
+Update a Recall.ai calendar user
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.updateUser({ calendar_auth_token: 'calendar-auth-token-from-authenticate', preferences: { record_external: true, record_internal: false } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+| `preferences` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Calendars
+
+### create
+
+`calendars.create`
+
+Create a Recall.ai calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.create({ platform: 'google_calendar', oauth_client_id: '1234567890-abc.apps.googleusercontent.com', oauth_client_secret: 'GOCSPX-client-secret', oauth_refresh_token: '1//0g-refresh-token' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `Record<string, string>` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string \| null` | No | — |
+| `oauth_client_certificate` | `string \| null` | No | — |
+| `oauth_client_private_key` | `string \| null` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook` | Yes | — |
+| `oauth_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string \| null` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string \| null` | Yes | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAccessToken
+
+`calendars.createAccessToken`
+
+Create a Recall.ai calendar access token
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.createAccessToken({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`calendars.delete`
+
+Delete a Recall.ai calendar
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendars.delete({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`calendars.list`
+
+List Recall.ai calendars
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at__gte` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `email` | `string` | No | — |
+| `platform` | `google_calendar \| microsoft_outlook` | No | — |
+| `status` | `connected \| connecting \| disconnected` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  metadata?: Record<string, string>,
+  oauth_client_id: string,
+  oauth_client_secret?: string | null,
+  oauth_refresh_token: string,
+  platform: google_calendar | microsoft_outlook | string,
+  oauth_email?: string,
+  platform_email: string | null,
+  status: string,
+  status_changes: {
+    status: connected | connecting | disconnected | string,
+    created_at: string,
+    reason: string
+  }[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`calendars.retrieve`
+
+Retrieve a Recall.ai calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendars.retrieve({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string \| null` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string \| null` | Yes | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`calendars.update`
+
+Update a Recall.ai calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.update({ id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', metadata: { team: 'sales' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `oauth_client_id` | `string` | No | — |
+| `oauth_client_secret` | `string \| null` | No | — |
+| `oauth_client_certificate` | `string \| null` | No | — |
+| `oauth_client_private_key` | `string \| null` | No | — |
+| `oauth_refresh_token` | `string` | No | — |
+| `platform` | `google_calendar \| microsoft_outlook` | No | — |
+| `oauth_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string \| null` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string \| null` | Yes | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Login Groups
+
+### create
+
+`googleLoginGroups.create`
+
+Create a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.create({ name: 'Sales bots', login_mode: 'only_if_required' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`googleLoginGroups.delete`
+
+Delete a Recall.ai Google login group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.delete({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`googleLoginGroups.list`
+
+List Recall.ai Google login groups
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `name` | `string` | No | — |
+| `name__contains` | `string` | No | — |
+| `ordering` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  login_mode: always | only_if_required | string,
+  created_at: string,
+  updated_at: string,
+  logins: {
+    id: string,
+    email: string,
+    is_active?: boolean,
+    sso_v2_workspace_domain: string,
+    sso_v2_private_key: string,
+    sso_v2_cert: string,
+    group_id: string,
+    created_at: string,
+    updated_at: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partialUpdate
+
+`googleLoginGroups.partialUpdate`
+
+Update fields on a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.partialUpdate({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', login_mode: 'always' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `login_mode` | `always \| only_if_required` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`googleLoginGroups.retrieve`
+
+Retrieve a Recall.ai Google login group
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.retrieve({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`googleLoginGroups.update`
+
+Replace a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.update({ id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'Sales bots', login_mode: 'always' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Logins
+
+### create
+
+`googleLogins.create`
+
+Create a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.create({ email: 'notetaker@acme.com', sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`googleLogins.delete`
+
+Delete a Recall.ai Google login
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.googleLogins.delete({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`googleLogins.list`
+
+List Recall.ai Google logins
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLogins.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `email` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `ordering` | `string` | No | — |
+| `sso_v2_workspace_domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partialUpdate
+
+`googleLogins.partialUpdate`
+
+Update fields on a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.partialUpdate({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', is_active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | No | — |
+| `sso_v2_private_key` | `string` | No | — |
+| `sso_v2_cert` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### retrieve
+
+`googleLogins.retrieve`
+
+Retrieve a Recall.ai Google login
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLogins.retrieve({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`googleLogins.update`
+
+Replace a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.update({ id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', email: 'notetaker@acme.com', is_active: true, sso_v2_workspace_domain: 'acme.com', sso_v2_private_key: '-----BEGIN PRIVATE KEY-----...', sso_v2_cert: '-----BEGIN CERTIFICATE-----...', group_id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Meeting Direct Connects
+
+### create
+
+`meetingDirectConnects.create`
+
+Create a Recall.ai direct connection
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.create({ google_meet_media_api: { space_name: 'spaces/jQCFfuBOdN5z', access_token: 'ya29.google-oauth-access-token' }, metadata: { source: 'meet-addon' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zoom_rtms` | `object \| null` | No | — |
+| `google_meet_media_api` | `object \| null` | No | — |
+| `recording_config` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+<AccordionGroup>
+<Accordion title="zoom_rtms full type">
+
+```ts
+{
+  meeting_uuid: string,
+  rtms_stream_id: string,
+  server_urls: string,
+  signature: string
+} | null
+```
+</Accordion>
+
+<Accordion title="google_meet_media_api full type">
+
+```ts
+{
+  space_name: string,
+  access_token: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `object` | Yes | — |
+| `zoom_rtms` | `Record<string, JsonValue> \| null` | No | — |
+| `google_meet_media_api` | `Record<string, JsonValue> \| null` | No | — |
+| `recording_config` | `Record<string, JsonValue> \| null` | No | — |
+| `recordings` | `object[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `created_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: pending | connecting | processing | complete | failed | string,
+  sub_code: string | null,
+  updated_at: string
+}
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+  id: string,
+  created_at: string,
+  started_at?: string | null,
+  completed_at?: string | null,
+  expires_at?: string | null,
+  status: Record<string, JsonValue> | null,
+  media_shortcuts: Record<string, JsonValue> | null,
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetingDirectConnects.list`
+
+List Recall.ai direct connections
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: {
+    code: pending | connecting | processing | complete | failed | string,
+    sub_code: string | null,
+    updated_at: string
+  },
+  zoom_rtms?: Record<string, JsonValue> | null,
+  google_meet_media_api?: Record<string, JsonValue> | null,
+  recording_config?: Record<string, JsonValue> | null,
+  recordings: {
+    id: string,
+    created_at: string,
+    started_at?: string | null,
+    completed_at?: string | null,
+    expires_at?: string | null,
+    status: Record<string, JsonValue> | null,
+    media_shortcuts: Record<string, JsonValue> | null,
+    metadata?: Record<string, string>
+  }[],
+  metadata?: Record<string, string>,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`meetingDirectConnects.retrieve`
+
+Retrieve a Recall.ai direct connection
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.retrieve({ id: 'e5f6a7b8-c9d0-4e1f-8a2b-4c5d6e7f8a9b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `object` | Yes | — |
+| `zoom_rtms` | `Record<string, JsonValue> \| null` | No | — |
+| `google_meet_media_api` | `Record<string, JsonValue> \| null` | No | — |
+| `recording_config` | `Record<string, JsonValue> \| null` | No | — |
+| `recordings` | `object[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `created_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: pending | connecting | processing | complete | failed | string,
+  sub_code: string | null,
+  updated_at: string
+}
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+  id: string,
+  created_at: string,
+  started_at?: string | null,
+  completed_at?: string | null,
+  expires_at?: string | null,
+  status: Record<string, JsonValue> | null,
+  media_shortcuts: Record<string, JsonValue> | null,
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meeting Metadata
+
+### delete
+
+`meetingMetadata.delete`
+
+Delete a Recall.ai meeting metadata artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.meetingMetadata.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`meetingMetadata.list`
+
+List Recall.ai meeting metadata artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingMetadata.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`meetingMetadata.retrieve`
+
+Retrieve a Recall.ai meeting metadata artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingMetadata.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`meetingMetadata.update`
+
+Update Recall.ai meeting metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.meetingMetadata.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Participant Events
+
+### delete
+
+`participantEvents.delete`
+
+Delete a Recall.ai participant event artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.participantEvents.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`participantEvents.list`
+
+List Recall.ai participant event artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.participantEvents.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`participantEvents.retrieve`
+
+Retrieve a Recall.ai participant event artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.participantEvents.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`participantEvents.update`
+
+Update Recall.ai participant event metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.participantEvents.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Realtime Endpoints
+
+### list
+
+`realtimeEndpoints.list`
+
+List Recall.ai real-time endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'running' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `status_code` | `running \| done \| failed` | No | — |
+| `type` | `desktop_sdk_callback \| rtmp \| webhook \| websocket` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`realtimeEndpoints.retrieve`
+
+Retrieve a Recall.ai real-time endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.retrieve({ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`realtimeEndpoints.update`
+
+Update a Recall.ai real-time endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.update({ id: '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d', metadata: { consumer: 'live-notes' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Recordings
+
+### createTranscript
+
+`recordings.createTranscript`
+
+Create an asynchronous Recall.ai transcript
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.recordings.createTranscript({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', provider: { recallai_async: { language_code: 'en' } }, diarization: { use_separate_streams_when_available: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `provider` | `object` | Yes | — |
+| `diarization` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="provider full type">
+
+```ts
+{
+  assembly_ai_async?: Record<string, JsonValue>,
+  deepgram_async?: Record<string, JsonValue>,
+  gladia_v2_async?: Record<string, JsonValue>,
+  recallai_async?: Record<string, JsonValue>,
+  rev_async?: Record<string, JsonValue>,
+  speechmatics_async?: Record<string, JsonValue>,
+  google_speech_v2_async?: Record<string, JsonValue>,
+  aws_transcribe_async?: Record<string, JsonValue>,
+  soniox_async?: Record<string, JsonValue>,
+  elevenlabs_async?: Record<string, JsonValue>
+}
+```
+</Accordion>
+
+<Accordion title="diarization full type">
+
+```ts
+{
+  use_separate_streams_when_available?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### delete
+
+`recordings.delete`
+
+Delete a Recall.ai recording artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.recordings.delete({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`recordings.list`
+
+List Recall.ai recording artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.recordings.list({ bot_id: '550e8400-e29b-41d4-a716-446655440000', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_id` | `string` | No | — |
+| `desktop_sdk_upload_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `status_code` | `processing \| paused \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`recordings.retrieve`
+
+Retrieve a Recall.ai recording artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.recordings.retrieve({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`recordings.update`
+
+Update Recall.ai recording metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.recordings.update({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', metadata: { crm_deal_id: 'D-1042' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Sdk Uploads
+
+### create
+
+`sdkUploads.create`
+
+Create a Recall.ai Desktop SDK upload
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.sdkUploads.create({ recording_config: { transcript: { provider: { recallai_streaming: {} } } }, metadata: { source: 'desktop-app' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_config` | `Record<string, JsonValue>` | No | — |
+| `_1080p` | `boolean` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### list
+
+`sdkUploads.list`
+
+List Recall.ai Desktop SDK uploads
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.sdkUploads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`sdkUploads.retrieve`
+
+Retrieve a Recall.ai Desktop SDK upload
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.sdkUploads.retrieve({ id: 'f6a7b8c9-d0e1-4f2a-9b3c-5d6e7f8a9b0c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Transcripts
+
+### delete
+
+`transcripts.delete`
+
+Delete a Recall.ai transcript artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.transcripts.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`transcripts.list`
+
+List Recall.ai transcript artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.transcripts.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`transcripts.retrieve`
+
+Retrieve a Recall.ai transcript artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.transcripts.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transcripts.update`
+
+Update Recall.ai transcript metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.transcripts.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Mixed
+
+### delete
+
+`videoMixed.delete`
+
+Delete a mixed video artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.videoMixed.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`videoMixed.list`
+
+List mixed video artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoMixed.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`videoMixed.retrieve`
+
+Retrieve a mixed video artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoMixed.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`videoMixed.update`
+
+Update mixed video artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.videoMixed.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Video Separate
+
+### delete
+
+`videoSeparate.delete`
+
+Delete a separate video artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.videoSeparate.delete({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`videoSeparate.list`
+
+List separate video artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoSeparate.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: Record<string, JsonValue>,
+  metadata?: Record<string, JsonValue>,
+  status?: Record<string, JsonValue>,
+  data?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`videoSeparate.retrieve`
+
+Retrieve a separate video artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoSeparate.retrieve({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`videoSeparate.update`
+
+Update separate video artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.videoSeparate.update({ id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f', metadata: { reviewed: 'true' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `status` | `Record<string, JsonValue>` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Zoom Meetings To Credentials
+
+### list
+
+`zoomMeetingsToCredentials.list`
+
+List Zoom meeting credential mappings
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomMeetingsToCredentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `meeting_id` | `number` | No | — |
+| `ordering` | `string` | No | — |
+| `synced_at_after` | `string` | No | — |
+| `synced_at_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  meeting_id: number,
+  credential: string,
+  synced_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth App Logs
+
+### list
+
+`zoomOAuthAppLogs.list`
+
+List Recall.ai Zoom OAuth app logs
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthAppLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `oauth_app` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  oauth_app: string,
+  message: string,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth Apps
+
+### create
+
+`zoomOAuthApps.create`
+
+Create a Recall.ai Zoom OAuth app
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.create({ kind: 'account_level', client_id: 'zoom-client-id', client_secret: 'zoom-client-secret', webhook_secret: 'zoom-webhook-secret' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `user_level \| account_level` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`zoomOAuthApps.delete`
+
+Delete a Recall.ai Zoom OAuth app
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.delete({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`zoomOAuthApps.list`
+
+List Recall.ai Zoom OAuth apps
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `kind` | `user_level \| account_level` | No | — |
+| `ordering` | `string` | No | — |
+| `webhook_last_validation_after` | `string` | No | — |
+| `webhook_last_validation_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  kind: user_level | account_level | string,
+  client_id: string,
+  client_secret: string,
+  webhook_secret: string,
+  webhook_last_validation: string | null,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`zoomOAuthApps.retrieve`
+
+Retrieve a Recall.ai Zoom OAuth app
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.retrieve({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`zoomOAuthApps.update`
+
+Update a Recall.ai Zoom OAuth app
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.update({ id: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', webhook_secret: 'new-zoom-webhook-secret' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `webhook_secret` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+## Zoom OAuth Credential Logs
+
+### list
+
+`zoomOAuthCredentialLogs.list`
+
+List Recall.ai Zoom OAuth credential logs
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentialLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `credential` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  credential: string,
+  message: string,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth Credentials
+
+### create
+
+`zoomOAuthCredentials.create`
+
+Create a Recall.ai Zoom OAuth credential
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.create({ oauth_app: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f', authorization_code: { code: 'zoom-authorization-code', redirect_uri: 'https://app.acme.com/zoom/callback' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `oauth_app` | `string` | Yes | — |
+| `authorization_code` | `object` | No | — |
+| `access_token_callback_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="authorization_code full type">
+
+```ts
+{
+  code: string,
+  redirect_uri: string,
+  code_verifier?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `oauth_app` | `string` | Yes | — |
+| `status` | `healthy \| unhealthy \| string` | Yes | — |
+| `user_id` | `string \| null` | Yes | — |
+| `account_id` | `string \| null` | Yes | — |
+| `access_token_callback_url` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed \| string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`zoomOAuthCredentials.delete`
+
+Delete a Recall.ai Zoom OAuth credential
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.delete({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`zoomOAuthCredentials.list`
+
+List Recall.ai Zoom OAuth credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed` | No | — |
+| `oauth_app` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `status` | `healthy \| unhealthy` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  oauth_app: string,
+  status: healthy | unhealthy | string,
+  user_id: string | null,
+  account_id: string | null,
+  access_token_callback_url: string | null,
+  created_at: string,
+  meeting_sync_status: not_started | in_progress | completed | failed | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`zoomOAuthCredentials.retrieve`
+
+Retrieve a Recall.ai Zoom OAuth credential
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.retrieve({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `oauth_app` | `string` | Yes | — |
+| `status` | `healthy \| unhealthy \| string` | Yes | — |
+| `user_id` | `string \| null` | Yes | — |
+| `account_id` | `string \| null` | Yes | — |
+| `access_token_callback_url` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed \| string` | Yes | — |
+
+
+
+---
+
+### retrieveAccessToken
+
+`zoomOAuthCredentials.retrieveAccessToken`
+
+Retrieve a Zoom OAuth access token
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.retrieveAccessToken({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+
+
+
+---
+
+### syncMeetings
+
+`zoomOAuthCredentials.syncMeetings`
+
+Synchronize Zoom OAuth credential meetings
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.syncMeetings({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### validate
+
+`zoomOAuthCredentials.validate`
+
+Validate a Recall.ai Zoom OAuth credential
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.validate({ id: 'd4e5f6a7-b8c9-4d0e-9f1a-3b4c5d6e7f8a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+

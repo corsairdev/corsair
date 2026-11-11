@@ -28,14 +28,14 @@ await corsair.openai.api.assistants.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `instructions` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -58,8 +58,7 @@ await corsair.openai.api.assistants.create({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
@@ -80,14 +79,6 @@ await corsair.openai.api.assistants.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -99,14 +90,14 @@ await corsair.openai.api.assistants.create({});
 | `id` | `string` | Yes | — |
 | `object` | `assistant` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
+| `description` | `string \| null` | Yes | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | Yes | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `top_p` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `top_p` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -129,20 +120,11 @@ await corsair.openai.api.assistants.create({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -224,10 +206,10 @@ await corsair.openai.api.assistants.list({});
   id: string,
   object: assistant,
   created_at: number,
-  name?: string | null,
-  description?: string | null,
+  name: string | null,
+  description: string | null,
   model: string,
-  instructions?: string | null,
+  instructions: string | null,
   tools: (
     {
       type: code_interpreter
@@ -245,14 +227,12 @@ await corsair.openai.api.assistants.list({});
       function: {
         name: string,
         description?: string,
-        parameters?: {
-        },
+        parameters?: Record<string, any>,
         strict?: boolean | null
       }
     }
   )[],
-  metadata?: {
-  } | null,
+  metadata?: Record<string, string> | null,
   temperature?: number | null,
   top_p?: number | null
 }[]
@@ -282,14 +262,14 @@ await corsair.openai.api.assistants.modify({});
 |------|------|----------|-------------|
 | `assistantId` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `instructions` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -312,8 +292,7 @@ await corsair.openai.api.assistants.modify({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
@@ -334,14 +313,6 @@ await corsair.openai.api.assistants.modify({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -353,14 +324,14 @@ await corsair.openai.api.assistants.modify({});
 | `id` | `string` | Yes | — |
 | `object` | `assistant` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
+| `description` | `string \| null` | Yes | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | Yes | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `top_p` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `top_p` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -383,20 +354,11 @@ await corsair.openai.api.assistants.modify({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -432,14 +394,14 @@ await corsair.openai.api.assistants.retrieve({});
 | `id` | `string` | Yes | — |
 | `object` | `assistant` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
+| `description` | `string \| null` | Yes | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | Yes | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `top_p` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `top_p` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tools full type">
@@ -462,20 +424,11 @@ await corsair.openai.api.assistants.retrieve({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -545,7 +498,7 @@ await corsair.openai.api.audio.createTranscription({});
 | `prompt` | `string` | No | — |
 | `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
 | `temperature` | `number` | No | — |
-| `timestampGranularities` | `word \| segment[]` | No | — |
+| `timestampGranularities` | `(word \| segment)[]` | No | — |
 
 
 
@@ -639,7 +592,7 @@ await corsair.openai.api.batches.cancel({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -663,14 +616,6 @@ await corsair.openai.api.batches.cancel({});
     param?: string | null,
     line?: number | null
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -699,17 +644,7 @@ await corsair.openai.api.batches.create({});
 | `inputFileId` | `string` | Yes | — |
 | `endpoint` | `/v1/chat/completions \| /v1/completions \| /v1/embeddings \| /v1/responses` | Yes | — |
 | `completionWindow` | `24h` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -736,7 +671,7 @@ await corsair.openai.api.batches.create({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -760,14 +695,6 @@ await corsair.openai.api.batches.create({});
     param?: string | null,
     line?: number | null
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -843,8 +770,7 @@ await corsair.openai.api.batches.list({});
       line?: number | null
     }[]
   },
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -897,7 +823,7 @@ await corsair.openai.api.batches.retrieve({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -921,14 +847,6 @@ await corsair.openai.api.batches.retrieve({});
     param?: string | null,
     line?: number | null
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -959,22 +877,22 @@ await corsair.openai.api.chat.createCompletion({});
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `frequencyPenalty` | `number` | No | — |
-| `logitBias` | `object` | No | — |
-| `logprobs` | `boolean` | No | — |
-| `topLogprobs` | `number` | No | — |
-| `maxCompletionTokens` | `number` | No | — |
-| `n` | `number` | No | — |
+| `logitBias` | `Record<string, number> \| null` | No | — |
+| `logprobs` | `boolean \| null` | No | — |
+| `topLogprobs` | `number \| null` | No | — |
+| `maxCompletionTokens` | `number \| null` | No | — |
+| `n` | `number \| null` | No | — |
 | `presencePenalty` | `number` | No | — |
 | `responseFormat` | `object` | No | — |
-| `seed` | `number` | No | — |
+| `seed` | `number \| null` | No | — |
 | `serviceTier` | `auto \| default \| flex \| priority` | No | — |
-| `stop` | `string \| string[]` | No | — |
-| `store` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
+| `stop` | `string \| string[] \| null` | No | — |
+| `store` | `boolean \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
 | `tools` | `object[]` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 | `reasoningEffort` | `minimal \| low \| medium \| high` | No | — |
 | `user` | `string` | No | — |
@@ -1025,14 +943,6 @@ await corsair.openai.api.chat.createCompletion({});
 ```
 </Accordion>
 
-<Accordion title="logitBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="responseFormat full type">
 
 ```ts
@@ -1045,18 +955,9 @@ await corsair.openai.api.chat.createCompletion({});
   json_schema: {
     name: string,
     description?: string,
-    schema?: {
-    },
+    schema?: Record<string, any>,
     strict?: boolean | null
   }
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1069,8 +970,7 @@ await corsair.openai.api.chat.createCompletion({});
   function: {
     name: string,
     description?: string,
-    parameters?: {
-    },
+    parameters?: Record<string, any>,
     strict?: boolean | null
   }
 }[]
@@ -1113,7 +1013,7 @@ none | auto | required | {
   index: number,
   message: {
     role: assistant,
-    content?: string | null,
+    content: string | null,
     refusal?: string | null,
     tool_calls?: {
       id: string,
@@ -1124,8 +1024,7 @@ none | auto | required | {
       }
     }[]
   },
-  logprobs?: {
-  } | null,
+  logprobs?: Record<string, any> | null,
   finish_reason: stop | length | tool_calls | content_filter | function_call
 }[]
 ```
@@ -1198,20 +1097,10 @@ await corsair.openai.api.chatCompletions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `asc \| desc` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1220,20 +1109,10 @@ await corsair.openai.api.chatCompletions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1267,20 +1146,10 @@ await corsair.openai.api.chatCompletions.listMessages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1336,17 +1205,7 @@ await corsair.openai.api.chatCompletions.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `completionId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | Yes | — |
 
 
 
@@ -1392,17 +1251,7 @@ await corsair.openai.api.chatkit.getThread({});
 | `id` | `string` | Yes | — |
 | `object` | `chatkit.thread` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `Record<string, any>` | No | — |
 
 
 
@@ -1437,20 +1286,10 @@ await corsair.openai.api.chatkit.listThreadItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1498,8 +1337,7 @@ await corsair.openai.api.chatkit.listThreads({});
   id: string,
   object: chatkit.thread,
   created_at: number,
-  status?: {
-  }
+  status?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1529,29 +1367,19 @@ await corsair.openai.api.completions.create({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
 | `prompt` | `string \| string[]` | Yes | — |
-| `maxTokens` | `number` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
-| `n` | `number` | No | — |
-| `stop` | `string \| string[]` | No | — |
+| `maxTokens` | `number \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
+| `n` | `number \| null` | No | — |
+| `stop` | `string \| string[] \| null` | No | — |
 | `presencePenalty` | `number` | No | — |
 | `frequencyPenalty` | `number` | No | — |
-| `logprobs` | `number` | No | — |
+| `logprobs` | `number \| null` | No | — |
 | `echo` | `boolean` | No | — |
 | `bestOf` | `number` | No | — |
-| `logitBias` | `object` | No | — |
+| `logitBias` | `Record<string, number> \| null` | No | — |
 | `user` | `string` | No | — |
-| `suffix` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="logitBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `suffix` | `string \| null` | No | — |
 
 
 
@@ -1573,8 +1401,7 @@ await corsair.openai.api.completions.create({});
 {
   text: string,
   index: number,
-  logprobs?: {
-  } | null,
+  logprobs: Record<string, any> | null,
   finish_reason: string
 }[]
 ```
@@ -1839,7 +1666,7 @@ await corsair.openai.api.containers.create({});
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `expires_after` | `object` | No | — |
+| `expires_after` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="expires_after full type">
@@ -1848,7 +1675,7 @@ await corsair.openai.api.containers.create({});
 {
   anchor: string,
   minutes: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1973,7 +1800,7 @@ await corsair.openai.api.containers.retrieve({});
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `expires_after` | `object` | No | — |
+| `expires_after` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="expires_after full type">
@@ -1982,7 +1809,7 @@ await corsair.openai.api.containers.retrieve({});
 {
   anchor: string,
   minutes: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2009,26 +1836,8 @@ await corsair.openai.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, any>[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2039,17 +1848,7 @@ await corsair.openai.api.conversations.create({});
 | `id` | `string` | Yes | — |
 | `object` | `conversation` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -2072,18 +1871,8 @@ await corsair.openai.api.conversations.createItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversationId` | `string` | Yes | — |
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `include` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2092,20 +1881,10 @@ await corsair.openai.api.conversations.createItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2171,17 +1950,7 @@ await corsair.openai.api.conversations.deleteItem({});
 | `id` | `string` | Yes | — |
 | `object` | `conversation` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -2248,20 +2017,10 @@ await corsair.openai.api.conversations.listItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2284,17 +2043,7 @@ await corsair.openai.api.conversations.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversationId` | `string` | Yes | — |
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | Yes | — |
 
 
 
@@ -2305,17 +2054,7 @@ await corsair.openai.api.conversations.update({});
 | `id` | `string` | Yes | — |
 | `object` | `conversation` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -2488,39 +2227,13 @@ await corsair.openai.api.evalRuns.cancel({});
 | `id` | `string` | Yes | — |
 | `object` | `eval.run` | Yes | — |
 | `eval_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2544,26 +2257,8 @@ await corsair.openai.api.evalRuns.create({});
 |------|------|----------|-------------|
 | `evalId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `dataSource` | `object` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="dataSource full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dataSource` | `Record<string, any>` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2574,39 +2269,13 @@ await corsair.openai.api.evalRuns.create({});
 | `id` | `string` | Yes | — |
 | `object` | `eval.run` | Yes | — |
 | `eval_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2673,39 +2342,13 @@ await corsair.openai.api.evalRuns.get({});
 | `id` | `string` | Yes | — |
 | `object` | `eval.run` | Yes | — |
 | `eval_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2788,12 +2431,9 @@ await corsair.openai.api.evalRuns.list({});
   created_at: number,
   status: string,
   model?: string,
-  data_source?: {
-  },
-  metadata?: {
-  } | null,
-  result_counts?: {
-  }
+  data_source?: Record<string, any>,
+  metadata?: Record<string, string> | null,
+  result_counts?: Record<string, number>
 }[]
 ```
 </Accordion>
@@ -2869,35 +2509,9 @@ await corsair.openai.api.evals.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `dataSourceConfig` | `object` | Yes | — |
-| `testingCriteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="dataSourceConfig full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testingCriteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dataSourceConfig` | `Record<string, any>` | Yes | — |
+| `testingCriteria` | `Record<string, any>[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2907,37 +2521,11 @@ await corsair.openai.api.evals.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `eval` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, any>` | Yes | — |
+| `testing_criteria` | `Record<string, any>[]` | Yes | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -3001,37 +2589,11 @@ await corsair.openai.api.evals.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `eval` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, any>` | Yes | — |
+| `testing_criteria` | `Record<string, any>[]` | Yes | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -3077,12 +2639,9 @@ await corsair.openai.api.evals.list({});
   object: eval,
   name?: string | null,
   created_at: number,
-  data_source_config: {
-  },
-  testing_criteria: {
-  }[],
-  metadata?: {
-  } | null
+  data_source_config: Record<string, any>,
+  testing_criteria: Record<string, any>[],
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -3110,17 +2669,7 @@ await corsair.openai.api.evals.update({});
 |------|------|----------|-------------|
 | `evalId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3130,37 +2679,11 @@ await corsair.openai.api.evals.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `eval` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, any>` | Yes | — |
+| `testing_criteria` | `Record<string, any>[]` | Yes | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -3389,40 +2912,24 @@ await corsair.openai.api.fineTuning.cancelJob({});
 | `object` | `fine_tuning.job` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
-| `fine_tuned_model` | `string` | No | — |
+| `fine_tuned_model` | `string \| null` | No | — |
 | `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
 | `training_file` | `string` | Yes | — |
-| `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `validation_file` | `string \| null` | No | — |
+| `hyperparameters` | `Record<string, any>` | No | — |
 | `result_files` | `string[]` | No | — |
-| `trained_tokens` | `number` | No | — |
-| `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `trained_tokens` | `number \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3450,46 +2957,12 @@ await corsair.openai.api.fineTuning.createJob({});
 | `model` | `string` | Yes | — |
 | `trainingFile` | `string` | Yes | — |
 | `validationFile` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `hyperparameters` | `Record<string, any>` | No | — |
 | `suffix` | `string` | No | — |
-| `integrations` | `object[]` | No | — |
+| `integrations` | `Record<string, any>[]` | No | — |
 | `seed` | `number` | No | — |
-| `method` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="integrations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="method full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `method` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3501,40 +2974,24 @@ await corsair.openai.api.fineTuning.createJob({});
 | `object` | `fine_tuning.job` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
-| `fine_tuned_model` | `string` | No | — |
+| `fine_tuned_model` | `string \| null` | No | — |
 | `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
 | `training_file` | `string` | Yes | — |
-| `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `validation_file` | `string \| null` | No | — |
+| `hyperparameters` | `Record<string, any>` | No | — |
 | `result_files` | `string[]` | No | — |
-| `trained_tokens` | `number` | No | — |
-| `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `trained_tokens` | `number \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3585,8 +3042,7 @@ await corsair.openai.api.fineTuning.listCheckpoints({});
   created_at: number,
   fine_tuned_model_checkpoint: string,
   step_number: number,
-  metrics?: {
-  }
+  metrics?: Record<string, number>
 }[]
 ```
 </Accordion>
@@ -3636,8 +3092,7 @@ await corsair.openai.api.fineTuning.listEvents({});
   created_at: number,
   level: string,
   message: string,
-  data?: {
-  }
+  data?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3665,17 +3120,7 @@ await corsair.openai.api.fineTuning.listJobs({});
 |------|------|----------|-------------|
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3700,16 +3145,14 @@ await corsair.openai.api.fineTuning.listJobs({});
   status: validating_files | queued | running | succeeded | failed | cancelled,
   training_file: string,
   validation_file?: string | null,
-  hyperparameters?: {
-  },
+  hyperparameters?: Record<string, any>,
   result_files?: string[],
   trained_tokens?: number | null,
   error?: {
     code: string,
     message: string
   } | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -3747,40 +3190,24 @@ await corsair.openai.api.fineTuning.retrieveJob({});
 | `object` | `fine_tuning.job` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
-| `fine_tuned_model` | `string` | No | — |
+| `fine_tuned_model` | `string \| null` | No | — |
 | `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
 | `training_file` | `string` | Yes | — |
-| `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `validation_file` | `string \| null` | No | — |
+| `hyperparameters` | `Record<string, any>` | No | — |
 | `result_files` | `string[]` | No | — |
-| `trained_tokens` | `number` | No | — |
-| `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `trained_tokens` | `number \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3807,27 +3234,9 @@ await corsair.openai.api.graders.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | Yes | — |
-| `item` | `object` | No | — |
+| `grader` | `Record<string, any>` | Yes | — |
+| `item` | `Record<string, any>` | No | — |
 | `modelSample` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3857,17 +3266,7 @@ await corsair.openai.api.graders.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `grader` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3875,17 +3274,7 @@ await corsair.openai.api.graders.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `grader` | `Record<string, any>` | No | — |
 
 
 
@@ -4066,9 +3455,9 @@ await corsair.openai.api.messages.create({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `role` | `user \| assistant` | Yes | — |
-| `content` | `object[]` | Yes | — |
-| `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `content` | `string \| object[]` | Yes | — |
+| `attachments` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4079,8 +3468,7 @@ string | (
     type: text,
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, any>[]
     }
   } | {
     type: image_file,
@@ -4111,15 +3499,7 @@ string | (
       type: file_search
     }
   )[]
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4137,10 +3517,10 @@ string | (
 | `status` | `in_progress \| incomplete \| completed` | No | — |
 | `role` | `user \| assistant` | Yes | — |
 | `content` | `object[]` | Yes | — |
-| `assistant_id` | `string` | No | — |
-| `run_id` | `string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `assistant_id` | `string \| null` | No | — |
+| `run_id` | `string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4151,8 +3531,7 @@ string | (
     type: text,
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, any>[]
     }
   } | {
     type: image_file,
@@ -4183,15 +3562,7 @@ string | (
       type: file_search
     }
   )[]
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4284,8 +3655,7 @@ await corsair.openai.api.messages.list({});
       type: text,
       text: {
         value: string,
-        annotations: {
-        }[]
+        annotations: Record<string, any>[]
       }
     } | {
       type: image_file,
@@ -4313,8 +3683,7 @@ await corsair.openai.api.messages.list({});
       }
     )[]
   }[] | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -4342,17 +3711,7 @@ await corsair.openai.api.messages.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -4367,10 +3726,10 @@ await corsair.openai.api.messages.modify({});
 | `status` | `in_progress \| incomplete \| completed` | No | — |
 | `role` | `user \| assistant` | Yes | — |
 | `content` | `object[]` | Yes | — |
-| `assistant_id` | `string` | No | — |
-| `run_id` | `string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `assistant_id` | `string \| null` | No | — |
+| `run_id` | `string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4381,8 +3740,7 @@ await corsair.openai.api.messages.modify({});
     type: text,
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, any>[]
     }
   } | {
     type: image_file,
@@ -4413,15 +3771,7 @@ await corsair.openai.api.messages.modify({});
       type: file_search
     }
   )[]
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4462,10 +3812,10 @@ await corsair.openai.api.messages.retrieve({});
 | `status` | `in_progress \| incomplete \| completed` | No | — |
 | `role` | `user \| assistant` | Yes | — |
 | `content` | `object[]` | Yes | — |
-| `assistant_id` | `string` | No | — |
-| `run_id` | `string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `assistant_id` | `string \| null` | No | — |
+| `run_id` | `string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4476,8 +3826,7 @@ await corsair.openai.api.messages.retrieve({});
     type: text,
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, any>[]
     }
   } | {
     type: image_file,
@@ -4508,15 +3857,7 @@ await corsair.openai.api.messages.retrieve({});
       type: file_search
     }
   )[]
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4618,18 +3959,8 @@ await corsair.openai.api.moderation.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| string[] \| Record<string, any>[]` | Yes | — |
 | `model` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | string[] | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4647,12 +3978,9 @@ string | string[] | {
 ```ts
 {
   flagged: boolean,
-  categories: {
-  },
-  category_scores: {
-  },
-  category_applied_input_types?: {
-  }
+  categories: Record<string, boolean>,
+  category_scores: Record<string, number>,
+  category_applied_input_types?: Record<string, string[]>
 }[]
 ```
 </Accordion>
@@ -4681,17 +4009,7 @@ await corsair.openai.api.realtime.createCall({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sdp` | `string` | No | — |
-| `session` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="session full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `session` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4722,18 +4040,10 @@ await corsair.openai.api.realtime.createClientSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `session` | `object` | No | — |
+| `session` | `Record<string, any>` | No | — |
 | `expiresAfter` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="session full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="expiresAfter full type">
 
 ```ts
@@ -4808,17 +4118,7 @@ await corsair.openai.api.realtime.createTranscriptionSession({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `inputAudioFormat` | `string` | No | — |
-| `inputAudioTranscription` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputAudioTranscription full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `inputAudioTranscription` | `Record<string, any>` | No | — |
 
 
 
@@ -4863,19 +4163,11 @@ await corsair.openai.api.responses.cancel({});
 | `created_at` | `number` | Yes | — |
 | `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
-| `previous_response_id` | `string` | No | — |
+| `output` | `Record<string, any>[]` | Yes | — |
+| `previous_response_id` | `string \| null` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -4909,17 +4201,7 @@ await corsair.openai.api.responses.compact({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `input` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -4930,18 +4212,10 @@ await corsair.openai.api.responses.compact({});
 | `id` | `string` | Yes | — |
 | `object` | `response.compaction` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `output` | `object[]` | Yes | — |
+| `output` | `Record<string, any>[]` | Yes | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -4975,54 +4249,22 @@ await corsair.openai.api.responses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| Record<string, any>[]` | Yes | — |
 | `instructions` | `string` | No | — |
-| `tools` | `object[]` | No | — |
-| `toolChoice` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
-| `maxOutputTokens` | `number` | No | — |
+| `tools` | `Record<string, any>[]` | No | — |
+| `toolChoice` | `none \| auto \| required \| Record<string, any>` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
+| `maxOutputTokens` | `number \| null` | No | — |
 | `previousResponseId` | `string` | No | — |
 | `store` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 | `truncation` | `auto \| disabled` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 | `background` | `boolean` | No | — |
 | `reasoning` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | {
-}[]
-```
-</Accordion>
-
-<Accordion title="tools full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="toolChoice full type">
-
-```ts
-none | auto | required | {
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="reasoning full type">
 
 ```ts
@@ -5044,19 +4286,11 @@ none | auto | required | {
 | `created_at` | `number` | Yes | — |
 | `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
-| `previous_response_id` | `string` | No | — |
+| `output` | `Record<string, any>[]` | Yes | — |
+| `previous_response_id` | `string \| null` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -5134,20 +4368,10 @@ await corsair.openai.api.responses.listInputItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5182,19 +4406,11 @@ await corsair.openai.api.responses.retrieve({});
 | `created_at` | `number` | Yes | — |
 | `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
-| `previous_response_id` | `string` | No | — |
+| `output` | `Record<string, any>[]` | Yes | — |
+| `previous_response_id` | `string \| null` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -5244,30 +4460,22 @@ await corsair.openai.api.runs.cancel({});
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -5291,20 +4499,11 @@ await corsair.openai.api.runs.cancel({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5315,7 +4514,7 @@ await corsair.openai.api.runs.cancel({});
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5343,16 +4542,16 @@ await corsair.openai.api.runs.create({});
 | `threadId` | `string` | Yes | — |
 | `assistantId` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `additionalInstructions` | `string` | No | — |
-| `tools` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
-| `maxPromptTokens` | `number` | No | — |
-| `maxCompletionTokens` | `number` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `additionalInstructions` | `string \| null` | No | — |
+| `tools` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
+| `maxPromptTokens` | `number \| null` | No | — |
+| `maxCompletionTokens` | `number \| null` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -5376,20 +4575,11 @@ await corsair.openai.api.runs.create({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
-)[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+)[] | null
 ```
 </Accordion>
 
@@ -5428,30 +4618,22 @@ none | auto | required | {
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -5475,20 +4657,11 @@ none | auto | required | {
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5499,7 +4672,7 @@ none | auto | required | {
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5553,8 +4726,7 @@ await corsair.openai.api.runs.list({});
   thread_id: string,
   assistant_id: string,
   status: queued | in_progress | requires_action | cancelling | cancelled | failed | completed | incomplete | expired,
-  required_action?: {
-  } | null,
+  required_action?: Record<string, any> | null,
   last_error?: {
     code: string,
     message: string
@@ -5578,14 +4750,12 @@ await corsair.openai.api.runs.list({});
       function: {
         name: string,
         description?: string,
-        parameters?: {
-        },
+        parameters?: Record<string, any>,
         strict?: boolean | null
       }
     }
   )[],
-  metadata?: {
-  } | null,
+  metadata?: Record<string, string> | null,
   usage?: {
     prompt_tokens: number,
     completion_tokens: number,
@@ -5618,17 +4788,7 @@ await corsair.openai.api.runs.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -5642,30 +4802,22 @@ await corsair.openai.api.runs.modify({});
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -5689,20 +4841,11 @@ await corsair.openai.api.runs.modify({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5713,7 +4856,7 @@ await corsair.openai.api.runs.modify({});
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5753,30 +4896,22 @@ await corsair.openai.api.runs.retrieve({});
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -5800,20 +4935,11 @@ await corsair.openai.api.runs.retrieve({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5824,7 +4950,7 @@ await corsair.openai.api.runs.retrieve({});
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5877,30 +5003,22 @@ await corsair.openai.api.runs.submitToolOutputs({});
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -5924,20 +5042,11 @@ await corsair.openai.api.runs.submitToolOutputs({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5948,7 +5057,7 @@ await corsair.openai.api.runs.submitToolOutputs({});
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6007,8 +5116,7 @@ await corsair.openai.api.runSteps.list({});
   thread_id: string,
   type: message_creation | tool_calls,
   status: in_progress | cancelled | failed | completed | expired,
-  step_details: {
-  },
+  step_details: Record<string, any>,
   last_error?: {
     code: string,
     message: string
@@ -6061,26 +5169,18 @@ await corsair.openai.api.runSteps.retrieve({});
 | `thread_id` | `string` | Yes | — |
 | `type` | `message_creation \| tool_calls` | Yes | — |
 | `status` | `in_progress \| cancelled \| failed \| completed \| expired` | Yes | — |
-| `step_details` | `object` | Yes | — |
-| `last_error` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `step_details` | `Record<string, any>` | Yes | — |
+| `last_error` | `object \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="step_details full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -6091,7 +5191,7 @@ await corsair.openai.api.runSteps.retrieve({});
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6237,7 +5337,7 @@ await corsair.openai.api.threads.create({});
 |------|------|----------|-------------|
 | `messages` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -6246,8 +5346,7 @@ await corsair.openai.api.threads.create({});
 {
   role: user | assistant,
   content: string,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -6265,14 +5364,6 @@ await corsair.openai.api.threads.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -6284,17 +5375,7 @@ await corsair.openai.api.threads.create({});
 | `id` | `string` | Yes | — |
 | `object` | `thread` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -6319,14 +5400,14 @@ await corsair.openai.api.threads.createAndRun({});
 | `assistantId` | `string` | Yes | — |
 | `thread` | `object` | No | — |
 | `model` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `tools` | `object[]` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `object[] \| null` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `temperature` | `number` | No | — |
-| `topP` | `number` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `temperature` | `number \| null` | No | — |
+| `topP` | `number \| null` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -6337,8 +5418,7 @@ await corsair.openai.api.threads.createAndRun({});
   messages?: {
     role: user | assistant,
     content: string,
-    metadata?: {
-    } | null
+    metadata?: Record<string, string> | null
   }[],
   toolResources?: {
     code_interpreter?: {
@@ -6348,8 +5428,7 @@ await corsair.openai.api.threads.createAndRun({});
       vector_store_ids: string[]
     }
   },
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }
 ```
 </Accordion>
@@ -6374,12 +5453,11 @@ await corsair.openai.api.threads.createAndRun({});
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
-)[]
+)[] | null
 ```
 </Accordion>
 
@@ -6393,14 +5471,6 @@ await corsair.openai.api.threads.createAndRun({});
   file_search?: {
     vector_store_ids: string[]
   }
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -6440,30 +5510,22 @@ none | auto | required | {
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
-| `last_error` | `object` | No | — |
+| `required_action` | `Record<string, any> \| null` | No | — |
+| `last_error` | `object \| null` | No | — |
 | `model` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-| `usage` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -6487,20 +5549,11 @@ none | auto | required | {
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, any>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -6511,7 +5564,7 @@ none | auto | required | {
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6570,7 +5623,7 @@ await corsair.openai.api.threads.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="toolResources full type">
@@ -6586,14 +5639,6 @@ await corsair.openai.api.threads.modify({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -6605,17 +5650,7 @@ await corsair.openai.api.threads.modify({});
 | `id` | `string` | Yes | — |
 | `object` | `thread` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -6648,17 +5683,7 @@ await corsair.openai.api.threads.retrieve({});
 | `id` | `string` | Yes | — |
 | `object` | `thread` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -6683,26 +5708,8 @@ await corsair.openai.api.tokens.countInput({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
-| `tools` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | {
-}[]
-```
-</Accordion>
-
-<Accordion title="tools full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `input` | `string \| Record<string, any>[]` | Yes | — |
+| `tools` | `Record<string, any>[]` | No | — |
 
 
 
@@ -6785,7 +5792,7 @@ await corsair.openai.api.uploads.cancel({});
 | `purpose` | `string` | Yes | — |
 | `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
 | `expires_at` | `number` | Yes | — |
-| `file` | `object` | No | — |
+| `file` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file full type">
@@ -6798,7 +5805,7 @@ await corsair.openai.api.uploads.cancel({});
   created_at: number,
   filename: string,
   purpose: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6841,7 +5848,7 @@ await corsair.openai.api.uploads.complete({});
 | `purpose` | `string` | Yes | — |
 | `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
 | `expires_at` | `number` | Yes | — |
-| `file` | `object` | No | — |
+| `file` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file full type">
@@ -6854,7 +5861,7 @@ await corsair.openai.api.uploads.complete({});
   created_at: number,
   filename: string,
   purpose: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6898,7 +5905,7 @@ await corsair.openai.api.uploads.create({});
 | `purpose` | `string` | Yes | — |
 | `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
 | `expires_at` | `number` | Yes | — |
-| `file` | `object` | No | — |
+| `file` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file full type">
@@ -6911,7 +5918,7 @@ await corsair.openai.api.uploads.create({});
   created_at: number,
   filename: string,
   purpose: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6941,7 +5948,7 @@ await corsair.openai.api.vectorStoreFileBatches.create({});
 | `vectorStoreId` | `string` | Yes | — |
 | `fileIds` | `string[]` | Yes | — |
 | `chunkingStrategy` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="chunkingStrategy full type">
@@ -6955,14 +5962,6 @@ await corsair.openai.api.vectorStoreFileBatches.create({});
     max_chunk_size_tokens: number,
     chunk_overlap_tokens: number
   }
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7051,8 +6050,7 @@ await corsair.openai.api.vectorStoreFileBatches.listFiles({});
     code: string,
     message: string
   } | null,
-  attributes?: {
-  } | null
+  attributes?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -7134,7 +6132,7 @@ await corsair.openai.api.vectorStoreFiles.create({});
 | `vectorStoreId` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
 | `chunkingStrategy` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="chunkingStrategy full type">
@@ -7148,14 +6146,6 @@ await corsair.openai.api.vectorStoreFiles.create({});
     max_chunk_size_tokens: number,
     chunk_overlap_tokens: number
   }
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7173,8 +6163,8 @@ await corsair.openai.api.vectorStoreFiles.create({});
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
 | `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
-| `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `last_error` | `object \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7183,15 +6173,7 @@ await corsair.openai.api.vectorStoreFiles.create({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7283,8 +6265,7 @@ await corsair.openai.api.vectorStoreFiles.list({});
     code: string,
     message: string
   } | null,
-  attributes?: {
-  } | null
+  attributes?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -7325,8 +6306,8 @@ await corsair.openai.api.vectorStoreFiles.retrieve({});
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
 | `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
-| `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `last_error` | `object \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7335,15 +6316,7 @@ await corsair.openai.api.vectorStoreFiles.retrieve({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7380,7 +6353,7 @@ await corsair.openai.api.vectorStoreFiles.retrieveContent({});
 | `object` | `vector_store.file_content.page` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_page` | `string` | No | — |
+| `next_page` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7416,17 +6389,7 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any> \| null` | Yes | — |
 
 
 
@@ -7440,8 +6403,8 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
 | `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
-| `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `last_error` | `object \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7450,15 +6413,7 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7489,7 +6444,7 @@ await corsair.openai.api.vectorStores.create({});
 | `fileIds` | `string[]` | No | — |
 | `expiresAfter` | `object` | No | — |
 | `chunkingStrategy` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="expiresAfter full type">
@@ -7516,14 +6471,6 @@ await corsair.openai.api.vectorStores.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -7535,14 +6482,14 @@ await corsair.openai.api.vectorStores.create({});
 | `id` | `string` | Yes | — |
 | `object` | `vector_store` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
 | `status` | `expired \| in_progress \| completed` | Yes | — |
 | `expires_after` | `object` | No | — |
-| `expires_at` | `number` | No | — |
-| `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `expires_at` | `number \| null` | No | — |
+| `last_active_at` | `number \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7564,14 +6511,6 @@ await corsair.openai.api.vectorStores.create({});
 {
   anchor: last_active_at,
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7670,8 +6609,7 @@ await corsair.openai.api.vectorStores.list({});
   },
   expires_at?: number | null,
   last_active_at?: number | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -7698,9 +6636,9 @@ await corsair.openai.api.vectorStores.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `expiresAfter` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="expiresAfter full type">
@@ -7709,14 +6647,6 @@ await corsair.openai.api.vectorStores.modify({});
 {
   anchor: last_active_at,
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7731,14 +6661,14 @@ await corsair.openai.api.vectorStores.modify({});
 | `id` | `string` | Yes | — |
 | `object` | `vector_store` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
 | `status` | `expired \| in_progress \| completed` | Yes | — |
 | `expires_after` | `object` | No | — |
-| `expires_at` | `number` | No | — |
-| `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `expires_at` | `number \| null` | No | — |
+| `last_active_at` | `number \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7760,14 +6690,6 @@ await corsair.openai.api.vectorStores.modify({});
 {
   anchor: last_active_at,
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7804,14 +6726,14 @@ await corsair.openai.api.vectorStores.retrieve({});
 | `id` | `string` | Yes | — |
 | `object` | `vector_store` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
 | `status` | `expired \| in_progress \| completed` | Yes | — |
 | `expires_after` | `object` | No | — |
-| `expires_at` | `number` | No | — |
-| `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `expires_at` | `number \| null` | No | — |
+| `last_active_at` | `number \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7833,14 +6755,6 @@ await corsair.openai.api.vectorStores.retrieve({});
 {
   anchor: last_active_at,
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7868,20 +6782,12 @@ await corsair.openai.api.vectorStores.search({});
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
 | `query` | `string \| string[]` | Yes | — |
-| `filters` | `object` | No | — |
+| `filters` | `Record<string, any>` | No | — |
 | `maxNumResults` | `number` | No | — |
 | `rankingOptions` | `object` | No | — |
 | `rewriteQuery` | `boolean` | No | — |
 
 <AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="rankingOptions full type">
 
 ```ts
@@ -7903,7 +6809,7 @@ await corsair.openai.api.vectorStores.search({});
 | `search_query` | `string[]` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_page` | `string` | No | — |
+| `next_page` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7913,8 +6819,7 @@ await corsair.openai.api.vectorStores.search({});
   file_id: string,
   filename: string,
   score: number,
-  attributes?: {
-  } | null,
+  attributes?: Record<string, any> | null,
   content: {
     type: text,
     text: string
@@ -7967,8 +6872,8 @@ await corsair.openai.api.videos.create({});
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
 | `size` | `string` | No | — |
-| `remixed_from_video_id` | `string` | No | — |
-| `error` | `object` | No | — |
+| `remixed_from_video_id` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -7977,7 +6882,7 @@ await corsair.openai.api.videos.create({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8019,8 +6924,8 @@ await corsair.openai.api.videos.createRemix({});
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
 | `size` | `string` | No | — |
-| `remixed_from_video_id` | `string` | No | — |
-| `error` | `object` | No | — |
+| `remixed_from_video_id` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -8029,7 +6934,7 @@ await corsair.openai.api.videos.createRemix({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8192,8 +7097,8 @@ await corsair.openai.api.videos.retrieve({});
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
 | `size` | `string` | No | — |
-| `remixed_from_video_id` | `string` | No | — |
-| `error` | `object` | No | — |
+| `remixed_from_video_id` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -8202,7 +7107,7 @@ await corsair.openai.api.videos.retrieve({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

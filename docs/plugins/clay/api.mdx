@@ -65,7 +65,7 @@ await corsair.clay.api.account.me({});
 ```ts
 {
   id: string,
-  name?: string | null,
+  name: string | null,
   email?: string | null,
   cli_onboarded?: boolean
 }
@@ -130,8 +130,7 @@ await corsair.clay.api.routines.getResults({});
   data: {
     id: string,
     status: complete | failed,
-    result?: {
-    },
+    result?: Record<string, any>,
     error?: {
       message: string
     }
@@ -171,8 +170,7 @@ await corsair.clay.api.routines.run({});
 ```ts
 {
   id: string,
-  inputs: {
-  }
+  inputs: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -280,21 +278,21 @@ await corsair.clay.api.search.run({});
   source_type: people,
   data: {
     clay_profile_id: number,
-    name?: string | null,
-    first_name?: string | null,
-    last_name?: string | null,
+    name: string | null,
+    first_name: string | null,
+    last_name: string | null,
     linkedin_url?: string | null,
     location: {
-      name?: string | null,
-      city?: string | null,
-      state_or_province?: string | null
+      name: string | null,
+      city: string | null,
+      state_or_province: string | null
     },
     matched_experiences: {
-      company?: string | null,
-      title?: string | null,
-      location?: string | null,
-      start_date?: string | null,
-      end_date?: string | null
+      company: string | null,
+      title: string | null,
+      location: string | null,
+      start_date: string | null,
+      end_date: string | null
     }[]
   }[],
   has_more: boolean,
@@ -309,17 +307,17 @@ await corsair.clay.api.search.run({});
   source_type: companies,
   data: {
     clay_company_id: number,
-    name?: string | null,
-    domain?: string | null,
-    size?: string | null,
-    type?: string | null,
-    country?: string | null,
-    industry?: string | null,
-    location?: string | null,
-    description?: string | null,
-    linkedin_url?: string | null,
-    annual_revenue?: string | null,
-    total_funding_amount_range_usd?: number | null
+    name: string | null,
+    domain: string | null,
+    size: string | null,
+    type: string | null,
+    country: string | null,
+    industry: string | null,
+    location: string | null,
+    description: string | null,
+    linkedin_url: string | null,
+    annual_revenue: string | null,
+    total_funding_amount_range_usd: number | null
   }[],
   has_more: boolean,
   exhaustion_reason?: query_limit | no_more_results,

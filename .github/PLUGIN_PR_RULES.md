@@ -25,6 +25,16 @@ PRs that only touch `packages/<plugin>/plugin-docs.yaml` and/or
 are docs PRs: the plugin gate is skipped (no demo video / R2–R4), and CI
 uses the documentation skip-heavy lane.
 
+### Team multi-plugin PRs
+
+A change that has to touch several existing plugins at once (risk levels, version bumps, one fix applied to many plugins) can go in one PR when a team member opens it and adds the `multi-plugin` label. The gate accepts it only when both hold: the label is set and the PR author is an org owner, member or collaborator. Contributors can't add labels to their own PRs.
+
+With the label, R1 still checks that every file sits inside the touched plugins' `packages/<plugin>/**` and `docs/plugins/<plugin>/**`, the registry in `constants.ts`, `pnpm-lock.yaml` or `docs/docs.json`. A brand-new plugin package still needs its own PR. R2 applies to every touched plugin (each needs its own `*.test.ts`); R3–R4 don't apply. CI builds and tests every touched package as usual.
+
+The gate reads labels when it runs, so after adding the label to an open PR, use "Re-run failed jobs" on the Plugin PR Gate.
+
+No PR needs a version bump: every merge releases the packages it changed as the next patch (see Versions and Releases in CONTRIBUTING.md).
+
 ## R2 — Tests required
 
 At least one `*.test.ts` inside `packages/<plugin>/` (see `packages/slack/`

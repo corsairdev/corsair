@@ -28,6 +28,7 @@ const rows = await corsair.reducto.db.classifyOutputs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `category` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultId` | `string` | equals, contains, startsWith, endsWith, in |
@@ -134,6 +135,7 @@ const rows = await corsair.reducto.db.extractOutputs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultId` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `date` | equals, before, after, between |
@@ -186,6 +188,8 @@ const rows = await corsair.reducto.db.jobs.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `numPages` | `number` | equals, gt, gte, lt, lte, in |
 | `totalPages` | `number` | equals, gt, gte, lt, lte, in |
 | `duration` | `number` | equals, gt, gte, lt, lte, in |
@@ -193,10 +197,15 @@ const rows = await corsair.reducto.db.jobs.search({
 | `studioLink` | `string` | equals, contains, startsWith, endsWith, in |
 | `responseType` | `string` | equals, contains, startsWith, endsWith, in |
 | `pdfUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `parseResultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `parseResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `parseResultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractResultKind` | `string` | equals, contains, startsWith, endsWith, in |
+| `splitResultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `splitResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `splitResultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `classifyResultKind` | `string` | equals, contains, startsWith, endsWith, in |
+| `pipelineResultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `pipelineResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `pipelineResultId` | `string` | equals, contains, startsWith, endsWith, in |
 | `progress` | `number` | equals, gt, gte, lt, lte, in |
@@ -287,6 +296,7 @@ const rows = await corsair.reducto.db.parseOcrItems.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
 | `ocrIndex` | `number` | equals, gt, gte, lt, lte, in |
 | `text` | `string` | equals, contains, startsWith, endsWith, in |
 | `confidence` | `number` | equals, gt, gte, lt, lte, in |
@@ -317,6 +327,7 @@ const rows = await corsair.reducto.db.pipelineOutputs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `resultId` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `date` | equals, before, after, between |

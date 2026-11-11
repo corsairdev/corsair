@@ -41,7 +41,7 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Configuration dictionary"
           },
           {
@@ -53,7 +53,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -126,7 +126,7 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the blueprint"
           },
           {
@@ -138,37 +138,37 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Brief description of blueprint configuration"
           },
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Template configuration settings"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -208,13 +208,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, config?: {} | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, config?: Record<string, any> | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of blueprints matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -249,7 +249,7 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated configuration"
           },
           {
@@ -261,7 +261,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -349,7 +349,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -450,7 +450,7 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the bot"
           },
           {
@@ -462,73 +462,73 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Brief description of the bot purpose"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated blueprint ID"
           },
           {
             "key": "datasetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated dataset ID for knowledge retrieval"
           },
           {
             "key": "skillsetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated skillset ID for tools and capabilities"
           },
           {
             "key": "backstory",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Natural language instructions defining bot personality and behavior"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "AI model configured for the bot"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "boolean",
+            "type": "boolean | null",
             "description": "Whether PII protection and anonymization is enabled"
           },
           {
             "key": "moderation",
             "optional": true,
-            "type": "boolean",
+            "type": "boolean | null",
             "description": "Whether content safety and filtering is active"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility access setting (e.g. private, protected, public)"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata attached to the bot"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -568,13 +568,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, datasetId?: string | null, skillsetId?: string | null, backstory?: string | null, model?: string | null, privacy?: boolean | null, moderation?: boolean | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, datasetId?: string | null, skillsetId?: string | null, backstory?: string | null, model?: string | null, privacy?: boolean | null, moderation?: boolean | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of bots matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -621,19 +621,19 @@
           {
             "key": "datasetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated dataset ID"
           },
           {
             "key": "skillsetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated skillset ID"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated blueprint ID"
           },
           {
@@ -645,7 +645,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -795,7 +795,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -868,79 +868,79 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the conversation"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Name of the conversation"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Description of the conversation"
           },
           {
             "key": "botId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated bot ID"
           },
           {
             "key": "backstory",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Instructions override for the conversation"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Model override"
           },
           {
             "key": "datasetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Dataset ID override"
           },
           {
             "key": "skillsetId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Skillset ID override"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated blueprint ID"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -980,13 +980,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name?: string | null, description?: string | null, botId?: string | null, backstory?: string | null, model?: string | null, datasetId?: string | null, skillsetId?: string | null, blueprintId?: string | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name?: string | null, description?: string | null, botId?: string | null, backstory?: string | null, model?: string | null, datasetId?: string | null, skillsetId?: string | null, blueprintId?: string | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of conversations matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -1021,7 +1021,7 @@
           {
             "key": "botId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated bot ID"
           },
           {
@@ -1033,7 +1033,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -1085,7 +1085,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -1158,7 +1158,7 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the dataset"
           },
           {
@@ -1170,85 +1170,85 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Brief description of dataset contents"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated blueprint ID"
           },
           {
             "key": "reranker",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Configured reranker model"
           },
           {
             "key": "recordMaxTokens",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Maximum tokens per record"
           },
           {
             "key": "searchMinScore",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Minimum score for search retrieval"
           },
           {
             "key": "searchMaxRecords",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Maximum search records returned"
           },
           {
             "key": "searchMaxTokens",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Maximum search tokens returned"
           },
           {
             "key": "matchInstruction",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Prompt instruction on search match"
           },
           {
             "key": "mismatchInstruction",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Prompt instruction on search mismatch"
           },
           {
             "key": "separators",
             "optional": true,
-            "type": "string[]",
+            "type": "string[] | null",
             "description": "Text chunk separators"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -1288,13 +1288,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, reranker?: string | null, recordMaxTokens?: number | null, searchMinScore?: number | null, searchMaxRecords?: number | null, searchMaxTokens?: number | null, matchInstruction?: string | null, mismatchInstruction?: string | null, separators?: string[] | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, reranker?: string | null, recordMaxTokens?: number | null, searchMinScore?: number | null, searchMaxRecords?: number | null, searchMaxTokens?: number | null, matchInstruction?: string | null, mismatchInstruction?: string | null, separators?: string[] | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of datasets matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -1334,7 +1334,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, score?: number, text: string, meta?: {} | null }[]",
+            "type": "{ id: string, score?: number, text: string, meta?: Record<string, any> | null }[]",
             "description": "Array of search matches from the dataset"
           }
         ]
@@ -1369,7 +1369,7 @@
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated blueprint ID"
           },
           {
@@ -1381,7 +1381,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -1433,7 +1433,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -1512,43 +1512,43 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "File description"
           },
           {
             "key": "mimeType",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "MIME type of the file"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "File size in bytes"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -1588,13 +1588,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, mimeType?: string | null, size?: number | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, name: string, description?: string | null, mimeType?: string | null, size?: number | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of files matching query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -1635,7 +1635,7 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Secret configuration credentials"
           },
           {
@@ -1647,7 +1647,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -1720,7 +1720,7 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the secret"
           },
           {
@@ -1732,55 +1732,55 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Description of the secret or connected service"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated blueprint ID"
           },
           {
             "key": "kind",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Kind of secret (e.g. personal, shared)"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Type of credential template"
           },
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Credential configuration"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -1820,13 +1820,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, kind?: string | null, type?: string | null, config?: {} | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, kind?: string | null, type?: string | null, config?: Record<string, any> | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of secrets matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -1861,7 +1861,7 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated configuration credentials"
           },
           {
@@ -1873,7 +1873,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -1925,7 +1925,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -1998,7 +1998,7 @@
           {
             "key": "alias",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Custom alias for the skillset"
           },
           {
@@ -2010,43 +2010,43 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Brief description of skillset capabilities"
           },
           {
             "key": "blueprintId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated blueprint ID"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Operational state (e.g. enabled, disabled)"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -2086,13 +2086,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, visibility?: string | null, state?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, visibility?: string | null, state?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of skillsets matching the query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for the next page of results"
           }
         ]
@@ -2139,7 +2139,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]
@@ -2197,7 +2197,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom metadata"
           }
         ]
@@ -2276,49 +2276,49 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Brief description of the task"
           },
           {
             "key": "botId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Associated bot ID"
           },
           {
             "key": "schedule",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Cron schedule string"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Task execution status"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Visibility setting"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "Custom metadata"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Creation timestamp in milliseconds"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Last updated timestamp in milliseconds"
           }
         ]
@@ -2358,13 +2358,13 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, botId?: string | null, schedule?: string | null, status?: string | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "type": "{ id: string, name: string, description?: string | null, botId?: string | null, schedule?: string | null, status?: string | null, visibility?: string | null, meta?: Record<string, any> | null, createdAt?: number | null, updatedAt?: number | null }[]",
             "description": "List of tasks matching query"
           },
           {
             "key": "cursor",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Pagination cursor for next page of results"
           }
         ]
@@ -2399,13 +2399,13 @@
           {
             "key": "botId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated bot ID"
           },
           {
             "key": "schedule",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Updated cron schedule"
           },
           {
@@ -2417,7 +2417,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Updated metadata"
           }
         ]

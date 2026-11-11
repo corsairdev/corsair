@@ -66,8 +66,7 @@ A doc was created or copied in the organization
   userContext: {
     source: string
   },
-  eventDetails?: {
-  },
+  eventDetails?: Record<string, JsonValue>,
   entity: {
     type: string
   }
@@ -97,8 +96,7 @@ A doc was created or copied in the organization
     userContext: {
       source: string
     },
-    eventDetails?: {
-    },
+    eventDetails?: Record<string, JsonValue>,
     entity: {
       type: doc,
       doc: {
@@ -173,8 +171,7 @@ A doc was deleted in the organization
   userContext: {
     source: string
   },
-  eventDetails?: {
-  },
+  eventDetails?: Record<string, JsonValue>,
   entity: {
     type: string
   }
@@ -204,8 +201,7 @@ A doc was deleted in the organization
     userContext: {
       source: string
     },
-    eventDetails?: {
-    },
+    eventDetails?: Record<string, JsonValue>,
     entity: {
       type: doc,
       doc: {
@@ -282,8 +278,7 @@ A page was added to a doc
   userContext: {
     source: string
   },
-  eventDetails?: {
-  },
+  eventDetails?: Record<string, JsonValue>,
   entity: {
     type: string
   }
@@ -313,8 +308,7 @@ A page was added to a doc
     userContext: {
       source: string
     },
-    eventDetails?: {
-    },
+    eventDetails?: Record<string, JsonValue>,
     entity: {
       type: page,
       page: {
@@ -382,8 +376,7 @@ A page in a doc was edited, renamed or moved
   userContext: {
     source: string
   },
-  eventDetails?: {
-  },
+  eventDetails?: Record<string, JsonValue>,
   entity: {
     type: string
   }
@@ -413,8 +406,7 @@ A page in a doc was edited, renamed or moved
     userContext: {
       source: string
     },
-    eventDetails?: {
-    },
+    eventDetails?: Record<string, JsonValue>,
     entity: {
       type: page,
       page: {

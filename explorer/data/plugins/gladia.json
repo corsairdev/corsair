@@ -1,7 +1,7 @@
 {
   "id": "gladia",
   "displayName": "Gladia",
-  "description": "Gladia plugin for Corsair",
+  "description": "Speech-to-text API for uploading audio and video, running pre-recorded transcriptions, and managing live transcription sessions.",
   "npmPackageName": "@corsair-dev/gladia",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -85,7 +85,7 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "kind",
@@ -95,22 +95,22 @@
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "file",
             "optional": true,
-            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string }"
+            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null"
           },
           {
             "key": "request_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "result",
@@ -120,7 +120,7 @@
           {
             "key": "post_session_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -161,7 +161,7 @@
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model",
@@ -181,27 +181,27 @@
           {
             "key": "language_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "pre_processing",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "realtime_processing",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "post_processing",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "messages_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback",
@@ -211,7 +211,7 @@
           {
             "key": "callback_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -272,12 +272,12 @@
           {
             "key": "status",
             "optional": true,
-            "type": "queued | processing | done | error[]"
+            "type": "(queued | processing | done | error)[]"
           },
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -296,13 +296,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: {}, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: {} | null, result?: any, post_session_metadata?: {} }[]"
+            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: Record<string, any>, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: Record<string, any> | null, result?: any, post_session_metadata?: Record<string, any> }[]"
           }
         ]
       }
@@ -374,7 +374,7 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "kind",
@@ -384,22 +384,22 @@
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "file",
             "optional": true,
-            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string }"
+            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null"
           },
           {
             "key": "request_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "result",
@@ -409,7 +409,7 @@
           {
             "key": "post_session_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -435,7 +435,7 @@
           {
             "key": "custom_vocabulary_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -450,7 +450,7 @@
           {
             "key": "callback_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subtitles",
@@ -460,7 +460,7 @@
           {
             "key": "subtitles_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "diarization",
@@ -470,7 +470,7 @@
           {
             "key": "diarization_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "translation",
@@ -480,7 +480,7 @@
           {
             "key": "translation_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "summarization",
@@ -490,7 +490,7 @@
           {
             "key": "summarization_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "named_entity_recognition",
@@ -505,7 +505,7 @@
           {
             "key": "custom_spelling_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sentiment_analysis",
@@ -520,7 +520,7 @@
           {
             "key": "audio_to_llm_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "pii_redaction",
@@ -530,12 +530,12 @@
           {
             "key": "pii_redaction_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sentences",
@@ -550,7 +550,7 @@
           {
             "key": "language_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model",
@@ -611,12 +611,12 @@
           {
             "key": "status",
             "optional": true,
-            "type": "queued | processing | done | error[]"
+            "type": "(queued | processing | done | error)[]"
           },
           {
             "key": "custom_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -635,13 +635,13 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: {}, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: {} | null, result?: any, post_session_metadata?: {} }[]"
+            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: Record<string, any>, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: Record<string, any> | null, result?: any, post_session_metadata?: Record<string, any> }[]"
           }
         ]
       }

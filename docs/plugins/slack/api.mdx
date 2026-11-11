@@ -551,7 +551,7 @@ await corsair.slack.api.channels.getHistory({});
 | `has_more` | `boolean` | No | — |
 | `pin_count` | `number` | No | — |
 | `channel_actions_count` | `number` | No | — |
-| `channel_actions_ts` | `number` | No | — |
+| `channel_actions_ts` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="response_metadata full type">
@@ -586,8 +586,7 @@ await corsair.slack.api.channels.getHistory({});
   blocks?: {
     type: string
   }[],
-  attachments?: {
-  }[],
+  attachments?: Record<string, any>[],
   thread_ts?: string,
   parent_user_id?: string,
   reply_count?: number,
@@ -735,8 +734,7 @@ await corsair.slack.api.channels.getReplies({});
   blocks?: {
     type: string
   }[],
-  attachments?: {
-  }[],
+  attachments?: Record<string, any>[],
   thread_ts?: string,
   parent_user_id?: string,
   reply_count?: number,
@@ -1945,7 +1943,7 @@ await corsair.slack.api.messages.post({});
 | `channel` | `string` | Yes | — |
 | `text` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `thread_ts` | `string` | No | — |
 | `reply_broadcast` | `boolean` | No | — |
 | `parse` | `full \| none` | No | — |
@@ -1969,21 +1967,12 @@ await corsair.slack.api.messages.post({});
 ```
 </Accordion>
 
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="metadata full type">
 
 ```ts
 {
   event_type: string,
-  event_payload: {
-  }
+  event_payload: Record<string, any>
 }
 ```
 </Accordion>
@@ -2037,8 +2026,7 @@ await corsair.slack.api.messages.post({});
   blocks?: {
     type: string
   }[],
-  attachments?: {
-  }[],
+  attachments?: Record<string, any>[],
   thread_ts?: string,
   parent_user_id?: string,
   reply_count?: number,
@@ -2154,8 +2142,7 @@ await corsair.slack.api.messages.search({});
     blocks?: {
       type: string
     }[],
-    attachments?: {
-    }[],
+    attachments?: Record<string, any>[],
     thread_ts?: string,
     parent_user_id?: string,
     reply_count?: number,
@@ -2208,7 +2195,7 @@ await corsair.slack.api.messages.update({});
 | `ts` | `string` | Yes | — |
 | `text` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `parse` | `full \| none` | No | — |
 | `link_names` | `boolean` | No | — |
 | `as_user` | `boolean` | No | — |
@@ -2226,21 +2213,12 @@ await corsair.slack.api.messages.update({});
 ```
 </Accordion>
 
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="metadata full type">
 
 ```ts
 {
   event_type: string,
-  event_payload: {
-  }
+  event_payload: Record<string, any>
 }
 ```
 </Accordion>
@@ -2295,8 +2273,7 @@ await corsair.slack.api.messages.update({});
   blocks?: {
     type: string
   }[],
-  attachments?: {
-  }[],
+  attachments?: Record<string, any>[],
   thread_ts?: string,
   parent_user_id?: string,
   reply_count?: number,
@@ -2445,8 +2422,7 @@ await corsair.slack.api.reactions.get({});
   blocks?: {
     type: string
   }[],
-  attachments?: {
-  }[],
+  attachments?: Record<string, any>[],
   thread_ts?: string,
   parent_user_id?: string,
   reply_count?: number,
@@ -2695,8 +2671,7 @@ await corsair.slack.api.stars.list({});
     blocks?: {
       type: string
     }[],
-    attachments?: {
-    }[],
+    attachments?: Record<string, any>[],
     thread_ts?: string,
     parent_user_id?: string,
     reply_count?: number,
@@ -3581,20 +3556,10 @@ await corsair.slack.api.users.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `profile` | `object` | No | — |
+| `profile` | `Record<string, any>` | No | — |
 | `user` | `string` | No | — |
 | `name` | `string` | No | — |
 | `value` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

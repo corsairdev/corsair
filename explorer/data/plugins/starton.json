@@ -47,7 +47,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Arbitrary JSON stored alongside the pin."
           }
         ]
@@ -63,22 +63,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "origins",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "status",
@@ -88,22 +88,22 @@
           {
             "key": "delegates",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "directory | file"
+            "type": "directory | file | null"
           },
           {
             "key": "directoryContent",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "projectId",
@@ -151,9 +151,9 @@
           },
           {
             "key": "params",
-            "optional": false,
-            "type": "(string | number | boolean | {})[]",
-            "description": "Function arguments, in the order the ABI declares them."
+            "optional": true,
+            "type": "(string | number | boolean | Record<string, any>)[]",
+            "description": "Function arguments, in the order the ABI declares them. Defaults to []."
           },
           {
             "key": "signerWallet",
@@ -210,12 +210,12 @@
           {
             "key": "blockHash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "blockNumber",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "chainId",
@@ -230,7 +230,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
@@ -240,37 +240,37 @@
           {
             "key": "gasLimit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gasPrice",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "maxFeePerGas",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "maxPriorityFeePerGas",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "nonce",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "signerWallet",
@@ -280,17 +280,17 @@
           {
             "key": "publishedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "minedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signedTransaction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -305,22 +305,22 @@
           {
             "key": "speed",
             "optional": true,
-            "type": "low | average | fast | fastest | custom"
+            "type": "low | average | fast | fastest | custom | null"
           },
           {
             "key": "logs",
             "optional": false,
-            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[]"
+            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: Record<string, any>, createdAt: string }[]"
           },
           {
             "key": "to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transactionHash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",
@@ -345,7 +345,7 @@
           {
             "key": "parentTransaction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -394,9 +394,9 @@
           },
           {
             "key": "params",
-            "optional": false,
-            "type": "(string | number | boolean | {})[]",
-            "description": "Smart contract constructor parameters, in the order the template declares them."
+            "optional": true,
+            "type": "(string | number | boolean | Record<string, any>)[]",
+            "description": "Smart contract constructor parameters, in the order the template declares them. Defaults to []."
           },
           {
             "key": "description",
@@ -437,13 +437,13 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Arbitrary JSON stored alongside the contract."
           },
           {
             "key": "uiData",
             "optional": true,
-            "type": "{ version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number }",
+            "type": "{ version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null",
             "description": "Dashboard display metadata Starton stores with the contract."
           },
           {
@@ -460,12 +460,12 @@
           {
             "key": "smartContract",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: {}[], address: string, params?: string[] | null, compilationDetails?: {} | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: {} | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }"
+            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: Record<string, any>[], address: string, params?: string[] | null, compilationDetails?: Record<string, any> | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: Record<string, any> | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }"
           },
           {
             "key": "transaction",
             "optional": false,
-            "type": "{ id: string, blockHash?: string | null, blockNumber?: number | null, chainId: number, network: string, data?: string | null, from: string, gasLimit?: string | null, gasPrice?: string | null, maxFeePerGas?: string | null, maxPriorityFeePerGas?: string | null, metadata?: {} | null, nonce?: number | null, type?: number | null, signerWallet: string, publishedDate?: string | null, minedDate?: string | null, signedTransaction?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, speed?: low | average | fast | fastest | custom | null, logs: { message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[], to?: string | null, transactionHash?: string | null, value: string, automaticNonce: boolean, isDeployTransaction: boolean, projectId: string, parentTransaction?: string | null, createdAt: string, updatedAt: string }"
+            "type": "{ id: string, blockHash?: string | null, blockNumber?: number | null, chainId: number, network: string, data?: string | null, from: string, gasLimit?: string | null, gasPrice?: string | null, maxFeePerGas?: string | null, maxPriorityFeePerGas?: string | null, metadata?: Record<string, any> | null, nonce?: number | null, type?: number | null, signerWallet: string, publishedDate?: string | null, minedDate?: string | null, signedTransaction?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, speed?: low | average | fast | fastest | custom | null, logs: { message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: Record<string, any>, createdAt: string }[], to?: string | null, transactionHash?: string | null, value: string, automaticNonce: boolean, isDeployTransaction: boolean, projectId: string, parentTransaction?: string | null, createdAt: string, updatedAt: string }"
           }
         ]
       }
@@ -522,7 +522,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: {}[], address: string, params?: string[] | null, compilationDetails?: {} | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: {} | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }[]"
+            "type": "{ id: string, name: string, description?: string | null, network: string, abi?: Record<string, any>[], address: string, params?: string[] | null, compilationDetails?: Record<string, any> | null, creationHash?: string | null, status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR, minedDate?: string | null, blockNumber?: number | null, templateId?: string | null, projectId: string, metadata?: Record<string, any> | null, uiData?: { version: 1, deployMethod: web3 | kms, imported: boolean, deployType?: string, chainId?: number } | null, createdAt: string, updatedAt: string }[]"
           },
           {
             "key": "meta",
@@ -560,9 +560,9 @@
           },
           {
             "key": "params",
-            "optional": false,
-            "type": "(string | number | boolean | {})[]",
-            "description": "Function arguments, in the order the ABI declares them."
+            "optional": true,
+            "type": "(string | number | boolean | Record<string, any>)[]",
+            "description": "Function arguments, in the order the ABI declares them. Defaults to []."
           }
         ]
       },
@@ -572,12 +572,12 @@
           {
             "key": "response",
             "optional": false,
-            "type": "string | number | boolean | {} | any[]"
+            "type": "string | number | boolean | Record<string, any> | any[]"
           },
           {
             "key": "params",
             "optional": false,
-            "type": "(string | number | boolean | {})[]"
+            "type": "(string | number | boolean | Record<string, any>)[]"
           },
           {
             "key": "functionName",
@@ -667,7 +667,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, name: string, description: string, shortDescription: string, githubUrl: string, blockchains: string[], tags: string[], category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL, humanReadableAbi: string[], abi: {}[], form?: {} | null, compilationDetails?: {} | null, isAudited: boolean, isActivated: boolean, order: number, createdAt: string, updatedAt: string }[]"
+            "type": "{ id: string, name: string, description: string, shortDescription: string, githubUrl: string, blockchains: string[], tags: string[], category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL, humanReadableAbi: string[], abi: Record<string, any>[], form?: Record<string, any> | null, compilationDetails?: Record<string, any> | null, isAudited: boolean, isActivated: boolean, order: number, createdAt: string, updatedAt: string }[]"
           },
           {
             "key": "meta",
@@ -704,12 +704,12 @@
           {
             "key": "blockHash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "blockNumber",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "chainId",
@@ -724,7 +724,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
@@ -734,37 +734,37 @@
           {
             "key": "gasLimit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gasPrice",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "maxFeePerGas",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "maxPriorityFeePerGas",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "nonce",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "signerWallet",
@@ -774,17 +774,17 @@
           {
             "key": "publishedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "minedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signedTransaction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -799,22 +799,22 @@
           {
             "key": "speed",
             "optional": true,
-            "type": "low | average | fast | fastest | custom"
+            "type": "low | average | fast | fastest | custom | null"
           },
           {
             "key": "logs",
             "optional": false,
-            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: {}, createdAt: string }[]"
+            "type": "{ message: string, type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED, context?: Record<string, any>, createdAt: string }[]"
           },
           {
             "key": "to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transactionHash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",
@@ -839,7 +839,7 @@
           {
             "key": "parentTransaction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -883,7 +883,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Arbitrary JSON stored alongside the wallet."
           }
         ]
@@ -909,17 +909,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "projectId",
@@ -979,7 +979,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ address: string, providerKeyId: string, kmsId: string, name?: string | null, description?: string | null, metadata?: {} | null, projectId: string, createdAt: string, updatedAt: string }[]"
+            "type": "{ address: string, providerKeyId: string, kmsId: string, name?: string | null, description?: string | null, metadata?: Record<string, any> | null, projectId: string, createdAt: string, updatedAt: string }[]"
           },
           {
             "key": "meta",
@@ -1038,12 +1038,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
@@ -1068,7 +1068,7 @@
           {
             "key": "customEventAbi",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "triggerType",
@@ -1093,17 +1093,17 @@
           {
             "key": "pausedReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "customFilters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "createdAt",
@@ -1152,7 +1152,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, refId: string, status: RETRYING | SUCCESSFUL | FAILED | CANCELED, payload?: {} | null, url: string, headers?: {} | null, attempts: {}[], projectId: string, createdAt: string, updatedAt: string }[]"
+            "type": "{ id: string, refId: string, status: RETRYING | SUCCESSFUL | FAILED | CANCELED, payload: Record<string, any> | null, url: string, headers: Record<string, any> | null, attempts: Record<string, any>[], projectId: string, createdAt: string, updatedAt: string }[]"
           },
           {
             "key": "meta",
@@ -1190,9 +1190,19 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "size",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "projectId",
@@ -1247,6 +1257,16 @@
         },
         {
           "field": "creationHash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1313,6 +1333,11 @@
         },
         {
           "field": "githubUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1434,6 +1459,21 @@
         },
         {
           "field": "signedTransaction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "speed",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1575,6 +1615,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggerType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "webhookUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1622,6 +1672,11 @@
         },
         {
           "field": "refId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

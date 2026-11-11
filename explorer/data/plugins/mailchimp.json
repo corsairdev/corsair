@@ -97,7 +97,7 @@
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ list_id: string, segment_opts?: {} }"
+            "type": "{ list_id: string, segment_opts?: Record<string, any> }"
           },
           {
             "key": "settings",
@@ -276,7 +276,7 @@
           {
             "key": "batch_delivery",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -361,7 +361,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -417,7 +417,7 @@
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ list_id: string, segment_opts?: {} }"
+            "type": "{ list_id: string, segment_opts?: Record<string, any> }"
           },
           {
             "key": "settings",
@@ -1155,12 +1155,12 @@
           {
             "key": "merge_fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "interests",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, boolean>"
           },
           {
             "key": "tags",
@@ -1460,12 +1460,12 @@
           {
             "key": "merge_fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "interests",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, boolean>"
           }
         ]
       },
@@ -1561,12 +1561,12 @@
           {
             "key": "merge_fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "interests",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, boolean>"
           },
           {
             "key": "tags",
@@ -1647,7 +1647,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1820,7 +1820,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1922,7 +1922,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2161,7 +2161,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2434,11 +2434,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string, list_id?: string, email?: string, merges?: {} }"
+            "type": "{ id?: string, list_id?: string, email?: string, merges?: Record<string, any> }"
           }
         ]
       },
-      "responseType": "{ type: profile, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: {} } }",
+      "responseType": "{ type: profile, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: Record<string, any> } }",
       "usageExample": "mailchimp({\n    webhookHooks: {\n        profile: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
     },
     {
@@ -2466,11 +2466,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string, list_id?: string, email?: string, merges?: {} }"
+            "type": "{ id?: string, list_id?: string, email?: string, merges?: Record<string, any> }"
           }
         ]
       },
-      "responseType": "{ type: subscribe, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: {} } }",
+      "responseType": "{ type: subscribe, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: Record<string, any> } }",
       "usageExample": "mailchimp({\n    webhookHooks: {\n        subscribe: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
     },
     {
@@ -2498,11 +2498,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string, list_id?: string, email?: string, merges?: {} }"
+            "type": "{ id?: string, list_id?: string, email?: string, merges?: Record<string, any> }"
           }
         ]
       },
-      "responseType": "{ type: unsubscribe, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: {} } }",
+      "responseType": "{ type: unsubscribe, created_at?: string, fired_at?: string, data: { id?: string, list_id?: string, email?: string, merges?: Record<string, any> } }",
       "usageExample": "mailchimp({\n    webhookHooks: {\n        unsubscribe: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
     }
   ],

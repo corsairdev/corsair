@@ -2330,7 +2330,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: number, name?: string, data?: {}, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
+        "type": "{ id?: number, name?: string, data?: Record<string, any>, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
       }
     },
     {
@@ -2344,7 +2344,7 @@
           {
             "key": "dashboard",
             "optional": false,
-            "type": "{ name: string, data: {}, is_public?: boolean }"
+            "type": "{ name: string, data: Record<string, any>, is_public?: boolean }"
           }
         ]
       },
@@ -2364,7 +2364,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "is_public",
@@ -2441,7 +2441,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: number, name?: string, data?: {}, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
+        "type": "{ id?: number, name?: string, data?: Record<string, any>, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
       }
     },
     {
@@ -2495,7 +2495,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: number, name?: string, data?: {}, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
+        "type": "{ id?: number, name?: string, data?: Record<string, any>, is_public?: boolean, created_at?: string, updated_at?: string, user?: { id?: number, name?: string } }[]"
       }
     },
     {
@@ -2534,7 +2534,7 @@
           {
             "key": "dashboard",
             "optional": false,
-            "type": "{ name?: string, data?: {}, is_public?: boolean }"
+            "type": "{ name?: string, data?: Record<string, any>, is_public?: boolean }"
           }
         ]
       },
@@ -2554,7 +2554,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "is_public",
@@ -2663,7 +2663,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { allow_notes?: Record<string, any>, block_notes?: Record<string, any> }>"
       }
     },
     {
@@ -2713,7 +2713,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { allow_notes?: Record<string, any>, block_notes?: Record<string, any> }>"
       }
     },
     {
@@ -2744,7 +2744,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { allow_notes?: Record<string, any>, block_notes?: Record<string, any> }>"
       }
     },
     {
@@ -2774,7 +2774,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { allow_notes?: Record<string, any>, block_notes?: Record<string, any> }>"
       }
     },
     {
@@ -2809,7 +2809,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { allow_notes?: Record<string, any>, block_notes?: Record<string, any> }>"
       }
     },
     {
@@ -5008,7 +5008,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
+            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
           }
         ]
       }
@@ -5065,7 +5065,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
+            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
           }
         ]
       }
@@ -5126,7 +5126,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[]"
+            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[]"
           },
           {
             "key": "links",
@@ -5182,7 +5182,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[]"
+            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[]"
           },
           {
             "key": "links",
@@ -5208,13 +5208,13 @@
           {
             "key": "zapier_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -5278,7 +5278,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
+            "type": "{ id?: string, type?: string, uuid?: string, attributes?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, relationships?: { networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }"
           }
         ]
       }
@@ -5694,7 +5694,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ application?: { name?: string, display_name?: string, description?: string, home_page_url?: string, favicon?: string, icon?: string }, organization?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, allow_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[], block_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[] }"
+            "type": "{ application?: { name?: string, display_name?: string, description?: string, home_page_url?: string, favicon?: string, icon?: string }, organization?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, allow_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[], block_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[] }"
           }
         ]
       }
@@ -5735,7 +5735,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ application?: { name?: string, display_name?: string, description?: string, home_page_url?: string, favicon?: string, icon?: string }, organization?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: {}, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, allow_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[], block_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[] }"
+            "type": "{ application?: { name?: string, display_name?: string, description?: string, home_page_url?: string, favicon?: string, icon?: string }, organization?: { id?: number, address?: string, allow_create_network?: boolean, allowlist_updated_at?: string, billing_address?: string, billing_contact_email?: string, billing_contact_name?: string, billing_contact_phone?: string, billing_manual?: boolean, blocklist_updated_at?: string, canceled?: boolean, canceled_at?: string, external_id?: string, feature_flags?: string[], fetched_onboard_details?: boolean, first_traffic_sent?: string, industry?: string, managed_by_msp_id?: number, metadata?: Record<string, any>, msp_feature_flags?: string[], name?: string, owned_msp_id?: number, plan_details?: string, release_channel?: string, role?: string, send_uninstall_notifications_to_admin_users?: boolean, sso_enabled?: boolean, stripe_customer_id?: string, summary_email_address?: string, summary_email_enabled?: boolean, sync_tools_auto_update?: boolean, trial_days?: number, unbounce_data?: string, unique_id?: string, update_payment?: boolean, usage_alert_cents?: string, user_agent_uninstall_notification?: boolean, user_agent_uninstall_notification_recipient_emails?: string[], user_agents_auto_update?: boolean, will_cancel_at?: string, active_psa_integration?: boolean, segment?: string, vpn_settings_organization?: { vpn_settings_state_type_id?: number } }, allow_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[], block_policies?: { id?: string, type?: string, uuid?: string, attributes?: { name?: string, organization_id?: number, whitelist_domains?: string[], blacklist_domains?: string[], blacklist_categories?: number[], allow_unknown_domains?: boolean, google_safesearch?: boolean, bing_safe_search?: boolean, duck_duck_go_safe_search?: boolean, ecosia_safesearch?: boolean, yandex_safe_search?: boolean, youtube_restricted?: boolean, youtube_restricted_level?: strict | none | string, interstitial?: boolean, is_global_policy?: boolean, can_edit?: boolean, lock_version?: number, allow_list_only?: boolean }, relationships?: { organization?: { data?: { id?: string, type?: string, uuid?: string } }, network_policies?: { data?: { id?: string, type?: string, uuid?: string }[] }, networks?: { data?: { id?: string, type?: string, uuid?: string }[] } } }[] }"
           }
         ]
       }
@@ -10641,7 +10641,7 @@
           {
             "key": "resolved_date",
             "optional": true,
-            "type": "{ value?: {}, operator?: string }"
+            "type": "{ value?: Record<string, any>, operator?: string }"
           },
           {
             "key": "search",
@@ -10671,7 +10671,7 @@
           {
             "key": "time_of_attempt",
             "optional": true,
-            "type": "{ value?: {}, operator?: string }"
+            "type": "{ value?: Record<string, any>, operator?: string }"
           }
         ]
       },
@@ -11770,7 +11770,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

@@ -1,7 +1,7 @@
 {
   "id": "cosmic",
   "displayName": "Cosmic",
-  "description": "Cosmic plugin for Corsair",
+  "description": "Headless CMS. Manage objects, object types, media, and revisions.",
   "npmPackageName": "@corsair-dev/cosmic",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -70,7 +70,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "props",
@@ -100,7 +100,7 @@
           {
             "key": "media",
             "optional": false,
-            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }[]"
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: Record<string, any> }[]"
           },
           {
             "key": "total",
@@ -146,7 +146,7 @@
           {
             "key": "media",
             "optional": false,
-            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }"
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: Record<string, any> }"
           }
         ]
       }
@@ -192,7 +192,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "trigger_webhook",
@@ -207,7 +207,7 @@
           {
             "key": "media",
             "optional": false,
-            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: {} }"
+            "type": "{ id: string, name: string, original_name?: string, url?: string, imgix_url?: string, folder?: string, alt_text?: string, width?: number, height?: number, size?: number | string, type?: string, bucket?: string, created_at?: string, metadata?: Record<string, any> }"
           }
         ]
       }
@@ -243,7 +243,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "trigger_webhook",
@@ -279,7 +279,7 @@
           {
             "key": "operations",
             "optional": false,
-            "type": "{ method: add | edit | delete, object_id?: string, object?: {}, trigger_webhook?: boolean }[]"
+            "type": "{ method: add | edit | delete, object_id?: string, object?: Record<string, any>, trigger_webhook?: boolean }[]"
           }
         ]
       },
@@ -289,7 +289,7 @@
           {
             "key": "operations",
             "optional": false,
-            "type": "{ method: string, status: string, object?: {}, message?: string }[]"
+            "type": "{ method: string, status: string, object?: Record<string, any>, message?: string }[]"
           }
         ]
       }
@@ -351,7 +351,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "props",
@@ -396,7 +396,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }[]"
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: Record<string, any>, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }[]"
           },
           {
             "key": "total",
@@ -457,7 +457,7 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: Record<string, any>, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
           }
         ]
       }
@@ -503,7 +503,7 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+            "type": "{ id: string, slug?: string, title?: string, type?: string, status?: string, metadata?: Record<string, any>, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
           }
         ]
       }
@@ -544,7 +544,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "trigger_webhook",
@@ -559,7 +559,7 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: Record<string, any>, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
           }
         ]
       }
@@ -600,7 +600,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "trigger_webhook",
@@ -615,7 +615,7 @@
           {
             "key": "object",
             "optional": false,
-            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: {}, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
+            "type": "{ id: string, slug: string, title: string, type: string, status?: string, metadata?: Record<string, any>, created_at?: string, modified_at?: string, published_at?: string, bucket?: string }"
           }
         ]
       }
@@ -881,7 +881,7 @@
           {
             "key": "revisions",
             "optional": false,
-            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }[]"
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: Record<string, any>, created_at?: string }[]"
           },
           {
             "key": "total",
@@ -932,7 +932,7 @@
           {
             "key": "revision",
             "optional": false,
-            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }"
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: Record<string, any>, created_at?: string }"
           }
         ]
       }
@@ -968,7 +968,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "trigger_webhook",
@@ -983,7 +983,7 @@
           {
             "key": "revision",
             "optional": false,
-            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: {}, created_at?: string }"
+            "type": "{ id: string, object_id: string, title: string, slug: string, status?: string, metadata?: Record<string, any>, created_at?: string }"
           }
         ]
       }

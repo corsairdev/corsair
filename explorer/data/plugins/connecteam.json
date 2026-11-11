@@ -934,6 +934,11 @@
           "field": "useParentData",
           "type": "boolean",
           "operators": ["equals"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },

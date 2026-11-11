@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Castingwords: every `castingwords.api.*` operation with input and output types."
+description: "API reference for CastingWords: every `castingwords.api.*` operation with input and output types."
 ---
 
 Every `castingwords.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -87,9 +87,9 @@ await corsair.castingwords.api.invoice.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `purchase_order` | `string \| number` | No | — |
+| `purchase_order` | `string \| number \| null` | No | — |
 | `createtime` | `string` | No | — |
-| `paidtime` | `string` | No | — |
+| `paidtime` | `string \| null` | No | — |
 | `total` | `string \| number` | No | — |
 | `items` | `object[]` | No | — |
 | `state` | `PAID \| SUBMITTED \| OPEN \| CREATED` | No | — |
@@ -133,7 +133,7 @@ await corsair.castingwords.api.order.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string \| string[]` | Yes | — |
-| `sku` | `TRANS14 \| TRANS2 \| TRANS6 \| TRANS7 \| EMSR02 \| DIFFQ2 \| TSTMP1 \| CAPTION1[]` | Yes | — |
+| `sku` | `(TRANS14 \| TRANS2 \| TRANS6 \| TRANS7 \| EMSR02 \| DIFFQ2 \| TSTMP1 \| CAPTION1)[]` | Yes | — |
 | `test` | `boolean` | No | — |
 | `notes` | `string` | No | — |
 | `names` | `string[]` | No | — |
@@ -273,7 +273,7 @@ await corsair.castingwords.api.transcript.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `audiofileId` | `number \| string` | Yes | — |
-| `extension` | `txt \| doc \| rtf \| html \| srt \| docx \| tstxt \| vtt` | Yes | — |
+| `extension` | `txt \| doc \| rtf \| html \| srt \| docx \| tstxt \| vtt` | No | Defaults to "txt". |
 | `test` | `boolean` | No | — |
 
 
@@ -302,7 +302,7 @@ await corsair.castingwords.api.upgrade.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `audiofileId` | `number \| string` | Yes | — |
-| `sku` | `DIFFQ2 \| TSTMP1 \| CAPTION1 \| EDIT01 \| UPGRD1 \| UPGRD2 \| UPGRD3[]` | Yes | — |
+| `sku` | `(DIFFQ2 \| TSTMP1 \| CAPTION1 \| EDIT01 \| UPGRD1 \| UPGRD2 \| UPGRD3)[]` | Yes | — |
 | `test` | `boolean` | No | — |
 
 
@@ -339,7 +339,7 @@ await corsair.castingwords.api.webhook.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `webhook` | `string \| ` | No | — |
+| `webhook` | `string \| "" \| null` | No | — |
 
 
 
@@ -369,7 +369,7 @@ await corsair.castingwords.api.webhook.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `webhook` | `string \| ` | No | — |
+| `webhook` | `string \| "" \| null` | No | — |
 
 
 
@@ -399,7 +399,7 @@ await corsair.castingwords.api.webhook.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `webhook` | `string \| ` | No | — |
+| `webhook` | `string \| "" \| null` | No | — |
 
 
 

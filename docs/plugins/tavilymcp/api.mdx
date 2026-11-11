@@ -31,14 +31,14 @@ await corsair.tavilymcp.api.tavily.crawl({});
 | `max_depth` | `number` | No | — |
 | `max_breadth` | `number` | No | — |
 | `limit` | `number` | No | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `chunks_per_source` | `number` | No | — |
 | `select_paths` | `string[]` | No | — |
 | `select_domains` | `string[]` | No | — |
 | `exclude_paths` | `string[]` | No | — |
 | `exclude_domains` | `string[]` | No | — |
 | `allow_external` | `boolean` | No | — |
-| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People[]` | No | — |
+| `categories` | `(Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People)[]` | No | — |
 | `extract_depth` | `basic \| advanced` | No | — |
 | `format` | `markdown \| text` | No | — |
 | `include_images` | `boolean` | No | — |
@@ -192,13 +192,13 @@ await corsair.tavilymcp.api.tavily.map({});
 | `max_depth` | `number` | No | — |
 | `max_breadth` | `number` | No | — |
 | `limit` | `number` | No | — |
-| `instructions` | `string` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `select_paths` | `string[]` | No | — |
 | `select_domains` | `string[]` | No | — |
 | `exclude_paths` | `string[]` | No | — |
 | `exclude_domains` | `string[]` | No | — |
 | `allow_external` | `boolean` | No | — |
-| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People[]` | No | — |
+| `categories` | `(Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People)[]` | No | — |
 | `timeout` | `number` | No | — |
 | `include_usage` | `boolean` | No | — |
 
@@ -247,7 +247,7 @@ await corsair.tavilymcp.api.tavily.research({});
 |------|------|----------|-------------|
 | `input` | `string` | Yes | — |
 | `model` | `auto \| mini \| pro` | No | — |
-| `output_schema` | `object` | No | — |
+| `output_schema` | `Record<string, any> \| null` | No | — |
 | `citation_format` | `numbered \| mla \| apa \| chicago` | No | — |
 | `include_domains` | `string[]` | No | — |
 | `exclude_domains` | `string[]` | No | — |
@@ -257,14 +257,6 @@ await corsair.tavilymcp.api.tavily.research({});
 | `poll_interval_ms` | `number` | No | — |
 
 <AccordionGroup>
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="files full type">
 
 ```ts
@@ -285,23 +277,15 @@ await corsair.tavilymcp.api.tavily.research({});
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
 | `status` | `pending \| in_progress \| completed \| failed` | Yes | — |
-| `input` | `string` | No | — |
-| `model` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `content` | `object` | No | — |
+| `input` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `content` | `string \| Record<string, any> \| null` | No | — |
 | `sources` | `object[]` | No | — |
-| `response_time` | `number` | No | — |
+| `response_time` | `number \| null` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="content full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
 <Accordion title="sources full type">
 
 ```ts
@@ -348,9 +332,9 @@ await corsair.tavilymcp.api.tavily.search({});
 | `chunks_per_source` | `number` | No | — |
 | `max_results` | `number` | No | — |
 | `topic` | `general \| news \| finance` | No | — |
-| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
+| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
 | `include_answer` | `boolean \| basic \| advanced` | No | — |
 | `include_raw_content` | `boolean \| markdown \| text` | No | — |
 | `include_images` | `boolean` | No | — |
@@ -358,7 +342,7 @@ await corsair.tavilymcp.api.tavily.search({});
 | `include_favicon` | `boolean` | No | — |
 | `include_domains` | `string[]` | No | — |
 | `exclude_domains` | `string[]` | No | — |
-| `country` | `string` | No | — |
+| `country` | `string \| null` | No | — |
 | `auto_parameters` | `boolean` | No | — |
 | `exact_match` | `boolean` | No | — |
 | `safe_search` | `boolean` | No | — |
@@ -371,14 +355,14 @@ await corsair.tavilymcp.api.tavily.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `answer` | `string` | No | — |
-| `follow_up_questions` | `string[]` | No | — |
+| `answer` | `string \| null` | No | — |
+| `follow_up_questions` | `string[] \| null` | No | — |
 | `images` | `object[]` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `response_time` | `number` | Yes | — |
 | `usage` | `object` | No | — |
 | `request_id` | `string` | No | — |
-| `auto_parameters` | `object` | No | — |
+| `auto_parameters` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="images full type">
@@ -415,14 +399,6 @@ await corsair.tavilymcp.api.tavily.search({});
 ```ts
 {
   credits: number
-}
-```
-</Accordion>
-
-<Accordion title="auto_parameters full type">
-
-```ts
-{
 }
 ```
 </Accordion>
