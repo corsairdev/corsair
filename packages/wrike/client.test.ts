@@ -76,6 +76,8 @@ describe('makeWrikeRequest', () => {
 		const error = (await makeWrikeRequest(API_KEY, {
 			method: 'GET',
 			path: '/tasks',
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as WrikeAPIError;
 
 		expect(error).toBeInstanceOf(WrikeAPIError);
@@ -93,6 +95,8 @@ describe('makeWrikeRequest', () => {
 		const error = (await makeWrikeRequest(API_KEY, {
 			method: 'POST',
 			path: '/folders/IEA1/tasks',
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as WrikeAPIError;
 
 		expect(error.message).toBe('fetch failed');

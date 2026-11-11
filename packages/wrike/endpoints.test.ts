@@ -305,6 +305,8 @@ describe('comments', () => {
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('POST');
 		expect(sent.body).toEqual({ text: 'Looks good to me.' });
+		// unknown: the log payload is a free-form record; only the keys asserted
+		// below are relied on.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('text');
 		expect(logged.length).toBe('Looks good to me.'.length);
@@ -329,6 +331,22 @@ describe('comments', () => {
 		await invoke(Timelogs.removeComment, { id: comment.id });
 
 		expect(lastRequest(fetchMock).method).toBe('DELETE');
+	});
+
+	it('lists every comment in the account, paged', async () => {
+		respond(fetchMock, commentsEnvelope);
+
+		const result = (await invoke(Timelogs.listComments, {
+			pageSize: 25,
+			nextPageToken: 'tok-2',
+		})) as { data?: { id?: string }[] };
+
+		const sent = lastRequest(fetchMock);
+		expect(sent.method).toBe('GET');
+		expect(sent.path).toBe('/api/v4/comments');
+		expect(sent.query.pageSize).toBe('25');
+		expect(sent.query.nextPageToken).toBe('tok-2');
+		expect(Array.isArray(result.data)).toBe(true);
 	});
 });
 

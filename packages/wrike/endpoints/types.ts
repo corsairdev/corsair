@@ -59,6 +59,8 @@ const TaskSchema = z
 		createdDate: z.string().nullish(),
 		updatedDate: z.string().nullish(),
 		completedDate: z.string().nullish(),
+		// unknown: custom fields are account-defined, so their ids and values have no
+		// static shape; the object is passed through as the API sent it.
 		customFields: z.array(z.record(z.string(), z.unknown())).nullish(),
 	})
 	.loose();
@@ -107,6 +109,8 @@ const ContactSchema = z
 		deleted: z.boolean().nullish(),
 		me: z.boolean().nullish(),
 		myTeam: z.boolean().nullish(),
+		// unknown: a profile carries account-defined field ids, so its keys are not
+		// known here; the record is passed through as sent.
 		profiles: z.array(z.record(z.string(), z.unknown())).nullish(),
 	})
 	.loose();
@@ -285,6 +289,8 @@ const TasksCreateInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Additional parent folders, beyond the one in the path.'),
+	// unknown: custom fields are account-defined, so their ids and values have no
+	// static shape; the object is passed through as the API sent it.
 	customFields: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
 	metadata: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
 });
@@ -318,6 +324,8 @@ const TasksUpdateInputSchema = z
 			.boolean()
 			.optional()
 			.describe('Restore a task from the recycle bin.'),
+		// unknown: custom fields are account-defined, so their ids and values have no
+		// static shape; the object is passed through as the API sent it.
 		customFields: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
 	})
 	.superRefine((value, ctx) => {
@@ -414,6 +422,8 @@ const FoldersUpdateInputSchema = z.object({
 	description: z.string().optional(),
 	addParents: z.array(IdSchema).min(1).optional(),
 	removeParents: z.array(IdSchema).min(1).optional(),
+	// unknown: custom fields are account-defined, so their ids and values have no
+	// static shape; the object is passed through as the API sent it.
 	customFields: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
 });
 
@@ -594,6 +604,8 @@ const AccountSchema = z
 		recycleBinId: z.string().nullish(),
 		timezone: z.string().nullish(),
 		locale: z.string().nullish(),
+		// unknown: the subscription payload names plan and feature ids that Wrike adds
+		// over time, so it is passed through rather than pinned.
 		subscription: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();

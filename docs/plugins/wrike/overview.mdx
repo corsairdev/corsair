@@ -76,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+A call with no saved key throws `AuthMissingError`. Save a Wrike permanent token on the account before calling, or pass `key` in the plugin options. A token only works against the host that issued it, so set `host` for a regional account.
 
 ```ts
 wrike()

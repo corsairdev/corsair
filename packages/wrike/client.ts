@@ -185,6 +185,8 @@ export async function makeWrikeRequest(
 	};
 
 	try {
+		// unknown: the body is provider JSON until the caller's output schema parses
+		// it; `request` cannot know the operation's shape.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: WRIKE_RATE_LIMIT_CONFIG,
 		});
