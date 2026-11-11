@@ -27,18 +27,9 @@ await corsair.placid.api.collections.create({ title: 'Acme onboarding', template
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string \| null` | Yes | — |
-| `custom_data` | `string \| object` | No | — |
-| `template_uuids` | `string[] \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
+| `title` | `string` | Yes | — |
+| `custom_data` | `string \| Record<string, any>` | No | — |
+| `template_uuids` | `string[]` | No | — |
 
 
 
@@ -48,18 +39,9 @@ string | Record<string, unknown>
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | — |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -122,18 +104,9 @@ await corsair.placid.api.collections.get({ collection_id: 'col_1234' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | — |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -175,8 +148,7 @@ await corsair.placid.api.collections.list({ per_page: 20 });
 {
   id: string,
   title?: string | null,
-  custom_data?: string | {
-  } | unknown[] | null,
+  custom_data?: string | Record<string, any> | any[] | null,
   templates?: string[] | null,
   template_uuids?: string[] | null
 }[]
@@ -191,7 +163,7 @@ await corsair.placid.api.collections.list({ per_page: 20 });
   last?: string | null,
   prev?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -201,7 +173,7 @@ await corsair.placid.api.collections.list({ per_page: 20 });
 {
   path?: string | null,
   per_page?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -227,20 +199,11 @@ await corsair.placid.api.collections.update({ collection_id: 'col_1234', add_tem
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `collection_id` | `string` | Yes | — |
-| `title` | `string \| null` | No | — |
-| `custom_data` | `string \| object` | No | — |
-| `template_uuids` | `string[] \| null` | No | Replaces the whole list of templates in the collection. |
+| `title` | `string` | No | — |
+| `custom_data` | `string \| Record<string, any> \| null` | No | — |
+| `template_uuids` | `string[]` | No | Replaces the whole list of templates in the collection. |
 | `add_template_uuids` | `string[]` | No | Adds these templates, keeping the existing ones. |
 | `remove_template_uuids` | `string[]` | No | Removes these templates. |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -250,18 +213,9 @@ string | Record<string, unknown> | null
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | — |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | — |
 | `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
 | `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -286,9 +240,9 @@ await corsair.placid.api.fonts.create({ file_url: 'https://example.com/Helvetica
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `file_url` | `string` | Yes | A publicly reachable ttf, otf, woff or woff2 file over HTTP(S). Private addresses are rejected, and the download is capped at 25 MB. |
-| `title` | `string \| null` | No | Display title. Defaults to the filename. |
+| `title` | `string` | No | Display title. Defaults to the filename. |
 | `terms_accepted` | `true` | Yes | You must confirm you own the font or hold a licence to use it. Placid rejects the upload without it. |
-| `filename` | `string \| null` | No | — |
+| `filename` | `string` | No | — |
 
 
 
@@ -424,7 +378,7 @@ await corsair.placid.api.fonts.list({ include_legacy: true });
   last?: string | null,
   prev?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -434,7 +388,7 @@ await corsair.placid.api.fonts.list({ include_legacy: true });
 {
   path?: string | null,
   per_page?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -460,7 +414,7 @@ await corsair.placid.api.fonts.update({ uuid: 'f1abc123def456', title: 'Helvetic
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
-| `title` | `string \| null` | Yes | — |
+| `title` | `string` | Yes | — |
 
 
 
@@ -502,14 +456,42 @@ await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { t
 | `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
 | `webhook_success` | `string` | No | Placid POSTs the finished image object to this URL. |
 | `create_now` | `boolean` | No | render immediately instead of queueing. Placid allows 10 simultaneous calls this way; past that the call can fail. |
-| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+| `passthrough` | `string \| any[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
 
 <AccordionGroup>
 <Accordion title="layers full type">
 
 ```ts
-{
-}
+Record<string, {
+  hide?: boolean,
+  opacity?: number,
+  rotation?: number,
+  position_x_absolute?: string,
+  position_y_absolute?: string,
+  position_x_relative?: string,
+  position_y_relative?: string,
+  width?: string,
+  height?: string,
+  link_target?: string,
+  text?: string | string[],
+  text_color?: string,
+  font?: string,
+  alt_text_color?: string,
+  alt_font?: string,
+  direction?: auto | ltr | rtl,
+  image?: string | string[],
+  image_viewport?: string,
+  video?: string,
+  url?: string,
+  background_color?: string,
+  border_color?: string,
+  border_radius?: string,
+  border_width?: string,
+  svg?: string,
+  value?: string | number,
+  color?: string,
+  srt?: string
+}>
 ```
 </Accordion>
 
@@ -520,10 +502,10 @@ await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { t
   width?: string | number,
   height?: string | number,
   filename?: string,
-  image_format?: 'auto' | 'jpg' | 'png' | 'webp',
+  image_format?: auto | jpg | png | webp,
   dpi?: number | string,
-  color_mode?: 'rgb' | 'cmyk',
-  image_quality?: 'high' | 'medium' | 'low'
+  color_mode?: rgb | cmyk,
+  image_quality?: high | medium | low
 }
 ```
 </Accordion>
@@ -532,12 +514,12 @@ await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { t
 
 ```ts
 {
-  to: 's3',
+  to: s3,
   key: string,
   secret: string,
   region?: string,
   bucket: string,
-  visibility?: 'public' | 'private',
+  visibility?: public | private,
   path: string,
   endpoint?: string,
   token?: string
@@ -553,13 +535,13 @@ await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { t
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `image_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
-| `errors` | `string[]` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
+| `error_details` | `object[] \| null` | No | — |
+| `errors` | `string[] \| null` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -568,7 +550,7 @@ await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { t
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -633,13 +615,13 @@ await corsair.placid.api.images.get({ id: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `image_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
-| `errors` | `string[]` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
+| `error_details` | `object[] \| null` | No | — |
+| `errors` | `string[] \| null` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -648,7 +630,7 @@ await corsair.placid.api.images.get({ id: 1 });
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -676,8 +658,8 @@ await corsair.placid.api.media.upload({ file_url: 'https://example.com/assets/lo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `file_url` | `string` | Yes | A publicly reachable HTTP(S) URL. The plugin downloads it and forwards the bytes as multipart. Private addresses are rejected, and the download is capped at 25 MB. |
-| `filename` | `string \| null` | No | Overrides the name from the URL. |
-| `file_key` | `string \| null` | No | The key the reply is filed under. Defaults to `file`. |
+| `filename` | `string` | No | Overrides the name from the URL. |
+| `file_key` | `string` | No | The key the reply is filed under. Defaults to `file`. |
 
 
 
@@ -725,7 +707,7 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 | `modifications` | `object` | No | Output sizing and format. Placid overrides the template default. |
 | `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
 | `webhook_success` | `string` | No | — |
-| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+| `passthrough` | `string \| any[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
 
 <AccordionGroup>
 <Accordion title="pages full type">
@@ -733,8 +715,36 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 ```ts
 {
   template_uuid: string,
-  layers?: {
-  }
+  layers?: Record<string, {
+    hide?: boolean,
+    opacity?: number,
+    rotation?: number,
+    position_x_absolute?: string,
+    position_y_absolute?: string,
+    position_x_relative?: string,
+    position_y_relative?: string,
+    width?: string,
+    height?: string,
+    link_target?: string,
+    text?: string | string[],
+    text_color?: string,
+    font?: string,
+    alt_text_color?: string,
+    alt_font?: string,
+    direction?: auto | ltr | rtl,
+    image?: string | string[],
+    image_viewport?: string,
+    video?: string,
+    url?: string,
+    background_color?: string,
+    border_color?: string,
+    border_radius?: string,
+    border_width?: string,
+    svg?: string,
+    value?: string | number,
+    color?: string,
+    srt?: string
+  }>
 }[]
 ```
 </Accordion>
@@ -746,10 +756,10 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
   width?: string | number,
   height?: string | number,
   filename?: string,
-  image_format?: 'auto' | 'jpg' | 'png' | 'webp',
+  image_format?: auto | jpg | png | webp,
   dpi?: number | string,
-  color_mode?: 'rgb' | 'cmyk',
-  image_quality?: 'high' | 'medium' | 'low'
+  color_mode?: rgb | cmyk,
+  image_quality?: high | medium | low
 }
 ```
 </Accordion>
@@ -758,12 +768,12 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 
 ```ts
 {
-  to: 's3',
+  to: s3,
   key: string,
   secret: string,
   region?: string,
   bucket: string,
-  visibility?: 'public' | 'private',
+  visibility?: public | private,
   path: string,
   endpoint?: string,
   token?: string
@@ -779,12 +789,12 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `pdf_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
+| `error_details` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -793,7 +803,7 @@ await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers:
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -858,12 +868,12 @@ await corsair.placid.api.pdfs.get({ id: 2 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `pdf_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
+| `error_details` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -872,7 +882,7 @@ await corsair.placid.api.pdfs.get({ id: 2 });
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -900,19 +910,19 @@ await corsair.placid.api.pdfs.merge({ urls: ['https://example.com/a.pdf', 'https
 | `urls` | `string[]` | Yes | Publicly reachable PDF URLs to merge, in order. |
 | `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
 | `webhook_success` | `string` | No | — |
-| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+| `passthrough` | `string \| any[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
 
 <AccordionGroup>
 <Accordion title="transfer full type">
 
 ```ts
 {
-  to: 's3',
+  to: s3,
   key: string,
   secret: string,
   region?: string,
   bucket: string,
-  visibility?: 'public' | 'private',
+  visibility?: public | private,
   path: string,
   endpoint?: string,
   token?: string
@@ -928,12 +938,12 @@ await corsair.placid.api.pdfs.merge({ urls: ['https://example.com/a.pdf', 'https
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `pdf_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
+| `error_details` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -942,7 +952,7 @@ await corsair.placid.api.pdfs.merge({ urls: ['https://example.com/a.pdf', 'https
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -969,22 +979,13 @@ await corsair.placid.api.templates.create({ title: 'Employee of the month', widt
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string \| null` | Yes | — |
-| `width` | `number \| null` | No | — |
-| `height` | `number \| null` | No | — |
-| `tags` | `string[] \| null` | No | — |
-| `custom_data` | `string \| object` | No | A reference value, such as a serialized JSON object. |
+| `title` | `string` | Yes | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_data` | `string \| Record<string, any>` | No | A reference value, such as a serialized JSON object. |
 | `from_template` | `string` | No | Duplicate this template UUID. Overrides `title`, `width` and `height` with the source values. |
 | `add_to_collections` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -997,7 +998,7 @@ string | Record<string, unknown>
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1010,14 +1011,7 @@ string | Record<string, unknown>
 {
   name?: string | null,
   type?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1086,7 +1080,7 @@ await corsair.placid.api.templates.get({ template_uuid: 'ospo24ysn' });
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1099,14 +1093,7 @@ await corsair.placid.api.templates.get({ template_uuid: 'ospo24ysn' });
 {
   name?: string | null,
   type?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1160,8 +1147,7 @@ await corsair.placid.api.templates.list({ tag: 'social', order_by: 'title-asc' }
     name?: string | null,
     type?: string | null
   }[] | null,
-  custom_data?: string | {
-  } | unknown[] | null,
+  custom_data?: string | Record<string, any> | any[] | null,
   width?: number | null,
   height?: number | null,
   created_at?: string | null,
@@ -1178,7 +1164,7 @@ await corsair.placid.api.templates.list({ tag: 'social', order_by: 'title-asc' }
   last?: string | null,
   prev?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1188,7 +1174,7 @@ await corsair.placid.api.templates.list({ tag: 'social', order_by: 'title-asc' }
 {
   path?: string | null,
   per_page?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1214,18 +1200,9 @@ await corsair.placid.api.templates.update({ template_uuid: 'ospo24ysn', title: '
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `template_uuid` | `string` | Yes | — |
-| `title` | `string \| null` | No | — |
-| `tags` | `string[] \| null` | No | — |
-| `custom_data` | `string \| object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | null
-```
-</Accordion>
-</AccordionGroup>
+| `title` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_data` | `string \| Record<string, any> \| null` | No | — |
 
 
 
@@ -1238,7 +1215,7 @@ string | Record<string, unknown> | null
 | `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
 | `tags` | `string[] \| null` | No | — |
 | `layers` | `object[] \| null` | No | — |
-| `custom_data` | `string \| object \| unknown[]` | No | The reference value set on the template, if any. |
+| `custom_data` | `string \| Record<string, any> \| any[] \| null` | No | The reference value set on the template, if any. |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -1251,14 +1228,7 @@ string | Record<string, unknown> | null
 {
   name?: string | null,
   type?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="custom_data full type">
-
-```ts
-string | Record<string, unknown> | unknown[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1289,7 +1259,7 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 | `modifications` | `object` | No | Video output settings. |
 | `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
 | `webhook_success` | `string` | No | — |
-| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+| `passthrough` | `string \| any[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
 
 <AccordionGroup>
 <Accordion title="clips full type">
@@ -1297,10 +1267,38 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 ```ts
 {
   template_uuid: string,
-  layers?: {
-  },
+  layers?: Record<string, {
+    hide?: boolean,
+    opacity?: number,
+    rotation?: number,
+    position_x_absolute?: string,
+    position_y_absolute?: string,
+    position_x_relative?: string,
+    position_y_relative?: string,
+    width?: string,
+    height?: string,
+    link_target?: string,
+    text?: string | string[],
+    text_color?: string,
+    font?: string,
+    alt_text_color?: string,
+    alt_font?: string,
+    direction?: auto | ltr | rtl,
+    image?: string | string[],
+    image_viewport?: string,
+    video?: string,
+    url?: string,
+    background_color?: string,
+    border_color?: string,
+    border_radius?: string,
+    border_width?: string,
+    svg?: string,
+    value?: string | number,
+    color?: string,
+    srt?: string
+  }>,
   audio?: string,
-  audio_duration?: 'auto',
+  audio_duration?: auto | full,
   audio_trim_start?: string,
   audio_trim_end?: string
 }[]
@@ -1311,7 +1309,7 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 
 ```ts
 {
-  format?: 'mp4',
+  format?: mp4,
   width?: string | number,
   height?: string | number,
   canvas_background?: string,
@@ -1325,12 +1323,12 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 
 ```ts
 {
-  to: 's3',
+  to: s3,
   key: string,
   secret: string,
   region?: string,
   bucket: string,
-  visibility?: 'public' | 'private',
+  visibility?: public | private,
   path: string,
   endpoint?: string,
   token?: string
@@ -1346,12 +1344,12 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `video_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
+| `error_details` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -1360,7 +1358,7 @@ await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', l
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1425,12 +1423,12 @@ await corsair.placid.api.videos.get({ id: 3 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `status` | `queued \| finished \| error \| string` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
 | `polling_url` | `string \| null` | No | GET this until `status` settles. |
 | `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
 | `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
 | `video_url` | `string \| null` | No | — |
-| `error_details` | `object[]` | No | — |
+| `error_details` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="error_details full type">
@@ -1439,7 +1437,7 @@ await corsair.placid.api.videos.get({ id: 3 });
 {
   layer?: string | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
