@@ -217,6 +217,15 @@ describe('transcriptions', () => {
 		});
 	});
 
+	it('renames _links to links on the updated transcription', async () => {
+		respond(transcription);
+		const result = await invoke<{ links?: unknown }>(
+			Transcriptions.updateDetails,
+			{ fileId: transcription.id, organizationId: 123, name: 'Renamed' },
+		);
+		expect(result.links).toEqual(transcription._links);
+	});
+
 	it('deletes and parses the empty answer', async () => {
 		respondEmpty(204);
 		await invoke(Transcriptions.delete, { fileId: transcription.id });

@@ -174,6 +174,7 @@ export const updateDetails: HappyScribeEndpoints['transcriptionsUpdateDetails'] 
 					},
 				},
 			}),
+			{ shape: withLinks },
 		);
 
 export const remove: HappyScribeEndpoints['transcriptionsDelete'] = (
