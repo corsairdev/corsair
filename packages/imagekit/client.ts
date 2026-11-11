@@ -7,6 +7,8 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 export const IMAGEKIT_API_BASE = 'https://api.imagekit.io';
+// Upload is served from its own origin; api.imagekit.io answers 404 there.
+export const IMAGEKIT_UPLOAD_BASE = 'https://upload.imagekit.io';
 
 // An upload can carry several megabytes of base64 data, so corsair/http's 20
 // second default is tight.
@@ -106,6 +108,8 @@ export type ImageKitRequest = {
 	formData?: Record<string, string | string[]>;
 	/** Marks reads whose 5xx failure can be retried without repeating an effect. */
 	replaySafe?: boolean;
+	/** Sends the request to upload.imagekit.io instead of api.imagekit.io. */
+	uploadOrigin?: boolean;
 };
 
 /** Encodes one path segment. */
@@ -124,10 +128,18 @@ function authHeader(apiKey: string): string {
 // is undefined for the bodyless answers: 204 on delete file and folder delete.
 export async function makeImageKitRequest(
 	apiKey: string,
-	{ path, query, body, formData, method, replaySafe }: ImageKitRequest,
+	{
+		path,
+		query,
+		body,
+		formData,
+		method,
+		replaySafe,
+		uploadOrigin,
+	}: ImageKitRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
-		BASE: IMAGEKIT_API_BASE,
+		BASE: uploadOrigin ? IMAGEKIT_UPLOAD_BASE : IMAGEKIT_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

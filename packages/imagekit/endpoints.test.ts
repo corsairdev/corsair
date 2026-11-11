@@ -75,9 +75,9 @@ function lastRequest() {
 	};
 }
 
-function expectAuthenticated() {
+function expectAuthenticated(origin = 'https://api.imagekit.io') {
 	const sent = lastRequest();
-	expect(sent.origin).toBe('https://api.imagekit.io');
+	expect(sent.origin).toBe(origin);
 	expect(sent.headers.get('authorization')).toBe(
 		`Basic ${Buffer.from(`${API_KEY}:`).toString('base64')}`,
 	);
@@ -105,7 +105,8 @@ describe('files.upload', () => {
 		});
 
 		expect(result.fileId).toBe(upload.fileId);
-		expectAuthenticated();
+		// Upload has its own origin; api.imagekit.io answers 404 there.
+		expectAuthenticated('https://upload.imagekit.io');
 		const sent = lastRequest();
 		expect(sent.path).toBe('/api/v1/files/upload');
 		const form = sent.body as FormData;

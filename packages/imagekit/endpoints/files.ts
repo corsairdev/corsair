@@ -32,8 +32,10 @@ export const upload: ImageKitEndpoints['filesUpload'] = (ctx, input) =>
 			description,
 		}) => ({
 			method: 'POST',
-			// Upload lives under /api/v1, everything else under /v1.
+			// Upload lives on upload.imagekit.io under /api/v1; everything else
+			// is on api.imagekit.io under /v1.
 			path: '/api/v1/files/upload',
+			uploadOrigin: true,
 			formData: {
 				file,
 				fileName,
