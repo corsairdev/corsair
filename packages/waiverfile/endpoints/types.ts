@@ -433,8 +433,10 @@ export type WaiversPdfInput = z.infer<typeof WaiversPdfInputSchema>;
 const WaiversPdfResponseSchema = z.object({
 	waiverID: z.string(),
 	contentType: z.string(),
-	/** The byte length of the PDF, when the body was readable. */
+	/** The real byte length of the file that was received. */
 	bytes: z.number(),
+	/** The file itself, base64-encoded, so it survives a JSON payload. */
+	content: z.string().describe('Base64. Decode it to get the PDF bytes.'),
 });
 
 export type WaiversPdfResponse = z.infer<typeof WaiversPdfResponseSchema>;

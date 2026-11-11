@@ -47,7 +47,7 @@ pnpm add @corsair-dev/waiverfile
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: an API key and a site ID, packed into the one key slot as `<api key>\n<site ID>` with a real newline between them. A bare key is rejected before any request is sent. A call with no saved key throws `AuthMissingError`; store the packed value for the tenant, connect through Hub, or pass `waiverfile({ key })`.
 
 ## Webhooks
 

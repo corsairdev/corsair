@@ -1,6 +1,14 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { WaiverFileAPIError, WaiverFileConfigurationError } from './client';
 
+/** The two deletes that travel as GETs, so `method` cannot separate them. */
+const EFFECTFUL_GETS = ['/api/v1/DeleteEvent', '/api/v1/DeleteEventCategory'];
+
+function isWaiverFileDelete(error: WaiverFileAPIError): boolean {
+	const path = error.path ?? '';
+	return EFFECTFUL_GETS.some((name) => path.includes(name));
+}
+
 function statusOf(error: Error): number | undefined {
 	return error instanceof WaiverFileAPIError ? error.status : undefined;
 }
@@ -52,10 +60,14 @@ export const errorHandlers = {
 	// GETs with effects, so they are matched here too — which is why the method
 	// alone is not enough on this API and the deletes are excluded by name.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof WaiverFileAPIError &&
-			error.method === 'GET' &&
-			(statusOf(error) ?? 0) >= 500,
+		match: (error: Error) => {
+			if (!(error instanceof WaiverFileAPIError)) return false;
+			if (error.method !== 'GET') return false;
+			if ((statusOf(error) ?? 0) < 500) return false;
+			// DeleteEvent and DeleteEventCategory are GETs that remove data, so a
+			// replay could delete twice. They are named out of the read-only rule.
+			return !isWaiverFileDelete(error);
+		},
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

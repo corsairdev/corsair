@@ -16,7 +16,7 @@ overviewNote: |
   - **`/task`-style PascalCase is the norm.** Responses use `WaiverID`, `DateSigned`, `SignedName`, and participants are spelled `Particpants` — WaiverFile's own typo, kept as-is so a caller reading the docs finds the field.
   - **The webhook triggers are path segments.** Subscribing is `POST /subscribe/<trigger>?targetUrl=…` and unsubscribing is `DELETE /deletesubscribe/<trigger>` with the same URL, one route per trigger. The twelve triggers are `newwaiver`, `newevent`, `newcheckin`, `newqrscan`, `newbookingcheckin`, `bookingcheckinundone`, `bookingcheckedin`, `newmembercheckin`, `membercheckinundone`, `editwaiver`, `editevent` and `editcheckin`. There is no signing secret, so the receiving host verifies by its own means.
   - **A waiver PDF is a file, not JSON.** `waivers.pdf` returns the document itself, so the plugin reports the waiver id and the byte length rather than pretending to parse it.
-  - **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log — only counts and flags.
+  - **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log. It does log identifiers (waiver, event, form and category IDs), page counts, byte counts and success flags, and the event `descriptionId` where one is sent.
 examples:
   read:
     path: waivers.get

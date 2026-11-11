@@ -192,9 +192,11 @@ export const update: WaiverFileEndpoints['eventsUpdate'] = (ctx, input) =>
 				isAllDay,
 				eventCategoryID,
 			},
-			// The form IDs are the request body, as a JSON array.
-			body: waiverFormIDs ?? [],
-			mediaType: 'application/json',
+			// The form IDs are the request body, as a JSON array. Omitted means "leave
+			// the attached forms alone"; an explicit empty list clears them, so the
+			// two must not be conflated. No body at all when the caller omitted it.
+			body: waiverFormIDs,
+			mediaType: waiverFormIDs === undefined ? undefined : 'application/json',
 		}),
 		{
 			log: (parsed, result) => ({

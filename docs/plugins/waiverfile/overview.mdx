@@ -18,7 +18,7 @@ Create the key in the WaiverFile admin under **Settings > API Keys**. Every call
 - **`/task`-style PascalCase is the norm.** Responses use `WaiverID`, `DateSigned`, `SignedName`, and participants are spelled `Particpants` — WaiverFile's own typo, kept as-is so a caller reading the docs finds the field.
 - **The webhook triggers are path segments.** Subscribing is `POST /subscribe/<trigger>?targetUrl=…` and unsubscribing is `DELETE /deletesubscribe/<trigger>` with the same URL, one route per trigger. The twelve triggers are `newwaiver`, `newevent`, `newcheckin`, `newqrscan`, `newbookingcheckin`, `bookingcheckinundone`, `bookingcheckedin`, `newmembercheckin`, `membercheckinundone`, `editwaiver`, `editevent` and `editcheckin`. There is no signing secret, so the receiving host verifies by its own means.
 - **A waiver PDF is a file, not JSON.** `waivers.pdf` returns the document itself, so the plugin reports the waiver id and the byte length rather than pretending to parse it.
-- **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log — only counts and flags.
+- **A waiver holds personal data.** Date of birth, email and phone are on the record, so the plugin never writes them to the event log. It does log identifiers (waiver, event, form and category IDs), page counts, byte counts and success flags, and the event `descriptionId` where one is sent.
 
 **What you get:**
 
@@ -70,6 +70,8 @@ export const corsair = createCorsair({
 });
 ```
 
+`new Database('corsair.db')` opens the file without creating Corsair's tables, and `createCorsairDatabase` does not migrate either. Run the [Quick start](/quick-start) migration before the first call.
+
 With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
@@ -78,7 +80,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+A call with no saved key throws `AuthMissingError`. Save the packed `<api key>\n<site ID>` value on the account before calling, or pass `key` in the plugin options.
 
 ```ts
 waiverfile()

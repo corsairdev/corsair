@@ -1,5 +1,20 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+
+/**
+ * Drops the query string from a webhook target. WaiverFile signs nothing, so a
+ * receiver's URL often carries a token in its query; logging it whole would write a
+ * usable secret into the event log. The origin and path still identify the receiver.
+ */
+function safeTargetUrl(url: string): string {
+	try {
+		const parsed = new URL(url);
+		return `${parsed.origin}${parsed.pathname}`;
+	} catch {
+		return url.split('?')[0] ?? url;
+	}
+}
+
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -35,7 +50,7 @@ export const subscribe: WaiverFileEndpoints['webhooksSubscribe'] = (
 			// server endpoint, not a person.
 			log: (parsed, result) => ({
 				trigger: parsed.trigger,
-				url: parsed.targetUrl,
+				url: safeTargetUrl(parsed.targetUrl),
 				success: result.Success ?? false,
 			}),
 		},
@@ -61,7 +76,7 @@ export const unsubscribe: WaiverFileEndpoints['webhooksUnsubscribe'] = (
 		{
 			log: (parsed, result) => ({
 				trigger: parsed.trigger,
-				url: parsed.targetUrl,
+				url: safeTargetUrl(parsed.targetUrl),
 				success: result.Success ?? false,
 			}),
 		},

@@ -96,3 +96,26 @@ describe('WaiverFile error handlers', () => {
 		expect(classify(new Error('other'))).toBe('DEFAULT');
 	});
 });
+
+describe('review fixes', () => {
+	it('never replays DeleteEvent, which is a GET with an effect', async () => {
+		const error = new WaiverFileAPIError('WaiverFile 500: boom', {
+			status: 500,
+			method: 'GET',
+			path: '/api/v1/DeleteEvent',
+		});
+
+		// The matcher excludes it, so it is not retried.
+		expect(classify(error)).toBe('DEFAULT');
+	});
+
+	it('still replays an ordinary read', async () => {
+		const error = new WaiverFileAPIError('WaiverFile 500: boom', {
+			status: 500,
+			method: 'GET',
+			path: '/api/v1/GetWaivers',
+		});
+
+		expect(classify(error)).toBe('SERVER_ERROR');
+	});
+});

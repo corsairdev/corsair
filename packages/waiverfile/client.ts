@@ -80,6 +80,8 @@ export class WaiverFileAPIError extends Error {
 	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
+	/** The path that failed, so a handler can tell a read from a GET with effects. */
+	readonly path?: string;
 	// unknown: error bodies are usually `{ Message }`, but a proxy can answer
 	// with HTML or text.
 	readonly body?: unknown;
@@ -93,6 +95,7 @@ export class WaiverFileAPIError extends Error {
 			body?: unknown;
 			retryAfter?: number;
 			method?: string;
+			path?: string;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -102,6 +105,7 @@ export class WaiverFileAPIError extends Error {
 		this.body = options.body ?? cause?.body;
 		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
 		this.method = options.method ?? cause?.request.method;
+		this.path = options.path ?? cause?.request.url.split('?')[0];
 	}
 
 	/**
@@ -191,7 +195,7 @@ export async function makeWaiverFileRequest(
 		if (error instanceof ApiError) {
 			throw new WaiverFileAPIError(
 				describeWaiverFileError(error.status, error.body, error.message),
-				{ cause: error },
+				{ cause: error, path },
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
@@ -200,6 +204,57 @@ export async function makeWaiverFileRequest(
 		}
 		throw new WaiverFileAPIError('Unknown WaiverFile error', { method });
 	}
+}
+
+/**
+ * Fetches a binary body, which `corsair/http` cannot return: it reads every
+ * response as text, and decoding a PDF as UTF-8 replaces invalid sequences, so the
+ * bytes and the length both change. The one endpoint that downloads a file uses
+ * this instead, and both the fetch call and the body read are normalised to this
+ * plugin's error type so a transport failure still reaches the handlers.
+ */
+export async function makeWaiverFileDownload(
+	credentials: WaiverFileCredentials,
+	{ path, query }: { path: string; query?: WaiverFileQuery },
+): Promise<{ bytes: Buffer; contentType: string }> {
+	const params = new URLSearchParams();
+	for (const [key, value] of Object.entries(query ?? {})) {
+		if (value !== undefined) params.set(key, String(value));
+	}
+	params.set('apiKey', credentials.apiKey);
+	params.set('siteID', credentials.siteID);
+	const url = `${WAIVERFILE_API_BASE}${path}?${params.toString()}`;
+
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: 'GET',
+			headers: { Accept: 'application/pdf' },
+		});
+	} catch (error) {
+		// A transport failure never reached WaiverFile, so a read is safe to replay.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new WaiverFileAPIError(error.message, {
+				cause: error,
+				method: 'GET',
+			});
+		}
+		throw new WaiverFileAPIError('Unknown WaiverFile error', { method: 'GET' });
+	}
+
+	if (!response.ok) {
+		const text = await response.text().catch(() => '');
+		throw new WaiverFileAPIError(
+			describeWaiverFileError(response.status, text, `HTTP ${response.status}`),
+			{ status: response.status, method: 'GET' },
+		);
+	}
+
+	const bytes = Buffer.from(await response.arrayBuffer());
+	return {
+		bytes,
+		contentType: response.headers.get('content-type') ?? 'application/pdf',
+	};
 }
 
 /** Narrows a caught value to this plugin's error. */

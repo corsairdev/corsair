@@ -1,5 +1,5 @@
 import type { WaiverFileEndpoints } from '..';
-import { call } from './call';
+import { call, download } from './call';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -230,12 +230,15 @@ export const dataCount: WaiverFileEndpoints['waiversDataCount'] = (
 	);
 
 /**
- * Downloads the waiver as a PDF. The response is a file, not JSON, so the
- * plugin reports what came back — its type and byte length — rather than
- * pretending to parse it, and the caller's HTTP layer saves the body.
+ * Downloads the waiver as a PDF.
+ *
+ * The response is a file, not JSON. The shared transport reads every body as text,
+ * which decodes a PDF's binary bytes lossily, so this operation downloads the bytes
+ * directly and hands them back base64-encoded with their real length. A caller can
+ * write `Buffer.from(result.content, 'base64')` to a file.
  */
 export const pdf: WaiverFileEndpoints['waiversPdf'] = (ctx, input) =>
-	call(
+	download(
 		ctx,
 		{
 			event: 'waivers.pdf',
@@ -244,25 +247,17 @@ export const pdf: WaiverFileEndpoints['waiversPdf'] = (ctx, input) =>
 		},
 		input,
 		({ waiverID }) => ({
-			method: 'GET',
 			path: '/api/v1/GetWaiverPDF',
 			query: { waiverID },
 		}),
 		{
-			// unknown: a PDF body is bytes or text, so it is measured, not parsed.
-			shape: (raw, parsed) => {
-				const bytes =
-					typeof raw === 'string'
-						? Buffer.byteLength(raw, 'utf8')
-						: raw instanceof ArrayBuffer
-							? raw.byteLength
-							: 0;
-				return {
-					waiverID: parsed.waiverID,
-					contentType: bytes > 0 ? 'application/pdf' : 'unknown',
-					bytes,
-				};
-			},
+			shape: (file, parsed) => ({
+				waiverID: parsed.waiverID,
+				contentType: file.contentType,
+				// The length of the bytes actually received, not a decoded string.
+				bytes: file.bytes.byteLength,
+				content: file.bytes.toString('base64'),
+			}),
 			log: (parsed, result) => ({
 				waiverID: parsed.waiverID,
 				bytes: result.bytes,

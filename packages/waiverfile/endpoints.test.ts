@@ -271,19 +271,44 @@ describe('waivers', () => {
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/GetWaiverDataCount');
 	});
 
-	it('reports the PDF byte length rather than its content', async () => {
+	it('returns the PDF bytes, base64-encoded, with their real length', async () => {
 		const pdf = '%PDF-1.4 fake waiver bytes';
 		respondText(fetchMock, pdf, 'application/pdf');
 
-		const result = await invoke(Waivers.pdf, { waiverID });
+		const result = (await invoke(Waivers.pdf, { waiverID })) as {
+			waiverID: string;
+			contentType: string;
+			bytes: number;
+			content: string;
+		};
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.path).toBe('/api/v1/GetWaiverPDF');
-		expect(result).toEqual({
-			waiverID,
-			contentType: 'application/pdf',
-			bytes: Buffer.byteLength(pdf, 'utf8'),
-		});
+		expect(result.waiverID).toBe(waiverID);
+		expect(result.contentType).toBe('application/pdf');
+		expect(result.bytes).toBe(Buffer.byteLength(pdf, 'utf8'));
+		// The file itself is recoverable, which it was not before.
+		expect(Buffer.from(result.content, 'base64').toString('utf8')).toBe(pdf);
+	});
+
+	it('preserves binary bytes that are not valid UTF-8', async () => {
+		// A byte sequence that UTF-8 decoding would replace, which is why the shared
+		// transport could not be used for this endpoint.
+		const binary = Buffer.from([0x25, 0x50, 0x44, 0x46, 0xff, 0xfe, 0x00]);
+		fetchMock.mockResolvedValueOnce(
+			new Response(binary, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+
+		const result = (await invoke(Waivers.pdf, { waiverID })) as {
+			bytes: number;
+			content: string;
+		};
+
+		expect(result.bytes).toBe(binary.byteLength);
+		expect(Buffer.from(result.content, 'base64').equals(binary)).toBe(true);
 	});
 });
 
