@@ -1222,6 +1222,13 @@ export const appointmentsDelete = {
 				'ID of the appointment, <b>use externalid instead, if you use the parameter sync=1 or sendemail=1</b> (relates to the ExternalID)',
 		},
 		{
+			name: 'externalid',
+			type: 'string',
+			required: false,
+			description:
+				'External ID of the appointment, used instead of id with sync or sendemail.',
+		},
+		{
 			name: 'start',
 			type: 'string',
 			required: false,
@@ -5305,7 +5312,7 @@ export const workingTimesList = {
 		{
 			name: 'calendarid',
 			type: 'number',
-			required: true,
+			required: false,
 			description: 'CalendarID of the calendar you need the working times for',
 		},
 		{

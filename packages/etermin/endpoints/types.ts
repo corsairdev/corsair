@@ -801,6 +801,12 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'ID of the appointment, <b>use externalid instead, if you use the parameter sync=1 or sendemail=1</b> (relates to the ExternalID)',
 				),
+			externalid: z
+				.string()
+				.optional()
+				.describe(
+					'External ID of the appointment, required when sync or sendemail is used.',
+				),
 			start: z.string().optional().describe('Start date of the appointments.'),
 			end: z.string().optional().describe('End date of the appointments.'),
 			sync: z
@@ -825,10 +831,11 @@ export const ETerminEndpointInputSchemas = {
 			(value) =>
 				value.appid !== undefined ||
 				value.id !== undefined ||
+				value.externalid !== undefined ||
 				(value.start !== undefined && value.end !== undefined),
 			{
 				message:
-					'Provide appid, id, or both start and end to delete appointments.',
+					'Provide appid, id, externalid, or both start and end to delete appointments.',
 			},
 		),
 	deletedAppointmentsList: z
@@ -2282,6 +2289,10 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen',
 				),
+			serviceen: z
+				.string()
+				.optional()
+				.describe('Name of the service in English.'),
 			timeslotminutes: z
 				.number()
 				.int()
@@ -2293,6 +2304,10 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen',
 				),
+			infoen: z
+				.string()
+				.optional()
+				.describe('Additional description of the service in English.'),
 			infodisplay: z
 				.number()
 				.int()
@@ -2959,12 +2974,20 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen',
 				),
+			servicegroupen: z
+				.string()
+				.optional()
+				.describe('Name of the service group in English.'),
 			additionaltextde: z
 				.string()
 				.optional()
 				.describe(
 					'Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten',
 				),
+			additionaltexten: z
+				.string()
+				.optional()
+				.describe('Additional information in English.'),
 			addtextdisplaymode: z
 				.number()
 				.int()
@@ -3047,12 +3070,20 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen',
 				),
+			servicegroupen: z
+				.string()
+				.optional()
+				.describe('Name of the service group in English.'),
 			additionaltextde: z
 				.string()
 				.optional()
 				.describe(
 					'Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten',
 				),
+			additionaltexten: z
+				.string()
+				.optional()
+				.describe('Additional information in English.'),
 			addtextdisplaymode: z
 				.number()
 				.int()
@@ -3522,6 +3553,7 @@ export const ETerminEndpointInputSchemas = {
 			calendarid: z
 				.number()
 				.int()
+				.optional()
 				.describe('CalendarID of the calendar you need the working times for'),
 			all: z
 				.boolean()
@@ -3537,7 +3569,10 @@ export const ETerminEndpointInputSchemas = {
 					'Set to 1 for the same information but with names instead of numbers',
 				),
 		})
-		.strict(),
+		.strict()
+		.refine((value) => value.calendarid !== undefined || value.all === true, {
+			message: 'Provide calendarid or set all to true to list working times.',
+		}),
 	workingTimesCreate: z
 		.object({
 			start: z.string().describe('Start time of the slot, e.g. 09:00'),
@@ -3900,7 +3935,10 @@ export const ETerminEndpointOutputSchemas = {
 	appointmentsUpdate: ETerminOpaqueResponseSchema,
 	appointmentsDelete: ETerminOpaqueResponseSchema,
 	deletedAppointmentsList: z.array(ETerminRecordSchema),
-	appointmentSyncList: z.array(ETerminRecordSchema),
+	appointmentSyncList: z.object({
+		appointments: z.array(ETerminRecordSchema),
+		synctoken: z.number().int(),
+	}),
 	appointmentSyncCreate: ETerminOpaqueResponseSchema,
 	appointmentSyncUpdate: ETerminOpaqueResponseSchema,
 	appointmentSyncDelete: ETerminOpaqueResponseSchema,

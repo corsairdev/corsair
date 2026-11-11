@@ -74,7 +74,7 @@ import {
 	workingTimesList,
 	workingTimesUpdate,
 } from '../operations';
-import { createETerminEndpoint } from './factory';
+import { createETerminEndpoint, createETerminSyncEndpoint } from './factory';
 import {
 	ETerminEndpointInputSchemas,
 	ETerminEndpointOutputSchemas,
@@ -104,7 +104,7 @@ export const eTerminEndpoints = {
 		list: createETerminEndpoint(deletedAppointmentsList),
 	},
 	appointmentSync: {
-		list: createETerminEndpoint(appointmentSyncList),
+		list: createETerminSyncEndpoint(),
 		create: createETerminEndpoint(appointmentSyncCreate),
 		update: createETerminEndpoint(appointmentSyncUpdate),
 		delete: createETerminEndpoint(appointmentSyncDelete),

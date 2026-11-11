@@ -3,6 +3,7 @@ import {
 	createETerminSignature,
 	ETERMIN_API_BASE,
 	makeETerminRequest,
+	makeETerminSyncRequest,
 } from './client';
 import { eTerminOperations } from './operations';
 
@@ -25,6 +26,7 @@ function headers(config: OpenAPIConfig): Record<string, string> {
 function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 	const call = mockRequest.mock.calls.at(-1);
 	if (!call) throw new Error('request() was never called');
+	// Jest's variadic mock-call type cannot express this known two-argument use.
 	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
 }
 
@@ -116,4 +118,38 @@ describe('eTermin query transport', () => {
 			});
 		},
 	);
+});
+
+describe('eTermin appointment sync transport', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	it('returns both the appointments response body and the next sync token header', async () => {
+		const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify([{ id: 'appointment-1' }]), {
+				status: 200,
+				headers: { synctoken: '42' },
+			}),
+		);
+
+		await expect(
+			makeETerminSyncRequest(
+				'/api/appointmentsync',
+				{
+					publicKey: 'public',
+					privateKey: 'private',
+				},
+				1,
+			),
+		).resolves.toEqual({
+			appointments: [{ id: 'appointment-1' }],
+			synctoken: 42,
+		});
+
+		const [url, options] = fetchMock.mock.calls[0] ?? [];
+		expect(String(url)).toBe(
+			'https://www.etermin.net/api/appointmentsync?synctoken=1',
+		);
+		expect(options).toMatchObject({ method: 'GET' });
+		expect(options?.headers).toMatchObject({ publickey: 'public' });
+	});
 });

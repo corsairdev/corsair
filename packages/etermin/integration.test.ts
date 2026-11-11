@@ -25,6 +25,8 @@ function publicEndpoint(
 	group: EndpointGroup,
 	action: string,
 ): CorsairEndpoint<ETerminContext, unknown, unknown> {
+	// The endpoint tree is heterogeneous; each selected endpoint validates this
+	// erased boundary type with its operation-specific schema before transport.
 	const endpoint =
 		pluginEndpoints?.[group]?.[action as EndpointAction<typeof group>];
 	if (!endpoint) throw new Error(`Missing endpoint ${group}.${action}`);
@@ -49,6 +51,7 @@ function minimalInput(operation: (typeof eTerminOperations)[number]) {
 	)
 		input.id = 'value';
 	if (operation.key === 'workingTimeDatesDelete') input.id = 1;
+	if (operation.key === 'workingTimesList') input.all = true;
 	return input;
 }
 
@@ -67,7 +70,11 @@ const context = {
 describe('eTermin public endpoint seams', () => {
 	beforeEach(() => mockRequest.mockReset());
 
-	it.each(eTerminOperations)(
+	it.each(
+		eTerminOperations.filter(
+			(operation) => operation.key !== 'appointmentSyncList',
+		),
+	)(
 		'$group.$action forwards its documented method, path, and query',
 		async (operation) => {
 			const input = minimalInput(operation);
@@ -100,5 +107,59 @@ describe('eTermin public endpoint seams', () => {
 			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('sends the documented external appointment identifier when deleting', async () => {
+		mockRequest.mockResolvedValue({});
+		await publicEndpoint('appointments', 'delete')(context as ETerminContext, {
+			externalid: 'calendar-event-42',
+			sync: true,
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/api/appointment',
+				query: { externalid: 'calendar-event-42', sync: true },
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('accepts documented English service and service-group fields', async () => {
+		mockRequest.mockResolvedValue({});
+		await expect(
+			publicEndpoint('services', 'update')(context as ETerminContext, {
+				id: 1,
+				serviceen: 'Consultation',
+				infoen: 'A consultation in English',
+			}),
+		).resolves.toEqual({});
+		await expect(
+			publicEndpoint('serviceGroups', 'update')(context as ETerminContext, {
+				servicegroupid: 1,
+				displayindex: 1,
+				servicegroupen: 'Consultations',
+				additionaltexten: 'Choose a consultation',
+			}),
+		).resolves.toEqual({});
+	});
+
+	it('allows all-calendar working-time requests without a calendar ID', async () => {
+		mockRequest.mockResolvedValue([]);
+		await expect(
+			publicEndpoint('workingTimes', 'list')(context as ETerminContext, {
+				all: true,
+			}),
+		).resolves.toEqual([]);
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/workingtimes',
+				query: { all: true },
+			}),
+			expect.anything(),
+		);
 	});
 });

@@ -3,7 +3,6 @@ title: "eTermin API reference"
 sidebarTitle: "API"
 description: "API reference for the eTermin plugin in Corsair: every `etermin.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -408,6 +407,7 @@ await corsair.etermin.api.appointments.create({});
 
 **Output:** _empty object_
 
+
 ---
 
 ### delete
@@ -428,6 +428,7 @@ await corsair.etermin.api.appointments.delete({});
 |------|------|----------|-------------|
 | `appid` | `number` | No | AppID of the appointment (relates to the ID) |
 | `id` | `string` | No | ID of the appointment, &lt;b&gt;use externalid instead, if you use the parameter sync=1 or sendemail=1&lt;/b&gt; (relates to the ExternalID) |
+| `externalid` | `string` | No | External ID of the appointment, required when sync or sendemail is used. |
 | `start` | `string` | No | Start date of the appointments. |
 | `end` | `string` | No | End date of the appointments. |
 | `sync` | `boolean` | No | True if the appointment should be synchronized with external calendars (use externalid instead of id Parameter) |
@@ -702,10 +703,15 @@ await corsair.etermin.api.appointmentSync.list({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointments` | `object[]` | Yes | — |
+| `synctoken` | `number` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="appointments full type">
 
 ```ts
 {
@@ -713,6 +719,7 @@ await corsair.etermin.api.appointmentSync.list({});
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1875,7 +1882,9 @@ await corsair.etermin.api.serviceGroups.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `servicegroupde` | `string` | No | Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen |
+| `servicegroupen` | `string` | No | Name of the service group in English. |
 | `additionaltextde` | `string` | No | Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten |
+| `additionaltexten` | `string` | No | Additional information in English. |
 | `addtextdisplaymode` | `number` | No | Defines the location of the additional text (0 = via Tooltip; 1 = under the name of the service group) |
 | `servicegrouptype` | `number` | No | Defines the service group type (0 = Service selection; 2 = Text field; 5 = location selection; 8 = Day amount selection; 9 = Number search; 10 = Minutes amount selection) |
 | `answerselection` | `number` | No | Selection type for services (0 = Single selection; 1 = Multi selection; 2 = list selection). Has to be -1 if servicegrouptype is not 0! |
@@ -1975,7 +1984,9 @@ await corsair.etermin.api.serviceGroups.update({});
 |------|------|----------|-------------|
 | `servicegroupid` | `number` | Yes | ID of the service group that gets updated |
 | `servicegroupde` | `string` | No | Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen |
+| `servicegroupen` | `string` | No | Name of the service group in English. |
 | `additionaltextde` | `string` | No | Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten |
+| `additionaltexten` | `string` | No | Additional information in English. |
 | `addtextdisplaymode` | `number` | No | Defines the location of the additional text (0 = via Tooltip; 1 = under the name of the service group) |
 | `servicegrouptype` | `number` | No | Defines the service group type (0 = Service selection; 2 = Text field; 5 = location selection; 8 = Day amount selection; 9 = Number search; 10 = Minutes amount selection) |
 | `answerselection` | `number` | No | Selection type for services (0 = Single selection; 1 = Multi selection; 2 = list selection). Has to be -1 if servicegrouptype is not 0! |
@@ -2237,8 +2248,10 @@ await corsair.etermin.api.services.update({});
 | `id` | `number` | Yes | ID of the service |
 | `servicegroupid` | `number` | No | ID of the service group |
 | `servicede` | `string` | No | Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen |
+| `serviceen` | `string` | No | Name of the service in English. |
 | `timeslotminutes` | `number` | No | Duration of the service in minutes |
 | `infode` | `string` | No | Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen |
+| `infoen` | `string` | No | Additional description of the service in English. |
 | `infodisplay` | `number` | No | Defines where the information is shown (0 = below service name, 1 = informationtext page 2, 2 = summary after booking, 3 = below service name and summary after booking) |
 | `differenttimeresource` | `boolean` | No | True if you want to add pre- or post processing times |
 | `timeslotminutesresstart` | `number` | No | Busy by minute (use negative number to have a pre-processing time) |
@@ -2916,7 +2929,7 @@ await corsair.etermin.api.workingTimes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calendarid` | `number` | Yes | CalendarID of the calendar you need the working times for |
+| `calendarid` | `number` | No | CalendarID of the calendar you need the working times for |
 | `all` | `boolean` | No | Use this parameter instead of calendarid, if you want the workingtimes of all calendars |
 | `join` | `number` | No | Set to 1 for the same information but with names instead of numbers |
 

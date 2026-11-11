@@ -69,6 +69,11 @@ const endpointSchemas =
 		typeof eTerminEndpoints
 	>;
 
+/**
+ * Endpoints have distinct generated input/output types. This erased boundary
+ * type is used only while iterating the heterogeneous endpoint tree; schemas
+ * validate both unknown values before transport and before returning them.
+ */
 type ETerminEndpointHandler = CorsairEndpoint<ETerminContext, unknown, unknown>;
 type ETerminSchemaEntry = { input?: z.ZodType; output?: z.ZodType };
 
@@ -98,6 +103,8 @@ function withETerminSchemas(
 				return [
 					action,
 					async (ctx: ETerminContext, input: unknown) => {
+						// Endpoint input is unknown at this heterogeneous registry boundary.
+						// The operation-specific schema parses it before it reaches transport.
 						const parsedInput = inputSchema.parse(input ?? {});
 						const result = await endpoint(ctx, parsedInput);
 						return outputSchema.parse(result);
