@@ -1,0 +1,142 @@
+---
+title: Overview
+description: "Time tracking for remote work with Worksnaps - manage projects and tasks, log and read time entries, assign users to tasks and projects, read users, and pull project and summary reports."
+---
+
+Use **Worksnaps** through Corsair: one client, typed API calls.
+
+Find the API token in Worksnaps under **Profile & Settings → Web Service API**. Regenerating it there invalidates the old one immediately, so every stored copy must be replaced.
+
+- **The token is a Basic-auth username.** Every request sends `Authorization: Basic <base64(token:)>` — the token as the username with an empty password, which the API ignores. There is no bearer header and no query parameter, and a wrong token answers a bare `401` with **no body at all**.
+- **An empty error body is the norm.** This API does not explain a failure: a 401, 403, 404 or 400 is just the status. The plugin therefore works from the status alone, and the error message is a readable fallback rather than something parsed from the response.
+- **A 403 usually means the wrong kind of token.** Creating a user is documented as a *privileged* operation that needs a **partner API token** issued out of band, not an ordinary user's. So `users.create` answering 403 for a normal key is expected behaviour, and the plugin names that case rather than reporting a generic permission error.
+- **XML, not JSON.** Every response is `application/xml`, and every create or update body must be too. The plugin has its own small reader and writer, so it parses what the API sends without adding a dependency: elements, attributes, text, CDATA, comments, the five entities and numeric references.
+- **Responses are Rails-shaped.** A collection is `<projects type="array"><project>…</project></projects>`, which becomes `{ projects: [...] }` — the root element's name is kept as the key, so you read the resource by name. Ids arrive as `type="integer"` and are coerced to numbers.
+- **The routes carry `.xml` in the path.** `/projects.xml`, `/projects/3456/tasks.xml`, `/me.xml`. The plugin builds them as documented rather than hiding the extension, so a URL you see in the docs matches what the plugin calls.
+- **`GET /me.xml` is the cheapest check.** It returns the account behind the token, which verifies the credential without touching project data.
+- **Duration is what a report totals.** A time entry carries `from_timestamp` and `duration_in_minutes`; the end is not derived, so both are required. `timeEntries.list` logs the sum, which is what a report cares about, rather than each worker's own comment.
+
+**What you get:**
+
+- 30 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/worksnaps better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/worksnaps better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/worksnaps better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/worksnaps better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { worksnaps } from '@corsair-dev/worksnaps';
+
+export const corsair = createCorsair({
+	plugins: [
+		worksnaps(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+worksnaps()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'worksnaps',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.worksnaps.api.projects.list({});
+```
+
+
+**Log 90 minutes against a task**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.worksnaps.api.timeEntries.create({
+	project_id: 3456,
+	task_id: 78,
+	from_timestamp: '2024-06-01T09:00:00Z',
+	duration_in_minutes: 90,
+});
+```
+
+
+See the full list on the [API](/plugins/worksnaps/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/worksnaps/api">
+    Every `worksnaps.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
