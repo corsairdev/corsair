@@ -2,29 +2,30 @@
 // with made-up meetings and contacts. They were not captured from the live
 // API.
 
+// Field names as the live API sent them on 11-11 (snake_case; the
+// reference examples show camelCase). Values are made up.
 export const transcription = {
 	id: '9josdjdfo09j309omsldknslkjndfjknsdfs',
 	name: 'interview2.mov',
 	folder: { id: 522, name: 'Customer calls' },
-	createdAt: '2024-10-29T14:31:29.799+00:00',
-	updatedAt: '2024-10-29T14:31:38.495+00:00',
-	failureReason: null,
-	sharingEnabled: false,
-	publicUrl: null,
+	created_at: '2024-10-29T14:31:29.799Z',
+	updated_at: '2024-10-29T14:31:38.495Z',
+	sharing_enabled: false,
+	share_code: '20ab11da2b858e519656',
+	public_url: null,
 	state: 'automatic_done',
+	audio_length_in_seconds: 42,
 	language: 'en-GB',
-	audioLengthInSeconds: 42,
-	costInCents: 100,
-	refunded: false,
+	soundwave_url: 'https://hs-soundwaves-prod.s3-eu-west-1.amazonaws.com/x.dat',
+	video_url: null,
 	tags: ['To do', 'req_1234'],
-	soundwaveUrl: 'https://hs-soundwaves-prod.s3-eu-west-1.amazonaws.com/x.dat',
-	audioUrl:
-		'https://media.happyscribe.com/abc123?response-content-disposition=attachment',
-	videoUrl: null,
+	meeting: null,
+	people: [],
+	companies: [],
 	_links: {
 		self: {
-			editorUrl:
-				'https://www.happyscribe.com/api/v1/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs',
+			editor_url:
+				'https://www.happyscribe.com/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/subtitles',
 		},
 	},
 };
@@ -142,34 +143,39 @@ export const styleGuides = {
 	style_guides: [{ id: 5, name: 'House style', operation: 'transcription' }],
 };
 
+// Live shape (11-11): snake_case, and a string id.
 export const organizations = {
 	organizations: [
 		{
-			id: '123',
+			id: 'wks_01m755y521zx980pmgjght4mkk',
 			name: 'Acme Corp',
 			role: 'owner',
-			createdAt: '2024-01-15T10:30:00.000Z',
-			updatedAt: '2024-02-01T14:20:00.000Z',
-			ownerEmail: 'owner@acme.com',
-			membersCount: 12,
-			isHumanTranscriptionAllowed: true,
-			isHumanTranslationAllowed: true,
-			emailDomains: ['acme.com'],
-			idpCompanyNames: ['Okta'],
+			created_at: '2024-01-15T10:30:00.000Z',
+			updated_at: '2024-02-01T14:20:00.000Z',
+			owner_email: 'owner@acme.com',
+			members_count: 12,
+			is_human_transcription_allowed: true,
+			is_human_translation_allowed: true,
+			email_domains: ['acme.com'],
+			idp_company_names: ['Okta'],
 			currency: 'usd',
+			metadata: {},
 		},
 	],
 };
 
+// Live shape (11-11): snake_case, and organization_id is the string id.
 export const memberships = {
 	members: [
 		{
 			id: 9001,
-			organizationId: 123,
-			organizationName: 'Acme Corp',
+			organization_id: 'wks_01m755y521zx980pmgjght4mkk',
+			organization_name: 'Acme Corp',
 			email: 'alice@acme.com',
 			name: 'Alice Smith',
 			role: 'admin',
+			created_at: '2024-01-15T10:30:00.000Z',
+			updated_at: '2024-01-15T10:30:00.000Z',
 		},
 	],
 };

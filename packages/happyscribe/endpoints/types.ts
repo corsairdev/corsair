@@ -67,6 +67,8 @@ const PersonRefSchema = z
 
 // ── shared output shapes ──────────────────────────────────────────────────
 
+// The live API sends transcription fields in snake_case (checked 11-11);
+// the reference examples show camelCase.
 export const HappyScribeTranscriptionSchema = z
 	.object({
 		id: z.string(),
@@ -75,26 +77,30 @@ export const HappyScribeTranscriptionSchema = z
 			.object({ id: z.number().nullish(), name: z.string().nullish() })
 			.loose()
 			.nullish(),
-		createdAt: z.string().nullish(),
-		updatedAt: z.string().nullish(),
-		sharingEnabled: z.boolean().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		sharing_enabled: z.boolean().nullish(),
+		share_code: z.string().nullish(),
 		// A string rather than the enum: an unknown state must not fail a
 		// read. Documented: initial, ingesting, automatic_transcribing,
 		// automatic_done, aligning, locked, failed, demo.
 		state: z.string().nullish(),
-		failureReason: z.string().nullish(),
+		failure_reason: z.string().nullish(),
 		language: z.string().nullish(),
-		publicUrl: z.string().nullish(),
-		audioLengthInSeconds: z.number().nullish(),
-		costInCents: z.number().nullish(),
+		public_url: z.string().nullish(),
+		audio_length_in_seconds: z.number().nullish(),
+		cost_in_cents: z.number().nullish(),
 		refunded: z.boolean().nullish(),
-		soundwaveUrl: z.string().nullish(),
-		audioUrl: z.string().nullish(),
-		videoUrl: z.string().nullish(),
+		soundwave_url: z.string().nullish(),
+		audio_url: z.string().nullish(),
+		video_url: z.string().nullish(),
 		tags: z.array(z.string()).nullish(),
+		// unknown: the meeting a notetaker transcription came from; null on
+		// uploaded media.
+		meeting: z.record(z.string(), z.unknown()).nullish(),
 		people: z.array(PersonRefSchema).nullish(),
 		companies: z.array(CompanyRefSchema).nullish(),
-		// unknown: HATEOAS links (editorUrl, downloadUrl) pass through.
+		// unknown: HATEOAS links (editor_url, download_url) pass through.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -205,22 +211,25 @@ export const HappyScribeStyleGuideSchema = z
 
 export type HappyScribeStyleGuide = z.infer<typeof HappyScribeStyleGuideSchema>;
 
+// Live (11-11): snake_case fields and a string id (`wks_…`); the
+// reference shows camelCase and numbers. Either id type is accepted and
+// passed back to organizationId as given.
 export const HappyScribeOrganizationSchema = z
 	.object({
-		// The reference shows numbers; strings were observed on the live API.
-		// Either is accepted and passed back to organizationId as given.
 		id: z.union([z.string(), z.number()]),
 		name: z.string().nullish(),
 		role: z.string().nullish(),
-		createdAt: z.string().nullish(),
-		updatedAt: z.string().nullish(),
-		ownerEmail: z.string().nullish(),
-		membersCount: z.number().nullish(),
-		isHumanTranscriptionAllowed: z.boolean().nullish(),
-		isHumanTranslationAllowed: z.boolean().nullish(),
-		emailDomains: z.array(z.string()).nullish(),
-		idpCompanyNames: z.array(z.string()).nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		owner_email: z.string().nullish(),
+		members_count: z.number().nullish(),
+		is_human_transcription_allowed: z.boolean().nullish(),
+		is_human_translation_allowed: z.boolean().nullish(),
+		email_domains: z.array(z.string()).nullish(),
+		idp_company_names: z.array(z.string()).nullish(),
 		currency: z.string().nullish(),
+		// unknown: free-form organization metadata.
+		metadata: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -228,14 +237,18 @@ export type HappyScribeOrganization = z.infer<
 	typeof HappyScribeOrganizationSchema
 >;
 
+// Live (11-11): snake_case fields; organization_id is the organization's
+// string id.
 export const HappyScribeMembershipSchema = z
 	.object({
 		id: z.number(),
-		organizationId: z.number().nullish(),
-		organizationName: z.string().nullish(),
+		organization_id: z.union([z.string(), z.number()]).nullish(),
+		organization_name: z.string().nullish(),
 		email: z.string().nullish(),
 		name: z.string().nullish(),
 		role: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
 	.loose();
 

@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { z } from 'zod';
 import {
 	Exports,
 	Glossaries,
@@ -12,6 +13,11 @@ import {
 	Translations,
 	Uploads,
 } from './endpoints';
+import {
+	HappyScribeMembershipSchema,
+	HappyScribeOrganizationSchema,
+	HappyScribeTranscriptionSchema,
+} from './endpoints/types';
 import {
 	badKey,
 	company,
@@ -367,11 +373,11 @@ describe('organization resources', () => {
 
 	it('lists organizations', async () => {
 		respond(organizations);
-		const result = await invoke<{ organizations: { id: number }[] }>(
+		const result = await invoke<{ organizations: { id: string }[] }>(
 			Organizations.list,
 			{},
 		);
-		expect(result.organizations[0]!.id).toBe('123');
+		expect(result.organizations[0]!.id).toBe('wks_01m755y521zx980pmgjght4mkk');
 		expect(lastRequest().path).toBe('/api/v1/organizations');
 	});
 
@@ -705,4 +711,36 @@ describe('documented inputs', () => {
 		expect(body).not.toHaveProperty('settings');
 		expect(body).toMatchObject({ bot_name: 'corsair-plugin-test' });
 	});
+});
+
+describe('live response fields', () => {
+	// Every field the live API sent is a declared (typed) field, so callers
+	// read `created_at`, not an always-undefined `createdAt`. `_links` is
+	// exposed as `links`.
+	const cases: [string, z.ZodObject, Record<string, unknown>, string[]][] = [
+		[
+			'transcription',
+			HappyScribeTranscriptionSchema,
+			transcription,
+			['_links'],
+		],
+		[
+			'organization',
+			HappyScribeOrganizationSchema,
+			organizations.organizations[0]!,
+			[],
+		],
+		['membership', HappyScribeMembershipSchema, memberships.members[0]!, []],
+	];
+	it.each(cases)(
+		'%s declares every live field',
+		(_name, schema, live, skip) => {
+			const declared = Object.keys(schema.shape);
+			const missing = Object.keys(live).filter(
+				(key) => !declared.includes(key) && !skip.includes(key),
+			);
+			expect(missing).toEqual([]);
+			expect(() => schema.parse(live)).not.toThrow();
+		},
+	);
 });
