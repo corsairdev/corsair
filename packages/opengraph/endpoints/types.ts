@@ -324,22 +324,28 @@ export type ScreenshotCaptureResponse = z.infer<
 
 // ── extract.run ────────────────────────────────────────────────────────────
 
-const ExtractSelectorSchema = z.object({
-	selector: z.string().min(1).describe('Any valid CSS selector.'),
-	multiple: z
-		.boolean()
-		.optional()
-		.describe('Return every match as an array instead of the first match.'),
-	type: z
-		.enum(['text', 'attr'])
-		.optional()
-		.describe('Extract inner text or an attribute value. Default text.'),
-	attr: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('The attribute to read, required when type is attr.'),
-});
+const ExtractSelectorSchema = z
+	.object({
+		selector: z.string().min(1).describe('Any valid CSS selector.'),
+		multiple: z
+			.boolean()
+			.optional()
+			.describe('Return every match as an array instead of the first match.'),
+		type: z
+			.enum(['text', 'attr'])
+			.optional()
+			.describe('Extract inner text or an attribute value. Default text.'),
+		attr: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('The attribute to read, required when type is attr.'),
+	})
+	// OpenGraph.io requires attr whenever type is attr.
+	.refine((config) => config.type !== 'attr' || config.attr !== undefined, {
+		message: 'attr is required when type is attr',
+		path: ['attr'],
+	});
 
 const ExtractRunInputSchema = z.object({
 	site: z.string().min(1).describe('The URL to extract from.'),

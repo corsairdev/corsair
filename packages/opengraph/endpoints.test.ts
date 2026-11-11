@@ -292,6 +292,16 @@ describe('extract.run', () => {
 		).rejects.toBeInstanceOf(Error);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('rejects an attr selector without the attribute to read', async () => {
+		await expect(
+			invoke(Extract.run, {
+				site: 'https://example.com',
+				selectors: { links: { selector: 'a', type: 'attr' } },
+			}),
+		).rejects.toBeInstanceOf(Error);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('query.run', () => {
