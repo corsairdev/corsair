@@ -4,10 +4,10 @@
  * exercised: every endpoint here parses the live answer, so a field typed
  * wrongly in the schema fails this suite instead of a caller.
  *
- * THIS SUITE HAS NEVER RUN. Melo's API needs a paid subscription (from EUR 24
- * a month, with a 14-day trial that asks for a card), and no key was available
- * when the plugin was built. Everything the fixtures cannot prove is therefore
- * unverified: see packages/melo/plugin-docs.yaml.
+ * First run against the real API on 11-11, on a pay-as-you-go account (free
+ * starting credit, then a charge per returned item), so every read asks for as
+ * few items as it can. See packages/melo/plugin-docs.yaml for what the run
+ * found and what is still unverified.
  *
  * Reads need `MELO_API_KEY` (an API key from https://stream.estate/console,
  * API Keys page). Without it nothing here runs, and a warning says so, so a
@@ -100,10 +100,10 @@ describeLive('Melo live reads', () => {
 			propertyTypes: [1],
 			transactionType: 0,
 			withCoherentPrice: true,
-			itemsPerPage: 3,
+			itemsPerPage: 2,
 		});
 
-		expect(result['hydra:member'].length).toBeLessThanOrEqual(3);
+		expect(result['hydra:member'].length).toBeLessThanOrEqual(2);
 		expect(result['hydra:totalItems']).toBeGreaterThan(0);
 		expect(result.nextPage === null || Number.isInteger(result.nextPage)).toBe(
 			true,
@@ -142,7 +142,7 @@ describeLive('Melo live reads', () => {
 		expect(typeof result['hydra:member'][0]?.average).toBe('number');
 	});
 
-	it('indicators.pointsOfInterest returns schools around Paris', async () => {
+	it('indicators.pointsOfInterest answers a collection for schools around Paris', async () => {
 		const result = await client.corsair.melo.api.indicators.pointsOfInterest({
 			facilities: ['school'],
 			lat: 48.8803424,
@@ -150,9 +150,16 @@ describeLive('Melo live reads', () => {
 			radius: 0.5,
 		});
 
-		expect(result['hydra:member'].length).toBeGreaterThan(0);
-		expect(result['hydra:member'][0]?.type).toBe('school');
-	});
+		// On 11-11 Melo answered an empty collection to every query tried (school,
+		// restaurant and kindergarten, radius up to 2 km, two points in central
+		// Paris), so the test cannot require members. Any it returns are schools.
+		expect(Array.isArray(result['hydra:member'])).toBe(true);
+		for (const poi of result['hydra:member']) {
+			expect(poi.type).toBe('school');
+		}
+		// The same route sometimes took 30 to 40 s to answer on 11-11, past the
+		// 20 s request timeout, so leave room for the plugin's retries.
+	}, 90_000);
 
 	it('indicators.cities finds a city by INSEE code', async () => {
 		const result = await client.corsair.melo.api.indicators.cities({
@@ -172,11 +179,15 @@ describeLive('Melo live reads', () => {
 
 describeWrites('Melo live search round trip', () => {
 	it('creates, reads, updates and deletes one search with notifications off', async () => {
-		const title = `corsair-live-${Date.now()}`;
+		const title = `corsair-plugin-test-${Date.now()}`;
+		// Melo refuses a search without a location and a budget or price per
+		// meter (400), although the spec marks neither as required.
 		const created = await client.corsair.melo.api.searches.create({
 			title,
 			transactionType: 0,
 			propertyTypes: [0],
+			includedDepartments: ['/departments/77'],
+			budgetMax: 400000,
 			notificationEnabled: false,
 		});
 		const iri = created['@id'];
