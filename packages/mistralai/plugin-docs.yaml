@@ -1,0 +1,5 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Mistral AI
+description: Mistral AI's model API. Run chat, fill-in-the-middle and agent completions, create embeddings, moderate and classify text, read documents with OCR, transcribe and synthesize speech, and manage models, files, batch jobs and agents.
+domain: mistral.ai
+recommendedAuth: api_key
