@@ -1832,6 +1832,14 @@
                 ]
               },
               {
+                "group": "Dropcontact",
+                "pages": [
+                  "plugins/dropcontact/overview",
+                  "plugins/dropcontact/api",
+                  "plugins/dropcontact/database"
+                ]
+              },
+              {
                 "group": "Dynapictures",
                 "pages": [
                   "plugins/dynapictures/overview",

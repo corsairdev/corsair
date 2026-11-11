@@ -217,6 +217,7 @@ export const BaseProviders = [
 	'dripcel',
 	'dropbox',
 	'dropboxsign',
+	'dropcontact',
 	'dynapictures',
 	'elevenlabs',
 	'emailoctopus',
@@ -697,6 +698,7 @@ export const ProviderDisplayNames = {
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
 	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
@@ -1184,6 +1186,7 @@ export type AllProviders =
 	| 'dripcel'
 	| 'dropbox'
 	| 'dropboxsign'
+	| 'dropcontact'
 	| 'dynapictures'
 	| 'elevenlabs'
 	| 'emailoctopus'
