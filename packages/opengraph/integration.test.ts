@@ -34,7 +34,10 @@ function respond(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued call must fail instead of reaching the network.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unmocked fetch'));
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
@@ -135,6 +138,10 @@ describe('OpenGraph.io plugin through createCorsair', () => {
 // Live read-only smoke tests; CI skips this file, so these run only with a
 // local OPENGRAPH_API_KEY.
 describeIfKey('OpenGraph.io live smoke', () => {
+	beforeEach(() => {
+		fetchMock.mockRestore();
+	});
+
 	it('unfurls a real page', async () => {
 		const { corsair, testDb } = await createClient({});
 		try {

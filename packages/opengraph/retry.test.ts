@@ -35,7 +35,10 @@ function respond(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued call must fail instead of reaching the network.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unmocked fetch'));
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 

@@ -45,7 +45,10 @@ async function failure(promise: Promise<unknown>): Promise<OpengraphAPIError> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued call must fail instead of reaching the network.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unmocked fetch'));
 });
 
 afterEach(() => {
