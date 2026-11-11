@@ -1,0 +1,567 @@
+---
+title: API
+description: "API reference for U301: every `u301.api.*` operation with input and output types."
+---
+
+Every `u301.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### audience
+
+`analytics.audience`
+
+Read a top-N click breakdown by country, city, referrer, browser, OS or device
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.analytics.audience({ dimension: 'countries', range: '30d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dimension` | `countries \| cities \| referrers \| browsers \| os \| devices` | Yes | Which breakdown to read: countries, cities, referrers, browsers, os or devices. |
+| `range` | `1d \| 7d \| 30d \| 90d \| 1y` | Yes | The window to aggregate over. |
+| `timezone` | `string` | No | An IANA timezone for the buckets. Defaults to UTC. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  clicks?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### clicks
+
+`analytics.clicks`
+
+Read click counts over a time range at a chosen granularity, in a chosen timezone
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.analytics.clicks({ range: '7d', granularity: 'day', timezone: 'UTC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `range` | `1d \| 7d \| 30d \| 90d \| 1y` | Yes | The window to aggregate over. |
+| `granularity` | `hour \| day \| week \| month` | Yes | The bucket size within that window. |
+| `timezone` | `string` | No | An IANA timezone for the buckets. Defaults to UTC. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string \| null` | No | ISO 8601 start of the window. |
+| `end` | `string \| null` | No | ISO 8601 end of the window. |
+| `data` | `object[] \| null` | No | One entry per bucket. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string | null,
+  clicks?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### active
+
+`domains.active`
+
+Check whether a domain's DNS verification has completed, which is the step to poll after adding the CNAME
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.domains.active({ domain: 'go.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actived` | `boolean \| null` | No | Whether the domain is active. |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`domains.create`
+
+Add a custom domain; the DNS CNAME still has to be created and verified before it serves links
+
+**Risk:** `write`
+
+```ts
+await corsair.u301.api.domains.create({ domain: 'go.example.com', shortCodeLength: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+| `shortCodeLength` | `number` | No | Length of the random slug, 3 to 10. Defaults to 6. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`domains.delete`
+
+Remove a custom domain from the workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.u301.api.domains.delete({ domain: 'go.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`domains.get`
+
+Read one domain's validity, archive state, slug length and redirect settings
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.domains.get({ domain: 'go.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `isValid` | `boolean \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `lastCheckedAt` | `string \| null` | No | — |
+| `randomCodeLength` | `number \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `homePageRedirectUrl` | `string \| null` | No | — |
+| `notFoundPageRedirectUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `isPrimary` | `boolean \| null` | No | — |
+
+
+
+---
+
+### homeRedirect
+
+`domains.homeRedirect`
+
+Set where a domain's root redirects to
+
+**Risk:** `write`
+
+```ts
+await corsair.u301.api.domains.homeRedirect({ domain: 'go.example.com', homePageRedirectUrl: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+| `homePageRedirectUrl` | `string` | Yes | Where the domain root redirects to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `isValid` | `boolean \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `lastCheckedAt` | `string \| null` | No | — |
+| `randomCodeLength` | `number \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `homePageRedirectUrl` | `string \| null` | No | — |
+| `notFoundPageRedirectUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `isPrimary` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List the workspace's domains, including the shared u301.co and any of your own
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.domains.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  domain?: string | null,
+  randomCodeLength?: number | null,
+  isPrimary?: boolean | null,
+  isGlobal?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### notFoundRedirect
+
+`domains.notFoundRedirect`
+
+Set where an unknown slug on a domain redirects to
+
+**Risk:** `write`
+
+```ts
+await corsair.u301.api.domains.notFoundRedirect({ domain: 'go.example.com', notFoundPageRedirectUrl: 'https://example.com/404' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+| `notFoundPageRedirectUrl` | `string` | Yes | Where an unknown slug on this domain redirects to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `isValid` | `boolean \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `lastCheckedAt` | `string \| null` | No | — |
+| `randomCodeLength` | `number \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `homePageRedirectUrl` | `string \| null` | No | — |
+| `notFoundPageRedirectUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `isPrimary` | `boolean \| null` | No | — |
+
+
+
+---
+
+### pathLength
+
+`domains.pathLength`
+
+Set the random slug length a domain uses, 3 to 10
+
+**Risk:** `write`
+
+```ts
+await corsair.u301.api.domains.pathLength({ domain: 'go.example.com', randomCodeLength: 8 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain for the link, such as u301.co or one of your own. |
+| `randomCodeLength` | `number` | Yes | Length of the random slug, 3 to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `isValid` | `boolean \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `lastCheckedAt` | `string \| null` | No | — |
+| `randomCodeLength` | `number \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `homePageRedirectUrl` | `string \| null` | No | — |
+| `notFoundPageRedirectUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `isPrimary` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Links
+
+### create
+
+`links.create`
+
+Shorten a URL on u301.co or one of your domains, with an optional custom slug, password and comment; a new link spends one monthly allowance slot
+
+**Risk:** `write`
+
+```ts
+await corsair.u301.api.links.create({ url: 'https://example.com/spring-sale', slug: 'spring', comment: 'spring campaign' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The destination URL to shorten. |
+| `domain` | `string` | No | The domain for the link, such as u301.co or one of your own. |
+| `slug` | `string` | No | A custom path. A random one is generated when omitted. |
+| `reuseExisting` | `boolean` | No | Reuse an existing short link when the same URL is already shortened, instead of creating a second one. |
+| `password` | `string` | No | Require this password before the short link resolves. |
+| `comment` | `string` | No | A note to attach to the link. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | The destination URL. |
+| `slug` | `string \| null` | No | — |
+| `isCustomSlug` | `boolean \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `isReused` | `boolean \| null` | No | True when an existing link was returned and no new one was created. |
+| `shortLink` | `string \| null` | No | The short link without a scheme, such as u301.co/jtyZ. |
+| `comment` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Delete a short link; the destination is no longer reachable through it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.u301.api.links.delete({ shortlink: 'u301.co/jtyZ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shortlink` | `string` | Yes | The short link as it appears, such as u301.co/abc123. It is sent as one path segment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | "success" on deletion. |
+
+
+
+---
+
+### get
+
+`links.get`
+
+Read one short link by its short form, such as u301.co/abc123
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.links.get({ shortlink: 'u301.co/jtyZ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shortlink` | `string` | Yes | The short link as it appears, such as u301.co/abc123. It is sent as one path segment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `domainName` | `string \| null` | No | The domain, on a list row. |
+| `domain` | `string \| null` | No | The domain, on a single read. |
+| `slug` | `string \| null` | No | — |
+| `isCustomSlug` | `boolean \| null` | No | — |
+| `shortUrl` | `string \| null` | No | — |
+| `originalUrl` | `string \| null` | No | The destination URL. |
+| `allowSearchEngineIndexing` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `statsClicks` | `number \| null` | No | Total clicks. |
+| `expiresAt` | `string \| null` | No | Null when the link never expires. |
+| `userId` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`links.list`
+
+List the workspace's short links with their click counts, archive and suspend state
+
+**Risk:** `read`
+
+```ts
+await corsair.u301.api.links.list({ page: 1, perPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `perPage` | `number` | No | Items per page. Defaults to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  id?: string | null,
+  domainName?: string | null,
+  domain?: string | null,
+  slug?: string | null,
+  isCustomSlug?: boolean | null,
+  shortUrl?: string | null,
+  originalUrl?: string | null,
+  allowSearchEngineIndexing?: boolean | null,
+  archived?: boolean | null,
+  suspended?: boolean | null,
+  statsClicks?: number | null,
+  expiresAt?: string | null,
+  userId?: string | null,
+  workspaceId?: string | null,
+  comment?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
