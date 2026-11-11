@@ -3148,6 +3148,15 @@
                 ]
               },
               {
+                "group": "Sanity",
+                "pages": [
+                  "plugins/sanity/overview",
+                  "plugins/sanity/api",
+                  "plugins/sanity/database",
+                  "plugins/sanity/webhooks"
+                ]
+              },
+              {
                 "group": "SAP SuccessFactors",
                 "pages": [
                   "plugins/sapsuccessfactors/overview",
