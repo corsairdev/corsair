@@ -19,7 +19,15 @@ Add a comment to any document; the caller supplies the reference, content, and c
 **Risk:** `write`
 
 ```ts
-await corsair.erpnext.api.desk.addComment({});
+await corsair.erpnext.api.desk.addComment({
+	body: {
+		reference_doctype: 'Customer',
+		reference_name: 'CUST-0001',
+		content: 'Follow-up scheduled for Friday.',
+		comment_email: 'agent@example.com',
+		comment_by: 'Corsair Agent',
+	},
+});
 ```
 
 **Input**
@@ -108,7 +116,7 @@ Search a DocType by text across its searchable fields, with optional custom sear
 **Risk:** `read`
 
 ```ts
-await corsair.erpnext.api.desk.searchGlobal({});
+await corsair.erpnext.api.desk.searchGlobal({ doctype: 'Customer', txt: 'Acme', page_length: 10 });
 ```
 
 **Input**

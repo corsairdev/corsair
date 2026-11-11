@@ -6,7 +6,7 @@ description: "Open-source ERP integration for documents, DocTypes, workflows, st
 
 Use **ERPNext** through Corsair: one client, typed API calls, local DB sync.
 
-Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own site, so a token only works on the site that issued it: pass `baseUrl` to pin one site for every account, or leave it out and store `base_url` per account. Credentials and their site always come from the same source.
+Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own site, so a token only works on the site that issued it. When credentials are configured explicitly, set the matching `baseUrl` beside them. When credentials come from a connected account, that account must also store its matching `base_url`; requests do not fall back to the plugin option.
 
 This plugin implements the requested 51 operations over the generic Frappe REST surface. Inbound webhooks are not included.
 
@@ -73,7 +73,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 
 No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Pass `baseUrl` to pin one site for every account, or leave it out and store `base_url` per account.
+Use `baseUrl` only with explicitly configured credentials for that same site. Connected accounts require their own `base_url` alongside the stored API key and secret.
 
 ```ts
 erpnext({
@@ -105,19 +105,27 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`desk.searchGlobal`**
+**Search customers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.erpnext.api.desk.searchGlobal({});
+await tenant.erpnext.api.desk.searchGlobal({ doctype: 'Customer', txt: 'Acme', page_length: 10 });
 ```
 
 
-**`desk.addComment`**
+**Add a customer comment**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.erpnext.api.desk.addComment({});
+await tenant.erpnext.api.desk.addComment({
+	body: {
+		reference_doctype: 'Customer',
+		reference_name: 'CUST-0001',
+		content: 'Follow-up scheduled for Friday.',
+		comment_email: 'agent@example.com',
+		comment_by: 'Corsair Agent',
+	},
+});
 ```
 
 
