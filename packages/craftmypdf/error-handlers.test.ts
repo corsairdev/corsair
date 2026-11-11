@@ -120,7 +120,7 @@ describe('craftmypdf error handlers', () => {
 		// again would report the template as missing instead of the real error.
 		const error = apiError(503, 'Service Unavailable', 'GET');
 
-		expect(firstMatch(error, 'templates.delete')).not.toBe('SERVER_ERROR');
+		expect(firstMatch(error, 'templates.delete')).toBe('DEFAULT');
 		await expect(run('DEFAULT', error)).resolves.toMatchObject({
 			maxRetries: 0,
 		});

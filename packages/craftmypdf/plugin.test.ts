@@ -128,8 +128,14 @@ describe('craftmypdf plugin definition', () => {
 
 	it('keeps DEFAULT last after merging handlers', () => {
 		const keys = Object.keys(plugin.errorHandlers ?? {});
-		expect(keys.at(-1)).toBe('DEFAULT');
-		expect(keys.length).toBe(Object.keys(plugin.errorHandlers ?? {}).length);
+		expect(keys).toEqual([
+			'RATE_LIMIT_ERROR',
+			'AUTH_ERROR',
+			'NOT_FOUND_ERROR',
+			'VALIDATION_ERROR',
+			'SERVER_ERROR',
+			'DEFAULT',
+		]);
 	});
 });
 
