@@ -94,6 +94,27 @@ export const collectionList = {
 	meta: { path: 'https://api.placid.app/api/rest/collections', per_page: 20 },
 };
 
+// A live reply to `GET /collections?per_page=1` (11-11, ids shortened): with a
+// page size, Placid echoes `per_page` back as the query string it was sent,
+// not as a number, and `links.next` carries the cursor for the next page.
+export const collectionPageLive = {
+	data: [
+		{
+			id: 'ed24410b-5a32-441e-9a04-46eeef183195',
+			title: 'corsair-plugin-test-a',
+			custom_data: null,
+			templates: [],
+		},
+	],
+	links: {
+		first: null,
+		last: null,
+		prev: null,
+		next: 'https://api.placid.app/api/rest/collections?cursor=eyJ0ZW1wbGF0ZV9jb2xsZWN0aW9ucy5pZCI6NzM1LCJfcG9pbnRzVG9OZXh0SXRlbXMiOnRydWV9',
+	},
+	meta: { path: 'https://api.placid.app/api/rest/collections', per_page: '1' },
+};
+
 // https://placid.app/docs/2.0/rest/media#response
 export const mediaUploaded = {
 	media: [

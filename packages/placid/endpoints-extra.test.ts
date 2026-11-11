@@ -3,6 +3,7 @@ import { Collections, Fonts, Media, Templates } from './endpoints';
 import {
 	collection,
 	collectionList,
+	collectionPageLive,
 	font,
 	fontList,
 	mediaUploaded,
@@ -251,6 +252,15 @@ describe('collections', () => {
 
 		expect(result.data[0]?.id).toBe('col_1234');
 		expect(lastCall()[0]).toContain('per_page=20');
+	});
+
+	it('reads the per_page Placid echoes back as a string', async () => {
+		respond(collectionPageLive);
+
+		const result = await Collections.list(contextFor(), { per_page: 1 });
+
+		expect(result.meta?.per_page).toBe(1);
+		expect(result.links?.next).toContain('cursor=');
 	});
 
 	it('pages collections by cursor', async () => {

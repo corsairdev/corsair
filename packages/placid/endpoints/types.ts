@@ -206,7 +206,9 @@ const PaginationLinksSchema = z
 const PaginationMetaSchema = z
 	.object({
 		path: z.string().nullish(),
-		per_page: z.number().nullish(),
+		// Placid sends 20 as a number by default, but echoes a `per_page` query
+		// back as the string it received ("1"), so both are read as a number.
+		per_page: z.coerce.number().nullish(),
 	})
 	.loose();
 
