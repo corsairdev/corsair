@@ -46,7 +46,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		body,
 		replaySafe,
 	});
-	const result = operation.output.parse(raw);
+	// Several write routes (delete-users, set-offer-expires, set-course-start-date)
+	// answer 200 with no body, which the request layer returns as undefined. An
+	// empty object lets those parse; a read that needs fields still fails, which
+	// is how find-by-uid reports an unknown uid.
+	const result = operation.output.parse(raw === undefined ? {} : raw);
 
 	await logEventFromContext(
 		ctx,

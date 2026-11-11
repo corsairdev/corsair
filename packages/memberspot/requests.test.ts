@@ -604,3 +604,50 @@ describe('error handling', () => {
 		expect(inspect(error)).not.toContain('super-secret-key');
 	});
 });
+
+describe('write routes the spec documents with no response body', () => {
+	/** A 200 with no content, which is what a NestJS handler returning void sends. */
+	function respondEmpty() {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+	}
+
+	it('users.delete resolves when MemberSpot answers 200 with no body', async () => {
+		respondEmpty();
+		await expect(
+			api.users.delete(makeCtx(), { emails: ['a@acme.example'] }),
+		).resolves.toEqual({});
+	});
+
+	it('users.deleteByUid resolves on an empty 200', async () => {
+		respondEmpty();
+		await expect(
+			api.users.deleteByUid(makeCtx(), { uids: ['uid-1'] }),
+		).resolves.toEqual({});
+	});
+
+	it('users.setOfferExpires and users.setCourseStartDate resolve on an empty 200', async () => {
+		respondEmpty();
+		await expect(
+			api.users.setOfferExpires(makeCtx(), {
+				uid: 'uid-1',
+				offerId: 'offer-1',
+				expiresAt: null,
+			}),
+		).resolves.toEqual({});
+		respondEmpty();
+		await expect(
+			api.users.setCourseStartDate(makeCtx(), {
+				uid: 'uid-1',
+				courseId: 'course-1',
+				startDate: '2026-12-01T00:00:00.000Z',
+			}),
+		).resolves.toEqual({});
+	});
+
+	it('still rejects an empty 200 from find-by-uid, the documented not-found answer', async () => {
+		respondEmpty();
+		await expect(
+			api.users.findByUid(makeCtx(), { uid: 'missing' }),
+		).rejects.toThrow();
+	});
+});
