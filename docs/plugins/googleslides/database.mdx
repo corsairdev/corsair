@@ -1,0 +1,49 @@
+---
+title: Database
+description: "Google Slides local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Google Slides plugin syncs data locally. Use `corsair.googleslides.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+Rows are written when a call returns a deck. `presentations.get`, `presentations.create` and `presentations.copy` store the whole summary, so the counts are filled in. `presentations.list` stores only what a Drive list row carries (id, title and URL), because Drive does not return slide counts; read the deck to fill them in. Search finds rows for presentations you have called one of those operations on, so the entity is a cache of what this account has touched, not a mirror of every presentation in Drive.
+
+A failed database write is logged and does not fail the call: the caller asked for the presentation, and a storage problem on the way back should not turn a successful read into an error.
+
+## Presentations
+
+Path: `googleslides.db.presentations.search`
+
+```ts
+const rows = await corsair.googleslides.db.presentations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `presentationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `revisionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `slideCount` | `number` | equals, gt, gte, lt, lte, in |
+| `layoutCount` | `number` | equals, gt, gte, lt, lte, in |
+| `masterCount` | `number` | equals, gt, gte, lt, lte, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastSyncedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

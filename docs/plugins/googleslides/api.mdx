@@ -1,0 +1,1446 @@
+---
+title: API
+description: "API reference for Google Slides: every `googleslides.api.*` operation with input and output types."
+---
+
+Every `googleslides.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### update
+
+`batch.update`
+
+Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.batch.update({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', requests: [{ mergeTableCells: { objectId: 'table_1', tableRange: { location: { rowIndex: 0, columnIndex: 0 }, rowSpan: 2, columnSpan: 2 } } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `requests` | `object[]` | Yes | Raw Slides batchUpdate requests, applied atomically. Use the typed groups where they exist. |
+| `writeControl` | `object` | No | Fails the batch when the presentation moved past this revision |
+
+Accepts any of the 49 `batchUpdate` request types. Google validates every request before applying any, so an invalid entry fails the whole batch.
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  insertText?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+Record<string, {
+}>[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Elements
+
+### createImage
+
+`elements.createImage`
+
+Add an image to a slide from a public URL
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.createImage({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', url: 'https://example.com/logo.png', elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 2000000 }, height: { magnitude: 1000000 } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `url` | `string` | Yes | Publicly readable image URL, under 50 MB and 25 megapixels. PNG, JPEG or GIF only. |
+| `elementProperties` | `object` | Yes | — |
+| `objectId` | `string` | No | 5 to 50 characters, starting alphanumeric or underscore |
+
+<AccordionGroup>
+<Accordion title="elementProperties full type">
+
+```ts
+{
+  pageObjectId: string,
+  size?: {
+    width?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    },
+    height?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    }
+  },
+  transform?: {
+    scaleX?: number,
+    scaleY?: number,
+    shearX?: number,
+    shearY?: number,
+    translateX?: number,
+    translateY?: number,
+    unit?: UNIT_UNSPECIFIED | EMU | PT
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+
+
+
+---
+
+### createShape
+
+`elements.createShape`
+
+Add a shape or text box to a slide
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.createShape({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', shapeType: 'TEXT_BOX', elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 3000000 }, height: { magnitude: 1500000 } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `shapeType` | `TEXT_BOX \| RECTANGLE \| ROUND_RECTANGLE \| ELLIPSE \| TRIANGLE \| DIAMOND \| STAR_5 \| CLOUD \| CHEVRON \| ARROW_EAST` | Yes | A subset of the full shape list; any ECMA-376 shape works via batch.update |
+| `elementProperties` | `object` | Yes | — |
+| `objectId` | `string` | No | 5 to 50 characters, starting alphanumeric or underscore |
+
+<AccordionGroup>
+<Accordion title="elementProperties full type">
+
+```ts
+{
+  pageObjectId: string,
+  size?: {
+    width?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    },
+    height?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    }
+  },
+  transform?: {
+    scaleX?: number,
+    scaleY?: number,
+    shearX?: number,
+    shearY?: number,
+    translateX?: number,
+    translateY?: number,
+    unit?: UNIT_UNSPECIFIED | EMU | PT
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+
+
+
+---
+
+### createTable
+
+`elements.createTable`
+
+Add an empty table to a slide
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.createTable({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', rows: 3, columns: 4, elementProperties: { pageObjectId: 'slide_1', size: { width: { magnitude: 5000000 }, height: { magnitude: 2000000 } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `rows` | `number` | Yes | — |
+| `columns` | `number` | Yes | — |
+| `elementProperties` | `object` | Yes | — |
+| `objectId` | `string` | No | 5 to 50 characters, starting alphanumeric or underscore |
+
+<AccordionGroup>
+<Accordion title="elementProperties full type">
+
+```ts
+{
+  pageObjectId: string,
+  size?: {
+    width?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    },
+    height?: {
+      magnitude?: number,
+      unit?: EMU | PT
+    }
+  },
+  transform?: {
+    scaleX?: number,
+    scaleY?: number,
+    shearX?: number,
+    shearY?: number,
+    translateX?: number,
+    translateY?: number,
+    unit?: UNIT_UNSPECIFIED | EMU | PT
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+
+
+
+---
+
+### group
+
+`elements.group`
+
+Group page elements into one object
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.group({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['shape_1', 'shape_2'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectIds` | `string[]` | Yes | At least two ungrouped elements on the same slide |
+| `groupObjectId` | `string` | No | 5 to 50 characters, starting alphanumeric or underscore |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `groupObjectId` | `string \| null` | No | — |
+
+
+
+---
+
+### setAltText
+
+`elements.setAltText`
+
+Set the alt text on a page element
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.setAltText({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'image_1', title: 'Revenue chart', description: 'Revenue rising 12% year over year' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | Page element, not a slide |
+| `title` | `string` | No | Short alt text read by screen readers |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+
+
+
+---
+
+### ungroup
+
+`elements.ungroup`
+
+Ungroup previously grouped page elements
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.ungroup({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['group_1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectIds` | `string[]` | Yes | Group ids, at most one level deep |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+
+
+
+---
+
+### updateTransform
+
+`elements.updateTransform`
+
+Move, scale or rotate a page element
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.updateTransform({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { translateX: 914400, translateY: 457200 }, applyMode: 'ABSOLUTE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `transform` | `object` | Yes | — |
+| `applyMode` | `RELATIVE \| ABSOLUTE` | No | RELATIVE (default) multiplies into the current transform, ABSOLUTE replaces it |
+
+<AccordionGroup>
+<Accordion title="transform full type">
+
+```ts
+{
+  scaleX?: number,
+  scaleY?: number,
+  shearX?: number,
+  shearY?: number,
+  translateX?: number,
+  translateY?: number,
+  unit?: UNIT_UNSPECIFIED | EMU | PT
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+
+
+
+---
+
+### zOrder
+
+`elements.zOrder`
+
+Change which elements sit in front of others
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.elements.zOrder({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['shape_1'], operation: 'BRING_TO_FRONT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectIds` | `string[]` | Yes | Elements on one slide, not grouped |
+| `operation` | `BRING_TO_FRONT \| BRING_FORWARD \| SEND_BACKWARD \| SEND_TO_BACK` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+
+
+
+---
+
+## Presentations
+
+### copy
+
+`presentations.copy`
+
+Copy a presentation to a new file
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.presentations.copy({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', name: 'Copy of Quarterly review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `name` | `string` | No | Name for the copy |
+| `parents` | `string[]` | No | Folders to place the copy in |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `revisionId` | `string \| null` | No | — |
+| `url` | `string` | Yes | — |
+| `slideCount` | `number` | Yes | — |
+| `layoutCount` | `number` | Yes | — |
+| `masterCount` | `number` | Yes | — |
+| `pageWidthEmu` | `number \| null` | No | — |
+| `pageHeightEmu` | `number \| null` | No | — |
+
+
+
+---
+
+### create
+
+`presentations.create`
+
+Create a blank presentation
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.presentations.create({ title: 'Quarterly review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Presentation title |
+| `presentationId` | `string` | No | Optional caller-chosen id. A random one is generated when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `revisionId` | `string \| null` | No | — |
+| `url` | `string` | Yes | — |
+| `slideCount` | `number` | Yes | — |
+| `layoutCount` | `number` | Yes | — |
+| `masterCount` | `number` | Yes | — |
+| `pageWidthEmu` | `number \| null` | No | — |
+| `pageHeightEmu` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`presentations.delete`
+
+Delete a presentation from Drive [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleslides.api.presentations.delete({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | Moved to the Drive trash, then purged |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### exportPdf
+
+`presentations.exportPdf`
+
+Export a presentation to PDF or PPTX as base64
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.presentations.exportPdf({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', format: 'pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `format` | `pdf \| pptx` | No | pdf by default; pptx needs the same Drive export scope |
+
+Export returns base64 file bytes. A large deck takes longer than the default request timeout, so this call allows three minutes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `format` | `pdf \| pptx` | Yes | — |
+| `mimeType` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+| `data` | `string` | Yes | Base64-encoded file |
+
+
+
+---
+
+### get
+
+`presentations.get`
+
+Read a presentation with slide and layout counts
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.presentations.get({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `commentsViewMode` | `COMMENTS_VIEW_MODE_UNSPECIFIED \| COMMENTS_VIEW_MODE_DEFAULT_FOR_CURRENT_ACCESS \| COMMENTS_VIEW_MODE_OMITTED \| COMMENTS_VIEW_MODE_INCLUDED` | No | INCLUDED needs comment access; otherwise the call answers 403 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `revisionId` | `string \| null` | No | — |
+| `url` | `string` | Yes | — |
+| `slideCount` | `number` | Yes | — |
+| `layoutCount` | `number` | Yes | — |
+| `masterCount` | `number` | Yes | — |
+| `pageWidthEmu` | `number \| null` | No | — |
+| `pageHeightEmu` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`presentations.list`
+
+List presentations in Drive, filtered and paged
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.presentations.list({ pageSize: 20, orderBy: 'modifiedTime desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Drive query appended with `and mimeType = application/vnd.google-apps.presentation` |
+| `pageSize` | `number` | No | Drive caps this at 1000; the API default is 100 |
+| `pageToken` | `string` | No | Cursor from a previous page |
+| `orderBy` | `string` | No | Drive sort, e.g. modifiedTime desc or name |
+
+The Drive query is a conjunction. Your filter is wrapped in parentheses and joined with a presentation MIME-type constraint and `trashed = false`, so an `or` filter cannot widen the result past presentations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  presentationId: string,
+  name?: string | null,
+  mimeType?: string | null,
+  createdTime?: string | null,
+  modifiedTime?: string | null,
+  webViewLink?: string | null,
+  owners?: {
+    displayName?: string | null,
+    emailAddress?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Slides
+
+### create
+
+`slides.create`
+
+Add a slide from a predefined or named layout
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.slides.create({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', layout: 'TITLE_AND_BODY', insertionIndex: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `insertionIndex` | `number` | No | 0-based position; omitted appends to the end |
+| `layout` | `BLANK \| CAPTION_ONLY \| TITLE \| TITLE_AND_BODY \| TITLE_AND_TWO_COLUMNS \| TITLE_ONLY \| SECTION_HEADER \| SECTION_TITLE_AND_DESCRIPTION \| ONE_COLUMN_TEXT \| MAIN_POINT \| BIG_NUMBER` | No | Predefined layout; BLANK when omitted |
+| `layoutId` | `string` | No | Layout object id from the presentation, when it is not predefined |
+| `slideObjectId` | `string` | No | Optional caller-chosen id for the new slide |
+
+`layoutId` wins over `layout` when both are given. The reply reports the layout Google actually applied, which differs from the request when the named layout is missing from the current master.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `insertionIndex` | `number \| null` | No | — |
+| `layoutObjectId` | `string \| null` | No | — |
+
+
+
+---
+
+### duplicate
+
+`slides.duplicate`
+
+Duplicate a slide
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.slides.duplicate({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `objectIds` | `Record<string, string>` | No | Optional map of source object id to the id its copy receives |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`slides.get`
+
+Read one slide with its page elements
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.slides.get({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectId` | `string` | Yes | — |
+| `pageType` | `string \| null` | No | — |
+| `pageElements` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pageElements full type">
+
+```ts
+{
+  objectId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNotes
+
+`slides.getNotes`
+
+Read the speaker notes on a slide
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.slides.getNotes({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+
+The text comes from the notes page. Google terminates every shape with a newline, and that trailing newline is removed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `notes` | `string` | Yes | — |
+| `notesObjectId` | `string \| null` | No | — |
+
+
+
+---
+
+### getThumbnail
+
+`slides.getThumbnail`
+
+Get a signed thumbnail URL for a slide, valid 30 minutes
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.slides.getThumbnail({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', size: 'LARGE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `size` | `SMALL \| MEDIUM \| LARGE \| WIDTH2000_PX` | No | SMALL 200px, MEDIUM 800px, LARGE 1600px, WIDTH2000_PX 2000px |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `contentUrl` | `string` | Yes | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `expiresInMinutes` | `number` | Yes | contentUrl stops working after 30 minutes |
+
+
+
+---
+
+### list
+
+`slides.list`
+
+List the slides in a presentation, in order
+
+**Risk:** `read`
+
+```ts
+await corsair.googleslides.api.slides.list({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `slides` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="slides full type">
+
+```ts
+{
+  objectId: string,
+  index: number,
+  layoutObjectId?: string | null,
+  isSkipped?: boolean | null,
+  elementCount: number,
+  notesObjectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`slides.move`
+
+Move slides to a new position
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.slides.move({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectIds: ['slide_3'], insertionIndex: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectIds` | `string[]` | Yes | Slides in their current order |
+| `insertionIndex` | `number` | Yes | Position measured before the move takes place |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectIds` | `string[]` | Yes | — |
+| `insertionIndex` | `number` | Yes | — |
+
+
+
+---
+
+### remove
+
+`slides.remove`
+
+Delete a slide from a presentation [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleslides.api.slides.remove({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `removed` | `true` | Yes | — |
+
+
+
+---
+
+### setNotes
+
+`slides.setNotes`
+
+Replace the speaker notes on a slide
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.slides.setNotes({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', notes: 'Open with the retention number.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `notes` | `string` | Yes | Replaces the existing speaker notes. An empty string clears them. |
+
+Replaces the notes rather than appending. The slide is read first for the notes shape id; without one, the call throws and explains that the shape does not exist yet.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `notes` | `string` | Yes | — |
+| `notesObjectId` | `string \| null` | No | — |
+
+
+
+---
+
+### setSkipped
+
+`slides.setSkipped`
+
+Mark a slide skipped or unskipped in presentation mode
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.slides.setSkipped({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', slideObjectId: 'slide_1', isSkipped: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `isSkipped` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `slideObjectId` | `string` | Yes | — |
+| `isSkipped` | `boolean` | Yes | — |
+
+
+
+---
+
+## Text
+
+### createBullets
+
+`text.createBullets`
+
+Turn paragraphs into a bulleted or numbered list
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.text.createBullets({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `textRange` | `object` | Yes | — |
+| `bulletPreset` | `BULLET_DISC_CIRCLE_SQUARE \| BULLET_DIAMONDX_ARROW3D_SQUARE \| BULLET_CHECKBOX \| BULLET_ARROW_DIAMOND_DISC \| BULLET_STAR_CIRCLE_SQUARE \| BULLET_ARROW3D_CIRCLE_SQUARE \| BULLET_LEFTTRIANGLE_DIAMOND_DISC \| BULLET_DIAMONDX_HOLLOWDIAMOND_SQUARE \| BULLET_DIAMOND_CIRCLE_SQUARE \| NUMBERED_DIGIT_ALPHA_ROMAN \| NUMBERED_DIGIT_ALPHA_ROMAN_PARENS \| NUMBERED_DIGIT_NESTED \| NUMBERED_UPPERALPHA_ALPHA_ROMAN \| NUMBERED_UPPERROMAN_UPPERALPHA_DIGIT \| NUMBERED_ZERODIGIT_ALPHA_ROMAN` | No | Defaults to BULLET_DISC_CIRCLE_SQUARE |
+| `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
+
+<AccordionGroup>
+<Accordion title="textRange full type">
+
+```ts
+{
+  type: FIXED_RANGE | FROM_START_INDEX | ALL,
+  startIndex?: number,
+  endIndex?: number
+}
+```
+</Accordion>
+
+<Accordion title="cellLocation full type">
+
+```ts
+{
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+
+### delete
+
+`text.delete`
+
+Delete a range of text from a shape or table cell
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googleslides.api.text.delete({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `textRange` | `object` | Yes | — |
+| `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
+
+Deleting across a paragraph boundary can change paragraph styles and lists, because the two paragraphs merge.
+
+<AccordionGroup>
+<Accordion title="textRange full type">
+
+```ts
+{
+  type: FIXED_RANGE | FROM_START_INDEX | ALL,
+  startIndex?: number,
+  endIndex?: number
+}
+```
+</Accordion>
+
+<Accordion title="cellLocation full type">
+
+```ts
+{
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+
+### insert
+
+`text.insert`
+
+Insert text into a shape or table cell
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.text.insert({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'title_box', text: 'Quarterly review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | Shape or table that receives the text |
+| `text` | `string` | Yes | — |
+| `insertionIndex` | `number` | No | Unicode code-unit offset; omitted appends |
+| `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
+
+<AccordionGroup>
+<Accordion title="cellLocation full type">
+
+```ts
+{
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+
+### removeBullets
+
+`text.removeBullets`
+
+Remove list formatting from paragraphs
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.text.removeBullets({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'body_box', textRange: { type: 'ALL' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `textRange` | `object` | Yes | — |
+| `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
+
+<AccordionGroup>
+<Accordion title="textRange full type">
+
+```ts
+{
+  type: FIXED_RANGE | FROM_START_INDEX | ALL,
+  startIndex?: number,
+  endIndex?: number
+}
+```
+</Accordion>
+
+<Accordion title="cellLocation full type">
+
+```ts
+{
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+
+### replaceAll
+
+`text.replaceAll`
+
+Find and replace text across slides, by string or regex
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.text.replaceAll({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', find: 'Q3', replace: 'Q4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `find` | `string` | Yes | Text to find, or a pattern with searchByRegex |
+| `replace` | `string` | Yes | Replacement text; empty string deletes matches |
+| `matchCase` | `boolean` | No | Case sensitive search when true |
+| `searchByRegex` | `boolean` | No | Treat find as a regular expression; backslashes must be escaped |
+| `pageObjectIds` | `string[]` | No | Limits matches to these slides; omitted searches every slide |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+
+### updateStyle
+
+`text.updateStyle`
+
+Apply text styling such as bold, size or colour
+
+**Risk:** `write`
+
+```ts
+await corsair.googleslides.api.text.updateStyle({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'title_box', textRange: { type: 'ALL' }, style: { bold: true, fontSize: { magnitude: 32, unit: 'PT' } }, fields: ['bold', 'fontSize'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `textRange` | `object` | Yes | — |
+| `style` | `object` | Yes | Properties to set; name them in fields |
+| `fields` | `(bold \| italic \| underline \| strikethrough \| smallCaps \| fontFamily \| fontSize \| foregroundColor \| backgroundColor \| baselineOffset)[]` | Yes | Properties the write applies; others are left untouched |
+| `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
+
+Google rejects the whole batch when `fields` names a property absent from `style`, so the schema rejects that combination before the request is sent.
+
+<AccordionGroup>
+<Accordion title="textRange full type">
+
+```ts
+{
+  type: FIXED_RANGE | FROM_START_INDEX | ALL,
+  startIndex?: number,
+  endIndex?: number
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  bold?: boolean,
+  italic?: boolean,
+  underline?: boolean,
+  strikethrough?: boolean,
+  smallCaps?: boolean,
+  fontFamily?: string,
+  fontSize?: {
+    magnitude?: number,
+    unit?: EMU | PT
+  },
+  foregroundColor?: {
+    opaqueColor?: {
+      rgbColor?: {
+        red?: number,
+        green?: number,
+        blue?: number
+      },
+      themeColor?: THEME_COLOR_TYPE_UNSPECIFIED | DARK1 | LIGHT1 | DARK2 | LIGHT2 | ACCENT1 | ACCENT2 | ACCENT3 | ACCENT4 | ACCENT5 | ACCENT6 | HYPERLINK | FOLLOWED_HYPERLINK | TEXT1 | BACKGROUND1 | TEXT2 | BACKGROUND2
+    }
+  },
+  backgroundColor?: {
+    opaqueColor?: {
+      rgbColor?: {
+        red?: number,
+        green?: number,
+        blue?: number
+      },
+      themeColor?: THEME_COLOR_TYPE_UNSPECIFIED | DARK1 | LIGHT1 | DARK2 | LIGHT2 | ACCENT1 | ACCENT2 | ACCENT3 | ACCENT4 | ACCENT5 | ACCENT6 | HYPERLINK | FOLLOWED_HYPERLINK | TEXT1 | BACKGROUND1 | TEXT2 | BACKGROUND2
+    }
+  },
+  baselineOffset?: NONE | SUPERSCRIPT | SUBSCRIPT
+}
+```
+</Accordion>
+
+<Accordion title="cellLocation full type">
+
+```ts
+{
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationId` | `string` | Yes | — |
+| `replyCount` | `number` | Yes | — |
+| `occurrencesChanged` | `number \| null` | No | Set by replace operations, absent otherwise |
+
+
+
+---
+

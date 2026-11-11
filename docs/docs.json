@@ -2240,6 +2240,14 @@
                 ]
               },
               {
+                "group": "Google Slides",
+                "pages": [
+                  "plugins/googleslides/overview",
+                  "plugins/googleslides/api",
+                  "plugins/googleslides/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
