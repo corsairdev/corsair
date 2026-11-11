@@ -226,3 +226,18 @@ export const unauthorized = {
 		},
 	],
 };
+
+// Live 400 (11-11) for metrics.getData with filter values [1, 2].
+export const numericFilterValueRejected = {
+	status: 'error',
+	requestId,
+	errors: [
+		{
+			code: 'invalid_input',
+			message:
+				'filters.conditions[0].values[0] has the wrong type: expected a string.',
+			field: 'filters.conditions[0].values[0]',
+			type: 'validation',
+		},
+	],
+};

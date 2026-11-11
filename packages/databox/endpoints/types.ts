@@ -543,9 +543,11 @@ const MetricFilterConditionSchema = z.object({
 		'NOT_CONTAINS',
 	]),
 	values: z
-		.array(z.union([z.string(), z.number()]))
+		.array(z.string())
 		.optional()
-		.describe('Values the operator applies to.'),
+		.describe(
+			"Values the operator applies to, as strings; Databox rejects numbers with a 400, so send '10', not 10.",
+		),
 });
 
 const GetMetricDataInputSchema = z.object({

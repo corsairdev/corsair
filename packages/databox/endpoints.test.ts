@@ -14,6 +14,7 @@ import {
 	ingestQueued,
 	metricData,
 	metricList,
+	numericFilterValueRejected,
 	unauthorized,
 	validationError,
 } from './test-fixtures';
@@ -794,6 +795,26 @@ describe('metrics.getData', () => {
 				],
 			},
 		});
+	});
+
+	it('rejects numeric filter values before calling, as Databox answers 400', async () => {
+		respond(numericFilterValueRejected, 400);
+
+		const error = await invoke(Metrics.getData, {
+			id: '5114116|custom_query_833397034|attribute',
+			dateRange: {
+				from: '2026-10-12',
+				to: '2026-11-11',
+				granularity: 'allTime',
+			},
+			dimensionIds: ['ITEM'],
+			filters: {
+				conditions: [{ field: 'ITEM', operator: 'NONE_OF', values: [1, 2] }],
+			},
+		}).catch((e: unknown) => e);
+
+		expect(error).not.toBeInstanceOf(DataboxAPIError);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('is replay-safe even though it POSTs', async () => {
