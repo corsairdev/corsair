@@ -47,6 +47,18 @@ const VendorPayloadSchema = z
 	.record(z.string(), VendorValueSchema)
 	.describe('Channel-specific fields, passed through as Heyy sends them.');
 
+/**
+ * A Heyy record id. Every id Heyy issues is a UUID, and a path id that is not
+ * one (a label name, a typo) gets a 500 `internal_error` instead of a 404, so
+ * it is refused before the request. `guid` rather than `uuid`: the check is the
+ * shape, not the version.
+ */
+function heyyId(what: string) {
+	return z
+		.guid({ message: `${what} must be a Heyy id, a UUID.` })
+		.describe(`${what}, a UUID.`);
+}
+
 /** The one field every successful search response carries. */
 const SuccessSchema = z.literal(true);
 
@@ -349,7 +361,7 @@ export type AttributesCreateResponse = z.infer<
 >;
 
 const AttributesRemoveInputSchema = z.object({
-	attributeId: z.string().min(1).describe('The attribute to delete.'),
+	attributeId: heyyId('The attribute to delete'),
 });
 
 export type AttributesRemoveInput = z.input<typeof AttributesRemoveInputSchema>;
@@ -419,7 +431,7 @@ const LabelsCreateResponseSchema = z.object({
 export type LabelsCreateResponse = z.infer<typeof LabelsCreateResponseSchema>;
 
 const LabelsRemoveInputSchema = z.object({
-	labelId: z.string().min(1).describe('The label to delete.'),
+	labelId: heyyId('The label to delete'),
 });
 
 export type LabelsRemoveInput = z.input<typeof LabelsRemoveInputSchema>;
@@ -542,7 +554,7 @@ export type ApiWebhooksSearchResponse = z.infer<
 
 const ApiWebhooksUpdateInputSchema = z
 	.object({
-		webhookId: z.string().min(1).describe('The webhook to change.'),
+		webhookId: heyyId('The webhook to change'),
 		url: z.url().optional().describe('New HTTPS URL for deliveries.'),
 		status: z
 			.enum(['active', 'inactive'])
@@ -591,7 +603,7 @@ export type ApiWebhooksUpdateResponse = z.infer<
 >;
 
 const ApiWebhooksRemoveInputSchema = z.object({
-	webhookId: z.string().min(1).describe('The webhook to delete.'),
+	webhookId: heyyId('The webhook to delete'),
 });
 
 export type ApiWebhooksRemoveInput = z.input<

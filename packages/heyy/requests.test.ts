@@ -29,6 +29,7 @@ import {
 	contactsSearchResponse,
 	deletedNothingResponse,
 	deletedResponse,
+	heyyMalformedIdResponse,
 	labelsCreateResponse,
 	labelsSearchResponse,
 	messageTemplatesSearchResponse,
@@ -47,6 +48,10 @@ const mockLog = jest.mocked(logEventFromContext);
 /** The scope every webhook event needs: at least one channel id. */
 const CHANNEL_SCOPE = [{ type: 'channel', ids: ['ch-1'] }];
 const API_KEY = 'heyy-test-key';
+// Heyy ids are UUIDs, and the path-id inputs refuse anything else.
+const ATTRIBUTE_ID = '3d4ec64b-115e-4bd2-9961-ec891bc5bc95';
+const LABEL_ID = '59d27175-2398-4ac7-8ae6-8dda6d0addc0';
+const WEBHOOK_ID = 'd4c19d91-cb83-48fa-a2f5-b2c4449ea9ba';
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type, so
@@ -408,26 +413,18 @@ describe('attributes.remove', () => {
 		respond(deletedResponse);
 
 		const result = (await invoke(attributesRemove, {
-			attributeId: 'attr-1',
+			attributeId: ATTRIBUTE_ID,
 		})) as { result: { deletedIds: string[] } };
 
-		expectAuthenticated('/attributes/attr-1', 'DELETE');
+		expectAuthenticated(`/attributes/${ATTRIBUTE_ID}`, 'DELETE');
 		expect(result.result.deletedIds).toEqual(['lbl-1']);
-	});
-
-	it('percent-encodes the id', async () => {
-		respond(deletedResponse);
-
-		await invoke(attributesRemove, { attributeId: 'a b/c' });
-
-		expect(lastRequest().path).toBe('/v3/attributes/a%20b%2Fc');
 	});
 
 	it('reports a missing id through notFoundIds, not an error', async () => {
 		respond(deletedNothingResponse);
 
 		const result = (await invoke(attributesRemove, {
-			attributeId: 'attr-missing',
+			attributeId: ATTRIBUTE_ID,
 		})) as { result: { deletedIds: string[]; notFoundIds: string[] } };
 
 		expect(result.result.deletedIds).toEqual([]);
@@ -480,9 +477,9 @@ describe('labels.remove', () => {
 	it('DELETEs by the label path segment', async () => {
 		respond(deletedResponse);
 
-		await invoke(labelsRemove, { labelId: 'lbl-1' });
+		await invoke(labelsRemove, { labelId: LABEL_ID });
 
-		expectAuthenticated('/labels/lbl-1', 'DELETE');
+		expectAuthenticated(`/labels/${LABEL_ID}`, 'DELETE');
 	});
 });
 
@@ -540,7 +537,7 @@ describe('apiWebhooks.create', () => {
 		).rejects.toThrow();
 		await expect(
 			invoke(apiWebhooksUpdate, {
-				webhookId: 'wh-1',
+				webhookId: WEBHOOK_ID,
 				events: [{ type: 'message.sent' }],
 			}),
 		).rejects.toThrow();
@@ -596,18 +593,18 @@ describe('apiWebhooks.update', () => {
 		respond({ success: true, data: webhookInactive });
 
 		const result = (await invoke(apiWebhooksUpdate, {
-			webhookId: 'wh-1',
+			webhookId: WEBHOOK_ID,
 			status: 'inactive',
 		})) as { webhook: { status: string } };
 
-		expectAuthenticated('/api_webhooks/wh-1', 'PUT');
+		expectAuthenticated(`/api_webhooks/${WEBHOOK_ID}`, 'PUT');
 		expect(lastRequest().body).toEqual({ status: 'inactive' });
 		expect(result.webhook.status).toBe('inactive');
 	});
 
 	it('rejects a call that changes nothing', async () => {
 		await expect(
-			invoke(apiWebhooksUpdate, { webhookId: 'wh-1' }),
+			invoke(apiWebhooksUpdate, { webhookId: WEBHOOK_ID }),
 		).rejects.toThrow(/at least one/);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -615,7 +612,7 @@ describe('apiWebhooks.update', () => {
 	it('rejects an http url', async () => {
 		await expect(
 			invoke(apiWebhooksUpdate, {
-				webhookId: 'wh-1',
+				webhookId: WEBHOOK_ID,
 				url: 'http://example.com/heyy',
 			}),
 		).rejects.toThrow(/https/);
@@ -627,10 +624,10 @@ describe('apiWebhooks.remove', () => {
 		respond(deletedResponse);
 
 		const result = (await invoke(apiWebhooksRemove, {
-			webhookId: 'wh-1',
+			webhookId: WEBHOOK_ID,
 		})) as { result: { deletedIds: string[] } };
 
-		expectAuthenticated('/api_webhooks/wh-1', 'DELETE');
+		expectAuthenticated(`/api_webhooks/${WEBHOOK_ID}`, 'DELETE');
 		expect(result.result.deletedIds).toEqual(['lbl-1']);
 	});
 });
@@ -727,4 +724,31 @@ describe('logging', () => {
 			contactId: '3f1a2b4c-0000-4000-8000-000000000001',
 		});
 	});
+});
+
+describe('path ids', () => {
+	// Live run 11-11: every Heyy id is a UUID, and a DELETE or PUT with anything
+	// else (a label name, a typo) gets 500 `internal_error`, "Oops! Something
+	// went wrong", which the 5xx handler then retries. Refusing it here gives the
+	// caller a reason instead.
+	const notAnId = 'Priority';
+
+	it.each([
+		['attributes.remove', attributesRemove, { attributeId: notAnId }],
+		['labels.remove', labelsRemove, { labelId: notAnId }],
+		['apiWebhooks.remove', apiWebhooksRemove, { webhookId: notAnId }],
+		[
+			'apiWebhooks.update',
+			apiWebhooksUpdate,
+			{ webhookId: notAnId, status: 'inactive' },
+		],
+	])(
+		'%s rejects an id that is not a UUID before sending',
+		async (_, endpoint, input) => {
+			respond(heyyMalformedIdResponse, 500);
+
+			await expect(invoke(endpoint, input)).rejects.toThrow(/UUID/);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 });

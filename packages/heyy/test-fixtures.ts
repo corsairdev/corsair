@@ -137,6 +137,18 @@ export const deletedNothingResponse = {
 	data: { deletedIds: [], notFoundIds: ['lbl-missing'] },
 };
 
+/**
+ * What Heyy answers, with a 500, to a DELETE or PUT whose path id is not a
+ * UUID. Taken from a live call on 11-11.
+ */
+export const heyyMalformedIdResponse = {
+	success: false,
+	error: {
+		messageKey: 'internal_error',
+		message: 'Oops! Something went wrong',
+	},
+};
+
 export const webhook = {
 	id: 'wh-1',
 	createdAt: '2026-10-01T08:00:00.000Z',
