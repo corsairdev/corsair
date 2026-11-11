@@ -82,7 +82,7 @@ afterEach(() => {
  */
 describe('request shape per operation', () => {
 	it('auth.check hits /api-auth with the key header', async () => {
-		respondJson({ id: 'school-1', name: 'Acme' });
+		respondJson({ schoolId: 'school-1', name: 'Acme' });
 
 		await api.auth.check(makeCtx(), {});
 
@@ -404,7 +404,7 @@ describe('request shape per operation', () => {
 	});
 
 	it('users.courseProgressDetailByUid puts courseId before by-uid', async () => {
-		respondJson({ courseId: 'course-1', progress: 25 });
+		respondJson(COURSE_PROGRESS_DETAIL_BODY);
 
 		await api.users.courseProgressDetailByUid(makeCtx(), {
 			courseId: 'course-1',
@@ -692,6 +692,35 @@ describe('error handling', () => {
 		expect((error as Error).message).not.toContain('super-secret-key');
 		expect(JSON.stringify(error)).not.toContain('super-secret-key');
 		expect(inspect(error)).not.toContain('super-secret-key');
+	});
+});
+
+describe('reads that must not pass an empty or wrong-shaped reply', () => {
+	it('auth.check rejects a reply without schoolId', async () => {
+		respondJson({ id: 'school-1', name: 'Acme' });
+
+		await expect(api.auth.check(makeCtx(), {})).rejects.toThrow();
+	});
+
+	it.each([
+		['an empty body', ''],
+		['an id-less object', { courseId: 'course-1', progress: 25 }],
+	])('users.courseProgressDetailByUid rejects %s', async (_, body) => {
+		fetchMock.mockResolvedValueOnce(
+			typeof body === 'string'
+				? new Response(body, { status: 200 })
+				: new Response(JSON.stringify(body), {
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					}),
+		);
+
+		await expect(
+			api.users.courseProgressDetailByUid(makeCtx(), {
+				courseId: 'course-1',
+				uid: 'uid-1',
+			}),
+		).rejects.toThrow();
 	});
 });
 

@@ -172,7 +172,7 @@ export type AuthCheckInput = z.input<typeof AuthCheckInputSchema>;
  */
 const AuthCheckResponseSchema = z
 	.object({
-		schoolId: z.string().nullish().describe('The school the key belongs to.'),
+		schoolId: z.string().describe('The school the key belongs to.'),
 		name: z.string().nullish().describe('The school name.'),
 	})
 	.loose();
@@ -313,8 +313,16 @@ export type UserCourseInput = z.input<typeof UserCourseInputSchema>;
 export type UserCourseByUidInput = z.input<typeof UserCourseByUidInputSchema>;
 
 // The spec answers both detail routes with UserCourseProgressItem, the same row
-// the progress list returns.
-const UserCourseProgressDetailSchema = UserCourseProgressItemSchema;
+// the progress list returns, and marks these five fields required. Requiring
+// them here keeps an empty 200 (which the request layer turns into {}) from
+// passing as a progress record.
+const UserCourseProgressDetailSchema = UserCourseProgressItemSchema.extend({
+	uid: z.string(),
+	email: z.string(),
+	firstname: z.string(),
+	name: z.string().describe('Last name.'),
+	courseId: z.string(),
+});
 
 export type UserCourseProgressDetail = z.infer<
 	typeof UserCourseProgressDetailSchema
