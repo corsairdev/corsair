@@ -1669,8 +1669,6 @@ ${pageTitleFrontmatter(`${title} API reference`, 'API')}
 description: ${yamlDoubleQuotedScalar(apiDescription)}
 ---
 
-Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
-
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -1689,7 +1687,7 @@ function buildDbMdx(
 	// exist.
 	if (data.db.length === 0) {
 		const description = fitDescription(
-			`The ${title} plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally. Use its API operations.`,
+			`The ${title} plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally.`,
 			`${title} returns live API data and stores no local entities.`,
 		);
 		return `---
@@ -1697,7 +1695,7 @@ ${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(description)}
 ---
 
-The ${title} plugin returns live API data and does not sync or store entities locally. No local \`.search()\` operations are available.
+No local \`.search()\` operations are available for ${title}. To read its data, call the [API operations](/plugins/${pluginId}/api), which return what ${title} has at that moment.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
