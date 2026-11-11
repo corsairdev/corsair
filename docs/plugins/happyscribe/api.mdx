@@ -311,6 +311,9 @@ await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl:
 | `participants` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, any> \| null` | No | — |
 | `settings` | `Record<string, any> \| null` | No | — |
+| `transcription_id` | `string \| null` | No | — |
+| `transcript` | `Record<string, any>[] \| null` | No | — |
+| `summary` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -361,6 +364,9 @@ await corsair.happyscribe.api.meetings.get({ meetingId: 'mtg_01k0h4r9s8x7c2dvq3m
 | `participants` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, any> \| null` | No | — |
 | `settings` | `Record<string, any> \| null` | No | — |
+| `transcription_id` | `string \| null` | No | — |
+| `transcript` | `Record<string, any>[] \| null` | No | — |
+| `summary` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -571,9 +577,9 @@ await corsair.happyscribe.api.memberships.updateRole({ membershipId: 9002, role:
 
 `orders.confirm`
 
-Confirm an incomplete order, which charges the organization and starts the human work; irreversible
+Confirm an incomplete order, which charges the organization and starts the work
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1ca1b3d0cf' });
@@ -595,6 +601,7 @@ await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
 | `operations` | `Record<string, any>[] \| null` | No | — |
+| `outputsIds` | `string[] \| null` | No | — |
 
 
 
@@ -606,7 +613,7 @@ await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1
 
 Create a transcription or subtitling order for media at a URL: service auto (the default) is machine work, pro is human work. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp3', language: 'es', service: 'pro', organizationId: 123 });
@@ -641,6 +648,7 @@ await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
 | `operations` | `Record<string, any>[] \| null` | No | — |
+| `outputsIds` | `string[] \| null` | No | — |
 
 
 
@@ -652,7 +660,7 @@ await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp
 
 Create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. Incomplete and unpaid until confirmed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: '9josdjdfo09j309omsldknslkjndfjknsdfs', targetLanguages: ['es'], organizationId: 123 });
@@ -667,6 +675,7 @@ await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: 
 | `service` | `auto \| pro` | No | `auto` (the default) for machine translation, `pro` for human translators. |
 | `confirm` | `boolean` | No | Confirm and pay immediately. |
 | `organizationId` | `string \| number` | Yes | ID of the organization to act on, as `organizations.list` returned it. |
+| `webhookUrl` | `string` | No | URL notified each time the order changes state. |
 | `glossaryIds` | `number[]` | No | Glossaries for the translators. |
 
 
@@ -679,6 +688,7 @@ await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: 
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
 | `operations` | `Record<string, any>[] \| null` | No | — |
+| `outputsIds` | `string[] \| null` | No | — |
 
 
 
@@ -712,6 +722,7 @@ await corsair.happyscribe.api.orders.get({ orderId: '10b1edd9381d4a00a3d0db1ca1b
 | `folder_id` | `number \| null` | No | — |
 | `state` | `string \| null` | No | — |
 | `operations` | `Record<string, any>[] \| null` | No | — |
+| `outputsIds` | `string[] \| null` | No | — |
 
 
 
