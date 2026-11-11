@@ -77,14 +77,26 @@ export const EXAMS_BODY = {
 export const EXAM_RESULTS_BODY = {
 	data: [
 		{
+			id: 'result-1',
 			uid: 'uid-1',
+			firstname: 'Jordan',
+			lastname: 'Miller',
 			email: 'jordan@acme.example',
+			created: '2026-02-01T10:00:00.000Z',
+			active: true,
+			hasPassed: true,
 			runs: [
 				{
-					startedAt: '2026-02-01T10:00:00.000Z',
-					finishedAt: '2026-02-01T10:20:00.000Z',
-					points: 9,
-					passed: true,
+					id: 'run-1',
+					courseId: 'course-1',
+					chapterId: 'chapter-1',
+					postId: 'post-1',
+					started: '2026-02-01T10:00:00.000Z',
+					ended: '2026-02-01T10:20:00.000Z',
+					possibleScore: 10,
+					pointsScored: 9,
+					percentRequired: 80,
+					hasPassed: true,
 				},
 			],
 			updatedAt: '2026-02-01T10:20:00.000Z',
@@ -139,10 +151,17 @@ export const COURSE_PROGRESS_BODY = {
 };
 
 export const COURSE_PROGRESS_DETAIL_BODY = {
+	uid: 'uid-1',
+	email: 'jordan@acme.example',
+	firstname: 'Jordan',
+	name: 'Miller',
+	active: true,
 	courseId: 'course-1',
 	activePosts: 20,
 	completedPosts: 5,
-	progress: 25,
+	grantedAt: '2026-01-15T09:00:00.000Z',
+	startDate: '2026-01-15T09:00:00.000Z',
+	updatedAt: '2026-02-01T10:20:00.000Z',
 };
 
 /** Write routes answer with a bare success-shaped object. */

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	MemberSpotEndpointInputSchemas as Inputs,
 	MemberSpotEndpointOutputSchemas as Outputs,
@@ -162,7 +163,10 @@ describe('course progress', () => {
 		const output = Outputs.usersCourseProgressDetail.parse(
 			COURSE_PROGRESS_DETAIL_BODY,
 		);
-		expect(output.progress).toBe(25);
+		expect(output.completedPosts).toBe(5);
+		// UserCourseProgressItem carries the member and the dates, not a percentage.
+		expect(output.startDate).toBe('2026-01-15T09:00:00.000Z');
+		expect(output.uid).toBe('uid-1');
 	});
 
 	it('rejects a progress row with a non-numeric count', () => {
@@ -177,14 +181,36 @@ describe('course progress', () => {
 describe('exam results', () => {
 	it('reads runs with their pass flag', () => {
 		const output = Outputs.examResults.parse(EXAM_RESULTS_BODY);
-		expect(output.data[0]?.runs?.[0]?.passed).toBe(true);
+		expect(output.data[0]?.runs?.[0]?.hasPassed).toBe(true);
+		expect(output.data[0]?.runs?.[0]?.pointsScored).toBe(9);
+		expect(output.data[0]?.lastname).toBe('Miller');
 	});
 
 	it('keeps the provider spelling lastSuccessfullRun', () => {
 		const output = Outputs.examResults.parse({
-			data: [{ uid: 'u', lastSuccessfullRun: { passed: true } }],
+			data: [{ uid: 'u', lastSuccessfullRun: { hasPassed: true } }],
 		});
-		expect(output.data[0]?.lastSuccessfullRun?.passed).toBe(true);
+		expect(output.data[0]?.lastSuccessfullRun?.hasPassed).toBe(true);
+	});
+
+	it('declares the ExamResultDto and ExamRunDto field names from the spec', () => {
+		// The published schema is what agents and the docs read, so a field the
+		// provider never sends there is a wrong answer even though .loose() parses.
+		const json = JSON.stringify(z.toJSONSchema(Outputs.examResults));
+		for (const field of [
+			'lastname',
+			'hasPassed',
+			'started',
+			'ended',
+			'possibleScore',
+			'pointsScored',
+			'percentRequired',
+		]) {
+			expect(json).toContain(`"${field}"`);
+		}
+		for (const field of ['startedAt', 'finishedAt', '"points"', '"passed"']) {
+			expect(json).not.toContain(field);
+		}
 	});
 
 	it('rejects a result list without the data array', () => {

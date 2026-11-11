@@ -13,12 +13,19 @@ const EmailSchema = z.string().email();
 
 // ── shared response pieces ────────────────────────────────────────────────
 
+// ExamRunDto in the spec.
 const ExamRunSchema = z
 	.object({
-		startedAt: z.string().nullish(),
-		finishedAt: z.string().nullish(),
-		points: z.number().nullish(),
-		passed: z.boolean().nullish(),
+		id: z.string().nullish(),
+		courseId: z.string().nullish(),
+		chapterId: z.string().nullish(),
+		postId: z.string().nullish(),
+		started: z.string().nullish(),
+		ended: z.string().nullish(),
+		possibleScore: z.number().nullish(),
+		pointsScored: z.number().nullish(),
+		percentRequired: z.number().nullish(),
+		hasPassed: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -28,7 +35,8 @@ const UserCourseProgressSchema = z
 		activePosts: z.number().nullish(),
 		completedPosts: z.number().nullish(),
 		grantedAt: z.string().nullish(),
-		progress: z.number().nullish(),
+		startDate: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 	})
 	.loose();
 
@@ -97,12 +105,18 @@ const ExamSummarySchema = z
 	})
 	.loose();
 
+// ExamResultDto in the spec. Unlike users, exam results spell the last name
+// `lastname`.
 const ExamResultSchema = z
 	.object({
+		id: z.string().nullish(),
 		uid: z.string().nullish(),
 		email: z.string().nullish(),
 		firstname: z.string().nullish(),
-		name: z.string().nullish(),
+		lastname: z.string().nullish(),
+		created: z.string().nullish(),
+		active: z.boolean().nullish(),
+		hasPassed: z.boolean().nullish(),
 		lastRun: ExamRunSchema.nullish(),
 		lastSuccessfullRun: ExamRunSchema.nullish(),
 		runs: z.array(ExamRunSchema).nullish(),
@@ -139,6 +153,9 @@ const UserCourseProgressItemSchema = z
 		courseId: z.string().nullish(),
 		activePosts: z.number().nullish(),
 		completedPosts: z.number().nullish(),
+		grantedAt: z.string().nullish(),
+		startDate: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 	})
 	.loose();
 
@@ -289,14 +306,9 @@ const UserCourseByUidInputSchema = z.object({
 export type UserCourseInput = z.input<typeof UserCourseInputSchema>;
 export type UserCourseByUidInput = z.input<typeof UserCourseByUidInputSchema>;
 
-const UserCourseProgressDetailSchema = z
-	.object({
-		courseId: z.string().nullish(),
-		activePosts: z.number().nullish(),
-		completedPosts: z.number().nullish(),
-		progress: z.number().nullish(),
-	})
-	.loose();
+// The spec answers both detail routes with UserCourseProgressItem, the same row
+// the progress list returns.
+const UserCourseProgressDetailSchema = UserCourseProgressItemSchema;
 
 export type UserCourseProgressDetail = z.infer<
 	typeof UserCourseProgressDetailSchema
