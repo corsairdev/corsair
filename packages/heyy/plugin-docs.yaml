@@ -43,7 +43,7 @@ apiExamples:
   labels.remove:
     call: "{ labelId: 'b1a2c3d4-0000-4000-8000-000000000000' }"
   apiWebhooks.create:
-    call: "{ url: 'https://example.com/heyy/events', events: [{ type: 'message.received' }] }"
+    call: "{ url: 'https://example.com/heyy/events', events: [{ type: 'message.received', scopes: [{ type: 'channel', ids: ['b1a2c3d4-0000-4000-8000-000000000000'] }] }] }"
   apiWebhooks.search: {}
   apiWebhooks.update:
     call: "{ webhookId: 'b1a2c3d4-0000-4000-8000-000000000000', status: 'inactive' }"
@@ -55,4 +55,4 @@ apiExamples:
 apiNotes:
   contacts.search: '`query` is a structured expression such as `equals(email, ''a@b.com'')`; `search` is free text. Pass one of them, not both.'
   attributes.create: 'A single_select or multi_select attribute needs `details.options`; any other type must omit it.'
-  apiWebhooks.create: 'The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each optionally scoped to channel ids.'
+  apiWebhooks.create: 'The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each scoped to at least one channel id from `channels.search`. Heyy then POSTs every matching message, with its content and sender, to that URL.'

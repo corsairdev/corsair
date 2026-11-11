@@ -41,6 +41,9 @@ jest.mock('corsair/core', () => ({
 }));
 
 const mockLog = jest.mocked(logEventFromContext);
+
+/** The scope every webhook event needs: at least one channel id. */
+const CHANNEL_SCOPE = [{ type: 'channel', ids: ['ch-1'] }];
 const API_KEY = 'heyy-test-key';
 
 // never parameters: every concrete endpoint is assignable to this because
@@ -456,13 +459,13 @@ describe('apiWebhooks.create', () => {
 
 		const result = (await invoke(apiWebhooksCreate, {
 			url: 'https://example.com/heyy/events',
-			events: [{ type: 'message.received' }],
+			events: [{ type: 'message.received', scopes: CHANNEL_SCOPE }],
 		})) as { webhook: { id: string; status: string } };
 
 		expectAuthenticated('/api_webhooks', 'POST');
 		expect(lastRequest().body).toEqual({
 			url: 'https://example.com/heyy/events',
-			events: [{ type: 'message.received' }],
+			events: [{ type: 'message.received', scopes: CHANNEL_SCOPE }],
 		});
 		expect(result.webhook.status).toBe('active');
 	});
@@ -487,11 +490,35 @@ describe('apiWebhooks.create', () => {
 		});
 	});
 
+	it('rejects an event with no channel scope, which the spec requires', async () => {
+		// openapi-v3.json marks events[].scopes required, and the webhook guide
+		// says at least one channel is required per event.
+		await expect(
+			invoke(apiWebhooksCreate, {
+				url: 'https://example.com/heyy/events',
+				events: [{ type: 'message.received' }],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(apiWebhooksCreate, {
+				url: 'https://example.com/heyy/events',
+				events: [{ type: 'message.received', scopes: [] }],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(apiWebhooksUpdate, {
+				webhookId: 'wh-1',
+				events: [{ type: 'message.sent' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an http url, which Heyy will not deliver to', async () => {
 		await expect(
 			invoke(apiWebhooksCreate, {
 				url: 'http://example.com/heyy',
-				events: [{ type: 'message.received' }],
+				events: [{ type: 'message.received', scopes: CHANNEL_SCOPE }],
 			}),
 		).rejects.toThrow(/https/);
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -510,7 +537,7 @@ describe('apiWebhooks.create', () => {
 		await expect(
 			invoke(apiWebhooksCreate, {
 				url: 'https://example.com/heyy',
-				events: [{ type: 'contact.created' }],
+				events: [{ type: 'contact.created', scopes: CHANNEL_SCOPE }],
 			}),
 		).rejects.toThrow();
 	});

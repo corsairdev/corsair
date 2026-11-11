@@ -448,6 +448,9 @@ export type HeyyWebhook = z.infer<typeof WebhookSchema>;
 /** The event list both the create and update routes take. */
 const WebhookEventInputSchema = z.object({
 	type: z.enum(HEYY_WEBHOOK_EVENT_TYPES).describe('The event to deliver.'),
+	// The spec marks `scopes` required on every event and the webhook guide says
+	// at least one channel is required per event, so an unscoped event is
+	// refused here rather than by a 400.
 	scopes: z
 		.array(
 			z.object({
@@ -455,8 +458,10 @@ const WebhookEventInputSchema = z.object({
 				ids: z.array(z.string().min(1)).min(1),
 			}),
 		)
-		.optional()
-		.describe('Only deliver events from these channel ids.'),
+		.min(1)
+		.describe(
+			'The channels this event is delivered for, as [{ type: "channel", ids: [...] }] with ids from `channels.search`. Heyy requires at least one channel per event.',
+		),
 });
 
 const ApiWebhooksCreateInputSchema = z

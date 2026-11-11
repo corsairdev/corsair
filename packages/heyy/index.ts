@@ -221,7 +221,7 @@ const heyyEndpointMeta = {
 	'apiWebhooks.create': {
 		riskLevel: 'write',
 		description:
-			'Register an HTTPS endpoint to receive message events, optionally limited to specific channels',
+			'Register an HTTPS endpoint for message events on the channels named in each event; Heyy then POSTs every matching message, with its content and sender, to that URL',
 	},
 	'apiWebhooks.search': {
 		riskLevel: 'read',

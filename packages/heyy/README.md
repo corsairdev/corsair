@@ -12,7 +12,7 @@ pnpm add @corsair-dev/heyy
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `apiWebhooks.create` | `heyy.api.apiWebhooks.create` | `write` | Register an HTTPS endpoint to receive message events, optionally limited to specific channels |
+| `apiWebhooks.create` | `heyy.api.apiWebhooks.create` | `write` | Register an HTTPS endpoint for message events on the channels named in each event; Heyy then POSTs every matching message, with its content and sender, to that URL |
 | `apiWebhooks.remove` | `heyy.api.apiWebhooks.remove` | `destructive` | Delete a webhook endpoint by id; Heyy stops delivering to it immediately |
 | `apiWebhooks.search` | `heyy.api.apiWebhooks.search` | `read` | List the registered webhook endpoints with their URL, status and subscribed events |
 | `apiWebhooks.update` | `heyy.api.apiWebhooks.update` | `write` | Change a webhook's URL or events, or pause deliveries by setting it inactive |
