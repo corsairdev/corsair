@@ -244,6 +244,18 @@ describe('sanity plugin through createCorsair', () => {
 			}
 		});
 
+		it('uses the option in an app with no database or kek at all', async () => {
+			const corsair = createCorsair({
+				plugins: [sanity({ webhookSecret: WEBHOOK_SECRET })],
+			});
+			const result = await processWebhook(
+				corsair,
+				deliveryHeaders(DELIVERY_BODY),
+				DELIVERY_BODY,
+			);
+			expect(result.response?.success).toBe(true);
+		});
+
 		it('uses the option for an account with no data key yet, as an option-only app has', async () => {
 			const { corsair, testDb } = await createClient(
 				{ webhookSecret: WEBHOOK_SECRET },

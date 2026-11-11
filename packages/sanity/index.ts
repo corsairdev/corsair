@@ -391,9 +391,11 @@ const NOTHING_STORED = [
 	/^Account not found for tenant/,
 ];
 
-async function storedWebhookSecret(keys: {
-	get_webhook_signature: () => Promise<string | null>;
-}): Promise<string | null> {
+async function storedWebhookSecret(
+	keys: { get_webhook_signature: () => Promise<string | null> } | undefined,
+): Promise<string | null> {
+	// No database or kek: core gives no key manager, so only the option exists.
+	if (!keys) return null;
 	try {
 		return await keys.get_webhook_signature();
 	} catch (error) {
