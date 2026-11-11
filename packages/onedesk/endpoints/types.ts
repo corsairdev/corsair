@@ -1330,7 +1330,7 @@ const TimerStartInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe(
-			'A UUID you choose for the timer; pass the same value to pause, resume or cancel it. OneDesk answers ERROR_INVALID_ID for anything that is not a UUID.',
+			'A UUID you choose for the timer (the spec types it as one); pass the same value to pause, resume or cancel it.',
 		),
 	itemExternalId: z.string().min(1).describe('Work item the timer is for.'),
 });

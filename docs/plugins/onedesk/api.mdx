@@ -4854,7 +4854,7 @@ await corsair.onedesk.api.timers.start({ timerExternalId: '4t52581b-0000-0000-00
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timerExternalId` | `string` | Yes | A UUID you choose for the timer; pass the same value to pause, resume or cancel it. OneDesk answers ERROR_INVALID_ID for anything that is not a UUID. |
+| `timerExternalId` | `string` | Yes | A UUID you choose for the timer (the spec types it as one); pass the same value to pause, resume or cancel it. |
 | `itemExternalId` | `string` | Yes | Work item the timer is for. |
 
 A timer is identified by the external id you choose, so starting the same id again resumes that timer.
