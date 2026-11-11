@@ -299,8 +299,10 @@ export const BaseProviders = [
 	'kling',
 	'leexi',
 	'leiga',
+	'lemonsqueezy',
 	'lever',
 	'linear',
+	'linguapop',
 	'linkedin',
 	'litescrape',
 	'loyverse',
@@ -316,6 +318,7 @@ export const BaseProviders = [
 	'minimax',
 	'miro',
 	'missive',
+	'mixmax',
 	'monday',
 	'mrscraper',
 	'nanonets',
@@ -363,7 +366,6 @@ export const BaseProviders = [
 	'removebg',
 	'render',
 	'replicate',
-	'replicate',
 	'replyio',
 	'resend',
 	'retailed',
@@ -373,6 +375,7 @@ export const BaseProviders = [
 	'runpod',
 	'salesflare',
 	'salesforce',
+	'sanity',
 	'saperly',
 	'sapsuccessfactors',
 	'scaleai',
@@ -403,9 +406,11 @@ export const BaseProviders = [
 	'surf',
 	'suzanne',
 	'synthflowai',
+	'taggun',
 	'tally',
 	'tavily',
 	'tavilymcp',
+	'teamcamp',
 	'teams',
 	'telegram',
 	'textrazor',
@@ -419,6 +424,7 @@ export const BaseProviders = [
 	'tinypng',
 	'tinyurl',
 	'tisane',
+	'tldv',
 	'todoist',
 	'toggl',
 	'tokenmetrics',
@@ -467,6 +473,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zenrows',
 	'zenserp',
 	'zohobigin',
 	'zohodesk',
@@ -763,8 +770,10 @@ export const ProviderDisplayNames = {
 	kling: 'Kling',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
+	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
+	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
@@ -780,6 +789,7 @@ export const ProviderDisplayNames = {
 	minimax: 'MiniMax',
 	miro: 'Miro',
 	missive: 'Missive',
+	mixmax: 'Mixmax',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
@@ -836,6 +846,7 @@ export const ProviderDisplayNames = {
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
+	sanity: 'Sanity',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
@@ -866,9 +877,11 @@ export const ProviderDisplayNames = {
 	surf: 'Surf',
 	suzanne: 'Suzanne',
 	synthflowai: 'Synthflow AI',
+	taggun: 'Taggun',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
+	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
@@ -882,6 +895,7 @@ export const ProviderDisplayNames = {
 	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
+	tldv: 'tl;dv',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
@@ -930,6 +944,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zenrows: 'ZenRows',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
 	zohodesk: 'Zoho Desk',
@@ -1054,6 +1069,7 @@ export type AllProviders =
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
+	| 'builtwith'
 	| 'bunnycdn'
 	| 'bytedance'
 	| 'byteforms'
@@ -1133,6 +1149,7 @@ export type AllProviders =
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
+	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docsumo'
@@ -1231,8 +1248,10 @@ export type AllProviders =
 	| 'kling'
 	| 'leexi'
 	| 'leiga'
+	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
+	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
 	| 'loyverse'
@@ -1248,6 +1267,7 @@ export type AllProviders =
 	| 'minimax'
 	| 'miro'
 	| 'missive'
+	| 'mixmax'
 	| 'monday'
 	| 'mrscraper'
 	| 'nanonets'
@@ -1295,7 +1315,6 @@ export type AllProviders =
 	| 'removebg'
 	| 'render'
 	| 'replicate'
-	| 'replicate'
 	| 'replyio'
 	| 'resend'
 	| 'retailed'
@@ -1305,6 +1324,7 @@ export type AllProviders =
 	| 'runpod'
 	| 'salesflare'
 	| 'salesforce'
+	| 'sanity'
 	| 'saperly'
 	| 'sapsuccessfactors'
 	| 'scaleai'
@@ -1335,9 +1355,11 @@ export type AllProviders =
 	| 'surf'
 	| 'suzanne'
 	| 'synthflowai'
+	| 'taggun'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
+	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
@@ -1351,6 +1373,7 @@ export type AllProviders =
 	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
+	| 'tldv'
 	| 'todoist'
 	| 'toggl'
 	| 'tokenmetrics'
@@ -1399,6 +1422,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zenrows'
 	| 'zenserp'
 	| 'zohobigin'
 	| 'zohodesk'

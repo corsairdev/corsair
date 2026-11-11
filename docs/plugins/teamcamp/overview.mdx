@@ -1,0 +1,134 @@
+---
+title: Overview
+description: "Project management for client work. Read and create projects, their task groups and their tasks, with the workspace members and customers a project is built from."
+---
+
+Use **Teamcamp** through Corsair: one client, typed API calls.
+
+Every call goes through `https://api.teamcamp.app/v1.0` with the key in an `apiKey` header. The published spec names the scheme `bearerAuth`, but it is declared as an `apiKey` header and the live API agrees: an `Authorization: Bearer` token is rejected, the `apiKey` header is accepted.
+
+List calls answer a bare JSON array. A project delete answers a bare JSON string. Both are returned as this plugin's own shape: `{ projects: [...] }`, `{ users: [...] }`, and `{ archived, projectId, message }`.
+
+A project read is what makes a task create useful. Its `status` array holds the workflow columns (`Todo`, `In Progress`, `Done`) with the `_id` a task's `statusId` takes, and `projectUsers` holds the member ids a task's `taskUsers` takes.
+
+Two Teamcamp behaviours worth knowing. A task's `status` is a boolean, and its workflow column is `statusId`, which is a string. A project delete archives rather than erases: the project leaves the project list, but reading it by id still answers it with `archived: true`.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/teamcamp better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/teamcamp better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/teamcamp better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/teamcamp better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { teamcamp } from '@corsair-dev/teamcamp';
+
+export const corsair = createCorsair({
+	plugins: [
+		teamcamp(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+teamcamp()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'teamcamp',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the projects in the workspace**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teamcamp.api.projects.list({});
+```
+
+
+**Create a task in a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teamcamp.api.tasks.create({ projectId: '<project id from projects.list>', taskName: 'Draft the launch announcement' });
+```
+
+
+See the full list on the [API](/plugins/teamcamp/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/teamcamp/api">
+    Every `teamcamp.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

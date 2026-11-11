@@ -1,0 +1,132 @@
+---
+title: Overview
+description: "Scan receipts and invoices into structured data with Taggun's OCR API, and validate them against campaign rules or rules sent with the request."
+---
+
+Use **Taggun** through Corsair: one client, typed API calls.
+
+Taggun is synchronous: every scan returns its result in the same HTTP call, with no webhooks, callbacks or job polling, so this plugin declares no webhooks.
+Every extraction call is one billable scan on the account, and it stores the receipt on Taggun's side unless `incognito` is true. Scans are therefore reported as writes, and a 5xx is never replayed.
+Three input methods exist for both depths: `url` for a document already hosted at an HTTPS address, `encoded` for a base64 payload in JSON, and `file` for a multipart upload under 20 MB. The `simple` form returns the four core fields with confidence levels; the `verbose` form adds product line items, the OCR text, helper arrays and any feature envelopes the account enables. A `language` hint helps most for `ar`, `kh`, `th` and `he`, and Taggun ignores a code it does not act on.
+Campaign Validation needs the feature enabled on the account (Advanced plan and above) and answers a 400 naming the feature when it is absent. `campaigns.update` replaces the stored rules wholesale, so read them with `campaigns.get` first and send back every section that should stay. `receiptValidation` needs no stored campaign: pass the rules inline, and nothing is persisted.
+A receipt that fails a validation rule is a successful call reporting `successful: false` with `failedValidations`; it is not an error.
+
+**What you get:**
+
+- 15 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/taggun better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/taggun better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/taggun better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/taggun better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { taggun } from '@corsair-dev/taggun';
+
+export const corsair = createCorsair({
+	plugins: [
+		taggun(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+taggun()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'taggun',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List campaign IDs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.taggun.api.campaigns.list({});
+```
+
+
+**Scan a receipt and return line items**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png', incognito: true });
+```
+
+
+See the full list on the [API](/plugins/taggun/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/taggun/api">
+    Every `taggun.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

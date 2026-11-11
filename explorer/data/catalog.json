@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T13:37:50.854Z",
-  "corsairVersion": "0.1.163",
+  "generatedAt": "2026-11-11T02:53:19.836Z",
+  "corsairVersion": "0.1.168",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -4313,6 +4313,21 @@
       }
     },
     {
+      "id": "lemonsqueezy",
+      "displayName": "Lemon Squeezy",
+      "description": "Sell software and digital products as a merchant of record. Read stores, products, orders and subscriptions, issue refunds, record metered usage, create checkout links and discount codes, and manage webhook registrations. Inbound webhook deliveries are not handled by this plugin.",
+      "npmPackageName": "@corsair-dev/lemonsqueezy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 57,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "lever",
       "displayName": "Lever",
       "description": "Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management.",
@@ -4342,6 +4357,21 @@
         "api": 18,
         "webhooks": 9,
         "db": 5
+      }
+    },
+    {
+      "id": "linguapop",
+      "displayName": "Linguapop",
+      "description": "Language placement tests with Linguapop - list the languages it can test and create candidate invitations that return a direct test link, optionally emailed to the candidate.",
+      "npmPackageName": "@corsair-dev/linguapop",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -4551,6 +4581,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 42,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "mixmax",
+      "displayName": "Mixmax",
+      "description": "Send and manage Mixmax emails, run sequences with recipients and folders, organize templates and template folders, track unsubscribes, and read the live engagement feed.",
+      "npmPackageName": "@corsair-dev/mixmax",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 132,
         "webhooks": 0,
         "db": 0
       }
@@ -5403,6 +5448,21 @@
       }
     },
     {
+      "id": "sanity",
+      "displayName": "Sanity",
+      "description": "Sanity's Content Lake from an agent. Query documents with GROQ, create and edit drafts, publish, upload images and files, read history, run Sanity's AI Agent Actions, manage datasets and webhooks, and receive signed document webhooks.",
+      "npmPackageName": "@corsair-dev/sanity",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
       "id": "saperly",
       "displayName": "Saperly",
       "description": "Phone numbers, voice, and SMS for AI agents. The workspace is resolved from a bearer API key.",
@@ -5858,6 +5918,21 @@
       }
     },
     {
+      "id": "taggun",
+      "displayName": "Taggun",
+      "description": "Scan receipts and invoices into structured data with Taggun's OCR API, and validate them against campaign rules or rules sent with the request.",
+      "npmPackageName": "@corsair-dev/taggun",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 15,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "tally",
       "displayName": "Tally",
       "description": "Simple form builder for surveys, signup flows, and collecting responses without code.",
@@ -5900,6 +5975,21 @@
         "api": 5,
         "webhooks": 0,
         "db": 5
+      }
+    },
+    {
+      "id": "teamcamp",
+      "displayName": "Teamcamp",
+      "description": "Project management for client work. Read and create projects, their task groups and their tasks, with the workspace members and customers a project is built from.",
+      "npmPackageName": "@corsair-dev/teamcamp",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -6095,6 +6185,21 @@
       "counts": {
         "api": 4,
         "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "tldv",
+      "displayName": "tl;dv",
+      "description": "Meeting intelligence with tl;dv - list and read recorded meetings, pull transcripts and AI notes, import a recording from a URL, and search folders.",
+      "npmPackageName": "@corsair-dev/tldv",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 2,
         "db": 0
       }
     },
@@ -6818,6 +6923,21 @@
         "api": 11,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "zenrows",
+      "displayName": "ZenRows",
+      "description": "Web data infrastructure for agents and applications. Fetch any page through anti-bot bypasses, a headless browser and residential proxies, extract structured JSON, crawl a site from one URL, and track the credits behind it all.",
+      "npmPackageName": "@corsair-dev/zenrows",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 19,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -76336,6 +76456,348 @@
       "haystack": "workflows.nextstates leiga.api.workflows.nextstates list the states an issue can move to from its current one read"
     },
     {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "affiliates.get",
+      "haystack": "affiliates.get lemonsqueezy.api.affiliates.get read one affiliate, with their status and earnings read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "affiliates.list",
+      "haystack": "affiliates.list lemonsqueezy.api.affiliates.list list affiliates, filtered by store or email read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "checkouts.create",
+      "haystack": "checkouts.create lemonsqueezy.api.checkouts.create create a checkout link for a variant and return its url, with optional prefilled data, custom pricing and appearance write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "checkouts.get",
+      "haystack": "checkouts.get lemonsqueezy.api.checkouts.get read one checkout, with its options and prefilled data read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "checkouts.list",
+      "haystack": "checkouts.list lemonsqueezy.api.checkouts.list list checkouts, filtered by store or variant read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create lemonsqueezy.api.customers.create create a customer record. this does not send an invitation to the customer write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get lemonsqueezy.api.customers.get read one customer, with their status, country and revenue read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list lemonsqueezy.api.customers.list list customers, filtered by store or email read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update lemonsqueezy.api.customers.update change a customer's name or email address write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discountRedemptions.get",
+      "haystack": "discountredemptions.get lemonsqueezy.api.discountredemptions.get read one discount redemption, with the amount it took off read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discountRedemptions.list",
+      "haystack": "discountredemptions.list lemonsqueezy.api.discountredemptions.list list discount redemptions, filtered by discount or order read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discounts.create",
+      "haystack": "discounts.create lemonsqueezy.api.discounts.create create a discount code, either a percentage or a fixed amount in cents, lasting once, a number of months or forever write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discounts.delete",
+      "haystack": "discounts.delete lemonsqueezy.api.discounts.delete delete a discount code. a deleted code cannot be restored destructive"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discounts.get",
+      "haystack": "discounts.get lemonsqueezy.api.discounts.get read one discount code, with its amount, duration and status read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "discounts.list",
+      "haystack": "discounts.list lemonsqueezy.api.discounts.list list discount codes, optionally for one store read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "files.get",
+      "haystack": "files.get lemonsqueezy.api.files.get read one file and its download url read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "files.list",
+      "haystack": "files.list lemonsqueezy.api.files.list list downloadable files, optionally for one variant read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "licenseKeyInstances.get",
+      "haystack": "licensekeyinstances.get lemonsqueezy.api.licensekeyinstances.get read one license key instance, with its identifier and name read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "licenseKeyInstances.list",
+      "haystack": "licensekeyinstances.list lemonsqueezy.api.licensekeyinstances.list list the instances a license key has been activated on read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "licenseKeys.get",
+      "haystack": "licensekeys.get lemonsqueezy.api.licensekeys.get read one license key, including the full key string read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "licenseKeys.list",
+      "haystack": "licensekeys.list lemonsqueezy.api.licensekeys.list list license keys, filtered by store, order, product or status read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "licenseKeys.update",
+      "haystack": "licensekeys.update lemonsqueezy.api.licensekeys.update change a license key's activation limit, expiry or disabled state write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orderItems.get",
+      "haystack": "orderitems.get lemonsqueezy.api.orderitems.get read one order line item, with its price and quantity read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orderItems.list",
+      "haystack": "orderitems.list lemonsqueezy.api.orderitems.list list order line items, filtered by order, product or variant read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orders.generateInvoice",
+      "haystack": "orders.generateinvoice lemonsqueezy.api.orders.generateinvoice generate the pdf invoice for an order and return its url. no money moves write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orders.get",
+      "haystack": "orders.get lemonsqueezy.api.orders.get read one order, with its totals, tax and refund state read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orders.list",
+      "haystack": "orders.list lemonsqueezy.api.orders.list list orders, filtered by store, email or order number read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "orders.refund",
+      "haystack": "orders.refund lemonsqueezy.api.orders.refund refund an order in full, or partially by amount in cents. a refund cannot be undone through the api destructive"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "prices.get",
+      "haystack": "prices.get lemonsqueezy.api.prices.get read one price, with its scheme, tiers and renewal interval read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "prices.list",
+      "haystack": "prices.list lemonsqueezy.api.prices.list list prices, optionally for one variant read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "products.get",
+      "haystack": "products.get lemonsqueezy.api.products.get read one product, with its price range and buy-now url read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list lemonsqueezy.api.products.list list products, optionally for one store read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "stores.get",
+      "haystack": "stores.get lemonsqueezy.api.stores.get read one store, with its plan, currency and sales totals read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "stores.list",
+      "haystack": "stores.list lemonsqueezy.api.stores.list list the stores the key can reach, with their plan and sales totals read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionInvoices.generate",
+      "haystack": "subscriptioninvoices.generate lemonsqueezy.api.subscriptioninvoices.generate generate the pdf invoice for a subscription invoice and return its url. no money moves write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionInvoices.get",
+      "haystack": "subscriptioninvoices.get lemonsqueezy.api.subscriptioninvoices.get read one subscription invoice, with its totals and refund state read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionInvoices.list",
+      "haystack": "subscriptioninvoices.list lemonsqueezy.api.subscriptioninvoices.list list subscription invoices, filtered by store, status, refund state or subscription read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionInvoices.refund",
+      "haystack": "subscriptioninvoices.refund lemonsqueezy.api.subscriptioninvoices.refund refund a subscription invoice in full, or partially by amount in cents. a refund cannot be undone through the api destructive"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionItems.get",
+      "haystack": "subscriptionitems.get lemonsqueezy.api.subscriptionitems.get read one subscription item, with its price, quantity and usage flag read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionItems.list",
+      "haystack": "subscriptionitems.list lemonsqueezy.api.subscriptionitems.list list a subscription's items, filtered by subscription or price read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionItems.update",
+      "haystack": "subscriptionitems.update lemonsqueezy.api.subscriptionitems.update change a subscription item's quantity write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptionItems.usage",
+      "haystack": "subscriptionitems.usage lemonsqueezy.api.subscriptionitems.usage read a usage-based item's metered usage for the current period read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptions.cancel",
+      "haystack": "subscriptions.cancel lemonsqueezy.api.subscriptions.cancel cancel an active subscription. it stays readable but stops renewing destructive"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptions.get",
+      "haystack": "subscriptions.get lemonsqueezy.api.subscriptions.get read one subscription, with its status, renewal date and pause state read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list lemonsqueezy.api.subscriptions.list list subscriptions, filtered by store, order, product, variant, email or status read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "subscriptions.update",
+      "haystack": "subscriptions.update lemonsqueezy.api.subscriptions.update move a subscription to another variant, pause or resume it, or change its billing date. a plan change prorates the next charge write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "usageRecords.create",
+      "haystack": "usagerecords.create lemonsqueezy.api.usagerecords.create record metered usage against a subscription item: add to the period total, or replace it write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "usageRecords.get",
+      "haystack": "usagerecords.get lemonsqueezy.api.usagerecords.get read one usage record, with its quantity and action read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "usageRecords.list",
+      "haystack": "usagerecords.list lemonsqueezy.api.usagerecords.list list metered usage records, optionally for one subscription item read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get lemonsqueezy.api.users.get read the account that owns the api key read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "variants.get",
+      "haystack": "variants.get lemonsqueezy.api.variants.get read one variant, with its license settings and checkout links read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "variants.list",
+      "haystack": "variants.list lemonsqueezy.api.variants.list list variants, optionally for one product or status read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create lemonsqueezy.api.webhooks.create register a webhook url with its signing secret and the events to send write"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete lemonsqueezy.api.webhooks.delete delete a webhook. deliveries to it stop immediately destructive"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get lemonsqueezy.api.webhooks.get read one webhook, with its url, events and last delivery time read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list lemonsqueezy.api.webhooks.list list webhooks, optionally for one store read"
+    },
+    {
+      "pluginId": "lemonsqueezy",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update lemonsqueezy.api.webhooks.update change a webhook's url, event list or signing secret write"
+    },
+    {
       "pluginId": "lever",
       "kind": "api",
       "shortPath": "applications.list",
@@ -77120,6 +77582,18 @@
       "kind": "webhook",
       "shortPath": "projects.update",
       "haystack": "projects.update linear.webhooks.projects.update a project was updated"
+    },
+    {
+      "pluginId": "linguapop",
+      "kind": "api",
+      "shortPath": "invitations.create",
+      "haystack": "invitations.create linguapop.api.invitations.create create a placement test invitation for a candidate and return the test link; with sendemail true, linguapop emails the invitation to the candidate. needs a paid linguapop subscription, the invitation cannot be cancelled through the api, and completed tests are billed write"
+    },
+    {
+      "pluginId": "linguapop",
+      "kind": "api",
+      "shortPath": "languages.list",
+      "haystack": "languages.list linguapop.api.languages.list list the languages linguapop can test, each with the code to pass as languagecode when creating an invitation read"
     },
     {
       "pluginId": "linkedin",
@@ -79574,6 +80048,798 @@
       "kind": "api",
       "shortPath": "users.list",
       "haystack": "users.list missive.api.users.list list users in organizations the authenticated user is part of; user status is not exposed by the api read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "appointmentLinks.getMe",
+      "haystack": "appointmentlinks.getme mixmax.api.appointmentlinks.getme get the user’s default mixmax appointment link. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "appointmentLinks.list",
+      "haystack": "appointmentlinks.list mixmax.api.appointmentlinks.list search the user’s mixmax appointment links by name. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "appointmentLinks.updateMe",
+      "haystack": "appointmentlinks.updateme mixmax.api.appointmentlinks.updateme rename the user’s default mixmax appointment link. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "codeSnippets.create",
+      "haystack": "codesnippets.create mixmax.api.codesnippets.create create a mixmax code snippet. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "codeSnippets.get",
+      "haystack": "codesnippets.get mixmax.api.codesnippets.get retrieve one mixmax code snippet by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "codeSnippets.list",
+      "haystack": "codesnippets.list mixmax.api.codesnippets.list list the user’s mixmax code snippets. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "fileRequests.get",
+      "haystack": "filerequests.get mixmax.api.filerequests.get retrieve one mixmax file request by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "fileRequests.list",
+      "haystack": "filerequests.list mixmax.api.filerequests.list list the mixmax file requests the user has access to. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "insightsReports.create",
+      "haystack": "insightsreports.create mixmax.api.insightsreports.create create a saved mixmax insights report from a query. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "insightsReports.delete",
+      "haystack": "insightsreports.delete mixmax.api.insightsreports.delete delete a saved mixmax insights report permanently. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "insightsReports.list",
+      "haystack": "insightsreports.list mixmax.api.insightsreports.list list the user’s saved mixmax insights reports. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "insightsReports.update",
+      "haystack": "insightsreports.update mixmax.api.insightsreports.update update a saved mixmax insights report. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.commands.create",
+      "haystack": "integrations.commands.create mixmax.api.integrations.commands.create create a mixmax slash command integration. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.commands.delete",
+      "haystack": "integrations.commands.delete mixmax.api.integrations.commands.delete delete a mixmax slash command integration. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.commands.list",
+      "haystack": "integrations.commands.list mixmax.api.integrations.commands.list list the user’s mixmax slash command integrations. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.enhancements.create",
+      "haystack": "integrations.enhancements.create mixmax.api.integrations.enhancements.create create a mixmax enhance-menu integration. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.enhancements.delete",
+      "haystack": "integrations.enhancements.delete mixmax.api.integrations.enhancements.delete delete a mixmax enhance-menu integration. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.enhancements.list",
+      "haystack": "integrations.enhancements.list mixmax.api.integrations.enhancements.list list the user’s mixmax enhance-menu integrations. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.linkResolvers.create",
+      "haystack": "integrations.linkresolvers.create mixmax.api.integrations.linkresolvers.create create a mixmax link resolver integration. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.linkResolvers.delete",
+      "haystack": "integrations.linkresolvers.delete mixmax.api.integrations.linkresolvers.delete delete a mixmax link resolver integration. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.linkResolvers.list",
+      "haystack": "integrations.linkresolvers.list mixmax.api.integrations.linkresolvers.list list the user’s mixmax link resolver integrations. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.sidebars.create",
+      "haystack": "integrations.sidebars.create mixmax.api.integrations.sidebars.create create a mixmax sidebar integration. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.sidebars.delete",
+      "haystack": "integrations.sidebars.delete mixmax.api.integrations.sidebars.delete delete a mixmax sidebar integration. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "integrations.sidebars.list",
+      "haystack": "integrations.sidebars.list mixmax.api.integrations.sidebars.list list the user’s mixmax sidebar integrations. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "livefeed.events",
+      "haystack": "livefeed.events mixmax.api.livefeed.events list individual mixmax live feed events such as opens, clicks, and replies. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "livefeed.list",
+      "haystack": "livefeed.list mixmax.api.livefeed.list list the user’s mixmax live feed of tracked email activity, with optional stats. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingInvites.get",
+      "haystack": "meetinginvites.get mixmax.api.meetinginvites.get retrieve one mixmax meeting invite by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingInvites.list",
+      "haystack": "meetinginvites.list mixmax.api.meetinginvites.list list the mixmax meeting invites sent to the user. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetings.getTranscript",
+      "haystack": "meetings.gettranscript mixmax.api.meetings.gettranscript retrieve the transcript of one mixmax meeting. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetings.searchSummaries",
+      "haystack": "meetings.searchsummaries mixmax.api.meetings.searchsummaries search mixmax meeting summaries by attendee, title, and date range. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingTypes.create",
+      "haystack": "meetingtypes.create mixmax.api.meetingtypes.create create a mixmax meeting template. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingTypes.delete",
+      "haystack": "meetingtypes.delete mixmax.api.meetingtypes.delete delete a mixmax meeting template permanently. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingTypes.get",
+      "haystack": "meetingtypes.get mixmax.api.meetingtypes.get retrieve one mixmax meeting template by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingTypes.list",
+      "haystack": "meetingtypes.list mixmax.api.meetingtypes.list list the user’s mixmax meeting templates. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "meetingTypes.update",
+      "haystack": "meetingtypes.update mixmax.api.meetingtypes.update update a mixmax meeting template. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.create",
+      "haystack": "messages.create mixmax.api.messages.create create a mixmax draft message without sending it. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.get",
+      "haystack": "messages.get mixmax.api.messages.get retrieve one mixmax message by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.list",
+      "haystack": "messages.list mixmax.api.messages.list list mixmax messages (drafts, scheduled, sent, or failed), newest first. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.schedule",
+      "haystack": "messages.schedule mixmax.api.messages.schedule schedule a saved mixmax draft: mixmax emails its recipients at the given unix-millisecond timestamp unless the send is unscheduled first. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.send",
+      "haystack": "messages.send mixmax.api.messages.send send a saved mixmax draft: this emails its recipients. delivery is asynchronous and cannot be undone. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.sendPlain",
+      "haystack": "messages.sendplain mixmax.api.messages.sendplain send a plain email from the user’s mailbox to its recipients immediately, outside mixmax tracking. it cannot be undone. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.test",
+      "haystack": "messages.test mixmax.api.messages.test send a mixmax test email to the calling user’s own account. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.unschedule",
+      "haystack": "messages.unschedule mixmax.api.messages.unschedule cancel a scheduled mixmax send and return the message to draft. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "messages.update",
+      "haystack": "messages.update mixmax.api.messages.update update the fields of a sent mixmax message; each included field replaces the stored value. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "polls.get",
+      "haystack": "polls.get mixmax.api.polls.get retrieve one mixmax poll by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "polls.list",
+      "haystack": "polls.list mixmax.api.polls.list list the user’s mixmax polls with their response counts. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "qa.get",
+      "haystack": "qa.get mixmax.api.qa.get retrieve one mixmax q&a form by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "qa.list",
+      "haystack": "qa.list mixmax.api.qa.list list the user’s mixmax q&a forms with their answers. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "reports.runDataTable",
+      "haystack": "reports.rundatatable mixmax.api.reports.rundatatable run a mixmax reporting query and return the aggregated data table buckets. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.actions.create",
+      "haystack": "rules.actions.create mixmax.api.rules.actions.create add an action to a mixmax rule. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.actions.delete",
+      "haystack": "rules.actions.delete mixmax.api.rules.actions.delete remove one action from a mixmax rule. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.actions.list",
+      "haystack": "rules.actions.list mixmax.api.rules.actions.list list the actions of one mixmax rule. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.actions.update",
+      "haystack": "rules.actions.update mixmax.api.rules.actions.update update one action of a mixmax rule. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.create",
+      "haystack": "rules.create mixmax.api.rules.create create a mixmax rule with a trigger and actions. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.delete",
+      "haystack": "rules.delete mixmax.api.rules.delete delete a mixmax rule permanently. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.deleteBulk",
+      "haystack": "rules.deletebulk mixmax.api.rules.deletebulk delete several mixmax rules at once by their ids. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.events.get",
+      "haystack": "rules.events.get mixmax.api.rules.events.get retrieve one mixmax rule event by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.events.list",
+      "haystack": "rules.events.list mixmax.api.rules.events.list list mixmax rule events with their status, filterable by rule and outcome. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.get",
+      "haystack": "rules.get mixmax.api.rules.get retrieve one mixmax rule by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.list",
+      "haystack": "rules.list mixmax.api.rules.list list the user’s mixmax rules, optionally with their actions. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "rules.update",
+      "haystack": "rules.update mixmax.api.rules.update update the trigger or fields of a mixmax rule. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.createAccount",
+      "haystack": "salesforce.createaccount mixmax.api.salesforce.createaccount create a salesforce account through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.createContact",
+      "haystack": "salesforce.createcontact mixmax.api.salesforce.createcontact create a salesforce contact through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.createLead",
+      "haystack": "salesforce.createlead mixmax.api.salesforce.createlead create a salesforce lead through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.createOpportunity",
+      "haystack": "salesforce.createopportunity mixmax.api.salesforce.createopportunity create a salesforce opportunity through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.createTask",
+      "haystack": "salesforce.createtask mixmax.api.salesforce.createtask create a salesforce task through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.deleteOpportunity",
+      "haystack": "salesforce.deleteopportunity mixmax.api.salesforce.deleteopportunity delete a salesforce opportunity through mixmax. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.deleteTask",
+      "haystack": "salesforce.deletetask mixmax.api.salesforce.deletetask delete a salesforce task through mixmax. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getAccount",
+      "haystack": "salesforce.getaccount mixmax.api.salesforce.getaccount retrieve one salesforce account synced to mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getAccountImplicit",
+      "haystack": "salesforce.getaccountimplicit mixmax.api.salesforce.getaccountimplicit look up the salesforce account matching an email domain. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getContact",
+      "haystack": "salesforce.getcontact mixmax.api.salesforce.getcontact retrieve one salesforce contact synced to mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getContactOrLead",
+      "haystack": "salesforce.getcontactorlead mixmax.api.salesforce.getcontactorlead look up the salesforce contact or lead matching an email address. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getLead",
+      "haystack": "salesforce.getlead mixmax.api.salesforce.getlead retrieve one salesforce lead synced to mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getOpportunity",
+      "haystack": "salesforce.getopportunity mixmax.api.salesforce.getopportunity retrieve one salesforce opportunity synced to mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getTask",
+      "haystack": "salesforce.gettask mixmax.api.salesforce.gettask retrieve one salesforce task synced to mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getWhat",
+      "haystack": "salesforce.getwhat mixmax.api.salesforce.getwhat resolve any salesforce record id to its related “what” object. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.getWho",
+      "haystack": "salesforce.getwho mixmax.api.salesforce.getwho resolve any salesforce record id to its related “who” object. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.listAccounts",
+      "haystack": "salesforce.listaccounts mixmax.api.salesforce.listaccounts list the salesforce accounts synced to the user’s mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.listContactTasks",
+      "haystack": "salesforce.listcontacttasks mixmax.api.salesforce.listcontacttasks list the salesforce tasks of one contact. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.listLeadTasks",
+      "haystack": "salesforce.listleadtasks mixmax.api.salesforce.listleadtasks list the salesforce tasks of one lead. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.search",
+      "haystack": "salesforce.search mixmax.api.salesforce.search search salesforce records of one object type through mixmax. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.syncedFields",
+      "haystack": "salesforce.syncedfields mixmax.api.salesforce.syncedfields list the salesforce fields mixmax syncs for each object type. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.updateAccount",
+      "haystack": "salesforce.updateaccount mixmax.api.salesforce.updateaccount update a salesforce account through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.updateContact",
+      "haystack": "salesforce.updatecontact mixmax.api.salesforce.updatecontact update a salesforce contact through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.updateLead",
+      "haystack": "salesforce.updatelead mixmax.api.salesforce.updatelead update a salesforce lead through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.updateOpportunity",
+      "haystack": "salesforce.updateopportunity mixmax.api.salesforce.updateopportunity update a salesforce opportunity through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "salesforce.updateTask",
+      "haystack": "salesforce.updatetask mixmax.api.salesforce.updatetask update a salesforce task through mixmax. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.addSequences",
+      "haystack": "sequencefolders.addsequences mixmax.api.sequencefolders.addsequences move one or more mixmax sequences into a sequence folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.create",
+      "haystack": "sequencefolders.create mixmax.api.sequencefolders.create create a mixmax sequence folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.delete",
+      "haystack": "sequencefolders.delete mixmax.api.sequencefolders.delete delete a mixmax sequence folder; its sequences are kept but left without a folder. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.get",
+      "haystack": "sequencefolders.get mixmax.api.sequencefolders.get retrieve one mixmax sequence folder by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.list",
+      "haystack": "sequencefolders.list mixmax.api.sequencefolders.list list the mixmax sequence folders the user can access. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequenceFolders.rename",
+      "haystack": "sequencefolders.rename mixmax.api.sequencefolders.rename rename a mixmax sequence folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.cancel",
+      "haystack": "sequences.cancel mixmax.api.sequences.cancel stop recipients of one mixmax sequence; cancellation is one-way and deletes their open tasks. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.cancelAll",
+      "haystack": "sequences.cancelall mixmax.api.sequences.cancelall stop the user’s recipients across every mixmax sequence at once; cancelled recipients cannot be resumed. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.list",
+      "haystack": "sequences.list mixmax.api.sequences.list list the mixmax sequences the user can access, including shared ones. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.recipients.add",
+      "haystack": "sequences.recipients.add mixmax.api.sequences.recipients.add add recipients to a mixmax sequence: this starts emailing them the sequence unless each recipient is kept as a draft with scheduledat false. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.recipients.list",
+      "haystack": "sequences.recipients.list mixmax.api.sequences.recipients.list list the recipients of one mixmax sequence with their per-stage activity. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "sequences.search",
+      "haystack": "sequences.search mixmax.api.sequences.search search sequence recipients across every accessible mixmax sequence with their status and activity. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippets.delete",
+      "haystack": "snippets.delete mixmax.api.snippets.delete move a mixmax template to the trash, or archive it, removing it from its folders. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippets.get",
+      "haystack": "snippets.get mixmax.api.snippets.get retrieve one mixmax template by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippets.list",
+      "haystack": "snippets.list mixmax.api.snippets.list list the mixmax templates (snippets) the user can access, including shared ones. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippets.send",
+      "haystack": "snippets.send mixmax.api.snippets.send send an email built from a mixmax template to its recipients, immediately or at a scheduled time. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippets.update",
+      "haystack": "snippets.update mixmax.api.snippets.update update the fields of a mixmax template; only the fields sent change. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.addSnippets",
+      "haystack": "snippettags.addsnippets mixmax.api.snippettags.addsnippets add a template to a mixmax template folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.create",
+      "haystack": "snippettags.create mixmax.api.snippettags.create create a mixmax template folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.delete",
+      "haystack": "snippettags.delete mixmax.api.snippettags.delete delete a mixmax template folder and move every template inside it to the trash. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.get",
+      "haystack": "snippettags.get mixmax.api.snippettags.get retrieve one mixmax template folder by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.list",
+      "haystack": "snippettags.list mixmax.api.snippettags.list list the mixmax template folders (snippet tags) the user can access. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.listSnippets",
+      "haystack": "snippettags.listsnippets mixmax.api.snippettags.listsnippets list the templates contained in one mixmax template folder. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "snippetTags.update",
+      "haystack": "snippettags.update mixmax.api.snippettags.update rename a mixmax template folder. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list mixmax.api.tasks.list list the user’s open mixmax tasks. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create mixmax.api.teams.create create a mixmax team. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete mixmax.api.teams.delete delete a mixmax team permanently. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get mixmax.api.teams.get retrieve one mixmax team by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list mixmax.api.teams.list list the user’s mixmax teams. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.members.add",
+      "haystack": "teams.members.add mixmax.api.teams.members.add add people to a mixmax team; mixmax emails each of them an invite. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.members.list",
+      "haystack": "teams.members.list mixmax.api.teams.members.list list the members of one mixmax team. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.members.remove",
+      "haystack": "teams.members.remove mixmax.api.teams.members.remove remove one member from a mixmax team. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.members.update",
+      "haystack": "teams.members.update mixmax.api.teams.members.update change a mixmax team member’s role. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "teams.update",
+      "haystack": "teams.update mixmax.api.teams.update rename a mixmax team. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "unsubscribes.create",
+      "haystack": "unsubscribes.create mixmax.api.unsubscribes.create add one or more email addresses to the mixmax unsubscribe list. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "unsubscribes.list",
+      "haystack": "unsubscribes.list mixmax.api.unsubscribes.list list the email addresses unsubscribed from the user’s mixmax sends. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "unsubscribes.remove",
+      "haystack": "unsubscribes.remove mixmax.api.unsubscribes.remove remove one email address from the mixmax unsubscribe list. destructive"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.getMe",
+      "haystack": "users.getme mixmax.api.users.getme get the current mixmax user. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.preferences.autoBccExcludedEmails.add",
+      "haystack": "users.preferences.autobccexcludedemails.add mixmax.api.users.preferences.autobccexcludedemails.add add email addresses to the user’s mixmax auto bcc exclusion list. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.preferences.autoBccExcludedEmails.exists",
+      "haystack": "users.preferences.autobccexcludedemails.exists mixmax.api.users.preferences.autobccexcludedemails.exists check exactly which email addresses are excluded from the user’s mixmax auto bcc list, including role exclusions. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.preferences.autoBccExcludedEmails.list",
+      "haystack": "users.preferences.autobccexcludedemails.list mixmax.api.users.preferences.autobccexcludedemails.list check whether one email address is excluded from the user’s mixmax auto bcc list. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.preferences.get",
+      "haystack": "users.preferences.get mixmax.api.users.preferences.get get the calling user’s mixmax preferences. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "users.preferences.update",
+      "haystack": "users.preferences.update mixmax.api.users.preferences.update update the calling user’s mixmax preferences. write"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "yesno.get",
+      "haystack": "yesno.get mixmax.api.yesno.get retrieve one mixmax yes/no question by id. read"
+    },
+    {
+      "pluginId": "mixmax",
+      "kind": "api",
+      "shortPath": "yesno.list",
+      "haystack": "yesno.list mixmax.api.yesno.list list the user’s mixmax yes/no questions with their answers. read"
     },
     {
       "pluginId": "monday",
@@ -93022,6 +94288,168 @@
       "haystack": "taskcreatedorcompleted salesforce.webhooks.taskcreatedorcompleted task created or completed"
     },
     {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.generate",
+      "haystack": "agentactions.generate sanity.api.agentactions.generate have sanity's ai write content into a document's fields from an instruction, following the schema. writes to the draft unless forcepublishedwrite; nowrite returns it without saving. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.prompt",
+      "haystack": "agentactions.prompt sanity.api.agentactions.prompt ask sanity's ai a question, optionally about documents passed as params, and get text or json back. writes nothing. costs one sanity ai credit. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.transform",
+      "haystack": "agentactions.transform sanity.api.agentactions.transform have sanity's ai rewrite a document's existing content by an instruction (tone, length, style), in place or into another document. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "agentActions.translate",
+      "haystack": "agentactions.translate sanity.api.agentactions.translate have sanity's ai translate a document into another language, usually into a new document. costs one sanity ai credit. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "assets.upload",
+      "haystack": "assets.upload sanity.api.assets.upload upload an image or file (base64, up to 25 mb) as a sanity asset and get its asset document and cdn url, ready to reference from a document. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.create",
+      "haystack": "datasets.create sanity.api.datasets.create create an empty dataset in the project. needs an administrator token. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.delete",
+      "haystack": "datasets.delete sanity.api.datasets.delete delete a dataset with every document and asset in it, for good. needs the name twice and an administrator token. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "datasets.list",
+      "haystack": "datasets.list sanity.api.datasets.list the project's datasets and whether each is public. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.create",
+      "haystack": "documents.create sanity.api.documents.create create a document as a draft (default) or, with publish: true, publish it at once. returns its id and draft id. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.delete",
+      "haystack": "documents.delete sanity.api.documents.delete delete up to 100 documents, published and draft together. documents that reference them must drop the references first. with purge, they also leave the history. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.discardDraft",
+      "haystack": "documents.discarddraft sanity.api.documents.discarddraft throw away a document's unpublished changes (its draft). the published version stays. with purge, the draft also leaves the history. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.edit",
+      "haystack": "documents.edit sanity.api.documents.edit change a document the way the studio does: the patch goes to its draft, made from the published version if needed, and nothing goes live until documents.publish (or publish: true). write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.get",
+      "haystack": "documents.get sanity.api.documents.get fetch up to 100 documents by exact id (drafts.<id> for a draft). ids that are missing or unreadable come back in omitted. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.history",
+      "haystack": "documents.history sanity.api.documents.history a document as it stood at a revision or a point in time. how far back depends on the plan's history retention. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.mutate",
+      "haystack": "documents.mutate sanity.api.documents.mutate apply raw sanity mutations (create, createorreplace, createifnotexists, patch, delete, by id or by query) in one transaction. for anything documents.create, edit, patch and delete can't express. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.patch",
+      "haystack": "documents.patch sanity.api.documents.patch patch one exact document id directly and get it back. a published id changes the live document at once; use documents.edit to go through a draft. ifrevisionid guards against overwriting someone else's change. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.publish",
+      "haystack": "documents.publish sanity.api.documents.publish publish a document's draft: the draft replaces the published version and goes away. fails when there is no draft. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.query",
+      "haystack": "documents.query sanity.api.documents.query run a groq query against a dataset and get its result. reads published documents unless perspective says otherwise. pass user input as params. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.transactions",
+      "haystack": "documents.transactions sanity.api.documents.transactions the transactions that changed some documents: when, by whom and which revisions, optionally with each mutation. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "documents.unpublish",
+      "haystack": "documents.unpublish sanity.api.documents.unpublish take a published document off the published perspective; its content stays as a draft. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "schemas.list",
+      "haystack": "schemas.list sanity.api.schemas.list the schemas deployed to a dataset: their ids (the schemaid agent actions take) and each type's fields. pass type for one type's full definition. read this before writing documents of a type you don't know. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.attempts",
+      "haystack": "webhooks.attempts sanity.api.webhooks.attempts recent delivery attempts of a webhook with the status your endpoint answered, to debug failing deliveries. read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create sanity.api.webhooks.create create a webhook that posts to a url when documents matching a groq filter are created, updated or deleted. set a secret so deliveries can be verified. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete sanity.api.webhooks.delete delete a webhook; deliveries stop at once. destructive"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list sanity.api.webhooks.list the project's groq-powered webhooks: url, dataset, filter, projection and whether each is signed (never the secret). read"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update sanity.api.webhooks.update change a webhook's url, filter, projection, events or secret, or pause and resume it with disabled. write"
+    },
+    {
+      "pluginId": "sanity",
+      "kind": "webhook",
+      "shortPath": "documents.changed",
+      "haystack": "documents.changed sanity.webhooks.documents.changed a groq-powered webhook fired: a document matching its filter was created, updated or deleted. the body is the webhook's projection; the operation, document id and dataset come from its headers. only signed deliveries are accepted."
+    },
+    {
       "pluginId": "saperly",
       "kind": "api",
       "shortPath": "assistant.answer",
@@ -100984,6 +102412,96 @@
       "haystack": "voices.list synthflowai.api.voices.list list all text-to-speech voices available in the workspace read"
     },
     {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create taggun.api.campaigns.create store a new set of validation rules under a campaign id you choose; rejected if that id already exists write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete taggun.api.campaigns.delete remove a campaign's validation rules permanently; later submissions against that campaign cannot evaluate them destructive"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get taggun.api.campaigns.get read one campaign's stored validation rules; sections with no rules may be omitted from the answer read"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list taggun.api.campaigns.list list the campaign ids that have validation settings stored on the account; needs the campaign validation feature read"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update taggun.api.campaigns.update replace a campaign's stored validation rules wholesale: every section left out is removed, so re-send the response from `campaigns.get` with your changes destructive"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.validateFile",
+      "haystack": "campaigns.validatefile taggun.api.campaigns.validatefile check an uploaded receipt against a campaign's stored rules and return pass/fail per rule; a failed rule is a successful call reporting `successful: false` write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "campaigns.validateUrl",
+      "haystack": "campaigns.validateurl taggun.api.campaigns.validateurl check a receipt at an https url against a campaign's stored rules; a failed rule is a successful call reporting `successful: false` write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "receiptValidation.file",
+      "haystack": "receiptvalidation.file taggun.api.receiptvalidation.file check an uploaded receipt against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false` write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "receiptValidation.url",
+      "haystack": "receiptvalidation.url taggun.api.receiptvalidation.url check a receipt at an https url against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false` write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "simple.encoded",
+      "haystack": "simple.encoded taggun.api.simple.encoded scan a base64-encoded receipt or invoice and return the four core fields; each call is one billable scan write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "simple.file",
+      "haystack": "simple.file taggun.api.simple.file scan an uploaded receipt or invoice file and return the four core fields; each call is one billable scan write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "simple.url",
+      "haystack": "simple.url taggun.api.simple.url scan a receipt at an https url and return the four core fields with confidence levels; each call is one billable scan and the receipt is stored unless `incognito` is set write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "verbose.encoded",
+      "haystack": "verbose.encoded taggun.api.verbose.encoded scan a base64-encoded receipt or invoice and return the full extraction, including product line items unless `extractlineitems` is false write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "verbose.file",
+      "haystack": "verbose.file taggun.api.verbose.file scan an uploaded receipt or invoice file and return the full extraction, including product line items unless `extractlineitems` is false write"
+    },
+    {
+      "pluginId": "taggun",
+      "kind": "api",
+      "shortPath": "verbose.url",
+      "haystack": "verbose.url taggun.api.verbose.url scan a receipt at an https url and return the full extraction: line items, text, helper arrays, per-field confidence and enabled feature blocks write"
+    },
+    {
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "forms.create",
@@ -101198,6 +102716,78 @@
       "kind": "api",
       "shortPath": "tavily.search",
       "haystack": "tavily.search tavilymcp.api.tavily.search search the web with tavily and return ranked snippets with source urls read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "account.verify",
+      "haystack": "account.verify teamcamp.api.account.verify read the workspace the key belongs to, which also confirms the key is valid read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list teamcamp.api.customers.list list the customers a project can be billed to, with their clients read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list teamcamp.api.groups.list list the task groups of a project, by id and name read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create teamcamp.api.projects.create create a project, optionally from a template and with a customer and dates write"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete teamcamp.api.projects.delete delete a project. it is archived rather than erased: it leaves the project list, but a read by id still returns it marked archived destructive"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get teamcamp.api.projects.get read one project: its members, owner, dates and workflow statuses, which a task create needs for its status id read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list teamcamp.api.projects.list list the projects in the workspace, by id and name read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update teamcamp.api.projects.update change a project name, description, dates or customer write"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create teamcamp.api.tasks.create create a task in a project, with a priority, due date, assignees, group, status, milestone, estimate and attachments write"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get teamcamp.api.tasks.get read one task, with its assignees, labels, files and comments read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list teamcamp.api.tasks.list list the tasks of a project, optionally only the completed or only the open ones read"
+    },
+    {
+      "pluginId": "teamcamp",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list teamcamp.api.users.list list the workspace members, with their role, timezone and last seen time read"
     },
     {
       "pluginId": "teams",
@@ -102488,6 +104078,54 @@
       "kind": "api",
       "shortPath": "text.sentiment",
       "haystack": "text.sentiment tisane.api.text.sentiment aspect-based sentiment analysis and tone evaluation read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list tldv.api.folders.list search the folders a user can see, with their meeting ids read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "meetings.get",
+      "haystack": "meetings.get tldv.api.meetings.get get one meeting by id, including the phone number and metadata an import attached read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "meetings.import",
+      "haystack": "meetings.import tldv.api.meetings.import import a meeting from a public media url, which starts a processing job and spends recording minutes write"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "meetings.list",
+      "haystack": "meetings.list tldv.api.meetings.list list meetings with paging, date bounds and folder or type filters read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "meetings.notes",
+      "haystack": "meetings.notes tldv.api.meetings.notes get the ai notes and topics generated for one meeting read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "api",
+      "shortPath": "meetings.transcript",
+      "haystack": "meetings.transcript tldv.api.meetings.transcript get the transcript of one meeting, sentence by sentence read"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "webhook",
+      "shortPath": "meetings.meetingReady",
+      "haystack": "meetings.meetingready tldv.webhooks.meetings.meetingready a meeting finished processing. carries its notes when they exist, and its transcript when the subscription includes one"
+    },
+    {
+      "pluginId": "tldv",
+      "kind": "webhook",
+      "shortPath": "transcripts.transcriptReady",
+      "haystack": "transcripts.transcriptready tldv.webhooks.transcripts.transcriptready a meeting transcript has been generated"
     },
     {
       "pluginId": "todoist",
@@ -110912,6 +112550,120 @@
       "kind": "api",
       "shortPath": "users.update",
       "haystack": "users.update zendesk.api.users.update update an existing user write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "account.subscription",
+      "haystack": "account.subscription zenrows.api.account.subscription read the plan behind the key: credits used and allowed, period end, per-product usage and the concurrency limit read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "crawl.get",
+      "haystack": "crawl.get zenrows.api.crawl.get read a crawl with its coverage and one page of results; poll it with the same cursor to collect new urls read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "crawl.getContent",
+      "haystack": "crawl.getcontent zenrows.api.crawl.getcontent read one kept page of a crawl, in the crawl's output format read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "crawl.list",
+      "haystack": "crawl.list zenrows.api.crawl.list list crawls, newest first, without their results read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "crawl.start",
+      "haystack": "crawl.start zenrows.api.crawl.start start a crawl from one url: each page it opens is a billed fetch request, and a crawl runs until its page limits stop it write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "crawl.stop",
+      "haystack": "crawl.stop zenrows.api.crawl.stop stop a running crawl. pages already being fetched finish and are billed write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "extract.allowance",
+      "haystack": "extract.allowance zenrows.api.extract.allowance read how many domain preparations this account has left this month read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "extract.domains",
+      "haystack": "extract.domains zenrows.api.extract.domains list the sites extract can handle today, with their verticals read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "extract.getDomainStatus",
+      "haystack": "extract.getdomainstatus zenrows.api.extract.getdomainstatus read how far a domain preparation has got: preparing, ready or failed read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "extract.listPreparedDomains",
+      "haystack": "extract.listprepareddomains zenrows.api.extract.listprepareddomains list the domains this account submitted for preparation, with the monthly allowance read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "extract.prepareDomain",
+      "haystack": "extract.preparedomain zenrows.api.extract.preparedomain ask zenrows to prepare a domain for extract, which takes minutes and one slot of the monthly allowance; preparation is free and shared across accounts write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.browse",
+      "haystack": "fetch.browse zenrows.api.fetch.browse render a page and act on it before capture: fill fields, click, check, scroll or run javascript. reaches the site, so it can change its state write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.cssExtract",
+      "haystack": "fetch.cssextract zenrows.api.fetch.cssextract extract named fields from a page with your own css or xpath selectors, such as a title, a price and every link, on any site with no preparation read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.extract",
+      "haystack": "fetch.extract zenrows.api.fetch.extract turn a page into structured json with extract: the site's own field names, or a canonical real estate schema, on a domain prepared for it read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.jsonResponse",
+      "haystack": "fetch.jsonresponse zenrows.api.fetch.jsonresponse capture the page and the xhr and fetch calls it made, as a json envelope, from a rendered page read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.outputs",
+      "haystack": "fetch.outputs zenrows.api.fetch.outputs pull typed data out of a page without parsing it: emails, phone numbers, links, headings, tables, metadata and more read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.page",
+      "haystack": "fetch.page zenrows.api.fetch.page fetch one page through zenrows: html by default, or markdown and plaintext, with optional browser rendering, residential proxies, geolocation and resource blocking read"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.post",
+      "haystack": "fetch.post zenrows.api.fetch.post send a post to the target through zenrows and return its answer. reaches the site with the caller's body, so the site's state can change write"
+    },
+    {
+      "pluginId": "zenrows",
+      "kind": "api",
+      "shortPath": "fetch.put",
+      "haystack": "fetch.put zenrows.api.fetch.put send a put to the target through zenrows and return its answer. reaches the site with the caller's body, so the site's state can change write"
     },
     {
       "pluginId": "zenserp",
