@@ -1,0 +1,44 @@
+displayName: "Conversion Tools"
+description: "Create and manage Conversion Tools file-conversion tasks, uploads, binary downloads, converter discovery, task status, and retention through its REST API."
+examples:
+  read:
+    path: files.downloadById
+    title: Download a converted file
+    args:
+      file_id: 0123456789abcdef0123456789abcdef
+  write:
+    path: tasks.create
+    title: Start a conversion task
+    args:
+      type: convert.xml_to_json
+      options:
+        file_id: 0123456789abcdef0123456789abcdef
+apiExamples:
+  conversions.list:
+    call: "{ input: 'xml', output: 'json', ai: false }"
+  conversions.get:
+    call: "{ type: 'convert.xml_to_json' }"
+  files.upload:
+    call: "{ file: new Blob(['<root />'], { type: 'application/xml' }) }"
+  files.getInfo:
+    call: "{ file_id: '0123456789abcdef0123456789abcdef' }"
+  files.createDownloadLink:
+    call: "{ file_id: '0123456789abcdef0123456789abcdef' }"
+  files.downloadById:
+    call: "{ file_id: '0123456789abcdef0123456789abcdef' }"
+  files.downloadFromLink:
+    call: "{ download_id: 'abcdef0123456789abcdef0123456789' }"
+  files.createUploadSession:
+    call: "{ filename: 'source.xml' }"
+  files.uploadToSession:
+    call: "{ upload_url: 'https://api.conversiontools.io/v1/upload-sessions/session-id', file: new Blob(['<root />'], { type: 'application/xml' }) }"
+  tasks.create:
+    call: "{ type: 'convert.xml_to_json', options: { file_id: '0123456789abcdef0123456789abcdef' } }"
+  tasks.list:
+    call: "{ status: 'RUNNING' }"
+  tasks.get:
+    call: "{ task_id: 'fedcba9876543210fedcba9876543210' }"
+  tasks.updateRetention:
+    call: "{ task_id: 'fedcba9876543210fedcba9876543210', retentionMode: 'standard_24h' }"
+  tasks.remove:
+    call: "{ task_id: 'fedcba9876543210fedcba9876543210' }"
