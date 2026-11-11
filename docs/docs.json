@@ -1449,19 +1449,19 @@
                 ]
               },
               {
-                "group": "CommCare",
-                "pages": [
-                  "plugins/commcare/overview",
-                  "plugins/commcare/api",
-                  "plugins/commcare/database"
-                ]
-              },
-              {
                 "group": "College Football Data",
                 "pages": [
                   "plugins/collegefootballdata/overview",
                   "plugins/collegefootballdata/api",
                   "plugins/collegefootballdata/database"
+                ]
+              },
+              {
+                "group": "CommCare",
+                "pages": [
+                  "plugins/commcare/overview",
+                  "plugins/commcare/api",
+                  "plugins/commcare/database"
                 ]
               },
               {
