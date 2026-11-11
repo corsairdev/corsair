@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Email and SMS marketing from Klaviyo - manage profiles, marketing lists, segments, events and metrics, and configure the webhooks that deliver them."
+---
+
+Use **Klaviyo** through Corsair: one client, typed API calls.
+
+Create a private API key in Klaviyo under Settings, API keys, and copy it. It goes in the `Authorization` header as `Klaviyo-API-Key <key>`, which is not a bearer token. Klaviyo scopes a private key at creation and will not widen it later, so give it the read and write scopes you need up front.
+
+Things that shape the calls:
+
+- **Every request carries a `revision` header.** Klaviyo versions the API by date and this plugin sends the revision it was built against.
+- **Bodies are JSON:API.** A write is `{ data: { type, attributes } }`. This plugin takes flat fields and builds that envelope; reads answer `data` plus `links`.
+- **Filters are expressions.** `filter` is a string such as `equals(email,"a@b.com")`, combined with `and()` and `or()`. Field names and operators differ per resource.
+- **Paging is cursor-based.** Pass the `nextCursor` from one response as `cursor` to read the next page. Klaviyo returns the cursor inside `links.next` as a full URL, and this plugin parses it out for you. The largest `pageSize` differs per route: 10 for lists and segments, 25 for tag groups, 50 for tags, 100 for profiles and 1000 for events. Metrics and webhooks take no page size.
+- **Subscription is a job.** `profiles.subscribe` grants marketing consent, so Klaviyo queues it and answers 202 with no body. The result confirms the request was accepted, not that the profile is subscribed yet.
+- **Events are recorded by metric name**, and Klaviyo creates the metric on first use. The event then counts towards any flow listening for it.
+- **Segments evaluate server-side.** A new segment is not populated immediately, and its `definition` is a condition group rather than a filter string.
+- **Webhooks need a secret, and Corsair does not receive the deliveries.** Klaviyo signs every delivery with the `secretKey` you set at creation. This plugin manages the webhook registrations; you host the endpoint that receives them and verify the signature there.
+- **Rate limits** run a burst and a steady window per account, and a 429 carries `Retry-After`.
+
+**What you get:**
+
+- 39 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/klaviyo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/klaviyo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/klaviyo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/klaviyo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { klaviyo } from '@corsair-dev/klaviyo';
+
+export const corsair = createCorsair({
+	plugins: [
+		klaviyo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+klaviyo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'klaviyo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find a profile by email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.klaviyo.api.profiles.list({ filter: 'equals(email,"jordan@acme.com")' });
+```
+
+
+**Create a tag**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.klaviyo.api.tags.create({ name: 'priority' });
+```
+
+
+See the full list on the [API](/plugins/klaviyo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/klaviyo/api">
+    Every `klaviyo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

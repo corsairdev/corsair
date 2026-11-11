@@ -1,0 +1,2874 @@
+---
+title: API
+description: "API reference for Klaviyo: every `klaviyo.api.*` operation with input and output types."
+---
+
+Every `klaviyo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### create
+
+`events.create`
+
+Record an event against a profile by metric name; Klaviyo creates the metric on first use, and the event can trigger flows
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.events.create({ metric: 'Placed Order', email: 'jordan@acme.com', properties: { Total: 129.5 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric` | `string` | Yes | The metric name, such as "Placed Order". Klaviyo creates the metric if it is new. |
+| `profileId` | `string` | No | The profile the event belongs to. Pass this or `email`. |
+| `email` | `string` | No | The profile email, when the id is not known. |
+| `properties` | `Record<string, any>` | Yes | Event properties, such as a cart total. Required by the spec. |
+| `value` | `number` | No | A monetary value for the event. |
+| `valueCurrency` | `string` | No | — |
+| `time` | `string` | No | ISO 8601 UTC timestamp. Defaults to now; Klaviyo rejects a time in the future or older than its retention window. |
+| `uniqueId` | `string` | No | A caller idempotency id, deduplicating a repeated send. |
+| `backfill` | `boolean` | No | Mark the event as historical rather than live. |
+
+`metric` is a name, not an id: Klaviyo creates the metric if it is new. `properties` is required by the spec, and the profile must be given by id or email.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Read one event by id, with its properties and timestamp
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.events.get({ id: 'Ev123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: event,
+  id: string,
+  attributes?: {
+    timestamp?: number | null,
+    event_properties?: Record<string, JsonValue> | null,
+    datetime?: string | null,
+    uuid?: string | null
+  } | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+Page the events recorded for the account, filtered by metric, profile or time
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.events.list({ pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
+| `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
+| `include` | `(profile \| metric)[]` | No | — |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 1000. Defaults to 200. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: event,
+  id: string,
+  attributes?: {
+    timestamp?: number | null,
+    event_properties?: Record<string, JsonValue> | null,
+    datetime?: string | null,
+    uuid?: string | null
+  } | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### addProfiles
+
+`lists.addProfiles`
+
+Add up to 1000 profiles to a list by id; adding does not change their subscription consent
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.lists.addProfiles({ id: 'R7QkZp', profileIds: ['01H8XYZABC123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The list id. |
+| `profileIds` | `string[]` | Yes | Profile ids to add, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`lists.create`
+
+Create an empty marketing list with a name
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.lists.create({ name: 'Newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The list name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: list,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Read one marketing list by id, with its name and timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.lists.get({ id: 'R7QkZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: list,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List the marketing lists on the account, filtered and cursor-paged
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.lists.list({ pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
+| `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 10. Defaults to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: list,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profiles
+
+`lists.profiles`
+
+Page the profiles that belong to a list
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.lists.profiles({ id: 'R7QkZp', pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The list id. |
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`lists.remove`
+
+Delete a list; the profiles on it stay on the account but lose that membership, and the list cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.lists.remove({ id: 'R7QkZp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The list to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### removeProfiles
+
+`lists.removeProfiles`
+
+Remove up to 1000 profiles from a list; their submission or consent elsewhere is untouched
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.lists.removeProfiles({ id: 'R7QkZp', profileIds: ['01H8XYZABC123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `profileIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Rename an existing list
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.lists.update({ id: 'R7QkZp', name: 'Newsletter 2027' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | The new list name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: list,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metrics
+
+### aggregate
+
+`metrics.aggregate`
+
+Aggregate a metric into time buckets, such as a daily count over a date range, optionally grouped by a dimension
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.metrics.aggregate({ metricId: 'Mt123', measurements: ['count'], interval: 'day', filter: ['greater-or-equal(datetime,2026-01-01T00:00:00)', 'less-than(datetime,2026-02-01T00:00:00)'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metricId` | `string` | Yes | The metric to aggregate. |
+| `measurements` | `string[]` | Yes | What to compute, such as ["count"] or ["sum_value", "count"]. |
+| `interval` | `hour \| day \| week \| month` | Yes | The bucket size. |
+| `pageCursor` | `string` | No | — |
+| `by` | `string[]` | No | Group by these dimensions, such as ["$attributed_message"]. |
+| `filter` | `string[]` | Yes | Filter expressions in Klaviyo filter syntax. A date range is required, such as ["greater-or-equal(datetime,2026-01-01T00:00:00)", "less-than(datetime,2026-02-01T00:00:00)"]. |
+| `timezone` | `string` | No | — |
+
+`filter` must carry a date range, and Klaviyo rejects the call without one. `dates` in the response are the bucket start times, and each row of `data` holds its measurement arrays in the same order.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  attributes?: {
+    dates?: string[] | null,
+    data?: {
+      dimensions?: string[] | null,
+      measurements?: Record<string, JsonValue> | null
+    }[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`metrics.get`
+
+Read one metric by id
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.metrics.get({ id: 'Mt123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: metric,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    integration?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`metrics.list`
+
+List the metrics defined on the account, such as Placed Order
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.metrics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: metric,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    integration?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### create
+
+`profiles.create`
+
+Create a profile from an email, phone number or external id, with names, location and custom properties; Klaviyo merges a duplicate onto the existing profile
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.profiles.create({ email: 'jordan@acme.com', first_name: 'Jordan', last_name: 'Reyes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `title` | `string` | No | — |
+| `image` | `string` | No | — |
+| `location` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | Custom properties, stored as sent. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  country?: string | null,
+  latitude?: string | number | null,
+  longitude?: string | number | null,
+  region?: string | null,
+  zip?: string | null,
+  timezone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`profiles.get`
+
+Read one profile by id, optionally including its conversations or push tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.profiles.get({ id: '01H8XYZABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The profile id. |
+| `include` | `(conversations \| push-tokens)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+Search profiles with a Klaviyo filter expression, sorted and cursor-paged; returns each profile with its attributes and subscription state
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.profiles.list({ pageSize: 20, filter: 'equals(email,"jordan@acme.com")' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
+| `fields` | `string[]` | No | Return only these profile fields. |
+| `additionalFields` | `(subscriptions \| predictive_analytics \| hashed_email \| hashed_phone_number)[]` | No | Extra fields to include beyond the default set. |
+| `include` | `(conversations \| push-tokens)[]` | No | — |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`profiles.subscribe`
+
+Subscribe a profile to a list over email or SMS; this grants marketing consent through a queued bulk job, so it confirms the request was accepted rather than returning the profile
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.profiles.subscribe({ listId: 'R7QkZp', email: 'jordan@acme.com', channels: ['email'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | The list to subscribe the profile to. |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `channels` | `(email \| sms)[]` | No | Which channels to subscribe. Defaults to email. |
+
+This grants marketing consent, so Klaviyo queues a bulk job and answers 202 with no body. The consent is not immediate, and there is no job id to poll.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`profiles.update`
+
+Change a profile name, location, custom properties or identifiers by id
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jordan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `title` | `string` | No | — |
+| `image` | `string` | No | — |
+| `location` | `object` | No | — |
+| `properties` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  country?: string | null,
+  latitude?: string | number | null,
+  longitude?: string | number | null,
+  region?: string | null,
+  zip?: string | null,
+  timezone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.segments.create({ name: 'Engaged 30 days', definition: { condition_groups: [] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The segment name. |
+| `definition` | `Record<string, any>` | Yes | The segment definition, a JSON:API condition group such as &#123; condition_groups: [...] &#125;. Klaviyo evaluates it server-side. |
+
+`definition` is a JSON:API condition group, not the filter string the list routes take. Klaviyo evaluates it asynchronously.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: segment,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    is_active?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Read one segment by id, with its active flag
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.segments.get({ id: 'SgXy12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: segment,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    is_active?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List the segments on the account, filtered and cursor-paged
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.segments.list({ pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `sort` | `string` | No | Sort field, prefixed with `-` for descending, such as `-created`. |
+| `fields` | `string[]` | No | Return only these fields, as a sparse fieldset. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 10. Defaults to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: segment,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    is_active?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profiles
+
+`segments.profiles`
+
+Page the profiles that currently match a segment
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.segments.profiles({ id: 'SgXy12', pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 100. Defaults to 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: profile,
+  id: string,
+  attributes?: {
+    email?: string | null,
+    phone_number?: string | null,
+    external_id?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    organization?: string | null,
+    locale?: string | null,
+    title?: string | null,
+    image?: string | null,
+    location?: {
+      address1?: string | null,
+      address2?: string | null,
+      city?: string | null,
+      country?: string | null,
+      latitude?: string | number | null,
+      longitude?: string | number | null,
+      region?: string | null,
+      zip?: string | null,
+      timezone?: string | null
+    } | null,
+    properties?: Record<string, JsonValue> | null,
+    created?: string | null,
+    updated?: string | null,
+    last_event_date?: string | null,
+    subscriptions?: Record<string, JsonValue> | null,
+    predictive_analytics?: Record<string, JsonValue> | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`segments.remove`
+
+Delete a segment; its definition is lost and cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.segments.remove({ id: 'SgXy12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Change a segment name or its condition group
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.segments.update({ id: 'SgXy12', name: 'Engaged 60 days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `definition` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: segment,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null,
+    is_active?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tag Groups
+
+### create
+
+`tagGroups.create`
+
+Create a tag group, optionally exclusive so only one of its tags applies
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.tagGroups.create({ name: 'Campaign type' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The tag group name. |
+| `exclusive` | `boolean` | No | Only one tag from this group may apply to an object. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: tag-group,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    exclusive?: boolean | null,
+    default?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tagGroups.list`
+
+List the tag groups, which namespace tags and can allow only one tag each
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.tagGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 25. Defaults to 25. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: tag-group,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    exclusive?: boolean | null,
+    default?: boolean | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tagGroups.remove`
+
+Delete a tag group; the tags inside it go with it and cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.tagGroups.remove({ id: 'TgG123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag with a name, unique within its tag group
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.tags.create({ name: 'priority' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The tag name, unique within its group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: tag,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Read one tag by id, with its name and timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.tags.get({ id: 'Tg123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: tag,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List the tags on the account, filtered and cursor-paged
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.tags.list({ pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | A filter expression such as "equals(email,\\"a@b.com\\")", combined with and()/or(). Field names and operators differ per resource; see Klaviyo filter syntax. |
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+| `pageSize` | `number` | No | Rows per page, 1 to 50. Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: tag,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    created?: string | null,
+    updated?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tags.remove`
+
+Delete a tag; it detaches from every campaign, flow, list and segment that carried it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.tags.remove({ id: 'Tg123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag; its group and attachments stay as they are
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.tags.update({ id: 'Tg123', name: 'urgent' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+Klaviyo answers 204 with no body, so this returns `{ success: true }` rather than the renamed tag.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook with an endpoint URL, a shared secret and one or more topics; Klaviyo signs each delivery with that secret
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.webhooks.create({ name: 'Order events', endpointUrl: 'https://example.com/klaviyo/events', secretKey: 'a-long-shared-secret', topicIds: ['Placed Order'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name for the webhook. |
+| `endpointUrl` | `string` | Yes | Where Klaviyo POSTs the events. |
+| `secretKey` | `string` | Yes | The shared secret Klaviyo signs deliveries with; the spec marks it required. Use a long random value and verify the signature on your side. |
+| `topicIds` | `string[]` | Yes | The webhook topic ids to subscribe to, from webhookTopics.list. |
+| `description` | `string` | No | — |
+
+The spec marks a secret key and at least one topic required. Klaviyo signs each delivery with `secretKey`, so keep it and verify on your side.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: webhook,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    description?: string | null,
+    endpoint_url?: string | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook by id
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.webhooks.get({ id: 'Wh123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: webhook,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    description?: string | null,
+    endpoint_url?: string | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks configured on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The `page[cursor]` value, taken from the previous response `links.next`. Omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: webhook,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    description?: string | null,
+    endpoint_url?: string | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`webhooks.remove`
+
+Delete a webhook; deliveries stop immediately and it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.klaviyo.api.webhooks.remove({ id: 'Wh123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook name, description, endpoint URL or enabled flag
+
+**Risk:** `write`
+
+```ts
+await corsair.klaviyo.api.webhooks.update({ id: 'Wh123', enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `endpointUrl` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: webhook,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    description?: string | null,
+    endpoint_url?: string | null,
+    enabled?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Topics
+
+### list
+
+`webhookTopics.list`
+
+List the topics a webhook can subscribe to, such as Placed Order
+
+**Risk:** `read`
+
+```ts
+await corsair.klaviyo.api.webhookTopics.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `included` | `object[] \| null` | No | Related resources requested through `include`. |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` to read the next page; absent on the last one. |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: webhook-topic,
+  id: string,
+  attributes?: {
+    name?: string | null,
+    description?: string | null
+  } | null,
+  links?: {
+    self?: string | null,
+    next?: string | null,
+    prev?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  type: string,
+  id: string,
+  attributes?: Record<string, JsonValue> | null,
+  relationships?: Record<string, JsonValue> | null,
+  links?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
