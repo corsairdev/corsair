@@ -1,0 +1,1225 @@
+---
+title: API
+description: "API reference for Webex: every `webex.api.*` operation with input and output types."
+---
+
+Every `webex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Memberships
+
+### create
+
+`memberships.create`
+
+Add a person to a room, optionally as a moderator
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.memberships.create({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', personEmail: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string` | Yes | — |
+| `personId` | `string` | No | — |
+| `personEmail` | `string` | No | — |
+| `isModerator` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `roomId` | `string \| null` | No | — |
+| `personId` | `string \| null` | No | — |
+| `personEmail` | `string \| null` | No | — |
+| `personDisplayName` | `string \| null` | No | — |
+| `personOrgId` | `string \| null` | No | — |
+| `isModerator` | `boolean \| null` | No | — |
+| `isMonitor` | `boolean \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`memberships.delete`
+
+Remove a person from a room
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.memberships.delete({ id: 'mem-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`memberships.list`
+
+List the memberships of a room or of a person
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.memberships.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string` | No | — |
+| `personId` | `string` | No | — |
+| `personEmail` | `string` | No | — |
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  roomId?: string | null,
+  personId?: string | null,
+  personEmail?: string | null,
+  personDisplayName?: string | null,
+  personOrgId?: string | null,
+  isModerator?: boolean | null,
+  isMonitor?: boolean | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Post a message to a room or directly to a person, with text, markdown, html or file attachments
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.messages.create({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', text: 'Your order shipped.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string` | No | The room to post to. |
+| `toPersonId` | `string` | No | A one-to-one message to this person id. |
+| `toPersonEmail` | `string` | No | A one-to-one message to this address. |
+| `text` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `html` | `string` | No | — |
+| `files` | `string[]` | No | Public URLs of files to attach. |
+| `parentId` | `string` | No | Post as a reply in this thread. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `roomId` | `string \| null` | No | — |
+| `roomType` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `markdown` | `string \| null` | No | — |
+| `files` | `string[] \| null` | No | — |
+| `personId` | `string \| null` | No | — |
+| `personEmail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `mentionedPeople` | `string[] \| null` | No | — |
+| `mentionedGroups` | `string[] \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `attachmentActions` | `any[] \| null` | No | — |
+| `isVoiceClip` | `boolean \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`messages.delete`
+
+Delete one message permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.messages.delete({ id: 'message-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Read one message with its text, files and thread parent
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.messages.get({ id: 'message-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `roomId` | `string \| null` | No | — |
+| `roomType` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `markdown` | `string \| null` | No | — |
+| `files` | `string[] \| null` | No | — |
+| `personId` | `string \| null` | No | — |
+| `personEmail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `mentionedPeople` | `string[] \| null` | No | — |
+| `mentionedGroups` | `string[] \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `attachmentActions` | `any[] \| null` | No | — |
+| `isVoiceClip` | `boolean \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a room or a thread, optionally before a time or message id
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.messages.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', max: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string` | No | Only messages in this room. |
+| `parentId` | `string` | No | Only the replies in this thread. |
+| `mentionedPeople` | `string` | No | Only messages mentioning this person. |
+| `before` | `string` | No | ISO 8601: only earlier messages. |
+| `beforeMessage` | `string` | No | Only messages before this id. |
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  roomId?: string | null,
+  roomType?: string | null,
+  text?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  files?: string[] | null,
+  personId?: string | null,
+  personEmail?: string | null,
+  created?: string | null,
+  updated?: string | null,
+  mentionedPeople?: string[] | null,
+  mentionedGroups?: string[] | null,
+  parentId?: string | null,
+  attachmentActions?: any[] | null,
+  isVoiceClip?: boolean | null,
+  contentType?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Edit a message you sent, or move it to another room
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.messages.update({ id: 'message-1', text: 'Corrected text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `roomId` | `string` | No | Move the message to another room you are in. |
+| `text` | `string` | No | — |
+| `markdown` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `roomId` | `string \| null` | No | — |
+| `roomType` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `markdown` | `string \| null` | No | — |
+| `files` | `string[] \| null` | No | — |
+| `personId` | `string \| null` | No | — |
+| `personEmail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `mentionedPeople` | `string[] \| null` | No | — |
+| `mentionedGroups` | `string[] \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `attachmentActions` | `any[] \| null` | No | — |
+| `isVoiceClip` | `boolean \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+
+
+
+---
+
+## People
+
+### get
+
+`people.get`
+
+Read one person by id
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.people.get({ id: 'person-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `nickName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `licenses` | `string[] \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `lastActivity` | `string \| null` | No | — |
+| `status` | `string \| null` | No | active, inactive or unknown. |
+| `type` | `string \| null` | No | person or bot. |
+
+
+
+---
+
+### list
+
+`people.list`
+
+List people by email, display name, id or organization
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.people.list({ email: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | Only this address. |
+| `displayName` | `string` | No | — |
+| `id` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  emails?: string[] | null,
+  displayName?: string | null,
+  nickName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  avatar?: string | null,
+  orgId?: string | null,
+  roles?: string[] | null,
+  licenses?: string[] | null,
+  created?: string | null,
+  lastActivity?: string | null,
+  status?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`people.me`
+
+Read the account behind the token, which is the cheapest way to check it
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.people.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `nickName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `licenses` | `string[] \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `lastActivity` | `string \| null` | No | — |
+| `status` | `string \| null` | No | active, inactive or unknown. |
+| `type` | `string \| null` | No | person or bot. |
+
+
+
+---
+
+## Rooms
+
+### create
+
+`rooms.create`
+
+Create a space, optionally within a team and with lock or read-only settings
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.rooms.create({ title: 'Support triage', description: 'Where support questions land' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `teamId` | `string` | No | — |
+| `description` | `string` | No | — |
+| `isLocked` | `boolean` | No | A locked room only lets moderators add people. |
+| `isPublic` | `boolean` | No | — |
+| `isReadOnly` | `boolean` | No | A read-only room only lets moderators send messages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `type` | `string \| null` | No | group for a space, direct for a one-to-one room. |
+| `isLocked` | `boolean \| null` | No | — |
+| `lastActivity` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `isReadOnly` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `siteUrl` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`rooms.delete`
+
+Delete a space and its message history; this cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.rooms.delete({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`rooms.get`
+
+Read one space with its title, type and creator
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.rooms.get({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `type` | `string \| null` | No | group for a space, direct for a one-to-one room. |
+| `isLocked` | `boolean \| null` | No | — |
+| `lastActivity` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `isReadOnly` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `siteUrl` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`rooms.list`
+
+List spaces, filtered by type, lock state, organization or team
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.rooms.list({ max: 50, type: 'group' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max` | `number` | No | Items per page, up to 1000. |
+| `type` | `group \| direct` | No | — |
+| `isLocked` | `boolean` | No | — |
+| `orgId` | `string` | No | — |
+| `teamId` | `string` | No | Only rooms shared with this team, or with no team for `none`. |
+| `sortBy` | `id \| lastactivity \| created` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  isLocked?: boolean | null,
+  lastActivity?: string | null,
+  creatorId?: string | null,
+  created?: string | null,
+  ownerId?: string | null,
+  isPublic?: boolean | null,
+  isReadOnly?: boolean | null,
+  description?: string | null,
+  siteUrl?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`rooms.update`
+
+Change a space title, description or lock and read-only settings
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.rooms.update({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', title: 'Support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `isLocked` | `boolean` | No | — |
+| `isReadOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `type` | `string \| null` | No | group for a space, direct for a one-to-one room. |
+| `isLocked` | `boolean \| null` | No | — |
+| `lastActivity` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `isReadOnly` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `siteUrl` | `string \| null` | No | — |
+
+
+
+---
+
+## Team Memberships
+
+### create
+
+`teamMemberships.create`
+
+Add a person to a team, optionally as a moderator
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.teamMemberships.create({ teamId: 'team-1', personEmail: 'jordan@acme.example', isModerator: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `personId` | `string` | No | — |
+| `personEmail` | `string` | No | — |
+| `isModerator` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `teamId` | `string \| null` | No | — |
+| `personId` | `string \| null` | No | — |
+| `personEmail` | `string \| null` | No | — |
+| `personDisplayName` | `string \| null` | No | — |
+| `personOrgId` | `string \| null` | No | — |
+| `isModerator` | `boolean \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`teamMemberships.delete`
+
+Remove a person from a team
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.teamMemberships.delete({ id: 'tm-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`teamMemberships.list`
+
+List the members of a team
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.teamMemberships.list({ teamId: 'team-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  teamId?: string | null,
+  personId?: string | null,
+  personEmail?: string | null,
+  personDisplayName?: string | null,
+  personOrgId?: string | null,
+  isModerator?: boolean | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team with a name
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.teams.create({ name: 'Support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a team, leaving its spaces in place
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.teams.delete({ id: 'team-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Read one team with its name and creator
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.teams.get({ id: 'team-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `creatorId` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the teams on the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.teams.list({ max: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  creatorId?: string | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe a URL to a resource event, optionally filtered to one room and signed with a secret
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.webhooks.create({ name: 'Message hook', targetUrl: 'https://acme.example/hooks/webex', resource: 'messages', event: 'created', secret: 'your-signing-secret' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `targetUrl` | `string` | Yes | — |
+| `resource` | `messages \| memberships \| rooms \| meetings \| recordings` | Yes | The resource whose events to send. |
+| `event` | `created \| updated \| deleted \| all` | Yes | Which event on that resource. |
+| `filter` | `string` | No | Restrict to a room id, e.g. `roomId=abc`. |
+| `secret` | `string` | No | The HMAC key Webex signs deliveries with. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `targetUrl` | `string \| null` | No | — |
+| `resource` | `string \| null` | No | — |
+| `event` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `ownedBy` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.webex.api.webhooks.delete({ id: 'wh-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook and what it fires on
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.webhooks.get({ id: 'wh-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `targetUrl` | `string \| null` | No | — |
+| `resource` | `string \| null` | No | — |
+| `event` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `ownedBy` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.webex.api.webhooks.list({ max: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max` | `number` | No | Items per page, up to 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  targetUrl?: string | null,
+  resource?: string | null,
+  event?: string | null,
+  filter?: string | null,
+  secret?: string | null,
+  status?: string | null,
+  created?: string | null,
+  createdBy?: string | null,
+  orgId?: string | null,
+  ownedBy?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook target, secret or status, or set it inactive to pause delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.webex.api.webhooks.update({ id: 'wh-1', status: 'inactive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `targetUrl` | `string` | No | — |
+| `secret` | `string` | No | — |
+| `status` | `active \| inactive` | No | inactive stops delivery without deleting the webhook. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `targetUrl` | `string \| null` | No | — |
+| `resource` | `string \| null` | No | — |
+| `event` | `string \| null` | No | — |
+| `filter` | `string \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `ownedBy` | `string \| null` | No | — |
+
+
+
+---
+

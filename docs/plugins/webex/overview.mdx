@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Cisco Webex messaging - manage spaces, post and read messages and threads, look up people and teams, manage room and team memberships, and subscribe webhooks to Webex events."
+---
+
+Use **Webex** through Corsair: one client, typed API calls.
+
+Create a personal access token or a bot token in the Webex developer portal, or integrate an OAuth app. It goes in `Authorization: Bearer` and every call is against `https://webexapis.com/v1`.
+
+- **Errors carry a `trackingId`, not a code.** A failure is `{ message, errors: [{ description }], trackingId }`. Cisco support asks for that `trackingId`, so the plugin keeps it on the error and appends it to the message rather than discarding it. The per-field `description` is preferred over the summary `message`, because it says which field failed.
+- **401 and 403 mean different things.** A 401 is a missing, expired or revoked token; a 403 is a working token without the scope for this call. The plugin maps them to an auth error and a permission error respectively, since only the first needs a new credential.
+- **Lists page by a `Link` header.** Webex returns `{ items: [...] }` and puts the next page in a `Link` header with `rel="next"`, not a cursor in the body — so `nextPageFromLink` parses it and the plugin does not pretend there is an offset.
+- **`max` caps at 1,000.** A larger value is rejected before the request rather than silently clamped.
+- **A message list needs a room or a thread.** Without `roomId` or `parentId`, the API would answer with the whole organization's messages, so the input schema refuses that combination outright.
+- **A message needs both a destination and content.** `roomId`, `toPersonId` or `toPersonEmail` for where, and `text`, `markdown`, `html` or `files` for what — the schema checks each, so neither an empty message nor an undirected one is sent.
+- **A webhook's `secret` is the HMAC key Webex signs deliveries with.** It is the value worth capturing at creation, but it never reaches the event log: only `hasSecret` is recorded.
+- **`status: 'inactive'` pauses a webhook** without deleting it, which is usually what a temporary stop wants.
+- **Deletes answer 204 with no body**, so each one states what it did rather than returning an empty object.
+- **A voice clip and a transcript are both message objects.** `isVoiceClip` and `contentType` say which kind a message is, rather than there being a separate resource.
+
+**What you get:**
+
+- 28 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/webex better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/webex better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/webex better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/webex better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { webex } from '@corsair-dev/webex';
+
+export const corsair = createCorsair({
+	plugins: [
+		webex(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+webex()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'webex',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the spaces you are in**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.webex.api.rooms.list({ max: 50 });
+```
+
+
+**Post a message to a space**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.webex.api.messages.create({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', text: 'Your order shipped.' });
+```
+
+
+See the full list on the [API](/plugins/webex/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/webex/api">
+    Every `webex.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
