@@ -112,7 +112,7 @@ await corsair.databox.api.datasets.create({ name: 'Transactions', dataSourceId: 
 | `primaryKey` | `string[]` | No | Column identifiers that make a record unique; re-ingesting a matching record overwrites it instead of appending. |
 | `schema` | `object[]` | Yes | Column definitions for the dataset. |
 | `accountId` | `number` | No | Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled. |
-| `idempotencyKey` | `string` | No | Sent as Idempotency-Key; Databox returns the original response for the same key within 24 hours. |
+| `idempotencyKey` | `string` | No | A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours. |
 
 <AccordionGroup>
 <Accordion title="schema full type">
@@ -330,7 +330,7 @@ await corsair.databox.api.datasets.ingestData({ id: 2345678, records: [{ transac
 | `id` | `number` | Yes | The dataset to ingest into. |
 | `records` | `Record<string, string \| number \| boolean \| null>[]` | Yes | Records keyed by column ID; at most 500 rows per request. With a primaryKey, matching records overwrite. |
 | `accountId` | `number` | No | Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled. |
-| `idempotencyKey` | `string` | No | Sent as Idempotency-Key; Databox returns the original response for the same key within 24 hours. |
+| `idempotencyKey` | `string` | No | A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours. |
 
 
 
@@ -493,7 +493,7 @@ Create a data source for pushing custom data through the API; only a name is req
 **Risk:** `write`
 
 ```ts
-await corsair.databox.api.dataSources.create({ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' });
+await corsair.databox.api.dataSources.create({ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: '3f1c9a52-7d4e-4b8a-9c21-5e6f7a8b9c0d' });
 ```
 
 **Input**
@@ -503,7 +503,7 @@ await corsair.databox.api.dataSources.create({ name: 'Sales', timezone: 'Europe/
 | `name` | `string` | Yes | Display name, such as Sales. |
 | `timezone` | `string` | No | IANA timezone identifier, such as Europe/Ljubljana. |
 | `accountId` | `number` | No | Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled. |
-| `idempotencyKey` | `string` | No | Sent as Idempotency-Key; Databox returns the original response for the same key within 24 hours. |
+| `idempotencyKey` | `string` | No | A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours. |
 
 
 
@@ -755,7 +755,7 @@ await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dat
     type?: dimension | unit,
     field: string,
     operator: ANY_OF | NONE_OF | EQ | NEQ | CONTAINS | NOT_CONTAINS,
-    values?: (string | number)[]
+    values?: string[]
   }[]
 }
 ```
