@@ -5,6 +5,8 @@ export const testContext = { key: API_KEY } as never;
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant.
+// unknown: parameters are contravariant, so `never` lets every concrete endpoint
+// be passed here, while each endpoint's own output type is what actually returns.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
@@ -43,6 +45,7 @@ export function lastRequest(fetchMock: jest.SpyInstance): RecordedRequest {
 		init.body === undefined || init.body === null
 			? undefined
 			: String(init.body);
+	// unknown: the raw request body, before any JSON parsing; each caller narrows it.
 	let body: unknown;
 	if (rawBody !== undefined) {
 		try {

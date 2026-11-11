@@ -179,6 +179,7 @@ describe('files', () => {
 	it('surfaces a missing file as not found', async () => {
 		respond(fetchMock, notFound, 404);
 
+		// unknown: a promise can reject with any value; the assertions below narrow it.
 		const error = (await invoke(Files.get, { id: 'unknown' }).catch(
 			(thrown: unknown) => thrown,
 		)) as VirustotalAPIError;

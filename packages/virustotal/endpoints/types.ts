@@ -51,6 +51,8 @@ const FileObjectSchema = z
 			.loose()
 			.nullish(),
 		relationships: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -88,6 +90,8 @@ const UrlObjectSchema = z
 			.loose()
 			.nullish(),
 		relationships: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -124,6 +128,8 @@ const DomainObjectSchema = z
 			.loose()
 			.nullish(),
 		relationships: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -160,6 +166,8 @@ const IpAddressObjectSchema = z
 			.loose()
 			.nullish(),
 		relationships: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -187,6 +195,8 @@ const AnalysisObjectSchema = z
 			})
 			.loose()
 			.nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -214,6 +224,8 @@ const CommentSchema = z
 			})
 			.loose()
 			.nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -249,6 +261,8 @@ const VoteSchema = z
 			})
 			.loose()
 			.nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -263,6 +277,8 @@ const VotesCollectionSchema = z
 	.object({
 		data: z.array(VoteSchema).nullish(),
 		meta: z.object({ cursor: z.string().nullish() }).loose().nullish(),
+		// unknown: HATEOAS links, whose keys are arbitrary relationship names and
+		// whose values are URLs; the shape belongs to VirusTotal, not to us.
 		links: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -270,15 +286,19 @@ const VotesCollectionSchema = z
 export type VirustotalVotes = z.infer<typeof VotesCollectionSchema>;
 
 /** Scanning and rescanning both answer an object descriptor with just an id. */
+/**
+ * The descriptor a scan or rescan returns. `id` is what `analyses.get` takes, so it
+ * is required: an empty `data: {}` with a 200 would otherwise be logged as a
+ * completed scan that handed the caller no way to read the result.
+ */
 const DescriptorSchema = z
 	.object({
 		data: z
 			.object({
-				type: z.string().nullish(),
-				id: z.string().nullish(),
+				type: z.string(),
+				id: z.string().min(1),
 			})
-			.loose()
-			.nullish(),
+			.loose(),
 	})
 	.loose();
 

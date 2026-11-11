@@ -302,16 +302,16 @@ await corsair.virustotal.api.domains.rescan({ id: 'acme.example' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null
-} | null
+  type: string,
+  id: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -539,16 +539,16 @@ await corsair.virustotal.api.files.rescan({ id: '275a021bbfb6489e54d471899f7db9d
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null
-} | null
+  type: string,
+  id: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -755,16 +755,16 @@ await corsair.virustotal.api.ipAddresses.rescan({ id: '203.0.113.10' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null
-} | null
+  type: string,
+  id: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -984,16 +984,16 @@ await corsair.virustotal.api.urls.rescan({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9n
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null
-} | null
+  type: string,
+  id: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1026,16 +1026,16 @@ await corsair.virustotal.api.urls.scan({ url: 'https://acme.example/login' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null
-} | null
+  type: string,
+  id: string
+}
 ```
 </Accordion>
 </AccordionGroup>

@@ -81,7 +81,7 @@ export class VirustotalAPIError extends Error {
 		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
 		this.method = options.method ?? cause?.request.method;
 
-		this.code = readString(asRecord(this.body)?.error as never, 'code');
+		this.code = readString(asRecord(asRecord(this.body)?.error), 'code');
 	}
 
 	/** True for a missing, wrong, inactive or unverified key. */
@@ -99,9 +99,13 @@ export class VirustotalAPIError extends Error {
 		return this.code === QUOTA_EXCEEDED;
 	}
 
-	/** True for a burst that will clear, so a retry can help. */
+	/**
+	 * True for a burst that will clear, so a retry can help. The code has to say so:
+	 * a 429 from a proxy or a gateway carries no VirusTotal code, and retrying a POST
+	 * or DELETE on that guess could repeat a write.
+	 */
 	get isRateLimited(): boolean {
-		return this.status === 429 && this.code !== QUOTA_EXCEEDED;
+		return this.status === 429 && this.code === TOO_MANY_REQUESTS;
 	}
 
 	/**

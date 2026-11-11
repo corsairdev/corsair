@@ -84,6 +84,8 @@ describe('makeVirustotalRequest', () => {
 		const error = (await makeVirustotalRequest(API_KEY, {
 			method: 'GET',
 			path: '/files/abc',
+			// unknown: a promise can reject with any value; the cast on the next line
+			// narrows it to the plugin's error type.
 		}).catch((thrown: unknown) => thrown)) as VirustotalAPIError;
 
 		expect(error).toBeInstanceOf(VirustotalAPIError);
@@ -100,6 +102,8 @@ describe('makeVirustotalRequest', () => {
 		const error = (await makeVirustotalRequest(API_KEY, {
 			method: 'GET',
 			path: '/files/abc',
+			// unknown: a promise can reject with any value; the cast on the next line
+			// narrows it to the plugin's error type.
 		}).catch((thrown: unknown) => thrown)) as VirustotalAPIError;
 
 		expect(error.message).toBe('fetch failed');
