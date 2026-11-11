@@ -441,6 +441,7 @@ export const BaseProviders = [
 	'typesafe',
 	'unione',
 	'unipile',
+	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
@@ -911,6 +912,7 @@ export const ProviderDisplayNames = {
 	typesafe: 'TypeSafe',
 	unione: 'Unione',
 	unipile: 'Unipile',
+	unisender: 'Unisender',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
@@ -1388,6 +1390,7 @@ export type AllProviders =
 	| 'typesafe'
 	| 'unione'
 	| 'unipile'
+	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
