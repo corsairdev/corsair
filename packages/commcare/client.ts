@@ -89,6 +89,27 @@ export function describeCommCareError(
 	return label ? `${label}: ${text}` : text;
 }
 
+/**
+ * The cleaned `<title>` of an HTML document body ("" when it has none), or
+ * undefined when the body is not an HTML page.
+ */
+// unknown: core returns parsed JSON or the raw text of other content types.
+export function htmlPageTitle(body: unknown): string | undefined {
+	if (
+		typeof body !== 'string' ||
+		!/^\s*<(!doctype html|html)[\s>]/i.test(body)
+	) {
+		return undefined;
+	}
+	const title = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(body)?.[1] ?? '';
+	// HQ titles read ": Upgrade Required - CommCare HQ"; keep the page name.
+	return title
+		.replace(/\s+/g, ' ')
+		.replace(/\s*-\s*CommCare HQ\s*$/i, '')
+		.replace(/^[\s:]+/, '')
+		.trim();
+}
+
 export type CommCareQuery = Record<
 	string,
 	string | number | boolean | undefined
@@ -146,9 +167,23 @@ export async function makeCommCareRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
+		const result = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: COMMCARE_RATE_LIMIT_CONFIG,
 		});
+		const page = htmlPageTitle(result);
+		if (page !== undefined) {
+			// HQ's case API answers a project without API access with 200 and
+			// an "Upgrade Required" HTML page, not a status code. No CommCare
+			// route this plugin calls answers HTML on success (restore and the
+			// receiver answer XML), so it is reported as a 403 permission
+			// error instead of failing the output schema. The page itself is
+			// dropped: it is 50 KB of markup.
+			throw new CommCareAPIError(
+				`CommCare 403: ${page || 'HTML page'}. HQ answered an HTML page instead of JSON, which it does when the project plan has no API access`,
+				{ status: 403, replaySafe },
+			);
+		}
+		return result;
 	} catch (error) {
 		// Rethrow first: the generic catch below would otherwise re-wrap
 		// this error and drop body and status.

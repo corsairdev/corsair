@@ -178,3 +178,17 @@ export const submissionResponseXml =
 export const rateLimited = { message: 'Slow down!' };
 export const badKey = { message: 'Unauthorized' };
 export const serverError = { message: 'Something went wrong.' };
+
+// Trimmed from the live case API (11-11) on a project whose plan has no API
+// access: HQ answers 200 with this page instead of JSON.
+export const upgradeRequiredPage = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>
+      : Upgrade Required
+      -
+      CommCare HQ
+  </title>
+</head>
+<body><h1>Sorry, you do not have access to API Access</h1></body>
+</html>`;

@@ -4,7 +4,7 @@ import {
 	makeCommCareRequest,
 	segment,
 } from './client';
-import { badKey, user } from './test-fixtures';
+import { badKey, upgradeRequiredPage, user } from './test-fixtures';
 
 const DOMAIN = 'my-project';
 const USERNAME = 'jdoe@my-project.commcarehq.org';
@@ -137,6 +137,43 @@ describe('makeCommCareRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('CommCare 401');
+	});
+
+	it('turns the HTML paywall page HQ answers with 200 into a 403', async () => {
+		// Trimmed from the live case API on a project whose plan lacks API
+		// access: 200, text/html, a full "Upgrade Required" page.
+		fetchMock.mockResolvedValueOnce(
+			new Response(upgradeRequiredPage, {
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+			}),
+		);
+
+		const error = await failure(
+			makeCommCareRequest(
+				{ domain: DOMAIN, username: USERNAME, apiKey: API_KEY },
+				{ method: 'GET', path: `/a/${DOMAIN}/api/case/v2/`, replaySafe: true },
+			),
+		);
+		expect(error.status).toBe(403);
+		expect(error.message).toBe(
+			'CommCare 403: Upgrade Required. HQ answered an HTML page instead of JSON, which it does when the project plan has no API access',
+		);
+		expect(error.message).not.toContain(API_KEY);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('still returns XML text bodies such as the OTA restore', async () => {
+		respond('<OpenRosaResponse><message>ok</message></OpenRosaResponse>', 200, {
+			'Content-Type': 'text/xml',
+		});
+
+		await expect(
+			makeCommCareRequest(
+				{ domain: DOMAIN, username: USERNAME, apiKey: API_KEY },
+				{ method: 'GET', path: `/a/${DOMAIN}/phone/restore/` },
+			),
+		).resolves.toContain('<OpenRosaResponse>');
 	});
 
 	it('does not leak the key through any error surface', async () => {
