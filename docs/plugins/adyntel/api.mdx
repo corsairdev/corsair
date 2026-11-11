@@ -27,7 +27,7 @@ await corsair.adyntel.api.google.ads({ company_domain: 'clay.com', country_code:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `company_domain` | `string` | Yes | The bare domain, without `https://` or `www.`. |
-| `media_type` | `text \| image \| video \| all` | No | Defaults to `all`. Anything unrecognised is also treated as `all` rather than rejected, so a typo silently widens the result. |
+| `media_type` | `text \| image \| video \| all` | No | Defaults to `all`. Any other value fails validation before the call is sent; Adyntel itself would treat it as `all` and widen the result. |
 | `country_code` | `string` | No | One country per call; a list is rejected. Leave it out, or send `anywhere`, for worldwide results. Send the same code again with every `continuation_token`. |
 | `continuation_token` | `string` | No | `continuation_token` from the previous response. |
 | `extract_text` | `boolean` | No | Extracts the text inside each creative for one extra credit. The docs table spells it `extract-text`; the OpenAPI spec and this plugin use `extract_text`. |
@@ -312,7 +312,7 @@ await corsair.adyntel.api.linkedin.ads({ company_domain: 'clay.com', date_filter
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`. |
+| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`. Send at least one of this, `linkedin_page_id`, `company_domains` or `linkedin_page_ids`. |
 | `linkedin_page_id` | `string \| number` | No | The numeric page ID, as a string or number. |
 | `linkedin_page_ids` | `string[]` | No | Batch mode: several pages in one call. |
 | `company_domains` | `string[]` | No | Batch mode: several domains in one call. |
@@ -506,8 +506,8 @@ await corsair.adyntel.api.meta.ads({ company_domain: 'zappos.com', media_type: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `facebook_url` | `string` | No | The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`. |
-| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`, e.g. `zoom.com`. |
+| `facebook_url` | `string` | No | The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`. Send exactly one of this or `company_domain`. |
+| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`, e.g. `zoom.com`. Send exactly one of this or `facebook_url`. |
 | `country_code` | `string \| string[]` | No | One code, or up to 20 for one job per country. The array form needs `webhook_url` and costs one credit per country. |
 | `media_type` | `image \| meme \| image_and_meme \| video` | No | Filter to one creative format. `check_ugc` needs `video`. |
 | `active_status` | `inactive \| all` | No | Left out, the call returns active ads only. |

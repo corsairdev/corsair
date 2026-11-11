@@ -218,14 +218,14 @@ const MetaAdsInputSchema = z
 		facebook_url: z
 			.url()
 			.describe(
-				'The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`.',
+				'The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`. Send exactly one of this or `company_domain`.',
 			)
 			.optional(),
 		company_domain: z
 			.string()
 			.min(1)
 			.describe(
-				'The bare domain, without `https://` or `www.`, e.g. `zoom.com`.',
+				'The bare domain, without `https://` or `www.`, e.g. `zoom.com`. Send exactly one of this or `facebook_url`.',
 			)
 			.optional(),
 		country_code: z
@@ -441,7 +441,7 @@ const GoogleAdsInputSchema = z
 		media_type: z
 			.enum(GOOGLE_MEDIA_TYPES)
 			.describe(
-				'Defaults to `all`. Anything unrecognised is also treated as `all` rather than rejected, so a typo silently widens the result.',
+				'Defaults to `all`. Any other value fails validation before the call is sent; Adyntel itself would treat it as `all` and widen the result.',
 			)
 			.optional(),
 		country_code: z
@@ -687,7 +687,9 @@ const LinkedInAdsInputSchema = z
 		company_domain: z
 			.string()
 			.min(1)
-			.describe('The bare domain, without `https://` or `www.`.')
+			.describe(
+				'The bare domain, without `https://` or `www.`. Send at least one of this, `linkedin_page_id`, `company_domains` or `linkedin_page_ids`.',
+			)
 			.optional(),
 		linkedin_page_id: z
 			.union([z.string().min(1), z.number().int().positive()])
