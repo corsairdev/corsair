@@ -90,6 +90,15 @@ describe('isBlockedAddress', () => {
 		expect(isBlockedAddress('::ffff:8.8.8.8')).toBe(false);
 	});
 
+	// RFC 8215 local-use translation prefix: a deployment can map it onto
+	// private IPv4 space, so 64:ff9b:1::a00:1 may reach 10.0.0.1.
+	it('blocks the local-use IPv4/IPv6 translation prefix', () => {
+		expect(isBlockedAddress('64:ff9b:1::a00:1')).toBe(true);
+		expect(isBlockedAddress('64:ff9b:1:ffff::1')).toBe(true);
+		// The neighbouring /48 is not part of it.
+		expect(isBlockedAddress('64:ff9b:2::1')).toBe(false);
+	});
+
 	it('treats an unparseable address as blocked', () => {
 		expect(isBlockedAddress('not-an-ip')).toBe(true);
 		expect(isBlockedAddress('999.1.1.1')).toBe(true);

@@ -166,6 +166,11 @@ function isBlockedV6(ip: string): boolean {
 	) {
 		return true;
 	}
+	// Local-use translation prefix (64:ff9b:1::/48, RFC 8215). It is not
+	// globally reachable, and a deployment may map it onto private IPv4 space.
+	if (groups[0] === 0x0064 && groups[1] === 0xff9b && groups[2] === 0x0001) {
+		return true;
+	}
 	return false;
 }
 
