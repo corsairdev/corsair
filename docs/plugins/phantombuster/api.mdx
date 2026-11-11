@@ -61,13 +61,13 @@ await corsair.phantombuster.api.agents.fetch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `scriptOrgName` | `string` | No | — |
-| `scriptId` | `string` | No | — |
-| `script` | `string` | No | — |
-| `branch` | `string` | No | — |
-| `environment` | `staging \| release` | No | — |
-| `argument` | `string` | No | — |
-| `lastEndType` | `finished \| killed \| global timeout \| org timeout \| agent timeout \| unknown \| no log timeout` | No | — |
+| `scriptOrgName` | `string \| null` | No | — |
+| `scriptId` | `string \| null` | No | — |
+| `script` | `string \| null` | No | — |
+| `branch` | `string \| null` | No | — |
+| `environment` | `staging \| release \| null` | No | — |
+| `argument` | `string \| null` | No | — |
+| `lastEndType` | `finished \| killed \| global timeout \| org timeout \| agent timeout \| unknown \| no log timeout \| null` | No | — |
 
 
 
@@ -110,8 +110,7 @@ await corsair.phantombuster.api.agents.fetchAll({});
   loadChrome?: boolean,
   disableWebSecurity?: boolean,
   ignoreSslErrors?: boolean,
-  argument?: string | {
-  },
+  argument?: string | Record<string, any>,
   createdAt?: string,
   updatedAt?: string
 }[]
@@ -217,39 +216,13 @@ await corsair.phantombuster.api.agents.launch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `argument` | `object` | No | — |
-| `arguments` | `object` | No | — |
-| `bonusArgument` | `object` | No | — |
+| `argument` | `string \| Record<string, any>` | No | — |
+| `arguments` | `string \| Record<string, any>` | No | — |
+| `bonusArgument` | `string \| Record<string, any>` | No | — |
 | `saveArgument` | `boolean` | No | — |
 | `saveArguments` | `boolean` | No | — |
 | `manualLaunch` | `boolean` | No | — |
 | `maxInstanceCount` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="argument full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="arguments full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="bonusArgument full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -281,28 +254,10 @@ await corsair.phantombuster.api.agents.launchSoon({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `minutes` | `number` | Yes | — |
-| `argument` | `object` | No | — |
-| `arguments` | `object` | No | — |
+| `argument` | `string \| Record<string, any>` | No | — |
+| `arguments` | `string \| Record<string, any>` | No | — |
 | `saveArgument` | `boolean` | No | — |
 | `saveArguments` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="argument full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="arguments full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -331,28 +286,18 @@ await corsair.phantombuster.api.agents.save({});
 | `name` | `string` | No | — |
 | `org` | `string` | No | — |
 | `script` | `string` | No | — |
-| `branch` | `string` | No | — |
-| `environment` | `staging \| release` | No | — |
-| `argument` | `object` | No | — |
+| `branch` | `string \| null` | No | — |
+| `environment` | `staging \| release \| null` | No | — |
+| `argument` | `string \| Record<string, any>` | No | — |
 | `launchType` | `manually \| repeatedly \| once \| after agent` | No | — |
 | `launchTimes` | `string[]` | No | — |
 | `launchTimezone` | `string` | No | — |
-| `cronString` | `string` | No | — |
-| `fileMgmt` | `folders \| mix \| delete` | No | — |
+| `cronString` | `string \| null` | No | — |
+| `fileMgmt` | `folders \| mix \| delete \| null` | No | — |
 | `fileMgmtValue` | `number` | No | — |
 | `loadChrome` | `boolean` | No | — |
 | `disableWebSecurity` | `boolean` | No | — |
 | `ignoreSslErrors` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="argument full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -612,12 +557,12 @@ await corsair.phantombuster.api.containers.fetch({});
 | `id` | `string` | Yes | — |
 | `agentId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `exitCode` | `number` | No | — |
-| `duration` | `number` | No | — |
-| `startTime` | `number` | No | — |
-| `endTime` | `number` | No | — |
-| `output` | `string` | No | — |
-| `resultObject` | `string` | No | — |
+| `exitCode` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `startTime` | `number \| null` | No | — |
+| `endTime` | `number \| null` | No | — |
+| `output` | `string \| null` | No | — |
+| `resultObject` | `string \| null` | No | — |
 
 
 
@@ -702,7 +647,7 @@ await corsair.phantombuster.api.containers.fetchOutput({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `output` | `string` | No | — |
+| `output` | `string \| null` | No | — |
 
 
 
@@ -732,7 +677,7 @@ await corsair.phantombuster.api.containers.fetchResultObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `resultObject` | `string` | No | — |
+| `resultObject` | `string \| null` | No | — |
 
 
 
@@ -784,18 +729,8 @@ await corsair.phantombuster.api.identities.saveEvent({});
 | `identity_type` | `string` | Yes | — |
 | `profile_id` | `string` | Yes | — |
 | `event_type` | `string` | Yes | — |
-| `event_data` | `object` | Yes | — |
+| `event_data` | `Record<string, any>` | Yes | — |
 | `timestamp` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="event_data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1061,7 +996,7 @@ await corsair.phantombuster.api.lists.fetch({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `totalLeads` | `number` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -1389,13 +1324,11 @@ await corsair.phantombuster.api.orgs.fetchAgentGroups({});
 <Accordion title="Output full type">
 
 ```ts
-(
-  string | {
-    id: string,
-    name: string,
-    agents: string[]
-  }
-)[]
+(string | {
+  id: string,
+  name: string,
+  agents: string[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1439,7 +1372,7 @@ await corsair.phantombuster.api.orgs.fetchResources({});
 | `planName` | `string` | No | — |
 | `dailyResourceNextResetAt` | `number` | No | — |
 | `monthlyResourceNextResetAt` | `number` | No | — |
-| `planShouldCancelAt` | `number` | No | — |
+| `planShouldCancelAt` | `number \| null` | No | — |
 
 
 
@@ -1509,13 +1442,11 @@ await corsair.phantombuster.api.orgs.saveAgentGroups({});
 <Accordion title="agentGroups full type">
 
 ```ts
-(
-  string | {
-    id: string,
-    name: string,
-    agents: string[]
-  }
-)[]
+(string | {
+  id: string,
+  name: string,
+  agents: string[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1532,13 +1463,11 @@ await corsair.phantombuster.api.orgs.saveAgentGroups({});
 <Accordion title="agentGroups full type">
 
 ```ts
-(
-  string | {
-    id: string,
-    name: string,
-    agents: string[]
-  }
-)[]
+(string | {
+  id: string,
+  name: string,
+  agents: string[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1566,7 +1495,7 @@ await corsair.phantombuster.api.scripts.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `branch` | `string` | No | — |
+| `branch` | `string \| null` | No | — |
 | `environment` | `staging \| release` | No | — |
 
 
@@ -1609,9 +1538,9 @@ await corsair.phantombuster.api.scripts.fetch({});
 | `orgSlug` | `string` | Yes | — |
 | `environment` | `staging \| release` | Yes | — |
 | `visibility` | `private \| semi public \| public \| semi open source \| open source` | Yes | — |
-| `description` | `string` | No | — |
-| `code` | `string` | No | — |
-| `branch` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `branch` | `string \| null` | No | — |
 | `branches` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1734,9 +1663,9 @@ await corsair.phantombuster.api.scripts.save({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `branch` | `string` | No | — |
-| `code` | `string` | No | — |
-| `markdown` | `string` | No | — |
+| `branch` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `markdown` | `string \| null` | No | — |
 
 
 
@@ -1859,19 +1788,9 @@ await corsair.phantombuster.api.storage.saveCompanyObject({});
 | `linkedinCompanyId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `id` | `string` | No | — |
 | `orgId` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1883,18 +1802,8 @@ await corsair.phantombuster.api.storage.saveCompanyObject({});
 | `linkedinCompanyId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
-| `orgId` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | Yes | — |
+| `orgId` | `string \| null` | No | — |
 
 
 
@@ -1918,22 +1827,12 @@ await corsair.phantombuster.api.storage.saveLeadObject({});
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `agentId` | `string` | Yes | — |
 | `leadObjectId` | `string` | No | — |
-| `leadId` | `string` | No | — |
-| `leadSlug` | `string` | No | — |
-| `leadUrn` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `leadId` | `string \| null` | No | — |
+| `leadSlug` | `string \| null` | No | — |
+| `leadUrn` | `string \| null` | No | — |
 
 
 
@@ -1945,20 +1844,10 @@ await corsair.phantombuster.api.storage.saveLeadObject({});
 | `orgId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
-| `leadId` | `string` | No | — |
-| `leadSlug` | `string` | No | — |
-| `leadUrn` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | Yes | — |
+| `leadId` | `string \| null` | No | — |
+| `leadSlug` | `string \| null` | No | — |
+| `leadUrn` | `string \| null` | No | — |
 
 
 
@@ -1990,8 +1879,7 @@ await corsair.phantombuster.api.storage.saveManyCompanyObjects({});
   linkedinCompanyId: string,
   type: string,
   slug: string,
-  properties: {
-  }
+  properties: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2014,8 +1902,7 @@ await corsair.phantombuster.api.storage.saveManyCompanyObjects({});
       linkedinCompanyId: string,
       type: string,
       slug: string,
-      properties: {
-      },
+      properties: Record<string, any>,
       orgId?: string | null
     }
   } | {
@@ -2056,8 +1943,7 @@ await corsair.phantombuster.api.storage.saveManyLeadObjects({});
 {
   type: string,
   slug: string,
-  properties: {
-  },
+  properties: Record<string, any>,
   agentId: string,
   leadObjectId?: string
 }[]
@@ -2112,7 +1998,7 @@ await corsair.phantombuster.api.storage.searchCompanyObjects({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2123,8 +2009,7 @@ await corsair.phantombuster.api.storage.searchCompanyObjects({});
   linkedinCompanyId: string,
   type: string,
   slug: string,
-  properties: {
-  },
+  properties: Record<string, any>,
   orgId?: string | null
 }[] | {
   companiesObjects: {
@@ -2132,8 +2017,7 @@ await corsair.phantombuster.api.storage.searchCompanyObjects({});
     linkedinCompanyId: string,
     type: string,
     slug: string,
-    properties: {
-    },
+    properties: Record<string, any>,
     orgId?: string | null
   }[],
   totalCount: number
@@ -2166,7 +2050,7 @@ await corsair.phantombuster.api.storage.searchLeadObjects({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2177,8 +2061,7 @@ await corsair.phantombuster.api.storage.searchLeadObjects({});
   orgId: string,
   type: string,
   slug: string,
-  properties: {
-  },
+  properties: Record<string, any>,
   leadId?: string | null,
   leadSlug?: string | null,
   leadUrn?: string | null
@@ -2188,8 +2071,7 @@ await corsair.phantombuster.api.storage.searchLeadObjects({});
     orgId: string,
     type: string,
     slug: string,
-    properties: {
-    },
+    properties: Record<string, any>,
     leadId?: string | null,
     leadSlug?: string | null,
     leadUrn?: string | null
@@ -2273,9 +2155,9 @@ await corsair.phantombuster.api.users.updateMe({});
 |------|------|----------|-------------|
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `company` | `string` | No | — |
-| `job` | `string` | No | — |
+| `phone` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `job` | `string \| null` | No | — |
 | `newsletter` | `boolean` | No | — |
 | `developerMode` | `boolean` | No | — |
 

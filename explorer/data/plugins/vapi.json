@@ -34,17 +34,17 @@
           {
             "key": "model",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "voice",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "firstMessage",
@@ -69,7 +69,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "serverUrl",
@@ -84,27 +84,27 @@
           {
             "key": "analysisPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "artifactPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "messagePlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "startSpeakingPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stopSpeakingPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "hipaaEnabled",
@@ -179,37 +179,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "voice",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "firstMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "systemPrompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallPhrases",
@@ -219,12 +219,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hipaaEnabled",
@@ -301,37 +301,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "voice",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "firstMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "systemPrompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallPhrases",
@@ -341,12 +341,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hipaaEnabled",
@@ -413,7 +413,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, model?: {}, voice?: {}, transcriber?: {}, firstMessage?: string | null, systemPrompt?: string | null, endCallMessage?: string | null, endCallPhrases?: string[], metadata?: {}, serverUrl?: string | null, hipaaEnabled?: boolean }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, model?: Record<string, any>, voice?: Record<string, any>, transcriber?: Record<string, any>, firstMessage?: string | null, systemPrompt?: string | null, endCallMessage?: string | null, endCallPhrases?: string[], metadata?: Record<string, any>, serverUrl?: string | null, hipaaEnabled?: boolean }[]"
       }
     },
     {
@@ -432,17 +432,17 @@
           {
             "key": "model",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "voice",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "firstMessage",
@@ -467,7 +467,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "serverUrl",
@@ -482,27 +482,27 @@
           {
             "key": "analysisPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "artifactPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "messagePlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "startSpeakingPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stopSpeakingPlan",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "hipaaEnabled",
@@ -582,37 +582,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "voice",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "firstMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "systemPrompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endCallPhrases",
@@ -622,12 +622,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hipaaEnabled",
@@ -653,12 +653,12 @@
           {
             "key": "assistant",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "assistantOverrides",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "squadId",
@@ -668,7 +668,7 @@
           {
             "key": "squad",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "phoneNumberId",
@@ -678,7 +678,7 @@
           {
             "key": "phoneNumber",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "customerId",
@@ -688,7 +688,7 @@
           {
             "key": "customer",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "name",
@@ -698,7 +698,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "scheduledAt",
@@ -743,32 +743,32 @@
           {
             "key": "endedReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneNumberId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
@@ -778,22 +778,22 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "artifact",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -875,32 +875,32 @@
           {
             "key": "endedReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneNumberId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
@@ -910,22 +910,22 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "artifact",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1002,7 +1002,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, squadId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {}, metadata?: {} }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, squadId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any>, metadata?: Record<string, any> }[]"
       }
     },
     {
@@ -1026,12 +1026,12 @@
           {
             "key": "assistantOverrides",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1071,32 +1071,32 @@
           {
             "key": "endedReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneNumberId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
@@ -1106,22 +1106,22 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "artifact",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1223,7 +1223,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1285,7 +1285,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string, originalName?: string, mimeType?: string, size?: number, status?: string, url?: string, metadata?: {} }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string, originalName?: string, mimeType?: string, size?: number, status?: string, url?: string, metadata?: Record<string, any> }[]"
       }
     },
     {
@@ -1364,7 +1364,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1425,12 +1425,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1507,12 +1507,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1574,7 +1574,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, provider?: string, name?: string | null, server?: {} }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, provider?: string, name?: string | null, server?: Record<string, any> }[]"
       }
     },
     {
@@ -1623,12 +1623,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1734,22 +1734,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1831,22 +1831,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1987,22 +1987,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "assistantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "squadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "serverUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2023,17 +2023,17 @@
           {
             "key": "members",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "membersOverrides",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2063,17 +2063,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "members",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2145,17 +2145,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "members",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2217,7 +2217,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, members?: {}[], metadata?: {} }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, members?: Record<string, any>[], metadata?: Record<string, any> }[]"
       }
     },
     {
@@ -2236,17 +2236,17 @@
           {
             "key": "members",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "membersOverrides",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -2281,17 +2281,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "members",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2317,22 +2317,22 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "function",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2367,17 +2367,17 @@
           {
             "key": "function",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2454,17 +2454,17 @@
           {
             "key": "function",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2526,7 +2526,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, function?: {}, server?: {}, metadata?: {} }[]"
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, function?: Record<string, any>, server?: Record<string, any>, metadata?: Record<string, any> }[]"
       }
     },
     {
@@ -2550,22 +2550,22 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "function",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -2605,17 +2605,17 @@
           {
             "key": "function",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "server",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2632,7 +2632,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: workflow.node.started, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, node?: {}, timestamp?: string }"
+            "type": "{ type: workflow.node.started, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, node?: Record<string, any>, timestamp?: string }"
           }
         ]
       },
@@ -2649,11 +2649,11 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: assistant-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, phoneNumber?: {}, customer?: {}, timestamp?: string }"
+            "type": "{ type: assistant-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, phoneNumber?: Record<string, any>, customer?: Record<string, any>, timestamp?: string }"
           }
         ]
       },
-      "responseType": "{ assistant?: {}, assistantId?: string, error?: string }",
+      "responseType": "{ assistant?: Record<string, any>, assistantId?: string, error?: string }",
       "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            assistantRequest: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2666,7 +2666,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: end-of-call-report, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, endedReason?: string, transcript?: string, summary?: string, messages?: {}[], analysis?: {}, artifact?: {}, timestamp?: string }"
+            "type": "{ type: end-of-call-report, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, endedReason?: string, transcript?: string, summary?: string, messages?: Record<string, any>[], analysis?: Record<string, any>, artifact?: Record<string, any>, timestamp?: string }"
           }
         ]
       },
@@ -2683,7 +2683,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: status-update, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, status: string, timestamp?: string }"
+            "type": "{ type: status-update, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, status: string, timestamp?: string }"
           }
         ]
       },
@@ -2700,7 +2700,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: tool-calls, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, toolCallList: { id: string, type: function, function: { name: string, arguments: string } }[], toolWithToolCallList?: {}[], timestamp?: string }"
+            "type": "{ type: tool-calls, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, toolCallList: { id: string, type: function, function: { name: string, arguments: string } }[], toolWithToolCallList?: Record<string, any>[], timestamp?: string }"
           }
         ]
       },
@@ -2717,11 +2717,11 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ type: transfer-destination-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, timestamp?: string }"
+            "type": "{ type: transfer-destination-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: Record<string, any>[], artifact?: Record<string, any>, analysis?: Record<string, any> }, timestamp?: string }"
           }
         ]
       },
-      "responseType": "{ destination?: {}, error?: string }",
+      "responseType": "{ destination?: Record<string, any>, error?: string }",
       "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            transferDestinationRequest: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

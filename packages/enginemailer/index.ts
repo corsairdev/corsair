@@ -333,7 +333,7 @@ const enginemailerEndpointMeta = {
 		description: 'Update a subscriber record',
 	},
 	'subscribers.unsubscribe': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unsubscribe a subscriber',
 	},
 	'subscribers.getSubcategories': {
@@ -353,8 +353,8 @@ const enginemailerEndpointMeta = {
 		description: 'Update subscribers in a batch',
 	},
 	'subscribers.batchUpdateStatus': {
-		riskLevel: 'write',
-		description: 'Update subscriber status in a batch',
+		riskLevel: 'read',
+		description: 'Get the status of a batch subscriber update by its job ID',
 	},
 	'subscribers.deleteSubscriber': {
 		riskLevel: 'destructive',
@@ -384,7 +384,6 @@ const enginemailerEndpointMeta = {
 	},
 	'campaigns.deleteRecipientList': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description: 'Remove a recipient list from a campaign',
 	},
 	'campaigns.pauseCampaign': {
@@ -401,7 +400,7 @@ const enginemailerEndpointMeta = {
 		description: 'Add or update a subscriber through Enginemailer N8N',
 	},
 	'n8n.deactivateSubscriber': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unsubscribe a subscriber through Enginemailer N8N',
 	},
 	'n8n.deleteN8nSubscriber': {

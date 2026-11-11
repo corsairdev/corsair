@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "CodeInterpreter plugin for Corsair"
+description: "LibreChat Code Interpreter API. Execute code in a sandbox and upload, list, download, and delete session files."
 ---
 
-Use **CodeInterpreter** through Corsair: one client, typed API calls, local DB sync.
+Use **Code Interpreter** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`file.download`**
+**List files**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.codeinterpreter.api.file.download({});
+await tenant.codeinterpreter.api.file.list({});
 ```
 
 
-**`code.execute`**
+**Run code**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.codeinterpreter.api.code.execute({});
+await tenant.codeinterpreter.api.code.execute({ code: 'print(\'hello\')', language: 'python' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/codeinterpreter/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.codeinterpreter.db.<entity>.search()` and `.list()`: `executions`, `files`, `sessions`.
+This table exists, but Code Interpreter calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/codeinterpreter/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.codeinterpreter.db.sessions.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `executions`, `files`, `sessions`. See [Database](/plugins/codeinterpreter/database) for filters and operators.
 
 ## What's next
 

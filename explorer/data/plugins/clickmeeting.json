@@ -86,7 +86,8 @@
           {
             "key": "room_type",
             "optional": true,
-            "type": "meeting | webinar"
+            "type": "meeting | webinar",
+            "description": "Defaults to \"webinar\"."
           },
           {
             "key": "permanent_room",
@@ -202,7 +203,8 @@
           {
             "key": "role",
             "optional": true,
-            "type": "listener | presenter | moderator | guest_speaker | host"
+            "type": "listener | presenter | moderator | guest_speaker | host",
+            "description": "Defaults to \"listener\"."
           },
           {
             "key": "password",
@@ -292,7 +294,8 @@
           {
             "key": "status",
             "optional": true,
-            "type": "active | inactive"
+            "type": "active | inactive",
+            "description": "Defaults to \"active\"."
           },
           {
             "key": "page",
@@ -348,12 +351,14 @@
           {
             "key": "role",
             "optional": true,
-            "type": "listener | presenter"
+            "type": "listener | presenter",
+            "description": "Defaults to \"listener\"."
           },
           {
             "key": "template",
             "optional": true,
-            "type": "advanced | basic"
+            "type": "advanced | basic",
+            "description": "Defaults to \"advanced\"."
           }
         ]
       },
@@ -872,7 +877,8 @@
           {
             "key": "status",
             "optional": true,
-            "type": "all | waiting | confirmed | rejected"
+            "type": "all | waiting | confirmed | rejected",
+            "description": "Defaults to \"all\"."
           }
         ]
       },
@@ -897,7 +903,8 @@
           {
             "key": "status",
             "optional": true,
-            "type": "all | waiting | confirmed | rejected"
+            "type": "all | waiting | confirmed | rejected",
+            "description": "Defaults to \"all\"."
           }
         ]
       },
@@ -922,7 +929,7 @@
           {
             "key": "registration",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Participant registration fields (e.g. first_name, last_name, email)"
           }
         ]
@@ -1126,7 +1133,8 @@
           {
             "key": "how_many",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 1."
           }
         ]
       },
@@ -1248,7 +1256,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "string[] | {}"
+        "type": "string[] | Record<string, string>"
       }
     },
     {
@@ -1269,7 +1277,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "string[] | {}"
+        "type": "string[] | Record<string, string>"
       }
     }
   ],

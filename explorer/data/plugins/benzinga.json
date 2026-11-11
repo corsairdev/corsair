@@ -1,7 +1,7 @@
 {
   "id": "benzinga",
   "displayName": "Benzinga",
-  "description": "Benzinga plugin for Corsair",
+  "description": "Financial news and market data API for reading news and channels, and calendar data for earnings, dividends, splits, IPOs, analyst ratings, guidance, and economics.",
   "npmPackageName": "@corsair-dev/benzinga",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -64,52 +64,52 @@
           {
             "key": "aggregate_ratings",
             "optional": true,
-            "type": "{ strong_buy?: number | null, buy?: number | null, hold?: number | null, sell?: number | null, strong_sell?: number | null }"
+            "type": "{ strong_buy?: number | null, buy?: number | null, hold?: number | null, sell?: number | null, strong_sell?: number | null } | null"
           },
           {
             "key": "aggregate_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "consensus_price_target",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "consensus_rating",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "consensus_rating_val",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "high_price_target",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "low_price_target",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_analyst_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unique_analyst_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -150,7 +150,7 @@
           {
             "key": "commands",
             "optional": false,
-            "type": "ping | replay[]"
+            "type": "(ping | replay)[]"
           }
         ]
       }
@@ -915,7 +915,7 @@
           {
             "key": "commands",
             "optional": false,
-            "type": "ping | replay[]"
+            "type": "(ping | replay)[]"
           }
         ]
       }
@@ -972,7 +972,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { id: number, updated?: string | null }[]>"
       }
     }
   ],

@@ -103,8 +103,16 @@ await corsair.giphy.api.categories.getById({});
     is_sticker?: number,
     import_datetime?: string,
     trending_datetime?: string,
-    images?: {
-    },
+    images?: Record<string, {
+      url?: string,
+      width?: string,
+      height?: string,
+      size?: string,
+      mp4?: string,
+      mp4_size?: string,
+      webp?: string,
+      webp_size?: string
+    }>,
     user?: {
       avatar_url?: string,
       banner_image?: string,
@@ -203,8 +211,16 @@ await corsair.giphy.api.categories.gifs({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -305,8 +321,16 @@ await corsair.giphy.api.categories.list({});
     is_sticker?: number,
     import_datetime?: string,
     trending_datetime?: string,
-    images?: {
-    },
+    images?: Record<string, {
+      url?: string,
+      width?: string,
+      height?: string,
+      size?: string,
+      mp4?: string,
+      mp4_size?: string,
+      webp?: string,
+      webp_size?: string
+    }>,
     user?: {
       avatar_url?: string,
       banner_image?: string,
@@ -490,8 +514,16 @@ await corsair.giphy.api.emoji.get({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -586,8 +618,16 @@ await corsair.giphy.api.emoji.variations({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -684,8 +724,16 @@ await corsair.giphy.api.gifs.getById({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -770,8 +818,16 @@ await corsair.giphy.api.gifs.getByIds({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -867,8 +923,16 @@ await corsair.giphy.api.gifs.random({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -959,8 +1023,16 @@ await corsair.giphy.api.gifs.search({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1056,8 +1128,16 @@ await corsair.giphy.api.gifs.translate({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1145,8 +1225,16 @@ await corsair.giphy.api.gifs.trending({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1351,8 +1439,16 @@ await corsair.giphy.api.stickers.random({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1440,8 +1536,16 @@ await corsair.giphy.api.stickers.search({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1537,8 +1641,16 @@ await corsair.giphy.api.stickers.translate({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,
@@ -1624,8 +1736,16 @@ await corsair.giphy.api.stickers.trending({});
   is_sticker?: number,
   import_datetime?: string,
   trending_datetime?: string,
-  images?: {
-  },
+  images?: Record<string, {
+    url?: string,
+    width?: string,
+    height?: string,
+    size?: string,
+    mp4?: string,
+    mp4_size?: string,
+    webp?: string,
+    webp_size?: string
+  }>,
   user?: {
     avatar_url?: string,
     banner_image?: string,

@@ -90,87 +90,87 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "two_factor_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "two_factor_enabled_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password_updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_time_in_utc",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "heroku",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recovery_codes_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pending_invitation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "last_request_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_for",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "team_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "managed_by_smartbear_id",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -206,87 +206,87 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "two_factor_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "two_factor_enabled_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password_updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_time_in_utc",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "heroku",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recovery_codes_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pending_invitation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "last_request_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_for",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "team_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "managed_by_smartbear_id",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -322,32 +322,32 @@
           {
             "key": "project_summary",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, slug?: string | null }"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, slug?: string | null } | null"
           },
           {
             "key": "team_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "individual_project_role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_project_role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -398,87 +398,87 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "two_factor_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "two_factor_enabled_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password_updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_time_in_utc",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "heroku",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recovery_codes_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pending_invitation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "last_request_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_for",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "team_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "managed_by_smartbear_id",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -510,7 +510,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: {} | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
+        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: Record<string, any> | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
       }
     },
     {
@@ -540,7 +540,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: {} | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
+        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: Record<string, any> | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
       }
     },
     {
@@ -689,7 +689,7 @@
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -704,87 +704,87 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "two_factor_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "two_factor_enabled_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password_updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_time_in_utc",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "heroku",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recovery_codes_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pending_invitation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "last_request_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_for",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "team_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "managed_by_smartbear_id",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -820,7 +820,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -830,27 +830,27 @@
           {
             "key": "events_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -871,7 +871,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           }
         ]
       },
@@ -886,7 +886,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -896,27 +896,27 @@
           {
             "key": "events_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -937,7 +937,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           }
         ]
       },
@@ -952,7 +952,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -962,27 +962,27 @@
           {
             "key": "events_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1018,7 +1018,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1028,27 +1028,27 @@
           {
             "key": "events_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1084,7 +1084,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1094,27 +1094,27 @@
           {
             "key": "events_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "confirmed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1135,7 +1135,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "report_type",
@@ -1155,7 +1155,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1165,27 +1165,27 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "report_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1206,7 +1206,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "report_type",
@@ -1226,7 +1226,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1236,27 +1236,27 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "report_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1292,7 +1292,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1302,27 +1302,27 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "report_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1358,7 +1358,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -1368,27 +1368,27 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "report_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1444,7 +1444,7 @@
           {
             "key": "reopen_rules",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1454,7 +1454,7 @@
           {
             "key": "operation",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1521,7 +1521,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "sort",
@@ -1566,7 +1566,7 @@
           {
             "key": "filter_options",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1581,7 +1581,7 @@
           {
             "key": "custom",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pivot_options",
@@ -1591,7 +1591,7 @@
           {
             "key": "path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter_options",
@@ -1601,12 +1601,12 @@
           {
             "key": "reindex_in_progress",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "reindex_percentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1708,7 +1708,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "sort",
@@ -1768,7 +1768,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "sort",
@@ -1913,7 +1913,7 @@
           {
             "key": "configuration",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1928,22 +1928,22 @@
           {
             "key": "integration_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "config",
@@ -1958,12 +1958,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2030,22 +2030,22 @@
           {
             "key": "integration_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "config",
@@ -2060,12 +2060,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2141,7 +2141,7 @@
           {
             "key": "configuration",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2151,17 +2151,17 @@
           {
             "key": "success",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }
@@ -2228,77 +2228,77 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, email?: string | null }"
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
           },
           {
             "key": "collaborators_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "projects_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_upgrade",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "upgrade_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "can_start_pro_trial",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pro_trial_ends_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pro_trial_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "managed_by_platform_services",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billing_emails",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2354,7 +2354,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "pivots",
@@ -2404,7 +2404,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "base",
@@ -2459,157 +2459,157 @@
           {
             "key": "organization_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upload_api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "must_use_upload_api_key",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_full_view",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "release_stages",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "errors_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "events_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "open_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "for_review_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "collaborators_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "teams_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "global_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "location_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_app_versions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_errors",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "custom_event_fields_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "resolve_on_deploy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "performance_display_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_performance_percentile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "target_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "critical_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "stability_target_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2676,157 +2676,157 @@
           {
             "key": "organization_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upload_api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "must_use_upload_api_key",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_full_view",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "release_stages",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "errors_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "events_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "open_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "for_review_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "collaborators_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "teams_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "global_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "location_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_app_versions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_errors",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "custom_event_fields_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "resolve_on_deploy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "performance_display_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_performance_percentile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "target_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "critical_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "stability_target_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2897,12 +2897,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endpoints",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }
@@ -2933,157 +2933,157 @@
           {
             "key": "organization_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upload_api_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "must_use_upload_api_key",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_full_view",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "release_stages",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "errors_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "events_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "open_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "for_review_error_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "collaborators_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "teams_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "global_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "location_grouping",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_app_versions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "discarded_errors",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "custom_event_fields_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "resolve_on_deploy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "performance_display_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_performance_percentile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "target_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "critical_stability",
             "optional": true,
-            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null"
           },
           {
             "key": "stability_target_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3199,7 +3199,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           },
           {
             "key": "shared",
@@ -3229,17 +3229,17 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -3249,77 +3249,77 @@
           {
             "key": "sort",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "updated_by_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_assigned_to_me",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_assigned_to",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_created_issue_filter",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_status_filter",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "new_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "open_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "for_review_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "snoozed_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "fixed_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "ignored_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "additional_filtersets",
@@ -3334,12 +3334,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3406,17 +3406,17 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filters",
@@ -3426,77 +3426,77 @@
           {
             "key": "sort",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "updated_by_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_assigned_to_me",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_assigned_to",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_created_issue_filter",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "has_status_filter",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "new_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "open_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "for_review_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "snoozed_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "fixed_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "ignored_error_inclusion",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "additional_filtersets",
@@ -3511,12 +3511,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3577,22 +3577,22 @@
           {
             "key": "project_notifications_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_user_using_for_email_notification",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "collaborator_email_notifications_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "performance_monitor_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3638,87 +3638,87 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "two_factor_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "two_factor_enabled_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password_updated_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_time_in_utc",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "heroku",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recovery_codes_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pending_invitation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "last_request_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_for",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "team_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "project_roles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "managed_by_smartbear_id",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3764,17 +3764,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "collaborator_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3810,17 +3810,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "collaborator_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3897,17 +3897,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "collaborator_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3968,7 +3968,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: string, value?: any } | { type: string, value?: any }[]>"
           }
         ]
       },

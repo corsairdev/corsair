@@ -1,0 +1,20 @@
+displayName: Browser Tool
+description: Cloud browser automation tool that runs AI-driven browser tasks, polls and stops them, and returns session live URLs and task output files.
+domain: composio.dev
+examples:
+  read:
+    path: sessions.get
+    title: Get a session
+    args:
+      sessionId: session_123
+  write:
+    path: tasks.create
+    title: Start a browser task
+    args:
+      task: Open example.com and return the page title
+      startUrl: https://example.com
+dbExample:
+  entity: tasks
+  note: >-
+    These tables exist, but Browser Tool calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

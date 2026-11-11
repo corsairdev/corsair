@@ -1,0 +1,2447 @@
+{
+  "id": "reamaze",
+  "displayName": "Re:amaze",
+  "description": "Customer support inbox for Re:amaze - read and reply to conversations, manage contacts, identities and notes, publish help articles, and pull the volume, response time, tag and channel reports.",
+  "npmPackageName": "@corsair-dev/reamaze",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 38,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "host"]
+    }
+  ],
+  "api": [
+    {
+      "path": "reamaze.api.articles.create",
+      "shortPath": "articles.create",
+      "description": "Create a help center article under a topic",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string",
+            "description": "Topic slug the article is filed under"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "0 | 1 | 4",
+            "description": "0 published, 1 draft, 4 internal"
+          },
+          {
+            "key": "topic_id",
+            "optional": true,
+            "type": "string",
+            "description": "Topic slug carried in the body"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.articles.get",
+      "shortPath": "articles.get",
+      "description": "Read one help center article by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.articles.list",
+      "shortPath": "articles.list",
+      "description": "List help center articles, filtered by status or search text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "published | draft | internal",
+            "description": "Defaults to published articles only"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search over article keywords"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "articles",
+            "optional": false,
+            "type": "{ title?: string | null, body?: string | null, slug?: string | null, status?: number | null, created_at?: string | null, updated_at?: string | null, url?: string | null, author?: { name?: string | null, email?: string | null } | null, topic?: { name?: string | null, slug?: string | null } | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.articles.update",
+      "shortPath": "articles.update",
+      "description": "Change an article title, body, status or topic",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "0 | 1 | 4",
+            "description": "0 published, 1 draft, 4 internal"
+          },
+          {
+            "key": "topic_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.channels.get",
+      "shortPath": "channels.get",
+      "description": "Read one channel by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Channel slug"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "spam_filter_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "reply_from_origin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verification_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_verified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings_reply_from_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings_signature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List the brand channels, optionally by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "email | facebook | twitter | chat",
+            "description": "Defaults to every channel type"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ name?: string | null, slug?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null, channel?: number | null, visibility?: number | null, spam_filter_enabled?: boolean | null, reply_from_origin?: boolean | null, verified?: boolean | null, verification_email?: string | null, last_verified?: string | null, settings_reply_from_name?: string | null, settings_signature?: string | null, brand?: { name?: string | null, url?: string | null } | null }[]"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact for the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Either this or mobile is required"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string",
+            "description": "E.164 without spaces, e.g. +12223334444. Either this or email is required"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id for this contact"
+          },
+          {
+            "key": "external_avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Plain note bodies attached at creation"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Customer data attributes, one level deep"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, email?: string | null, friendly_name?: string | null, mobile?: string | null, external_avatar_url?: string | null, notes?: { id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[] | null, data?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts, filtered by search text, type or data attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search over contact name and email"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Sent as one `data[key]=value` query entry per key, ANDed by the API"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "date",
+            "description": "date orders by create time descending; default is by name"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "email | mobile",
+            "description": "Only contacts that have an email address or a phone number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, email?: string | null, friendly_name?: string | null, mobile?: string | null, external_avatar_url?: string | null, notes?: { id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[] | null, data?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change a contact name, friendly name, avatar or data attributes, and append notes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The contact identifier in the path"
+          },
+          {
+            "key": "identifier_type",
+            "optional": true,
+            "type": "mobile | facebook | twitter | instagram",
+            "description": "Interprets `email` as this identity type instead of an email"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "friendly_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Appends notes; a note is edited through the notes endpoints"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Customer data attributes, one level deep"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, email?: string | null, friendly_name?: string | null, mobile?: string | null, external_avatar_url?: string | null, notes?: { id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[] | null, data?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a conversation on behalf of a customer, with its first message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string",
+            "description": "Channel slug the conversation is created in"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number",
+            "description": "0 open, 2 done, 3 spam, 5 on hold, 9 AI spam"
+          },
+          {
+            "key": "hold_until",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601; only meaningful when status is 5 (On Hold)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Conversation data attributes"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string",
+            "description": "Staff email the conversation is assigned to"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ body: string, recipients?: string[], suppress_notifications?: boolean, suppress_autoresolve?: boolean, suppress_surveys?: boolean | string, attachment?: string, attachments?: string[] }"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ name: string, email: string, data?: Record<string, any> }",
+            "description": "The customer the conversation is created for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Identifier used by the get and update routes"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_staff_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_customer_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Read one conversation by slug, reference id, or origin id within a channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation slug, unless id_type selects another identifier"
+          },
+          {
+            "key": "id_type",
+            "optional": true,
+            "type": "ref | origin",
+            "description": "ref looks up by ref_id, origin by origin id within `category`"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Channel slug, required when id_type is origin"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "number | string",
+            "description": "Channel type, used with id_type=origin"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Identifier used by the get and update routes"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_staff_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_customer_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations, filtered by status, assignee, tag, channel, origin or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "archived | open | unassigned | all",
+            "description": "Defaults to unarchived conversations only"
+          },
+          {
+            "key": "for",
+            "optional": true,
+            "type": "string",
+            "description": "User email; returns conversations visible to that customer"
+          },
+          {
+            "key": "for_id",
+            "optional": true,
+            "type": "string",
+            "description": "SSO user id; the same filter as `for`"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "updated | changed",
+            "description": "updated orders by last customer message, changed by any update. Default is created_at"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags, all must match"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Channel slug"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601; filters on the latest customer message time"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601; filters on the latest customer message time"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "number | string",
+            "description": "Origin number (1 email) or name (email)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Sent as one `data[key]=value` query entry per key, ANDed by the API"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ slug: string, subject?: string | null, status?: number | null, created_at?: string | null, updated_at?: string | null, tag_list?: string[] | null, message?: { body?: string | null, created_at?: string | null } | null, last_staff_message?: { body?: string | null, created_at?: string | null } | null, last_customer_message?: { body?: string | null, created_at?: string | null } | null, author?: { name?: string | null, email?: string | null } | null, assignee?: { name?: string | null, email?: string | null } | null, category?: { name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null, data?: Record<string, any> | null, followers?: { name?: string | null, email?: string | null }[] | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Change a conversation status, tags, assignee, data attributes or channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ email: string }",
+            "description": "Reassigns the conversation to this staff user"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the tag list"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hold_until",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601; only meaningful when status is 5 (On Hold)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Moves the conversation to this channel; it must be an email channel"
+          },
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Destination brand URL, only when moving to another brand"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Identifier used by the get and update routes"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_staff_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "last_customer_message",
+            "optional": true,
+            "type": "{ body?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.identities.create",
+      "shortPath": "identities.create",
+      "description": "Attach an identity to a contact. An identity already on another contact is moved here with its messages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email the identity is attached to"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | mobile | instagram | igsid | twitter",
+            "description": "Facebook identities cannot be added"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Address or handle, matching `type`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identities",
+            "optional": false,
+            "type": "{ type?: string | null, identifier?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.identities.list",
+      "shortPath": "identities.list",
+      "description": "List the emails, handles and phone numbers attached to a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email whose identities are listed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identities",
+            "optional": false,
+            "type": "{ type?: string | null, identifier?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.incidents.create",
+      "shortPath": "incidents.create",
+      "description": "Create a status page incident with its first update, which shows on the public status page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updates_attributes",
+            "optional": false,
+            "type": "{ status: investigating | identified | monitoring | resolved, message: string }[]"
+          },
+          {
+            "key": "incidents_systems_attributes",
+            "optional": true,
+            "type": "{ id?: string, system_id: string, status: operational | degraded_performance | partial_outage | major_outage | under_maintenance }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "investigating, identified, monitoring or resolved"
+          },
+          {
+            "key": "updates",
+            "optional": true,
+            "type": "{ id?: string | number | null, status?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "incidents_systems",
+            "optional": true,
+            "type": "{ id?: string | number | null, system_id?: string | number | null, status?: string | null, system?: { id?: string | number | null, title?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.incidents.get",
+      "shortPath": "incidents.get",
+      "description": "Read one status page incident by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Incident id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "investigating, identified, monitoring or resolved"
+          },
+          {
+            "key": "updates",
+            "optional": true,
+            "type": "{ id?: string | number | null, status?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "incidents_systems",
+            "optional": true,
+            "type": "{ id?: string | number | null, system_id?: string | number | null, status?: string | null, system?: { id?: string | number | null, title?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.incidents.list",
+      "shortPath": "incidents.list",
+      "description": "List status page incidents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incidents",
+            "optional": false,
+            "type": "{ id?: string | number | null, title?: string | null, created_at?: string | null, updated_at?: string | null, status?: string | null, updates?: { id?: string | number | null, status?: string | null, message?: string | null }[] | null, incidents_systems?: { id?: string | number | null, system_id?: string | number | null, status?: string | null, system?: { id?: string | number | null, title?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.incidents.update",
+      "shortPath": "incidents.update",
+      "description": "Change a status page incident and append an update, which shows on the public status page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Incident id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updates_attributes",
+            "optional": true,
+            "type": "{ status: investigating | identified | monitoring | resolved, message: string }[]",
+            "description": "Appends updates to the incident"
+          },
+          {
+            "key": "incidents_systems_attributes",
+            "optional": true,
+            "type": "{ id?: string, system_id: string, status: operational | degraded_performance | partial_outage | major_outage | under_maintenance }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "investigating, identified, monitoring or resolved"
+          },
+          {
+            "key": "updates",
+            "optional": true,
+            "type": "{ id?: string | number | null, status?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "incidents_systems",
+            "optional": true,
+            "type": "{ id?: string | number | null, system_id?: string | number | null, status?: string | null, system?: { id?: string | number | null, title?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Send a reply in a conversation. It goes out to the real customer and the other participants unless suppress_notifications is set. visibility 1 posts an internal note only staff see",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation slug the message belongs to"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "Markdown is accepted"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "number",
+            "description": "0 regular (default), 1 internal note"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ name?: string, email?: string }",
+            "description": "Sender; defaults to the authenticated user"
+          },
+          {
+            "key": "origin_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own message id, which lets Re:amaze discard duplicates"
+          },
+          {
+            "key": "suppress_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "suppress_autoresolve",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "suppress_surveys",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "string",
+            "description": "URL Re:amaze fetches to attach"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "string[]",
+            "description": "Emails or phone numbers added as thread participants"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "original_body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "origin_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[] | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ file_file_name?: string | null, file_content_type?: string | null, file_file_size?: number | null, thumb_url?: string | null, url?: string | null, image?: boolean | null }[] | null"
+          },
+          {
+            "key": "conversation",
+            "optional": true,
+            "type": "{ subject?: string | null, slug?: string | null, created_at?: string | null, category?: { name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages across the brand, filtered by sender, tag, channel or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "staff | customer",
+            "description": "Defaults to every message"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags on the conversation"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "number",
+            "description": "1 email, 2 twitter, 6 chat, 7 api, 9 sms, 15 whatsapp, 17 form"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          },
+          {
+            "key": "sent_by",
+            "optional": true,
+            "type": "string",
+            "description": "User email the message was sent by"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Channel slug"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 message creation bound"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 message creation bound"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "original_body",
+            "description": "Adds `original_body`, the message HTML when present"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ body?: string | null, original_body?: string | null, visibility?: number | null, origin?: number | null, origin_id?: string | null, created_at?: string | null, user?: { name?: string | null, email?: string | null } | null, recipients?: { name?: string | null, email?: string | null }[] | null, attachments?: { file_file_name?: string | null, file_content_type?: string | null, file_file_size?: number | null, thumb_url?: string | null, url?: string | null, image?: boolean | null }[] | null, conversation?: { subject?: string | null, slug?: string | null, created_at?: string | null, category?: { name?: string | null, slug?: string | null, email?: string | null, channel?: number | null } | null } | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Add a note to one contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email address or phone number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator_email",
+            "optional": true,
+            "type": "string",
+            "description": "Staff email credited with the note; defaults to the caller"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601; defaults to now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "{ id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete one contact note. Re:amaze keeps no undo and the note text is not returned anywhere afterwards",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email address or phone number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "Note id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List the notes on one contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email address or phone number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "{ id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Replace the text of one contact note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email address or phone number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "Note id"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator_email",
+            "optional": true,
+            "type": "string",
+            "description": "Staff email credited with the note; the creator is kept when omitted"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "{ id?: string | number | null, note?: string | null, content?: string | null, body?: string | null, created_at?: string | null, updated_at?: string | null, creator?: { name?: string | null, email?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.reports.channelSummary",
+      "shortPath": "reports.channelSummary",
+      "description": "Per-channel response counts, response time, satisfaction and thread size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL; omit for every brand in the account"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to 30 days ago"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to today"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.reports.responseTime",
+      "shortPath": "reports.responseTime",
+      "description": "Daily first-response time in seconds, with averages and ratios",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL; omit for every brand in the account"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to 30 days ago"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to today"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_times",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.reports.staff",
+      "shortPath": "reports.staff",
+      "description": "Per-staff response counts, response time and appreciations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL; omit for every brand in the account"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to 30 days ago"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to today"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.reports.tags",
+      "shortPath": "reports.tags",
+      "description": "Tag usage counts over a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL; omit for every brand in the account"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to 30 days ago"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to today"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.reports.volume",
+      "shortPath": "reports.volume",
+      "description": "Daily conversation volume over a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL; omit for every brand in the account"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to 30 days ago"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD; defaults to today"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_counts",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.responseTemplates.create",
+      "shortPath": "responseTemplates.create",
+      "description": "Create a response template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_personal",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "1 creates a personal template when the caller may have one"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_personal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "response_template_group",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.responseTemplates.get",
+      "shortPath": "responseTemplates.get",
+      "description": "Read one response template by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Response template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_personal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "response_template_group",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.responseTemplates.list",
+      "shortPath": "responseTemplates.list",
+      "description": "List response templates, filtered by search text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search over template keywords"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_templates",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, body?: string | null, is_personal?: number | null, response_template_group?: { id?: string | number | null, name?: string | null } | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.responseTemplates.update",
+      "shortPath": "responseTemplates.update",
+      "description": "Change a response template name or body",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Response template id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_personal",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_personal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "response_template_group",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.satisfaction.list",
+      "shortPath": "satisfaction.list",
+      "description": "List satisfaction survey ratings, filtered by brand, rating or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "string",
+            "description": "Brand URL, or all_brands; omitting it also means all brands"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string",
+            "description": "Staff member the conversation was assigned to"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601"
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "satisfaction_ratings",
+            "optional": false,
+            "type": "{ id?: string | number | null, rating?: number | null, comment?: string | null, user_id?: string | number | null, assignee_id?: string | number | null, conversation_id?: string | number | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.staff.create",
+      "shortPath": "staff.create",
+      "description": "Create a staff user, which counts toward the monthly subscription. No invite email is sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string",
+            "description": "Temporary password; the user must change it at first login"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.staff.list",
+      "shortPath": "staff.list",
+      "description": "List staff users, oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based. The response carries page_size and page_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "staff",
+            "optional": false,
+            "type": "{ name?: string | null, email?: string | null, created_at?: string | null, role?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reamaze.api.systems.list",
+      "shortPath": "systems.list",
+      "description": "List the status page systems and their current status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "systems",
+            "optional": false,
+            "type": "{ id?: string | number | null, title?: string | null, account_id?: string | number | null, brand_id?: string | number | null, created_at?: string | null, updated_at?: string | null, status?: string | null, active_incidents?: { id?: string | number | null, title?: string | null, created_at?: string | null, updated_at?: string | null, status?: string | null, updates?: { id?: string | number | null, status?: string | null, message?: string | null }[] | null, incidents_systems?: { id?: string | number | null, system_id?: string | number | null, status?: string | null, system?: { id?: string | number | null, title?: string | null } | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

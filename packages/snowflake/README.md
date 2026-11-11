@@ -12,7 +12,7 @@ pnpm add @corsair-dev/snowflake
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `statements.submit` | `snowflake.api.statements.submit` | `write` | Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats. |
+| `statements.submit` | `snowflake.api.statements.submit` | `destructive` | Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats. |
 | `statements.get` | `snowflake.api.statements.get` | `read` | Fetch the status of a statement and one partition of its result. |
 | `statements.cancel` | `snowflake.api.statements.cancel` | `write` | Cancel a running SQL statement. |
 

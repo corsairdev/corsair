@@ -76,10 +76,10 @@ await corsair.notion.api.blocks.appendBlock({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -116,14 +116,6 @@ await corsair.notion.api.blocks.appendBlock({});
     block_id: string
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -160,10 +152,10 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -202,14 +194,6 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 }[]
 ```
 </Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -235,17 +219,7 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `database_id` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | Yes | — |
 
 
 
@@ -259,15 +233,15 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
 | `last_edited_by` | `object` | No | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 | `is_locked` | `boolean` | No | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -301,7 +275,7 @@ await corsair.notion.api.databasePages.createDatabasePage({});
   file?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -314,7 +288,7 @@ await corsair.notion.api.databasePages.createDatabasePage({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -333,14 +307,6 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 } | {
   type: block_id,
   block_id: string
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -380,15 +346,15 @@ await corsair.notion.api.databasePages.getDatabasePage({});
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
 | `last_edited_by` | `object` | No | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 | `is_locked` | `boolean` | No | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -422,7 +388,7 @@ await corsair.notion.api.databasePages.getDatabasePage({});
   file?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -435,7 +401,7 @@ await corsair.notion.api.databasePages.getDatabasePage({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -454,14 +420,6 @@ await corsair.notion.api.databasePages.getDatabasePage({});
 } | {
   type: block_id,
   block_id: string
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -501,10 +459,10 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -556,19 +514,10 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
   archived: boolean,
   in_trash?: boolean,
   is_locked?: boolean,
-  properties: {
-  },
+  properties: Record<string, any>,
   url: string,
   public_url?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -594,18 +543,8 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page_id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `archived` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -619,15 +558,15 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
 | `last_edited_by` | `object` | No | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 | `is_locked` | `boolean` | No | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -661,7 +600,7 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
   file?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -674,7 +613,7 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -693,14 +632,6 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
 } | {
   type: block_id,
   block_id: string
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -738,8 +669,8 @@ await corsair.notion.api.databases.getDatabase({});
 |------|------|----------|-------------|
 | `object` | `database` | Yes | — |
 | `id` | `string` | Yes | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `created_time` | `string` | Yes | — |
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
@@ -747,10 +678,10 @@ await corsair.notion.api.databases.getDatabase({});
 | `title` | `object[]` | Yes | — |
 | `description` | `object[]` | Yes | — |
 | `is_inline` | `boolean` | Yes | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `parent` | `object` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 
@@ -763,7 +694,7 @@ await corsair.notion.api.databases.getDatabase({});
   external?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -776,7 +707,7 @@ await corsair.notion.api.databases.getDatabase({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -850,14 +781,6 @@ await corsair.notion.api.databases.getDatabase({});
 ```
 </Accordion>
 
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="parent full type">
 
 ```ts
@@ -909,10 +832,10 @@ await corsair.notion.api.databases.getManyDatabases({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -984,8 +907,7 @@ await corsair.notion.api.databases.getManyDatabases({});
     href?: string | null
   }[],
   is_inline: boolean,
-  properties: {
-  },
+  properties: Record<string, any>,
   parent: {
     type: workspace,
     workspace: boolean
@@ -1004,14 +926,6 @@ await corsair.notion.api.databases.getManyDatabases({});
   archived: boolean,
   in_trash?: boolean
 }[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1050,10 +964,10 @@ await corsair.notion.api.databases.searchDatabase({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -1125,8 +1039,7 @@ await corsair.notion.api.databases.searchDatabase({});
     href?: string | null
   }[],
   is_inline: boolean,
-  properties: {
-  },
+  properties: Record<string, any>,
   parent: {
     type: workspace,
     workspace: boolean
@@ -1145,14 +1058,6 @@ await corsair.notion.api.databases.searchDatabase({});
   archived: boolean,
   in_trash?: boolean
 }[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1193,15 +1098,15 @@ await corsair.notion.api.pages.archivePage({});
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
 | `last_edited_by` | `object` | No | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 | `is_locked` | `boolean` | No | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -1235,7 +1140,7 @@ await corsair.notion.api.pages.archivePage({});
   file?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1248,7 +1153,7 @@ await corsair.notion.api.pages.archivePage({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1267,14 +1172,6 @@ await corsair.notion.api.pages.archivePage({});
 } | {
   type: block_id,
   block_id: string
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1301,7 +1198,7 @@ await corsair.notion.api.pages.createPage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `parent` | `object` | Yes | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `children` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1317,14 +1214,6 @@ await corsair.notion.api.pages.createPage({});
 } | {
   type: workspace,
   workspace: boolean
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1378,15 +1267,15 @@ await corsair.notion.api.pages.createPage({});
 | `created_by` | `object` | No | — |
 | `last_edited_time` | `string` | Yes | — |
 | `last_edited_by` | `object` | No | — |
-| `cover` | `object` | No | — |
-| `icon` | `object` | No | — |
+| `cover` | `object \| null` | No | — |
+| `icon` | `object \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `in_trash` | `boolean` | No | — |
 | `is_locked` | `boolean` | No | — |
-| `properties` | `object` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
 | `url` | `string` | Yes | — |
-| `public_url` | `string` | No | — |
+| `public_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -1420,7 +1309,7 @@ await corsair.notion.api.pages.createPage({});
   file?: {
     url: string
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1433,7 +1322,7 @@ await corsair.notion.api.pages.createPage({});
     url: string
   },
   emoji?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1452,14 +1341,6 @@ await corsair.notion.api.pages.createPage({});
 } | {
   type: block_id,
   block_id: string
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1499,10 +1380,10 @@ await corsair.notion.api.pages.searchPage({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -1555,8 +1436,7 @@ await corsair.notion.api.pages.searchPage({});
     archived: boolean,
     in_trash?: boolean,
     is_locked?: boolean,
-    properties: {
-    },
+    properties: Record<string, any>,
     url: string,
     public_url?: string | null
   } | {
@@ -1624,8 +1504,7 @@ await corsair.notion.api.pages.searchPage({});
       href?: string | null
     }[],
     is_inline: boolean,
-    properties: {
-    },
+    properties: Record<string, any>,
     parent: {
       type: workspace,
       workspace: boolean
@@ -1645,14 +1524,6 @@ await corsair.notion.api.pages.searchPage({});
     in_trash?: boolean
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1690,10 +1561,10 @@ await corsair.notion.api.users.getManyUsers({});
 |------|------|----------|-------------|
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `type` | `string` | No | — |
-| `page_or_database` | `object` | No | — |
+| `page_or_database` | `Record<string, any>` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -1707,14 +1578,6 @@ await corsair.notion.api.users.getManyUsers({});
   name?: string | null,
   avatar_url?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page_or_database full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1750,8 +1613,8 @@ await corsair.notion.api.users.getUser({});
 | `object` | `user` | Yes | — |
 | `id` | `string` | Yes | — |
 | `type` | `person \| bot` | Yes | — |
-| `name` | `string` | No | — |
-| `avatar_url` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
 
 
 

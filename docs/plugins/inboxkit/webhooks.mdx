@@ -1,0 +1,489 @@
+---
+title: Webhooks
+description: "InboxKit incoming webhooks: event paths, payloads, and response data."
+---
+
+The InboxKit plugin handles incoming webhooks. Set your Corsair HTTP handler's URL under **Settings → API → Webhooks** in InboxKit (see [Overview](/plugins/inboxkit/overview) for setup context and the exact URL shape). A team has one URL. A workspace's own URL, set with `workspaces.updateWebhook`, is used only when the team has none.
+
+**Mailbox events carry passwords by default.** Unless you turn off **Include mailbox credentials** on that card, `mailbox.status_changed` includes the mailbox's decrypted password, app password and 2FA secret. Turn it off unless you need them. Either way, the plugin deletes them from the delivery before verifying it, so `after` hooks, local data and `result.body` never see them, and `mailboxes.showCredentials` still works. A `before` hook runs ahead of the plugin and does see them, so don't log the request there, and use an HTTPS URL.
+
+**Real-time email events aren't handled yet.** That switch on the same card sends a delivery for every mail sent or received, and nothing documents their shape. Leave it off: each one would get a 404, and InboxKit pauses a URL after five failures in a row.
+
+**What the signature proves.** `X-InboxKit-Signature` is `sha256=` and the SHA-256 of your team API key, so there is no separate secret to store. It covers none of the delivery and is the same every time: it shows the sender knows your key, and anyone who has seen one can forge deliveries until you rotate the key. Treat an event as a prompt to look, and read the current state with `domains.list` or `mailboxes.get` before acting on it. Rotating the key briefly refuses deliveries still signed with the old one, and InboxKit tries a refused delivery up to three times.
+
+**Routing tenants.** Every delivery names its team in `team_id`, the same `uid` that `account.get` returns. Store it with `corsair.withTenant(id).inboxkit.keys.set_tenant_external_id(uid)`, or pass `?tenantId=` on the URL.
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `clientIdRequests`
+  - `statusChanged` (`clientIdRequests.statusChanged`)
+- `consentRequests`
+  - `statusChanged` (`consentRequests.statusChanged`)
+- `domains`
+  - `statusChanged` (`domains.statusChanged`)
+- `mailboxes`
+  - `statusChanged` (`mailboxes.statusChanged`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    const result = await processWebhook(corsair, headers, body, query);
+    // 500 on a refusal, not 401: InboxKit gives up at once on a 401, and a key
+    // being rotated would lose those deliveries. It retries a 500.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
+}
+```
+
+## Events
+
+## Client Id Requests
+
+### Status Changed
+
+`clientIdRequests.statusChanged`
+
+A client ID request's status changed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `client_id_request.status_changed` | Yes | — |
+| `timestamp` | `string \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
+| `team_name` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  client_id_request: {
+    uid: string,
+    status?: string | null,
+    previous_status?: string | null,
+    status_text?: string | null,
+    status_reason?: string | null,
+    retry_count?: number | null,
+    max_retries?: number | null,
+    completed_at?: string | null
+  },
+  metadata?: {
+    updated_at?: string | null,
+    workspace_id?: string | null,
+    workspace_uid?: string | null,
+    domain_id?: string | null,
+    domain_uid?: string | null,
+    domain_name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: client_id_request.status_changed,
+  timestamp?: string | null,
+  team_id?: string | null,
+  team_name?: string | null,
+  data: {
+    client_id_request: {
+      uid: string,
+      status?: string | null,
+      previous_status?: string | null,
+      status_text?: string | null,
+      status_reason?: string | null,
+      retry_count?: number | null,
+      max_retries?: number | null,
+      completed_at?: string | null
+    },
+    metadata?: {
+      updated_at?: string | null,
+      workspace_id?: string | null,
+      workspace_uid?: string | null,
+      domain_id?: string | null,
+      domain_uid?: string | null,
+      domain_name?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inboxkit({
+    webhookHooks: {
+        clientIdRequests: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Consent Requests
+
+### Status Changed
+
+`consentRequests.statusChanged`
+
+An OAuth consent request's status changed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `consent_request.status_changed` | Yes | — |
+| `timestamp` | `string \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
+| `team_name` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  consent_request: {
+    uid: string,
+    status?: string | null,
+    previous_status?: string | null,
+    status_text?: string | null,
+    status_reason?: string | null,
+    retry_count?: number | null,
+    max_retries?: number | null,
+    completed_at?: string | null,
+    consent_url?: string | null
+  },
+  metadata?: {
+    updated_at?: string | null,
+    workspace_id?: string | null,
+    workspace_uid?: string | null,
+    domain_id?: string | null,
+    domain_uid?: string | null,
+    domain_name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: consent_request.status_changed,
+  timestamp?: string | null,
+  team_id?: string | null,
+  team_name?: string | null,
+  data: {
+    consent_request: {
+      uid: string,
+      status?: string | null,
+      previous_status?: string | null,
+      status_text?: string | null,
+      status_reason?: string | null,
+      retry_count?: number | null,
+      max_retries?: number | null,
+      completed_at?: string | null,
+      consent_url?: string | null
+    },
+    metadata?: {
+      updated_at?: string | null,
+      workspace_id?: string | null,
+      workspace_uid?: string | null,
+      domain_id?: string | null,
+      domain_uid?: string | null,
+      domain_name?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inboxkit({
+    webhookHooks: {
+        consentRequests: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Domains
+
+### Status Changed
+
+`domains.statusChanged`
+
+A domain's status changed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `domain.status_changed` | Yes | — |
+| `timestamp` | `string \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
+| `team_name` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain: {
+    uid: string,
+    name?: string | null,
+    tld?: string | null,
+    status?: string | null,
+    previous_status?: string | null,
+    dns_propagation_status?: string | null,
+    nameservers?: string[] | null,
+    renewal_date?: string | null,
+    renewal_status?: string | null,
+    registration_years?: number | null,
+    registration_date?: string | null,
+    price?: number | null,
+    connection_type?: string | null,
+    forwarding_url?: string | null,
+    forwarding_email?: string | null,
+    forwarding_status?: string | null,
+    enable_mask_forwarding?: boolean | null
+  },
+  metadata?: {
+    updated_at?: string | null,
+    workspace_id?: string | null,
+    workspace_uid?: string | null,
+    domain_id?: string | null,
+    domain_uid?: string | null,
+    domain_name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: domain.status_changed,
+  timestamp?: string | null,
+  team_id?: string | null,
+  team_name?: string | null,
+  data: {
+    domain: {
+      uid: string,
+      name?: string | null,
+      tld?: string | null,
+      status?: string | null,
+      previous_status?: string | null,
+      dns_propagation_status?: string | null,
+      nameservers?: string[] | null,
+      renewal_date?: string | null,
+      renewal_status?: string | null,
+      registration_years?: number | null,
+      registration_date?: string | null,
+      price?: number | null,
+      connection_type?: string | null,
+      forwarding_url?: string | null,
+      forwarding_email?: string | null,
+      forwarding_status?: string | null,
+      enable_mask_forwarding?: boolean | null
+    },
+    metadata?: {
+      updated_at?: string | null,
+      workspace_id?: string | null,
+      workspace_uid?: string | null,
+      domain_id?: string | null,
+      domain_uid?: string | null,
+      domain_name?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inboxkit({
+    webhookHooks: {
+        domains: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Mailboxes
+
+### Status Changed
+
+`mailboxes.statusChanged`
+
+A mailbox's status changed. Unless the team has turned it off, InboxKit sends the mailbox's passwords in this delivery; the plugin removes them before a handler returns. Use mailboxes.showCredentials if you need them.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `mailbox.status_changed` | Yes | — |
+| `timestamp` | `string \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
+| `team_name` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  mailbox: {
+    uid: string,
+    email?: string | null,
+    username?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    profile_picture?: string | null,
+    status?: string | null,
+    previous_status?: string | null,
+    platform?: string | null,
+    renewal_date?: string | null,
+    renewal_status?: string | null,
+    is_admin?: boolean | null,
+    is_add_on?: boolean | null
+  },
+  metadata?: {
+    updated_at?: string | null,
+    workspace_id?: string | null,
+    workspace_uid?: string | null,
+    domain_id?: string | null,
+    domain_uid?: string | null,
+    domain_name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: mailbox.status_changed,
+  timestamp?: string | null,
+  team_id?: string | null,
+  team_name?: string | null,
+  data: {
+    mailbox: {
+      uid: string,
+      email?: string | null,
+      username?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      profile_picture?: string | null,
+      status?: string | null,
+      previous_status?: string | null,
+      platform?: string | null,
+      renewal_date?: string | null,
+      renewal_status?: string | null,
+      is_admin?: boolean | null,
+      is_add_on?: boolean | null
+    },
+    metadata?: {
+      updated_at?: string | null,
+      workspace_id?: string | null,
+      workspace_uid?: string | null,
+      domain_id?: string | null,
+      domain_uid?: string | null,
+      domain_name?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inboxkit({
+    webhookHooks: {
+        mailboxes: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

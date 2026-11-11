@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "CurrentsApi plugin for Corsair"
+description: "News API that returns latest news, searches articles, and lists the available categories, languages, and regions."
 ---
 
-Use **CurrentsApi** through Corsair: one client, typed API calls.
+Use **Currents API** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,17 +89,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`categories.get`**
+**Get the latest news**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.currentsapi.api.categories.get({});
+await tenant.currentsapi.api.latest.get({ language: 'en' });
 ```
 
 
-**Write**
+**Search news articles**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/currentsapi/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.currentsapi.api.search.get({ keywords: 'climate', language: 'en' });
+```
 
 
 See the full list on the [API](/plugins/currentsapi/api) page.

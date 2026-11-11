@@ -89,17 +89,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -130,22 +130,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -166,7 +166,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -181,22 +181,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -267,17 +267,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -308,22 +308,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -344,7 +344,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -359,22 +359,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -436,7 +436,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -446,22 +446,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -492,7 +492,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -502,22 +502,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -558,7 +558,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -568,22 +568,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -604,12 +604,12 @@
           {
             "key": "camera",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "screenshare",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -624,7 +624,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -634,22 +634,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -690,7 +690,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -700,22 +700,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -746,7 +746,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -756,22 +756,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -807,7 +807,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -817,22 +817,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -863,7 +863,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -873,22 +873,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -934,7 +934,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -944,22 +944,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -980,7 +980,7 @@
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -995,7 +995,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1005,22 +1005,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1061,7 +1061,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1071,22 +1071,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1187,7 +1187,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1197,22 +1197,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1248,7 +1248,7 @@
           {
             "key": "meeting_url",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue>"
           },
           {
             "key": "bot_name",
@@ -1263,12 +1263,12 @@
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1283,7 +1283,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1293,22 +1293,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1364,12 +1364,12 @@
           {
             "key": "platform",
             "optional": true,
-            "type": "chime_sdk | google_meet | google_meet_media_api | goto_meeting | microsoft_teams | microsoft_teams_live | slack_authenticator | slack_huddle_observer | webex | zoom | zoom_rtms[]"
+            "type": "(chime_sdk | google_meet | google_meet_media_api | goto_meeting | microsoft_teams | microsoft_teams_live | slack_authenticator | slack_huddle_observer | webex | zoom | zoom_rtms)[]"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "analysis_done | analysis_failed | call_ended | done | fatal | in_call_not_recording | in_call_recording | in_waiting_room | joining_call | media_expired | ready | recording_done | recording_permission_allowed | recording_permission_denied[]"
+            "type": "(analysis_done | analysis_failed | call_ended | done | fatal | in_call_not_recording | in_call_recording | in_waiting_room | joining_call | media_expired | ready | recording_done | recording_permission_allowed | recording_permission_denied)[]"
           },
           {
             "key": "use_cursor",
@@ -1394,17 +1394,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, meeting_url?: string | {} | null, bot_name?: string, join_at?: string | null, status_changes?: {}[], recordings?: {}[], metadata?: {} | null }[]"
+            "type": "{ id: string, meeting_url?: string | Record<string, JsonValue> | null, bot_name?: string, join_at?: string | null, status_changes?: Record<string, JsonValue>[], recordings?: Record<string, JsonValue>[], metadata?: Record<string, JsonValue> | null }[]"
           }
         ]
       }
@@ -1435,7 +1435,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1445,22 +1445,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1496,12 +1496,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1516,7 +1516,7 @@
           {
             "key": "meeting_url",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue> | null"
           },
           {
             "key": "bot_name",
@@ -1526,22 +1526,22 @@
           {
             "key": "join_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_changes",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "recordings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           }
         ]
       }
@@ -1563,7 +1563,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1608,7 +1608,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1663,7 +1663,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1698,7 +1698,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, JsonValue>[]"
       }
     },
     {
@@ -1728,7 +1728,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[] | { count?: number, next?: string | null, previous?: string | null, results: {}[] }"
+        "type": "Record<string, JsonValue>[] | { count?: number, next?: string | null, previous?: string | null, results: Record<string, JsonValue>[] }"
       }
     },
     {
@@ -1748,7 +1748,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, JsonValue>[]"
       }
     },
     {
@@ -1768,7 +1768,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1793,7 +1793,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1813,7 +1813,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1837,13 +1837,13 @@
           {
             "key": "bot_config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1863,7 +1863,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1893,7 +1893,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1917,13 +1917,13 @@
           {
             "key": "preferences",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -1937,7 +1937,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "oauth_client_id",
@@ -1947,17 +1947,17 @@
           {
             "key": "oauth_client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_client_certificate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_client_private_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_refresh_token",
@@ -1987,7 +1987,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "oauth_client_id",
@@ -1997,7 +1997,7 @@
           {
             "key": "oauth_client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_refresh_token",
@@ -2016,8 +2016,8 @@
           },
           {
             "key": "platform_email",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2134,17 +2134,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, metadata?: {}, oauth_client_id: string, oauth_client_secret?: string | null, oauth_refresh_token: string, platform: google_calendar | microsoft_outlook | string, oauth_email?: string, platform_email?: string | null, status: string, status_changes: { status: connected | connecting | disconnected | string, created_at: string, reason: string }[], created_at: string, updated_at: string }[]"
+            "type": "{ id: string, metadata?: Record<string, string>, oauth_client_id: string, oauth_client_secret?: string | null, oauth_refresh_token: string, platform: google_calendar | microsoft_outlook | string, oauth_email?: string, platform_email: string | null, status: string, status_changes: { status: connected | connecting | disconnected | string, created_at: string, reason: string }[], created_at: string, updated_at: string }[]"
           }
         ]
       }
@@ -2175,7 +2175,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "oauth_client_id",
@@ -2185,7 +2185,7 @@
           {
             "key": "oauth_client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_refresh_token",
@@ -2204,8 +2204,8 @@
           },
           {
             "key": "platform_email",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2246,7 +2246,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "oauth_client_id",
@@ -2256,17 +2256,17 @@
           {
             "key": "oauth_client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_client_certificate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_client_private_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_refresh_token",
@@ -2296,7 +2296,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "oauth_client_id",
@@ -2306,7 +2306,7 @@
           {
             "key": "oauth_client_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "oauth_refresh_token",
@@ -2325,8 +2325,8 @@
           },
           {
             "key": "platform_email",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2463,12 +2463,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -2808,12 +2808,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -3092,22 +3092,22 @@
           {
             "key": "zoom_rtms",
             "optional": true,
-            "type": "{ meeting_uuid: string, rtms_stream_id: string, server_urls: string, signature: string }"
+            "type": "{ meeting_uuid: string, rtms_stream_id: string, server_urls: string, signature: string } | null"
           },
           {
             "key": "google_meet_media_api",
             "optional": true,
-            "type": "{ space_name: string, access_token: string }"
+            "type": "{ space_name: string, access_token: string } | null"
           },
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3122,32 +3122,32 @@
           {
             "key": "status",
             "optional": false,
-            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code?: string | null, updated_at: string }"
+            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }"
           },
           {
             "key": "zoom_rtms",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "google_meet_media_api",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "recordings",
             "optional": false,
-            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status?: {} | null, media_shortcuts?: {} | null, metadata?: {} }[]"
+            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "created_at",
@@ -3168,7 +3168,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, status: { code: pending | connecting | processing | complete | failed | string, sub_code?: string | null, updated_at: string }, zoom_rtms?: {} | null, google_meet_media_api?: {} | null, recording_config?: {} | null, recordings: { id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status?: {} | null, media_shortcuts?: {} | null, metadata?: {} }[], metadata?: {}, created_at: string }[]"
+        "type": "{ id: string, status: { code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }, zoom_rtms?: Record<string, JsonValue> | null, google_meet_media_api?: Record<string, JsonValue> | null, recording_config?: Record<string, JsonValue> | null, recordings: { id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[], metadata?: Record<string, string>, created_at: string }[]"
       }
     },
     {
@@ -3197,32 +3197,32 @@
           {
             "key": "status",
             "optional": false,
-            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code?: string | null, updated_at: string }"
+            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }"
           },
           {
             "key": "zoom_rtms",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "google_meet_media_api",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue> | null"
           },
           {
             "key": "recordings",
             "optional": false,
-            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status?: {} | null, media_shortcuts?: {} | null, metadata?: {} }[]"
+            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "created_at",
@@ -3293,17 +3293,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -3334,7 +3334,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -3349,12 +3349,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3375,7 +3375,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -3390,7 +3390,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -3405,12 +3405,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3476,17 +3476,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -3517,7 +3517,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -3532,12 +3532,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3558,7 +3558,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -3573,7 +3573,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -3588,12 +3588,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3649,17 +3649,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -3690,22 +3690,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3726,7 +3726,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -3741,22 +3741,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3777,7 +3777,7 @@
           {
             "key": "provider",
             "optional": false,
-            "type": "{ assembly_ai_async?: {}, deepgram_async?: {}, gladia_v2_async?: {}, recallai_async?: {}, rev_async?: {}, speechmatics_async?: {}, google_speech_v2_async?: {}, aws_transcribe_async?: {}, soniox_async?: {}, elevenlabs_async?: {} }"
+            "type": "{ assembly_ai_async?: Record<string, JsonValue>, deepgram_async?: Record<string, JsonValue>, gladia_v2_async?: Record<string, JsonValue>, recallai_async?: Record<string, JsonValue>, rev_async?: Record<string, JsonValue>, speechmatics_async?: Record<string, JsonValue>, google_speech_v2_async?: Record<string, JsonValue>, aws_transcribe_async?: Record<string, JsonValue>, soniox_async?: Record<string, JsonValue>, elevenlabs_async?: Record<string, JsonValue> }"
           },
           {
             "key": "diarization",
@@ -3787,7 +3787,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -3802,22 +3802,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3893,17 +3893,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -3934,22 +3934,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -3970,7 +3970,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -3985,22 +3985,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4016,7 +4016,7 @@
           {
             "key": "recording_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "_1080p",
@@ -4026,7 +4026,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4041,22 +4041,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4087,17 +4087,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -4128,22 +4128,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4209,17 +4209,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -4250,7 +4250,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -4265,12 +4265,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4291,7 +4291,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4306,7 +4306,7 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "created_at",
@@ -4321,12 +4321,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4397,17 +4397,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -4438,22 +4438,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4474,7 +4474,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4489,22 +4489,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4575,17 +4575,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, recording?: {}, metadata?: {}, status?: {}, data?: {} }[]"
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
           }
         ]
       }
@@ -4616,22 +4616,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4652,7 +4652,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4667,22 +4667,22 @@
           {
             "key": "recording",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       }
@@ -4732,13 +4732,13 @@
         "fields": [
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -4788,13 +4788,13 @@
         "fields": [
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -4864,8 +4864,8 @@
           },
           {
             "key": "webhook_last_validation",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -4950,18 +4950,18 @@
         "fields": [
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, kind: user_level | account_level | string, client_id: string, client_secret: string, webhook_secret: string, webhook_last_validation?: string | null, created_at: string }[]"
+            "type": "{ id: string, kind: user_level | account_level | string, client_id: string, client_secret: string, webhook_secret: string, webhook_last_validation: string | null, created_at: string }[]"
           }
         ]
       }
@@ -5011,8 +5011,8 @@
           },
           {
             "key": "webhook_last_validation",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -5077,8 +5077,8 @@
           },
           {
             "key": "webhook_last_validation",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -5128,13 +5128,13 @@
         "fields": [
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -5165,7 +5165,7 @@
           {
             "key": "access_token_callback_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -5189,18 +5189,18 @@
           },
           {
             "key": "user_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "access_token_callback_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -5295,18 +5295,18 @@
         "fields": [
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, oauth_app: string, status: healthy | unhealthy | string, user_id?: string | null, account_id?: string | null, access_token_callback_url?: string | null, created_at: string, meeting_sync_status: not_started | in_progress | completed | failed | string }[]"
+            "type": "{ id: string, oauth_app: string, status: healthy | unhealthy | string, user_id: string | null, account_id: string | null, access_token_callback_url: string | null, created_at: string, meeting_sync_status: not_started | in_progress | completed | failed | string }[]"
           }
         ]
       }
@@ -5346,18 +5346,18 @@
           },
           {
             "key": "user_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "account_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "access_token_callback_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "created_at",

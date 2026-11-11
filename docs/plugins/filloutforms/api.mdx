@@ -39,8 +39,7 @@ await corsair.filloutforms.api.databases.create({});
   fields: {
     type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source,
     name: string,
-    template: {
-    }
+    template: Record<string, any>
   }[]
 }[]
 ```
@@ -74,16 +73,14 @@ await corsair.filloutforms.api.databases.create({});
     id: string,
     name: string,
     type: string,
-    template: {
-    },
+    template: Record<string, any>,
     order: number
   }[],
   views: {
     id: string,
     name: string,
     type: string,
-    config?: {
-    }
+    config?: Record<string, any>
   }[],
   url: string
 }[]
@@ -198,16 +195,14 @@ await corsair.filloutforms.api.databases.getById({});
     id: string,
     name: string,
     type: string,
-    template: {
-    },
+    template: Record<string, any>,
     order: number
   }[],
   views: {
     id: string,
     name: string,
     type: string,
-    config?: {
-    }
+    config?: Record<string, any>
   }[],
   url: string
 }[]
@@ -241,17 +236,7 @@ await corsair.filloutforms.api.fields.create({});
 | `tableId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `single_line_text \| long_text \| email \| url \| phone_number \| number \| currency \| percent \| rating \| duration \| single_select \| multiple_select \| checkbox \| date \| datetime \| attachments \| linked_record \| lookup \| autonumber \| source` | Yes | — |
-| `template` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="template full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `Record<string, any>` | No | — |
 
 
 
@@ -262,18 +247,8 @@ await corsair.filloutforms.api.fields.create({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `template` | `object` | Yes | — |
+| `template` | `Record<string, any>` | Yes | — |
 | `order` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="template full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -326,17 +301,7 @@ await corsair.filloutforms.api.fields.update({});
 | `tableId` | `string` | Yes | — |
 | `fieldId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `template` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="template full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `Record<string, any>` | No | — |
 
 
 
@@ -347,18 +312,8 @@ await corsair.filloutforms.api.fields.update({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `template` | `object` | Yes | — |
+| `template` | `Record<string, any>` | Yes | — |
 | `order` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="template full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -393,11 +348,11 @@ await corsair.filloutforms.api.forms.getFormMetadata({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `questions` | `object[]` | Yes | — |
-| `calculations` | `object[]` | No | — |
-| `urlParameters` | `object[]` | No | — |
-| `scheduling` | `object[]` | No | — |
-| `payments` | `object[]` | No | — |
-| `quiz` | `object` | No | — |
+| `calculations` | `Record<string, any>[]` | No | — |
+| `urlParameters` | `Record<string, any>[]` | No | — |
+| `scheduling` | `Record<string, any>[]` | No | — |
+| `payments` | `Record<string, any>[]` | No | — |
+| `quiz` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="questions full type">
@@ -408,46 +363,6 @@ await corsair.filloutforms.api.forms.getFormMetadata({});
   name: string,
   type: string
 }[]
-```
-</Accordion>
-
-<Accordion title="calculations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="urlParameters full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="scheduling full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="payments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="quiz full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -542,17 +457,7 @@ await corsair.filloutforms.api.records.create({});
 |------|------|----------|-------------|
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
-| `record` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, any>` | Yes | — |
 
 
 
@@ -561,28 +466,10 @@ await corsair.filloutforms.api.records.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -642,28 +529,10 @@ await corsair.filloutforms.api.records.getById({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -687,28 +556,10 @@ await corsair.filloutforms.api.records.list({});
 |------|------|----------|-------------|
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
-| `filter` | `object` | No | — |
-| `sort` | `object[]` | No | — |
+| `filter` | `Record<string, any>` | No | — |
+| `sort` | `Record<string, any>[]` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="sort full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -725,10 +576,8 @@ await corsair.filloutforms.api.records.list({});
 ```ts
 {
   id: string,
-  data: {
-  },
-  fields: {
-  },
+  data: Record<string, any>,
+  fields: Record<string, any>,
   createdAt: string,
   updatedAt: string
 }[]
@@ -759,17 +608,7 @@ await corsair.filloutforms.api.records.update({});
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
-| `record` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, any>` | Yes | — |
 
 
 
@@ -778,28 +617,10 @@ await corsair.filloutforms.api.records.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -842,12 +663,9 @@ await corsair.filloutforms.api.submissions.create({});
   }[],
   submissionTime?: string,
   lastUpdatedAt?: string,
-  scheduling?: {
-  }[],
-  payments?: {
-  }[],
-  login?: {
-  }
+  scheduling?: Record<string, any>[],
+  payments?: Record<string, any>[],
+  login?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -886,14 +704,10 @@ await corsair.filloutforms.api.submissions.create({});
     name: string,
     value: string
   }[],
-  scheduling?: {
-  }[],
-  payments?: {
-  }[],
-  quiz?: {
-  },
-  login?: {
-  }
+  scheduling?: Record<string, any>[],
+  payments?: Record<string, any>[],
+  quiz?: Record<string, any>,
+  login?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -987,14 +801,10 @@ await corsair.filloutforms.api.submissions.getById({});
     name: string,
     value: string
   }[],
-  scheduling?: {
-  }[],
-  payments?: {
-  }[],
-  quiz?: {
-  },
-  login?: {
-  }
+  scheduling?: Record<string, any>[],
+  payments?: Record<string, any>[],
+  quiz?: Record<string, any>,
+  login?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1066,14 +876,10 @@ await corsair.filloutforms.api.submissions.list({});
     name: string,
     value: string
   }[],
-  scheduling?: {
-  }[],
-  payments?: {
-  }[],
-  quiz?: {
-  },
-  login?: {
-  }
+  scheduling?: Record<string, any>[],
+  payments?: Record<string, any>[],
+  quiz?: Record<string, any>,
+  login?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1112,8 +918,7 @@ await corsair.filloutforms.api.tables.create({});
 {
   type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source,
   name: string,
-  template: {
-  }
+  template: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1141,8 +946,7 @@ await corsair.filloutforms.api.tables.create({});
   id: string,
   name: string,
   type: string,
-  template: {
-  },
+  template: Record<string, any>,
   order: number
 }[]
 ```
@@ -1155,8 +959,7 @@ await corsair.filloutforms.api.tables.create({});
   id: string,
   name: string,
   type: string,
-  config?: {
-  }
+  config?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1234,8 +1037,7 @@ await corsair.filloutforms.api.tables.update({});
   id: string,
   name: string,
   type: string,
-  template: {
-  },
+  template: Record<string, any>,
   order: number
 }[]
 ```
@@ -1248,8 +1050,7 @@ await corsair.filloutforms.api.tables.update({});
   id: string,
   name: string,
   type: string,
-  config?: {
-  }
+  config?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1306,7 +1107,7 @@ await corsair.filloutforms.api.webhooks.createDatabase({});
 |------|------|----------|-------------|
 | `databaseId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `events` | `record.created \| record.updated \| record.deleted \| table.created \| table.updated \| table.deleted \| field.created \| field.updated \| field.deleted[]` | Yes | — |
+| `events` | `(record.created \| record.updated \| record.deleted \| table.created \| table.updated \| table.deleted \| field.created \| field.updated \| field.deleted)[]` | Yes | — |
 | `tableId` | `string` | No | — |
 
 

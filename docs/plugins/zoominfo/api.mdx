@@ -68,8 +68,7 @@ await corsair.zoominfo.api.zoominfo.enrichCompany({});
 {
   outputFields?: string[][],
   result: {
-    input?: {
-    },
+    input?: Record<string, any>,
     data: {
       id?: number,
       name?: string,
@@ -153,8 +152,7 @@ await corsair.zoominfo.api.zoominfo.enrichContact({});
 {
   outputFields?: string[][],
   result: {
-    input?: {
-    },
+    input?: Record<string, any>,
     data: {
       id?: number,
       firstName?: string,
@@ -760,10 +758,10 @@ await corsair.zoominfo.api.zoominfo.searchCompanies({});
 | `companyTicker` | `string[]` | No | — |
 | `certified` | `0 \| 1` | No | — |
 | `excludeDefunctCompanies` | `boolean` | No | — |
-| `businessModel` | `B2C \| B2B \| B2G[]` | No | — |
+| `businessModel` | `(B2C \| B2B \| B2G)[]` | No | — |
 | `engagementStartDate` | `string` | No | — |
 | `engagementEndDate` | `string` | No | — |
-| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+| `engagementType` | `(email \| phone \| online meeting)[]` | No | — |
 | `marketingDepartmentBudgetMin` | `number` | No | — |
 | `marketingDepartmentBudgetMax` | `number` | No | — |
 | `financeDepartmentBudgetMin` | `number` | No | — |
@@ -902,7 +900,7 @@ await corsair.zoominfo.api.zoominfo.searchContacts({});
 | `positionStartDateMax` | `string` | No | — |
 | `engagementStartDate` | `string` | No | — |
 | `engagementEndDate` | `string` | No | — |
-| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+| `engagementType` | `(email \| phone \| online meeting)[]` | No | — |
 
 
 

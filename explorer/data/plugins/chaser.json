@@ -1,7 +1,7 @@
 {
   "id": "chaser",
   "displayName": "Chaser",
-  "description": "Chaser plugin for Corsair",
+  "description": "Accounts receivable automation software. List customers, invoices, and credit notes, and read organization details.",
   "npmPackageName": "@corsair-dev/chaser",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

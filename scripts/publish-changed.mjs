@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isAlreadyPublished } from './npm-publish-errors.mjs';
+import { isAlreadyPublished, waitUntilOnNpm } from './npm-publish-errors.mjs';
 import { orderForPublish } from './publish-order.mjs';
 
 // Publishable workspace roots. Plugins live in packages/; framework adapters
@@ -30,11 +30,12 @@ function workspaceDeps(pkg) {
 		.map(([name]) => name);
 }
 
-function getPublishedVersion(name) {
-	assertPackageName(name);
+// `spec` is a package name (latest) or name@version (that exact version).
+function getPublishedVersion(spec) {
+	assertPackageName(spec.replace(/@[^@/]+$/, ''));
 	try {
 		return (
-			execFileSync('npm', ['view', name, 'version'], {
+			execFileSync('npm', ['view', spec, 'version'], {
 				encoding: 'utf-8',
 				stdio: ['ignore', 'pipe', 'ignore'],
 			}).trim() || null
@@ -157,7 +158,19 @@ for (const { name, version, deps } of ordered) {
 		const out = `${err.stdout ?? ''}${err.stderr ?? ''}`;
 		process.stdout.write(out);
 		if (isAlreadyPublished(out)) {
-			console.log(`  SKIP ${name}@${version} (already on npm)`);
+			const onNpm = waitUntilOnNpm(name, version, {
+				view: getPublishedVersion,
+				sleep: (ms) =>
+					Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms),
+			});
+			if (onNpm) {
+				console.log(`  SKIP ${name}@${version} (already on npm)`);
+				continue;
+			}
+			console.error(
+				`  FAILED ${name}@${version} — npm reports it as published but doesn't serve it`,
+			);
+			failed.add(name);
 			continue;
 		}
 		console.error(`  FAILED ${name}@${version}`);

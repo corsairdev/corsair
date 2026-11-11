@@ -165,7 +165,7 @@ await corsair.activecampaign.api.accountContacts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountContacts` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="accountContacts full type">
@@ -188,7 +188,7 @@ await corsair.activecampaign.api.accountContacts.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -406,7 +406,7 @@ await corsair.activecampaign.api.accountCustomFieldData.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountCustomFieldData` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -414,7 +414,7 @@ await corsair.activecampaign.api.accountCustomFieldData.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -672,7 +672,7 @@ await corsair.activecampaign.api.accountCustomFieldMeta.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountCustomFieldMeta` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="accountCustomFieldMeta full type">
@@ -705,7 +705,7 @@ await corsair.activecampaign.api.accountCustomFieldMeta.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -985,7 +985,7 @@ await corsair.activecampaign.api.accounts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accounts` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="accounts full type">
@@ -1012,7 +1012,7 @@ await corsair.activecampaign.api.accounts.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1184,7 +1184,7 @@ await corsair.activecampaign.api.activities.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `activities` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -1192,7 +1192,7 @@ await corsair.activecampaign.api.activities.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1381,7 +1381,7 @@ await corsair.activecampaign.api.addresses.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `addresses` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="addresses full type">
@@ -1414,7 +1414,7 @@ await corsair.activecampaign.api.addresses.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1549,7 +1549,7 @@ await corsair.activecampaign.api.automations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `automations` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="automations full type">
@@ -1573,7 +1573,7 @@ await corsair.activecampaign.api.automations.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1763,17 +1763,7 @@ await corsair.activecampaign.api.browseSessions.save({});
 | `connectionId` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `products` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2001,7 +1991,7 @@ await corsair.activecampaign.api.calendars.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `calendars` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="calendars full type">
@@ -2026,7 +2016,7 @@ await corsair.activecampaign.api.calendars.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2112,26 +2102,8 @@ await corsair.activecampaign.api.campaigns.create({});
 | `status` | `number` | No | — |
 | `sdate` | `string` | No | — |
 | `segmentid` | `number` | No | — |
-| `p` | `object` | No | — |
-| `m` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="p full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="m full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `p` | `Record<string, any>` | No | — |
+| `m` | `Record<string, any>` | No | — |
 
 
 
@@ -2316,7 +2288,7 @@ await corsair.activecampaign.api.campaigns.getAutomationLists({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignLists` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -2324,7 +2296,7 @@ await corsair.activecampaign.api.campaigns.getAutomationLists({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2360,7 +2332,7 @@ await corsair.activecampaign.api.campaigns.getAutomations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `automations` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -2368,7 +2340,7 @@ await corsair.activecampaign.api.campaigns.getAutomations({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2404,7 +2376,7 @@ await corsair.activecampaign.api.campaigns.getLinks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `links` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -2412,7 +2384,7 @@ await corsair.activecampaign.api.campaigns.getLinks({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2448,7 +2420,7 @@ await corsair.activecampaign.api.campaigns.getMessages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignMessages` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -2456,7 +2428,7 @@ await corsair.activecampaign.api.campaigns.getMessages({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2525,7 +2497,7 @@ await corsair.activecampaign.api.campaigns.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaigns` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="campaigns full type">
@@ -2559,7 +2531,7 @@ await corsair.activecampaign.api.campaigns.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2847,7 +2819,7 @@ await corsair.activecampaign.api.connections.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `connections` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="connections full type">
@@ -2884,7 +2856,7 @@ await corsair.activecampaign.api.connections.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3073,7 +3045,7 @@ await corsair.activecampaign.api.contactAutomations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactAutomations` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3081,7 +3053,7 @@ await corsair.activecampaign.api.contactAutomations.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3243,7 +3215,7 @@ await corsair.activecampaign.api.contactDeals.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactDeals` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3251,7 +3223,7 @@ await corsair.activecampaign.api.contactDeals.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3322,7 +3294,7 @@ await corsair.activecampaign.api.contactLists.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactLists` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contactLists full type">
@@ -3366,7 +3338,7 @@ await corsair.activecampaign.api.contactLists.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3534,7 +3506,7 @@ await corsair.activecampaign.api.contacts.find({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contacts` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -3596,7 +3568,7 @@ await corsair.activecampaign.api.contacts.find({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3724,7 +3696,7 @@ await corsair.activecampaign.api.contacts.getAccountContacts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountContacts` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3732,7 +3704,7 @@ await corsair.activecampaign.api.contacts.getAccountContacts({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3768,7 +3740,7 @@ await corsair.activecampaign.api.contacts.getAutomations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactAutomations` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3776,7 +3748,7 @@ await corsair.activecampaign.api.contacts.getAutomations({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3842,7 +3814,7 @@ await corsair.activecampaign.api.contacts.getDeals({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deals` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3850,7 +3822,7 @@ await corsair.activecampaign.api.contacts.getDeals({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3886,7 +3858,7 @@ await corsair.activecampaign.api.contacts.getFieldValues({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fieldValues` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3894,7 +3866,7 @@ await corsair.activecampaign.api.contacts.getFieldValues({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3930,7 +3902,7 @@ await corsair.activecampaign.api.contacts.getGeoIps({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `geoIps` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3938,7 +3910,7 @@ await corsair.activecampaign.api.contacts.getGeoIps({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3974,7 +3946,7 @@ await corsair.activecampaign.api.contacts.getGoals({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactGoals` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -3982,7 +3954,7 @@ await corsair.activecampaign.api.contacts.getGoals({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4018,7 +3990,7 @@ await corsair.activecampaign.api.contacts.getLists({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactLists` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contactLists full type">
@@ -4062,7 +4034,7 @@ await corsair.activecampaign.api.contacts.getLists({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4098,7 +4070,7 @@ await corsair.activecampaign.api.contacts.getLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactLogs` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -4106,7 +4078,7 @@ await corsair.activecampaign.api.contacts.getLogs({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4142,7 +4114,7 @@ await corsair.activecampaign.api.contacts.getNotes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `notes` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -4150,7 +4122,7 @@ await corsair.activecampaign.api.contacts.getNotes({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4246,7 +4218,7 @@ await corsair.activecampaign.api.contacts.getScoreValues({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scoreValues` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -4254,7 +4226,7 @@ await corsair.activecampaign.api.contacts.getScoreValues({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4290,7 +4262,7 @@ await corsair.activecampaign.api.contacts.getTags({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactTags` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contactTags full type">
@@ -4315,7 +4287,7 @@ await corsair.activecampaign.api.contacts.getTags({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4351,7 +4323,7 @@ await corsair.activecampaign.api.contacts.getTrackingLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `trackingLogs` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -4359,7 +4331,7 @@ await corsair.activecampaign.api.contacts.getTrackingLogs({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4402,7 +4374,7 @@ await corsair.activecampaign.api.contacts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contacts` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -4464,7 +4436,7 @@ await corsair.activecampaign.api.contacts.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4604,7 +4576,7 @@ await corsair.activecampaign.api.contactTags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactTags` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contactTags full type">
@@ -4629,7 +4601,7 @@ await corsair.activecampaign.api.contactTags.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4884,7 +4856,7 @@ await corsair.activecampaign.api.customObjectRecords.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `records` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -4892,7 +4864,7 @@ await corsair.activecampaign.api.customObjectRecords.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4919,17 +4891,7 @@ await corsair.activecampaign.api.customObjectRecords.upsert({});
 |------|------|----------|-------------|
 | `schemaId` | `string` | Yes | — |
 | `externalId` | `string` | No | — |
-| `fields` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -4964,35 +4926,9 @@ await corsair.activecampaign.api.customObjectSchemas.create({});
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
-| `fields` | `object[]` | No | — |
-| `relationships` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="relationships full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `labels` | `Record<string, any>` | No | — |
+| `fields` | `Record<string, any>[]` | No | — |
+| `relationships` | `Record<string, any>[]` | No | — |
 
 
 
@@ -5186,7 +5122,7 @@ await corsair.activecampaign.api.customObjectSchemas.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `schemas` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="schemas full type">
@@ -5212,7 +5148,7 @@ await corsair.activecampaign.api.customObjectSchemas.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5240,36 +5176,10 @@ await corsair.activecampaign.api.customObjectSchemas.update({});
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
-| `fields` | `object[]` | No | — |
-| `relationships` | `object[]` | No | — |
+| `labels` | `Record<string, any>` | No | — |
+| `fields` | `Record<string, any>[]` | No | — |
+| `relationships` | `Record<string, any>[]` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="relationships full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5335,7 +5245,7 @@ await corsair.activecampaign.api.dealActivities.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealActivities` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -5343,7 +5253,7 @@ await corsair.activecampaign.api.dealActivities.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5441,7 +5351,7 @@ await corsair.activecampaign.api.dealCustomFieldData.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealCustomFieldData` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -5449,7 +5359,7 @@ await corsair.activecampaign.api.dealCustomFieldData.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5671,7 +5581,7 @@ await corsair.activecampaign.api.dealCustomFieldMeta.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealCustomFieldMeta` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealCustomFieldMeta full type">
@@ -5704,7 +5614,7 @@ await corsair.activecampaign.api.dealCustomFieldMeta.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5949,7 +5859,7 @@ await corsair.activecampaign.api.dealGroups.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealGroups` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealGroups full type">
@@ -5978,7 +5888,7 @@ await corsair.activecampaign.api.dealGroups.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6150,7 +6060,7 @@ await corsair.activecampaign.api.dealRoles.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealRoles` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealRoles full type">
@@ -6171,7 +6081,7 @@ await corsair.activecampaign.api.dealRoles.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6334,7 +6244,7 @@ await corsair.activecampaign.api.deals.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deals` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="deals full type">
@@ -6378,7 +6288,7 @@ await corsair.activecampaign.api.deals.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6441,7 +6351,7 @@ await corsair.activecampaign.api.deals.listFiltered({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deals` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="deals full type">
@@ -6485,7 +6395,7 @@ await corsair.activecampaign.api.deals.listFiltered({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6831,7 +6741,7 @@ await corsair.activecampaign.api.dealStages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealStages` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealStages full type">
@@ -6862,7 +6772,7 @@ await corsair.activecampaign.api.dealStages.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6976,7 +6886,7 @@ await corsair.activecampaign.api.dealTasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 | `relid` | `string` | Yes | — |
 | `reltype` | `Deal \| Subscriber \| Account` | Yes | — |
 | `dealTasktype` | `string` | Yes | — |
@@ -7148,7 +7058,7 @@ await corsair.activecampaign.api.dealTasks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealTasks` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealTasks full type">
@@ -7177,7 +7087,7 @@ await corsair.activecampaign.api.dealTasks.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7202,7 +7112,7 @@ await corsair.activecampaign.api.dealTasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 | `relid` | `string` | No | — |
 | `reltype` | `Deal \| Subscriber \| Account` | No | — |
 | `dealTasktype` | `string` | No | — |
@@ -7391,7 +7301,7 @@ await corsair.activecampaign.api.dealTaskTypes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealTasktypes` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="dealTasktypes full type">
@@ -7420,7 +7330,7 @@ await corsair.activecampaign.api.dealTaskTypes.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7652,7 +7562,7 @@ await corsair.activecampaign.api.ecomCustomers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ecomCustomers` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ecomCustomers full type">
@@ -7679,7 +7589,7 @@ await corsair.activecampaign.api.ecomCustomers.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7801,7 +7711,7 @@ await corsair.activecampaign.api.ecomOrderProducts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ecomOrderProducts` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -7809,7 +7719,7 @@ await corsair.activecampaign.api.ecomOrderProducts.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7845,7 +7755,7 @@ await corsair.activecampaign.api.ecomOrderProducts.listForOrder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ecomOrderProducts` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -7853,7 +7763,7 @@ await corsair.activecampaign.api.ecomOrderProducts.listForOrder({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7883,8 +7793,8 @@ await corsair.activecampaign.api.ecomOrders.create({});
 | `externalid` | `string` | Yes | — |
 | `source` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
-| `orderProducts` | `object[]` | Yes | — |
-| `orderDiscounts` | `object[]` | No | — |
+| `orderProducts` | `Record<string, any>[]` | Yes | — |
+| `orderDiscounts` | `Record<string, any>[]` | No | — |
 | `totalPrice` | `number` | Yes | — |
 | `shippingAmount` | `number` | No | — |
 | `taxAmount` | `number` | No | — |
@@ -7898,24 +7808,6 @@ await corsair.activecampaign.api.ecomOrders.create({});
 | `customerid` | `string` | Yes | — |
 | `orderNumber` | `string` | No | — |
 | `shippingMethod` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="orderProducts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="orderDiscounts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7984,7 +7876,7 @@ await corsair.activecampaign.api.ecomOrders.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ecomOrder` | `any` | No | — |
+| `ecomOrder` | `any \| null` | Yes | — |
 
 
 
@@ -8048,7 +7940,7 @@ await corsair.activecampaign.api.ecomOrders.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ecomOrders` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -8056,7 +7948,7 @@ await corsair.activecampaign.api.ecomOrders.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8084,8 +7976,8 @@ await corsair.activecampaign.api.ecomOrders.update({});
 | `externalid` | `string` | No | — |
 | `source` | `number` | No | — |
 | `email` | `string` | No | — |
-| `orderProducts` | `object[]` | No | — |
-| `orderDiscounts` | `object[]` | No | — |
+| `orderProducts` | `Record<string, any>[]` | No | — |
+| `orderDiscounts` | `Record<string, any>[]` | No | — |
 | `totalPrice` | `number` | No | — |
 | `shippingAmount` | `number` | No | — |
 | `taxAmount` | `number` | No | — |
@@ -8100,24 +7992,6 @@ await corsair.activecampaign.api.ecomOrders.update({});
 | `orderNumber` | `string` | No | — |
 | `shippingMethod` | `string` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="orderProducts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="orderDiscounts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -8150,8 +8024,8 @@ await corsair.activecampaign.api.ecomOrders.upsert({});
 | `externalid` | `string` | Yes | — |
 | `source` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
-| `orderProducts` | `object[]` | Yes | — |
-| `orderDiscounts` | `object[]` | No | — |
+| `orderProducts` | `Record<string, any>[]` | Yes | — |
+| `orderDiscounts` | `Record<string, any>[]` | No | — |
 | `totalPrice` | `number` | Yes | — |
 | `shippingAmount` | `number` | No | — |
 | `taxAmount` | `number` | No | — |
@@ -8165,24 +8039,6 @@ await corsair.activecampaign.api.ecomOrders.upsert({});
 | `customerid` | `string` | Yes | — |
 | `orderNumber` | `string` | No | — |
 | `shippingMethod` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="orderProducts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="orderDiscounts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -8226,7 +8082,7 @@ await corsair.activecampaign.api.emailActivities.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `emailActivities` | `any[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -8234,7 +8090,7 @@ await corsair.activecampaign.api.emailActivities.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8344,7 +8200,7 @@ await corsair.activecampaign.api.eventTrackingEvents.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `eventTrackingEvents` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="eventTrackingEvents full type">
@@ -8363,7 +8219,7 @@ await corsair.activecampaign.api.eventTrackingEvents.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8543,7 +8399,7 @@ await corsair.activecampaign.api.fieldRels.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fieldRels` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="fieldRels full type">
@@ -8565,7 +8421,7 @@ await corsair.activecampaign.api.fieldRels.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8763,7 +8619,7 @@ await corsair.activecampaign.api.fields.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fields` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -8801,7 +8657,7 @@ await corsair.activecampaign.api.fields.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8988,7 +8844,7 @@ await corsair.activecampaign.api.fieldValues.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fieldValues` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="fieldValues full type">
@@ -9014,7 +8870,7 @@ await corsair.activecampaign.api.fieldValues.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9262,7 +9118,7 @@ await corsair.activecampaign.api.forms.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `forms` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="forms full type">
@@ -9286,7 +9142,7 @@ await corsair.activecampaign.api.forms.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9323,7 +9179,7 @@ await corsair.activecampaign.api.groupLimits.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groupLimits` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="groupLimits full type">
@@ -9353,7 +9209,7 @@ await corsair.activecampaign.api.groupLimits.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9467,7 +9323,7 @@ await corsair.activecampaign.api.groupMembers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groupMembers` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="groupMembers full type">
@@ -9488,7 +9344,7 @@ await corsair.activecampaign.api.groupMembers.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9704,7 +9560,7 @@ await corsair.activecampaign.api.groups.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groups` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="groups full type">
@@ -9730,7 +9586,7 @@ await corsair.activecampaign.api.groups.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9845,10 +9701,8 @@ await corsair.activecampaign.api.imports.createBulk({});
   url: string,
   requestType?: GET | POST | PUT | PATCH,
   detailed_results?: boolean | true | false,
-  params?: {
-  },
-  headers?: {
-  }
+  params?: Record<string, any>,
+  headers?: Record<string, string>
 }
 ```
 </Accordion>
@@ -9860,12 +9714,12 @@ await corsair.activecampaign.api.imports.createBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `string \| number` | No | — |
-| `success` | `string \| number \| boolean` | No | — |
-| `batchId` | `string` | No | — |
-| `queued_contacts` | `number` | No | — |
-| `queuedContacts` | `number` | No | — |
-| `message` | `string` | No | — |
+| `Success` | `string \| number \| null` | No | — |
+| `success` | `string \| number \| boolean \| null` | No | — |
+| `batchId` | `string \| null` | No | — |
+| `queued_contacts` | `number \| null` | No | — |
+| `queuedContacts` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
 
 
 
@@ -10261,7 +10115,7 @@ await corsair.activecampaign.api.lists.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lists` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lists full type">
@@ -10329,7 +10183,7 @@ await corsair.activecampaign.api.lists.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -10611,7 +10465,7 @@ await corsair.activecampaign.api.messages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messages` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -10655,7 +10509,7 @@ await corsair.activecampaign.api.messages.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -11062,7 +10916,7 @@ await corsair.activecampaign.api.notes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `notes` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="notes full type">
@@ -11089,7 +10943,7 @@ await corsair.activecampaign.api.notes.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -11272,17 +11126,7 @@ await corsair.activecampaign.api.orders.upsertBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `orders` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="orders full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `orders` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -11307,17 +11151,7 @@ await corsair.activecampaign.api.orders.upsertBulkAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `orders` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="orders full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `orders` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -11516,7 +11350,7 @@ await corsair.activecampaign.api.personalizations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `personalizations` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="personalizations full type">
@@ -11541,7 +11375,7 @@ await corsair.activecampaign.api.personalizations.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -11818,19 +11652,9 @@ await corsair.activecampaign.api.products.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -11899,17 +11723,7 @@ await corsair.activecampaign.api.products.upsertBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `products` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -11936,19 +11750,9 @@ await corsair.activecampaign.api.recurringPayments.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -11978,17 +11782,7 @@ await corsair.activecampaign.api.recurringPayments.upsertBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `recurringPayments` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="recurringPayments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `recurringPayments` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -12154,7 +11948,7 @@ await corsair.activecampaign.api.savedResponses.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `savedResponses` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="savedResponses full type">
@@ -12178,7 +11972,7 @@ await corsair.activecampaign.api.savedResponses.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12267,7 +12061,7 @@ await corsair.activecampaign.api.scores.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scores` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="scores full type">
@@ -12291,7 +12085,7 @@ await corsair.activecampaign.api.scores.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12461,7 +12255,7 @@ await corsair.activecampaign.api.segments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segments` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="segments full type">
@@ -12488,7 +12282,7 @@ await corsair.activecampaign.api.segments.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12524,7 +12318,7 @@ await corsair.activecampaign.api.segments.listAudiences({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segments` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="segments full type">
@@ -12551,7 +12345,7 @@ await corsair.activecampaign.api.segments.listAudiences({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12641,7 +12435,7 @@ await corsair.activecampaign.api.segmentsV2.countAtTimestamp({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segmentCounts` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -12649,7 +12443,7 @@ await corsair.activecampaign.api.segmentsV2.countAtTimestamp({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12683,7 +12477,7 @@ await corsair.activecampaign.api.segmentsV2.countHistory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segmentCounts` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -12691,7 +12485,7 @@ await corsair.activecampaign.api.segmentsV2.countHistory({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12718,17 +12512,7 @@ await corsair.activecampaign.api.segmentsV2.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `conditions` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="conditions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `conditions` | `Record<string, any>[]` | No | — |
 
 
 
@@ -13004,7 +12788,7 @@ await corsair.activecampaign.api.segmentsV2.recentCounts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segmentCounts` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -13012,7 +12796,7 @@ await corsair.activecampaign.api.segmentsV2.recentCounts({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -13070,18 +12854,8 @@ await corsair.activecampaign.api.segmentsV2.update({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `conditions` | `object[]` | No | — |
+| `conditions` | `Record<string, any>[]` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="conditions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -13124,7 +12898,7 @@ await corsair.activecampaign.api.smsBroadcastLists.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `lists` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -13132,7 +12906,7 @@ await corsair.activecampaign.api.smsBroadcastLists.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -13300,7 +13074,7 @@ await corsair.activecampaign.api.smsBroadcasts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `broadcasts` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -13308,7 +13082,7 @@ await corsair.activecampaign.api.smsBroadcasts.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -13559,7 +13333,7 @@ await corsair.activecampaign.api.tags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tags` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tags full type">
@@ -13587,7 +13361,7 @@ await corsair.activecampaign.api.tags.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -13812,7 +13586,7 @@ await corsair.activecampaign.api.taskOutcomes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `taskOutcomes` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="taskOutcomes full type">
@@ -13838,7 +13612,7 @@ await corsair.activecampaign.api.taskOutcomes.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -14101,7 +13875,7 @@ await corsair.activecampaign.api.tracking.listWhitelist({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `siteTrackingWhitelist` | `any[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -14109,7 +13883,7 @@ await corsair.activecampaign.api.tracking.listWhitelist({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -14529,7 +14303,7 @@ await corsair.activecampaign.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -14557,7 +14331,7 @@ await corsair.activecampaign.api.users.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -14649,7 +14423,7 @@ await corsair.activecampaign.api.webhooks.create({});
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
-| `sources` | `public \| admin \| api \| system[]` | Yes | — |
+| `sources` | `(public \| admin \| api \| system)[]` | Yes | — |
 | `listid` | `string` | No | — |
 
 
@@ -14790,7 +14564,7 @@ await corsair.activecampaign.api.webhooks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `webhooks` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhooks full type">
@@ -14816,7 +14590,7 @@ await corsair.activecampaign.api.webhooks.list({});
 ```ts
 {
   total?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -14844,7 +14618,7 @@ await corsair.activecampaign.api.webhooks.update({});
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
 | `events` | `string[]` | No | — |
-| `sources` | `public \| admin \| api \| system[]` | No | — |
+| `sources` | `(public \| admin \| api \| system)[]` | No | — |
 | `listid` | `string` | No | — |
 | `id` | `string` | Yes | — |
 

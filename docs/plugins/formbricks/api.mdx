@@ -32,17 +32,7 @@ await corsair.formbricks.api.actionClasses.create({});
 | `description` | `string` | No | — |
 | `type` | `code \| noCode` | Yes | — |
 | `key` | `string` | No | — |
-| `noCodeConfig` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="noCodeConfig full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `noCodeConfig` | `Record<string, any>` | No | — |
 
 
 
@@ -51,14 +41,14 @@ await corsair.formbricks.api.actionClasses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `key` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `noCodeConfig` | `any` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -175,8 +165,8 @@ await corsair.formbricks.api.client.createDisplay({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `surveyId` | `string` | No | — |
-| `contactId` | `string` | No | — |
+| `surveyId` | `string \| null` | No | — |
+| `contactId` | `string \| null` | No | — |
 
 
 
@@ -200,17 +190,7 @@ await corsair.formbricks.api.client.createUser({});
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -261,7 +241,7 @@ await corsair.formbricks.api.client.environment({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `any` | No | — |
-| `expiresAt` | `string` | No | — |
+| `expiresAt` | `string \| null` | No | — |
 
 
 
@@ -285,17 +265,7 @@ await corsair.formbricks.api.client.identifyUser({});
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -351,15 +321,15 @@ await corsair.formbricks.api.contactAttributeKeys.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `key` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `dataType` | `string` | No | — |
-| `isUnique` | `boolean` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `dataType` | `string \| null` | No | — |
+| `isUnique` | `boolean \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -422,15 +392,15 @@ await corsair.formbricks.api.contactAttributeKeys.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `key` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `dataType` | `string` | No | — |
-| `isUnique` | `boolean` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `dataType` | `string \| null` | No | — |
+| `isUnique` | `boolean \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -461,15 +431,15 @@ await corsair.formbricks.api.contactAttributeKeys.getClass({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `key` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `dataType` | `string` | No | — |
-| `isUnique` | `boolean` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `dataType` | `string \| null` | No | — |
+| `isUnique` | `boolean \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -594,15 +564,15 @@ await corsair.formbricks.api.contactAttributeKeys.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `key` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `dataType` | `string` | No | — |
-| `isUnique` | `boolean` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `dataType` | `string \| null` | No | — |
+| `isUnique` | `boolean \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -667,17 +637,7 @@ await corsair.formbricks.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | Yes | — |
 
 
 
@@ -686,10 +646,10 @@ await corsair.formbricks.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `attributes` | `any` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -752,10 +712,10 @@ await corsair.formbricks.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `attributes` | `any` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -786,10 +746,10 @@ await corsair.formbricks.api.contacts.getPerson({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `attributes` | `any` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -883,17 +843,7 @@ await corsair.formbricks.api.contacts.updateAttributes({});
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | Yes | — |
 
 
 
@@ -961,8 +911,8 @@ await corsair.formbricks.api.contacts.uploadBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
-| `message` | `string` | No | — |
+| `status` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
 
 
 
@@ -1043,9 +993,9 @@ await corsair.formbricks.api.me.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `organizationId` | `string` | No | — |
-| `workspacePermissions` | `any[]` | No | — |
-| `environmentPermissions` | `any[]` | No | — |
+| `organizationId` | `string \| null` | No | — |
+| `workspacePermissions` | `any[] \| null` | No | — |
+| `environmentPermissions` | `any[] \| null` | No | — |
 | `organizationAccess` | `any` | No | — |
 
 
@@ -1072,10 +1022,10 @@ await corsair.formbricks.api.me.getAccountInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `type` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `appSetupCompleted` | `boolean` | No | — |
+| `type` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `appSetupCompleted` | `boolean \| null` | No | — |
 | `workspace` | `any` | No | — |
 | `project` | `any` | No | — |
 
@@ -1103,10 +1053,10 @@ await corsair.formbricks.api.me.getManagement({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `type` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `appSetupCompleted` | `boolean` | No | — |
+| `type` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `appSetupCompleted` | `boolean \| null` | No | — |
 | `workspace` | `any` | No | — |
 | `project` | `any` | No | — |
 
@@ -1134,37 +1084,11 @@ await corsair.formbricks.api.responses.create({});
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
 | `surveyId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `finished` | `boolean` | No | — |
-| `meta` | `object` | No | — |
-| `ttc` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `ttc` | `Record<string, any>` | No | — |
 | `language` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="ttc full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1173,21 +1097,21 @@ await corsair.formbricks.api.responses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `surveyId` | `string` | No | — |
-| `finished` | `boolean` | No | — |
-| `endingId` | `string` | No | — |
+| `surveyId` | `string \| null` | No | — |
+| `finished` | `boolean \| null` | No | — |
+| `endingId` | `string \| null` | No | — |
 | `data` | `any` | No | — |
 | `meta` | `any` | No | — |
 | `ttc` | `any` | No | — |
 | `variables` | `any` | No | — |
 | `contactAttributes` | `any` | No | — |
 | `contact` | `any` | No | — |
-| `singleUseId` | `string` | No | — |
-| `language` | `string` | No | — |
-| `displayId` | `string` | No | — |
-| `tags` | `any[]` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `singleUseId` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `displayId` | `string \| null` | No | — |
+| `tags` | `any[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1295,28 +1219,10 @@ await corsair.formbricks.api.responses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `responseId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `finished` | `boolean` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 | `language` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1325,21 +1231,21 @@ await corsair.formbricks.api.responses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `surveyId` | `string` | No | — |
-| `finished` | `boolean` | No | — |
-| `endingId` | `string` | No | — |
+| `surveyId` | `string \| null` | No | — |
+| `finished` | `boolean \| null` | No | — |
+| `endingId` | `string \| null` | No | — |
 | `data` | `any` | No | — |
 | `meta` | `any` | No | — |
 | `ttc` | `any` | No | — |
 | `variables` | `any` | No | — |
 | `contactAttributes` | `any` | No | — |
 | `contact` | `any` | No | — |
-| `singleUseId` | `string` | No | — |
-| `language` | `string` | No | — |
-| `displayId` | `string` | No | — |
-| `tags` | `any[]` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `singleUseId` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `displayId` | `string \| null` | No | — |
+| `tags` | `any[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1396,9 +1302,9 @@ await corsair.formbricks.api.storage.uploadPrivate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signedUrl` | `string` | No | — |
+| `signedUrl` | `string \| null` | No | — |
 | `presignedFields` | `any` | No | — |
-| `fileUrl` | `string` | No | — |
+| `fileUrl` | `string \| null` | No | — |
 
 
 
@@ -1430,9 +1336,9 @@ await corsair.formbricks.api.storage.uploadPublic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signedUrl` | `string` | No | — |
+| `signedUrl` | `string \| null` | No | — |
 | `presignedFields` | `any` | No | — |
-| `fileUrl` | `string` | No | — |
+| `fileUrl` | `string \| null` | No | — |
 
 
 
@@ -1459,45 +1365,11 @@ await corsair.formbricks.api.surveys.create({});
 | `workspaceId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `questions` | `object[]` | No | — |
-| `welcomeCard` | `object` | No | — |
-| `endings` | `object[]` | No | — |
+| `questions` | `Record<string, any>[]` | No | — |
+| `welcomeCard` | `Record<string, any>` | No | — |
+| `endings` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-| `triggers` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="questions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="welcomeCard full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="endings full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="triggers full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `triggers` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1506,51 +1378,51 @@ await corsair.formbricks.api.surveys.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdBy` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `publishOn` | `string` | No | — |
-| `closeOn` | `string` | No | — |
-| `archivedAt` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `publishOn` | `string \| null` | No | — |
+| `closeOn` | `string \| null` | No | — |
+| `archivedAt` | `string \| null` | No | — |
 | `welcomeCard` | `any` | No | — |
-| `questions` | `any[]` | No | — |
+| `questions` | `any[] \| null` | No | — |
 | `blocks` | `any` | No | — |
-| `endings` | `any[]` | No | — |
+| `endings` | `any[] \| null` | No | — |
 | `hiddenFields` | `any` | No | — |
-| `variables` | `any[]` | No | — |
+| `variables` | `any[] \| null` | No | — |
 | `styling` | `any` | No | — |
-| `languages` | `any[]` | No | — |
+| `languages` | `any[] \| null` | No | — |
 | `surveyClosedMessage` | `any` | No | — |
 | `metadata` | `any` | No | — |
-| `displayOption` | `string` | No | — |
-| `recontactDays` | `number` | No | — |
-| `displayLimit` | `number` | No | — |
-| `displayPercentage` | `number` | No | — |
-| `autoClose` | `number` | No | — |
-| `delay` | `number` | No | — |
-| `autoComplete` | `number` | No | — |
-| `isVerifyEmailEnabled` | `boolean` | No | — |
-| `isSingleResponsePerEmailEnabled` | `boolean` | No | — |
-| `isBackButtonHidden` | `boolean` | No | — |
-| `isAutoProgressingEnabled` | `boolean` | No | — |
-| `isCaptureIpEnabled` | `boolean` | No | — |
-| `showLanguageSwitch` | `boolean` | No | — |
-| `redirectUrl` | `string` | No | — |
-| `pin` | `string` | No | — |
+| `displayOption` | `string \| null` | No | — |
+| `recontactDays` | `number \| null` | No | — |
+| `displayLimit` | `number \| null` | No | — |
+| `displayPercentage` | `number \| null` | No | — |
+| `autoClose` | `number \| null` | No | — |
+| `delay` | `number \| null` | No | — |
+| `autoComplete` | `number \| null` | No | — |
+| `isVerifyEmailEnabled` | `boolean \| null` | No | — |
+| `isSingleResponsePerEmailEnabled` | `boolean \| null` | No | — |
+| `isBackButtonHidden` | `boolean \| null` | No | — |
+| `isAutoProgressingEnabled` | `boolean \| null` | No | — |
+| `isCaptureIpEnabled` | `boolean \| null` | No | — |
+| `showLanguageSwitch` | `boolean \| null` | No | — |
+| `redirectUrl` | `string \| null` | No | — |
+| `pin` | `string \| null` | No | — |
 | `singleUse` | `any` | No | — |
 | `recaptcha` | `any` | No | — |
-| `customHeadScripts` | `string` | No | — |
-| `customHeadScriptsMode` | `string` | No | — |
+| `customHeadScripts` | `string \| null` | No | — |
+| `customHeadScriptsMode` | `string \| null` | No | — |
 | `workspaceOverwrites` | `any` | No | — |
 | `projectOverwrites` | `any` | No | — |
-| `triggers` | `any[]` | No | — |
+| `triggers` | `any[] \| null` | No | — |
 | `segment` | `any` | No | — |
-| `followUps` | `any[]` | No | — |
+| `followUps` | `any[] \| null` | No | — |
 
 
 
@@ -1689,44 +1561,10 @@ await corsair.formbricks.api.surveys.update({});
 | `surveyId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `questions` | `object[]` | No | — |
-| `welcomeCard` | `object` | No | — |
-| `endings` | `object[]` | No | — |
-| `triggers` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="questions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="welcomeCard full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="endings full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="triggers full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `questions` | `Record<string, any>[]` | No | — |
+| `welcomeCard` | `Record<string, any>` | No | — |
+| `endings` | `Record<string, any>[]` | No | — |
+| `triggers` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1735,51 +1573,51 @@ await corsair.formbricks.api.surveys.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdBy` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `publishOn` | `string` | No | — |
-| `closeOn` | `string` | No | — |
-| `archivedAt` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `publishOn` | `string \| null` | No | — |
+| `closeOn` | `string \| null` | No | — |
+| `archivedAt` | `string \| null` | No | — |
 | `welcomeCard` | `any` | No | — |
-| `questions` | `any[]` | No | — |
+| `questions` | `any[] \| null` | No | — |
 | `blocks` | `any` | No | — |
-| `endings` | `any[]` | No | — |
+| `endings` | `any[] \| null` | No | — |
 | `hiddenFields` | `any` | No | — |
-| `variables` | `any[]` | No | — |
+| `variables` | `any[] \| null` | No | — |
 | `styling` | `any` | No | — |
-| `languages` | `any[]` | No | — |
+| `languages` | `any[] \| null` | No | — |
 | `surveyClosedMessage` | `any` | No | — |
 | `metadata` | `any` | No | — |
-| `displayOption` | `string` | No | — |
-| `recontactDays` | `number` | No | — |
-| `displayLimit` | `number` | No | — |
-| `displayPercentage` | `number` | No | — |
-| `autoClose` | `number` | No | — |
-| `delay` | `number` | No | — |
-| `autoComplete` | `number` | No | — |
-| `isVerifyEmailEnabled` | `boolean` | No | — |
-| `isSingleResponsePerEmailEnabled` | `boolean` | No | — |
-| `isBackButtonHidden` | `boolean` | No | — |
-| `isAutoProgressingEnabled` | `boolean` | No | — |
-| `isCaptureIpEnabled` | `boolean` | No | — |
-| `showLanguageSwitch` | `boolean` | No | — |
-| `redirectUrl` | `string` | No | — |
-| `pin` | `string` | No | — |
+| `displayOption` | `string \| null` | No | — |
+| `recontactDays` | `number \| null` | No | — |
+| `displayLimit` | `number \| null` | No | — |
+| `displayPercentage` | `number \| null` | No | — |
+| `autoClose` | `number \| null` | No | — |
+| `delay` | `number \| null` | No | — |
+| `autoComplete` | `number \| null` | No | — |
+| `isVerifyEmailEnabled` | `boolean \| null` | No | — |
+| `isSingleResponsePerEmailEnabled` | `boolean \| null` | No | — |
+| `isBackButtonHidden` | `boolean \| null` | No | — |
+| `isAutoProgressingEnabled` | `boolean \| null` | No | — |
+| `isCaptureIpEnabled` | `boolean \| null` | No | — |
+| `showLanguageSwitch` | `boolean \| null` | No | — |
+| `redirectUrl` | `string \| null` | No | — |
+| `pin` | `string \| null` | No | — |
 | `singleUse` | `any` | No | — |
 | `recaptcha` | `any` | No | — |
-| `customHeadScripts` | `string` | No | — |
-| `customHeadScriptsMode` | `string` | No | — |
+| `customHeadScripts` | `string \| null` | No | — |
+| `customHeadScriptsMode` | `string \| null` | No | — |
 | `workspaceOverwrites` | `any` | No | — |
 | `projectOverwrites` | `any` | No | — |
-| `triggers` | `any[]` | No | — |
+| `triggers` | `any[] \| null` | No | — |
 | `segment` | `any` | No | — |
-| `followUps` | `any[]` | No | — |
+| `followUps` | `any[] \| null` | No | — |
 
 
 
@@ -1927,7 +1765,7 @@ await corsair.formbricks.api.webhooks.create({});
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `source` | `user \| zapier \| make \| n8n` | Yes | — |
-| `triggers` | `responseFinished \| responseCreated \| responseUpdated[]` | Yes | — |
+| `triggers` | `(responseFinished \| responseCreated \| responseUpdated)[]` | Yes | — |
 | `surveyIds` | `string[]` | Yes | — |
 
 
@@ -1937,15 +1775,15 @@ await corsair.formbricks.api.webhooks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `source` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `triggers` | `string[]` | No | — |
-| `surveyIds` | `string[]` | No | — |
-| `secret` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `triggers` | `string[] \| null` | No | — |
+| `surveyIds` | `string[] \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -2008,15 +1846,15 @@ await corsair.formbricks.api.webhooks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `source` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `triggers` | `string[]` | No | — |
-| `surveyIds` | `string[]` | No | — |
-| `secret` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `triggers` | `string[] \| null` | No | — |
+| `surveyIds` | `string[] \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -2089,7 +1927,7 @@ await corsair.formbricks.api.webhooks.update({});
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `source` | `user \| zapier \| make \| n8n` | Yes | — |
-| `triggers` | `responseFinished \| responseCreated \| responseUpdated[]` | Yes | — |
+| `triggers` | `(responseFinished \| responseCreated \| responseUpdated)[]` | Yes | — |
 | `surveyIds` | `string[]` | Yes | — |
 
 
@@ -2099,15 +1937,15 @@ await corsair.formbricks.api.webhooks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `source` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `triggers` | `string[]` | No | — |
-| `surveyIds` | `string[]` | No | — |
-| `secret` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `triggers` | `string[] \| null` | No | — |
+| `surveyIds` | `string[] \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 

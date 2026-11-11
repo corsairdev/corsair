@@ -55,17 +55,7 @@ await corsair.ably.api.application.getStats({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -197,8 +187,7 @@ await corsair.ably.api.channels.getChannelDetails({});
 {
   isActive?: boolean,
   occupancy?: {
-    metrics?: {
-    }
+    metrics?: Record<string, number>
   }
 }
 ```
@@ -247,8 +236,7 @@ await corsair.ably.api.channels.getChannelHistory({});
   connectionId?: string,
   timestamp?: number,
   encoding?: string,
-  extras?: {
-  }
+  extras?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -336,8 +324,7 @@ await corsair.ably.api.channels.getMessageVersions({});
   connectionId?: string,
   timestamp?: number,
   encoding?: string,
-  extras?: {
-  }
+  extras?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -411,17 +398,7 @@ await corsair.ably.api.channels.listChannels({});
 | `limit` | `number` | No | — |
 | `prefix` | `string` | No | — |
 | `by` | `id \| value` | No | — |
-| `next` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="next full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `next` | `Record<string, string>` | No | — |
 
 
 
@@ -430,32 +407,21 @@ await corsair.ably.api.channels.listChannels({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next` | `object` | No | — |
+| `next` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
 
 ```ts
-(
-  string | {
-    channelId?: string,
-    status?: {
-      isActive?: boolean,
-      occupancy?: {
-        metrics?: {
-        }
-      }
+(string | {
+  channelId?: string,
+  status?: {
+    isActive?: boolean,
+    occupancy?: {
+      metrics?: Record<string, number>
     }
   }
-)[]
-```
-</Accordion>
-
-<Accordion title="next full type">
-
-```ts
-{
-}
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -496,8 +462,7 @@ await corsair.ably.api.channels.publishBatchMessages({});
     connectionId?: string,
     timestamp?: number,
     encoding?: string,
-    extras?: {
-    }
+    extras?: Record<string, any>
   }[]
 }[]
 ```
@@ -531,17 +496,7 @@ await corsair.ably.api.channels.publishMessageToChannel({});
 | `name` | `string` | No | — |
 | `data` | `any` | Yes | — |
 | `clientId` | `string` | No | — |
-| `extras` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extras full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extras` | `Record<string, any>` | No | — |
 
 
 
@@ -634,26 +589,17 @@ await corsair.ably.api.push.getPushDevice({});
 | `clientId` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `formFactor` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
 {
   state?: string,
-  recipient?: {
-  }
+  recipient?: Record<string, any>
 }
 ```
 </Accordion>
@@ -681,17 +627,7 @@ await corsair.ably.api.push.listPushChannels({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `prefix` | `string` | No | — |
-| `next` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="next full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `next` | `Record<string, string>` | No | — |
 
 
 
@@ -700,17 +636,7 @@ await corsair.ably.api.push.listPushChannels({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `string[]` | Yes | — |
-| `next` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="next full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `next` | `Record<string, string>` | No | — |
 
 
 
@@ -736,17 +662,7 @@ await corsair.ably.api.push.listPushChannelSubscriptions({});
 | `channel` | `string` | No | — |
 | `deviceId` | `string` | No | — |
 | `clientId` | `string` | No | — |
-| `next` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="next full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `next` | `Record<string, string>` | No | — |
 
 
 
@@ -755,7 +671,7 @@ await corsair.ably.api.push.listPushChannelSubscriptions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next` | `object` | No | — |
+| `next` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -766,14 +682,6 @@ await corsair.ably.api.push.listPushChannelSubscriptions({});
   deviceId?: string,
   clientId?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="next full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -801,17 +709,7 @@ await corsair.ably.api.push.listRegisteredPushDevices({});
 | `limit` | `number` | No | — |
 | `deviceId` | `string` | No | — |
 | `clientId` | `string` | No | — |
-| `next` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="next full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `next` | `Record<string, string>` | No | — |
 
 
 
@@ -820,7 +718,7 @@ await corsair.ably.api.push.listRegisteredPushDevices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next` | `object` | No | — |
+| `next` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -831,23 +729,13 @@ await corsair.ably.api.push.listRegisteredPushDevices({});
   clientId?: string,
   platform?: string,
   formFactor?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   updateToken?: string,
   push?: {
     state?: string,
-    recipient?: {
-    }
+    recipient?: Record<string, any>
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="next full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -874,26 +762,8 @@ await corsair.ably.api.push.patchPushDeviceRegistration({});
 |------|------|----------|-------------|
 | `deviceId` | `string` | Yes | — |
 | `clientId` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `push` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="push full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
+| `push` | `Record<string, any>` | No | — |
 
 
 
@@ -905,26 +775,17 @@ await corsair.ably.api.push.patchPushDeviceRegistration({});
 | `clientId` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `formFactor` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
 {
   state?: string,
-  recipient?: {
-  }
+  recipient?: Record<string, any>
 }
 ```
 </Accordion>
@@ -950,35 +811,9 @@ await corsair.ably.api.push.publishPushNotification({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `recipient` | `object` | Yes | — |
-| `data` | `object` | No | — |
-| `notification` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="recipient full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="notification full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `recipient` | `Record<string, any>` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+| `notification` | `Record<string, any>` | No | — |
 
 
 
@@ -1003,17 +838,7 @@ await corsair.ably.api.push.publishPushNotificationsBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `notifications` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="notifications full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `notifications` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1042,19 +867,11 @@ await corsair.ably.api.push.registerPushDevice({});
 | `clientId` | `string` | No | — |
 | `platform` | `ios \| android \| browser` | Yes | — |
 | `formFactor` | `phone \| tablet \| desktop \| tv \| watch \| car \| embedded` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
@@ -1077,26 +894,17 @@ await corsair.ably.api.push.registerPushDevice({});
 | `clientId` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `formFactor` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
 {
   state?: string,
-  recipient?: {
-  }
+  recipient?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1177,19 +985,11 @@ await corsair.ably.api.push.updatePushDevice({});
 | `clientId` | `string` | No | — |
 | `platform` | `ios \| android \| browser` | Yes | — |
 | `formFactor` | `phone \| tablet \| desktop \| tv \| watch \| car \| embedded` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
@@ -1212,26 +1012,17 @@ await corsair.ably.api.push.updatePushDevice({});
 | `clientId` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `formFactor` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `updateToken` | `string` | No | — |
 | `push` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="push full type">
 
 ```ts
 {
   state?: string,
-  recipient?: {
-  }
+  recipient?: Record<string, any>
 }
 ```
 </Accordion>

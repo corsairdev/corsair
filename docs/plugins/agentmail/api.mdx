@@ -53,7 +53,7 @@ await corsair.agentmail.api.messages.get({});
 | `attachments` | `object[]` | No | — |
 | `in_reply_to` | `string` | No | — |
 | `references` | `string[]` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `reply_to` | `string[]` | No | — |
 | `text` | `string` | No | — |
 | `html` | `string` | No | — |
@@ -72,14 +72,6 @@ await corsair.agentmail.api.messages.get({});
   content_disposition?: string,
   content_id?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -128,7 +120,7 @@ await corsair.agentmail.api.messages.list({});
 | `count` | `number` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `limit` | `number` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_page_token` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -159,8 +151,7 @@ await corsair.agentmail.api.messages.list({});
   }[],
   in_reply_to?: string,
   references?: string[],
-  headers?: {
-  }
+  headers?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -195,17 +186,7 @@ await corsair.agentmail.api.messages.send({});
 | `subject` | `string` | No | — |
 | `text` | `string` | No | — |
 | `html` | `string` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string>` | No | — |
 
 
 

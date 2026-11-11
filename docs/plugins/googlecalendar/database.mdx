@@ -55,6 +55,7 @@ const rows = await corsair.googlecalendar.db.events.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `htmlLink` | `string` | equals, contains, startsWith, endsWith, in |
 | `created` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated` | `string` | equals, contains, startsWith, endsWith, in |
@@ -64,6 +65,8 @@ const rows = await corsair.googlecalendar.db.events.search({
 | `colorId` | `string` | equals, contains, startsWith, endsWith, in |
 | `endTimeUnspecified` | `boolean` | equals |
 | `recurringEventId` | `string` | equals, contains, startsWith, endsWith, in |
+| `transparency` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
 | `iCalUID` | `string` | equals, contains, startsWith, endsWith, in |
 | `sequence` | `number` | equals, gt, gte, lt, lte, in |
 | `attendeesOmitted` | `boolean` | equals |
@@ -74,6 +77,7 @@ const rows = await corsair.googlecalendar.db.events.search({
 | `guestsCanSeeOtherGuests` | `boolean` | equals |
 | `privateCopy` | `boolean` | equals |
 | `locked` | `boolean` | equals |
+| `eventType` | `string` | equals, contains, startsWith, endsWith, in |
 | `calendarId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 

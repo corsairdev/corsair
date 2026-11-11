@@ -30,17 +30,7 @@ await corsair.synthflowai.api.actions.attach({});
 | `model_id` | `string` | Yes | — |
 | `actions` | `string[]` | No | — |
 | `action_ids` | `string[]` | No | — |
-| `items` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, any>[]` | No | — |
 
 
 
@@ -71,98 +61,16 @@ await corsair.synthflowai.api.actions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `REAL_TIME_BOOKING` | `object` | No | — |
-| `CALCOM` | `object` | No | — |
-| `GHL` | `object` | No | — |
-| `INFORMATION_EXTRACTOR` | `object` | No | — |
-| `LIVE_TRANSFER` | `object` | No | — |
-| `SEND_SMS` | `object` | No | — |
-| `INCALL_SMS` | `object` | No | — |
-| `INCALL_WHATSAPP` | `object` | No | — |
-| `CUSTOM_ACTION` | `object` | No | — |
-| `CUSTOM_EVAL` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="REAL_TIME_BOOKING full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CALCOM full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="GHL full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INFORMATION_EXTRACTOR full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="LIVE_TRANSFER full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="SEND_SMS full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INCALL_SMS full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INCALL_WHATSAPP full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CUSTOM_ACTION full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CUSTOM_EVAL full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `REAL_TIME_BOOKING` | `Record<string, any>` | No | — |
+| `CALCOM` | `Record<string, any>` | No | — |
+| `GHL` | `Record<string, any>` | No | — |
+| `INFORMATION_EXTRACTOR` | `Record<string, any>` | No | — |
+| `LIVE_TRANSFER` | `Record<string, any>` | No | — |
+| `SEND_SMS` | `Record<string, any>` | No | — |
+| `INCALL_SMS` | `Record<string, any>` | No | — |
+| `INCALL_WHATSAPP` | `Record<string, any>` | No | — |
+| `CUSTOM_ACTION` | `Record<string, any>` | No | — |
+| `CUSTOM_EVAL` | `Record<string, any>` | No | — |
 
 
 
@@ -321,98 +229,16 @@ await corsair.synthflowai.api.actions.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action_id` | `string` | Yes | — |
-| `REAL_TIME_BOOKING` | `object` | No | — |
-| `CALCOM` | `object` | No | — |
-| `GHL` | `object` | No | — |
-| `INFORMATION_EXTRACTOR` | `object` | No | — |
-| `LIVE_TRANSFER` | `object` | No | — |
-| `SEND_SMS` | `object` | No | — |
-| `INCALL_SMS` | `object` | No | — |
-| `INCALL_WHATSAPP` | `object` | No | — |
-| `CUSTOM_ACTION` | `object` | No | — |
-| `CUSTOM_EVAL` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="REAL_TIME_BOOKING full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CALCOM full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="GHL full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INFORMATION_EXTRACTOR full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="LIVE_TRANSFER full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="SEND_SMS full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INCALL_SMS full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="INCALL_WHATSAPP full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CUSTOM_ACTION full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="CUSTOM_EVAL full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `REAL_TIME_BOOKING` | `Record<string, any>` | No | — |
+| `CALCOM` | `Record<string, any>` | No | — |
+| `GHL` | `Record<string, any>` | No | — |
+| `INFORMATION_EXTRACTOR` | `Record<string, any>` | No | — |
+| `LIVE_TRANSFER` | `Record<string, any>` | No | — |
+| `SEND_SMS` | `Record<string, any>` | No | — |
+| `INCALL_SMS` | `Record<string, any>` | No | — |
+| `INCALL_WHATSAPP` | `Record<string, any>` | No | — |
+| `CUSTOM_ACTION` | `Record<string, any>` | No | — |
+| `CUSTOM_EVAL` | `Record<string, any>` | No | — |
 
 
 
@@ -605,9 +431,7 @@ await corsair.synthflowai.api.assistants.list({});
     limit?: number,
     offset?: number
   },
-  assistants?: {
-  }[] | {
-  }
+  assistants?: Record<string, any>[] | Record<string, any>
 }
 ```
 </Accordion>
@@ -641,17 +465,7 @@ await corsair.synthflowai.api.assistants.update({});
 | `phone_number` | `string` | No | — |
 | `external_webhook_url` | `string` | No | — |
 | `is_recording` | `boolean` | No | — |
-| `agent` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="agent full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `agent` | `Record<string, any>` | No | — |
 
 
 
@@ -688,7 +502,7 @@ await corsair.synthflowai.api.calls.create({});
 | `phone` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `from_phone_number` | `string` | No | — |
-| `custom_variables` | `object` | No | — |
+| `custom_variables` | `object[] \| Record<string, any>` | No | — |
 | `lead_email` | `string` | No | — |
 | `lead_timezone` | `string` | No | — |
 | `prompt` | `string` | No | — |
@@ -701,8 +515,7 @@ await corsair.synthflowai.api.calls.create({});
 {
   key: string,
   value: string
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -804,10 +617,8 @@ await corsair.synthflowai.api.calls.list({});
 
 ```ts
 {
-  pagination?: {
-  },
-  calls?: {
-  }[]
+  pagination?: Record<string, any>,
+  calls?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -839,17 +650,7 @@ await corsair.synthflowai.api.contacts.create({});
 | `phone_number` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `company` | `string` | No | — |
-| `contact_metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="contact_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contact_metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -971,10 +772,8 @@ await corsair.synthflowai.api.contacts.list({});
 
 ```ts
 {
-  pagination?: {
-  },
-  contacts?: {
-  }[]
+  pagination?: Record<string, any>,
+  contacts?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1004,17 +803,7 @@ await corsair.synthflowai.api.contacts.update({});
 | `name` | `string` | No | — |
 | `phone_number` | `string` | No | — |
 | `email` | `string` | No | — |
-| `contact_metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="contact_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contact_metadata` | `Record<string, any>` | No | — |
 
 
 

@@ -35,13 +35,13 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{} | lazy[]",
+            "type": "Record<string, JsonValue> | JsonValue[]",
             "description": "JSON dataset to merge into the document template placeholders"
           },
           {
             "key": "convertTo",
             "optional": true,
-            "type": "string | { formatName: string, formatOptions?: {} }",
+            "type": "string | { formatName: string, formatOptions?: Record<string, JsonValue> }",
             "description": "Target file format extension to convert output document into (e.g. pdf, docx, xlsx, html)"
           },
           {
@@ -71,25 +71,25 @@
           {
             "key": "translations",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, Record<string, string>>",
             "description": "Dictionary of translation strings per locale"
           },
           {
             "key": "enum",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, Record<string, string>>",
             "description": "Enum mapping dictionaries for translating code values"
           },
           {
             "key": "variable",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Pre-calculated variables accessible globally within the template"
           },
           {
             "key": "complement",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Complementary dataset accessible with the c. prefix in templates"
           },
           {
@@ -135,13 +135,13 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{} | lazy[]",
+            "type": "Record<string, JsonValue> | JsonValue[]",
             "description": "JSON dataset to merge into the template placeholders"
           },
           {
             "key": "convertTo",
             "optional": true,
-            "type": "string | { formatName: string, formatOptions?: {} }",
+            "type": "string | { formatName: string, formatOptions?: Record<string, JsonValue> }",
             "description": "Target output document format extension (e.g. pdf, docx, xlsx, html)"
           },
           {
@@ -171,25 +171,25 @@
           {
             "key": "translations",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, Record<string, string>>",
             "description": "Translation dictionaries for multi-language templates"
           },
           {
             "key": "enum",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, Record<string, string>>",
             "description": "Enum dictionaries for code translation"
           },
           {
             "key": "variable",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Pre-calculated variables accessible in template"
           },
           {
             "key": "complement",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Complementary data accessible with c. prefix"
           },
           {

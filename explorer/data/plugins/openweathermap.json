@@ -46,7 +46,7 @@
           {
             "key": "coord",
             "optional": true,
-            "type": "tuple | {}"
+            "type": "[number, number] | {}"
           },
           {
             "key": "list",
@@ -84,7 +84,7 @@
           {
             "key": "coord",
             "optional": true,
-            "type": "tuple | {}"
+            "type": "[number, number] | {}"
           },
           {
             "key": "list",
@@ -134,7 +134,7 @@
           {
             "key": "coord",
             "optional": true,
-            "type": "tuple | {}"
+            "type": "[number, number] | {}"
           },
           {
             "key": "list",
@@ -215,7 +215,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ name?: string, local_names?: {}, lat: number, lon: number, country?: string, state?: string }[]"
+        "type": "{ name?: string, local_names?: Record<string, string>, lat: number, lon: number, country?: string, state?: string }[]"
       }
     },
     {
@@ -248,7 +248,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ name?: string, local_names?: {}, lat: number, lon: number, country?: string, state?: string }[]"
+        "type": "{ name?: string, local_names?: Record<string, string>, lat: number, lon: number, country?: string, state?: string }[]"
       }
     },
     {
@@ -1177,7 +1177,7 @@
           {
             "key": "exclude",
             "optional": true,
-            "type": "current | minutely | hourly | daily | alerts[]",
+            "type": "(current | minutely | hourly | daily | alerts)[]",
             "description": "Parts to exclude from the response: current, minutely, hourly, daily, alerts"
           },
           {

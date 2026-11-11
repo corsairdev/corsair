@@ -133,17 +133,7 @@ await corsair.diffbot.api.bulk.listBulkJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jobs` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="jobs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `jobs` | `Record<string, any>[]` | No | — |
 
 
 
@@ -281,20 +271,10 @@ await corsair.diffbot.api.crawl.manageCrawl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jobs` | `object[]` | No | — |
+| `jobs` | `Record<string, any>[]` | No | — |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="jobs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -360,17 +340,7 @@ await corsair.diffbot.api.customApi.createCustomApi({});
 | `api` | `string` | Yes | Name of the custom API (e.g. "myCustomArticleApi") |
 | `url` | `string` | Yes | Sample URL that this custom API applies to |
 | `pattern` | `string` | No | URL regex pattern to match pages for this custom API |
-| `rules` | `object` | No | Extraction rules and CSS selector definitions |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>` | No | Extraction rules and CSS selector definitions |
 
 
 
@@ -439,26 +409,8 @@ await corsair.diffbot.api.customApi.listCustomApis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customApis` | `object[]` | No | — |
-| `apis` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="customApis full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="apis full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `customApis` | `Record<string, any>[]` | No | — |
+| `apis` | `Record<string, any>[]` | No | — |
 
 
 
@@ -497,26 +449,8 @@ await corsair.diffbot.api.enhance.combineEntityProfiles({});
 | `version` | `number` | No | — |
 | `hits` | `number` | No | — |
 | `kgversion` | `string` | No | — |
-| `data` | `object[]` | No | — |
-| `errors` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
+| `errors` | `Record<string, any>[]` | No | — |
 
 
 
@@ -557,35 +491,9 @@ await corsair.diffbot.api.enhance.enhanceEntity({});
 | `version` | `number` | No | — |
 | `hits` | `number` | No | — |
 | `kgversion` | `string` | No | — |
-| `request_ctx` | `object` | No | — |
-| `data` | `object[]` | No | — |
-| `errors` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="request_ctx full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `request_ctx` | `Record<string, any>` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
+| `errors` | `Record<string, any>[]` | No | — |
 
 
 
@@ -618,19 +526,9 @@ await corsair.diffbot.api.enhance.getKgCoverageReportById({});
 |------|------|----------|-------------|
 | `reportId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `coverage` | `object` | No | — |
+| `coverage` | `Record<string, any>` | No | — |
 | `data` | `any` | No | — |
 | `csv` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="coverage full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -666,17 +564,7 @@ await corsair.diffbot.api.enhance.resolveLostId({});
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
 | `hits` | `number` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -732,12 +620,10 @@ await corsair.diffbot.api.extract.extractJob({});
   type?: job,
   title?: string,
   description?: string,
-  company?: {
-  },
+  company?: Record<string, any>,
   locations?: string[],
   employmentType?: string,
-  compensation?: {
-  },
+  compensation?: Record<string, any>,
   requirements?: string[],
   skills?: string[],
   postedDate?: string,
@@ -801,8 +687,7 @@ await corsair.diffbot.api.extract.extractList({});
   type?: list,
   title?: string,
   numItems?: number,
-  items?: {
-  }[],
+  items?: Record<string, any>[],
   pageUrl?: string,
   humanLanguage?: string
 }[]
@@ -846,7 +731,7 @@ await corsair.diffbot.api.extract.getAnalyze({});
 | `type` | `string` | No | Detected page type (article, product, discussion, etc.) |
 | `humanLanguage` | `string` | No | — |
 | `title` | `string` | No | — |
-| `objects` | `object[]` | No | — |
+| `objects` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="request full type">
@@ -857,14 +742,6 @@ await corsair.diffbot.api.extract.getAnalyze({});
   api?: string,
   version?: number
 }
-```
-</Accordion>
-
-<Accordion title="objects full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -949,8 +826,7 @@ await corsair.diffbot.api.extract.getArticle({});
     attrAlt?: string,
     caption?: string
   }[],
-  videos?: {
-  }[],
+  videos?: Record<string, any>[],
   tags?: {
     id?: number,
     label: string,
@@ -1032,8 +908,7 @@ await corsair.diffbot.api.extract.getDiscussion({});
   numParticipants?: number,
   participants?: string[],
   rssUrl?: string,
-  posts?: {
-  }[],
+  posts?: Record<string, any>[],
   pageUrl?: string,
   humanLanguage?: string,
   diffbotUri?: string
@@ -1097,8 +972,7 @@ await corsair.diffbot.api.extract.getEvent({});
   startDate?: string,
   endDate?: string,
   location?: string,
-  venue?: {
-  },
+  venue?: Record<string, any>,
   organizer?: string,
   ticketUrl?: string,
   pageUrl?: string,
@@ -1259,8 +1133,7 @@ await corsair.diffbot.api.extract.getProduct({});
     attrAlt?: string,
     caption?: string
   }[],
-  offers?: {
-  }[],
+  offers?: Record<string, any>[],
   colors?: string[],
   pageUrl?: string,
   humanLanguage?: string,
@@ -1469,18 +1342,8 @@ await corsair.diffbot.api.kgBulkEnhance.downloadBulkResults({});
 |------|------|----------|-------------|
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `data` | `object[]` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
 | `raw` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1512,21 +1375,11 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkJobStatus({});
 |------|------|----------|-------------|
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `jobStatus` | `object` | No | — |
+| `jobStatus` | `Record<string, any>` | No | — |
 | `total` | `number` | No | — |
 | `completed` | `number` | No | — |
 | `failed` | `number` | No | — |
 | `progress` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="jobStatus full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1560,18 +1413,8 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkResults({});
 |------|------|----------|-------------|
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `data` | `object[]` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
 | `raw` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1604,26 +1447,8 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkSingleResult({});
 |------|------|----------|-------------|
 | `bulkjobId` | `string` | No | — |
 | `jobIndex` | `number` | No | — |
-| `data` | `object` | No | — |
-| `entity` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="entity full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
+| `entity` | `Record<string, any>` | No | — |
 
 
 
@@ -1648,26 +1473,8 @@ await corsair.diffbot.api.kgBulkEnhance.listBulkJobsStatusForToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jobs` | `object[]` | No | — |
-| `bulkjobs` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="jobs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="bulkjobs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `jobs` | `Record<string, any>[]` | No | — |
+| `bulkjobs` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1741,27 +1548,9 @@ await corsair.diffbot.api.search.search({});
 | `results` | `number` | No | — |
 | `kgversion` | `string` | No | — |
 | `diffbot_type` | `string` | No | — |
-| `facet` | `object` | No | — |
-| `data` | `object[]` | No | — |
+| `facet` | `Record<string, any>` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
 | `cursor` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="facet full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1795,7 +1584,7 @@ await corsair.diffbot.api.search.searchCrawlData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request` | `object` | No | — |
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `numResults` | `number` | No | — |
 | `hits` | `number` | No | — |
 
@@ -1808,14 +1597,6 @@ await corsair.diffbot.api.search.searchCrawlData({});
   api?: string,
   version?: number
 }
-```
-</Accordion>
-
-<Accordion title="results full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>

@@ -39,23 +39,23 @@ await corsair.remoet.api.companies.get({ slug: 'starburst' });
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `url` | `string` | No | — |
-| `nbrOfStars` | `number` | No | — |
-| `jobCount` | `number` | No | — |
-| `techStack` | `string[]` | No | A preview capped by Remoet; techStackCount is the full size. |
-| `matchedTechStack` | `string[]` | No | — |
-| `techStackCount` | `number` | No | — |
-| `experienceLevels` | `object` | No | — |
-| `shortDescription` | `string` | No | — |
-| `isStarred` | `boolean` | No | — |
-| `jobPreview` | `string[]` | No | — |
-| `about` | `string` | No | — |
-| `careersUrl` | `string` | No | — |
-| `verified` | `boolean` | No | — |
-| `urls` | `object` | No | — |
-| `perks` | `object[]` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `nbrOfStars` | `number \| null` | No | — |
+| `jobCount` | `number \| null` | No | — |
+| `techStack` | `string[] \| null` | No | A preview capped by Remoet; techStackCount is the full size. |
+| `matchedTechStack` | `string[] \| null` | No | — |
+| `techStackCount` | `number \| null` | No | — |
+| `experienceLevels` | `object \| null` | No | — |
+| `shortDescription` | `string \| null` | No | — |
+| `isStarred` | `boolean \| null` | No | — |
+| `jobPreview` | `string[] \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `careersUrl` | `string \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `urls` | `Record<string, string \| null> \| null` | No | — |
+| `perks` | `object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="experienceLevels full type">
@@ -65,15 +65,7 @@ await corsair.remoet.api.companies.get({ slug: 'starburst' });
   junior?: number | null,
   mid?: number | null,
   senior?: number | null
-}
-```
-</Accordion>
-
-<Accordion title="urls full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -86,7 +78,7 @@ await corsair.remoet.api.companies.get({ slug: 'starburst' });
   tags?: string[] | null,
   description?: string | null,
   category?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -115,7 +107,7 @@ await corsair.remoet.api.companies.search({});
 | `searchQuery` | `string` | No | Search keyword: matches company name, description and about text. |
 | `techStack` | `string[]` | No | — |
 | `techStackMatch` | `any \| all` | No | How techStack combines: "any" (at least one) or "all" (every one required). |
-| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `experienceLevel` | `(junior \| mid \| senior)[]` | No | — |
 | `sortBy` | `stars \| jobCount \| name` | No | — |
 | `page` | `number` | No | Page number, starting from 1. |
 | `pageSize` | `number` | No | Results per page, max 100. |
@@ -128,13 +120,13 @@ await corsair.remoet.api.companies.search({});
 |------|------|----------|-------------|
 | `listings` | `object[]` | Yes | — |
 | `totalCount` | `number` | Yes | — |
-| `page` | `number` | No | — |
-| `pageSize` | `number` | No | — |
-| `totalPages` | `number` | No | — |
-| `hasNextPage` | `boolean` | No | — |
-| `starred` | `boolean` | No | — |
-| `hint` | `string` | No | — |
-| `note` | `string` | No | — |
+| `page` | `number \| null` | No | — |
+| `pageSize` | `number \| null` | No | — |
+| `totalPages` | `number \| null` | No | — |
+| `hasNextPage` | `boolean \| null` | No | — |
+| `starred` | `boolean \| null` | No | — |
+| `hint` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="listings full type">
@@ -202,13 +194,13 @@ await corsair.remoet.api.education.create({ institution: 'MIT' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `institution` | `string` | Yes | — |
-| `institutionUrl` | `string` | No | — |
-| `studyLevel` | `string` | No | — |
-| `fieldOfStudy` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `endDate` | `string` | No | — |
-| `isCurrent` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `institutionUrl` | `string \| null` | No | — |
+| `studyLevel` | `string \| null` | No | — |
+| `fieldOfStudy` | `string \| null` | No | — |
+| `startDate` | `string \| null` | Yes | — |
+| `endDate` | `string \| null` | Yes | — |
+| `isCurrent` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -272,8 +264,8 @@ await corsair.remoet.api.education.list({});
   institutionUrl?: string | null,
   studyLevel?: string | null,
   fieldOfStudy?: string | null,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: string | null,
+  endDate: string | null,
   isCurrent?: boolean | null,
   description?: string | null
 }[]
@@ -318,13 +310,13 @@ await corsair.remoet.api.education.update({ id: '65f0000000000000000000a3', isCu
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `institution` | `string` | Yes | — |
-| `institutionUrl` | `string` | No | — |
-| `studyLevel` | `string` | No | — |
-| `fieldOfStudy` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `endDate` | `string` | No | — |
-| `isCurrent` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `institutionUrl` | `string \| null` | No | — |
+| `studyLevel` | `string \| null` | No | — |
+| `fieldOfStudy` | `string \| null` | No | — |
+| `startDate` | `string \| null` | Yes | — |
+| `endDate` | `string \| null` | Yes | — |
+| `isCurrent` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -359,7 +351,7 @@ await corsair.remoet.api.feed.list({});
 |------|------|----------|-------------|
 | `hasNextPage` | `boolean` | Yes | — |
 | `filtersApplied` | `boolean` | Yes | — |
-| `nextCursor` | `string` | No | — |
+| `nextCursor` | `string \| null` | Yes | — |
 | `entries` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -486,7 +478,7 @@ await corsair.remoet.api.jobContext.get({ url: 'https://job-boards.greenhouse.io
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `match` | `object` | No | — |
+| `match` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="match full type">
@@ -499,7 +491,7 @@ await corsair.remoet.api.jobContext.get({ url: 'https://job-boards.greenhouse.io
   daysSinceFirstSeen: number,
   firstSeenAtIsCensored: boolean,
   isActive: boolean,
-  deactivatedAt?: string | null,
+  deactivatedAt: string | null,
   reposts: {
     removedAt: string,
     repostedAt: string,
@@ -508,17 +500,17 @@ await corsair.remoet.api.jobContext.get({ url: 'https://job-boards.greenhouse.io
   otherOpenRoles: number,
   isStarred: boolean,
   techStack: string[],
-  remotePolicy?: string | null,
-  remoteRestrictions?: string | null,
-  salary?: {
+  remotePolicy: string | null,
+  remoteRestrictions: string | null,
+  salary: {
     from?: number | null,
     to?: number | null,
     currency?: string | null,
     period?: string | null
   } | null,
-  experienceLevel?: string | null,
-  summary?: string | null
-}
+  experienceLevel: string | null,
+  summary: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -549,8 +541,8 @@ await corsair.remoet.api.jobs.search({});
 | `techStack` | `string[]` | No | Match roles carrying technologies from this list, e.g. ["React", "Go"]. |
 | `techStackMatch` | `any \| all` | No | How techStack combines: "any" (at least one) or "all" (every one required). |
 | `companySlug` | `string` | No | Restrict to one company by its Remoet slug, e.g. "stripe". |
-| `remotePolicy` | `onsite \| hybrid \| remote \| remote-restricted[]` | No | — |
-| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `remotePolicy` | `(onsite \| hybrid \| remote \| remote-restricted)[]` | No | — |
+| `experienceLevel` | `(junior \| mid \| senior)[]` | No | — |
 | `salaryMin` | `number` | No | Minimum salary. |
 | `location` | `string[]` | No | Place names, e.g. ["Berlin"]. Each may itself contain a comma, e.g. "Portland, OR". |
 | `sortBy` | `newest \| salary` | No | — |
@@ -570,7 +562,7 @@ await corsair.remoet.api.jobs.search({});
 | `pageSize` | `number` | Yes | — |
 | `totalPages` | `number` | Yes | — |
 | `hasNextPage` | `boolean` | Yes | — |
-| `hint` | `string` | No | Present on an empty result: which filter emptied it and what to try. |
+| `hint` | `string \| null` | No | Present on an empty result: which filter emptied it and what to try. |
 
 <AccordionGroup>
 <Accordion title="jobs full type">
@@ -636,7 +628,7 @@ await corsair.remoet.api.linkTrees.get({ slug: 'my-links' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `slug` | `string` | Yes | — |
 | `links` | `object[]` | Yes | — |
 | `createdAt` | `string` | Yes | — |
@@ -723,8 +715,8 @@ await corsair.remoet.api.profile.get({});
 |------|------|----------|-------------|
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-| `ghId` | `number` | No | Numeric GitHub user id; absent for users who never linked GitHub. |
-| `email` | `string` | No | — |
+| `ghId` | `number \| null` | No | Numeric GitHub user id; absent for users who never linked GitHub. |
+| `email` | `string \| null` | No | — |
 | `profile` | `object` | Yes | — |
 | `jobs` | `object[]` | Yes | — |
 | `projects` | `object[]` | Yes | — |
@@ -740,47 +732,47 @@ await corsair.remoet.api.profile.get({});
   isPublic?: boolean | null,
   slug?: string | null,
   name?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   avatarUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   phone?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   url?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   summary?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   location?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   githubUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   facebookUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   twitterUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   linkedinUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null,
   youtubeUrl?: {
-    value?: string | null,
+    value: string | null,
     isPublic: boolean
   } | null
 }
@@ -823,8 +815,8 @@ await corsair.remoet.api.profile.get({});
   isOpenSource?: boolean | null,
   description?: string | null,
   role?: string | null,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: string | null,
+  endDate: string | null,
   repoUrl?: string | null,
   demoUrl?: string | null,
   jobId?: string | null
@@ -860,8 +852,8 @@ await corsair.remoet.api.profile.get({});
   institutionUrl?: string | null,
   studyLevel?: string | null,
   fieldOfStudy?: string | null,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: string | null,
+  endDate: string | null,
   isCurrent?: boolean | null,
   description?: string | null
 }[]
@@ -892,12 +884,12 @@ await corsair.remoet.api.profile.getLinks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | — |
-| `githubUrl` | `string` | No | — |
-| `facebookUrl` | `string` | No | — |
-| `twitterUrl` | `string` | No | — |
-| `linkedinUrl` | `string` | No | — |
-| `youtubeUrl` | `string` | No | — |
+| `url` | `string \| null` | Yes | — |
+| `githubUrl` | `string \| null` | Yes | — |
+| `facebookUrl` | `string \| null` | Yes | — |
+| `twitterUrl` | `string \| null` | Yes | — |
+| `linkedinUrl` | `string \| null` | Yes | — |
+| `youtubeUrl` | `string \| null` | Yes | — |
 
 
 
@@ -983,18 +975,18 @@ await corsair.remoet.api.projects.create({ title: 'corsair-remoet', shortDescrip
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `shortDescription` | `string` | No | — |
-| `technologies` | `string[]` | No | — |
-| `isCurrent` | `boolean` | No | — |
-| `isRemote` | `boolean` | No | — |
-| `isOpenSource` | `boolean` | No | — |
-| `description` | `string` | No | — |
-| `role` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `endDate` | `string` | No | — |
-| `repoUrl` | `string` | No | — |
-| `demoUrl` | `string` | No | — |
-| `jobId` | `string` | No | Set when this project is linked to a work experience entry. |
+| `shortDescription` | `string \| null` | No | — |
+| `technologies` | `string[] \| null` | No | — |
+| `isCurrent` | `boolean \| null` | No | — |
+| `isRemote` | `boolean \| null` | No | — |
+| `isOpenSource` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `startDate` | `string \| null` | Yes | — |
+| `endDate` | `string \| null` | Yes | — |
+| `repoUrl` | `string \| null` | No | — |
+| `demoUrl` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | Set when this project is linked to a work experience entry. |
 
 
 
@@ -1062,8 +1054,8 @@ await corsair.remoet.api.projects.list({});
   isOpenSource?: boolean | null,
   description?: string | null,
   role?: string | null,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: string | null,
+  endDate: string | null,
   repoUrl?: string | null,
   demoUrl?: string | null,
   jobId?: string | null
@@ -1113,18 +1105,18 @@ await corsair.remoet.api.projects.update({ id: '65f0000000000000000000a2', isOpe
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `shortDescription` | `string` | No | — |
-| `technologies` | `string[]` | No | — |
-| `isCurrent` | `boolean` | No | — |
-| `isRemote` | `boolean` | No | — |
-| `isOpenSource` | `boolean` | No | — |
-| `description` | `string` | No | — |
-| `role` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `endDate` | `string` | No | — |
-| `repoUrl` | `string` | No | — |
-| `demoUrl` | `string` | No | — |
-| `jobId` | `string` | No | Set when this project is linked to a work experience entry. |
+| `shortDescription` | `string \| null` | No | — |
+| `technologies` | `string[] \| null` | No | — |
+| `isCurrent` | `boolean \| null` | No | — |
+| `isRemote` | `boolean \| null` | No | — |
+| `isOpenSource` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `startDate` | `string \| null` | Yes | — |
+| `endDate` | `string \| null` | Yes | — |
+| `repoUrl` | `string \| null` | No | — |
+| `demoUrl` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | Set when this project is linked to a work experience entry. |
 
 
 
@@ -1161,9 +1153,9 @@ await corsair.remoet.api.savedJobs.create({ jobId: '65f0000000000000000000b1' })
 | `id` | `string` | Yes | The saved-job entry id, used by savedJobs.update and savedJobs.delete. |
 | `jobId` | `string` | Yes | — |
 | `jobType` | `string` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `savedAt` | `string` | Yes | — |
-| `job` | `object` | No | — |
+| `job` | `object \| null` | Yes | — |
 | `locked` | `boolean` | No | — |
 | `lockedReason` | `string` | No | — |
 
@@ -1183,7 +1175,7 @@ await corsair.remoet.api.savedJobs.create({ jobId: '65f0000000000000000000b1' })
   applicationUrl?: string | null,
   isActive?: boolean | null,
   deactivatedAt?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1265,7 +1257,7 @@ await corsair.remoet.api.savedJobs.list({});
   jobType: string,
   note?: string | null,
   savedAt: string,
-  job?: {
+  job: {
     title: string,
     listingId?: string | null,
     techStack?: string[] | null,
@@ -1317,9 +1309,9 @@ await corsair.remoet.api.savedJobs.update({ savedJobId: '65f0000000000000000000b
 | `id` | `string` | Yes | The saved-job entry id, used by savedJobs.update and savedJobs.delete. |
 | `jobId` | `string` | Yes | — |
 | `jobType` | `string` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `savedAt` | `string` | Yes | — |
-| `job` | `object` | No | — |
+| `job` | `object \| null` | Yes | — |
 | `locked` | `boolean` | No | — |
 | `lockedReason` | `string` | No | — |
 
@@ -1339,7 +1331,7 @@ await corsair.remoet.api.savedJobs.update({ savedJobId: '65f0000000000000000000b
   applicationUrl?: string | null,
   isActive?: boolean | null,
   deactivatedAt?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1370,8 +1362,8 @@ await corsair.remoet.api.starredJobs.list({});
 | `locationQuery` | `string` | No | Filter by location or remote restrictions. |
 | `techStack` | `string[]` | No | — |
 | `techStackMatch` | `any \| all` | No | How techStack combines: "any" (at least one) or "all" (every one required). |
-| `remotePolicy` | `onsite \| hybrid \| remote \| remote-restricted[]` | No | — |
-| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `remotePolicy` | `(onsite \| hybrid \| remote \| remote-restricted)[]` | No | — |
+| `experienceLevel` | `(junior \| mid \| senior)[]` | No | — |
 | `salaryMin` | `number` | No | Minimum salary. |
 | `sortBy` | `createdAt \| remotePolicy \| salaryEnriched.from \| experienceLevel` | No | — |
 | `sortOrder` | `asc \| desc` | No | — |
@@ -1390,7 +1382,7 @@ await corsair.remoet.api.starredJobs.list({});
 | `page` | `number` | Yes | — |
 | `pageSize` | `number` | Yes | — |
 | `hasNextPage` | `boolean` | Yes | — |
-| `starsOverCap` | `object` | No | Present when the user holds more stars than the cap allows. |
+| `starsOverCap` | `object \| null` | No | Present when the user holds more stars than the cap allows. |
 
 <AccordionGroup>
 <Accordion title="jobs full type">
@@ -1433,7 +1425,7 @@ await corsair.remoet.api.starredJobs.list({});
   maxActiveStars: number,
   starsPendingDeletionAt?: string | null,
   note: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1546,18 +1538,18 @@ await corsair.remoet.api.workExperience.create({
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-| `userId` | `string` | No | — |
+| `userId` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
 | `startDate` | `string` | Yes | — |
-| `endDate` | `string` | No | Null or absent for a current role. |
-| `isCurrent` | `boolean` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `companyName` | `string` | No | — |
-| `technologies` | `string[]` | No | — |
-| `description` | `string` | No | — |
-| `isRemote` | `boolean` | No | — |
-| `companyUrl` | `string` | No | — |
-| `listingId` | `string` | No | Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match. |
+| `endDate` | `string \| null` | No | Null or absent for a current role. |
+| `isCurrent` | `boolean \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `technologies` | `string[] \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `isRemote` | `boolean \| null` | No | — |
+| `companyUrl` | `string \| null` | No | — |
+| `listingId` | `string \| null` | No | Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match. |
 
 
 
@@ -1675,18 +1667,18 @@ await corsair.remoet.api.workExperience.update({ id: '65f0000000000000000000a1',
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-| `userId` | `string` | No | — |
+| `userId` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
 | `startDate` | `string` | Yes | — |
-| `endDate` | `string` | No | Null or absent for a current role. |
-| `isCurrent` | `boolean` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `companyName` | `string` | No | — |
-| `technologies` | `string[]` | No | — |
-| `description` | `string` | No | — |
-| `isRemote` | `boolean` | No | — |
-| `companyUrl` | `string` | No | — |
-| `listingId` | `string` | No | Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match. |
+| `endDate` | `string \| null` | No | Null or absent for a current role. |
+| `isCurrent` | `boolean \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `technologies` | `string[] \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `isRemote` | `boolean \| null` | No | — |
+| `companyUrl` | `string \| null` | No | — |
+| `listingId` | `string \| null` | No | Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match. |
 
 
 

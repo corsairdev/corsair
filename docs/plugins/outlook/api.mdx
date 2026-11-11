@@ -276,17 +276,17 @@ await corsair.outlook.api.contacts.create({});
 | `displayName` | `string` | No | — |
 | `givenName` | `string` | No | — |
 | `surname` | `string` | No | — |
-| `middleName` | `string` | No | — |
-| `nickName` | `string` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `nickName` | `string \| null` | No | — |
 | `emailAddresses` | `object[]` | No | — |
-| `mobilePhone` | `string` | No | — |
+| `mobilePhone` | `string \| null` | No | — |
 | `homePhones` | `string[]` | No | — |
 | `businessPhones` | `string[]` | No | — |
-| `jobTitle` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `department` | `string` | No | — |
-| `officeLocation` | `string` | No | — |
-| `birthday` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `officeLocation` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
 | `personalNotes` | `string` | No | — |
 | `parentFolderId` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
@@ -468,17 +468,17 @@ await corsair.outlook.api.contacts.update({});
 | `displayName` | `string` | No | — |
 | `givenName` | `string` | No | — |
 | `surname` | `string` | No | — |
-| `middleName` | `string` | No | — |
-| `nickName` | `string` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `nickName` | `string \| null` | No | — |
 | `emailAddresses` | `object[]` | No | — |
-| `mobilePhone` | `string` | No | — |
+| `mobilePhone` | `string \| null` | No | — |
 | `homePhones` | `string[]` | No | — |
 | `businessPhones` | `string[]` | No | — |
-| `jobTitle` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `department` | `string` | No | — |
-| `officeLocation` | `string` | No | — |
-| `birthday` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `officeLocation` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
 | `personalNotes` | `string` | No | — |
 | `parentFolderId` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
@@ -616,16 +616,16 @@ await corsair.outlook.api.events.create({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `recurrence` | `object` | No | — |
-| `responseStatus` | `object` | No | — |
+| `recurrence` | `Record<string, any> \| null` | No | — |
+| `responseStatus` | `Record<string, any>` | No | — |
 | `responseRequested` | `boolean` | No | — |
-| `seriesMasterId` | `string` | No | — |
-| `transactionId` | `string` | No | — |
+| `seriesMasterId` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `onlineMeeting` | `object` | No | — |
+| `onlineMeeting` | `object \| null` | No | — |
 | `onlineMeetingProvider` | `string` | No | — |
-| `onlineMeetingUrl` | `string` | No | — |
+| `onlineMeetingUrl` | `string \| null` | No | — |
 | `reminderMinutesBeforeStart` | `number` | No | — |
 | `allowNewTimeProposals` | `boolean` | No | — |
 | `hasAttachments` | `boolean` | No | — |
@@ -667,8 +667,7 @@ await corsair.outlook.api.events.create({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }
 ```
 </Accordion>
@@ -678,8 +677,7 @@ await corsair.outlook.api.events.create({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -689,8 +687,7 @@ await corsair.outlook.api.events.create({});
 ```ts
 {
   type?: string,
-  status?: {
-  },
+  status?: Record<string, any>,
   emailAddress?: {
     name?: string,
     address?: string
@@ -709,22 +706,6 @@ await corsair.outlook.api.events.create({});
 ```
 </Accordion>
 
-<Accordion title="recurrence full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="responseStatus full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="onlineMeeting full type">
 
 ```ts
@@ -732,7 +713,7 @@ await corsair.outlook.api.events.create({});
   joinUrl?: string,
   conferenceId?: string,
   tollNumber?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -761,17 +742,7 @@ await corsair.outlook.api.events.decline({});
 | `comment` | `string` | No | — |
 | `user_id` | `string` | No | — |
 | `sendResponse` | `boolean` | No | — |
-| `proposedNewTime` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="proposedNewTime full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `proposedNewTime` | `Record<string, any>` | No | — |
 
 
 
@@ -834,41 +805,15 @@ await corsair.outlook.api.events.findMeetingTimes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_id` | `string` | No | — |
-| `attendees` | `object[]` | No | — |
-| `timeConstraint` | `object` | No | — |
-| `locationConstraint` | `object` | No | — |
+| `attendees` | `Record<string, any>[]` | No | — |
+| `timeConstraint` | `Record<string, any>` | No | — |
+| `locationConstraint` | `Record<string, any>` | No | — |
 | `meetingDuration` | `string` | No | — |
 | `maxCandidates` | `number` | No | — |
 | `isOrganizerOptional` | `boolean` | No | — |
 | `returnSuggestionReasons` | `boolean` | No | — |
 | `minimumAttendeePercentage` | `number` | No | — |
 | `prefer_timezone` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="attendees full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="timeConstraint full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="locationConstraint full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -901,8 +846,7 @@ await corsair.outlook.api.events.findMeetingTimes({});
   attendeeAvailability?: {
     attendee?: {
       type?: string,
-      status?: {
-      },
+      status?: Record<string, any>,
       emailAddress?: {
         name?: string,
         address?: string
@@ -912,8 +856,7 @@ await corsair.outlook.api.events.findMeetingTimes({});
   }[],
   locations?: {
     displayName?: string,
-    address?: {
-    }
+    address?: Record<string, any>
   }[]
 }[]
 ```
@@ -974,16 +917,16 @@ await corsair.outlook.api.events.get({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `recurrence` | `object` | No | — |
-| `responseStatus` | `object` | No | — |
+| `recurrence` | `Record<string, any> \| null` | No | — |
+| `responseStatus` | `Record<string, any>` | No | — |
 | `responseRequested` | `boolean` | No | — |
-| `seriesMasterId` | `string` | No | — |
-| `transactionId` | `string` | No | — |
+| `seriesMasterId` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `onlineMeeting` | `object` | No | — |
+| `onlineMeeting` | `object \| null` | No | — |
 | `onlineMeetingProvider` | `string` | No | — |
-| `onlineMeetingUrl` | `string` | No | — |
+| `onlineMeetingUrl` | `string \| null` | No | — |
 | `reminderMinutesBeforeStart` | `number` | No | — |
 | `allowNewTimeProposals` | `boolean` | No | — |
 | `hasAttachments` | `boolean` | No | — |
@@ -1025,8 +968,7 @@ await corsair.outlook.api.events.get({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1036,8 +978,7 @@ await corsair.outlook.api.events.get({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1047,8 +988,7 @@ await corsair.outlook.api.events.get({});
 ```ts
 {
   type?: string,
-  status?: {
-  },
+  status?: Record<string, any>,
   emailAddress?: {
     name?: string,
     address?: string
@@ -1067,22 +1007,6 @@ await corsair.outlook.api.events.get({});
 ```
 </Accordion>
 
-<Accordion title="recurrence full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="responseStatus full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="onlineMeeting full type">
 
 ```ts
@@ -1090,7 +1014,7 @@ await corsair.outlook.api.events.get({});
   joinUrl?: string,
   conferenceId?: string,
   tollNumber?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1149,18 +1073,8 @@ await corsair.outlook.api.events.getSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `value` | `object[]` | No | — |
+| `value` | `Record<string, any>[]` | No | — |
 | `@odata.context` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1224,18 +1138,15 @@ await corsair.outlook.api.events.list({});
   },
   location?: {
     displayName?: string,
-    address?: {
-    }
+    address?: Record<string, any>
   },
   locations?: {
     displayName?: string,
-    address?: {
-    }
+    address?: Record<string, any>
   }[],
   attendees?: {
     type?: string,
-    status?: {
-    },
+    status?: Record<string, any>,
     emailAddress?: {
       name?: string,
       address?: string
@@ -1259,10 +1170,8 @@ await corsair.outlook.api.events.list({});
   webLink?: string,
   changeKey?: string,
   categories?: string[],
-  recurrence?: {
-  } | null,
-  responseStatus?: {
-  },
+  recurrence?: Record<string, any> | null,
+  responseStatus?: Record<string, any>,
   responseRequested?: boolean,
   seriesMasterId?: string | null,
   transactionId?: string | null,
@@ -1307,32 +1216,14 @@ await corsair.outlook.api.events.update({});
 | `event_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `subject` | `string` | No | — |
-| `body` | `object` | No | — |
+| `body` | `Record<string, any>` | No | — |
 | `start_datetime` | `string` | No | — |
 | `end_datetime` | `string` | No | — |
 | `time_zone` | `string` | No | — |
 | `location` | `string` | No | — |
-| `attendees` | `object[]` | No | — |
+| `attendees` | `Record<string, any>[]` | No | — |
 | `show_as` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attendees full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1364,16 +1255,16 @@ await corsair.outlook.api.events.update({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `recurrence` | `object` | No | — |
-| `responseStatus` | `object` | No | — |
+| `recurrence` | `Record<string, any> \| null` | No | — |
+| `responseStatus` | `Record<string, any>` | No | — |
 | `responseRequested` | `boolean` | No | — |
-| `seriesMasterId` | `string` | No | — |
-| `transactionId` | `string` | No | — |
+| `seriesMasterId` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `onlineMeeting` | `object` | No | — |
+| `onlineMeeting` | `object \| null` | No | — |
 | `onlineMeetingProvider` | `string` | No | — |
-| `onlineMeetingUrl` | `string` | No | — |
+| `onlineMeetingUrl` | `string \| null` | No | — |
 | `reminderMinutesBeforeStart` | `number` | No | — |
 | `allowNewTimeProposals` | `boolean` | No | — |
 | `hasAttachments` | `boolean` | No | — |
@@ -1415,8 +1306,7 @@ await corsair.outlook.api.events.update({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1426,8 +1316,7 @@ await corsair.outlook.api.events.update({});
 ```ts
 {
   displayName?: string,
-  address?: {
-  }
+  address?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1437,8 +1326,7 @@ await corsair.outlook.api.events.update({});
 ```ts
 {
   type?: string,
-  status?: {
-  },
+  status?: Record<string, any>,
   emailAddress?: {
     name?: string,
     address?: string
@@ -1457,22 +1345,6 @@ await corsair.outlook.api.events.update({});
 ```
 </Accordion>
 
-<Accordion title="recurrence full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="responseStatus full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="onlineMeeting full type">
 
 ```ts
@@ -1480,7 +1352,7 @@ await corsair.outlook.api.events.update({});
   joinUrl?: string,
   conferenceId?: string,
   tollNumber?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1725,18 +1597,10 @@ await corsair.outlook.api.messages.addAttachment({});
 | `contentId` | `string` | No | — |
 | `contentLocation` | `string` | No | — |
 | `isInline` | `boolean` | No | — |
-| `item` | `object` | No | — |
+| `item` | `Record<string, any>` | No | — |
 | `attachment` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachment full type">
 
 ```ts
@@ -1845,8 +1709,7 @@ await corsair.outlook.api.messages.batchUpdate({});
 ```ts
 {
   message_id: string,
-  patch: {
-  }
+  patch: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1903,17 +1766,7 @@ await corsair.outlook.api.messages.createDraft({});
 | `to_recipients` | `string[]` | No | — |
 | `cc_recipients` | `string[]` | No | — |
 | `bcc_recipients` | `string[]` | No | — |
-| `attachment` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attachment full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attachment` | `Record<string, any>` | No | — |
 
 
 
@@ -1944,12 +1797,12 @@ await corsair.outlook.api.messages.createDraft({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `flag` | `object` | No | — |
+| `flag` | `Record<string, any>` | No | — |
 | `internetMessageId` | `string` | No | — |
 | `conversationIndex` | `string` | No | — |
 | `inferenceClassification` | `string` | No | — |
-| `isReadReceiptRequested` | `boolean` | No | — |
-| `isDeliveryReceiptRequested` | `boolean` | No | — |
+| `isReadReceiptRequested` | `boolean \| null` | No | — |
+| `isDeliveryReceiptRequested` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2019,14 +1872,6 @@ await corsair.outlook.api.messages.createDraft({});
   name?: string,
   address?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="flag full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2148,12 +1993,12 @@ await corsair.outlook.api.messages.get({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `flag` | `object` | No | — |
+| `flag` | `Record<string, any>` | No | — |
 | `internetMessageId` | `string` | No | — |
 | `conversationIndex` | `string` | No | — |
 | `inferenceClassification` | `string` | No | — |
-| `isReadReceiptRequested` | `boolean` | No | — |
-| `isDeliveryReceiptRequested` | `boolean` | No | — |
+| `isReadReceiptRequested` | `boolean \| null` | No | — |
+| `isDeliveryReceiptRequested` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2223,14 +2068,6 @@ await corsair.outlook.api.messages.get({});
   name?: string,
   address?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="flag full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2337,8 +2174,7 @@ await corsair.outlook.api.messages.list({});
   webLink?: string,
   changeKey?: string,
   categories?: string[],
-  flag?: {
-  },
+  flag?: Record<string, any>,
   internetMessageId?: string,
   conversationIndex?: string,
   inferenceClassification?: string,
@@ -2402,12 +2238,12 @@ await corsair.outlook.api.messages.move({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `flag` | `object` | No | — |
+| `flag` | `Record<string, any>` | No | — |
 | `internetMessageId` | `string` | No | — |
 | `conversationIndex` | `string` | No | — |
 | `inferenceClassification` | `string` | No | — |
-| `isReadReceiptRequested` | `boolean` | No | — |
-| `isDeliveryReceiptRequested` | `boolean` | No | — |
+| `isReadReceiptRequested` | `boolean \| null` | No | — |
+| `isDeliveryReceiptRequested` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2477,14 +2313,6 @@ await corsair.outlook.api.messages.move({});
   name?: string,
   address?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="flag full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2577,8 +2405,7 @@ await corsair.outlook.api.messages.query({});
   webLink?: string,
   changeKey?: string,
   categories?: string[],
-  flag?: {
-  },
+  flag?: Record<string, any>,
   internetMessageId?: string,
   conversationIndex?: string,
   inferenceClassification?: string,
@@ -2622,17 +2449,7 @@ await corsair.outlook.api.messages.reply({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status_code` | `number` | No | — |
-| `response_body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="response_body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `response_body` | `Record<string, any>` | No | — |
 
 
 
@@ -2720,8 +2537,7 @@ await corsair.outlook.api.messages.search({});
   webLink?: string,
   changeKey?: string,
   categories?: string[],
-  flag?: {
-  },
+  flag?: Record<string, any>,
   internetMessageId?: string,
   conversationIndex?: string,
   inferenceClassification?: string,
@@ -2762,17 +2578,7 @@ await corsair.outlook.api.messages.send({});
 | `bcc_emails` | `string[]` | No | — |
 | `from_address` | `string` | No | — |
 | `save_to_sent_items` | `boolean` | No | — |
-| `attachment` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attachment full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attachment` | `Record<string, any>` | No | — |
 
 
 
@@ -2781,17 +2587,7 @@ await corsair.outlook.api.messages.send({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status_code` | `number` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2850,56 +2646,14 @@ await corsair.outlook.api.messages.update({});
 | `subject` | `string` | No | — |
 | `importance` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `to_recipients` | `object[]` | No | — |
-| `cc_recipients` | `object[]` | No | — |
-| `bcc_recipients` | `object[]` | No | — |
-| `reply_to` | `object[]` | No | — |
-| `flag` | `object` | No | — |
+| `to_recipients` | `Record<string, any>[]` | No | — |
+| `cc_recipients` | `Record<string, any>[]` | No | — |
+| `bcc_recipients` | `Record<string, any>[]` | No | — |
+| `reply_to` | `Record<string, any>[]` | No | — |
+| `flag` | `Record<string, any>` | No | — |
 | `inference_classification` | `string` | No | — |
 | `is_read_receipt_requested` | `boolean` | No | — |
 | `is_delivery_receipt_requested` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="to_recipients full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="cc_recipients full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="bcc_recipients full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="reply_to full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="flag full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2930,12 +2684,12 @@ await corsair.outlook.api.messages.update({});
 | `webLink` | `string` | No | — |
 | `changeKey` | `string` | No | — |
 | `categories` | `string[]` | No | — |
-| `flag` | `object` | No | — |
+| `flag` | `Record<string, any>` | No | — |
 | `internetMessageId` | `string` | No | — |
 | `conversationIndex` | `string` | No | — |
 | `inferenceClassification` | `string` | No | — |
-| `isReadReceiptRequested` | `boolean` | No | — |
-| `isDeliveryReceiptRequested` | `boolean` | No | — |
+| `isReadReceiptRequested` | `boolean \| null` | No | — |
+| `isDeliveryReceiptRequested` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -3005,14 +2759,6 @@ await corsair.outlook.api.messages.update({});
   name?: string,
   address?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="flag full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

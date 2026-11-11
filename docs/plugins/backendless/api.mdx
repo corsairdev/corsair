@@ -56,7 +56,7 @@ await corsair.backendless.api.counters.reset({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -118,7 +118,7 @@ await corsair.backendless.api.data.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -188,7 +188,7 @@ await corsair.backendless.api.files.count({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | — |
+| `path` | `string` | No | Defaults to "". |
 | `pattern` | `string` | No | — |
 | `recursive` | `boolean` | No | — |
 | `directoryCount` | `boolean` | No | — |
@@ -220,7 +220,7 @@ await corsair.backendless.api.files.createDirectory({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -246,7 +246,7 @@ await corsair.backendless.api.files.delete({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -271,7 +271,7 @@ await corsair.backendless.api.files.deleteDirectory({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -292,7 +292,7 @@ await corsair.backendless.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | — |
+| `path` | `string` | No | Defaults to "". |
 | `pattern` | `string` | No | — |
 | `sub` | `boolean` | No | — |
 | `pageSize` | `number` | No | — |
@@ -368,7 +368,7 @@ await corsair.backendless.api.hive.create({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -397,17 +397,7 @@ await corsair.backendless.api.hive.keyItems({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-any[] | string | number | boolean | null | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `any[] \| string \| number \| boolean \| null \| Record<string, any>`
 
 
 ---
@@ -461,17 +451,7 @@ await corsair.backendless.api.hive.values({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -496,19 +476,9 @@ await corsair.backendless.api.messaging.publish({});
 |------|------|----------|-------------|
 | `channel` | `string` | Yes | — |
 | `message` | `any` | Yes | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `subtopic` | `string` | No | — |
 | `publishAt` | `string \| number` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -516,7 +486,7 @@ await corsair.backendless.api.messaging.publish({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `errorMessage` | `string` | No | — |
+| `errorMessage` | `string \| null` | No | — |
 | `messageId` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
 
@@ -550,7 +520,7 @@ await corsair.backendless.api.permissions.grant({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -579,7 +549,7 @@ await corsair.backendless.api.permissions.revoke({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -606,7 +576,7 @@ await corsair.backendless.api.users.delete({});
 
 
 
-**Output:** `object`
+**Output:** `number \| object \| null \| undefined \| ""`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -614,7 +584,7 @@ await corsair.backendless.api.users.delete({});
 ```ts
 number | {
   deletionTime?: number
-} | null | undefined |
+} | null | undefined | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -650,8 +620,8 @@ await corsair.backendless.api.users.find({});
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
 | `created` | `number` | No | — |
-| `updated` | `number` | No | — |
-| `ownerId` | `string` | No | — |
+| `updated` | `number \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
 | `user-token` | `string` | No | — |
 
 
@@ -723,7 +693,7 @@ await corsair.backendless.api.users.logout({});
 **Input:** _empty object_
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -748,7 +718,7 @@ await corsair.backendless.api.users.passwordRecovery({});
 
 
 
-**Output:** `null \| undefined \| `
+**Output:** `null \| undefined \| ""`
 
 
 ---
@@ -771,17 +741,7 @@ await corsair.backendless.api.users.register({});
 |------|------|----------|-------------|
 | `identity` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | No | — |
 
 
 
@@ -793,8 +753,8 @@ await corsair.backendless.api.users.register({});
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
 | `created` | `number` | No | — |
-| `updated` | `number` | No | — |
-| `ownerId` | `string` | No | — |
+| `updated` | `number \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
 | `user-token` | `string` | No | — |
 
 
@@ -818,17 +778,7 @@ await corsair.backendless.api.users.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `properties` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | Yes | — |
 
 
 
@@ -840,8 +790,8 @@ await corsair.backendless.api.users.update({});
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
 | `created` | `number` | No | — |
-| `updated` | `number` | No | — |
-| `ownerId` | `string` | No | — |
+| `updated` | `number \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
 | `user-token` | `string` | No | — |
 
 

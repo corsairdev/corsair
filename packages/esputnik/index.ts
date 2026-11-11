@@ -347,7 +347,7 @@ const esputnikEndpointMeta = {
 		description: 'Add emails to the eSputnik unsubscribe list',
 	},
 	'contacts.deleteFromUnsubscribed': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Remove emails from the eSputnik unsubscribe list',
 	},
 	'contacts.getGroupContacts': {
@@ -716,7 +716,7 @@ const esputnikEndpointMeta = {
 		description: 'Get the status of an eSputnik preprocessor file upload',
 	},
 	'preprocessor.updatePreprocessorFile': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Replace the data of an eSputnik preprocessor file',
 	},
 	'preprocessor.uploadPreprocessorFile': {

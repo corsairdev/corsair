@@ -27,7 +27,7 @@ await corsair.unipile.api.accounts.createAuthLink({ providers: 'linkedin', redir
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `providers` | `* \| *:MESSAGING \| *:EMAILS \| *:CALENDAR \| *:SOCIAL \| linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram \| linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram[]` | No | Providers to offer when linking a new account, e.g. linkedin. Omit when reconnecting with account_id |
+| `providers` | `* \| *:MESSAGING \| *:EMAILS \| *:CALENDAR \| *:SOCIAL \| linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram \| (linkedin \| mock \| whatsapp \| google \| outlook \| imap \| telegram \| instagram)[]` | No | Providers to offer when linking a new account, e.g. linkedin. Omit when reconnecting with account_id |
 | `account_id` | `string` | No | Reconnect or reconfigure this existing account instead of linking a new one |
 | `expires_on` | `string` | No | When the link stops working, ISO 8601 with a timezone. Defaults to one hour from now |
 | `redirect_uri` | `string` | Yes | Where to send the user afterwards. On success Unipile adds account_id, provider and state to the query; on failure error_title |
@@ -42,8 +42,8 @@ await corsair.unipile.api.accounts.createAuthLink({ providers: 'linkedin', redir
 ```ts
 {
   linkedin?: {
-    allow_methods?: credentials | cookies | unilogin[],
-    products?: classic | company | recruiter | sales_navigator[],
+    allow_methods?: (credentials | cookies | unilogin)[],
+    products?: (classic | company | recruiter | sales_navigator)[],
     allow_product_selection?: boolean,
     auto_proxy_config?: {
       country?: string,
@@ -67,7 +67,7 @@ await corsair.unipile.api.accounts.createAuthLink({ providers: 'linkedin', redir
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `link` | `string` | Yes | Hosted Auth URL to send the user to |
 
 
@@ -98,17 +98,17 @@ await corsair.unipile.api.accounts.get({ account_id: 'acc_9f2c1d7e' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `user_id` | `string` | No | The owner's user ID on the provider |
+| `name` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | The owner's user ID on the provider |
 | `provider` | `string` | Yes | — |
 | `status` | `string` | Yes | running, errored, disconnected (needs re-authentication), degraded or partial |
-| `is_locked` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -116,11 +116,9 @@ await corsair.unipile.api.accounts.get({ account_id: 'acc_9f2c1d7e' });
 ```ts
 {
   connection_method?: string | null,
-  products_connection_status?: {
-  } | null,
-  custom_data?: {
-  } | null
-}
+  products_connection_status?: Record<string, string> | null,
+  custom_data?: Record<string, string> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -158,9 +156,9 @@ await corsair.unipile.api.accounts.list({ provider: 'linkedin', status: 'running
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
-| `has_more` | `boolean` | No | — |
+| `has_more` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -179,10 +177,8 @@ await corsair.unipile.api.accounts.list({ provider: 'linkedin', status: 'running
   account_scope_id?: string | null,
   metadata?: {
     connection_method?: string | null,
-    products_connection_status?: {
-    } | null,
-    custom_data?: {
-    } | null
+    products_connection_status?: Record<string, string> | null,
+    custom_data?: Record<string, string> | null
   } | null
 }[]
 ```
@@ -241,20 +237,12 @@ await corsair.unipile.api.accounts.update({});
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
 | `account_scope_id` | `string` | No | The Scope to permanently assign to an unscoped Account. This field requires a Service API Key, and the Scope cannot be removed or replaced after assignment. |
-| `metadata` | `object` | No | Custom key-value data for the account. Replaces the account `metadata.custom_data` field; other metadata fields are not modified. Any fields not provided will be removed. |
+| `metadata` | `Record<string, string>` | No | Custom key-value data for the account. Replaces the account `metadata.custom_data` field; other metadata fields are not modified. Any fields not provided will be removed. |
 | `auto_proxy_country` | `string` | No | The rotation country to use for Automatic Proxy Protection. Choose from the countries where Unipile offers automatic proxies. A proxy may be temporarily unavailable even in a country included in the offering. |
 | `allow_country_fallback` | `boolean` | No | Whether Automatic Proxy Protection may use an available proxy from another country when none is available in the rotation country, during authentication and throughout the account lifetime. Defaults to true. |
-| `proxy` | `object` | No | A new proxy configuration for the account. This will restart the account. Set to `null` to remove the proxy. Removing the proxy will revert the account to using Automatic Proxy Protection if required for the provider. |
+| `proxy` | `object \| null` | No | A new proxy configuration for the account. This will restart the account. Set to `null` to remove the proxy. Removing the proxy will revert the account to using Automatic Proxy Protection if required for the provider. |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="proxy full type">
 
 ```ts
@@ -264,7 +252,7 @@ await corsair.unipile.api.accounts.update({});
   username?: string,
   password?: string,
   protocol?: https | http | socks5 | socks4
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -277,18 +265,18 @@ await corsair.unipile.api.accounts.update({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | The type of the returned object. |
 | `user_id` | `string` | Yes | The ID of the user that owns the account for the provider. |
-| `name` | `string` | No | The name of the account. This is usually the display name or public identifier (phone number, email address, etc.) of the user that owns the account. |
+| `name` | `string \| null` | No | The name of the account. This is usually the display name or public identifier (phone number, email address, etc.) of the user that owns the account. |
 | `created_at` | `string` | Yes | The date and time the account was linked with Unipile. |
 | `id` | `string` | Yes | ID of the account. |
 | `application_id` | `string` | Yes | ID of the parent application. |
-| `account_scope_id` | `string` | No | ID of the Scope assigned to the Account. Once assigned, the Scope cannot be removed or replaced. |
+| `account_scope_id` | `string \| null \| null` | No | ID of the Scope assigned to the Account. Once assigned, the Scope cannot be removed or replaced. |
 | `status` | `string` | Yes | The current status of the account. - `running` is Operational. - `errored` is Service Interuption. - `disconnected` requires authentication. |
 | `is_locked` | `boolean` | Yes | Whether API access to the account is locked. |
 | `provider` | `string` | Yes | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
-| `oauth_scope` | `string` | No | If the provider is OAuth, this is the scope of comma-separated permissions granted to the account. |
+| `oauth_scope` | `string \| null` | No | If the provider is OAuth, this is the scope of comma-separated permissions granted to the account. |
 | `metadata` | `object` | Yes | Metadata associated with the Account. |
-| `initial_sync` | `object` | No | Sync details if the account has initial sync enabled. |
-| `proxy` | `object` | No | The proxy used for the account. |
+| `initial_sync` | `object \| null` | No | Sync details if the account has initial sync enabled. |
+| `proxy` | `object \| null` | No | The proxy used for the account. |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -300,10 +288,8 @@ await corsair.unipile.api.accounts.update({});
   connection_method?: string | null,
   v1_account_id?: string | null,
   v1_instance_port?: number | null,
-  products_connection_status?: {
-  } | null,
-  custom_data?: {
-  } | null
+  products_connection_status?: Record<string, any> | null,
+  custom_data?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -314,7 +300,7 @@ await corsair.unipile.api.accounts.update({});
 {
   status: string,
   started_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -322,13 +308,13 @@ await corsair.unipile.api.accounts.update({});
 
 ```ts
 {
-  country?: string | null,
+  country: string | null,
   auto_proxy: boolean,
   host?: string | null,
   port?: number | null,
   username?: string | null,
   protocol?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -461,7 +447,7 @@ await corsair.unipile.api.apiKeys.list({});
   expires_at: string,
   name: string,
   role: string,
-  account_scope_id?: string | null
+  account_scope_id: string | null
 }[]
 ```
 </Accordion>
@@ -498,10 +484,10 @@ await corsair.unipile.api.auth.requestCheckpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
-| `checkpoint` | `object` | No | The details of the checkpoint that user needs to solve. |
-| `intent_id` | `string` | No | The ID of the auth intent. This should be used in Solve Checkpoint. |
-| `qrcode` | `string` | No | The QR Code to scan. |
+| `object` | `string \| null` | No | — |
+| `checkpoint` | `object \| null` | No | The details of the checkpoint that user needs to solve. |
+| `intent_id` | `string \| null` | No | The ID of the auth intent. This should be used in Solve Checkpoint. |
+| `qrcode` | `string \| null` | No | The QR Code to scan. |
 
 <AccordionGroup>
 <Accordion title="checkpoint full type">
@@ -517,7 +503,7 @@ await corsair.unipile.api.auth.requestCheckpoint({});
   contracts?: any[] | null,
   products?: any[] | null,
   challenges?: any[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -581,24 +567,24 @@ await corsair.unipile.api.auth.solveCheckpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
-| `checkpoint` | `object` | No | The details of the checkpoint that user needs to solve. |
-| `intent_id` | `string` | No | The ID of the auth intent. This should be used in Solve Checkpoint. |
-| `qrcode` | `string` | No | The QR Code to scan. |
-| `url` | `string` | No | The URL to redirect to start the oauth flow of the provider. |
-| `user_id` | `string` | No | The ID of the user that owns the account for the provider. |
-| `name` | `string` | No | The name of the account. This is usually the display name or public identifier (phone number, email address, etc.) of the user that owns the account. |
-| `created_at` | `string` | No | The date and time the account was linked with Unipile. |
-| `id` | `string` | No | ID of the account. |
-| `application_id` | `string` | No | ID of the parent application. |
-| `account_scope_id` | `string` | No | ID of the Scope assigned to the Account. Once assigned, the Scope cannot be removed or replaced. |
-| `status` | `string` | No | The current status of the account. - `running` is Operational. - `errored` is Service Interuption. - `disconnected` requires authentication. |
-| `is_locked` | `boolean` | No | Whether API access to the account is locked. |
-| `provider` | `string` | No | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
-| `oauth_scope` | `string` | No | If the provider is OAuth, this is the scope of comma-separated permissions granted to the account. |
-| `metadata` | `object` | No | Metadata associated with the Account. |
-| `initial_sync` | `object` | No | Sync details if the account has initial sync enabled. |
-| `proxy` | `object` | No | The proxy used for the account. |
+| `object` | `string \| null` | No | — |
+| `checkpoint` | `object \| null` | No | The details of the checkpoint that user needs to solve. |
+| `intent_id` | `string \| null` | No | The ID of the auth intent. This should be used in Solve Checkpoint. |
+| `qrcode` | `string \| null` | No | The QR Code to scan. |
+| `url` | `string \| null` | No | The URL to redirect to start the oauth flow of the provider. |
+| `user_id` | `string \| null` | No | The ID of the user that owns the account for the provider. |
+| `name` | `string \| null` | No | The name of the account. This is usually the display name or public identifier (phone number, email address, etc.) of the user that owns the account. |
+| `created_at` | `string \| null` | No | The date and time the account was linked with Unipile. |
+| `id` | `string \| null` | No | ID of the account. |
+| `application_id` | `string \| null` | No | ID of the parent application. |
+| `account_scope_id` | `string \| null \| null` | No | ID of the Scope assigned to the Account. Once assigned, the Scope cannot be removed or replaced. |
+| `status` | `string \| null` | No | The current status of the account. - `running` is Operational. - `errored` is Service Interuption. - `disconnected` requires authentication. |
+| `is_locked` | `boolean \| null` | No | Whether API access to the account is locked. |
+| `provider` | `string \| null` | No | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
+| `oauth_scope` | `string \| null` | No | If the provider is OAuth, this is the scope of comma-separated permissions granted to the account. |
+| `metadata` | `object \| null` | No | Metadata associated with the Account. |
+| `initial_sync` | `object \| null` | No | Sync details if the account has initial sync enabled. |
+| `proxy` | `object \| null` | No | The proxy used for the account. |
 
 <AccordionGroup>
 <Accordion title="checkpoint full type">
@@ -614,7 +600,7 @@ await corsair.unipile.api.auth.solveCheckpoint({});
   contracts?: any[] | null,
   products?: any[] | null,
   challenges?: any[] | null
-}
+} | null
 ```
 </Accordion>
 
@@ -627,11 +613,9 @@ await corsair.unipile.api.auth.solveCheckpoint({});
   connection_method?: string | null,
   v1_account_id?: string | null,
   v1_instance_port?: number | null,
-  products_connection_status?: {
-  } | null,
-  custom_data?: {
-  } | null
-}
+  products_connection_status?: Record<string, any> | null,
+  custom_data?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 
@@ -641,7 +625,7 @@ await corsair.unipile.api.auth.solveCheckpoint({});
 {
   status: string,
   started_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -649,13 +633,13 @@ await corsair.unipile.api.auth.solveCheckpoint({});
 
 ```ts
 {
-  country?: string | null,
+  country: string | null,
   auto_proxy: boolean,
   host?: string | null,
   port?: number | null,
   username?: string | null,
   protocol?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -685,17 +669,7 @@ await corsair.unipile.api.auth.startIntent({});
 | `account_scope_id` | `string` | No | Scope to assign a newly linked account to |
 | `state` | `string` | No | Returned in the account.add / account.reconnect webhook |
 | `unilogin` | `boolean` | No | LinkedIn and Instagram: connect through the UniLogin extension instead of credentials |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -833,30 +807,30 @@ await corsair.unipile.api.calendarEvents.create({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar event. |
-| `master_event_id` | `string` | No | If event instance, the ID of the master event. |
+| `master_event_id` | `string \| null` | No | If event instance, the ID of the master event. |
 | `calendar_id` | `string` | Yes | The ID of the calendar the event belongs to. |
-| `ical_uid` | `string` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
+| `ical_uid` | `string \| null` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
 | `created_at` | `string` | Yes | The date the event was created. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SSZ). |
 | `updated_at` | `string` | Yes | The date the event was last updated. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `title` | `string` | Yes | The title of the event. |
-| `body` | `string` | No | The body of the event. |
-| `location` | `string` | No | The location of the event. |
+| `body` | `string \| null` | No | The body of the event. |
+| `location` | `string \| null` | No | The location of the event. |
 | `is_cancelled` | `boolean` | Yes | Is the event cancelled. |
 | `is_all_day` | `boolean` | Yes | Is the event all day. |
 | `is_attendees_list_hidden` | `boolean` | Yes | Is the attendees list hidden for attendees. |
-| `attendees` | `object[]` | No | The attendees of the event. |
+| `attendees` | `object[] \| null` | No | The attendees of the event. |
 | `start` | `object` | Yes | The start date and time of the event. |
 | `end` | `object` | Yes | The end date and time of the event. |
-| `recurrence` | `string[]` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
+| `recurrence` | `string[] \| null` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
 | `organizer` | `object` | Yes | — |
-| `conference` | `object` | No | — |
+| `conference` | `object \| null` | No | — |
 | `visibility` | `string` | Yes | The visibility of the event. - `public` is visible to all. - `private` is visible only to the calendar owner. |
 | `transparency` | `string` | Yes | The transparency of the event. - `opaque` does block time on the calendar and is equivalent to setting Show me as to Busy in the Calendar UI. |
 | `event_type` | `string` | Yes | The type of the event (`birthday`, `fromGmail`, `outOfOffice`...) |
-| `timezone` | `string` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
-| `background_color` | `string` | No | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the event in hexadecimal format. |
-| `specifics` | `any` | No | Object containing provider-specific calendar event data. |
+| `timezone` | `string \| null` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
+| `background_color` | `string \| null` | No | Background color of the calendar in hexadecimal format. |
+| `text_color` | `string \| null` | No | Foreground color of the event in hexadecimal format. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar event data. |
 
 <AccordionGroup>
 <Accordion title="attendees full type">
@@ -872,7 +846,7 @@ await corsair.unipile.api.calendarEvents.create({});
   is_resource: boolean,
   type: string,
   response_status: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -918,7 +892,7 @@ await corsair.unipile.api.calendarEvents.create({});
   hosting: string,
   conference_id?: string | null,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -987,30 +961,30 @@ await corsair.unipile.api.calendarEvents.get({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar event. |
-| `master_event_id` | `string` | No | If event instance, the ID of the master event. |
+| `master_event_id` | `string \| null` | No | If event instance, the ID of the master event. |
 | `calendar_id` | `string` | Yes | The ID of the calendar the event belongs to. |
-| `ical_uid` | `string` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
+| `ical_uid` | `string \| null` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
 | `created_at` | `string` | Yes | The date the event was created. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SSZ). |
 | `updated_at` | `string` | Yes | The date the event was last updated. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `title` | `string` | Yes | The title of the event. |
-| `body` | `string` | No | The body of the event. |
-| `location` | `string` | No | The location of the event. |
+| `body` | `string \| null` | No | The body of the event. |
+| `location` | `string \| null` | No | The location of the event. |
 | `is_cancelled` | `boolean` | Yes | Is the event cancelled. |
 | `is_all_day` | `boolean` | Yes | Is the event all day. |
 | `is_attendees_list_hidden` | `boolean` | Yes | Is the attendees list hidden for attendees. |
-| `attendees` | `object[]` | No | The attendees of the event. |
+| `attendees` | `object[] \| null` | No | The attendees of the event. |
 | `start` | `object` | Yes | The start date and time of the event. |
 | `end` | `object` | Yes | The end date and time of the event. |
-| `recurrence` | `string[]` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
+| `recurrence` | `string[] \| null` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
 | `organizer` | `object` | Yes | — |
-| `conference` | `object` | No | — |
+| `conference` | `object \| null` | No | — |
 | `visibility` | `string` | Yes | The visibility of the event. - `public` is visible to all. - `private` is visible only to the calendar owner. |
 | `transparency` | `string` | Yes | The transparency of the event. - `opaque` does block time on the calendar and is equivalent to setting Show me as to Busy in the Calendar UI. |
 | `event_type` | `string` | Yes | The type of the event (`birthday`, `fromGmail`, `outOfOffice`...) |
-| `timezone` | `string` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
-| `background_color` | `string` | No | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the event in hexadecimal format. |
-| `specifics` | `any` | No | Object containing provider-specific calendar event data. |
+| `timezone` | `string \| null` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
+| `background_color` | `string \| null` | No | Background color of the calendar in hexadecimal format. |
+| `text_color` | `string \| null` | No | Foreground color of the event in hexadecimal format. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar event data. |
 
 <AccordionGroup>
 <Accordion title="attendees full type">
@@ -1026,7 +1000,7 @@ await corsair.unipile.api.calendarEvents.get({});
   is_resource: boolean,
   type: string,
   response_status: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1072,7 +1046,7 @@ await corsair.unipile.api.calendarEvents.get({});
   hosting: string,
   conference_id?: string | null,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1123,8 +1097,8 @@ await corsair.unipile.api.calendarEvents.list({ account_id: 'acc_9f2c1d7e', cale
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1145,15 +1119,11 @@ await corsair.unipile.api.calendarEvents.list({ account_id: 'acc_9f2c1d7e', cale
   is_all_day: boolean,
   is_attendees_list_hidden: boolean,
   attendees?: any[] | null,
-  start: {
-  },
-  end: {
-  },
+  start: Record<string, any>,
+  end: Record<string, any>,
   recurrence?: string[] | null,
-  organizer: {
-  },
-  conference?: {
-  } | null,
+  organizer: Record<string, any>,
+  conference?: Record<string, any> | null,
   visibility: string,
   transparency: string,
   event_type: string,
@@ -1261,7 +1231,7 @@ await corsair.unipile.api.calendarEvents.update({});
 | `background_color` | `string` | No | Background color of the calendar in hexadecimal format. For Google we match the closest palette available |
 | `transparency` | `opaque \| transparent` | No | The transparency of the event. - `opaque` does block time on the calendar and is equivalent to setting Show me as to Busy in the Calendar UI. |
 | `visibility` | `public \| private` | No | The visibility of the event. - `public` is visible to all. - `private` is visible only to the calendar owner. |
-| `conference` | `object` | No | A conference to generate or attach, or `null` to remove the conference currently on the event. |
+| `conference` | `object \| null` | No | A conference to generate or attach, or `null` to remove the conference currently on the event. |
 | `is_attendees_list_hidden` | `boolean` | No | Is the attendees list hidden for attendees. |
 | `attendees` | `object[]` | No | — |
 | `recurrence` | `string[]` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
@@ -1278,7 +1248,7 @@ await corsair.unipile.api.calendarEvents.update({});
   provider: google_meet | zoom | skype | teams | unknown,
   conference_id?: string,
   url?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1331,30 +1301,30 @@ await corsair.unipile.api.calendarEvents.update({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar event. |
-| `master_event_id` | `string` | No | If event instance, the ID of the master event. |
+| `master_event_id` | `string \| null` | No | If event instance, the ID of the master event. |
 | `calendar_id` | `string` | Yes | The ID of the calendar the event belongs to. |
-| `ical_uid` | `string` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
+| `ical_uid` | `string \| null` | No | The iCalendar UID (RFC5545 UID) of the event. Unlike `id`, it is shared by every copy of the event across the calendars of its attendees, and stays stable when… |
 | `created_at` | `string` | Yes | The date the event was created. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SSZ). |
 | `updated_at` | `string` | Yes | The date the event was last updated. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `title` | `string` | Yes | The title of the event. |
-| `body` | `string` | No | The body of the event. |
-| `location` | `string` | No | The location of the event. |
+| `body` | `string \| null` | No | The body of the event. |
+| `location` | `string \| null` | No | The location of the event. |
 | `is_cancelled` | `boolean` | Yes | Is the event cancelled. |
 | `is_all_day` | `boolean` | Yes | Is the event all day. |
 | `is_attendees_list_hidden` | `boolean` | Yes | Is the attendees list hidden for attendees. |
-| `attendees` | `object[]` | No | The attendees of the event. |
+| `attendees` | `object[] \| null` | No | The attendees of the event. |
 | `start` | `object` | Yes | The start date and time of the event. |
 | `end` | `object` | Yes | The end date and time of the event. |
-| `recurrence` | `string[]` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
+| `recurrence` | `string[] \| null` | No | List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. |
 | `organizer` | `object` | Yes | — |
-| `conference` | `object` | No | — |
+| `conference` | `object \| null` | No | — |
 | `visibility` | `string` | Yes | The visibility of the event. - `public` is visible to all. - `private` is visible only to the calendar owner. |
 | `transparency` | `string` | Yes | The transparency of the event. - `opaque` does block time on the calendar and is equivalent to setting Show me as to Busy in the Calendar UI. |
 | `event_type` | `string` | Yes | The type of the event (`birthday`, `fromGmail`, `outOfOffice`...) |
-| `timezone` | `string` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
-| `background_color` | `string` | No | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the event in hexadecimal format. |
-| `specifics` | `any` | No | Object containing provider-specific calendar event data. |
+| `timezone` | `string \| null` | No | The IANA timezone when start and end share the same timezone (e.g. `Europe/Paris`). Omitted when they differ; use `start.timezone` and `end.timezone` instead. |
+| `background_color` | `string \| null` | No | Background color of the calendar in hexadecimal format. |
+| `text_color` | `string \| null` | No | Foreground color of the event in hexadecimal format. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar event data. |
 
 <AccordionGroup>
 <Accordion title="attendees full type">
@@ -1370,7 +1340,7 @@ await corsair.unipile.api.calendarEvents.update({});
   is_resource: boolean,
   type: string,
   response_status: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1416,7 +1386,7 @@ await corsair.unipile.api.calendarEvents.update({});
   hosting: string,
   conference_id?: string | null,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1458,14 +1428,14 @@ await corsair.unipile.api.calendars.create({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar. |
 | `name` | `string` | Yes | Name of the calendar. |
-| `description` | `string` | No | Description of the calendar. |
+| `description` | `string \| null` | No | Description of the calendar. |
 | `is_read_only` | `boolean` | Yes | Indicates if the calendar is read-only or not. |
 | `is_owned_by_user` | `boolean` | Yes | Indicates if the user owns this calendar. |
 | `is_default` | `boolean` | Yes | Indicates if this is the primary calendar of the user. |
 | `background_color` | `string` | Yes | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the calendar in hexadecimal format. |
-| `timezone` | `string` | No | Timezone used in this calendar. |
-| `specifics` | `any` | No | Object containing provider-specific calendar data. |
+| `text_color` | `string \| null` | No | Foreground color of the calendar in hexadecimal format. |
+| `timezone` | `string \| null` | No | Timezone used in this calendar. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar data. |
 
 
 
@@ -1530,14 +1500,14 @@ await corsair.unipile.api.calendars.get({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar. |
 | `name` | `string` | Yes | Name of the calendar. |
-| `description` | `string` | No | Description of the calendar. |
+| `description` | `string \| null` | No | Description of the calendar. |
 | `is_read_only` | `boolean` | Yes | Indicates if the calendar is read-only or not. |
 | `is_owned_by_user` | `boolean` | Yes | Indicates if the user owns this calendar. |
 | `is_default` | `boolean` | Yes | Indicates if this is the primary calendar of the user. |
 | `background_color` | `string` | Yes | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the calendar in hexadecimal format. |
-| `timezone` | `string` | No | Timezone used in this calendar. |
-| `specifics` | `any` | No | Object containing provider-specific calendar data. |
+| `text_color` | `string \| null` | No | Foreground color of the calendar in hexadecimal format. |
+| `timezone` | `string \| null` | No | Timezone used in this calendar. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar data. |
 
 
 
@@ -1571,8 +1541,8 @@ await corsair.unipile.api.calendars.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1631,14 +1601,14 @@ await corsair.unipile.api.calendars.update({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the calendar. |
 | `name` | `string` | Yes | Name of the calendar. |
-| `description` | `string` | No | Description of the calendar. |
+| `description` | `string \| null` | No | Description of the calendar. |
 | `is_read_only` | `boolean` | Yes | Indicates if the calendar is read-only or not. |
 | `is_owned_by_user` | `boolean` | Yes | Indicates if the user owns this calendar. |
 | `is_default` | `boolean` | Yes | Indicates if this is the primary calendar of the user. |
 | `background_color` | `string` | Yes | Background color of the calendar in hexadecimal format. |
-| `text_color` | `string` | No | Foreground color of the calendar in hexadecimal format. |
-| `timezone` | `string` | No | Timezone used in this calendar. |
-| `specifics` | `any` | No | Object containing provider-specific calendar data. |
+| `text_color` | `string \| null` | No | Foreground color of the calendar in hexadecimal format. |
+| `timezone` | `string \| null` | No | Timezone used in this calendar. |
+| `specifics` | `any \| null` | No | Object containing provider-specific calendar data. |
 
 
 
@@ -1734,25 +1704,25 @@ await corsair.unipile.api.chats.get({ account_id: 'acc_9f2c1d7e', chat_id: 'chat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | 1to1, group or channel |
-| `provider` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `last_message_timestamp` | `string` | No | — |
-| `unread_count` | `number` | No | — |
-| `is_archived` | `boolean` | No | — |
-| `is_readonly` | `boolean` | No | — |
-| `is_group` | `boolean` | No | — |
-| `is_1to1` | `boolean` | No | — |
-| `participants_count` | `number` | No | — |
-| `restrictions` | `string[]` | No | — |
-| `folders` | `string[]` | No | — |
-| `user` | `object` | No | — |
-| `participants` | `object[]` | No | — |
-| `last_message` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | 1to1, group or channel |
+| `provider` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `last_message_timestamp` | `string \| null` | No | — |
+| `unread_count` | `number \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `is_readonly` | `boolean \| null` | No | — |
+| `is_group` | `boolean \| null` | No | — |
+| `is_1to1` | `boolean \| null` | No | — |
+| `participants_count` | `number \| null` | No | — |
+| `restrictions` | `string[] \| null` | No | — |
+| `folders` | `string[] \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `participants` | `object[] \| null` | No | — |
+| `last_message` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1780,7 +1750,7 @@ await corsair.unipile.api.chats.get({ account_id: 'acc_9f2c1d7e', chat_id: 'chat
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1809,15 +1779,7 @@ await corsair.unipile.api.chats.get({ account_id: 'acc_9f2c1d7e', chat_id: 'chat
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}[]
-```
-</Accordion>
-
-<Accordion title="last_message full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1855,9 +1817,9 @@ await corsair.unipile.api.chats.getPicture({});
 |------|------|----------|-------------|
 | `content_type` | `string` | Yes | MIME type Unipile sent |
 | `size_bytes` | `number` | Yes | Size of the file in bytes |
-| `filename` | `string` | No | File name from Content-Disposition, when sent |
-| `content_base64` | `string` | No | The file as base64, only with include_content |
-| `content_omitted` | `string` | No | Why content_base64 is missing although include_content was set |
+| `filename` | `string \| null` | No | File name from Content-Disposition, when sent |
+| `content_base64` | `string \| null` | No | The file as base64, only with include_content |
+| `content_omitted` | `string \| null` | No | Why content_base64 is missing although include_content was set |
 
 
 
@@ -1896,8 +1858,8 @@ await corsair.unipile.api.chats.list({ account_id: 'acc_9f2c1d7e', is_unread: tr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1966,8 +1928,7 @@ await corsair.unipile.api.chats.list({ account_id: 'acc_9f2c1d7e', is_unread: tr
       is_verified?: boolean | null
     } | null
   }[] | null,
-  last_message?: {
-  } | null
+  last_message?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2006,8 +1967,8 @@ await corsair.unipile.api.chats.listParticipants({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2017,8 +1978,7 @@ await corsair.unipile.api.chats.listParticipants({});
   object: string,
   is_self: boolean,
   is_admin: boolean,
-  user: {
-  }
+  user: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2153,9 +2113,9 @@ await corsair.unipile.api.chats.start({ account_id: 'acc_9f2c1d7e', users_ids: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `chat_id` | `string` | Yes | — |
-| `message_id` | `string \| string[]` | No | — |
+| `message_id` | `string \| string[] \| null` | No | — |
 
 
 
@@ -2195,17 +2155,17 @@ await corsair.unipile.api.chats.update({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The unique identifier of the chat for the provider. |
 | `name` | `string` | Yes | The name / title of the chat. If the provider does not provide a name, name is built out of participants usernames. |
-| `label` | `string` | No | If supported by the provider, a label associated with the chat. |
-| `description` | `string` | No | The description / subject of the chat. |
-| `public_picture_url` | `string` | No | Public URL of the chat picture. |
-| `private_picture_download_url` | `string` | No | Private URL to download the chat picture. This URL requires authentication. |
-| `image_url` | `string` | No | The URL of the chat image. Use public_picture_url or private_picture_download_url instead. |
-| `created_at` | `string` | No | The creation date of the chat. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `updated_at` | `string` | No | The last update date of the chat. Use ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). Some providers update this field on new messages. |
-| `last_message_timestamp` | `string` | No | The timestamp of the last message in the chat. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `label` | `string \| null` | No | If supported by the provider, a label associated with the chat. |
+| `description` | `string \| null` | No | The description / subject of the chat. |
+| `public_picture_url` | `string \| null` | No | Public URL of the chat picture. |
+| `private_picture_download_url` | `string \| null` | No | Private URL to download the chat picture. This URL requires authentication. |
+| `image_url` | `string \| null` | No | The URL of the chat image. Use public_picture_url or private_picture_download_url instead. |
+| `created_at` | `string \| null` | No | The creation date of the chat. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `updated_at` | `string \| null` | No | The last update date of the chat. Use ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). Some providers update this field on new messages. |
+| `last_message_timestamp` | `string \| null` | No | The timestamp of the last message in the chat. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `muted_until` | `string \| boolean` | Yes | The date until the chat is muted. Use ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). Is `true` if muted indefinitely. |
-| `creator_id` | `string` | No | The ID of the user who created the chat. |
-| `user_id` | `string` | No | The ID of the other participant in the chat if 1to1 chat. |
+| `creator_id` | `string \| null` | No | The ID of the user who created the chat. |
+| `user_id` | `string \| null` | No | The ID of the other participant in the chat if 1to1 chat. |
 | `is_group` | `boolean` | Yes | Is the chat a group chat. |
 | `is_1to1` | `boolean` | Yes | Is the chat a 1to1 chat. |
 | `is_channel` | `boolean` | Yes | Is the chat a channel chat. |
@@ -2214,14 +2174,14 @@ await corsair.unipile.api.chats.update({});
 | `is_readonly` | `boolean` | Yes | Is the chat read-only for the current user. Trying to send messages in read-only chats will fail. |
 | `is_archived` | `boolean` | Yes | Is the chat archived. Archived chats are usually hidden from the chat list. |
 | `folders` | `string[]` | Yes | A list of folders the chat belongs to. |
-| `participants_count` | `number` | No | The number of participants in the chat if the chat is a group. |
+| `participants_count` | `number \| null` | No | The number of participants in the chat if the chat is a group. |
 | `unread_count` | `number` | Yes | The number of unread messages in the chat. `0` if the chat is read, `-1` if the chat was manually marked as unread by the user and does not have any unread mess… |
-| `restrictions` | `string[]` | No | List of action restrictions of the chat. - `send_message` is the permission to send messages. |
-| `participants` | `object[]` | No | List of participants in the chat if group chat. |
-| `last_message` | `object` | No | The last message in the chat. |
-| `user` | `object` | No | The other participant if 1to1 chat. |
+| `restrictions` | `string[] \| null` | No | List of action restrictions of the chat. - `send_message` is the permission to send messages. |
+| `participants` | `object[] \| null` | No | List of participants in the chat if group chat. |
+| `last_message` | `object \| null` | No | The last message in the chat. |
+| `user` | `object \| null` | No | The other participant if 1to1 chat. |
 | `provider` | `string` | Yes | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
-| `specifics` | `any` | No | — |
+| `specifics` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="participants full type">
@@ -2229,11 +2189,10 @@ await corsair.unipile.api.chats.update({});
 ```ts
 {
   object: string,
-  user: {
-  },
+  user: Record<string, any>,
   is_self: boolean,
   is_admin: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2304,19 +2263,17 @@ await corsair.unipile.api.chats.update({});
     text?: string | null,
     specifics?: any | null,
     attachments: any[],
-    sender?: {
-    } | null
+    sender?: Record<string, any> | null
   } | null,
   forwarded?: {
     text?: string | null,
     specifics?: any | null,
     attachments: any[],
-    sender?: {
-    } | null,
+    sender?: Record<string, any> | null,
     object: string
   } | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2336,7 +2293,7 @@ await corsair.unipile.api.chats.update({});
   private_picture_download_url?: string | null,
   description?: string | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2375,8 +2332,8 @@ await corsair.unipile.api.contacts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2385,8 +2342,7 @@ await corsair.unipile.api.contacts.list({});
 {
   object: string,
   id: string,
-  user?: {
-  } | null,
+  user?: Record<string, any> | null,
   public_picture_url?: string | null,
   private_picture_download_url?: string | null,
   picture_url?: string | null,
@@ -2403,8 +2359,7 @@ await corsair.unipile.api.contacts.list({});
   notes?: string | null,
   emails?: string[] | null,
   phone_numbers?: string[] | null,
-  social_handles?: {
-  } | null,
+  social_handles?: Record<string, any> | null,
   addresses?: any[] | null,
   websites?: string[] | null,
   groups?: any[] | null
@@ -2535,18 +2490,18 @@ await corsair.unipile.api.drafts.create({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the draft. |
-| `thread_id` | `string` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
+| `thread_id` | `string \| null` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
 | `body` | `string` | Yes | The body of the draft. |
 | `snippet` | `string` | Yes | The snippet (preview) of the draft. |
 | `subject` | `string` | Yes | The subject of the draft. |
-| `from` | `object[]` | No | The list of attendees that the email should be sent from. |
-| `to` | `object[]` | No | The list of attendees that the email should be sent to. |
-| `cc` | `object[]` | No | The list of attendees that the email should be CC'd to. |
-| `bcc` | `object[]` | No | The list of attendees that the email should be BCC'd to. |
-| `reply_to` | `object[]` | No | The list of attendees that the replies should be sent to. |
+| `from` | `object[] \| null` | No | The list of attendees that the email should be sent from. |
+| `to` | `object[] \| null` | No | The list of attendees that the email should be sent to. |
+| `cc` | `object[] \| null` | No | The list of attendees that the email should be CC'd to. |
+| `bcc` | `object[] \| null` | No | The list of attendees that the email should be BCC'd to. |
+| `reply_to` | `object[] \| null` | No | The list of attendees that the replies should be sent to. |
 | `attachments` | `object[]` | Yes | The attachments of the draft. |
 | `folders` | `string[]` | Yes | The folder the draft is in. For Gmail, the labels assigned to the draft. |
-| `categories` | `string[]` | No | List of categories assigned to the draft. |
+| `categories` | `string[] \| null` | No | List of categories assigned to the draft. |
 
 <AccordionGroup>
 <Accordion title="from full type">
@@ -2555,7 +2510,7 @@ await corsair.unipile.api.drafts.create({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2565,7 +2520,7 @@ await corsair.unipile.api.drafts.create({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2575,7 +2530,7 @@ await corsair.unipile.api.drafts.create({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2585,7 +2540,7 @@ await corsair.unipile.api.drafts.create({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2595,7 +2550,7 @@ await corsair.unipile.api.drafts.create({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2616,8 +2571,7 @@ await corsair.unipile.api.drafts.create({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -2695,18 +2649,18 @@ await corsair.unipile.api.drafts.get({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the draft. |
-| `thread_id` | `string` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
+| `thread_id` | `string \| null` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
 | `body` | `string` | Yes | The body of the draft. |
 | `snippet` | `string` | Yes | The snippet (preview) of the draft. |
 | `subject` | `string` | Yes | The subject of the draft. |
-| `from` | `object[]` | No | The list of attendees that the email should be sent from. |
-| `to` | `object[]` | No | The list of attendees that the email should be sent to. |
-| `cc` | `object[]` | No | The list of attendees that the email should be CC'd to. |
-| `bcc` | `object[]` | No | The list of attendees that the email should be BCC'd to. |
-| `reply_to` | `object[]` | No | The list of attendees that the replies should be sent to. |
+| `from` | `object[] \| null` | No | The list of attendees that the email should be sent from. |
+| `to` | `object[] \| null` | No | The list of attendees that the email should be sent to. |
+| `cc` | `object[] \| null` | No | The list of attendees that the email should be CC'd to. |
+| `bcc` | `object[] \| null` | No | The list of attendees that the email should be BCC'd to. |
+| `reply_to` | `object[] \| null` | No | The list of attendees that the replies should be sent to. |
 | `attachments` | `object[]` | Yes | The attachments of the draft. |
 | `folders` | `string[]` | Yes | The folder the draft is in. For Gmail, the labels assigned to the draft. |
-| `categories` | `string[]` | No | List of categories assigned to the draft. |
+| `categories` | `string[] \| null` | No | List of categories assigned to the draft. |
 
 <AccordionGroup>
 <Accordion title="from full type">
@@ -2715,7 +2669,7 @@ await corsair.unipile.api.drafts.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2725,7 +2679,7 @@ await corsair.unipile.api.drafts.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2735,7 +2689,7 @@ await corsair.unipile.api.drafts.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2745,7 +2699,7 @@ await corsair.unipile.api.drafts.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2755,7 +2709,7 @@ await corsair.unipile.api.drafts.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2776,8 +2730,7 @@ await corsair.unipile.api.drafts.get({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -2828,8 +2781,8 @@ await corsair.unipile.api.drafts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2886,7 +2839,7 @@ await corsair.unipile.api.drafts.send({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the email. |
-| `message_id` | `string` | No | The Message-ID header value of the email. Use `id` in Unipile requests. May be absent when the header could not be retrieved after sending (the email has been s… |
+| `message_id` | `string \| null` | No | The Message-ID header value of the email. Use `id` in Unipile requests. May be absent when the header could not be retrieved after sending (the email has been s… |
 
 
 
@@ -3021,18 +2974,18 @@ await corsair.unipile.api.drafts.update({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the draft. |
-| `thread_id` | `string` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
+| `thread_id` | `string \| null` | No | The ID of the thread the draft belongs to. For IMAP drafts, this field is present only when the server provides a native thread ID. |
 | `body` | `string` | Yes | The body of the draft. |
 | `snippet` | `string` | Yes | The snippet (preview) of the draft. |
 | `subject` | `string` | Yes | The subject of the draft. |
-| `from` | `object[]` | No | The list of attendees that the email should be sent from. |
-| `to` | `object[]` | No | The list of attendees that the email should be sent to. |
-| `cc` | `object[]` | No | The list of attendees that the email should be CC'd to. |
-| `bcc` | `object[]` | No | The list of attendees that the email should be BCC'd to. |
-| `reply_to` | `object[]` | No | The list of attendees that the replies should be sent to. |
+| `from` | `object[] \| null` | No | The list of attendees that the email should be sent from. |
+| `to` | `object[] \| null` | No | The list of attendees that the email should be sent to. |
+| `cc` | `object[] \| null` | No | The list of attendees that the email should be CC'd to. |
+| `bcc` | `object[] \| null` | No | The list of attendees that the email should be BCC'd to. |
+| `reply_to` | `object[] \| null` | No | The list of attendees that the replies should be sent to. |
 | `attachments` | `object[]` | Yes | The attachments of the draft. |
 | `folders` | `string[]` | Yes | The folder the draft is in. For Gmail, the labels assigned to the draft. |
-| `categories` | `string[]` | No | List of categories assigned to the draft. |
+| `categories` | `string[] \| null` | No | List of categories assigned to the draft. |
 
 <AccordionGroup>
 <Accordion title="from full type">
@@ -3041,7 +2994,7 @@ await corsair.unipile.api.drafts.update({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3051,7 +3004,7 @@ await corsair.unipile.api.drafts.update({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3061,7 +3014,7 @@ await corsair.unipile.api.drafts.update({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3071,7 +3024,7 @@ await corsair.unipile.api.drafts.update({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3081,7 +3034,7 @@ await corsair.unipile.api.drafts.update({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3102,8 +3055,7 @@ await corsair.unipile.api.drafts.update({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -3154,21 +3106,21 @@ await corsair.unipile.api.emails.get({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the email. |
 | `message_id` | `string` | Yes | The Message-ID header value of the email. Use `id` in Unipile requests. |
-| `thread_id` | `string` | No | The thread identifier. For IMAP, Unipile uses the server-provided thread ID when available. |
+| `thread_id` | `string \| null` | No | The thread identifier. For IMAP, Unipile uses the server-provided thread ID when available. |
 | `body` | `string` | Yes | The complete body of the email: HTML when available, otherwise plain text. An empty string when the email has no body or meta_only=true. |
 | `body_plain` | `string` | Yes | The complete plain-text body of the email. Uses the original plain-text version when available, otherwise text converted from HTML. |
 | `snippet` | `string` | Yes | A short preview of the email, not its complete plain-text body. Use body_plain for the full text. |
 | `subject` | `string` | Yes | The subject of the email. |
 | `headers` | `object[]` | Yes | List of headers. A single email can sometimes have multiple headers with the same key name. |
-| `from` | `object[]` | No | The list of attendees that the email was sent from. |
-| `to` | `object[]` | No | The list of attendees that the email was sent to. |
+| `from` | `object[] \| null` | No | The list of attendees that the email was sent from. |
+| `to` | `object[] \| null` | No | The list of attendees that the email was sent to. |
 | `cc` | `object[]` | Yes | The list of attendees that the email was CC'd to. An empty array when none are available. |
 | `bcc` | `object[]` | Yes | The list of attendees that the email was BCC'd to. An empty array when none are available. |
 | `reply_to` | `object[]` | Yes | The list of attendees that the replies should be sent to. An empty array when none are available. |
 | `date` | `string` | Yes | The date the email was sent. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `attachments` | `object[]` | Yes | The attachments of the email. |
 | `folders` | `string[]` | Yes | The IDs of folders the email is in. For Gmail, the IDs of labels assigned to the email, excluding the UNREAD system label, which is exposed through is_unread in… |
-| `categories` | `string[]` | No | List of categories assigned to the email. |
+| `categories` | `string[] \| null` | No | List of categories assigned to the email. |
 | `is_unread` | `boolean` | Yes | Is the email unread. For Gmail, this reflects the UNREAD system label. |
 
 <AccordionGroup>
@@ -3188,7 +3140,7 @@ await corsair.unipile.api.emails.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3198,7 +3150,7 @@ await corsair.unipile.api.emails.get({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3249,8 +3201,7 @@ await corsair.unipile.api.emails.get({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -3300,9 +3251,9 @@ await corsair.unipile.api.emails.getAttachment({});
 |------|------|----------|-------------|
 | `content_type` | `string` | Yes | MIME type Unipile sent |
 | `size_bytes` | `number` | Yes | Size of the file in bytes |
-| `filename` | `string` | No | File name from Content-Disposition, when sent |
-| `content_base64` | `string` | No | The file as base64, only with include_content |
-| `content_omitted` | `string` | No | Why content_base64 is missing although include_content was set |
+| `filename` | `string \| null` | No | File name from Content-Disposition, when sent |
+| `content_base64` | `string \| null` | No | The file as base64, only with include_content |
+| `content_omitted` | `string \| null` | No | Why content_base64 is missing although include_content was set |
 
 
 
@@ -3410,8 +3361,8 @@ await corsair.unipile.api.emails.list({ account_id: 'acc_9f2c1d7e', limit: 20 })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3486,8 +3437,8 @@ await corsair.unipile.api.emails.listInFolder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3547,8 +3498,8 @@ await corsair.unipile.api.emails.listSenders({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3676,21 +3627,21 @@ await corsair.unipile.api.emails.modify({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the email. |
 | `message_id` | `string` | Yes | The Message-ID header value of the email. Use `id` in Unipile requests. |
-| `thread_id` | `string` | No | The thread identifier. For IMAP, Unipile uses the server-provided thread ID when available. |
+| `thread_id` | `string \| null` | No | The thread identifier. For IMAP, Unipile uses the server-provided thread ID when available. |
 | `body` | `string` | Yes | The complete body of the email: HTML when available, otherwise plain text. An empty string when the email has no body or meta_only=true. |
 | `body_plain` | `string` | Yes | The complete plain-text body of the email. Uses the original plain-text version when available, otherwise text converted from HTML. |
 | `snippet` | `string` | Yes | A short preview of the email, not its complete plain-text body. Use body_plain for the full text. |
 | `subject` | `string` | Yes | The subject of the email. |
 | `headers` | `object[]` | Yes | List of headers. A single email can sometimes have multiple headers with the same key name. |
-| `from` | `object[]` | No | The list of attendees that the email was sent from. |
-| `to` | `object[]` | No | The list of attendees that the email was sent to. |
+| `from` | `object[] \| null` | No | The list of attendees that the email was sent from. |
+| `to` | `object[] \| null` | No | The list of attendees that the email was sent to. |
 | `cc` | `object[]` | Yes | The list of attendees that the email was CC'd to. An empty array when none are available. |
 | `bcc` | `object[]` | Yes | The list of attendees that the email was BCC'd to. An empty array when none are available. |
 | `reply_to` | `object[]` | Yes | The list of attendees that the replies should be sent to. An empty array when none are available. |
 | `date` | `string` | Yes | The date the email was sent. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `attachments` | `object[]` | Yes | The attachments of the email. |
 | `folders` | `string[]` | Yes | The IDs of folders the email is in. For Gmail, the IDs of labels assigned to the email, excluding the UNREAD system label, which is exposed through is_unread in… |
-| `categories` | `string[]` | No | List of categories assigned to the email. |
+| `categories` | `string[] \| null` | No | List of categories assigned to the email. |
 | `is_unread` | `boolean` | Yes | Is the email unread. For Gmail, this reflects the UNREAD system label. |
 
 <AccordionGroup>
@@ -3710,7 +3661,7 @@ await corsair.unipile.api.emails.modify({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3720,7 +3671,7 @@ await corsair.unipile.api.emails.modify({});
 {
   email: string,
   display_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3771,8 +3722,7 @@ await corsair.unipile.api.emails.modify({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -3919,7 +3869,7 @@ await corsair.unipile.api.emails.send({ account_id: 'acc_9f2c1d7e', to: [{ email
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the email. |
-| `message_id` | `string` | No | The Message-ID header value of the email. Use `id` in Unipile requests. May be absent when the header could not be retrieved after sending (the email has been s… |
+| `message_id` | `string \| null` | No | The Message-ID header value of the email. Use `id` in Unipile requests. May be absent when the header could not be retrieved after sending (the email has been s… |
 
 
 
@@ -3989,13 +3939,13 @@ await corsair.unipile.api.folders.create({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the folder for the provider. |
 | `name` | `string` | Yes | The name of the folder. |
-| `role` | `string` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
+| `role` | `string \| null` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
 | `total_count` | `number` | Yes | The total number of emails in the folder. For Gmail, the total number of emails assigned with this label. |
 | `unread_count` | `number` | Yes | The number of unread emails in the folder. For Gmail, the number of unread emails assigned with this label. |
-| `background_color` | `string` | No | (Gmail Only) The background color of the folder. |
-| `text_color` | `string` | No | (Gmail Only) The text color of the folder. |
-| `is_system` | `boolean` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
-| `parent_id` | `string` | No | (Outlook only) The ID of the parent folder. |
+| `background_color` | `string \| null` | No | (Gmail Only) The background color of the folder. |
+| `text_color` | `string \| null` | No | (Gmail Only) The text color of the folder. |
+| `is_system` | `boolean \| null` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
+| `parent_id` | `string \| null` | No | (Outlook only) The ID of the parent folder. |
 
 
 
@@ -4060,13 +4010,13 @@ await corsair.unipile.api.folders.get({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the folder for the provider. |
 | `name` | `string` | Yes | The name of the folder. |
-| `role` | `string` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
+| `role` | `string \| null` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
 | `total_count` | `number` | Yes | The total number of emails in the folder. For Gmail, the total number of emails assigned with this label. |
 | `unread_count` | `number` | Yes | The number of unread emails in the folder. For Gmail, the number of unread emails assigned with this label. |
-| `background_color` | `string` | No | (Gmail Only) The background color of the folder. |
-| `text_color` | `string` | No | (Gmail Only) The text color of the folder. |
-| `is_system` | `boolean` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
-| `parent_id` | `string` | No | (Outlook only) The ID of the parent folder. |
+| `background_color` | `string \| null` | No | (Gmail Only) The background color of the folder. |
+| `text_color` | `string \| null` | No | (Gmail Only) The text color of the folder. |
+| `is_system` | `boolean \| null` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
+| `parent_id` | `string \| null` | No | (Outlook only) The ID of the parent folder. |
 
 
 
@@ -4100,8 +4050,8 @@ await corsair.unipile.api.folders.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4159,13 +4109,13 @@ await corsair.unipile.api.folders.update({});
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the folder for the provider. |
 | `name` | `string` | Yes | The name of the folder. |
-| `role` | `string` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
+| `role` | `string \| null` | No | The folder role represents a supported special-use purpose (based on RFC special-use attributes where applicable); it does not indicate whether the folder is sy… |
 | `total_count` | `number` | Yes | The total number of emails in the folder. For Gmail, the total number of emails assigned with this label. |
 | `unread_count` | `number` | Yes | The number of unread emails in the folder. For Gmail, the number of unread emails assigned with this label. |
-| `background_color` | `string` | No | (Gmail Only) The background color of the folder. |
-| `text_color` | `string` | No | (Gmail Only) The text color of the folder. |
-| `is_system` | `boolean` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
-| `parent_id` | `string` | No | (Outlook only) The ID of the parent folder. |
+| `background_color` | `string \| null` | No | (Gmail Only) The background color of the folder. |
+| `text_color` | `string \| null` | No | (Gmail Only) The text color of the folder. |
+| `is_system` | `boolean \| null` | No | (Gmail Only) If `true`, the label is created by Google. If `false`, the label was created by the user. |
+| `parent_id` | `string \| null` | No | (Outlook only) The ID of the parent folder. |
 
 
 
@@ -4198,8 +4148,8 @@ await corsair.unipile.api.inboxes.list({ account_id: 'acc_9f2c1d7e' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4253,8 +4203,8 @@ await corsair.unipile.api.inboxes.listChats({ account_id: 'acc_9f2c1d7e', inbox_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4286,12 +4236,10 @@ await corsair.unipile.api.inboxes.listChats({ account_id: 'acc_9f2c1d7e', inbox_
   participants_count?: number | null,
   unread_count: number,
   restrictions?: string[] | null,
-  last_message?: {
-  } | null,
+  last_message?: Record<string, any> | null,
   provider: string,
   specifics?: any | null,
-  user?: {
-  } | null,
+  user?: Record<string, any> | null,
   participants?: any[] | null
 }[]
 ```
@@ -4473,14 +4421,14 @@ await corsair.unipile.api.linkedin.getCompany({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The ID of the Company for the provider. |
 | `name` | `string` | Yes | The name of the Company. |
-| `profile_url` | `string` | No | The public profile URL of the Company. |
-| `public_picture_url` | `string` | No | The public picture URL of the Company. |
-| `public_identifier` | `string` | No | The public identifier of the Company. |
-| `followers_count` | `number` | No | The number of followers of the Company. |
-| `is_following` | `boolean` | No | Whether the current user is following the Company. |
+| `profile_url` | `string \| null` | No | The public profile URL of the Company. |
+| `public_picture_url` | `string \| null` | No | The public picture URL of the Company. |
+| `public_identifier` | `string \| null` | No | The public identifier of the Company. |
+| `followers_count` | `number \| null` | No | The number of followers of the Company. |
+| `is_following` | `boolean \| null` | No | Whether the current user is following the Company. |
 | `object` | `string` | Yes | — |
-| `description` | `string` | No | The description of the Company. |
-| `tagline` | `string` | No | The tagline of the Company. |
+| `description` | `string \| null` | No | The description of the Company. |
+| `tagline` | `string \| null` | No | The tagline of the Company. |
 | `is_school` | `boolean` | Yes | Whether the Company is a school. |
 | `is_active` | `boolean` | Yes | Whether the Company is currently in activity. |
 | `is_archived` | `boolean` | Yes | Whether the Company has been archived. |
@@ -4488,19 +4436,19 @@ await corsair.unipile.api.linkedin.getCompany({});
 | `is_verified` | `boolean` | Yes | Whether the Company has been verified. |
 | `is_claimable` | `boolean` | Yes | Whether the Company can be claimed. |
 | `is_claimable_by_viewer` | `boolean` | Yes | Whether the Company can be claimed by the current user. |
-| `verified_at` | `string` | No | The date on which the Company was verified. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `verified_at` | `string \| null` | No | The date on which the Company was verified. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `mailbox` | `object` | Yes | The mailbox informations of the Company. |
 | `viewer_roles` | `object[]` | Yes | The list of roles the current user may have in the Company. |
 | `locations` | `object[]` | Yes | The list of locations related to the Company. |
 | `industry` | `string[]` | Yes | A list of industries associated with the the Company. |
-| `activities` | `string[]` | No | The list of activities of the Company. |
-| `website` | `string` | No | The website URL of the Company. |
-| `establishment_year` | `number` | No | The year the Company was established. |
-| `phone` | `string` | No | The phone number of the Company. |
-| `fields_of_expertise` | `string[]` | No | The list of fields of expertise of the Company. |
-| `acquired_by` | `object` | No | The acquirer company. |
+| `activities` | `string[] \| null` | No | The list of activities of the Company. |
+| `website` | `string \| null` | No | The website URL of the Company. |
+| `establishment_year` | `number \| null` | No | The year the Company was established. |
+| `phone` | `string \| null` | No | The phone number of the Company. |
+| `fields_of_expertise` | `string[] \| null` | No | The list of fields of expertise of the Company. |
+| `acquired_by` | `object \| null` | No | The acquirer company. |
 | `insights` | `object` | Yes | Insights about the company. |
-| `funding` | `object` | No | Company funding information. |
+| `funding` | `object \| null` | No | Company funding information. |
 | `hashtags` | `string[]` | Yes | The list of hashtags related to the Company. |
 
 <AccordionGroup>
@@ -4551,7 +4499,7 @@ await corsair.unipile.api.linkedin.getCompany({});
   public_identifier?: string | null,
   followers_count?: number | null,
   is_following?: boolean | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4579,10 +4527,9 @@ await corsair.unipile.api.linkedin.getCompany({});
     rounds_url: string,
     rounds_count: number,
     company_url: string,
-    last_round: {
-    }
+    last_round: Record<string, any>
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4699,8 +4646,8 @@ await corsair.unipile.api.linkedin.getSearchParameters({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4710,8 +4657,7 @@ await corsair.unipile.api.linkedin.getSearchParameters({});
   object: string,
   id: string,
   name: string,
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -4841,8 +4787,8 @@ await corsair.unipile.api.linkedin.listManagedCompanyPages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4885,7 +4831,7 @@ await corsair.unipile.api.linkedin.listProfileViews({});
 | `industry` | `string[]` | No | — |
 | `company` | `string[]` | No | — |
 | `location` | `string[]` | No | — |
-| `details_sections` | `COMPANIES \| INDUSTRIES \| LOCATIONS[]` | No | — |
+| `details_sections` | `(COMPANIES \| INDUSTRIES \| LOCATIONS)[]` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -4897,7 +4843,7 @@ await corsair.unipile.api.linkedin.listProfileViews({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `entities` | `object[]` | Yes | A collection of profile view entities. |
-| `analytics` | `object` | No | Profile views analytics will only be present in the first request of a series of paginated requests. |
+| `analytics` | `object \| null` | No | Profile views analytics will only be present in the first request of a series of paginated requests. |
 
 <AccordionGroup>
 <Accordion title="entities full type">
@@ -4905,15 +4851,14 @@ await corsair.unipile.api.linkedin.listProfileViews({});
 ```ts
 {
   object: string,
-  id?: string | null,
+  id: string | null,
   public_identifier: string,
   name: string,
   picture_url?: string | null,
   network_distance?: string | null,
   premium?: boolean | null,
   verified?: boolean | null,
-  last_visited?: {
-  } | null
+  last_visited: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -4930,14 +4875,11 @@ await corsair.unipile.api.linkedin.listProfileViews({});
     top_industry?: string | null
   } | null,
   details?: {
-    locations?: {
-    } | null,
-    companies?: {
-    } | null,
-    industries?: {
-    } | null
+    locations?: Record<string, any> | null,
+    companies?: Record<string, any> | null,
+    industries?: Record<string, any> | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4965,46 +4907,12 @@ await corsair.unipile.api.linkedin.request({});
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
 | `url` | `string` | Yes | The specific LinkedIn public API endpoint you need to call. Path variables can be declared with the `:VARIABLE_NAME` syntax. |
 | `method` | `GET \| POST \| PUT \| PATCH \| DELETE` | Yes | The HTTP method to use when performing the request. |
-| `body` | `object` | No | A body object to send in the request. |
+| `body` | `Record<string, any>` | No | A body object to send in the request. |
 | `binary_body` | `string` | No | Binary content in base64 to be sent with POST/PUT/PATCH requests. Overrides `body` param. |
-| `headers` | `object` | No | A headers object to include in the request. Null value may be used in order to remove a specific header from the default set. |
-| `path_variables` | `object` | No | The Path variables that have been declared in the URL. Each variable must have a corresponding VARIABLE_NAME key to be injected in the URL. |
-| `query_params` | `object` | No | Query parameters to include in the request URL. |
+| `headers` | `Record<string, string \| null>` | No | A headers object to include in the request. Null value may be used in order to remove a specific header from the default set. |
+| `path_variables` | `Record<string, string>` | No | The Path variables that have been declared in the URL. Each variable must have a corresponding VARIABLE_NAME key to be injected in the URL. |
+| `query_params` | `Record<string, string>` | No | Query parameters to include in the request URL. |
 | `bypass_url_encoding` | `boolean` | No | Whether to bypass URL encoding for query parameters or form-urlencoded body, so you can handle encoding yourself. |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="path_variables full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5057,8 +4965,8 @@ await corsair.unipile.api.linkedin.searchCompanies({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5116,9 +5024,9 @@ await corsair.unipile.api.linkedin.searchFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `data` | `object[] \| null` | No | — |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5149,7 +5057,7 @@ await corsair.unipile.api.linkedin.searchFromUrl({});
   website_url?: string | null,
   portfolio_url?: string | null,
   services_page_url?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5180,9 +5088,9 @@ await corsair.unipile.api.linkedin.searchJobs({});
 | `keywords` | `string` | No | A keyword or group of keywords. |
 | `sort_by` | `RELEVANCE \| DATE` | No | The sort method. Native filter : Sort by |
 | `date_posted` | `PAST_DAY \| PAST_WEEK \| PAST_MONTH` | No | The time period when the jobs should have been published. Native filter : Date posted |
-| `workplace_type` | `ON_SITE \| REMOTE \| HYBRID[]` | No | A list of workplace types. Native filter : Remote |
-| `seniority` | `INTERNSHIP \| ENTRY_LEVEL \| ASSOCIATE \| MID_SENIOR_LEVEL \| DIRECTOR \| EXECUTIVE[]` | No | A list of experience levels required by the jobs. Native filter : Experience level |
-| `employment_status` | `FULL_TIME \| PART_TIME \| CONTRACT \| TEMPORARY \| VOLUNTEER \| INTERNSHIP \| OTHER[]` | No | A list of employment statuses. Native filter : Job type |
+| `workplace_type` | `(ON_SITE \| REMOTE \| HYBRID)[]` | No | A list of workplace types. Native filter : Remote |
+| `seniority` | `(INTERNSHIP \| ENTRY_LEVEL \| ASSOCIATE \| MID_SENIOR_LEVEL \| DIRECTOR \| EXECUTIVE)[]` | No | A list of experience levels required by the jobs. Native filter : Experience level |
+| `employment_status` | `(FULL_TIME \| PART_TIME \| CONTRACT \| TEMPORARY \| VOLUNTEER \| INTERNSHIP \| OTHER)[]` | No | A list of employment statuses. Native filter : Job type |
 | `company` | `string[]` | No | A list of parameter IDs. Use List Search Parameters with `COMPANY` type to find out the possible values. Native filter : Company |
 | `primary_location` | `string` | No | A parameter ID. Use List Search Parameters with `LOCATION` type to find out the possible values. Native filter : Primary location |
 | `location` | `string[]` | No | A list of parameter IDs. Use List Search Parameters with `LOCATION` type to find out the possible values. Native filter : Location |
@@ -5196,8 +5104,8 @@ await corsair.unipile.api.linkedin.searchJobs({});
 | `in_your_network` | `boolean` | No | Whether the jobs have been published by relations of you. Native filter : In your network |
 | `fair_chance_employer` | `boolean` | No | Whether the jobs accept applicants with criminal records. Native filter : Fair chance employer |
 | `salary` | `object` | No | The minimum salary. Native filter : Salary |
-| `benefits` | `MEDICAL_INSURANCE \| VISION_INSURANCE \| DENTAL_INSURANCE \| DISABILITY_INSURANCE \| 401(K) \| PENSION_PLAN \| PAID_MATERNITY_LEAVE \| PAID_PATERNITY_LEAVE \| COMMUTER_BENEFITS \| STUDENT_LOAN_ASSISTANCE \| TUITION_ASSISTANCE[]` | No | A list of benefits. |
-| `commitments` | `CAREER_GROWTH_AND_LEARNING \| DIVERSITY_EQUITY_AND_INCLUSION \| ENVIRONMENTAL_SUSTAINABILITY \| SOCIAL_IMPACT \| WORK_LIFE_BALANCE[]` | No | A list of commitments. |
+| `benefits` | `(MEDICAL_INSURANCE \| VISION_INSURANCE \| DENTAL_INSURANCE \| DISABILITY_INSURANCE \| 401(K) \| PENSION_PLAN \| PAID_MATERNITY_LEAVE \| PAID_PATERNITY_LEAVE \| COMMUTER_BENEFITS \| STUDENT_LOAN_ASSISTANCE \| TUITION_ASSISTANCE)[]` | No | A list of benefits. |
+| `commitments` | `(CAREER_GROWTH_AND_LEARNING \| DIVERSITY_EQUITY_AND_INCLUSION \| ENVIRONMENTAL_SUSTAINABILITY \| SOCIAL_IMPACT \| WORK_LIFE_BALANCE)[]` | No | A list of commitments. |
 
 <AccordionGroup>
 <Accordion title="salary full type">
@@ -5224,8 +5132,8 @@ await corsair.unipile.api.linkedin.searchJobs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5243,8 +5151,7 @@ await corsair.unipile.api.linkedin.searchJobs({});
   is_promoted: boolean,
   easy_apply: boolean,
   few_applicants: boolean,
-  company: {
-  },
+  company: Record<string, any>,
   insights: string[]
 }[]
 ```
@@ -5309,8 +5216,8 @@ await corsair.unipile.api.linkedin.searchPeople({ account_id: 'acc_9f2c1d7e', ke
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5420,8 +5327,8 @@ await corsair.unipile.api.linkedin.searchPosts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5434,27 +5341,20 @@ await corsair.unipile.api.linkedin.searchPosts({});
   created_at: string,
   title?: string | null,
   text: string,
-  author: {
-  },
+  author: Record<string, any>,
   user_reacted: boolean | string,
-  permissions: {
-  },
-  reactions_counter?: any[] | null,
-  comments_counter?: number | null,
-  reposts_counter?: number | null,
-  poll?: {
-  } | null,
-  event?: {
-  } | null,
+  permissions: Record<string, any>,
+  reactions_counter: any[] | null,
+  comments_counter: number | null,
+  reposts_counter: number | null,
+  poll?: Record<string, any> | null,
+  event?: Record<string, any> | null,
   attachments: any[],
-  analytics?: {
-  } | null,
+  analytics?: Record<string, any> | null,
   specifics?: any | null,
   is_repost: boolean,
-  reposted_by?: {
-  } | null,
-  quoted_post?: {
-  } | null
+  reposted_by?: Record<string, any> | null,
+  quoted_post?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -5606,33 +5506,33 @@ await corsair.unipile.api.messages.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
-| `id` | `string` | No | The unique identifier of the message for the provider. |
-| `text` | `string` | No | The text content of the message. |
-| `sender_id` | `string` | No | The ID of the user who sent the message. |
-| `chat_id` | `string` | No | The ID of the chat where the message was sent. |
-| `timestamp` | `string` | No | The timestamp of the message. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `is_sender` | `boolean` | No | Is the current user the sender of the message. |
-| `is_hidden` | `boolean` | No | Is the message hidden. Hidden messages are usually not displayed in the chat but can be as last message is chats list. |
-| `is_seen` | `boolean` | No | Is the message seen by other participants. |
-| `is_delivered` | `boolean` | No | Is the message delivered to the other participants. |
-| `is_deleted` | `boolean` | No | Is the message deleted. Some providers show the message as deleted in the chat. |
-| `is_edited` | `boolean` | No | Is the message edited. Some providers adds an "edited" mark on the message in the chat. |
-| `is_pinned` | `boolean` | No | Is the message pinned. Pinned messages are usually displayed at the top of the chat. |
-| `is_event` | `boolean` | No | Is the message an event. Events are special messages that are not displayed in the chat but can be used to trigger actions. |
-| `is_mentionned` | `boolean` | No | Is the message mentionning the current user. Usually to notify. |
-| `view_mode` | `string` | No | How the ephemeral content of this message may be viewed: `once` for a single opening, `replayable` when the sender allowed it to be opened again. |
-| `event_type` | `number` | No | The type of message event. 0 : Unknown (Not implemented) 1 : Chat name update 2 : Chat description update 3 : New participant added to the chat group 4 : Partic… |
-| `event_metadata` | `object` | No | — |
-| `content_relation` | `object` | No | — |
-| `reactions_counter` | `object[]` | No | A list of reactions to the element. |
-| `sender` | `object` | No | The user who sent the message. |
-| `provider` | `string` | No | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
-| `attachments` | `object[]` | No | List of message attachments. |
-| `hyperlinks` | `object[]` | No | List of message hyperlinks. |
-| `quoted` | `object` | No | The quoted message. |
-| `forwarded` | `object` | No | Contains the original message if this message was forwarded from another chat, depending on provider support. |
-| `specifics` | `any` | No | — |
+| `object` | `string \| null` | No | — |
+| `id` | `string \| null` | No | The unique identifier of the message for the provider. |
+| `text` | `string \| null` | No | The text content of the message. |
+| `sender_id` | `string \| null` | No | The ID of the user who sent the message. |
+| `chat_id` | `string \| null` | No | The ID of the chat where the message was sent. |
+| `timestamp` | `string \| null` | No | The timestamp of the message. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `is_sender` | `boolean \| null` | No | Is the current user the sender of the message. |
+| `is_hidden` | `boolean \| null` | No | Is the message hidden. Hidden messages are usually not displayed in the chat but can be as last message is chats list. |
+| `is_seen` | `boolean \| null` | No | Is the message seen by other participants. |
+| `is_delivered` | `boolean \| null` | No | Is the message delivered to the other participants. |
+| `is_deleted` | `boolean \| null` | No | Is the message deleted. Some providers show the message as deleted in the chat. |
+| `is_edited` | `boolean \| null` | No | Is the message edited. Some providers adds an "edited" mark on the message in the chat. |
+| `is_pinned` | `boolean \| null` | No | Is the message pinned. Pinned messages are usually displayed at the top of the chat. |
+| `is_event` | `boolean \| null` | No | Is the message an event. Events are special messages that are not displayed in the chat but can be used to trigger actions. |
+| `is_mentionned` | `boolean \| null` | No | Is the message mentionning the current user. Usually to notify. |
+| `view_mode` | `string \| null` | No | How the ephemeral content of this message may be viewed: `once` for a single opening, `replayable` when the sender allowed it to be opened again. |
+| `event_type` | `number \| null` | No | The type of message event. 0 : Unknown (Not implemented) 1 : Chat name update 2 : Chat description update 3 : New participant added to the chat group 4 : Partic… |
+| `event_metadata` | `object \| null` | No | — |
+| `content_relation` | `object \| null` | No | — |
+| `reactions_counter` | `object[] \| null` | No | A list of reactions to the element. |
+| `sender` | `object \| null` | No | The user who sent the message. |
+| `provider` | `string \| null` | No | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
+| `attachments` | `object[] \| null` | No | List of message attachments. |
+| `hyperlinks` | `object[] \| null` | No | List of message hyperlinks. |
+| `quoted` | `object \| null` | No | The quoted message. |
+| `forwarded` | `object \| null` | No | Contains the original message if this message was forwarded from another chat, depending on provider support. |
+| `specifics` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="event_metadata full type">
@@ -5654,7 +5554,7 @@ await corsair.unipile.api.messages.edit({});
   is_pin?: boolean | null,
   subject?: string | null,
   reaction?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5664,7 +5564,7 @@ await corsair.unipile.api.messages.edit({});
 {
   type: string,
   attachment_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5674,7 +5574,7 @@ await corsair.unipile.api.messages.edit({});
 {
   reaction: string,
   count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5694,7 +5594,7 @@ await corsair.unipile.api.messages.edit({});
   private_picture_download_url?: string | null,
   description?: string | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5715,8 +5615,7 @@ await corsair.unipile.api.messages.edit({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -5727,7 +5626,7 @@ await corsair.unipile.api.messages.edit({});
   organization?: string | null,
   phones?: any[] | null,
   emails?: any[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5738,7 +5637,7 @@ await corsair.unipile.api.messages.edit({});
   url: string,
   starts_at: number,
   length: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -5765,7 +5664,7 @@ await corsair.unipile.api.messages.edit({});
     description?: string | null,
     specifics?: any | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5791,7 +5690,7 @@ await corsair.unipile.api.messages.edit({});
     specifics?: any | null
   } | null,
   object: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5864,7 +5763,7 @@ await corsair.unipile.api.messages.get({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The unique identifier of the message for the provider. |
-| `text` | `string` | No | The text content of the message. |
+| `text` | `string \| null` | No | The text content of the message. |
 | `sender_id` | `string` | Yes | The ID of the user who sent the message. |
 | `chat_id` | `string` | Yes | The ID of the chat where the message was sent. |
 | `timestamp` | `string` | Yes | The timestamp of the message. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
@@ -5877,18 +5776,18 @@ await corsair.unipile.api.messages.get({});
 | `is_pinned` | `boolean` | Yes | Is the message pinned. Pinned messages are usually displayed at the top of the chat. |
 | `is_event` | `boolean` | Yes | Is the message an event. Events are special messages that are not displayed in the chat but can be used to trigger actions. |
 | `is_mentionned` | `boolean` | Yes | Is the message mentionning the current user. Usually to notify. |
-| `view_mode` | `string` | No | How the ephemeral content of this message may be viewed: `once` for a single opening, `replayable` when the sender allowed it to be opened again. |
-| `event_type` | `number` | No | The type of message event. 0 : Unknown (Not implemented) 1 : Chat name update 2 : Chat description update 3 : New participant added to the chat group 4 : Partic… |
-| `event_metadata` | `object` | No | — |
-| `content_relation` | `object` | No | — |
+| `view_mode` | `string \| null` | No | How the ephemeral content of this message may be viewed: `once` for a single opening, `replayable` when the sender allowed it to be opened again. |
+| `event_type` | `number \| null` | No | The type of message event. 0 : Unknown (Not implemented) 1 : Chat name update 2 : Chat description update 3 : New participant added to the chat group 4 : Partic… |
+| `event_metadata` | `object \| null` | No | — |
+| `content_relation` | `object \| null` | No | — |
 | `reactions_counter` | `object[]` | Yes | A list of reactions to the element. |
 | `provider` | `string` | Yes | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
 | `attachments` | `object[]` | Yes | List of message attachments. |
 | `hyperlinks` | `object[]` | Yes | List of message hyperlinks. |
-| `specifics` | `object` | No | Object containing provider-specific message data. |
-| `sender` | `object` | No | The user who sent the message. |
-| `quoted` | `object` | No | The quoted message. |
-| `forwarded` | `object` | No | Contains the original message if this message was forwarded from another chat, depending on provider support. |
+| `specifics` | `object \| null` | No | Object containing provider-specific message data. |
+| `sender` | `object \| null` | No | The user who sent the message. |
+| `quoted` | `object \| null` | No | The quoted message. |
+| `forwarded` | `object \| null` | No | Contains the original message if this message was forwarded from another chat, depending on provider support. |
 
 <AccordionGroup>
 <Accordion title="event_metadata full type">
@@ -5910,7 +5809,7 @@ await corsair.unipile.api.messages.get({});
   is_pin?: boolean | null,
   subject?: string | null,
   reaction?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5920,7 +5819,7 @@ await corsair.unipile.api.messages.get({});
 {
   type: string,
   attachment_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -5951,8 +5850,7 @@ await corsair.unipile.api.messages.get({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -5989,10 +5887,9 @@ await corsair.unipile.api.messages.get({});
     title?: string | null,
     footer?: string | null,
     buttons: any[],
-    selected_button?: {
-    } | null
+    selected_button?: Record<string, any> | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6027,7 +5924,7 @@ await corsair.unipile.api.messages.get({});
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6051,14 +5948,12 @@ await corsair.unipile.api.messages.get({});
     public_picture_url?: string | null,
     private_picture_download_url?: string | null,
     description?: string | null,
-    specifics?: {
-    } | null
+    specifics?: Record<string, any> | null
   } | null,
   specifics?: {
-    interactive?: {
-    } | null
+    interactive?: Record<string, any> | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6081,14 +5976,12 @@ await corsair.unipile.api.messages.get({});
     public_picture_url?: string | null,
     private_picture_download_url?: string | null,
     description?: string | null,
-    specifics?: {
-    } | null
+    specifics?: Record<string, any> | null
   } | null,
   specifics?: {
-    interactive?: {
-    } | null
+    interactive?: Record<string, any> | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6128,9 +6021,9 @@ await corsair.unipile.api.messages.getAttachment({});
 |------|------|----------|-------------|
 | `content_type` | `string` | Yes | MIME type Unipile sent |
 | `size_bytes` | `number` | Yes | Size of the file in bytes |
-| `filename` | `string` | No | File name from Content-Disposition, when sent |
-| `content_base64` | `string` | No | The file as base64, only with include_content |
-| `content_omitted` | `string` | No | Why content_base64 is missing although include_content was set |
+| `filename` | `string \| null` | No | File name from Content-Disposition, when sent |
+| `content_base64` | `string \| null` | No | The file as base64, only with include_content |
+| `content_omitted` | `string \| null` | No | Why content_base64 is missing although include_content was set |
 
 
 
@@ -6168,8 +6061,8 @@ await corsair.unipile.api.messages.list({ account_id: 'acc_9f2c1d7e', chat_id: '
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -6213,8 +6106,7 @@ await corsair.unipile.api.messages.list({ account_id: 'acc_9f2c1d7e', chat_id: '
       is_verified?: boolean | null
     } | null
   } | null,
-  quoted?: {
-  } | null
+  quoted?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -6254,8 +6146,8 @@ await corsair.unipile.api.messages.listReactions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -6265,8 +6157,7 @@ await corsair.unipile.api.messages.listReactions({});
   object: string,
   value: string,
   is_sender: boolean,
-  sender: {
-  }
+  sender: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -6430,8 +6321,8 @@ await corsair.unipile.api.messages.send({ account_id: 'acc_9f2c1d7e', chat_id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
-| `message_id` | `string \| string[]` | No | — |
+| `object` | `string \| null` | No | — |
+| `message_id` | `string \| string[] \| null` | No | — |
 
 
 
@@ -6485,7 +6376,7 @@ await corsair.unipile.api.posts.addComment({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the comment. |
-| `thread_id` | `string` | No | The ID of the thread if this is a reply to another comment. |
+| `thread_id` | `string \| null` | No | The ID of the thread if this is a reply to another comment. |
 | `author` | `object` | Yes | The author of the comment. |
 | `created_at` | `string` | Yes | The creation date of the comment. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `text` | `string` | Yes | The text content of the comment. |
@@ -6494,7 +6385,7 @@ await corsair.unipile.api.posts.addComment({});
 | `can_reply` | `boolean` | Yes | Whether the current user can reply to the comment or not. |
 | `can_react` | `boolean` | Yes | Whether the current user can react to the comment or not. |
 | `reply_counter` | `number` | Yes | The number of replies to the comment. |
-| `impressions_counter` | `number` | No | The number of impressions of the comment. |
+| `impressions_counter` | `number \| null` | No | The number of impressions of the comment. |
 | `reactions_counter` | `object[]` | Yes | A list of reactions to the element. |
 
 <AccordionGroup>
@@ -6535,8 +6426,7 @@ await corsair.unipile.api.posts.addComment({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -6695,22 +6585,22 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
 | `id` | `string` | Yes | The ID of the post for the provider. |
 | `share_url` | `string` | Yes | The URL to share the post. |
 | `created_at` | `string` | Yes | The creation date of the post. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `title` | `string` | No | The title of the post. |
+| `title` | `string \| null` | No | The title of the post. |
 | `text` | `string` | Yes | The text content of the post. |
 | `author` | `object` | Yes | The author of the post. |
 | `user_reacted` | `boolean \| string` | Yes | If the account owner has reacted to this post, the value of the reaction (emoji unicode or reaction type), `true` if no details on the reaction, else `false`. |
 | `permissions` | `object` | Yes | The permissions for the account owner on the post. |
-| `reactions_counter` | `object[]` | No | The counter of reactions to the post. `null` if counter is hidden. |
-| `comments_counter` | `number` | No | The number of comments to the post. `null` if counter is hidden. |
-| `reposts_counter` | `number` | No | The number of reposts of the post. `null` if counter is hidden. |
-| `poll` | `object` | No | Data about the poll if the post is a poll. |
-| `event` | `object` | No | Data about the event if the post is an event. |
+| `reactions_counter` | `object[] \| null` | Yes | The counter of reactions to the post. `null` if counter is hidden. |
+| `comments_counter` | `number \| null` | Yes | The number of comments to the post. `null` if counter is hidden. |
+| `reposts_counter` | `number \| null` | Yes | The number of reposts of the post. `null` if counter is hidden. |
+| `poll` | `object \| null` | No | Data about the poll if the post is a poll. |
+| `event` | `object \| null` | No | Data about the event if the post is an event. |
 | `attachments` | `object[]` | Yes | List of post attachments. |
-| `analytics` | `object` | No | Analytics data of the post. |
-| `specifics` | `any` | No | Object containing provider-specific post data. |
+| `analytics` | `object \| null` | No | Analytics data of the post. |
+| `specifics` | `any \| null` | No | Object containing provider-specific post data. |
 | `is_repost` | `boolean` | Yes | `true` if this post is reposted by someone without quote. Quoted post does not qualify as a repost. |
-| `reposted_by` | `object` | No | The user who reposted the post if `is_repost` is `true`. |
-| `quoted_post` | `object` | No | The post that is quoted in this post. |
+| `reposted_by` | `object \| null` | No | The user who reposted the post if `is_repost` is `true`. |
+| `quoted_post` | `object \| null` | No | The post that is quoted in this post. |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -6750,7 +6640,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
 {
   reaction: string,
   count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -6763,7 +6653,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
   question: string,
   is_open: boolean,
   options: any[]
-}
+} | null
 ```
 </Accordion>
 
@@ -6780,7 +6670,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
   public_picture_url?: string | null,
   starts_on?: string | null,
   ends_on?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6801,8 +6691,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -6829,7 +6718,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
   page_viewers_from_this_post_counter?: number | null,
   followers_gained_from_this_post_counter?: number | null,
   users_reached_counter?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6849,7 +6738,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
   private_picture_download_url?: string | null,
   description?: string | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -6883,9 +6772,9 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
     can_react: boolean,
     can_post_comments: boolean
   },
-  reactions_counter?: any[] | null,
-  comments_counter?: number | null,
-  reposts_counter?: number | null,
+  reactions_counter: any[] | null,
+  comments_counter: number | null,
+  reposts_counter: number | null,
   poll?: {
     id: string,
     total_votes_count: number,
@@ -6916,7 +6805,7 @@ await corsair.unipile.api.posts.create({ account_id: 'acc_9f2c1d7e', text: 'We j
     users_reached_counter?: number | null
   } | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6987,7 +6876,7 @@ await corsair.unipile.api.posts.createStory({});
 | `provider_id` | `string` | Yes | The story's raw provider-native identifier. |
 | `media_type` | `string` | Yes | The type of media attached to the story. |
 | `created_at` | `string` | Yes | The creation date of the story. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `expires_at` | `string` | No | The expiration date of the story (~24h after creation, if supported by the provider). Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `expires_at` | `string \| null` | No | The expiration date of the story (~24h after creation, if supported by the provider). Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 
 
 
@@ -7085,22 +6974,22 @@ await corsair.unipile.api.posts.get({});
 | `id` | `string` | Yes | The ID of the post for the provider. |
 | `share_url` | `string` | Yes | The URL to share the post. |
 | `created_at` | `string` | Yes | The creation date of the post. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `title` | `string` | No | The title of the post. |
+| `title` | `string \| null` | No | The title of the post. |
 | `text` | `string` | Yes | The text content of the post. |
 | `user_reacted` | `boolean \| string` | Yes | If the account owner has reacted to this post, the value of the reaction (emoji unicode or reaction type), `true` if no details on the reaction, else `false`. |
 | `permissions` | `object` | Yes | The permissions for the account owner on the post. |
-| `reactions_counter` | `object[]` | No | The counter of reactions to the post. `null` if counter is hidden. |
-| `comments_counter` | `number` | No | The number of comments to the post. `null` if counter is hidden. |
-| `reposts_counter` | `number` | No | The number of reposts of the post. `null` if counter is hidden. |
-| `poll` | `object` | No | Data about the poll if the post is a poll. |
-| `event` | `object` | No | Data about the event if the post is an event. |
+| `reactions_counter` | `object[] \| null` | Yes | The counter of reactions to the post. `null` if counter is hidden. |
+| `comments_counter` | `number \| null` | Yes | The number of comments to the post. `null` if counter is hidden. |
+| `reposts_counter` | `number \| null` | Yes | The number of reposts of the post. `null` if counter is hidden. |
+| `poll` | `object \| null` | No | Data about the poll if the post is a poll. |
+| `event` | `object \| null` | No | Data about the event if the post is an event. |
 | `attachments` | `object[]` | Yes | List of post attachments. |
-| `analytics` | `object` | No | Analytics data of the post. |
+| `analytics` | `object \| null` | No | Analytics data of the post. |
 | `is_repost` | `boolean` | Yes | `true` if this post is reposted by someone without quote. Quoted post does not qualify as a repost. |
 | `author` | `object` | Yes | The author of the post. |
-| `reposted_by` | `object` | No | The user who reposted the post if `is_repost` is `true`. |
-| `quoted_post` | `object` | No | The post that is quoted in this post. |
-| `specifics` | `object` | No | Object containing provider-specific post data. |
+| `reposted_by` | `object \| null` | No | The user who reposted the post if `is_repost` is `true`. |
+| `quoted_post` | `object \| null` | No | The post that is quoted in this post. |
+| `specifics` | `object \| null` | No | Object containing provider-specific post data. |
 
 <AccordionGroup>
 <Accordion title="permissions full type">
@@ -7120,7 +7009,7 @@ await corsair.unipile.api.posts.get({});
 {
   reaction: string,
   count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7133,7 +7022,7 @@ await corsair.unipile.api.posts.get({});
   question: string,
   is_open: boolean,
   options: any[]
-}
+} | null
 ```
 </Accordion>
 
@@ -7150,7 +7039,7 @@ await corsair.unipile.api.posts.get({});
   public_picture_url?: string | null,
   starts_on?: string | null,
   ends_on?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -7171,8 +7060,7 @@ await corsair.unipile.api.posts.get({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -7199,7 +7087,7 @@ await corsair.unipile.api.posts.get({});
   page_viewers_from_this_post_counter?: number | null,
   followers_gained_from_this_post_counter?: number | null,
   users_reached_counter?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -7269,7 +7157,7 @@ await corsair.unipile.api.posts.get({});
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -7289,9 +7177,9 @@ await corsair.unipile.api.posts.get({});
     can_react: boolean,
     can_post_comments: boolean
   },
-  reactions_counter?: any[] | null,
-  comments_counter?: number | null,
-  reposts_counter?: number | null,
+  reactions_counter: any[] | null,
+  comments_counter: number | null,
+  reposts_counter: number | null,
   poll?: {
     id: string,
     total_votes_count: number,
@@ -7333,17 +7221,14 @@ await corsair.unipile.api.posts.get({});
     public_picture_url?: string | null,
     private_picture_download_url?: string | null,
     description?: string | null,
-    specifics?: {
-    } | null
+    specifics?: Record<string, any> | null
   },
   specifics?: {
     mentions?: any[] | null,
-    job_posting?: {
-    } | null,
-    article?: {
-    } | null
+    job_posting?: Record<string, any> | null,
+    article?: Record<string, any> | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -7353,14 +7238,13 @@ await corsair.unipile.api.posts.get({});
 {
   mentions?: any[] | null,
   job_posting?: {
-    id?: string | null,
+    id: string | null,
     title: string,
     location: string,
-    company: {
-    }
+    company: Record<string, any>
   } | null,
   article?: {
-    id?: string | null,
+    id: string | null,
     title: string,
     author?: string | null,
     url?: string | null,
@@ -7368,7 +7252,7 @@ await corsair.unipile.api.posts.get({});
     excerpt?: string | null,
     picture_url?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7406,8 +7290,8 @@ await corsair.unipile.api.posts.list({ account_id: 'acc_9f2c1d7e', user_id: 'wil
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7490,8 +7374,8 @@ await corsair.unipile.api.posts.listCommentReactions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7501,8 +7385,7 @@ await corsair.unipile.api.posts.listCommentReactions({});
   object: string,
   value: string,
   is_sender: boolean,
-  sender: {
-  }
+  sender: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -7542,8 +7425,8 @@ await corsair.unipile.api.posts.listCommentReplies({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7562,8 +7445,7 @@ await corsair.unipile.api.posts.listCommentReplies({});
   reply_counter: number,
   impressions_counter?: number | null,
   reactions_counter: any[],
-  author: {
-  }
+  author: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -7603,8 +7485,8 @@ await corsair.unipile.api.posts.listComments({ account_id: 'acc_9f2c1d7e', post_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7679,8 +7561,8 @@ await corsair.unipile.api.posts.listReactions({ account_id: 'acc_9f2c1d7e', post
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -7834,7 +7716,7 @@ await corsair.unipile.api.posts.replyToComment({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the comment. |
-| `thread_id` | `string` | No | The ID of the thread if this is a reply to another comment. |
+| `thread_id` | `string \| null` | No | The ID of the thread if this is a reply to another comment. |
 | `author` | `object` | Yes | The author of the comment. |
 | `created_at` | `string` | Yes | The creation date of the comment. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `text` | `string` | Yes | The text content of the comment. |
@@ -7843,7 +7725,7 @@ await corsair.unipile.api.posts.replyToComment({});
 | `can_reply` | `boolean` | Yes | Whether the current user can reply to the comment or not. |
 | `can_react` | `boolean` | Yes | Whether the current user can react to the comment or not. |
 | `reply_counter` | `number` | Yes | The number of replies to the comment. |
-| `impressions_counter` | `number` | No | The number of impressions of the comment. |
+| `impressions_counter` | `number \| null` | No | The number of impressions of the comment. |
 | `reactions_counter` | `object[]` | Yes | A list of reactions to the element. |
 
 <AccordionGroup>
@@ -7884,8 +7766,7 @@ await corsair.unipile.api.posts.replyToComment({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -7946,22 +7827,22 @@ await corsair.unipile.api.posts.update({});
 | `id` | `string` | Yes | The ID of the post for the provider. |
 | `share_url` | `string` | Yes | The URL to share the post. |
 | `created_at` | `string` | Yes | The creation date of the post. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `title` | `string` | No | The title of the post. |
+| `title` | `string \| null` | No | The title of the post. |
 | `text` | `string` | Yes | The text content of the post. |
 | `author` | `object` | Yes | The author of the post. |
 | `user_reacted` | `boolean \| string` | Yes | If the account owner has reacted to this post, the value of the reaction (emoji unicode or reaction type), `true` if no details on the reaction, else `false`. |
 | `permissions` | `object` | Yes | The permissions for the account owner on the post. |
-| `reactions_counter` | `object[]` | No | The counter of reactions to the post. `null` if counter is hidden. |
-| `comments_counter` | `number` | No | The number of comments to the post. `null` if counter is hidden. |
-| `reposts_counter` | `number` | No | The number of reposts of the post. `null` if counter is hidden. |
-| `poll` | `object` | No | Data about the poll if the post is a poll. |
-| `event` | `object` | No | Data about the event if the post is an event. |
+| `reactions_counter` | `object[] \| null` | Yes | The counter of reactions to the post. `null` if counter is hidden. |
+| `comments_counter` | `number \| null` | Yes | The number of comments to the post. `null` if counter is hidden. |
+| `reposts_counter` | `number \| null` | Yes | The number of reposts of the post. `null` if counter is hidden. |
+| `poll` | `object \| null` | No | Data about the poll if the post is a poll. |
+| `event` | `object \| null` | No | Data about the event if the post is an event. |
 | `attachments` | `object[]` | Yes | List of post attachments. |
-| `analytics` | `object` | No | Analytics data of the post. |
-| `specifics` | `any` | No | Object containing provider-specific post data. |
+| `analytics` | `object \| null` | No | Analytics data of the post. |
+| `specifics` | `any \| null` | No | Object containing provider-specific post data. |
 | `is_repost` | `boolean` | Yes | `true` if this post is reposted by someone without quote. Quoted post does not qualify as a repost. |
-| `reposted_by` | `object` | No | The user who reposted the post if `is_repost` is `true`. |
-| `quoted_post` | `object` | No | The post that is quoted in this post. |
+| `reposted_by` | `object \| null` | No | The user who reposted the post if `is_repost` is `true`. |
+| `quoted_post` | `object \| null` | No | The post that is quoted in this post. |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -8001,7 +7882,7 @@ await corsair.unipile.api.posts.update({});
 {
   reaction: string,
   count: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -8014,7 +7895,7 @@ await corsair.unipile.api.posts.update({});
   question: string,
   is_open: boolean,
   options: any[]
-}
+} | null
 ```
 </Accordion>
 
@@ -8031,7 +7912,7 @@ await corsair.unipile.api.posts.update({});
   public_picture_url?: string | null,
   starts_on?: string | null,
   ends_on?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -8052,8 +7933,7 @@ await corsair.unipile.api.posts.update({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -8080,7 +7960,7 @@ await corsair.unipile.api.posts.update({});
   page_viewers_from_this_post_counter?: number | null,
   followers_gained_from_this_post_counter?: number | null,
   users_reached_counter?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -8100,7 +7980,7 @@ await corsair.unipile.api.posts.update({});
   private_picture_download_url?: string | null,
   description?: string | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -8134,9 +8014,9 @@ await corsair.unipile.api.posts.update({});
     can_react: boolean,
     can_post_comments: boolean
   },
-  reactions_counter?: any[] | null,
-  comments_counter?: number | null,
-  reposts_counter?: number | null,
+  reactions_counter: any[] | null,
+  comments_counter: number | null,
+  reposts_counter: number | null,
   poll?: {
     id: string,
     total_votes_count: number,
@@ -8167,7 +8047,7 @@ await corsair.unipile.api.posts.update({});
     users_reached_counter?: number | null
   } | null,
   specifics?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8205,7 +8085,7 @@ await corsair.unipile.api.posts.updateComment({});
 |------|------|----------|-------------|
 | `object` | `string` | Yes | — |
 | `id` | `string` | Yes | The ID of the comment. |
-| `thread_id` | `string` | No | The ID of the thread if this is a reply to another comment. |
+| `thread_id` | `string \| null` | No | The ID of the thread if this is a reply to another comment. |
 | `author` | `object` | Yes | The author of the comment. |
 | `created_at` | `string` | Yes | The creation date of the comment. Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
 | `text` | `string` | Yes | The text content of the comment. |
@@ -8214,7 +8094,7 @@ await corsair.unipile.api.posts.updateComment({});
 | `can_reply` | `boolean` | Yes | Whether the current user can reply to the comment or not. |
 | `can_react` | `boolean` | Yes | Whether the current user can react to the comment or not. |
 | `reply_counter` | `number` | Yes | The number of replies to the comment. |
-| `impressions_counter` | `number` | No | The number of impressions of the comment. |
+| `impressions_counter` | `number \| null` | No | The number of impressions of the comment. |
 | `reactions_counter` | `object[]` | Yes | A list of reactions to the element. |
 
 <AccordionGroup>
@@ -8255,8 +8135,7 @@ await corsair.unipile.api.posts.updateComment({});
   type?: string | null,
   duration?: number | null,
   voice_note?: boolean | null,
-  size?: {
-  } | null,
+  size?: Record<string, any> | null,
   sticker?: boolean | null,
   gif?: boolean | null,
   filename?: string | null,
@@ -8376,12 +8255,12 @@ await corsair.unipile.api.relationRequests.create({ account_id: 'acc_9f2c1d7e', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | sent or received |
-| `created_at` | `string` | No | — |
-| `message` | `string` | No | — |
-| `user` | `object` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -8409,7 +8288,7 @@ await corsair.unipile.api.relationRequests.create({ account_id: 'acc_9f2c1d7e', 
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -8447,8 +8326,8 @@ await corsair.unipile.api.relationRequests.list({ account_id: 'acc_9f2c1d7e', ty
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8526,8 +8405,8 @@ await corsair.unipile.api.salesNavigator.browseAccountList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8554,8 +8433,7 @@ await corsair.unipile.api.salesNavigator.browseAccountList({});
   founded_on?: number | null,
   is_starred: boolean,
   object: string,
-  recommended_lead?: {
-  } | null
+  recommended_lead?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -8596,8 +8474,8 @@ await corsair.unipile.api.salesNavigator.browseLeadList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8628,14 +8506,11 @@ await corsair.unipile.api.salesNavigator.browseLeadList({});
   is_open_profile: boolean,
   websites?: string[] | null,
   addresses?: string[] | null,
-  contact_info: {
-  },
-  latest_contact?: {
-  } | null,
+  contact_info: Record<string, any>,
+  latest_contact?: Record<string, any> | null,
   lists_count: number,
   notes_count: number,
-  social_handles?: {
-  } | null,
+  social_handles?: Record<string, any> | null,
   industry?: string | null,
   education: any[],
   skills: any[],
@@ -8644,8 +8519,7 @@ await corsair.unipile.api.salesNavigator.browseLeadList({});
   volunteering: any[],
   object: string,
   saved_at: string,
-  associated_account?: {
-  } | null
+  associated_account?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -8684,8 +8558,8 @@ await corsair.unipile.api.salesNavigator.getSearchParameters({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8695,8 +8569,7 @@ await corsair.unipile.api.salesNavigator.getSearchParameters({});
   object: string,
   id: string,
   name: string,
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -8733,8 +8606,8 @@ await corsair.unipile.api.salesNavigator.listAccountLists({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8784,8 +8657,8 @@ await corsair.unipile.api.salesNavigator.listLeadLists({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -8905,7 +8778,7 @@ await corsair.unipile.api.salesNavigator.searchCompanies({});
 | `department_headcount` | `object` | No | Native filter : Company attributes / Department headcount |
 | `department_headcount_growth` | `object` | No | Native filter : Company attributes / Department headcount growth |
 | `fortune` | `object[]` | No | A list of fortune ranges. |
-| `spotlights` | `HIRING_ON_LINKEDIN \| RECENT_LEADERSHIP_CHANGE \| RECENT_FUNDING_EVENTS \| FIRST_DEGREE_CONNECTIONS[]` | No | A list of spotlights. |
+| `spotlights` | `(HIRING_ON_LINKEDIN \| RECENT_LEADERSHIP_CHANGE \| RECENT_FUNDING_EVENTS \| FIRST_DEGREE_CONNECTIONS)[]` | No | A list of spotlights. |
 | `saved_accounts` | `boolean` | No | Whether to include all your saved accounts in the results. Native filter : Workflow / Saved accounts / All my saved accounts |
 | `account_list` | `object` | No | Native filter : Workflow / Account lists |
 
@@ -9059,8 +8932,8 @@ await corsair.unipile.api.salesNavigator.searchCompanies({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -9125,9 +8998,9 @@ await corsair.unipile.api.salesNavigator.searchFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `data` | `object[] \| null` | No | — |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -9162,21 +9035,18 @@ await corsair.unipile.api.salesNavigator.searchFromUrl({});
   is_open_profile: boolean,
   websites?: string[] | null,
   addresses?: string[] | null,
-  contact_info: {
-  },
-  latest_contact?: {
-  } | null,
+  contact_info: Record<string, any>,
+  latest_contact?: Record<string, any> | null,
   lists_count: number,
   notes_count: number,
-  social_handles?: {
-  } | null,
+  social_handles?: Record<string, any> | null,
   industry?: string | null,
   education: any[],
   skills: any[],
   work_experience: any[],
   languages: any[],
   volunteering: any[]
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9211,7 +9081,7 @@ await corsair.unipile.api.salesNavigator.searchPeople({ account_id: 'acc_9f2c1d7
 | `current_company` | `object` | No | You can also use company names in plain text format. Native filter : Company / Current company |
 | `past_company` | `object` | No | You can also use company names in plain text format. Native filter : Company / Past company |
 | `company_headcount` | `object[]` | No | A list of headcount ranges. |
-| `company_type` | `PUBLIC_COMPANY \| PRIVATELY_HELD \| NON_PROFIT \| EDUCATIONAL_INSTITUTION \| PARTNERSHIP \| SELF_EMPLOYED \| SELF_OWNED \| GOVERNMENT_AGENCY[]` | No | A list of company types. |
+| `company_type` | `(PUBLIC_COMPANY \| PRIVATELY_HELD \| NON_PROFIT \| EDUCATIONAL_INSTITUTION \| PARTNERSHIP \| SELF_EMPLOYED \| SELF_OWNED \| GOVERNMENT_AGENCY)[]` | No | A list of company types. |
 | `company_location` | `object` | No | Native filter : Company / Company headquarters location |
 | `function` | `object` | No | Native filter : Role / Function |
 | `current_job_title` | `object` | No | You can also use job titles in plain text format. Native filter : Role / Current job title |
@@ -9345,8 +9215,8 @@ await corsair.unipile.api.salesNavigator.searchPeople({ account_id: 'acc_9f2c1d7
 
 ```ts
 {
-  include?: OWNER/PARTNER | CXO | VICE_PRESIDENT | DIRECTOR | EXPERIENCED_MANAGER | ENTRY_LEVEL_MANAGER | STRATEGIC | SENIOR | ENTRY_LEVEL | IN_TRAINING[],
-  exclude?: OWNER/PARTNER | CXO | VICE_PRESIDENT | DIRECTOR | EXPERIENCED_MANAGER | ENTRY_LEVEL_MANAGER | STRATEGIC | SENIOR | ENTRY_LEVEL | IN_TRAINING[]
+  include?: (OWNER/PARTNER | CXO | VICE_PRESIDENT | DIRECTOR | EXPERIENCED_MANAGER | ENTRY_LEVEL_MANAGER | STRATEGIC | SENIOR | ENTRY_LEVEL | IN_TRAINING)[],
+  exclude?: (OWNER/PARTNER | CXO | VICE_PRESIDENT | DIRECTOR | EXPERIENCED_MANAGER | ENTRY_LEVEL_MANAGER | STRATEGIC | SENIOR | ENTRY_LEVEL | IN_TRAINING)[]
 }
 ```
 </Accordion>
@@ -9480,8 +9350,8 @@ await corsair.unipile.api.salesNavigator.searchPeople({ account_id: 'acc_9f2c1d7
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -9516,14 +9386,11 @@ await corsair.unipile.api.salesNavigator.searchPeople({ account_id: 'acc_9f2c1d7
   is_open_profile: boolean,
   websites?: string[] | null,
   addresses?: string[] | null,
-  contact_info: {
-  },
-  latest_contact?: {
-  } | null,
+  contact_info: Record<string, any>,
+  latest_contact?: Record<string, any> | null,
   lists_count: number,
   notes_count: number,
-  social_handles?: {
-  } | null,
+  social_handles?: Record<string, any> | null,
   industry?: string | null,
   education: any[],
   skills: any[],
@@ -9570,7 +9437,7 @@ await corsair.unipile.api.scopes.create({});
 | `id` | `string` | Yes | The unique public ID of the Scope. |
 | `application_id` | `string` | Yes | The ID of the Application that owns the Scope. |
 | `name` | `string` | Yes | The internal name of the Scope. |
-| `reference` | `string` | No | External metadata used to map the Scope to another resource, or `null` when none is defined. |
+| `reference` | `string \| null` | Yes | External metadata used to map the Scope to another resource, or `null` when none is defined. |
 | `status` | `string` | Yes | The status of the Scope. A disabled scope blocks its scoped API keys and authentication flows until it is enabled again. |
 | `created_at` | `string` | Yes | The date and time when the Scope was created. |
 | `accounts_count` | `number` | Yes | The number of Accounts permanently assigned to the Scope. |
@@ -9638,7 +9505,7 @@ await corsair.unipile.api.scopes.get({});
 | `id` | `string` | Yes | The unique public ID of the Scope. |
 | `application_id` | `string` | Yes | The ID of the Application that owns the Scope. |
 | `name` | `string` | Yes | The internal name of the Scope. |
-| `reference` | `string` | No | External metadata used to map the Scope to another resource, or `null` when none is defined. |
+| `reference` | `string \| null` | Yes | External metadata used to map the Scope to another resource, or `null` when none is defined. |
 | `status` | `string` | Yes | The status of the Scope. A disabled scope blocks its scoped API keys and authentication flows until it is enabled again. |
 | `created_at` | `string` | Yes | The date and time when the Scope was created. |
 | `accounts_count` | `number` | Yes | The number of Accounts permanently assigned to the Scope. |
@@ -9688,7 +9555,7 @@ await corsair.unipile.api.scopes.list({});
   id: string,
   application_id: string,
   name: string,
-  reference?: string | null,
+  reference: string | null,
   status: string,
   created_at: string,
   accounts_count: number,
@@ -9720,7 +9587,7 @@ await corsair.unipile.api.scopes.update({});
 |------|------|----------|-------------|
 | `scope_id` | `string` | Yes | The ID of the Scope to update. |
 | `name` | `string` | No | The new internal name of the Scope. |
-| `reference` | `string` | No | The new external reference of the Scope. Must be unique in the Application. Set to `null` to remove it. |
+| `reference` | `string \| null` | No | The new external reference of the Scope. Must be unique in the Application. Set to `null` to remove it. |
 | `status` | `active \| disabled` | No | The status of the Scope. A disabled scope blocks its scoped API keys and authentication flows until it is enabled again. |
 
 
@@ -9733,7 +9600,7 @@ await corsair.unipile.api.scopes.update({});
 | `id` | `string` | Yes | The unique public ID of the Scope. |
 | `application_id` | `string` | Yes | The ID of the Application that owns the Scope. |
 | `name` | `string` | Yes | The internal name of the Scope. |
-| `reference` | `string` | No | External metadata used to map the Scope to another resource, or `null` when none is defined. |
+| `reference` | `string \| null` | Yes | External metadata used to map the Scope to another resource, or `null` when none is defined. |
 | `status` | `string` | Yes | The status of the Scope. A disabled scope blocks its scoped API keys and authentication flows until it is enabled again. |
 | `created_at` | `string` | Yes | The date and time when the Scope was created. |
 | `accounts_count` | `number` | Yes | The number of Accounts permanently assigned to the Scope. |
@@ -9770,12 +9637,12 @@ await corsair.unipile.api.users.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
-| `type` | `string` | No | Type of the relation / follow request. - `sent` if the current user has asked another one to be in his relations. |
-| `id` | `string` | No | The unique identifier of the invitation for the provider. |
-| `created_at` | `string` | No | Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
-| `message` | `string` | No | Any message that comes with the invitation. |
-| `user` | `object` | No | The user who is the target of the relation / follow request. |
+| `object` | `string \| null` | No | — |
+| `type` | `string \| null` | No | Type of the relation / follow request. - `sent` if the current user has asked another one to be in his relations. |
+| `id` | `string \| null` | No | The unique identifier of the invitation for the provider. |
+| `created_at` | `string \| null` | No | Uses ISO 8601 UTC datetime (YYYY-MM-DDTHH:MM:SS.sssZ). |
+| `message` | `string \| null` | No | Any message that comes with the invitation. |
+| `user` | `object \| null` | No | The user who is the target of the relation / follow request. |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -9809,7 +9676,7 @@ await corsair.unipile.api.users.follow({});
     is_premium?: boolean | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -9843,7 +9710,7 @@ await corsair.unipile.api.users.getChat({ account_id: 'acc_9f2c1d7e', user_id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -9892,9 +9759,9 @@ await corsair.unipile.api.users.getPicture({});
 |------|------|----------|-------------|
 | `content_type` | `string` | Yes | MIME type Unipile sent |
 | `size_bytes` | `number` | Yes | Size of the file in bytes |
-| `filename` | `string` | No | File name from Content-Disposition, when sent |
-| `content_base64` | `string` | No | The file as base64, only with include_content |
-| `content_omitted` | `string` | No | Why content_base64 is missing although include_content was set |
+| `filename` | `string \| null` | No | File name from Content-Disposition, when sent |
+| `content_base64` | `string \| null` | No | The file as base64, only with include_content |
+| `content_omitted` | `string \| null` | No | Why content_base64 is missing although include_content was set |
 
 
 
@@ -9928,7 +9795,7 @@ await corsair.unipile.api.users.getPresence({});
 | `object` | `string` | Yes | — |
 | `user_id` | `string` | Yes | The ID of the User this presence belongs to. |
 | `presence` | `string` | Yes | Whether the user is currently connected to the provider. - `online` if the user is connected right now. - `offline` if the user is not connected. |
-| `last_online_at` | `string` | No | Date and time when the user was last online. Only set when the user is offline and the provider exposes the exact date. |
+| `last_online_at` | `string \| null` | No | Date and time when the user was last online. Only set when the user is offline and the provider exposes the exact date. |
 | `provider` | `string` | Yes | The provider's of the Account. - `mock` is mock. - `whatsapp` is WhatsApp. - `linkedin` is LinkedIn. - `instagram` is Instagram. - `google` is Google. |
 
 
@@ -9953,7 +9820,7 @@ await corsair.unipile.api.users.getProfile({ account_id: 'acc_9f2c1d7e', user_id
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
 | `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
-| `with_sections` | `linkedin_* \| linkedin_experience \| linkedin_education \| linkedin_languages \| linkedin_skills \| linkedin_certifications \| linkedin_volunteer_experience \| linkedin_projects \| linkedin_recommendations \| linkedin_recruiting_activity \| linkedin_interests \| linkedin_*_preview \| linkedin_experience_preview \| linkedin_education_preview \| linkedin_languages_preview \| linkedin_skills_preview \| linkedin_certifications_preview \| linkedin_volunteer_experience_preview \| linkedin_projects_preview \| linkedin_recommendations_preview \| linkedin_recruiting_activity_preview \| linkedin_interests_preview[]` | No | Extra LinkedIn sections to load, e.g. linkedin_experience. Each one is another request to LinkedIn |
+| `with_sections` | `(linkedin_* \| linkedin_experience \| linkedin_education \| linkedin_languages \| linkedin_skills \| linkedin_certifications \| linkedin_volunteer_experience \| linkedin_projects \| linkedin_recommendations \| linkedin_recruiting_activity \| linkedin_interests \| linkedin_*_preview \| linkedin_experience_preview \| linkedin_education_preview \| linkedin_languages_preview \| linkedin_skills_preview \| linkedin_certifications_preview \| linkedin_volunteer_experience_preview \| linkedin_projects_preview \| linkedin_recommendations_preview \| linkedin_recruiting_activity_preview \| linkedin_interests_preview)[]` | No | Extra LinkedIn sections to load, e.g. linkedin_experience. Each one is another request to LinkedIn |
 | `variant` | `linkedin_classic \| linkedin_recruiter \| linkedin_sales_navigator` | No | Which LinkedIn product to read the profile through |
 
 
@@ -9962,28 +9829,28 @@ await corsair.unipile.api.users.getProfile({ account_id: 'acc_9f2c1d7e', user_id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
-| `provider` | `string` | No | — |
-| `type` | `string` | No | — |
-| `public_identifier` | `string` | No | — |
-| `display_name` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `profile_url` | `string` | No | — |
-| `public_picture_url` | `string` | No | — |
-| `description` | `string` | No | Headline on LinkedIn |
-| `bio` | `string` | No | — |
-| `location` | `string` | No | — |
-| `followers_count` | `number` | No | — |
-| `relations_count` | `number` | No | — |
-| `shared_relations_count` | `number` | No | — |
-| `is_premium` | `boolean` | No | — |
-| `is_blocked` | `boolean` | No | — |
-| `emails` | `string[]` | No | — |
-| `phone_numbers` | `string[]` | No | — |
-| `websites` | `string[]` | No | — |
-| `specifics` | `object` | No | — |
+| `provider` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `public_identifier` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `public_picture_url` | `string \| null` | No | — |
+| `description` | `string \| null` | No | Headline on LinkedIn |
+| `bio` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `followers_count` | `number \| null` | No | — |
+| `relations_count` | `number \| null` | No | — |
+| `shared_relations_count` | `number \| null` | No | — |
+| `is_premium` | `boolean \| null` | No | — |
+| `is_blocked` | `boolean \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `phone_numbers` | `string[] \| null` | No | — |
+| `websites` | `string[] \| null` | No | — |
+| `specifics` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="specifics full type">
@@ -10003,7 +9870,7 @@ await corsair.unipile.api.users.getProfile({ account_id: 'acc_9f2c1d7e', user_id
   experience?: any[] | null,
   education?: any[] | null,
   skills?: any[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -10029,7 +9896,7 @@ await corsair.unipile.api.users.listComments({ account_id: 'acc_9f2c1d7e', user_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
-| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `user_id` | `string` | No | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner. Defaults to "me". |
 | `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
 | `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
 | `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
@@ -10041,8 +9908,8 @@ await corsair.unipile.api.users.listComments({ account_id: 'acc_9f2c1d7e', user_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -10156,8 +10023,8 @@ await corsair.unipile.api.users.listFollowers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -10175,8 +10042,7 @@ await corsair.unipile.api.users.listFollowers({});
   public_picture_url?: string | null,
   private_picture_download_url?: string | null,
   description?: string | null,
-  specifics?: {
-  } | null
+  specifics?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -10215,8 +10081,8 @@ await corsair.unipile.api.users.listFollowing({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | Total number of results if supported by the provider. |
-| `next_cursor` | `string` | No | Cursor to get the next page of results if supported. Else use `offset`. |
+| `total_count` | `number \| null` | No | Total number of results if supported by the provider. |
+| `next_cursor` | `string \| null` | No | Cursor to get the next page of results if supported. Else use `offset`. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -10234,8 +10100,7 @@ await corsair.unipile.api.users.listFollowing({});
   public_picture_url?: string | null,
   private_picture_download_url?: string | null,
   description?: string | null,
-  specifics?: {
-  } | null
+  specifics?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -10262,7 +10127,7 @@ await corsair.unipile.api.users.listReactions({ account_id: 'acc_9f2c1d7e', user
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
-| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `user_id` | `string` | No | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner. Defaults to "me". |
 | `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
 | `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
 | `limit` | `number` | No | Page size. Leave unset to use the provider's own page size, which Unipile recommends |
@@ -10274,8 +10139,8 @@ await corsair.unipile.api.users.listReactions({ account_id: 'acc_9f2c1d7e', user
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -10373,7 +10238,7 @@ await corsair.unipile.api.users.listRelations({ account_id: 'acc_9f2c1d7e', sear
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | Unipile account ID (acc_…) of the connected account to act as, from accounts.list |
-| `user_id` | `string` | Yes | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner |
+| `user_id` | `string` | No | Provider user ID. For LinkedIn, the member ID (ACo…) or public identifier from a profile URL; `me` is the account owner. Defaults to "me". |
 | `search` | `string` | No | Filter relations by name |
 | `offset` | `number` | No | Offset pagination: add the previous limit to get the next page. Use `cursor` instead when the previous page returned next_cursor |
 | `cursor` | `string` | No | next_cursor from the previous page. Send it alone, without offset |
@@ -10386,8 +10251,8 @@ await corsair.unipile.api.users.listRelations({ account_id: 'acc_9f2c1d7e', sear
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `total_count` | `number` | No | — |
-| `next_cursor` | `string` | No | Pass as cursor to get the next page; absent on the last page |
+| `total_count` | `number \| null` | No | — |
+| `next_cursor` | `string \| null` | No | Pass as cursor to get the next page; absent on the last page |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -10835,7 +10700,7 @@ await corsair.unipile.api.users.updateProfile({});
         location: any[]
       }[],
       start_date?: IMMEDIATELY | FLEXIBLE,
-      employment_type?: FULL_TIME | PART_TIME | CONTRACT | INTERNSHIP | TEMPORARY[],
+      employment_type?: (FULL_TIME | PART_TIME | CONTRACT | INTERNSHIP | TEMPORARY)[],
       visibility: ALL | RECRUITERS_ONLY
     } | null
   }
@@ -10906,7 +10771,7 @@ await corsair.unipile.api.webhookEndpoints.create({ url: 'https://your-app.examp
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | HTTPS URL that receives event POSTs |
-| `trigger_events` | `account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new[]` | Yes | Events to send, e.g. relation.new, message.new |
+| `trigger_events` | `(account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new)[]` | Yes | Events to send, e.g. relation.new, message.new |
 | `account_ids` | `string[]` | No | Only send events from these accounts. Omit for all accounts |
 | `description` | `string` | No | — |
 
@@ -10916,16 +10781,16 @@ await corsair.unipile.api.webhookEndpoints.create({ url: 'https://your-app.examp
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `enabled` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `application_id` | `string` | No | — |
-| `account_ids` | `string[]` | No | — |
-| `account_targets` | `any[]` | No | — |
-| `secret` | `string` | No | Signing secret for the unipile-signature header. Shown only once, here: store it now as the plugin webhookSecret (or the stored webhook signature). list, get and update never return it |
+| `application_id` | `string \| null` | No | — |
+| `account_ids` | `string[] \| null` | No | — |
+| `account_targets` | `any[] \| null` | No | — |
+| `secret` | `string \| null` | No | Signing secret for the unipile-signature header. Shown only once, here: store it now as the plugin webhookSecret (or the stored webhook signature). list, get and update never return it |
 
 
 
@@ -10985,15 +10850,15 @@ await corsair.unipile.api.webhookEndpoints.get({ id: 'whe_42' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `enabled` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `application_id` | `string` | No | — |
-| `account_ids` | `string[]` | No | — |
-| `account_targets` | `any[]` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `account_ids` | `string[] \| null` | No | — |
+| `account_targets` | `any[] \| null` | No | — |
 | `secret_set` | `boolean` | Yes | Whether the endpoint has a signing secret. Only webhookEndpoints.create returns the secret itself |
 
 
@@ -11025,9 +10890,9 @@ await corsair.unipile.api.webhookEndpoints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
-| `has_more` | `boolean` | No | — |
+| `has_more` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -11071,7 +10936,7 @@ await corsair.unipile.api.webhookEndpoints.update({ id: 'whe_42', enabled: false
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Webhook endpoint ID |
 | `url` | `string` | No | — |
-| `trigger_events` | `account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new[]` | No | — |
+| `trigger_events` | `(account.status.disconnected \| account.status.running \| account.status.errored \| account.status.degraded \| account.status.partial \| account.locked \| account.unlocked \| account.add \| account.reconnect \| account.remove \| account.initial_sync.running \| account.initial_sync.failed \| account.initial_sync.completed \| message.new \| message.update \| message.delete \| message.receipt.read \| message.receipt.delivery \| message.reaction.new \| message.reaction.delete \| chat.delete \| chat.update \| email.new \| email.new.bounce \| email.delete \| email.draft.new \| email.draft.delete \| email.folder.create \| email.folder.update \| email.folder.delete \| calendar.create \| calendar.update \| calendar.delete \| calendar.event.new \| calendar.event.update \| calendar.event.delete \| tracking.open \| tracking.click \| relation.new \| follower.new)[]` | No | — |
 | `account_ids` | `string[]` | No | — |
 | `description` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
@@ -11082,15 +10947,15 @@ await corsair.unipile.api.webhookEndpoints.update({ id: 'whe_42', enabled: false
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `string` | No | — |
+| `object` | `string \| null` | No | — |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `enabled` | `boolean` | No | — |
-| `description` | `string` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `trigger_events` | `string[]` | Yes | — |
-| `application_id` | `string` | No | — |
-| `account_ids` | `string[]` | No | — |
-| `account_targets` | `any[]` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `account_ids` | `string[] \| null` | No | — |
+| `account_targets` | `any[] \| null` | No | — |
 | `secret_set` | `boolean` | Yes | Whether the endpoint has a signing secret. Only webhookEndpoints.create returns the secret itself |
 
 
@@ -11143,11 +11008,11 @@ await corsair.unipile.api.webhookEvents.listDeliveries({});
   first_attempt: boolean,
   event_type: string,
   created_at: string,
-  http_status?: number | null,
+  http_status: number | null,
   endpoint_url: string,
-  response_body?: string | null,
-  latency_ms?: number | null,
-  response_time_ms?: number | null,
+  response_body: string | null,
+  latency_ms: number | null,
+  response_time_ms: number | null,
   object: string,
   id: string,
   endpoint_id: string,

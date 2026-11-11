@@ -1,0 +1,15 @@
+displayName: Currents API
+description: News API that returns latest news, searches articles, and lists the available categories, languages, and regions.
+domain: currentsapi.services
+examples:
+  read:
+    path: latest.get
+    title: Get the latest news
+    args:
+      language: en
+  write:
+    path: search.get
+    title: Search news articles
+    args:
+      keywords: climate
+      language: en

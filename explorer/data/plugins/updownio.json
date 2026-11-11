@@ -29,7 +29,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ token: string, url?: string | null, type?: string | null, alias?: string | null, last_status?: number | null, uptime?: number | null, down?: boolean | null, down_since?: string | null, up_since?: string | null, error?: string | null, period?: number | null, apdex_t?: number | null, string_match?: string | null, enabled?: boolean | null, published?: boolean | null, disabled_locations?: string[] | null, recipients?: string[] | null, last_check_at?: string | null, next_check_at?: string | null, created_at?: string | null, mute_until?: string | null, favicon_url?: string | null, custom_headers?: {} | null, http_verb?: string | null, http_body?: string | null, ssl?: { tested_at?: string | null, expires_at?: string | null, valid?: boolean | null, error?: string | null, cert?: { subject?: string | null, subject_org?: string | null, san?: string[] | null, issuer?: string | null, issuer_org?: string | null, from?: string | null, to?: string | null, algorithm?: string | null } | null } | null, domain?: { tested_at?: string | null, expires_at?: string | null, remaining_days?: number | null, source?: string | null } | null }[]"
+        "type": "{ token: string, url?: string | null, type?: string | null, alias?: string | null, last_status?: number | null, uptime?: number | null, down?: boolean | null, down_since?: string | null, up_since?: string | null, error?: string | null, period?: number | null, apdex_t?: number | null, string_match?: string | null, enabled?: boolean | null, published?: boolean | null, disabled_locations?: string[] | null, recipients?: string[] | null, last_check_at?: string | null, next_check_at?: string | null, created_at?: string | null, mute_until?: string | null, favicon_url?: string | null, custom_headers?: Record<string, string> | null, http_verb?: string | null, http_body?: string | null, ssl?: { tested_at?: string | null, expires_at?: string | null, valid?: boolean | null, error?: string | null, cert?: { subject?: string | null, subject_org?: string | null, san?: string[] | null, issuer?: string | null, issuer_org?: string | null, from?: string | null, to?: string | null, algorithm?: string | null } | null } | null, domain?: { tested_at?: string | null, expires_at?: string | null, remaining_days?: number | null, source?: string | null } | null }[]"
       }
     },
     {
@@ -43,7 +43,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { ip?: string | null, ip6?: string | null, city?: string | null, country?: string | null, country_code?: string | null, lat?: number | null, lng?: number | null }>"
       }
     },
     {

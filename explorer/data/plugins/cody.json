@@ -1,7 +1,7 @@
 {
   "id": "cody",
   "displayName": "Cody",
-  "description": "Cody plugin for Corsair",
+  "description": "AI assistant platform. Manage bots, conversations, messages, documents, and folders, and create signed upload URLs.",
   "npmPackageName": "@corsair-dev/cody",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -63,7 +63,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: Record<string, string | null> } }"
           }
         ]
       }
@@ -229,7 +229,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: Record<string, string | null> } }"
           }
         ]
       }
@@ -301,9 +301,9 @@
           },
           {
             "key": "content_type",
-            "optional": false,
+            "optional": true,
             "type": "text/plain | text/html",
-            "description": "MIME content type of the content body"
+            "description": "MIME content type of the content body. Defaults to \"text/plain\"."
           },
           {
             "key": "folder_id",
@@ -506,7 +506,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: Record<string, string | null> } }"
           }
         ]
       }
@@ -610,7 +610,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: Record<string, string | null> } }"
           }
         ]
       }
@@ -676,7 +676,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }"
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: Record<string, any>[] }, usage?: { tokens?: number, credits?: number } }"
           }
         ]
       }
@@ -721,12 +721,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }[]"
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: Record<string, any>[] }, usage?: { tokens?: number, credits?: number } }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: Record<string, string | null> } }"
           }
         ]
       }
@@ -759,7 +759,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }"
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: Record<string, any>[] }, usage?: { tokens?: number, credits?: number } }"
           }
         ]
       }

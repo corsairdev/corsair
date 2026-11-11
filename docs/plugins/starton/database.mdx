@@ -29,7 +29,9 @@ const rows = await corsair.starton.db.pins.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `cid` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `size` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
@@ -61,6 +63,8 @@ const rows = await corsair.starton.db.smartContracts.search({
 | `network` | `string` | equals, contains, startsWith, endsWith, in |
 | `address` | `string` | equals, contains, startsWith, endsWith, in |
 | `creationHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `minedDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `blockNumber` | `number` | equals, gt, gte, lt, lte, in |
 | `templateId` | `string` | equals, contains, startsWith, endsWith, in |
@@ -94,6 +98,7 @@ const rows = await corsair.starton.db.templates.search({
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
 | `shortDescription` | `string` | equals, contains, startsWith, endsWith, in |
 | `githubUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
 | `isAudited` | `boolean` | equals |
 | `isActivated` | `boolean` | equals |
 | `order` | `number` | equals, gt, gte, lt, lte, in |
@@ -138,6 +143,9 @@ const rows = await corsair.starton.db.transactions.search({
 | `publishedDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `minedDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `signedTransaction` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `speed` | `string` | equals, contains, startsWith, endsWith, in |
 | `to` | `string` | equals, contains, startsWith, endsWith, in |
 | `transactionHash` | `string` | equals, contains, startsWith, endsWith, in |
 | `value` | `string` | equals, contains, startsWith, endsWith, in |
@@ -205,6 +213,8 @@ const rows = await corsair.starton.db.watchers.search({
 | `address` | `string` | equals, contains, startsWith, endsWith, in |
 | `network` | `string` | equals, contains, startsWith, endsWith, in |
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `triggerType` | `string` | equals, contains, startsWith, endsWith, in |
 | `webhookUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `confirmationsBlocks` | `number` | equals, gt, gte, lt, lte, in |
 | `paused` | `boolean` | equals |
@@ -235,6 +245,7 @@ const rows = await corsair.starton.db.webhooks.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `refId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `string` | equals, contains, startsWith, endsWith, in |

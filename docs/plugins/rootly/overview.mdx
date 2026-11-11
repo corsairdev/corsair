@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Rootly plugin for Corsair"
+description: "Incident management platform where this plugin gets, updates, and deletes incidents and manages incident action items."
 ---
 
 Use **Rootly** through Corsair: one client, typed API calls.
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`actionItems.get`**
+**Get an incident**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rootly.api.actionItems.get({});
+await tenant.rootly.api.incidents.get({ id: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d' });
 ```
 
 
-**`actionItems.delete`**
+**Update an incident**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rootly.api.actionItems.delete({});
+await tenant.rootly.api.incidents.update({ id: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', title: 'Checkout API latency' });
 ```
 
 

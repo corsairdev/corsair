@@ -1078,7 +1078,7 @@
           {
             "key": "company_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -1303,7 +1303,7 @@
           {
             "key": "company_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -1379,7 +1379,7 @@
           {
             "key": "company_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -1946,7 +1946,7 @@
           {
             "key": "headcount",
             "optional": true,
-            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]"
+            "type": "(1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[]"
           },
           {
             "key": "company_type",
@@ -1971,7 +1971,7 @@
           {
             "key": "funding",
             "optional": true,
-            "type": "{ series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
+            "type": "{ series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
           },
           {
             "key": "job_openings",
@@ -2047,7 +2047,7 @@
           {
             "key": "headcount",
             "optional": true,
-            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]"
+            "type": "(1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[]"
           },
           {
             "key": "company_type",
@@ -2072,7 +2072,7 @@
           {
             "key": "funding",
             "optional": true,
-            "type": "{ series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
+            "type": "{ series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
           },
           {
             "key": "job_openings",
@@ -2148,7 +2148,7 @@
           {
             "key": "headcount",
             "optional": true,
-            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]"
+            "type": "(1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[]"
           },
           {
             "key": "company_type",
@@ -2173,7 +2173,7 @@
           {
             "key": "funding",
             "optional": true,
-            "type": "{ series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
+            "type": "{ series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
           },
           {
             "key": "job_openings",
@@ -2234,7 +2234,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2249,7 +2249,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, filters?: {}, created_at?: string, updated_at?: string }"
+            "type": "{ id?: number, name?: string, filters?: Record<string, any>, created_at?: string, updated_at?: string }"
           },
           {
             "key": "meta",
@@ -2306,7 +2306,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, filters?: {}, created_at?: string, updated_at?: string }"
+            "type": "{ id?: number, name?: string, filters?: Record<string, any>, created_at?: string, updated_at?: string }"
           },
           {
             "key": "meta",
@@ -2336,7 +2336,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, filters?: {}, created_at?: string, updated_at?: string }[]"
+            "type": "{ id?: number, name?: string, filters?: Record<string, any>, created_at?: string, updated_at?: string }[]"
           },
           {
             "key": "meta",
@@ -2377,7 +2377,7 @@
           {
             "key": "headcount",
             "optional": true,
-            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]"
+            "type": "(1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[]"
           },
           {
             "key": "company_type",
@@ -2402,7 +2402,7 @@
           {
             "key": "funding",
             "optional": true,
-            "type": "{ series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
+            "type": "{ series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[], amount?: { from?: number, to?: number }, date?: { from?: string, to?: string }, received?: boolean }"
           },
           {
             "key": "job_openings",
@@ -3226,7 +3226,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ total?: number, personal_emails?: number, generic_emails?: number, department?: {}, seniority?: {}, job_titles?: {} }"
+            "type": "{ total?: number, personal_emails?: number, generic_emails?: number, department?: Record<string, number>, seniority?: Record<string, number>, job_titles?: Record<string, number> }"
           },
           {
             "key": "meta",
@@ -3538,7 +3538,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status?: string, data: { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: {} | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: {} | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }"
+        "type": "{ status?: string, data: { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }"
       }
     },
     {
@@ -3563,7 +3563,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status?: string, data: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: {} | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: {} | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }"
+        "type": "{ status?: string, data: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }"
       }
     },
     {
@@ -3745,7 +3745,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ email: string, id?: number | null }[]"
+            "type": "{ email: string, id: number | null }[]"
           },
           {
             "key": "meta",
@@ -3822,7 +3822,7 @@
           {
             "key": "leads",
             "optional": false,
-            "type": "{ email?: string, first_name?: string, last_name?: string, position?: string, company?: string, company_industry?: string, company_size?: string, confidence_score?: number, website?: string, country_code?: string, department?: string, linkedin_url?: string, phone_number?: string, twitter?: string, notes?: string, source?: string, leads_list_id?: number | string, leads_list_ids?: (number | string)[], leads_list_name?: string, custom_attributes?: {} }[]"
+            "type": "{ email?: string, first_name?: string, last_name?: string, position?: string, company?: string, company_industry?: string, company_size?: string, confidence_score?: number, website?: string, country_code?: string, department?: string, linkedin_url?: string, phone_number?: string, twitter?: string, notes?: string, source?: string, leads_list_id?: number | string, leads_list_ids?: (number | string)[], leads_list_name?: string, custom_attributes?: Record<string, string> }[]"
           }
         ]
       },
@@ -3837,7 +3837,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ index?: number, email?: string | null, status?: string, lead?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null } | null, errors?: any[] }[]"
+            "type": "{ index?: number, email?: string | null, status?: string, lead?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null } | null, errors?: any[] }[]"
           },
           {
             "key": "meta",
@@ -3953,7 +3953,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "company_type",
@@ -3988,7 +3988,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4045,7 +4045,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4081,7 +4081,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number | null, leads_list_id?: number | null, leads_list_name?: string | null }"
+            "type": "{ id: number | null, leads_list_id: number | null, leads_list_name: string | null }"
           },
           {
             "key": "meta",
@@ -4117,7 +4117,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4259,12 +4259,12 @@
           {
             "key": "sending_status",
             "optional": true,
-            "type": "clicked | opened | sent | pending | error | bounced | unsubscribed | replied | ~[]"
+            "type": "(clicked | opened | sent | pending | error | bounced | unsubscribed | replied | ~)[]"
           },
           {
             "key": "verification_status",
             "optional": true,
-            "type": "accept_all | disposable | invalid | unknown | valid | webmail | pending[]"
+            "type": "(accept_all | disposable | invalid | unknown | valid | webmail | pending)[]"
           },
           {
             "key": "last_activity_at",
@@ -4299,7 +4299,7 @@
           {
             "key": "department",
             "optional": true,
-            "type": "executive | it | finance | management | sales | legal | support | hr | marketing | communication | education | design | health | operations[]"
+            "type": "(executive | it | finance | management | sales | legal | support | hr | marketing | communication | education | design | health | operations)[]"
           },
           {
             "key": "tags",
@@ -4329,7 +4329,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "query",
@@ -4364,7 +4364,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ leads: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }[] }"
+            "type": "{ leads: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
           },
           {
             "key": "meta",
@@ -4485,7 +4485,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "company_type",
@@ -4625,7 +4625,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "company_type",
@@ -4760,7 +4760,7 @@
           {
             "key": "custom_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4775,7 +4775,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -5000,7 +5000,7 @@
           {
             "key": "leads_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -5118,7 +5118,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, leads_count?: number, type?: string, created_at?: string, leads_list_folder_id?: number | null, leads?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: {}, created_at?: string | null, created_by?: number | null }[] }"
+            "type": "{ id?: number, name?: string, leads_count?: number, type?: string, created_at?: string, leads_list_folder_id?: number | null, leads?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
           },
           {
             "key": "meta",
@@ -5210,7 +5210,7 @@
           {
             "key": "leads_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -5276,7 +5276,7 @@
           {
             "key": "leads_list_folder_id",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       },
@@ -6558,12 +6558,12 @@
           {
             "key": "bcc_recipient",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -6788,12 +6788,12 @@
           {
             "key": "bcc_recipient",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "id",
@@ -6992,12 +6992,12 @@
           {
             "key": "bcc_recipient",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "id",

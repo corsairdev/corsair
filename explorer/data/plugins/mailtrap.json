@@ -33,22 +33,22 @@
           {
             "key": "billing",
             "optional": true,
-            "type": "{ cycle_start?: string | null, cycle_end?: string | null }"
+            "type": "{ cycle_start?: string | null, cycle_end?: string | null } | null"
           },
           {
             "key": "testing",
             "optional": true,
-            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null, forwarded_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null, forwarded_messages_count?: { current?: number | null, limit?: number | null } | null } | null } | null"
           },
           {
             "key": "sending",
             "optional": true,
-            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null } | null"
           },
           {
             "key": "marketing",
             "optional": true,
-            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null } | null"
           }
         ]
       }
@@ -64,7 +64,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy[]"
+        "type": "{ id?: number | null, name?: string | null, type?: string | null, access_level?: number | null, resources?: (recursive)[] | null }[]"
       }
     },
     {
@@ -122,22 +122,22 @@
           {
             "key": "merge_tag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_type",
             "optional": true,
-            "type": "text | number | boolean | date"
+            "type": "text | number | boolean | date | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -193,22 +193,22 @@
           {
             "key": "merge_tag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_type",
             "optional": true,
-            "type": "text | number | boolean | date"
+            "type": "text | number | boolean | date | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -268,22 +268,22 @@
           {
             "key": "merge_tag",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_type",
             "optional": true,
-            "type": "text | number | boolean | date"
+            "type": "text | number | boolean | date | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -442,7 +442,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "list_ids",
@@ -472,27 +472,27 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "subscribed | unsubscribed"
+            "type": "subscribed | unsubscribed | null"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean> | null"
           }
         ]
       }
@@ -518,7 +518,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -528,22 +528,22 @@
           {
             "key": "contact_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean> | null"
           }
         ]
       }
@@ -574,22 +574,22 @@
           {
             "key": "status",
             "optional": true,
-            "type": "started | created | finished"
+            "type": "started | created | finished | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -645,27 +645,27 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "subscribed | unsubscribed"
+            "type": "subscribed | unsubscribed | null"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean> | null"
           }
         ]
       }
@@ -696,22 +696,22 @@
           {
             "key": "status",
             "optional": true,
-            "type": "started | created | finished"
+            "type": "started | created | finished | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -742,32 +742,32 @@
           {
             "key": "status",
             "optional": true,
-            "type": "created | started | finished | failed"
+            "type": "created | started | finished | failed | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_contacts_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_contacts_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "contacts_over_limit_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -783,7 +783,7 @@
           {
             "key": "contacts",
             "optional": false,
-            "type": "{ email: string, fields?: {}, list_ids_included?: number[], list_ids_excluded?: number[] }[]"
+            "type": "{ email: string, fields?: Record<string, string | number>, list_ids_included?: number[], list_ids_excluded?: number[] }[]"
           }
         ]
       },
@@ -798,32 +798,32 @@
           {
             "key": "status",
             "optional": true,
-            "type": "created | started | finished | failed"
+            "type": "created | started | finished | failed | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_contacts_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_contacts_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "contacts_over_limit_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -849,7 +849,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "list_ids",
@@ -889,27 +889,27 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "list_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "subscribed | unsubscribed"
+            "type": "subscribed | unsubscribed | null"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean> | null"
           }
         ]
       }
@@ -960,7 +960,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -970,32 +970,32 @@
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1046,7 +1046,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1056,32 +1056,32 @@
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1151,7 +1151,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1161,32 +1161,32 @@
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1222,112 +1222,112 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sent_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "forwarded_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "used",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "forward_from_email_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pop3_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "smtp_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "pop3_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "emails_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emails_unread_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_message_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_message_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -1363,112 +1363,112 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sent_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "forwarded_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "used",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "forward_from_email_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pop3_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "smtp_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "pop3_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "emails_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emails_unread_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_message_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_message_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -1518,112 +1518,112 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sent_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "forwarded_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "used",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "forward_from_email_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pop3_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "smtp_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "pop3_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "emails_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emails_unread_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_message_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_message_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -1659,112 +1659,112 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sent_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "forwarded_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "used",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "forward_from_email_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pop3_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "smtp_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "pop3_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "emails_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emails_unread_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_message_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_message_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -1810,112 +1810,112 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_username_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sent_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "forwarded_messages_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "used",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "forward_from_email_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pop3_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "smtp_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "pop3_ports",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "emails_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emails_unread_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_message_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_message_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -2043,17 +2043,17 @@
           {
             "key": "share_links",
             "optional": true,
-            "type": "{ admin?: string | null, viewer?: string | null }"
+            "type": "{ admin?: string | null, viewer?: string | null } | null"
           },
           {
             "key": "inboxes",
             "optional": true,
-            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[] | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -2108,17 +2108,17 @@
           {
             "key": "share_links",
             "optional": true,
-            "type": "{ admin?: string | null, viewer?: string | null }"
+            "type": "{ admin?: string | null, viewer?: string | null } | null"
           },
           {
             "key": "inboxes",
             "optional": true,
-            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[] | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null"
           }
         ]
       }
@@ -2154,57 +2154,57 @@
           {
             "key": "demo",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inbound_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inbound_verified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "open_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "click_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "auto_unsubscribe_link_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "custom_domain_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "health_alerts_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "critical_alerts_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "alert_recipient_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dns_records",
             "optional": true,
-            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[]"
+            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[] | null"
           }
         ]
       }
@@ -2260,57 +2260,57 @@
           {
             "key": "demo",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inbound_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inbound_verified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "open_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "click_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "auto_unsubscribe_link_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "custom_domain_tracking_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "health_alerts_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "critical_alerts_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "alert_recipient_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dns_records",
             "optional": true,
-            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[]"
+            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[] | null"
           }
         ]
       }
@@ -2555,52 +2555,52 @@
           {
             "key": "delivery_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delivery_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bounce_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bounce_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "open_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "open_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "click_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "click_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "spam_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "spam_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2649,6 +2649,11 @@
         },
         {
           "field": "merge_tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data_type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
@@ -2703,6 +2708,11 @@
           "field": "updated_at",
           "type": "date",
           "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },

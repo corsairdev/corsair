@@ -1,0 +1,532 @@
+---
+title: API
+description: "API reference for Fluxguard: every `fluxguard.api.*` operation with input and output types."
+---
+
+Every `fluxguard.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the organisation account: plan, credits, site count and flags
+
+**Risk:** `read`
+
+```ts
+await corsair.fluxguard.api.account.get({});
+```
+
+**Input:** _empty object_
+
+`flags` maps each severity label to the colour the console shows it in; the same labels appear as `aiFlagged` on a change.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Organisation ID; the webhook tenant key |
+| `status` | `string \| null` | No | Lowercase account status, e.g. active |
+| `plan` | `number \| null` | No | Plan tier; 0 on a free account |
+| `credits` | `number \| null` | No | Credits remaining |
+| `siteCount` | `number \| null` | No | Sites being monitored |
+| `notifyGap` | `number \| null` | No | Minutes between change notifications |
+| `created` | `string \| number \| null` | No | When the account was created |
+| `lastTouch` | `string \| number \| null` | No | Last account activity |
+| `lastFreeCredits` | `string \| number \| null` | No | ISO 8601 string or epoch milliseconds |
+| `flags` | `object \| null` | No | Change severity labels with their console colours |
+
+<AccordionGroup>
+<Accordion title="flags full type">
+
+```ts
+Record<string, {
+  name: string,
+  color?: string | null,
+  isDefault?: boolean | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a site category; sites are assigned to it in the Fluxguard console
+
+**Risk:** `write`
+
+```ts
+await corsair.fluxguard.api.categories.create({ name: 'Marketing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the new site category |
+
+Creates a site category. Page categories exist separately and the API cannot create them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Category ID |
+| `name` | `string` | Yes | — |
+| `created` | `string \| number \| null` | No | When the category was created |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List the site categories change notifications can be limited to
+
+**Risk:** `read`
+
+```ts
+await corsair.fluxguard.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+Fluxguard indexes categories by id and leaves the id out of each value, so the plugin restores it as an `id` field. An account with no categories answers `{}`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  for?: string | null,
+  created?: string | number | null,
+  updated?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitoring
+
+### addPage
+
+`monitoring.addPage`
+
+Add a URL for monitoring, creating a site and session when none is given
+
+**Risk:** `write`
+
+```ts
+await corsair.fluxguard.api.monitoring.addPage({ url: 'https://example.org/pricing', categories: ['0123jdq6th8dc'], siteNickname: 'Pricing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL to monitor; a scheme-less host is accepted |
+| `siteId` | `string` | No | Existing site. Must be given with sessionId; siteNickname and the category options are rejected when it is set |
+| `sessionId` | `string` | No | Existing session. Must be given with siteId |
+| `categories` | `string[]` | No | Category IDs |
+| `categoryId` | `string` | No | Single category ID |
+| `categoryName` | `string` | No | Single category name |
+| `siteNickname` | `string` | No | Nickname for the site created with this page |
+
+`siteId` and `sessionId` must be given together. The API answers 400 when only one is set, and 400 when `siteNickname` or a category option is set alongside an existing site, so the plugin rejects both cases before sending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site the page was added to |
+| `sessionId` | `string` | Yes | Session the page was added to |
+| `pageId` | `string` | Yes | New page ID |
+
+
+
+---
+
+### deletePage
+
+`monitoring.deletePage`
+
+Stop monitoring a page: Fluxguard hides it and everything captured for it, and the id still resolves with status ignore
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fluxguard.api.monitoring.deletePage({ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg', pageId: '0123jdu8r4724' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site ID |
+| `sessionId` | `string` | Yes | Session ID |
+| `pageId` | `string` | Yes | Page ID |
+
+Answers 204. Fluxguard keeps the row with `status: 'ignore'` rather than removing it, so the id keeps resolving.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | True once Fluxguard accepted the delete |
+| `siteId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `pageId` | `string` | Yes | — |
+
+
+
+---
+
+### deleteSite
+
+`monitoring.deleteSite`
+
+Delete a site with all of its sessions, pages and captured versions
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fluxguard.api.monitoring.deleteSite({ siteId: '0123jdq6th8dc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site ID |
+
+Answers 204. Deleting an already-deleted site answers 204 too.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | True once Fluxguard accepted the delete |
+| `siteId` | `string` | Yes | — |
+
+
+
+---
+
+### getPage
+
+`monitoring.getPage`
+
+Get one monitored page with its version counts and categories
+
+**Risk:** `read`
+
+```ts
+await corsair.fluxguard.api.monitoring.getPage({ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg', pageId: '0123jdu8r4724' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site ID |
+| `sessionId` | `string` | Yes | Session ID |
+| `pageId` | `string` | Yes | Page ID |
+
+An unknown site, session or page answers 204 with no body, not 404, so the plugin throws instead of returning an empty page. A deleted page still answers 200 with `status: 'ignore'`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Page ID |
+| `orgId` | `string \| null` | No | Organisation that owns the site |
+| `path` | `string \| null` | No | Path of the monitored page |
+| `url` | `string \| null` | No | URL being monitored |
+| `status` | `string \| null` | No | active, or ignore once the page was deleted |
+| `versions` | `number \| null` | No | Versions captured so far |
+| `versionsKept` | `number \| null` | No | Versions retained |
+| `viewUrl` | `string \| null` | No | Console URL for this page |
+| `created` | `string \| number \| null` | No | When the page was added |
+| `site` | `object \| null` | No | — |
+| `session` | `object \| null` | No | — |
+| `siteCategories` | `string[]` | Yes | Names of the site categories the site belongs to |
+| `pageCategories` | `string[]` | Yes | Names of the page categories the page belongs to |
+
+<AccordionGroup>
+<Accordion title="site full type">
+
+```ts
+{
+  id: string,
+  origin?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="session full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  comparisonType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startCrawl
+
+`monitoring.startCrawl`
+
+Start capturing a session now; the capture runs in the background and spends account credits
+
+**Risk:** `write`
+
+```ts
+await corsair.fluxguard.api.monitoring.startCrawl({ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site ID |
+| `sessionId` | `string` | Yes | Session ID |
+
+Answers 204 with no body. The crawl runs in the background and spends account credits; read the capture with `monitoring.getPage`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | Yes | Site that was crawled |
+| `sessionId` | `string` | Yes | Session that was crawled |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Add a webhook URL. Every later change event is POSTed to it, so a live URL starts receiving data immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.fluxguard.api.webhooks.create({ url: 'https://example.org/hooks/fluxguard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL to POST change events to |
+
+Only `url` is honoured. `siteCategories` and `categories` are silently ignored, so assign categories in the console instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook ID; pass it to webhooks.delete |
+| `url` | `string` | Yes | URL the webhook posts to |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Remove a webhook so its URL stops receiving change events
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fluxguard.api.webhooks.delete({ id: '0123jdxabuzn2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook ID from webhooks.list |
+
+The `id` travels in the request body. A query parameter is ignored and a request without a body answers 400, so the plugin always sends `{ id }`. Deleting an unknown id answers 204.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | True once Fluxguard accepted the delete |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook URLs change events are posted to
+
+**Risk:** `read`
+
+```ts
+await corsair.fluxguard.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+Each webhook's `secret` is its own HMAC signing key for deliveries, and Fluxguard shows the same value behind the key icon beside the webhook URL in Account Settings. Pass it as `webhookSecret`, or store it with `keys.set_webhook_signature`, to verify incoming deliveries.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  secret?: string | null,
+  api?: string | null,
+  created?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sample
+
+`webhooks.sample`
+
+Get a sample delivery built from this account, to inspect the payload shape
+
+**Risk:** `read`
+
+```ts
+await corsair.fluxguard.api.webhooks.sample({});
+```
+
+**Input:** _empty object_
+
+Returns an array of example changes from your own account, or seeded data on a new one.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `samples` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="samples full type">
+
+```ts
+{
+  url?: string | null,
+  finalUrl?: string | null,
+  capturedAt?: string | number | null,
+  comparisonType?: string | null,
+  orgId?: string | null,
+  orgName?: string | null,
+  title?: string | null,
+  statusCode?: number | null,
+  aiFlagged?: string | null,
+  summary?: string | null,
+  diffSummary?: string | null,
+  diffUrl?: string | null,
+  fileBaseUrl?: string | null,
+  site?: {
+    id: string,
+    origin?: string | null
+  } | null,
+  session?: {
+    id: string,
+    name?: string | null,
+    comparisonType?: string | null
+  } | null,
+  page?: {
+    id: string,
+    path?: string | null
+  } | null,
+  siteCategories?: string[] | null,
+  pageCategories?: string[] | null,
+  files?: Record<string, unknown> | null,
+  alarms?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

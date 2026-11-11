@@ -59,6 +59,7 @@ const rows = await corsair.convex.db.deployments.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `createTime` | `number` | equals, gt, gte, lt, lte, in |
 | `lastDeployTime` | `number` | equals, gt, gte, lt, lte, in |
+| `deploymentType` | `string` | equals, contains, startsWith, endsWith, in |
 | `projectId` | `number` | equals, gt, gte, lt, lte, in |
 | `creator` | `number` | equals, gt, gte, lt, lte, in |
 | `previewIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
@@ -70,6 +71,7 @@ const rows = await corsair.convex.db.deployments.search({
 | `expiresAt` | `number` | equals, gt, gte, lt, lte, in |
 | `class` | `string` | equals, contains, startsWith, endsWith, in |
 | `sendLogsToClient` | `boolean` | equals |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
 | `port` | `number` | equals, gt, gte, lt, lte, in |
 | `deviceName` | `string` | equals, contains, startsWith, endsWith, in |
 | `isActive` | `boolean` | equals |

@@ -85,7 +85,7 @@
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

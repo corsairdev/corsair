@@ -877,8 +877,9 @@
           },
           {
             "key": "kind",
-            "optional": false,
-            "type": "note | task | portalMessage | phoneCall | text"
+            "optional": true,
+            "type": "note | task | portalMessage | phoneCall | text",
+            "description": "Defaults to \"note\"."
           },
           {
             "key": "pinned",
@@ -1955,6 +1956,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "assigneeId",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
@@ -2063,6 +2069,11 @@
         },
         {
           "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2231,6 +2242,16 @@
         },
         {
           "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

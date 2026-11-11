@@ -33,47 +33,47 @@
           {
             "key": "patronLevel",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tierName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "monthlyLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "remainingCalls",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "usedCalls",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "resetAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sharedPool",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "products",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "features",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, boolean> | null"
           }
         ]
       }
@@ -140,7 +140,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, season?: number | null, seasonType?: string | null, week?: number | null, startDate?: string | null, homeTeamId?: number | null, homeTeam?: string | null, homeConference?: string | null, homeClassification?: string | null, homeScore?: number | null, awayTeamId?: number | null, awayTeam?: string | null, awayConference?: string | null, awayClassification?: string | null, awayScore?: number | null, lines?: {}[] | null }[]"
+        "type": "{ id: number, season?: number | null, seasonType?: string | null, week?: number | null, startDate?: string | null, homeTeamId?: number | null, homeTeam?: string | null, homeConference?: string | null, homeClassification?: string | null, homeScore?: number | null, awayTeamId?: number | null, awayTeam?: string | null, awayConference?: string | null, awayClassification?: string | null, awayScore?: number | null, lines?: Record<string, any>[] | null }[]"
       }
     },
     {
@@ -422,7 +422,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string | null, gameId?: number | null, offense?: string | null, offenseConference?: string | null, defense?: string | null, defenseConference?: string | null, driveNumber?: number | null, scoring?: boolean | null, startPeriod?: number | null, startYardline?: number | null, startYardsToGoal?: number | null, startTime?: {} | null, endPeriod?: number | null, endYardline?: number | null, endYardsToGoal?: number | null, endTime?: {} | null, elapsed?: {} | null, plays?: number | null, yards?: number | null, driveResult?: string | null, isHomeOffense?: boolean | null, startOffenseScore?: number | null, startDefenseScore?: number | null, endOffenseScore?: number | null, endDefenseScore?: number | null }[]"
+        "type": "{ id?: string | null, gameId?: number | null, offense?: string | null, offenseConference?: string | null, defense?: string | null, defenseConference?: string | null, driveNumber?: number | null, scoring?: boolean | null, startPeriod?: number | null, startYardline?: number | null, startYardsToGoal?: number | null, startTime?: Record<string, any> | null, endPeriod?: number | null, endYardline?: number | null, endYardsToGoal?: number | null, endTime?: Record<string, any> | null, elapsed?: Record<string, any> | null, plays?: number | null, yards?: number | null, driveResult?: string | null, isHomeOffense?: boolean | null, startOffenseScore?: number | null, startDefenseScore?: number | null, endOffenseScore?: number | null, endDefenseScore?: number | null }[]"
       }
     },
     {
@@ -446,17 +446,17 @@
           {
             "key": "gameInfo",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "teams",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "players",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -623,7 +623,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, teams?: {}[] | null }[]"
+        "type": "{ id: number, teams?: Record<string, any>[] | null }[]"
       }
     },
     {
@@ -673,7 +673,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, teams?: {}[] | null }[]"
+        "type": "{ id: number, teams?: Record<string, any>[] | null }[]"
       }
     },
     {
@@ -817,7 +817,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, usage?: {} | null }[]"
+        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, usage?: Record<string, any> | null }[]"
       }
     },
     {
@@ -872,7 +872,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string | null, team?: string | null, name?: string | null, firstName?: string | null, lastName?: string | null, weight?: number | null, height?: number | null, jersey?: number | null, position?: string | null, hometown?: string | null, teamColor?: string | null, teamColorSecondary?: string | null, activeStartYear?: number | null, activeEndYear?: number | null, teamStints?: {}[] | null }[]"
+        "type": "{ id?: string | null, team?: string | null, name?: string | null, firstName?: string | null, lastName?: string | null, weight?: number | null, height?: number | null, jersey?: number | null, position?: string | null, hometown?: string | null, teamColor?: string | null, teamColorSecondary?: string | null, activeStartYear?: number | null, activeEndYear?: number | null, teamStints?: Record<string, any>[] | null }[]"
       }
     },
     {
@@ -942,7 +942,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gameId?: number | null, driveId?: string | null, id?: string | null, driveNumber?: number | null, playNumber?: number | null, offense?: string | null, offenseConference?: string | null, offenseScore?: number | null, defense?: string | null, defenseConference?: string | null, defenseScore?: number | null, home?: string | null, away?: string | null, period?: number | null, clock?: {} | null, offenseTimeouts?: number | null, defenseTimeouts?: number | null, yardline?: number | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, yardsGained?: number | null, scoring?: boolean | null, playType?: string | null, playText?: string | null, ppa?: number | null, wallclock?: string | null }[]"
+        "type": "{ gameId?: number | null, driveId?: string | null, id?: string | null, driveNumber?: number | null, playNumber?: number | null, offense?: string | null, offenseConference?: string | null, offenseScore?: number | null, defense?: string | null, defenseConference?: string | null, defenseScore?: number | null, home?: string | null, away?: string | null, period?: number | null, clock?: Record<string, any> | null, offenseTimeouts?: number | null, defenseTimeouts?: number | null, yardline?: number | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, yardsGained?: number | null, scoring?: boolean | null, playType?: string | null, playText?: string | null, ppa?: number | null, wallclock?: string | null }[]"
       }
     },
     {
@@ -997,7 +997,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gameId?: number | null, season?: number | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, teamScore?: number | null, opponentScore?: number | null, driveId?: string | null, playId?: string | null, period?: number | null, clock?: {} | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, athleteId?: string | null, athleteName?: string | null, statType?: string | null, stat?: string | null }[]"
+        "type": "{ gameId?: number | null, season?: number | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, teamScore?: number | null, opponentScore?: number | null, driveId?: string | null, playId?: string | null, period?: number | null, clock?: Record<string, any> | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, athleteId?: string | null, athleteName?: string | null, statType?: string | null, stat?: string | null }[]"
       }
     },
     {
@@ -1080,7 +1080,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ season?: number | null, week?: number | null, seasonType?: string | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, opponent?: string | null, averagePPA?: {} | null }[]"
+        "type": "{ season?: number | null, week?: number | null, seasonType?: string | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, opponent?: string | null, averagePPA?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1130,7 +1130,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, averagePPA?: {} | null, totalPPA?: {} | null }[]"
+        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, averagePPA?: Record<string, any> | null, totalPPA?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1295,7 +1295,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ year?: number | null, conference?: string | null, rating?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: {} | null }[]"
+        "type": "{ year?: number | null, conference?: string | null, rating?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1355,7 +1355,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ year?: number | null, team?: string | null, conference?: string | null, fpi?: number | null, resumeRanks?: {} | null, efficiencies?: {} | null }[]"
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, fpi?: number | null, resumeRanks?: Record<string, any> | null, efficiencies?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1380,7 +1380,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ year?: number | null, team?: string | null, conference?: string | null, rating?: number | null, ranking?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: {} | null }[]"
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, rating?: number | null, ranking?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1555,7 +1555,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "regular | postseason | both | allstar | spring_regular | spring_postseason[]"
+        "type": "(regular | postseason | both | allstar | spring_regular | spring_postseason)[]"
       }
     },
     {
@@ -1600,7 +1600,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: {} | null, defense?: {} | null }[]"
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: Record<string, any> | null, defense?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1640,7 +1640,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: {} | null, defense?: {} | null }[]"
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: Record<string, any> | null, defense?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1680,7 +1680,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, opponentConference?: string | null, offense?: {} | null, defense?: {} | null }[]"
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, opponentConference?: string | null, offense?: Record<string, any> | null, defense?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1843,32 +1843,32 @@
           {
             "key": "team1",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team1Wins",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "team2Wins",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ties",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "games",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           }
         ]
       }

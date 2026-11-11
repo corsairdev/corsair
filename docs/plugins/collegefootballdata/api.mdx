@@ -30,25 +30,15 @@ await corsair.collegefootballdata.api.account.getUserInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `patronLevel` | `number` | No | — |
-| `tierName` | `string` | No | — |
-| `monthlyLimit` | `number` | No | — |
-| `remainingCalls` | `number` | No | — |
-| `usedCalls` | `number` | No | — |
-| `resetAt` | `string` | No | — |
-| `sharedPool` | `boolean` | No | — |
-| `products` | `string[]` | No | — |
-| `features` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="features full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `patronLevel` | `number \| null` | No | — |
+| `tierName` | `string \| null` | No | — |
+| `monthlyLimit` | `number \| null` | No | — |
+| `remainingCalls` | `number \| null` | No | — |
+| `usedCalls` | `number \| null` | No | — |
+| `resetAt` | `string \| null` | No | — |
+| `sharedPool` | `boolean \| null` | No | — |
+| `products` | `string[] \| null` | No | — |
+| `features` | `Record<string, boolean> \| null` | No | — |
 
 
 
@@ -107,8 +97,7 @@ await corsair.collegefootballdata.api.betting.getLines({});
   awayConference?: string | null,
   awayClassification?: string | null,
   awayScore?: number | null,
-  lines?: {
-  }[] | null
+  lines?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -495,15 +484,12 @@ await corsair.collegefootballdata.api.drives.list({});
   startPeriod?: number | null,
   startYardline?: number | null,
   startYardsToGoal?: number | null,
-  startTime?: {
-  } | null,
+  startTime?: Record<string, any> | null,
   endPeriod?: number | null,
   endYardline?: number | null,
   endYardsToGoal?: number | null,
-  endTime?: {
-  } | null,
-  elapsed?: {
-  } | null,
+  endTime?: Record<string, any> | null,
+  elapsed?: Record<string, any> | null,
   plays?: number | null,
   yards?: number | null,
   driveResult?: string | null,
@@ -546,35 +532,9 @@ await corsair.collegefootballdata.api.games.getAdvancedBoxScore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `gameInfo` | `object` | No | — |
-| `teams` | `object` | No | — |
-| `players` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="gameInfo full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="teams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="players full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `gameInfo` | `Record<string, any> \| null` | No | — |
+| `teams` | `Record<string, any> \| null` | No | — |
+| `players` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -754,8 +714,7 @@ await corsair.collegefootballdata.api.games.getPlayerStats({});
 ```ts
 {
   id: number,
-  teams?: {
-  }[] | null
+  teams?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -798,8 +757,7 @@ await corsair.collegefootballdata.api.games.getTeamStats({});
 ```ts
 {
   id: number,
-  teams?: {
-  }[] | null
+  teams?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -1032,8 +990,7 @@ await corsair.collegefootballdata.api.players.getUsage({});
   position?: string | null,
   team?: string | null,
   conference?: string | null,
-  usage?: {
-  } | null
+  usage?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1131,8 +1088,7 @@ await corsair.collegefootballdata.api.players.search({});
   teamColorSecondary?: string | null,
   activeStartYear?: number | null,
   activeEndYear?: number | null,
-  teamStints?: {
-  }[] | null
+  teamStints?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -1194,8 +1150,7 @@ await corsair.collegefootballdata.api.plays.list({});
   home?: string | null,
   away?: string | null,
   period?: number | null,
-  clock?: {
-  } | null,
+  clock?: Record<string, any> | null,
   offenseTimeouts?: number | null,
   defenseTimeouts?: number | null,
   yardline?: number | null,
@@ -1261,8 +1216,7 @@ await corsair.collegefootballdata.api.plays.listStats({});
   driveId?: string | null,
   playId?: string | null,
   period?: number | null,
-  clock?: {
-  } | null,
+  clock?: Record<string, any> | null,
   yardsToGoal?: number | null,
   down?: number | null,
   distance?: number | null,
@@ -1390,8 +1344,7 @@ await corsair.collegefootballdata.api.ppa.getByPlayerGame({});
   position?: string | null,
   team?: string | null,
   opponent?: string | null,
-  averagePPA?: {
-  } | null
+  averagePPA?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1439,10 +1392,8 @@ await corsair.collegefootballdata.api.ppa.getByPlayerSeason({});
   position?: string | null,
   team?: string | null,
   conference?: string | null,
-  averagePPA?: {
-  } | null,
-  totalPPA?: {
-  } | null
+  averagePPA?: Record<string, any> | null,
+  totalPPA?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1723,8 +1674,7 @@ await corsair.collegefootballdata.api.ratings.getConferenceSP({});
     runRate?: number | null,
     pace?: number | null
   } | null,
-  specialTeams?: {
-  } | null
+  specialTeams?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1807,10 +1757,8 @@ await corsair.collegefootballdata.api.ratings.getFPI({});
   team?: string | null,
   conference?: string | null,
   fpi?: number | null,
-  resumeRanks?: {
-  } | null,
-  efficiencies?: {
-  } | null
+  resumeRanks?: Record<string, any> | null,
+  efficiencies?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1878,8 +1826,7 @@ await corsair.collegefootballdata.api.ratings.getSP({});
     runRate?: number | null,
     pace?: number | null
   } | null,
-  specialTeams?: {
-  } | null
+  specialTeams?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2142,7 +2089,7 @@ await corsair.collegefootballdata.api.seasonTypes.list({});
 
 
 
-**Output:** `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason[]`
+**Output:** `(regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason)[]`
 
 
 ---
@@ -2187,10 +2134,8 @@ await corsair.collegefootballdata.api.stats.getAdvancedGameStats({});
   week?: number | null,
   team?: string | null,
   opponent?: string | null,
-  offense?: {
-  } | null,
-  defense?: {
-  } | null
+  offense?: Record<string, any> | null,
+  defense?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2236,10 +2181,8 @@ await corsair.collegefootballdata.api.stats.getAdvancedSeasonStats({});
   week?: number | null,
   team?: string | null,
   opponent?: string | null,
-  offense?: {
-  } | null,
-  defense?: {
-  } | null
+  offense?: Record<string, any> | null,
+  defense?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2287,10 +2230,8 @@ await corsair.collegefootballdata.api.stats.getGameHavocStats({});
   conference?: string | null,
   opponent?: string | null,
   opponentConference?: string | null,
-  offense?: {
-  } | null,
-  defense?: {
-  } | null
+  offense?: Record<string, any> | null,
+  defense?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2486,22 +2427,12 @@ await corsair.collegefootballdata.api.teams.getMatchup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `team1` | `string` | No | — |
-| `team2` | `string` | No | — |
-| `team1Wins` | `number` | No | — |
-| `team2Wins` | `number` | No | — |
-| `ties` | `number` | No | — |
-| `games` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="games full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `team1` | `string \| null` | No | — |
+| `team2` | `string \| null` | No | — |
+| `team1Wins` | `number \| null` | No | — |
+| `team2Wins` | `number \| null` | No | — |
+| `ties` | `number \| null` | No | — |
+| `games` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -2637,9 +2568,7 @@ await corsair.collegefootballdata.api.teams.getRoster({});
   homeLatitude?: number | null,
   homeLongitude?: number | null,
   homeCountyFIPS?: string | null,
-  recruitIds?: (
-    string | number
-  )[] | null
+  recruitIds?: (string | number)[] | null
 }[]
 ```
 </Accordion>

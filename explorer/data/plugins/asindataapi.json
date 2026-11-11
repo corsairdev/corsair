@@ -74,7 +74,7 @@
           {
             "key": "request_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_metadata",
@@ -89,12 +89,12 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "refinements",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -896,7 +896,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } }"
+        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: Record<string, any>, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: Record<string, any>[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: Record<string, any> } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: Record<string, any>, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: Record<string, any>[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: Record<string, any> } }"
       }
     },
     {
@@ -965,7 +965,7 @@
           {
             "key": "request_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_metadata",
@@ -975,22 +975,22 @@
           {
             "key": "product",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "offers",
             "optional": true,
-            "type": "{ position?: number, is_prime?: boolean, buybox_winner?: boolean, offer_id?: string, offer_asin?: string, price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, condition?: {}, seller?: {}, delivery?: {} }[]"
+            "type": "{ position?: number, is_prime?: boolean, buybox_winner?: boolean, offer_id?: string, offer_asin?: string, price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, condition?: Record<string, any>, seller?: Record<string, any>, delivery?: Record<string, any> }[]"
           },
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "available_filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1037,7 +1037,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } }"
+        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: Record<string, any>, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: Record<string, any>[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: Record<string, any> } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: Record<string, any>, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: Record<string, any>[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: Record<string, any> } }"
       }
     },
     {
@@ -1351,7 +1351,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: {} | null, destination_status?: {} | null }"
+            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: Record<string, any> | null, destination_status?: Record<string, any> | null }"
           }
         ]
       }
@@ -1397,7 +1397,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: {} | null, destination_status?: {} | null }[]"
+            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: Record<string, any> | null, destination_status?: Record<string, any> | null }[]"
           }
         ]
       }
@@ -1473,7 +1473,7 @@
           {
             "key": "request_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "request_metadata",
@@ -1488,12 +1488,12 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "refinements",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1559,9 +1559,24 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "schedule_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "enabled",
           "type": "boolean",
           "operators": ["equals"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "request_total_count",
@@ -1670,6 +1685,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "enabled",
           "type": "boolean",
           "operators": ["equals"]
@@ -1757,6 +1777,11 @@
         },
         {
           "field": "custom_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

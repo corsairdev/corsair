@@ -69,14 +69,14 @@ await corsair.supadata.api.metadata.get({});
 | `type` | `video \| image \| carousel \| post` | Yes | — |
 | `id` | `string` | Yes | — |
 | `url` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `author` | `object` | No | — |
 | `stats` | `object` | No | — |
 | `media` | `object` | No | — |
 | `tags` | `string[]` | No | — |
 | `createdAt` | `string` | No | — |
-| `additionalData` | `object` | No | — |
+| `additionalData` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -95,9 +95,9 @@ await corsair.supadata.api.metadata.get({});
 
 ```ts
 {
-  likes?: number | null,
-  comments?: number | null,
-  shares?: number | null,
+  likes: number | null,
+  comments: number | null,
+  shares: number | null,
   views?: number | null
 }
 ```
@@ -112,14 +112,6 @@ await corsair.supadata.api.metadata.get({});
   thumbnailUrl?: string,
   url?: string,
   items?: any[]
-}
-```
-</Accordion>
-
-<Accordion title="additionalData full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -205,8 +197,8 @@ await corsair.supadata.api.transcript.getJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `queued \| active \| completed \| failed` | Yes | — |
-| `error` | `object` | No | — |
-| `content` | `object[]` | No | — |
+| `error` | `object \| null` | No | — |
+| `content` | `string \| object[]` | No | — |
 | `lang` | `string` | No | — |
 | `availableLangs` | `string[]` | No | — |
 
@@ -219,7 +211,7 @@ await corsair.supadata.api.transcript.getJob({});
   message: string,
   details: string,
   documentationUrl?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -488,7 +480,7 @@ await corsair.supadata.api.youtube.search({});
 | `uploadDate` | `all \| hour \| today \| week \| month \| year` | No | — |
 | `sortBy` | `relevance \| rating \| date \| views` | No | — |
 | `duration` | `all \| short \| medium \| long` | No | — |
-| `features` | `360 \| hd \| subtitles \| creative-commons \| 3d \| live \| 4k \| location \| hdr \| vr180[]` | No | — |
+| `features` | `(360 \| hd \| subtitles \| creative-commons \| 3d \| live \| 4k \| location \| hdr \| vr180)[]` | No | — |
 | `nextPageToken` | `string` | No | — |
 
 
@@ -563,9 +555,9 @@ await corsair.supadata.api.youtube.video({});
 | `tags` | `string[]` | Yes | — |
 | `transcriptLanguages` | `string[]` | Yes | — |
 | `thumbnail` | `string` | No | — |
-| `uploadDate` | `string` | No | — |
-| `viewCount` | `number` | No | — |
-| `likeCount` | `number` | No | — |
+| `uploadDate` | `string \| null` | No | — |
+| `viewCount` | `number \| null` | No | — |
+| `likeCount` | `number \| null` | No | — |
 | `isLive` | `boolean` | No | — |
 
 <AccordionGroup>

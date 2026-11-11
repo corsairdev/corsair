@@ -51,10 +51,8 @@ await corsair.woodpeckerco.api.campaigns.deleteStep({ campaign_id: 1234567, step
   status?: string | null,
   bounce_shield_autopaused_at?: string | null,
   email_account_ids?: number[] | null,
-  settings?: {
-  } | null,
-  steps?: {
-  } | null
+  settings?: Record<string, any> | null,
+  steps?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -80,7 +78,7 @@ await corsair.woodpeckerco.api.campaigns.list({ status: ['RUNNING', 'PAUSED'] })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `RUNNING \| DRAFT \| EDITED \| PAUSED \| STOPPED \| COMPLETED[]` | No | Only campaigns in these statuses. |
+| `status` | `(RUNNING \| DRAFT \| EDITED \| PAUSED \| STOPPED \| COMPLETED)[]` | No | Only campaigns in these statuses. |
 | `id` | `number[]` | No | Only these campaigns. Exactly one ID also returns its `stats`; several return the plain list. |
 
 
@@ -126,8 +124,7 @@ await corsair.woodpeckerco.api.campaigns.list({ status: ['RUNNING', 'PAUSED'] })
     interested?: number | null,
     maybe_later?: number | null,
     not_interested?: number | null,
-    emails?: {
-    }[] | null
+    emails?: Record<string, any>[] | null
   } | null,
   timestamp?: string | null
 }[]
@@ -312,7 +309,7 @@ await corsair.woodpeckerco.api.prospects.addToCampaign({ campaign: { campaign_id
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `prospects` | `object[]` | Yes | — |
-| `status` | `object` | No | — |
+| `status` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="prospects full type">
@@ -337,7 +334,7 @@ await corsair.woodpeckerco.api.prospects.addToCampaign({ campaign: { campaign_id
   status?: string | null,
   code?: string | null,
   msg?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -382,7 +379,7 @@ await corsair.woodpeckerco.api.prospects.listInCampaigns({ campaigns_id: [123456
 | `prospects` | `object[]` | Yes | — |
 | `page` | `number` | Yes | — |
 | `per_page` | `number` | Yes | — |
-| `next_page` | `number` | No | The next page while this one is full; null once a page comes back short. A full last page leads to one empty page. |
+| `next_page` | `number \| null` | Yes | The next page while this one is full; null once a page comes back short. A full last page leads to one empty page. |
 | `message` | `string` | No | Woodpecker's note when nothing matched. |
 
 <AccordionGroup>
@@ -410,8 +407,7 @@ await corsair.woodpeckerco.api.prospects.listInCampaigns({ campaigns_id: [123456
   last replied?: string | null,
   updated?: string | null,
   encrypted?: boolean | null,
-  snippet_labels?: {
-  } | null,
+  snippet_labels?: Record<string, any> | null,
   status?: string | null,
   interested?: string | null,
   interest_level?: {

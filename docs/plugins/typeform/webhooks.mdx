@@ -55,19 +55,16 @@ A form was submitted — Typeform delivers the full response payload
   token: string,
   submitted_at: string,
   landed_at: string,
-  hidden?: {
-  },
+  hidden?: Record<string, string>,
   calculated?: {
     score?: number
   },
   definition?: {
     id?: string,
     title?: string,
-    fields?: {
-    }[]
+    fields?: Record<string, any>[]
   },
-  answers?: {
-  }[],
+  answers?: Record<string, any>[],
   variables?: {
     key?: string,
     type?: string,
@@ -100,19 +97,16 @@ A form was submitted — Typeform delivers the full response payload
     token: string,
     submitted_at: string,
     landed_at: string,
-    hidden?: {
-    },
+    hidden?: Record<string, string>,
     calculated?: {
       score?: number
     },
     definition?: {
       id?: string,
       title?: string,
-      fields?: {
-      }[]
+      fields?: Record<string, any>[]
     },
-    answers?: {
-    }[],
+    answers?: Record<string, any>[],
     variables?: {
       key?: string,
       type?: string,

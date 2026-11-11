@@ -180,7 +180,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "prompt_cache_key",
@@ -250,12 +250,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ code?: string, message?: string }"
+            "type": "{ code?: string, message?: string } | null"
           },
           {
             "key": "incomplete_details",
             "optional": true,
-            "type": "{ reason?: string }"
+            "type": "{ reason?: string } | null"
           },
           {
             "key": "parallel_tool_calls",

@@ -1,0 +1,17 @@
+displayName: WhoisFreaks
+description: Domain and network intelligence API for WHOIS, DNS, SSL, subdomains, domain availability, typosquatting, IP and ASN data, geolocation, and reputation lookups.
+domain: whoisfreaks.com
+examples:
+  read:
+    path: dns.live
+    title: Look up live DNS records
+    args:
+      domainName: example.com
+      type: all
+  write:
+    path: availability.check
+    title: Check domain availability
+    args:
+      domain: example.com
+      sug: false
+      count: 5

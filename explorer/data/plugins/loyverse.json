@@ -45,7 +45,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -76,22 +76,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -198,22 +198,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -239,7 +239,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -270,97 +270,97 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customer_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_visit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_visit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_visits",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_spent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_points",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permanent_deletion_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -457,47 +457,47 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customer_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -512,97 +512,97 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customer_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_visit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_visit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_visits",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_spent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_points",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "permanent_deletion_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -628,7 +628,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -659,47 +659,47 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "restricted_access",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -862,47 +862,47 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "restricted_access",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -933,42 +933,42 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "is_owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1142,7 +1142,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -1204,117 +1204,117 @@
           {
             "key": "handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "item_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_stock",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sold_by_weight",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_composite",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "use_production",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "components",
             "optional": true,
-            "type": "{ variant_id?: string | null, quantity?: number | null }[]"
+            "type": "{ variant_id?: string | null, quantity?: number | null }[] | null"
           },
           {
             "key": "primary_supplier_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "modifier_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "form",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option1_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "variants",
             "optional": true,
-            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1447,17 +1447,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_stock",
@@ -1487,7 +1487,7 @@
           {
             "key": "primary_supplier_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax_ids",
@@ -1512,17 +1512,17 @@
           {
             "key": "option1_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "variants",
@@ -1542,117 +1542,117 @@
           {
             "key": "handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "item_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "track_stock",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sold_by_weight",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_composite",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "use_production",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "components",
             "optional": true,
-            "type": "{ variant_id?: string | null, quantity?: number | null }[]"
+            "type": "{ variant_id?: string | null, quantity?: number | null }[] | null"
           },
           {
             "key": "primary_supplier_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tax_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "modifier_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "form",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option1_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "variants",
             "optional": true,
-            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1677,27 +1677,27 @@
           {
             "key": "business_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "{ code?: string | null, decimal_places?: number | null }"
+            "type": "{ code?: string | null, decimal_places?: number | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1723,7 +1723,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -1754,37 +1754,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "position",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "modifier_options",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1901,37 +1901,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "position",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "modifier_options",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1951,37 +1951,37 @@
           {
             "key": "issuer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "authorization_endpoint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "token_endpoint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userinfo_endpoint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jwks_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scopes_supported",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "response_types_supported",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -2032,32 +2032,32 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2149,7 +2149,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -2180,22 +2180,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "store_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2302,22 +2302,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "store_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2393,137 +2393,137 @@
           {
             "key": "receipt_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "refund_for",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_money",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_earned",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_deducted",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tip",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "surcharge",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "store_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pos_device_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dining_option",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_discounts",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "total_taxes",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[] | null"
           },
           {
             "key": "payments",
             "optional": true,
-            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[] | null"
           }
         ]
       }
@@ -2549,137 +2549,137 @@
           {
             "key": "receipt_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "refund_for",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_money",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_earned",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_deducted",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tip",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "surcharge",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "store_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pos_device_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dining_option",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_discounts",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "total_taxes",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[] | null"
           },
           {
             "key": "payments",
             "optional": true,
-            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[] | null"
           }
         ]
       }
@@ -2816,137 +2816,137 @@
           {
             "key": "receipt_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "refund_for",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receipt_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_money",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_earned",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_deducted",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "points_balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tip",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "surcharge",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customer_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "store_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pos_device_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dining_option",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_discounts",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "total_taxes",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[] | null"
           },
           {
             "key": "payments",
             "optional": true,
-            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[] | null"
           }
         ]
       }
@@ -3028,67 +3028,67 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3180,7 +3180,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -3211,77 +3211,77 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_1",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3373,57 +3373,57 @@
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_1",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -3438,77 +3438,77 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_1",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address_2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postal_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3534,7 +3534,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -3565,37 +3565,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3712,37 +3712,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3768,7 +3768,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -3799,77 +3799,77 @@
           {
             "key": "item_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sku",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference_variant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option1_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "barcode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "purchase_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_pricing_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[]"
+            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3976,27 +3976,27 @@
           {
             "key": "reference_variant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option1_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "barcode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
@@ -4006,7 +4006,7 @@
           {
             "key": "purchase_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_pricing_type",
@@ -4016,7 +4016,7 @@
           {
             "key": "default_price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
@@ -4036,77 +4036,77 @@
           {
             "key": "item_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sku",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference_variant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option1_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option2_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "option3_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "barcode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "purchase_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_pricing_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stores",
             "optional": true,
-            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[]"
+            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4132,7 +4132,7 @@
           {
             "key": "deleted_object_ids",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -4158,42 +4158,42 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merchant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4259,42 +4259,42 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "merchant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

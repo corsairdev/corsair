@@ -26,17 +26,7 @@ await corsair.bubble.api.meta.getSwagger({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -212,7 +202,7 @@ await corsair.bubble.api.things.list({});
 {
   key: string,
   constraint_type: string,
-  value?: string | number | boolean | lazy
+  value?: string | number | boolean | JsonValue
 }[]
 ```
 </Accordion>
@@ -332,17 +322,7 @@ await corsair.bubble.api.workflows.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workflowName` | `string` | Yes | — |
-| `params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -350,7 +330,7 @@ await corsair.bubble.api.workflows.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -373,17 +353,7 @@ await corsair.bubble.api.workflows.runGet({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workflowName` | `string` | Yes | — |
-| `params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -391,7 +361,7 @@ await corsair.bubble.api.workflows.runGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 
 
 

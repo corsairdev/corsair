@@ -32,9 +32,9 @@ await corsair.buildkite.api.getCurrentAccessToken({});
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
 | `scopes` | `string[]` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `user` | `object` | No | — |
 
 <AccordionGroup>
@@ -178,7 +178,7 @@ await corsair.buildkite.api.listPipelineAgents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `orgSlug` | `string` | Yes | Official path param {org.slug} on GET /v2/organizations/{org.slug}/agents |
+| `orgSlug` | `string` | Yes | Official path param &#123;org.slug&#125; on GET /v2/organizations/&#123;org.slug&#125;/agents |
 | `name` | `string` | No | Official query: ?name= |
 | `hostname` | `string` | No | Official query: ?hostname= |
 | `version` | `string` | No | Official query: ?version= |

@@ -1,0 +1,13 @@
+displayName: Cosmic
+description: Headless CMS. Manage objects, object types, media, and revisions.
+domain: cosmicjs.com
+examples:
+  read:
+    path: objects.find
+    title: Find objects
+  write:
+    path: objects.insert
+    title: Create an object
+    args:
+      title: Hello world
+      type: posts

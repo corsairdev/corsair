@@ -1,0 +1,16 @@
+displayName: ContactOut
+description: Contact data platform. Enrich and search people and companies, find and verify emails and phones, and check account usage.
+domain: contactout.com
+examples:
+  read:
+    path: people.search
+    title: Search for people
+  write:
+    path: linkedin.enrich
+    title: Enrich a LinkedIn profile
+    args:
+      profile: https://www.linkedin.com/in/example
+dbExample:
+  entity: profiles
+  note: Search synced profiles without hitting ContactOut.
+  limit: 50

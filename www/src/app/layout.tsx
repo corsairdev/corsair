@@ -1,12 +1,19 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata, Viewport } from 'next';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
+import Script from 'next/script';
 import type { ReactNode } from 'react';
 import './globals.css';
 import '@/components/landing/theme.css';
 import { cn } from '@/lib/utils';
 
 const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_ID;
+
+// Ahrefs Web Analytics for the "Corsair" Ahrefs project. The key is public:
+// it ships in the page HTML. Production only, so previews and local runs
+// don't count as corsair.dev visits.
+const ahrefsAnalyticsKey = 'crwd3fDrSyDxBeS+avatNw';
+const isProduction = process.env.VERCEL_ENV === 'production';
 
 const hostGrotesk = Host_Grotesk({
 	subsets: ['latin'],
@@ -138,6 +145,13 @@ export default function RootLayout({
 				{children}
 			</body>
 			{googleAnalyticsId ? <GoogleAnalytics gaId={googleAnalyticsId} /> : null}
+			{isProduction ? (
+				<Script
+					src="https://analytics.ahrefs.com/analytics.js"
+					data-key={ahrefsAnalyticsKey}
+					strategy="afterInteractive"
+				/>
+			) : null}
 		</html>
 	);
 }

@@ -1,0 +1,12 @@
+displayName: Veriphone
+description: Phone number validation API for verifying numbers, listing supported countries, checking credit usage, and fetching example numbers.
+domain: veriphone.io
+examples:
+  read:
+    path: credits
+    title: Check credit balance
+  write:
+    path: verifyPhoneNumber
+    title: Verify a phone number
+    args:
+      phone: "+14155552671"

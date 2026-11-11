@@ -30,11 +30,11 @@ await corsair.agentql.api.browserSessions.createRemoteBrowserSession({});
 | `browser_ua_preset` | `windows \| macos \| linux` | No | — |
 | `browser_profile` | `light \| stealth \| tf-browser` | No | — |
 | `inactivity_timeout_seconds` | `number` | No | — |
-| `proxy` | `object` | No | — |
+| `proxy` | `object \| null` | No | — |
 | `shutdown_mode` | `on_disconnect \| on_inactivity_timeout` | No | — |
-| `sub_user_id` | `string` | No | — |
+| `sub_user_id` | `string \| null` | No | — |
 | `branding` | `boolean` | No | — |
-| `browser_startup_url` | `string \| about:blank` | No | — |
+| `browser_startup_url` | `string \| about:blank \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="proxy full type">
@@ -48,7 +48,7 @@ await corsair.agentql.api.browserSessions.createRemoteBrowserSession({});
   url: string,
   username?: string | null,
   password?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -121,18 +121,10 @@ await corsair.agentql.api.data.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `metadata` | `object` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="metadata full type">
 
 ```ts
@@ -140,7 +132,7 @@ await corsair.agentql.api.data.query({});
   request_id?: string,
   generated_query?: string | null,
   screenshot?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -188,25 +180,17 @@ await corsair.agentql.api.data.queryDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-| `metadata` | `object` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="metadata full type">
 
 ```ts
 {
   request_id?: string,
   generated_query?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

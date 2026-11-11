@@ -31,7 +31,7 @@ await corsair.render.api.blueprints.disconnect({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -148,7 +148,7 @@ await corsair.render.api.blueprints.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -186,21 +186,11 @@ await corsair.render.api.blueprints.update({});
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -237,7 +227,7 @@ await corsair.render.api.blueprints.validate({ ownerId: 'tea-cjnxpkdhshc73d12t9i
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -311,7 +301,7 @@ await corsair.render.api.buildSources.builds.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -347,7 +337,7 @@ await corsair.render.api.buildSources.builds.trigger({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -382,30 +372,12 @@ await corsair.render.api.buildSources.create({});
 | `ownerId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `projectId` | `string` | No | — |
-| `git` | `object` | No | — |
-| `image` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="git full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="image full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `git` | `Record<string, any>` | No | — |
+| `image` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -441,7 +413,7 @@ await corsair.render.api.buildSources.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -477,7 +449,7 @@ await corsair.render.api.buildSources.envGroups.link({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -514,7 +486,7 @@ await corsair.render.api.buildSources.envGroups.unlink({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -550,7 +522,7 @@ await corsair.render.api.buildSources.envVars.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -621,7 +593,7 @@ await corsair.render.api.buildSources.envVars.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -708,21 +680,11 @@ await corsair.render.api.buildSources.envVars.upsert({});
 |------|------|----------|-------------|
 | `buildSourceId` | `string` | Yes | — |
 | `envVarKey` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -798,7 +760,7 @@ await corsair.render.api.buildSources.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -835,7 +797,7 @@ await corsair.render.api.buildSources.secretFiles.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -906,7 +868,7 @@ await corsair.render.api.buildSources.secretFiles.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -988,21 +950,11 @@ await corsair.render.api.buildSources.secretFiles.upsert({});
 |------|------|----------|-------------|
 | `buildSourceId` | `string` | Yes | — |
 | `envVarKey` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1035,21 +987,11 @@ await corsair.render.api.buildSources.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `buildSourceId` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1091,7 +1033,7 @@ await corsair.render.api.dedicatedIps.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1132,7 +1074,7 @@ await corsair.render.api.dedicatedIps.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1212,7 +1154,7 @@ await corsair.render.api.dedicatedIps.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1250,21 +1192,11 @@ await corsair.render.api.dedicatedIps.update({});
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1305,7 +1237,7 @@ await corsair.render.api.disks.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1346,7 +1278,7 @@ await corsair.render.api.disks.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1447,7 +1379,7 @@ await corsair.render.api.disks.listSnapshots({});
 
 Restore a snapshot to a Render disk
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.render.api.disks.restoreSnapshot({});
@@ -1468,7 +1400,7 @@ await corsair.render.api.disks.restoreSnapshot({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1509,7 +1441,7 @@ await corsair.render.api.disks.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1552,7 +1484,7 @@ await corsair.render.api.disks.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1590,7 +1522,7 @@ await corsair.render.api.events.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1633,7 +1565,7 @@ await corsair.render.api.keyValue.connectionInfo({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1671,7 +1603,7 @@ await corsair.render.api.keyValue.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1707,7 +1639,7 @@ await corsair.render.api.keyValue.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1739,7 +1671,7 @@ await corsair.render.api.keyValue.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string[]` | No | — |
-| `region` | `frankfurt \| oregon \| ohio \| singapore \| virginia[]` | No | — |
+| `region` | `(frankfurt \| oregon \| ohio \| singapore \| virginia)[]` | No | — |
 | `ownerId` | `string[]` | No | — |
 | `environmentId` | `string[]` | No | — |
 | `createdBefore` | `string` | No | — |
@@ -1791,13 +1723,13 @@ await corsair.render.api.keyValue.resume({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -1826,7 +1758,7 @@ await corsair.render.api.keyValue.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1867,13 +1799,13 @@ await corsair.render.api.keyValue.suspend({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -1903,21 +1835,11 @@ await corsair.render.api.keyValue.update({});
 | `plan` | `string` | No | — |
 | `maxmemoryPolicy` | `string` | No | — |
 | `persistenceMode` | `string` | No | — |
-| `ipAllowList` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="ipAllowList full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `ipAllowList` | `Record<string, any>[]` | No | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1960,7 +1882,7 @@ await corsair.render.api.logs.deleteOwnerStream({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1995,7 +1917,7 @@ await corsair.render.api.logs.deleteResourceStream({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2036,7 +1958,7 @@ await corsair.render.api.logs.list({ ownerId: 'tea-cjnxpkdhshc73d12t9i0', resour
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2112,7 +2034,7 @@ await corsair.render.api.logs.retrieveOwnerStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2148,7 +2070,7 @@ await corsair.render.api.logs.retrieveResourceStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2187,7 +2109,7 @@ await corsair.render.api.logs.updateOwnerStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2226,7 +2148,7 @@ await corsair.render.api.logs.updateResourceStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2269,7 +2191,7 @@ await corsair.render.api.logs.values({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2352,7 +2274,7 @@ await corsair.render.api.maintenance.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2393,13 +2315,13 @@ await corsair.render.api.maintenance.trigger({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -2434,13 +2356,13 @@ await corsair.render.api.maintenance.update({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -2476,7 +2398,7 @@ await corsair.render.api.metrics.activeConnections({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2557,7 +2479,7 @@ await corsair.render.api.metrics.bandwidth({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2598,7 +2520,7 @@ await corsair.render.api.metrics.bandwidthSources({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2639,7 +2561,7 @@ await corsair.render.api.metrics.cpu({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2680,7 +2602,7 @@ await corsair.render.api.metrics.cpuLimit({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2721,7 +2643,7 @@ await corsair.render.api.metrics.cpuTarget({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2757,7 +2679,7 @@ await corsair.render.api.metrics.deleteOwnerStream({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2797,7 +2719,7 @@ await corsair.render.api.metrics.diskCapacity({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2838,7 +2760,7 @@ await corsair.render.api.metrics.diskUsage({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2919,7 +2841,7 @@ await corsair.render.api.metrics.httpLatency({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2960,7 +2882,7 @@ await corsair.render.api.metrics.httpRequests({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3001,7 +2923,7 @@ await corsair.render.api.metrics.instanceCount({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3042,7 +2964,7 @@ await corsair.render.api.metrics.memory({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3083,7 +3005,7 @@ await corsair.render.api.metrics.memoryLimit({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3124,7 +3046,7 @@ await corsair.render.api.metrics.memoryTarget({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3205,7 +3127,7 @@ await corsair.render.api.metrics.replicationLag({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3241,7 +3163,7 @@ await corsair.render.api.metrics.retrieveOwnerStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3282,7 +3204,7 @@ await corsair.render.api.metrics.taskRunsCompleted({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3323,7 +3245,7 @@ await corsair.render.api.metrics.taskRunsQueued({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3362,7 +3284,7 @@ await corsair.render.api.metrics.upsertOwnerStream({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3438,7 +3360,7 @@ await corsair.render.api.notifications.retrieveOwnerSettings({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3474,7 +3396,7 @@ await corsair.render.api.notifications.retrieveServiceOverrides({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3513,7 +3435,7 @@ await corsair.render.api.notifications.updateOwnerSettings({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3551,7 +3473,7 @@ await corsair.render.api.notifications.updateServiceOverrides({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3756,7 +3678,7 @@ await corsair.render.api.owners.removeMember({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3796,7 +3718,7 @@ await corsair.render.api.owners.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3834,7 +3756,7 @@ await corsair.render.api.owners.updateMember({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3877,7 +3799,7 @@ await corsair.render.api.postgres.connectionInfo({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3916,7 +3838,7 @@ await corsair.render.api.postgres.create({ name: 'orders-db', ownerId: 'tea-cjnx
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3957,7 +3879,7 @@ await corsair.render.api.postgres.createExport({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4005,7 +3927,7 @@ await corsair.render.api.postgres.createUser({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4046,7 +3968,7 @@ await corsair.render.api.postgres.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4087,7 +4009,7 @@ await corsair.render.api.postgres.deleteUser({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4127,13 +4049,13 @@ await corsair.render.api.postgres.failover({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -4324,7 +4246,7 @@ await corsair.render.api.postgres.recover({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4365,7 +4287,7 @@ await corsair.render.api.postgres.recoveryInfo({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4406,13 +4328,13 @@ await corsair.render.api.postgres.restart({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -4446,13 +4368,13 @@ await corsair.render.api.postgres.resume({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -4486,7 +4408,7 @@ await corsair.render.api.postgres.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4572,13 +4494,13 @@ await corsair.render.api.postgres.suspend({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -4702,7 +4624,7 @@ await corsair.render.api.postgres.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4753,7 +4675,7 @@ await corsair.render.api.projects.create({ name: 'storefront', ownerId: 'tea-cjn
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4794,7 +4716,7 @@ await corsair.render.api.projects.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4874,7 +4796,7 @@ await corsair.render.api.projects.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4915,7 +4837,7 @@ await corsair.render.api.projects.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4957,7 +4879,7 @@ await corsair.render.api.registryCredentials.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4998,7 +4920,7 @@ await corsair.render.api.registryCredentials.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5078,7 +5000,7 @@ await corsair.render.api.registryCredentials.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5118,7 +5040,7 @@ await corsair.render.api.registryCredentials.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5194,7 +5116,7 @@ await corsair.render.api.services.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5233,7 +5155,7 @@ await corsair.render.api.services.createPreview({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5269,7 +5191,7 @@ await corsair.render.api.services.cronJobs.cancelRun({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5339,7 +5261,7 @@ await corsair.render.api.services.customDomains.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5376,7 +5298,7 @@ await corsair.render.api.services.customDomains.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5454,7 +5376,7 @@ await corsair.render.api.services.customDomains.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5491,7 +5413,7 @@ await corsair.render.api.services.customDomains.verify({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5527,7 +5449,7 @@ await corsair.render.api.services.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5562,7 +5484,7 @@ await corsair.render.api.services.deleteAutoscaling({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5629,7 +5551,7 @@ await corsair.render.api.services.envGroups.create({ name: 'shared-config', owne
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5670,7 +5592,7 @@ await corsair.render.api.services.envGroups.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5706,7 +5628,7 @@ await corsair.render.api.services.envGroups.envVars.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5742,7 +5664,7 @@ await corsair.render.api.services.envGroups.envVars.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5781,7 +5703,7 @@ await corsair.render.api.services.envGroups.envVars.upsert({ envGroupId: 'evg-d0
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5818,7 +5740,7 @@ await corsair.render.api.services.envGroups.linkService({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5902,7 +5824,7 @@ await corsair.render.api.services.envGroups.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5939,7 +5861,7 @@ await corsair.render.api.services.envGroups.secretFiles.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5975,7 +5897,7 @@ await corsair.render.api.services.envGroups.secretFiles.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6013,7 +5935,7 @@ await corsair.render.api.services.envGroups.secretFiles.upsert({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6050,7 +5972,7 @@ await corsair.render.api.services.envGroups.unlinkService({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6086,7 +6008,7 @@ await corsair.render.api.services.envGroups.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6123,7 +6045,7 @@ await corsair.render.api.services.environments.addResources({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6162,7 +6084,7 @@ await corsair.render.api.services.environments.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6203,7 +6125,7 @@ await corsair.render.api.services.environments.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6279,7 +6201,7 @@ await corsair.render.api.services.environments.removeResources({ environmentId: 
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6319,7 +6241,7 @@ await corsair.render.api.services.environments.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6360,7 +6282,7 @@ await corsair.render.api.services.environments.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6397,7 +6319,7 @@ await corsair.render.api.services.envVars.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6470,7 +6392,7 @@ await corsair.render.api.services.envVars.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6524,7 +6446,7 @@ await corsair.render.api.services.envVars.update({ serviceId: 'srv-d0k1q2r3s4t5u
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6563,7 +6485,7 @@ await corsair.render.api.services.envVars.upsert({ serviceId: 'srv-d0k1q2r3s4t5u
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6602,7 +6524,7 @@ await corsair.render.api.services.headers.add({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6639,7 +6561,7 @@ await corsair.render.api.services.headers.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6728,7 +6650,7 @@ await corsair.render.api.services.headers.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6765,7 +6687,7 @@ await corsair.render.api.services.jobs.cancel({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6803,7 +6725,7 @@ await corsair.render.api.services.jobs.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6875,7 +6797,7 @@ await corsair.render.api.services.jobs.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6912,7 +6834,7 @@ await corsair.render.api.services.list({ type: ['web_service'], region: ['oregon
 | `environmentId` | `string[]` | No | — |
 | `env` | `string[]` | No | — |
 | `region` | `string[]` | No | — |
-| `suspended` | `suspended \| not_suspended[]` | No | — |
+| `suspended` | `(suspended \| not_suspended)[]` | No | — |
 | `ownerId` | `string[]` | No | — |
 | `includePreviews` | `boolean` | No | — |
 | `createdBefore` | `string` | No | — |
@@ -7115,13 +7037,13 @@ await corsair.render.api.services.purgeCache({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -7150,13 +7072,13 @@ await corsair.render.api.services.restart({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -7185,13 +7107,13 @@ await corsair.render.api.services.resume({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -7228,7 +7150,7 @@ await corsair.render.api.services.retrieve({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `ownerId` | `string` | Yes | — |
-| `environmentId` | `string` | No | — |
+| `environmentId` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 
@@ -7257,7 +7179,7 @@ await corsair.render.api.services.retrieveDeploy({ serviceId: 'srv-d0k1q2r3s4t5u
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7333,7 +7255,7 @@ await corsair.render.api.services.routes.add({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7370,7 +7292,7 @@ await corsair.render.api.services.routes.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7404,7 +7326,7 @@ await corsair.render.api.services.routes.list({});
 | `serviceId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `type` | `redirect \| rewrite[]` | No | — |
+| `type` | `(redirect \| rewrite)[]` | No | — |
 | `source` | `string[]` | No | — |
 | `destination` | `string[]` | No | — |
 
@@ -7459,7 +7381,7 @@ await corsair.render.api.services.routes.update({ serviceId: 'srv-d0k1q2r3s4t5u6
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7497,7 +7419,7 @@ await corsair.render.api.services.routes.updatePriority({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7534,13 +7456,13 @@ await corsair.render.api.services.scale({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9',
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -7570,7 +7492,7 @@ await corsair.render.api.services.secretFiles.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7643,7 +7565,7 @@ await corsair.render.api.services.secretFiles.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7692,7 +7614,7 @@ await corsair.render.api.services.secretFiles.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7730,7 +7652,7 @@ await corsair.render.api.services.secretFiles.upsert({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7766,13 +7688,13 @@ await corsair.render.api.services.suspend({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| "" \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-undefined | | {
+undefined | "" | {
 }
 ```
 </Accordion>
@@ -7806,7 +7728,7 @@ await corsair.render.api.services.triggerDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined \| ""`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7819,7 +7741,7 @@ await corsair.render.api.services.triggerDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6
   createdAt?: string,
   updatedAt?: string,
   finishedAt?: string
-} | undefined | | {
+} | undefined | "" | {
 }
 ```
 </Accordion>
@@ -7858,7 +7780,7 @@ await corsair.render.api.services.update({});
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `ownerId` | `string` | Yes | — |
-| `environmentId` | `string` | No | — |
+| `environmentId` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 
@@ -7908,7 +7830,7 @@ await corsair.render.api.services.updateAutoscaling({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7951,7 +7873,7 @@ await corsair.render.api.user.get({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7993,7 +7915,7 @@ await corsair.render.api.webhooks.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8034,7 +7956,7 @@ await corsair.render.api.webhooks.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8153,7 +8075,7 @@ await corsair.render.api.webhooks.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8197,7 +8119,7 @@ await corsair.render.api.webhooks.update({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8254,7 +8176,7 @@ await corsair.render.api.workflows.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8295,7 +8217,7 @@ await corsair.render.api.workflows.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8375,7 +8297,7 @@ await corsair.render.api.workflows.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8416,7 +8338,7 @@ await corsair.render.api.workflows.taskRuns.cancel({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8448,22 +8370,12 @@ await corsair.render.api.workflows.taskRuns.create({ task: 'my-workflow/send-rep
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task` | `string` | Yes | — |
-| `input` | `object` | Yes | — |
+| `input` | `any[] \| Record<string, any>` | Yes | — |
 | `idempotencyKey` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8544,7 +8456,7 @@ await corsair.render.api.workflows.taskRuns.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8625,7 +8537,7 @@ await corsair.render.api.workflows.tasks.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8663,21 +8575,11 @@ await corsair.render.api.workflows.update({});
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8714,7 +8616,7 @@ await corsair.render.api.workflows.versions.create({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -8795,7 +8697,7 @@ await corsair.render.api.workflows.versions.retrieve({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">

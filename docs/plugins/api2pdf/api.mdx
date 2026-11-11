@@ -40,13 +40,13 @@ await corsair.api2pdf.api.chrome.addHeaderFooter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -80,13 +80,13 @@ await corsair.api2pdf.api.libreoffice.libreOfficePdfToHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -118,13 +118,13 @@ await corsair.api2pdf.api.libreoffice.libreOfficeThumbnail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -160,13 +160,13 @@ await corsair.api2pdf.api.pdfsharp.extractPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -198,13 +198,13 @@ await corsair.api2pdf.api.pdfsharp.mergePdfs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -236,13 +236,13 @@ await corsair.api2pdf.api.pdfsharp.optimizePdf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -279,13 +279,13 @@ await corsair.api2pdf.api.pdfsharp.watermarkPdf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 
@@ -343,7 +343,7 @@ await corsair.api2pdf.api.utility.deletePdf({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Success` | `boolean` | No | — |
-| `Error` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
 
 
 
@@ -379,13 +379,13 @@ await corsair.api2pdf.api.zebra.generateBarcode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `FileUrl` | `string` | No | — |
-| `MbOut` | `number` | No | — |
-| `Cost` | `number` | No | — |
-| `Seconds` | `number` | No | — |
+| `FileUrl` | `string \| null` | No | — |
+| `MbOut` | `number \| null` | No | — |
+| `Cost` | `number \| null` | No | — |
+| `Seconds` | `number \| null` | No | — |
 | `Success` | `boolean` | Yes | — |
-| `Error` | `string` | No | — |
-| `ResponseId` | `string` | No | — |
+| `Error` | `string \| null` | No | — |
+| `ResponseId` | `string \| null` | No | — |
 
 
 

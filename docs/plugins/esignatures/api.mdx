@@ -40,10 +40,10 @@ await corsair.esignatures.api.contracts.addSigner({ contract_id: '1contr11-2222'
   mobile?: string,
   company_name?: string,
   signing_order?: string,
-  auto_sign?: 'yes' | 'no',
-  signature_request_delivery_methods?: ('email' | 'sms')[],
-  signed_document_delivery_method?: 'email' | 'sms' | '',
-  multi_factor_authentications?: ('sms_verification_code' | 'email_verification_code' | 'photo_id')[],
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
   redirect_url?: string
 }
 ```
@@ -56,7 +56,7 @@ await corsair.esignatures.api.contracts.addSigner({ contract_id: '1contr11-2222'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -81,14 +81,14 @@ await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', s
 | `template_id` | `string` | Yes | The template ID. |
 | `signers` | `object[]` | Yes | — |
 | `title` | `string` | No | — |
-| `locale` | `'cz' \| 'da' \| 'de' \| 'el' \| 'en' \| 'en-GB' \| 'es' \| 'fi' \| 'fr' \| 'hr' \| 'hu' \| 'id' \| 'it' \| 'ja' \| 'nl' \| 'no' \| 'pl' \| 'pt' \| 'ro' \| 'rs' \| 'sk' \| 'sl' \| 'sv' \| 'vi' \| 'zh-CN' \| 'zh-TW'` | No | Language of the sign request emails and sign page. |
+| `locale` | `cz \| da \| de \| el \| en \| en-GB \| es \| fi \| fr \| hr \| hu \| id \| it \| ja \| nl \| no \| pl \| pt \| ro \| rs \| sk \| sl \| sv \| vi \| zh-CN \| zh-TW` | No | Language of the sign request emails and sign page. |
 | `metadata` | `string` | No | Custom data attached to the contract, echoed by webhooks. |
 | `expires_in_hours` | `string` | No | Hours before the sign request expires, such as "48". |
 | `custom_webhook_url` | `string` | No | — |
 | `assigned_user_email` | `string` | No | — |
 | `labels` | `string[]` | No | — |
-| `test` | `'yes' \| 'no'` | No | When yes, the contract is a demo and no sending fees are charged. |
-| `save_as_draft` | `'yes' \| 'no'` | No | When yes, the contract is a draft until `contracts.sendDraft` sends it. |
+| `test` | `yes \| no` | No | When yes, the contract is a demo and no sending fees are charged. |
+| `save_as_draft` | `yes \| no` | No | When yes, the contract is a draft until `contracts.sendDraft` sends it. |
 | `placeholder_fields` | `object[]` | No | — |
 | `signer_fields` | `object[]` | No | Pre-fills Signer fields the signer completes. |
 | `emails` | `object` | No | Overrides for the sign request and signed-contract emails. |
@@ -104,10 +104,10 @@ await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', s
   mobile?: string,
   company_name?: string,
   signing_order?: string,
-  auto_sign?: 'yes' | 'no',
-  signature_request_delivery_methods?: ('email' | 'sms')[],
-  signed_document_delivery_method?: 'email' | 'sms' | '',
-  multi_factor_authentications?: ('sms_verification_code' | 'email_verification_code' | 'photo_id')[],
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
   redirect_url?: string
 }[]
 ```
@@ -191,7 +191,7 @@ await corsair.esignatures.api.contracts.create({ template_id: '4templ44-8888', s
     sign_page_url?: string | null,
     signing_order?: string | null,
     auto_sign?: string | null,
-    signer_field_values?: Record<string, unknown> | null
+    signer_field_values?: Record<string, any> | null
   }[] | null
 }
 ```
@@ -227,7 +227,7 @@ await corsair.esignatures.api.contracts.deleteSigner({ contract_id: '1contr11-22
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `queued` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -281,7 +281,7 @@ await corsair.esignatures.api.contracts.get({ contract_id: '1contr11-2222' });
     sign_page_url?: string | null,
     signing_order?: string | null,
     auto_sign?: string | null,
-    signer_field_values?: Record<string, unknown> | null
+    signer_field_values?: Record<string, any> | null
   }[] | null
 }
 ```
@@ -317,7 +317,7 @@ await corsair.esignatures.api.contracts.resendToSigner({ contract_id: '1contr11-
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `queued` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -347,7 +347,7 @@ await corsair.esignatures.api.contracts.sendDraft({ contract_id: '1contr11-2222'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `queued` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -383,10 +383,10 @@ await corsair.esignatures.api.contracts.updateSigner({ contract_id: '1contr11-22
   mobile?: string,
   company_name?: string,
   signing_order?: string,
-  auto_sign?: 'yes' | 'no',
-  signature_request_delivery_methods?: ('email' | 'sms')[],
-  signed_document_delivery_method?: 'email' | 'sms' | '',
-  multi_factor_authentications?: ('sms_verification_code' | 'email_verification_code' | 'photo_id')[],
+  auto_sign?: yes | no,
+  signature_request_delivery_methods?: (email | sms)[],
+  signed_document_delivery_method?: email | sms | "",
+  multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[],
   redirect_url?: string
 }
 ```
@@ -399,7 +399,7 @@ await corsair.esignatures.api.contracts.updateSigner({ contract_id: '1contr11-22
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `updated` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -429,7 +429,7 @@ await corsair.esignatures.api.contracts.withdraw({ contract_id: '1contr11-2222' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `withdrawn` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
@@ -493,7 +493,7 @@ await corsair.esignatures.api.templates.delete({ template_id: '4templ44-8888' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `deleted` | Yes | — |
+| `status` | `string` | No | — |
 
 
 
