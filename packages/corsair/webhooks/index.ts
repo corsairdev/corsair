@@ -118,6 +118,16 @@ function normalizeHeaders(
 	return normalized;
 }
 
+// Form-encoded deliveries (Twilio, Mailchimp) are not JSON; their matchers
+// decode the raw string themselves.
+function parseJsonOrRaw(body: string): unknown {
+	try {
+		return JSON.parse(body);
+	} catch {
+		return body;
+	}
+}
+
 function buildGoogleChannelBody(
 	headers: Record<string, string | undefined>,
 ): Record<string, unknown> | null {
@@ -195,8 +205,7 @@ export async function processWebhook(
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
-	let parsedBody =
-		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
+	let parsedBody = typeof body === 'string' ? parseJsonOrRaw(body) : body;
 
 	const isEmptyBody =
 		!parsedBody ||
