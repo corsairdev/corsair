@@ -20,6 +20,7 @@ import {
 	markdownResponse,
 	oembedResponse,
 	queryResponse,
+	scrapeLiveHtml,
 	scrapeResponse,
 	screenshotResponse,
 	siteResponse,
@@ -171,6 +172,20 @@ describe('scrape.fetch', () => {
 		expect(lastRequest().query.full_render).toBe('true');
 		expect(result.htmlContent).toBe('<!DOCTYPE html><html>...</html>');
 		expect(result.requestInfo?.responseContentType).toBe('text/html');
+	});
+
+	it('wraps the text/plain HTML the live API returns', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(scrapeLiveHtml, {
+				status: 200,
+				headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+			}),
+		);
+
+		const result = await invoke(Scrape.fetch, { url: 'https://example.com' });
+
+		expect(result.htmlContent).toBe(scrapeLiveHtml);
+		expect(result.requestInfo).toBeUndefined();
 	});
 
 	it('surfaces a blocked target as a 403', async () => {

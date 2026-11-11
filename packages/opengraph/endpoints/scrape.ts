@@ -20,5 +20,10 @@ export const fetch: OpengraphEndpoints['scrapeFetch'] = (ctx, input) =>
 			path: `/3.0/scrape/${segment(url)}`,
 			query,
 		}),
-		{ log: ({ url }) => ({ url }) },
+		{
+			// The reference shows a JSON envelope, but the live API answers with
+			// the page itself as text/plain; wrap it so both forms parse.
+			shape: (raw) => (typeof raw === 'string' ? { htmlContent: raw } : raw),
+			log: ({ url }) => ({ url }),
+		},
 	);

@@ -45,6 +45,11 @@ export const scrapeResponse = {
 	},
 };
 
+// Live 3.0/scrape answers with the page itself as text/plain, not the JSON
+// envelope the reference shows (example.com, 11-11, trimmed).
+export const scrapeLiveHtml =
+	'<!doctype html><html lang=en><head><meta charset=utf-8><title>Example Domain</title></head><body><p>This domain is for use in documentation examples without needing permission.</p></body></html>\n';
+
 export const screenshotResponse = {
 	screenshotUrl: 'https://cdn.opengraph.io/screenshots/abc123.png',
 	dimensions: {
