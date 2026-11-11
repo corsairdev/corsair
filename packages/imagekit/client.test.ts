@@ -37,7 +37,9 @@ async function failure(promise: Promise<unknown>): Promise<ImageKitAPIError> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
@@ -215,6 +217,59 @@ describe('makeImageKitRequest', () => {
 		// The request itself still carried the full signed URL.
 		const [sentUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(decodeURIComponent(sentUrl)).toContain('ik-s=abc123signature');
+	});
+
+	it('keeps a percent-encoded signature out of the error cause', async () => {
+		const signed =
+			'https://ik.imagekit.io/your_imagekit_id/private.jpg?ik-t=1700000000&ik-s=%61%62%63encodedsig';
+
+		respond({ message: 'not found' }, 404);
+		const error = await failure(
+			makeImageKitRequest(API_KEY, {
+				method: 'GET',
+				path: '/v1/metadata',
+				query: { url: signed },
+				replaySafe: true,
+			}),
+		);
+
+		const cause = error.cause as ApiError;
+		expect(JSON.stringify(cause)).not.toContain('encodedsig');
+		expect(cause.url).not.toContain('encodedsig');
+
+		// The redaction stops at an encoded &, so the next parameter survives.
+		respond({ message: 'boom' }, 500);
+		const bodyError = await failure(
+			makeImageKitRequest(API_KEY, {
+				method: 'POST',
+				path: '/v1/files/purge',
+				body: { url: `${signed}%26keep=1` },
+			}),
+		);
+		const bodyCause = JSON.stringify(bodyError.cause);
+		expect(bodyCause).not.toContain('encodedsig');
+		expect(bodyCause).toContain('%26keep=1');
+	});
+
+	it('keeps uploaded file contents out of the error cause', async () => {
+		respond({ message: 'boom' }, 500);
+
+		const error = await failure(
+			makeImageKitRequest(API_KEY, {
+				method: 'POST',
+				path: '/api/v1/files/upload',
+				formData: {
+					file: 'SECRETFILECONTENTSBASE64',
+					fileName: 'photo.jpg',
+				},
+			}),
+		);
+
+		const cause = error.cause as ApiError;
+		expect(JSON.stringify(cause)).not.toContain('SECRETFILECONTENTSBASE64');
+		expect(JSON.stringify(error)).not.toContain('SECRETFILECONTENTSBASE64');
+		// The other fields stay for debugging.
+		expect(cause.request.formData?.fileName).toBe('photo.jpg');
 	});
 
 	it('percent-encodes path segments', () => {

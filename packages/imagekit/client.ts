@@ -127,8 +127,20 @@ function authHeader(apiKey: string): string {
 // A signed URL's ik-s signature opens a private file until it expires.
 // metadata.getByUrl sends one in the query and cache.purge in the body, and
 // core's ApiError keeps both on url and request, where error logs would pick
-// them up. Matches the plain, encoded and double-encoded `=`.
-const SIGNATURE = /(ik-s(?:=|%3D|%253D))[^&#%\s"']+/gi;
+// them up. Matches the plain, encoded and double-encoded `=`; the value may
+// itself be percent-encoded, and ends at a plain, encoded or double-encoded
+// `&` or `#`.
+const SIGNATURE =
+	/(ik-s(?:=|%3D|%253D))(?:[^&#%\s"']|%(?!2[36]|252[36])[0-9a-f]{2})+/gi;
+
+// An upload's `file` field is the file itself (base64 or binary text) or a
+// URL to fetch it from; neither belongs in an error.
+function withoutFileContents(
+	formData: Record<string, string | string[]> | undefined,
+): Record<string, string | string[]> | undefined {
+	if (!formData || formData.file === undefined) return formData;
+	return { ...formData, file: '[omitted]' };
+}
 
 // unknown: request query, body and form values are any JSON-like shape.
 function redactSignatures(value: unknown): unknown {
@@ -160,7 +172,9 @@ function withoutSignatures(error: ApiError): ApiError {
 			url: redactSignatures(request.url) as string,
 			query: redactSignatures(request.query) as typeof request.query,
 			body: redactSignatures(request.body),
-			formData: redactSignatures(request.formData) as typeof request.formData,
+			formData: redactSignatures(
+				withoutFileContents(request.formData),
+			) as typeof request.formData,
 		},
 	});
 }
