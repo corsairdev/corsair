@@ -1,0 +1,303 @@
+{
+  "id": "servicenow",
+  "displayName": "ServiceNow",
+  "description": "IT service management with ServiceNow - query and read records in any table, create and update them, delete them, and list the tables an instance exposes.",
+  "npmPackageName": "@corsair-dev/servicenow",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "host"]
+    }
+  ],
+  "api": [
+    {
+      "path": "servicenow.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a record in any table, which triggers its business rules and notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Column values for the new record, e.g. { short_description: \"...\" }"
+          },
+          {
+            "key": "sysparm_input_display_value",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat the supplied values as display values"
+          },
+          {
+            "key": "sysparm_display_value",
+            "optional": true,
+            "type": "true | false | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "servicenow.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete one record. ServiceNow keeps no undo, and what happens to referencing records depends on the table reference cascade rule",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sys_id",
+            "optional": false,
+            "type": "string",
+            "description": "ServiceNow sys_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sys_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicenow.api.records.get",
+      "shortPath": "records.get",
+      "description": "Read one record by its sys_id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sys_id",
+            "optional": false,
+            "type": "string",
+            "description": "ServiceNow sys_id"
+          },
+          {
+            "key": "sysparm_fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return, e.g. \"number,short_description,state\""
+          },
+          {
+            "key": "sysparm_display_value",
+            "optional": true,
+            "type": "true | false | all"
+          },
+          {
+            "key": "sysparm_exclude_reference_link",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a reference column as a bare sys_id instead of { link, value }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "servicenow.api.records.list",
+      "shortPath": "records.list",
+      "description": "Query any table with an encoded query, field selection and offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "Table name, e.g. incident, change_request"
+          },
+          {
+            "key": "sysparm_query",
+            "optional": true,
+            "type": "string",
+            "description": "Encoded query, e.g. \"active=true^priority=1^ORDERBYDESCsys_created_on\". Operators: = != > < >= <= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN"
+          },
+          {
+            "key": "sysparm_fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return, e.g. \"number,short_description,state\""
+          },
+          {
+            "key": "sysparm_display_value",
+            "optional": true,
+            "type": "true | false | all",
+            "description": "false (default) returns raw values; true returns display values; all returns both"
+          },
+          {
+            "key": "sysparm_exclude_reference_link",
+            "optional": true,
+            "type": "boolean",
+            "description": "Omit the per-field reference link objects"
+          },
+          {
+            "key": "sysparm_no_count",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip the total; makes the call faster on large tables"
+          },
+          {
+            "key": "sysparm_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. ServiceNow defaults to 10000 when omitted"
+          },
+          {
+            "key": "sysparm_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Add sysparm_limit per page to walk a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicenow.api.records.update",
+      "shortPath": "records.update",
+      "description": "Patch fields on one record, which triggers its business rules and notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sys_id",
+            "optional": false,
+            "type": "string",
+            "description": "ServiceNow sys_id"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "sysparm_input_display_value",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "servicenow.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List visible table metadata from sys_db_object, to find a table name to query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sysparm_query",
+            "optional": true,
+            "type": "string",
+            "description": "Encoded query, e.g. \"active=true^priority=1^ORDERBYDESCsys_created_on\". Operators: = != > < >= <= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN"
+          },
+          {
+            "key": "sysparm_fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return, e.g. \"number,short_description,state\""
+          },
+          {
+            "key": "sysparm_exclude_reference_link",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a reference column as a bare sys_id instead of { link, value }"
+          },
+          {
+            "key": "sysparm_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. ServiceNow defaults to 10000 when omitted"
+          },
+          {
+            "key": "sysparm_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Add sysparm_limit per page to walk a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ name: string, label?: string | null, super_class?: string | { link?: string | null, value?: string | null } | null, sys_id?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
