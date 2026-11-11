@@ -17,6 +17,37 @@ import { defineEndpoint } from './factory';
 // the identity pair (doctype, name) is required for persistence.
 type ErpnextAnyDoc = Record<string, unknown>;
 
+// `upsertByEntityId` replaces the whole stored payload. Keep each
+// read-merge-write sequence (and deletion) in order for one document, so two
+// overlapping list pages cannot both merge against the same older row and
+// discard the fields saved by the other. Entity clients are tenant-scoped;
+// separating queues by client also keeps equal document IDs in different
+// tenant stores independent.
+const documentMutationQueues = new WeakMap<
+	ErpnextDbDocumentsClient,
+	Map<string, Promise<void>>
+>();
+
+async function mutateStoredDocument(
+	db: ErpnextDbDocumentsClient,
+	entityId: string,
+	mutation: () => Promise<void>,
+): Promise<void> {
+	let queues = documentMutationQueues.get(db);
+	if (!queues) {
+		queues = new Map();
+		documentMutationQueues.set(db, queues);
+	}
+	const previous = queues.get(entityId) ?? Promise.resolve();
+	const current = previous.catch(() => undefined).then(mutation);
+	queues.set(entityId, current);
+	try {
+		await current;
+	} finally {
+		if (queues.get(entityId) === current) queues.delete(entityId);
+	}
+}
+
 function docsFromEnvelope(result: unknown): ErpnextAnyDoc[] {
 	// unknown: the envelope shape is provider-defined per route; the helper
 	// walks the documented variants and returns the document records found.
@@ -56,20 +87,23 @@ async function syncDocuments(
 		for (const doc of docsFromEnvelope(result)) {
 			const name = doc.name;
 			if (typeof name === 'string' && name.length > 0) {
-				// Upsert replaces the stored row, and list results carry only the
-				// fields the caller selected: merge with the document a previous
-				// fetch stored so a name-only list page never wipes saved fields.
-				// The core ORM returns the entity row, so the document fields
-				// live under `data` beside the row metadata.
-				const existing = await db.findByEntityId(`${doctype}:${name}`);
-				const prior =
-					existing?.data && typeof existing.data === 'object'
-						? (existing.data as ErpnextAnyDoc)
-						: {};
-				await db.upsertByEntityId(`${doctype}:${name}`, {
-					doctype,
-					...prior,
-					...doc,
+				const entityId = `${doctype}:${name}`;
+				await mutateStoredDocument(db, entityId, async () => {
+					// Upsert replaces the stored row, and list results carry only the
+					// fields the caller selected: merge with the document a previous
+					// fetch stored so a name-only list page never wipes saved fields.
+					// The core ORM returns the entity row, so the document fields
+					// live under `data` beside the row metadata.
+					const existing = await db.findByEntityId(entityId);
+					const prior =
+						existing?.data && typeof existing.data === 'object'
+							? (existing.data as ErpnextAnyDoc)
+							: {};
+					await db.upsertByEntityId(entityId, {
+						doctype,
+						...prior,
+						...doc,
+					});
 				});
 			}
 		}
@@ -86,7 +120,10 @@ async function removeDocument(
 	const db: ErpnextDbDocumentsClient | undefined = ctx.db?.documents;
 	if (!db) return;
 	try {
-		await db.deleteByEntityId(`${doctype}:${name}`);
+		const entityId = `${doctype}:${name}`;
+		await mutateStoredDocument(db, entityId, async () => {
+			await db.deleteByEntityId(entityId);
+		});
 	} catch (error) {
 		console.warn(
 			'Failed to remove the document from the local database:',

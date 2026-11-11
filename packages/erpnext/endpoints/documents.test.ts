@@ -888,6 +888,146 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 
+	it('merges fields from concurrent list pages for the same document', async () => {
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url) => {
+				const fields = new URL(String(url)).searchParams.get('fields');
+				const data = fields?.includes('customer_name')
+					? { name: 'CUST-010', customer_name: 'Acme' }
+					: { name: 'CUST-010', customer_group: 'Commercial' };
+				return new Response(JSON.stringify({ data: [data] }), {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				});
+			});
+		let stored: Record<string, unknown> = {
+			doctype: 'Customer',
+			name: 'CUST-010',
+			phone_number: '+1 555 0100',
+		};
+		let firstRead!: () => void;
+		const firstReadStarted = new Promise<void>((resolve) => {
+			firstRead = resolve;
+		});
+		let releaseFirstRead!: () => void;
+		const firstReadReleased = new Promise<void>((resolve) => {
+			releaseFirstRead = resolve;
+		});
+		let reads = 0;
+		const db = {
+			findByEntityId: jest.fn(async () => {
+				reads += 1;
+				if (reads === 1) {
+					firstRead();
+					await firstReadReleased;
+				}
+				return { data: stored };
+			}),
+			upsertByEntityId: jest.fn(async (_entityId, data) => {
+				stored = data as Record<string, unknown>;
+			}),
+			deleteByEntityId: jest.fn(),
+		};
+		try {
+			const first = documentsEndpoints.list(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: db },
+				},
+				{ doctype: 'Customer', fields: '["name","customer_name"]' },
+			);
+			await firstReadStarted;
+			const second = documentsEndpoints.list(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: db },
+				},
+				{ doctype: 'Customer', fields: '["name","customer_group"]' },
+			);
+			releaseFirstRead();
+			await Promise.all([first, second]);
+			expect(db.findByEntityId).toHaveBeenCalledTimes(2);
+			expect(stored).toEqual({
+				doctype: 'Customer',
+				name: 'CUST-010',
+				phone_number: '+1 555 0100',
+				customer_name: 'Acme',
+				customer_group: 'Commercial',
+			});
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('serializes a deletion after an in-flight save for the same document', async () => {
+		let stored: Record<string, unknown> | undefined;
+		let saveStarted!: () => void;
+		const saveStartedPromise = new Promise<void>((resolve) => {
+			saveStarted = resolve;
+		});
+		let releaseSave!: () => void;
+		const saveReleased = new Promise<void>((resolve) => {
+			releaseSave = resolve;
+		});
+		const db = {
+			findByEntityId: jest.fn(async () => {
+				saveStarted();
+				await saveReleased;
+				return { data: {} };
+			}),
+			upsertByEntityId: jest.fn(async (_entityId, data) => {
+				stored = data as Record<string, unknown>;
+			}),
+			deleteByEntityId: jest.fn(async () => {
+				stored = undefined;
+			}),
+		};
+		const fetchSpy = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (_url, init) => {
+				if (init?.method === 'DELETE') {
+					return new Response(JSON.stringify({ message: 'ok' }), {
+						status: 200,
+						headers: { 'content-type': 'application/json' },
+					});
+				}
+				return new Response(
+					JSON.stringify({ data: { name: 'CUST-011', customer_name: 'Acme' } }),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			const save = documentsEndpoints.get(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: db },
+				},
+				{ doctype: 'Customer', name: 'CUST-011' },
+			);
+			await saveStartedPromise;
+			const deletion = documentsEndpoints.delete(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: db },
+				},
+				{ doctype: 'Customer', name: 'CUST-011' },
+			);
+			releaseSave();
+			await Promise.all([save, deletion]);
+			expect(db.upsertByEntityId.mock.invocationCallOrder[0]).toBeLessThan(
+				db.deleteByEntityId.mock.invocationCallOrder[0] ?? Infinity,
+			);
+			expect(stored).toBeUndefined();
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+
 	it('removes the stored row when a document is deleted', async () => {
 		const deleteByEntityId = jest.fn();
 		const mockFetch = jest
