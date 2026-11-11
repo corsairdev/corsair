@@ -331,7 +331,11 @@ export type GrantOfferInput = z.input<typeof GrantOfferInputSchema>;
 
 const GrantOfferByUidInputSchema = z.object({
 	uid: UidSchema,
-	offerId: z.string().min(1),
+	offerId: z
+		.string()
+		.min(1)
+		.describe('Offer to grant, by id. Sent as `grantOffer`.'),
+	orderId: z.string().optional(),
 });
 
 export type GrantOfferByUidInput = z.input<typeof GrantOfferByUidInputSchema>;
@@ -370,16 +374,15 @@ export type SetOfferStateByUidInput = z.input<
 	typeof SetOfferStateByUidInputSchema
 >;
 
+// The order id is what identifies the grant, so these DTOs carry no offerId.
 const SetOrderStateInputSchema = z.object({
 	email: EmailSchema,
-	offerId: z.string().min(1),
 	orderId: z.string().min(1),
 	active: z.boolean().optional(),
 });
 
 const SetOrderStateByUidInputSchema = z.object({
 	uid: UidSchema,
-	offerId: z.string().min(1),
 	orderId: z.string().min(1),
 	active: z.boolean().optional(),
 });
@@ -421,30 +424,15 @@ export type SetCourseStartDateInput = z.input<
 >;
 
 /**
- * Keys that select the target rather than name a property. MemberSpot spreads
- * the property map into the same body as the selector, so a map containing one
- * of these would retarget the write to a different member.
+ * Property id to value. The id is the `id` from `customProperties.list`; the
+ * plugin sends the map as the `[{ id, value }]` array the API takes.
  */
-const RESERVED_PROPERTY_KEYS = ['email', 'uid'] as const;
-
-const CustomPropertyValueSchema = z
-	.record(z.string(), z.string())
-	.superRefine((value, ctx) => {
-		for (const reserved of RESERVED_PROPERTY_KEYS) {
-			if (reserved in value) {
-				ctx.addIssue({
-					code: 'custom',
-					path: [reserved],
-					message: `"${reserved}" selects the member, so it cannot also be a property name. Rename the property.`,
-				});
-			}
-		}
-	});
+const CustomPropertyValueSchema = z.record(z.string(), z.string());
 
 const SetCustomPropertiesInputSchema = z.object({
 	email: EmailSchema,
 	properties: CustomPropertyValueSchema.describe(
-		'Property key to value. A property omitted here is left unchanged. `email` and `uid` are rejected, because they would retarget the write.',
+		'Custom property id to value. A property omitted here is left unchanged.',
 	),
 });
 
@@ -507,11 +495,13 @@ export type MutationResponse = z.infer<typeof MutationResponseSchema>;
 
 const ChapterAccessInputSchema = z.object({
 	email: EmailSchema,
+	courseId: z.string().min(1).describe('The course the chapter belongs to.'),
 	chapterId: z.string().min(1),
 });
 
 const ChapterAccessByUidInputSchema = z.object({
 	uid: UidSchema,
+	courseId: z.string().min(1).describe('The course the chapter belongs to.'),
 	chapterId: z.string().min(1),
 });
 

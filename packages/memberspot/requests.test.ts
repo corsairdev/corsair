@@ -212,7 +212,7 @@ describe('request shape per operation', () => {
 		});
 	});
 
-	it('users.grantOfferByUid posts uid and offerId', async () => {
+	it('users.grantOfferByUid sends the offer as grantOffer, the spec field', async () => {
 		respondJson(USER_CREATED_BODY);
 
 		await api.users.grantOfferByUid(makeCtx(), {
@@ -221,7 +221,8 @@ describe('request shape per operation', () => {
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/grant-user-offer-by-uid');
-		expect(bodyOf()).toEqual({ uid: 'uid-1', offerId: 'offer-1' });
+		// GrantOfferByUidDto is { uid, grantOffer, orderId }; it has no offerId.
+		expect(bodyOf()).toEqual({ uid: 'uid-1', grantOffer: 'offer-1' });
 	});
 
 	it('users.setOfferState posts email, offerId and active', async () => {
@@ -253,19 +254,18 @@ describe('request shape per operation', () => {
 		expect(bodyOf()).toEqual({ uid: 'uid-1', offerId: 'offer-1' });
 	});
 
-	it('users.setOrderState posts the order id with the offer', async () => {
+	it('users.setOrderState posts the email and order id, which is the whole DTO', async () => {
 		respondJson({ success: true });
 
 		await api.users.setOrderState(makeCtx(), {
 			email: 'jordan@acme.example',
-			offerId: 'offer-1',
 			orderId: 'order-9',
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-order-state');
+		// SetOrderStateForUserDto is { email, orderId, active }: no offerId.
 		expect(bodyOf()).toEqual({
 			email: 'jordan@acme.example',
-			offerId: 'offer-1',
 			orderId: 'order-9',
 		});
 	});
@@ -275,14 +275,12 @@ describe('request shape per operation', () => {
 
 		await api.users.setOrderStateByUid(makeCtx(), {
 			uid: 'uid-1',
-			offerId: 'offer-1',
 			orderId: 'order-9',
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-order-state-by-uid');
 		expect(bodyOf()).toEqual({
 			uid: 'uid-1',
-			offerId: 'offer-1',
 			orderId: 'order-9',
 		});
 	});
@@ -387,7 +385,7 @@ describe('request shape per operation', () => {
 		);
 	});
 
-	it('users.setCustomProperties spreads the property map into the body', async () => {
+	it('users.setCustomProperties sends the map as an id/value array', async () => {
 		respondJson({ success: true });
 
 		await api.users.setCustomProperties(makeCtx(), {
@@ -396,14 +394,17 @@ describe('request shape per operation', () => {
 		});
 
 		expect(sent().url.pathname).toBe('/v1/users/set-custom-user-properties');
+		// SetCustomPropertyDto: { email, properties: [{ id, value }] }.
 		expect(bodyOf()).toEqual({
 			email: 'jordan@acme.example',
-			department: 'Sales',
-			region: 'EMEA',
+			properties: [
+				{ id: 'department', value: 'Sales' },
+				{ id: 'region', value: 'EMEA' },
+			],
 		});
 	});
 
-	it('users.setCustomPropertiesByUid spreads the map for a uid', async () => {
+	it('users.setCustomPropertiesByUid sends the array for a uid', async () => {
 		respondJson({ success: true });
 
 		await api.users.setCustomPropertiesByUid(makeCtx(), {
@@ -411,7 +412,10 @@ describe('request shape per operation', () => {
 			properties: { department: 'Sales' },
 		});
 
-		expect(bodyOf()).toEqual({ uid: 'uid-1', department: 'Sales' });
+		expect(bodyOf()).toEqual({
+			uid: 'uid-1',
+			properties: [{ id: 'department', value: 'Sales' }],
+		});
 	});
 
 	it('users.setCustomProperty sends key and value', async () => {
@@ -467,57 +471,55 @@ describe('request shape per operation', () => {
 		expect(bodyOf()).toEqual({ uids: ['uid-1', 'uid-2'] });
 	});
 
-	it('chapters.enableAccess posts email and chapterId', async () => {
+	it('chapters.enableAccess posts email, courseId and chapterId', async () => {
 		respondJson({ success: true });
 
 		await api.chapters.enableAccess(makeCtx(), {
 			email: 'jordan@acme.example',
+			courseId: 'course-1',
 			chapterId: 'chapter-1',
 		});
 
 		expect(sent().url.pathname).toBe('/v1/chapters/chapter-access/enable');
+		// ApiChapterAccessDto requires courseId alongside chapterId.
 		expect(bodyOf()).toEqual({
 			email: 'jordan@acme.example',
+			courseId: 'course-1',
 			chapterId: 'chapter-1',
 		});
 	});
 
-	it('chapters.enableAccessByUid posts uid and chapterId', async () => {
+	it('chapters.enableAccessByUid posts uid, courseId and chapterId', async () => {
 		respondJson({ success: true });
 
 		await api.chapters.enableAccessByUid(makeCtx(), {
 			uid: 'uid-1',
+			courseId: 'course-1',
 			chapterId: 'chapter-1',
 		});
 
 		expect(sent().url.pathname).toBe(
 			'/v1/chapters/chapter-access/enable-by-uid',
 		);
-		expect(bodyOf()).toEqual({ uid: 'uid-1', chapterId: 'chapter-1' });
+		expect(bodyOf()).toEqual({
+			uid: 'uid-1',
+			courseId: 'course-1',
+			chapterId: 'chapter-1',
+		});
 	});
 });
 
 describe('input validation before sending', () => {
-	it('rejects a property map that tries to retarget an email write', async () => {
-		// MemberSpot spreads the map into the same body as the selector, so an
-		// `email` key would send the update to a different member.
-		await expect(
-			api.users.setCustomProperties(makeCtx(), {
-				email: 'a@acme.example',
-				properties: { email: 'b@acme.example', department: 'Sales' },
-			}),
-		).rejects.toThrow(/selects the member/);
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('rejects a property map that tries to retarget a uid write', async () => {
-		await expect(
-			api.users.setCustomPropertiesByUid(makeCtx(), {
-				uid: 'uid-1',
-				properties: { uid: 'uid-2', department: 'Sales' },
-			}),
-		).rejects.toThrow(/selects the member/);
-		expect(fetchMock).not.toHaveBeenCalled();
+	it('keeps an email or uid property id inside the array, so it cannot retarget the write', async () => {
+		respondJson({ success: true });
+		await api.users.setCustomProperties(makeCtx(), {
+			email: 'a@acme.example',
+			properties: { email: 'b@acme.example' },
+		});
+		expect(bodyOf()).toEqual({
+			email: 'a@acme.example',
+			properties: [{ id: 'email', value: 'b@acme.example' }],
+		});
 	});
 
 	it('accepts a property map with ordinary keys', async () => {
@@ -528,18 +530,6 @@ describe('input validation before sending', () => {
 				properties: { department: 'Sales', region: 'EMEA' },
 			}),
 		).resolves.toBeDefined();
-	});
-
-	it('keeps the selector when the map has no reserved key', async () => {
-		respondJson({ success: true });
-		await api.users.setCustomProperties(makeCtx(), {
-			email: 'a@acme.example',
-			properties: { department: 'Sales' },
-		});
-		expect(bodyOf()).toEqual({
-			email: 'a@acme.example',
-			department: 'Sales',
-		});
 	});
 
 	it('rejects a delete list over the documented 10-user cap', async () => {

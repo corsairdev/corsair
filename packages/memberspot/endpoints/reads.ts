@@ -304,7 +304,13 @@ export const usersGrantOfferByUid: MemberSpotEndpoints['usersGrantOfferByUid'] =
 			(parsed) => ({
 				action: '/v1/users/grant-user-offer-by-uid',
 				method: 'POST',
-				body: bodyOf({ uid: parsed.uid, offerId: parsed.offerId }),
+				// GrantOfferByUidDto names the offer `grantOffer`, as the by-mail route
+				// does; the input keeps `offerId` to match the other by-uid writes.
+				body: bodyOf({
+					uid: parsed.uid,
+					grantOffer: parsed.offerId,
+					orderId: parsed.orderId,
+				}),
 				replaySafe: true,
 			}),
 			{ log: (_, result) => ({ uid: result.uid }) },
@@ -397,7 +403,6 @@ function setOrderState(
 			body: bodyOf({
 				email: 'email' in parsed ? parsed.email : undefined,
 				uid: 'uid' in parsed ? parsed.uid : undefined,
-				offerId: 'offerId' in parsed ? parsed.offerId : undefined,
 				orderId: parsed.orderId,
 				active: parsed.active,
 			}),
@@ -526,7 +531,11 @@ function setCustomProperties(
 			body: bodyOf({
 				email: 'email' in parsed ? parsed.email : undefined,
 				uid: 'uid' in parsed ? parsed.uid : undefined,
-				...parsed.properties,
+				// SetCustomPropertyDto takes `properties: [{ id, value }]`.
+				properties: Object.entries(parsed.properties).map(([id, value]) => ({
+					id,
+					value,
+				})),
 			}),
 			// Values are absolute, so writing the same set twice is the same state.
 			replaySafe: true,
@@ -713,6 +722,7 @@ function chapterAccess(
 			body: bodyOf({
 				email: 'email' in parsed ? parsed.email : undefined,
 				uid: 'uid' in parsed ? parsed.uid : undefined,
+				courseId: parsed.courseId,
 				chapterId: parsed.chapterId,
 			}),
 			// Enabling access that is already enabled is the same state.
