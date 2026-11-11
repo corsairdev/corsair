@@ -365,7 +365,6 @@ export const BaseProviders = [
 	'removebg',
 	'render',
 	'replicate',
-	'replicate',
 	'replyio',
 	'resend',
 	'retailed',
@@ -1068,6 +1067,7 @@ export type AllProviders =
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
+	| 'builtwith'
 	| 'bunnycdn'
 	| 'bytedance'
 	| 'byteforms'
@@ -1147,6 +1147,7 @@ export type AllProviders =
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
+	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docsumo'
@@ -1310,7 +1311,6 @@ export type AllProviders =
 	| 'remoet'
 	| 'removebg'
 	| 'render'
-	| 'replicate'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
