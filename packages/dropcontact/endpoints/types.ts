@@ -281,7 +281,9 @@ const EnrichedRecordSchema = z
 		// `siren`, and `email` becomes a list of qualified objects.
 		email: z.array(EmailResultSchema).nullish(),
 		siren: z.string().nullish().describe('The input `num_siren`.'),
-		custom_fields: z.record(z.string(), z.string().nullish()).nullish(),
+		// unknown: the spec types the echoed object as open (any value type), and
+		// a batch submitted outside Corsair can hold numbers or nested values.
+		custom_fields: z.record(z.string(), z.unknown()).nullish(),
 		company_change: z
 			.string()
 			.nullish()

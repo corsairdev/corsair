@@ -438,6 +438,26 @@ describe('enrichment.results', () => {
 		expect(result.status).toBe('ready');
 	});
 
+	it('reads custom_fields that hold values other than strings', async () => {
+		// The spec types the echoed custom_fields as an open object, and a batch
+		// submitted outside Corsair can carry numbers or booleans in it. One such
+		// value must not make the whole batch unreadable.
+		const record = resultsReady.data[0];
+		respond({
+			...resultsReady,
+			data: [{ ...record, custom_fields: { crm_id: 42, vip: true } }],
+		});
+
+		const result = (await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+		})) as { records: { custom_fields?: Record<string, unknown> | null }[] };
+
+		expect(result.records[0]?.custom_fields).toEqual({
+			crm_id: 42,
+			vip: true,
+		});
+	});
+
 	it('keeps a not-ready batch pending even though success is false', async () => {
 		respond(resultsNotReady);
 
