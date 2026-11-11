@@ -1,0 +1,146 @@
+---
+title: Overview
+description: "In-app onboarding with Userflow - sync users, groups and membership attributes, track events, read flows, checklists and their sessions, and manage webhook subscriptions, accounts, members and invites."
+---
+
+Use **Userflow** through Corsair: one client, typed API calls.
+
+Create a key in the Userflow app: an **environment** key (`ak_…`) under Settings → API for the Users API, or a **personal** key (`pak_…`) under My Account → Personal API Keys for the Accounts API.
+
+- **Two APIs, two key types, one plugin.** The Users API manages your users, groups and events; the Accounts API manages team resources inside a Userflow account. An environment key cannot call `/accounts`: Userflow answers `401` with the code `invalid_pak`. Both codes are treated as auth errors, so a missing or wrong key surfaces the same way — but only a personal key reaches members and invites.
+- **The API version is pinned.** Userflow has released one dated version and defaults every request to the latest, so this plugin sends `Userflow-Version: 2020-01-03` explicitly, as the docs recommend. A later version cannot silently change the shapes underneath.
+- **Creating and updating are the same call.** `users.upsert` and `groups.upsert` take your own id: an unseen id creates the object, a known one merges only the attributes sent. Because of that, a `400` on a retried write is not the only risk — which is why a 5xx is replayed for reads only.
+- **Groups or memberships, never both.** `users.upsert` takes `groups` for simple membership or `memberships` when the membership itself holds attributes such as a role. Sending both is rejected before the request.
+- **`prune_memberships` is a delete.** It removes every membership not listed, so sending it with no list would clear them all; the schema refuses that combination.
+- **Relationships are opt-in.** `groups` and `memberships` come back as `null` unless you pass `expand`, and nesting works to four levels (`memberships.group`). Every read takes an `expand` argument for this.
+- **Paging is `has_more`, not the link.** Every list answers `next_page_url`, and it is set even on the last page, so the plugin reports `has_more` and passes `starting_after` through rather than following the link blindly.
+- **Sessions are the record of what was seen.** A flow or checklist run is a content session; `contentSessions.list` filtered by `user_id` and `content_id` answers whether that person has seen it, and `progress` is a decimal string from `0` to `1`.
+- **Definitions are created by Userflow.** Attribute and event definitions appear the first time an unseen name arrives, and the API can only list them — which makes `attributes.list` the way to discover what a workspace already tracks.
+- **Webhook subscriptions are managed here; delivery is not.** Each subscription has its own `whsec_…` secret, returned only on create and update, and notifications are signed as `Userflow-Signature: t=<timestamp>,v1=<hmac>`. The plugin manages subscriptions, but does not receive them, since there is no single workspace-wide signing key to verify against.
+- **EU environments use a different host.** An EU environment lives on `api.eu.userflow.com`, and the key gives no hint of its region, so pass `region: 'eu'` to the plugin.
+
+**What you get:**
+
+- 35 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/userflow better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/userflow better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/userflow better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/userflow better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { userflow } from '@corsair-dev/userflow';
+
+export const corsair = createCorsair({
+	plugins: [
+		userflow(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+userflow()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'userflow',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List users ordered by signup**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.userflow.api.users.list({
+	limit: 50,
+	order_by: ['attributes.signed_up_at'],
+});
+```
+
+
+**Sync a user with their company**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.userflow.api.users.upsert({
+	id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c',
+	attributes: { name: 'Evelyn Reichert', email: 'evelyn@example.com' },
+});
+```
+
+
+See the full list on the [API](/plugins/userflow/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/userflow/api">
+    Every `userflow.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
