@@ -1,0 +1,647 @@
+import { z } from 'zod';
+
+// Inputs use Webex's own parameter names. Outputs are `.loose()` and their
+// documented fields nullish.
+// Reference: https://developer.webex.com/docs/api/v1
+//
+// Webex lists page with `max` (capped at 1000) and follow a `Link` header with
+// a next rel rather than a cursor in the body.
+
+const RoomSchema = z
+	.object({
+		id: z.string().nullish(),
+		title: z.string().nullish(),
+		type: z
+			.string()
+			.nullish()
+			.describe('group for a space, direct for a one-to-one room.'),
+		isLocked: z.boolean().nullish(),
+		lastActivity: z.string().nullish(),
+		creatorId: z.string().nullish(),
+		created: z.string().nullish(),
+		ownerId: z.string().nullish(),
+		isPublic: z.boolean().nullish(),
+		isReadOnly: z.boolean().nullish(),
+		description: z.string().nullish(),
+		siteUrl: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexRoom = z.infer<typeof RoomSchema>;
+
+const MessageSchema = z
+	.object({
+		id: z.string().nullish(),
+		roomId: z.string().nullish(),
+		roomType: z.string().nullish(),
+		text: z.string().nullish(),
+		html: z.string().nullish(),
+		markdown: z.string().nullish(),
+		files: z.array(z.string()).nullish(),
+		personId: z.string().nullish(),
+		personEmail: z.string().nullish(),
+		created: z.string().nullish(),
+		updated: z.string().nullish(),
+		mentionedPeople: z.array(z.string()).nullish(),
+		mentionedGroups: z.array(z.string()).nullish(),
+		parentId: z.string().nullish(),
+		attachmentActions: z.array(z.unknown()).nullish(),
+		// A transcript or a cue is rendered from the same message object.
+		isVoiceClip: z.boolean().nullish(),
+		contentType: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexMessage = z.infer<typeof MessageSchema>;
+
+const PersonSchema = z
+	.object({
+		id: z.string().nullish(),
+		emails: z.array(z.string()).nullish(),
+		displayName: z.string().nullish(),
+		nickName: z.string().nullish(),
+		firstName: z.string().nullish(),
+		lastName: z.string().nullish(),
+		avatar: z.string().nullish(),
+		orgId: z.string().nullish(),
+		roles: z.array(z.string()).nullish(),
+		licenses: z.array(z.string()).nullish(),
+		created: z.string().nullish(),
+		lastActivity: z.string().nullish(),
+		status: z.string().nullish().describe('active, inactive or unknown.'),
+		type: z.string().nullish().describe('person or bot.'),
+	})
+	.loose();
+
+export type WebexPerson = z.infer<typeof PersonSchema>;
+
+const TeamSchema = z
+	.object({
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		creatorId: z.string().nullish(),
+		created: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexTeam = z.infer<typeof TeamSchema>;
+
+const TeamMembershipSchema = z
+	.object({
+		id: z.string().nullish(),
+		teamId: z.string().nullish(),
+		personId: z.string().nullish(),
+		personEmail: z.string().nullish(),
+		personDisplayName: z.string().nullish(),
+		personOrgId: z.string().nullish(),
+		isModerator: z.boolean().nullish(),
+		created: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexTeamMembership = z.infer<typeof TeamMembershipSchema>;
+
+const MembershipSchema = z
+	.object({
+		id: z.string().nullish(),
+		roomId: z.string().nullish(),
+		personId: z.string().nullish(),
+		personEmail: z.string().nullish(),
+		personDisplayName: z.string().nullish(),
+		personOrgId: z.string().nullish(),
+		isModerator: z.boolean().nullish(),
+		isMonitor: z.boolean().nullish(),
+		created: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexMembership = z.infer<typeof MembershipSchema>;
+
+const WebhookSchema = z
+	.object({
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		targetUrl: z.string().nullish(),
+		resource: z.string().nullish(),
+		event: z.string().nullish(),
+		filter: z.string().nullish(),
+		secret: z.string().nullish(),
+		status: z.string().nullish(),
+		created: z.string().nullish(),
+		createdBy: z.string().nullish(),
+		orgId: z.string().nullish(),
+		ownedBy: z.string().nullish(),
+	})
+	.loose();
+
+export type WebexWebhook = z.infer<typeof WebhookSchema>;
+
+/** Webex answers a list as `{ items: [...] }`. */
+function items<T extends z.ZodType>(item: T) {
+	return z.object({ items: z.array(item).nullish() }).loose();
+}
+
+const MaxSchema = z
+	.number()
+	.int()
+	.min(1)
+	.max(1000)
+	.optional()
+	.describe('Items per page, up to 1000.');
+
+// ── rooms ─────────────────────────────────────────────────────────────────
+
+const RoomsListInputSchema = z.object({
+	max: MaxSchema,
+	type: z.enum(['group', 'direct']).optional(),
+	isLocked: z.boolean().optional(),
+	orgId: z.string().optional(),
+	teamId: z
+		.string()
+		.optional()
+		.describe('Only rooms shared with this team, or with no team for `none`.'),
+	sortBy: z.enum(['id', 'lastactivity', 'created']).optional(),
+});
+
+export type RoomsListInput = z.infer<typeof RoomsListInputSchema>;
+
+const RoomsListResponseSchema = items(RoomSchema);
+
+export type RoomsListResponse = z.infer<typeof RoomsListResponseSchema>;
+
+const RoomsGetInputSchema = z.object({ id: z.string().min(1) });
+
+export type RoomsGetInput = z.infer<typeof RoomsGetInputSchema>;
+
+const RoomResponseSchema = RoomSchema;
+
+export type RoomResponse = z.infer<typeof RoomResponseSchema>;
+
+const RoomsCreateInputSchema = z.object({
+	title: z.string().min(1),
+	teamId: z.string().optional(),
+	description: z.string().optional(),
+	isLocked: z
+		.boolean()
+		.optional()
+		.describe('A locked room only lets moderators add people.'),
+	isPublic: z.boolean().optional(),
+	isReadOnly: z
+		.boolean()
+		.optional()
+		.describe('A read-only room only lets moderators send messages.'),
+});
+
+export type RoomsCreateInput = z.infer<typeof RoomsCreateInputSchema>;
+
+const RoomsUpdateInputSchema = z.object({
+	id: z.string().min(1),
+	title: z.string().min(1).optional(),
+	description: z.string().optional(),
+	isLocked: z.boolean().optional(),
+	isReadOnly: z.boolean().optional(),
+});
+
+export type RoomsUpdateInput = z.infer<typeof RoomsUpdateInputSchema>;
+
+const RoomsDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type RoomsDeleteInput = z.infer<typeof RoomsDeleteInputSchema>;
+
+/** A delete answers 204, so the plugin states what it did. */
+const DeleteResponseSchema = z.object({
+	id: z.string(),
+	deleted: z.literal(true),
+});
+
+export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
+
+// ── messages ──────────────────────────────────────────────────────────────
+
+const MessagesListInputSchema = z
+	.object({
+		roomId: z.string().optional().describe('Only messages in this room.'),
+		parentId: z
+			.string()
+			.optional()
+			.describe('Only the replies in this thread.'),
+		mentionedPeople: z
+			.string()
+			.optional()
+			.describe('Only messages mentioning this person.'),
+		before: z.string().optional().describe('ISO 8601: only earlier messages.'),
+		beforeMessage: z
+			.string()
+			.optional()
+			.describe('Only messages before this id.'),
+		max: MaxSchema,
+	})
+	.superRefine((value, ctx) => {
+		if (value.roomId === undefined && value.parentId === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['roomId'],
+				message: 'A message list needs a roomId or a parentId.',
+			});
+		}
+	});
+
+export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
+
+const MessagesListResponseSchema = items(MessageSchema);
+
+export type MessagesListResponse = z.infer<typeof MessagesListResponseSchema>;
+
+const MessagesGetInputSchema = z.object({ id: z.string().min(1) });
+
+export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
+
+const MessageResponseSchema = MessageSchema;
+
+export type MessageResponse = z.infer<typeof MessageResponseSchema>;
+
+/**
+ * Sends a message. At least one of `text`, `markdown` or `files` is needed, and
+ * the schema enforces that rather than letting Webex reject an empty message.
+ */
+const MessagesCreateInputSchema = z
+	.object({
+		roomId: z.string().optional().describe('The room to post to.'),
+		toPersonId: z
+			.string()
+			.optional()
+			.describe('A one-to-one message to this person id.'),
+		toPersonEmail: z
+			.string()
+			.optional()
+			.describe('A one-to-one message to this address.'),
+		text: z.string().optional(),
+		markdown: z.string().optional(),
+		html: z.string().optional(),
+		files: z
+			.array(z.string())
+			.min(1)
+			.optional()
+			.describe('Public URLs of files to attach.'),
+		parentId: z.string().optional().describe('Post as a reply in this thread.'),
+	})
+	.superRefine((value, ctx) => {
+		if (
+			value.roomId === undefined &&
+			value.toPersonId === undefined &&
+			value.toPersonEmail === undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['roomId'],
+				message: 'A message needs a roomId, a toPersonId or a toPersonEmail.',
+			});
+		}
+		if (
+			value.text === undefined &&
+			value.markdown === undefined &&
+			value.html === undefined &&
+			value.files === undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['text'],
+				message: 'A message needs text, markdown, html or files.',
+			});
+		}
+	});
+
+export type MessagesCreateInput = z.infer<typeof MessagesCreateInputSchema>;
+
+const MessagesUpdateInputSchema = z.object({
+	id: z.string().min(1),
+	roomId: z
+		.string()
+		.optional()
+		.describe('Move the message to another room you are in.'),
+	text: z.string().optional(),
+	markdown: z.string().optional(),
+});
+
+export type MessagesUpdateInput = z.infer<typeof MessagesUpdateInputSchema>;
+
+const MessagesDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type MessagesDeleteInput = z.infer<typeof MessagesDeleteInputSchema>;
+
+// ── people ────────────────────────────────────────────────────────────────
+
+const PeopleListInputSchema = z.object({
+	email: z.string().optional().describe('Only this address.'),
+	displayName: z.string().optional(),
+	id: z.string().optional(),
+	orgId: z.string().optional(),
+	max: MaxSchema,
+});
+
+export type PeopleListInput = z.infer<typeof PeopleListInputSchema>;
+
+const PeopleListResponseSchema = items(PersonSchema);
+
+export type PeopleListResponse = z.infer<typeof PeopleListResponseSchema>;
+
+const MeInputSchema = z.object({});
+
+export type MeInput = z.infer<typeof MeInputSchema>;
+
+const MeResponseSchema = PersonSchema;
+
+export type MeResponse = z.infer<typeof MeResponseSchema>;
+
+const PeopleGetInputSchema = z.object({ id: z.string().min(1) });
+
+export type PeopleGetInput = z.infer<typeof PeopleGetInputSchema>;
+
+// ── teams ─────────────────────────────────────────────────────────────────
+
+const TeamsListInputSchema = z.object({ max: MaxSchema });
+
+export type TeamsListInput = z.infer<typeof TeamsListInputSchema>;
+
+const TeamsListResponseSchema = items(TeamSchema);
+
+export type TeamsListResponse = z.infer<typeof TeamsListResponseSchema>;
+
+const TeamsGetInputSchema = z.object({ id: z.string().min(1) });
+
+export type TeamsGetInput = z.infer<typeof TeamsGetInputSchema>;
+
+const TeamResponseSchema = TeamSchema;
+
+export type TeamResponse = z.infer<typeof TeamResponseSchema>;
+
+const TeamsCreateInputSchema = z.object({ name: z.string().min(1) });
+
+export type TeamsCreateInput = z.infer<typeof TeamsCreateInputSchema>;
+
+const TeamsDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type TeamsDeleteInput = z.infer<typeof TeamsDeleteInputSchema>;
+
+const TeamMembershipsListInputSchema = z.object({
+	teamId: z.string().min(1),
+	max: MaxSchema,
+});
+
+export type TeamMembershipsListInput = z.infer<
+	typeof TeamMembershipsListInputSchema
+>;
+
+const TeamMembershipsListResponseSchema = items(TeamMembershipSchema);
+
+export type TeamMembershipsListResponse = z.infer<
+	typeof TeamMembershipsListResponseSchema
+>;
+
+const TeamMembershipsCreateInputSchema = z.object({
+	teamId: z.string().min(1),
+	personId: z.string().optional(),
+	personEmail: z.string().optional(),
+	isModerator: z.boolean().optional(),
+});
+
+export type TeamMembershipsCreateInput = z.infer<
+	typeof TeamMembershipsCreateInputSchema
+>;
+
+const TeamMembershipResponseSchema = TeamMembershipSchema;
+
+export type TeamMembershipResponse = z.infer<
+	typeof TeamMembershipResponseSchema
+>;
+
+const TeamMembershipsDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type TeamMembershipsDeleteInput = z.infer<
+	typeof TeamMembershipsDeleteInputSchema
+>;
+
+// ── room memberships ──────────────────────────────────────────────────────
+
+const MembershipsListInputSchema = z.object({
+	roomId: z.string().optional(),
+	personId: z.string().optional(),
+	personEmail: z.string().optional(),
+	max: MaxSchema,
+});
+
+export type MembershipsListInput = z.infer<typeof MembershipsListInputSchema>;
+
+const MembershipsListResponseSchema = items(MembershipSchema);
+
+export type MembershipsListResponse = z.infer<
+	typeof MembershipsListResponseSchema
+>;
+
+const MembershipsCreateInputSchema = z.object({
+	roomId: z.string().min(1),
+	personId: z.string().optional(),
+	personEmail: z.string().optional(),
+	isModerator: z.boolean().optional(),
+});
+
+export type MembershipsCreateInput = z.infer<
+	typeof MembershipsCreateInputSchema
+>;
+
+const MembershipResponseSchema = MembershipSchema;
+
+export type MembershipResponse = z.infer<typeof MembershipResponseSchema>;
+
+const MembershipsDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type MembershipsDeleteInput = z.infer<
+	typeof MembershipsDeleteInputSchema
+>;
+
+// ── webhooks ──────────────────────────────────────────────────────────────
+
+const WebhooksListInputSchema = z.object({ max: MaxSchema });
+
+export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
+
+const WebhooksListResponseSchema = items(WebhookSchema);
+
+export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
+
+const WebhooksGetInputSchema = z.object({ id: z.string().min(1) });
+
+export type WebhooksGetInput = z.infer<typeof WebhooksGetInputSchema>;
+
+const WebhookResponseSchema = WebhookSchema;
+
+export type WebhookResponse = z.infer<typeof WebhookResponseSchema>;
+
+/**
+ * Creates a webhook. `resource` and `event` together select what it fires on,
+ * and `secret` is the HMAC key Webex signs each delivery with — so it is the
+ * one value worth capturing at creation.
+ */
+const WebhooksCreateInputSchema = z.object({
+	name: z.string().min(1),
+	targetUrl: z.string().min(1),
+	resource: z
+		.enum(['messages', 'memberships', 'rooms', 'meetings', 'recordings'])
+		.describe('The resource whose events to send.'),
+	event: z
+		.enum(['created', 'updated', 'deleted', 'all'])
+		.describe('Which event on that resource.'),
+	filter: z
+		.string()
+		.optional()
+		.describe('Restrict to a room id, e.g. `roomId=abc`.'),
+	secret: z
+		.string()
+		.optional()
+		.describe('The HMAC key Webex signs deliveries with.'),
+});
+
+export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;
+
+const WebhooksUpdateInputSchema = z.object({
+	id: z.string().min(1),
+	name: z.string().min(1).optional(),
+	targetUrl: z.string().min(1).optional(),
+	secret: z.string().optional(),
+	status: z
+		.enum(['active', 'inactive'])
+		.optional()
+		.describe('inactive stops delivery without deleting the webhook.'),
+});
+
+export type WebhooksUpdateInput = z.infer<typeof WebhooksUpdateInputSchema>;
+
+const WebhooksDeleteInputSchema = z.object({ id: z.string().min(1) });
+
+export type WebhooksDeleteInput = z.infer<typeof WebhooksDeleteInputSchema>;
+
+// ── Registry ──────────────────────────────────────────────────────────────
+
+export type WebexEndpointInputs = {
+	roomsList: RoomsListInput;
+	roomsGet: RoomsGetInput;
+	roomsCreate: RoomsCreateInput;
+	roomsUpdate: RoomsUpdateInput;
+	roomsDelete: RoomsDeleteInput;
+	messagesList: MessagesListInput;
+	messagesGet: MessagesGetInput;
+	messagesCreate: MessagesCreateInput;
+	messagesUpdate: MessagesUpdateInput;
+	messagesDelete: MessagesDeleteInput;
+	peopleList: PeopleListInput;
+	peopleMe: MeInput;
+	peopleGet: PeopleGetInput;
+	teamsList: TeamsListInput;
+	teamsGet: TeamsGetInput;
+	teamsCreate: TeamsCreateInput;
+	teamsDelete: TeamsDeleteInput;
+	teamMembershipsList: TeamMembershipsListInput;
+	teamMembershipsCreate: TeamMembershipsCreateInput;
+	teamMembershipsDelete: TeamMembershipsDeleteInput;
+	membershipsList: MembershipsListInput;
+	membershipsCreate: MembershipsCreateInput;
+	membershipsDelete: MembershipsDeleteInput;
+	webhooksList: WebhooksListInput;
+	webhooksGet: WebhooksGetInput;
+	webhooksCreate: WebhooksCreateInput;
+	webhooksUpdate: WebhooksUpdateInput;
+	webhooksDelete: WebhooksDeleteInput;
+};
+
+export type WebexEndpointOutputs = {
+	roomsList: RoomsListResponse;
+	roomsGet: RoomResponse;
+	roomsCreate: RoomResponse;
+	roomsUpdate: RoomResponse;
+	roomsDelete: DeleteResponse;
+	messagesList: MessagesListResponse;
+	messagesGet: MessageResponse;
+	messagesCreate: MessageResponse;
+	messagesUpdate: MessageResponse;
+	messagesDelete: DeleteResponse;
+	peopleList: PeopleListResponse;
+	peopleMe: MeResponse;
+	peopleGet: MeResponse;
+	teamsList: TeamsListResponse;
+	teamsGet: TeamResponse;
+	teamsCreate: TeamResponse;
+	teamsDelete: DeleteResponse;
+	teamMembershipsList: TeamMembershipsListResponse;
+	teamMembershipsCreate: TeamMembershipResponse;
+	teamMembershipsDelete: DeleteResponse;
+	membershipsList: MembershipsListResponse;
+	membershipsCreate: MembershipResponse;
+	membershipsDelete: DeleteResponse;
+	webhooksList: WebhooksListResponse;
+	webhooksGet: WebhookResponse;
+	webhooksCreate: WebhookResponse;
+	webhooksUpdate: WebhookResponse;
+	webhooksDelete: DeleteResponse;
+};
+
+export const WebexEndpointInputSchemas = {
+	roomsList: RoomsListInputSchema,
+	roomsGet: RoomsGetInputSchema,
+	roomsCreate: RoomsCreateInputSchema,
+	roomsUpdate: RoomsUpdateInputSchema,
+	roomsDelete: RoomsDeleteInputSchema,
+	messagesList: MessagesListInputSchema,
+	messagesGet: MessagesGetInputSchema,
+	messagesCreate: MessagesCreateInputSchema,
+	messagesUpdate: MessagesUpdateInputSchema,
+	messagesDelete: MessagesDeleteInputSchema,
+	peopleList: PeopleListInputSchema,
+	peopleMe: MeInputSchema,
+	peopleGet: PeopleGetInputSchema,
+	teamsList: TeamsListInputSchema,
+	teamsGet: TeamsGetInputSchema,
+	teamsCreate: TeamsCreateInputSchema,
+	teamsDelete: TeamsDeleteInputSchema,
+	teamMembershipsList: TeamMembershipsListInputSchema,
+	teamMembershipsCreate: TeamMembershipsCreateInputSchema,
+	teamMembershipsDelete: TeamMembershipsDeleteInputSchema,
+	membershipsList: MembershipsListInputSchema,
+	membershipsCreate: MembershipsCreateInputSchema,
+	membershipsDelete: MembershipsDeleteInputSchema,
+	webhooksList: WebhooksListInputSchema,
+	webhooksGet: WebhooksGetInputSchema,
+	webhooksCreate: WebhooksCreateInputSchema,
+	webhooksUpdate: WebhooksUpdateInputSchema,
+	webhooksDelete: WebhooksDeleteInputSchema,
+} as const;
+
+export const WebexEndpointOutputSchemas = {
+	roomsList: RoomsListResponseSchema,
+	roomsGet: RoomResponseSchema,
+	roomsCreate: RoomResponseSchema,
+	roomsUpdate: RoomResponseSchema,
+	roomsDelete: DeleteResponseSchema,
+	messagesList: MessagesListResponseSchema,
+	messagesGet: MessageResponseSchema,
+	messagesCreate: MessageResponseSchema,
+	messagesUpdate: MessageResponseSchema,
+	messagesDelete: DeleteResponseSchema,
+	peopleList: PeopleListResponseSchema,
+	peopleMe: MeResponseSchema,
+	peopleGet: MeResponseSchema,
+	teamsList: TeamsListResponseSchema,
+	teamsGet: TeamResponseSchema,
+	teamsCreate: TeamResponseSchema,
+	teamsDelete: DeleteResponseSchema,
+	teamMembershipsList: TeamMembershipsListResponseSchema,
+	teamMembershipsCreate: TeamMembershipResponseSchema,
+	teamMembershipsDelete: DeleteResponseSchema,
+	membershipsList: MembershipsListResponseSchema,
+	membershipsCreate: MembershipResponseSchema,
+	membershipsDelete: DeleteResponseSchema,
+	webhooksList: WebhooksListResponseSchema,
+	webhooksGet: WebhookResponseSchema,
+	webhooksCreate: WebhookResponseSchema,
+	webhooksUpdate: WebhookResponseSchema,
+	webhooksDelete: DeleteResponseSchema,
+} as const;
