@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Turso plugin"
+sidebarTitle: "Overview"
 description: "Serverless SQLite databases on libSQL with global replication."
 ---
 
@@ -17,16 +18,20 @@ Use **Turso** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/turso
+npm install corsair @corsair-dev/turso better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/turso
+yarn add corsair @corsair-dev/turso better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/turso
+pnpm install corsair @corsair-dev/turso better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/turso
+bun add corsair @corsair-dev/turso better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

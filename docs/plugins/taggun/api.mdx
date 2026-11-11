@@ -1,0 +1,4643 @@
+---
+title: "Taggun API reference"
+sidebarTitle: "API"
+description: "API reference for the Taggun plugin in Corsair: every `taggun.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Store a new set of validation rules under a campaign ID you choose; rejected if that ID already exists
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.campaigns.create({
+	campaignId: 'coffee-june-2026',
+	settings: {
+		merchantNames: {
+			allowList: ['Fresh Market'],
+		},
+		balanceOwing: { max: 0.01 },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+| `settings` | `object` | Yes | Validation rules for the campaign. At least one section should be present: a campaign with no sections checks nothing. |
+
+The campaign ID is yours to choose, up to 50 characters. At least one rule section is needed, or the campaign validates nothing. `balanceOwing.max` must be above zero: Taggun skips the comparison when it is 0.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  date?: {
+    start: string,
+    end: string
+  },
+  merchantNames?: {
+    skip?: boolean,
+    allowList?: string[],
+    blockList?: string[],
+    list?: string[],
+    returnFromTheList?: boolean
+  },
+  productCodes?: {
+    skip?: boolean,
+    description?: string | null,
+    list?: string[]
+  },
+  productLineItems?: {
+    skip?: boolean,
+    names?: string[],
+    totalPrice?: {
+      min?: number,
+      max?: number
+    },
+    quantity?: {
+      min?: number,
+      max?: number
+    },
+    shouldMatchAbbreviations?: boolean
+  },
+  balanceOwing?: {
+    skip?: boolean,
+    max: number
+  },
+  fraudDetection?: {
+    skip?: boolean,
+    allowSimilarityCheck?: boolean,
+    allowTamperDetection?: boolean,
+    allowDigitalDetection?: boolean,
+    allowHandwritingDetection?: boolean
+  },
+  smartValidate?: {
+    prompts: {
+      question: string,
+      example: Record<string, boolean>,
+      skip?: boolean
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Remove a campaign's validation rules permanently; later submissions against that campaign cannot evaluate them
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.taggun.api.campaigns.delete({ campaignId: 'coffee-june-2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+
+Permanently removes the campaign rules. Submit nothing against that campaign afterwards, since the removed rules cannot be evaluated.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one campaign's stored validation rules; sections with no rules may be omitted from the answer
+
+**Risk:** `read`
+
+```ts
+await corsair.taggun.api.campaigns.get({ campaignId: 'coffee-june-2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+
+Sections with no rules are omitted from the response, so a campaign with only a date window returns just `date`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `object` | No | Receipt date window; both bounds are required when supplied. |
+| `merchantNames` | `object` | No | — |
+| `productCodes` | `object` | No | — |
+| `productLineItems` | `object` | No | — |
+| `balanceOwing` | `object` | No | — |
+| `fraudDetection` | `object` | No | — |
+| `smartValidate` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="date full type">
+
+```ts
+{
+  start: string,
+  end: string
+}
+```
+</Accordion>
+
+<Accordion title="merchantNames full type">
+
+```ts
+{
+  skip?: boolean,
+  allowList?: string[],
+  blockList?: string[],
+  list?: string[],
+  returnFromTheList?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+{
+  skip?: boolean,
+  description?: string | null,
+  list?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="productLineItems full type">
+
+```ts
+{
+  skip?: boolean,
+  names?: string[],
+  totalPrice?: {
+    min?: number,
+    max?: number
+  },
+  quantity?: {
+    min?: number,
+    max?: number
+  },
+  shouldMatchAbbreviations?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="balanceOwing full type">
+
+```ts
+{
+  skip?: boolean,
+  max: number
+}
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+{
+  skip?: boolean,
+  allowSimilarityCheck?: boolean,
+  allowTamperDetection?: boolean,
+  allowDigitalDetection?: boolean,
+  allowHandwritingDetection?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+{
+  prompts: {
+    question: string,
+    example: Record<string, boolean>,
+    skip?: boolean
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List the campaign IDs that have validation settings stored on the account; needs the Campaign Validation feature
+
+**Risk:** `read`
+
+```ts
+await corsair.taggun.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+Returns a bare array of campaign IDs. An account without Campaign Validation enabled gets a 400 naming the feature rather than an empty list.
+
+
+**Output:** `string[]`
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Replace a campaign's stored validation rules wholesale: every section left out is removed, so re-send the response from `campaigns.get` with your changes
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.taggun.api.campaigns.update({
+	campaignId: 'coffee-june-2026',
+	settings: {
+		merchantNames: {
+			allowList: ['Fresh Market', 'Corner Store'],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+| `settings` | `object` | Yes | Replaces the stored settings wholesale: every section left out is removed from the campaign. |
+
+Replaces the stored rules wholesale: every section left out is removed. Read the current rules with `campaigns.get` and re-send them with your changes.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  date?: {
+    start: string,
+    end: string
+  },
+  merchantNames?: {
+    skip?: boolean,
+    allowList?: string[],
+    blockList?: string[],
+    list?: string[],
+    returnFromTheList?: boolean
+  },
+  productCodes?: {
+    skip?: boolean,
+    description?: string | null,
+    list?: string[]
+  },
+  productLineItems?: {
+    skip?: boolean,
+    names?: string[],
+    totalPrice?: {
+      min?: number,
+      max?: number
+    },
+    quantity?: {
+      min?: number,
+      max?: number
+    },
+    shouldMatchAbbreviations?: boolean
+  },
+  balanceOwing?: {
+    skip?: boolean,
+    max: number
+  },
+  fraudDetection?: {
+    skip?: boolean,
+    allowSimilarityCheck?: boolean,
+    allowTamperDetection?: boolean,
+    allowDigitalDetection?: boolean,
+    allowHandwritingDetection?: boolean
+  },
+  smartValidate?: {
+    prompts: {
+      question: string,
+      example: Record<string, boolean>,
+      skip?: boolean
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+| `statusCode` | `number` | No | — |
+
+
+
+---
+
+### validateFile
+
+`campaigns.validateFile`
+
+Check an uploaded receipt against a campaign's stored rules and return pass/fail per rule; a failed rule is a successful call reporting `successful: false`
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.campaigns.validateFile({ campaignId: 'coffee-june-2026', file: new File([bytes], 'receipt.jpg') });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+| `file` | `custom` | Yes | The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | — |
+| `ipAddress` | `string` | No | — |
+| `incognito` | `boolean` | No | — |
+| `userId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `subAccountId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `referenceId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+
+A failed rule is a successful call reporting `successful: false` with `failedValidations`, not an error. Each call is one billable scan.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
+| `failedValidations` | `string[]` | No | Validation keys that failed. |
+| `passedValidations` | `string[]` | No | Validation keys that passed. |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
+| `totalAmount` | `number` | No | — |
+| `currencyCode` | `string` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
+| `trackingId` | `string` | No | — |
+| `targetRotation` | `number` | No | — |
+| `similarReceipts` | `object[]` | No | — |
+| `tamperDetection` | `object` | No | — |
+| `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
+
+<AccordionGroup>
+<Accordion title="productLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="matchedProductLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+
+<Accordion title="similarReceipts full type">
+
+```ts
+{
+  referenceId?: string | null,
+  userId?: string | null,
+  trackingId?: string,
+  similarityScore?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tamperDetection full type">
+
+```ts
+{
+  isTampered?: boolean,
+  tamperedScore?: number
+}
+```
+</Accordion>
+
+<Accordion title="digitalDetection full type">
+
+```ts
+{
+  data?: {
+    isDigital?: boolean,
+    digitalScore?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateUrl
+
+`campaigns.validateUrl`
+
+Check a receipt at an HTTPS URL against a campaign's stored rules; a failed rule is a successful call reporting `successful: false`
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.campaigns.validateUrl({ campaignId: 'coffee-june-2026', url: 'https://example.com/receipts/receipt-123.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign ID, your choice, maximum 50 characters. |
+| `url` | `string` | Yes | HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected. |
+| `headers` | `Record<string, string>` | No | Headers to forward when fetching a protected HTTPS URL the document is hosted at. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | — |
+| `ipAddress` | `string` | No | — |
+| `incognito` | `boolean` | No | — |
+| `userId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `subAccountId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `referenceId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+
+Validates against the rules stored under `campaignId`. A failed rule is a successful call reporting `successful: false`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
+| `failedValidations` | `string[]` | No | Validation keys that failed. |
+| `passedValidations` | `string[]` | No | Validation keys that passed. |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
+| `totalAmount` | `number` | No | — |
+| `currencyCode` | `string` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
+| `trackingId` | `string` | No | — |
+| `targetRotation` | `number` | No | — |
+| `similarReceipts` | `object[]` | No | — |
+| `tamperDetection` | `object` | No | — |
+| `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
+
+<AccordionGroup>
+<Accordion title="productLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="matchedProductLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+
+<Accordion title="similarReceipts full type">
+
+```ts
+{
+  referenceId?: string | null,
+  userId?: string | null,
+  trackingId?: string,
+  similarityScore?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tamperDetection full type">
+
+```ts
+{
+  isTampered?: boolean,
+  tamperedScore?: number
+}
+```
+</Accordion>
+
+<Accordion title="digitalDetection full type">
+
+```ts
+{
+  data?: {
+    isDigital?: boolean,
+    digitalScore?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Receipt Validation
+
+### file
+
+`receiptValidation.file`
+
+Check an uploaded receipt against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false`
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.receiptValidation.file({ file: new File([bytes], 'receipt.jpg'), validation: { merchantName: { allowed: ['H-E-B'] } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`. |
+| `validation` | `object` | Yes | Rules for this request; nothing is stored. |
+| `additionalExtractionFields` | `modelNumber[]` | No | Extra fields to expose on extracted objects. Only `modelNumber` is supported. |
+| `containerId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `incognito` | `boolean` | No | — |
+| `ipAddress` | `string` | No | — |
+| `near` | `string` | No | — |
+| `referenceId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `userId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of the account. Up to 100 characters on receipt-validation requests. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+
+The inline `validation` rules travel as a JSON string inside the multipart body, because a form field cannot carry an object. Set `required: false` on a rule to report its output without letting it affect `successful`.
+
+<AccordionGroup>
+<Accordion title="validation full type">
+
+```ts
+{
+  date?: {
+    start: string,
+    end: string,
+    required?: boolean
+  },
+  merchantName?: {
+    allowed?: string[],
+    blocked?: string[],
+    returnFromTheList?: boolean,
+    required?: boolean
+  },
+  merchantAddress?: {
+    value: string,
+    confidenceThreshold?: number,
+    required?: boolean
+  },
+  productCodes?: {
+    description?: string,
+    allowed?: string[],
+    required?: boolean
+  },
+  serialNumber?: {
+    value: string,
+    required?: boolean
+  },
+  balanceOwing?: {
+    max: number,
+    required?: boolean
+  },
+  productLineItems?: {
+    products: {
+      names?: string[],
+      sku?: {
+        allowed: string[]
+      },
+      modelNumber?: {
+        allowed: string[]
+      },
+      unitPrice?: {
+        min?: number,
+        max?: number
+      },
+      totalPrice?: {
+        min?: number,
+        max?: number
+      },
+      quantity?: {
+        min?: number,
+        max?: number
+      },
+      shouldMatchAbbreviations?: boolean
+    }[],
+    required?: boolean
+  },
+  fraudDetection?: {
+    similarityCheck?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    tamperDetection?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    handwritingDetection?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    digitalDetection?: {
+      enabled: boolean,
+      required?: boolean
+    }
+  },
+  smartValidate?: {
+    prompts: {
+      question: string,
+      example: Record<string, boolean>,
+      skip?: boolean
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
+| `failedValidations` | `string[]` | No | Validation keys that failed. |
+| `passedValidations` | `string[]` | No | Validation keys that passed. |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
+| `totalAmount` | `number` | No | — |
+| `currencyCode` | `string` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
+| `trackingId` | `string` | No | — |
+| `targetRotation` | `number` | No | — |
+| `similarReceipts` | `object[]` | No | — |
+| `tamperDetection` | `object` | No | — |
+| `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
+
+<AccordionGroup>
+<Accordion title="productLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="matchedProductLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+
+<Accordion title="similarReceipts full type">
+
+```ts
+{
+  referenceId?: string | null,
+  userId?: string | null,
+  trackingId?: string,
+  similarityScore?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tamperDetection full type">
+
+```ts
+{
+  isTampered?: boolean,
+  tamperedScore?: number
+}
+```
+</Accordion>
+
+<Accordion title="digitalDetection full type">
+
+```ts
+{
+  data?: {
+    isDigital?: boolean,
+    digitalScore?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### url
+
+`receiptValidation.url`
+
+Check a receipt at an HTTPS URL against rules sent with this request, storing nothing; a failed rule is a successful call reporting `successful: false`
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.receiptValidation.url({
+	url: 'https://example.com/receipts/receipt-123.png',
+	validation: {
+		merchantName: {
+			allowed: ['H-E-B'],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected. |
+| `headers` | `Record<string, string>` | No | Headers to forward when fetching a protected HTTPS URL the document is hosted at. |
+| `validation` | `object` | Yes | Rules for this request; nothing is stored. |
+| `additionalExtractionFields` | `modelNumber[]` | No | Extra fields to expose on extracted objects. Only `modelNumber` is supported. |
+| `containerId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `incognito` | `boolean` | No | — |
+| `ipAddress` | `string` | No | — |
+| `near` | `string` | No | — |
+| `referenceId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `userId` | `string` | No | Caller-supplied identifier, maximum 50 characters. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of the account. Up to 100 characters on receipt-validation requests. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+
+Nothing is stored: the rules in `validation` apply to this request only. Set `required: false` on a rule to report its output without letting it affect `successful`.
+
+<AccordionGroup>
+<Accordion title="validation full type">
+
+```ts
+{
+  date?: {
+    start: string,
+    end: string,
+    required?: boolean
+  },
+  merchantName?: {
+    allowed?: string[],
+    blocked?: string[],
+    returnFromTheList?: boolean,
+    required?: boolean
+  },
+  merchantAddress?: {
+    value: string,
+    confidenceThreshold?: number,
+    required?: boolean
+  },
+  productCodes?: {
+    description?: string,
+    allowed?: string[],
+    required?: boolean
+  },
+  serialNumber?: {
+    value: string,
+    required?: boolean
+  },
+  balanceOwing?: {
+    max: number,
+    required?: boolean
+  },
+  productLineItems?: {
+    products: {
+      names?: string[],
+      sku?: {
+        allowed: string[]
+      },
+      modelNumber?: {
+        allowed: string[]
+      },
+      unitPrice?: {
+        min?: number,
+        max?: number
+      },
+      totalPrice?: {
+        min?: number,
+        max?: number
+      },
+      quantity?: {
+        min?: number,
+        max?: number
+      },
+      shouldMatchAbbreviations?: boolean
+    }[],
+    required?: boolean
+  },
+  fraudDetection?: {
+    similarityCheck?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    tamperDetection?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    handwritingDetection?: {
+      enabled: boolean,
+      required?: boolean
+    },
+    digitalDetection?: {
+      enabled: boolean,
+      required?: boolean
+    }
+  },
+  smartValidate?: {
+    prompts: {
+      question: string,
+      example: Record<string, boolean>,
+      skip?: boolean
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
+| `failedValidations` | `string[]` | No | Validation keys that failed. |
+| `passedValidations` | `string[]` | No | Validation keys that passed. |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
+| `totalAmount` | `number` | No | — |
+| `currencyCode` | `string` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
+| `trackingId` | `string` | No | — |
+| `targetRotation` | `number` | No | — |
+| `similarReceipts` | `object[]` | No | — |
+| `tamperDetection` | `object` | No | — |
+| `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
+
+<AccordionGroup>
+<Accordion title="productLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="matchedProductLineItems full type">
+
+```ts
+{
+  name?: string,
+  unitPrice?: number,
+  totalPrice?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+
+<Accordion title="similarReceipts full type">
+
+```ts
+{
+  referenceId?: string | null,
+  userId?: string | null,
+  trackingId?: string,
+  similarityScore?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tamperDetection full type">
+
+```ts
+{
+  isTampered?: boolean,
+  tamperedScore?: number
+}
+```
+</Accordion>
+
+<Accordion title="digitalDetection full type">
+
+```ts
+{
+  data?: {
+    isDigital?: boolean,
+    digitalScore?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Simple
+
+### encoded
+
+`simple.encoded`
+
+Scan a base64-encoded receipt or invoice and return the four core fields; each call is one billable scan
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', filename: 'receipt.jpg', contentType: 'image/jpeg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string` | Yes | Base64-encoded file content. The field is named `image` for legacy reasons but accepts any supported type, including PDF. |
+| `filename` | `string` | Yes | File name, used to tell Taggun the document type. |
+| `contentType` | `string` | Yes | File content type, for example `image/jpeg` or `application/pdf`. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### file
+
+`simple.file`
+
+Scan an uploaded receipt or invoice file and return the four core fields; each call is one billable scan
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.simple.file({ file: new File([bytes], 'receipt.jpg', { type: 'image/jpeg' }) });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+The file must be under 20 MB. The request-size limit counts multipart framing, so a file at the limit plus its boundaries is a 413.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### url
+
+`simple.url`
+
+Scan a receipt at an HTTPS URL and return the four core fields with confidence levels; each call is one billable scan and the receipt is stored unless `incognito` is set
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.simple.url({ url: 'https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png', incognito: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected. |
+| `headers` | `Record<string, string>` | No | Headers to forward when fetching a protected HTTPS URL the document is hosted at. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+Only https URLs are accepted, and localhost, loopback, link-local and private-network hosts are rejected before the request is sent. `incognito` keeps the receipt out of Taggun storage.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Verbose
+
+### encoded
+
+`verbose.encoded`
+
+Scan a base64-encoded receipt or invoice and return the full extraction, including product line items unless `extractLineItems` is false
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', filename: 'receipt.jpg', contentType: 'image/jpeg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string` | Yes | Base64-encoded file content. The field is named `image` for legacy reasons but accepts any supported type, including PDF. |
+| `filename` | `string` | Yes | File name, used to tell Taggun the document type. |
+| `contentType` | `string` | Yes | File content type, for example `image/jpeg` or `application/pdf`. |
+| `extractLineItems` | `boolean` | No | Extract product line items; Taggun defaults this to true. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+| `discountAmount` | `object` | No | — |
+| `paidAmount` | `object` | No | — |
+| `dueDate` | `object` | No | — |
+| `paymentType` | `object` | No | — |
+| `merchantTaxId` | `object` | No | — |
+| `text` | `object` | No | — |
+| `amounts` | `object[]` | No | — |
+| `lineAmounts` | `object[]` | No | — |
+| `numbers` | `object[]` | No | — |
+| `entities` | `object` | No | — |
+| `itemsCount` | `object` | No | — |
+| `trackingId` | `string` | No | Taggun tracking ID; quote it in support requests. |
+| `targetRotation` | `number` | No | — |
+| `elapsed` | `number` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="discountAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paidAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="dueDate full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paymentType full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTaxId full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  text?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[] | {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="amounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="lineAmounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="numbers full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="entities full type">
+
+```ts
+{
+  productLineItems?: {
+    data?: {
+      quantity?: {
+        data?: string | number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      unitPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      totalPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      name?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      sku?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      itemNumber?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      discountAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      category?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }[],
+  multiTaxLineItems?: {
+    data?: {
+      taxAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      netAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      grossAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxRate?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxType?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number
+  }[],
+  invoiceNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  receiptNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  purchaseOrderNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  last4?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  category?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  masterCategory?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  expenseType?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  merchantVerification?: {
+    verificationId?: string,
+    countryCode?: string,
+    vatNo?: string,
+    vies?: {
+      valid?: boolean,
+      name?: string,
+      address?: string
+    }
+  },
+  qrCodeData?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="itemsCount full type">
+
+```ts
+{
+  data?: string | number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  city?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  continent?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  registered_country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  subdivisions?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  }[],
+  postal?: {
+    code?: string
+  },
+  location?: {
+    accuracy_radius?: number,
+    latitude?: number,
+    longitude?: number,
+    time_zone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### file
+
+`verbose.file`
+
+Scan an uploaded receipt or invoice file and return the full extraction, including product line items unless `extractLineItems` is false
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.verbose.file({ file: new File([bytes], 'receipt.jpg', { type: 'image/jpeg' }) });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | The receipt or invoice, under 20 MB: PDF, JPG, PNG, GIF or HEIC. A `File` carries its own name and type, so prefer it over a bare `Blob`. |
+| `extractLineItems` | `boolean` | No | Extract product line items; Taggun defaults this to true. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+The verbose form is the one to evaluate Taggun with: it returns line items, the OCR text and per-field metadata.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+| `discountAmount` | `object` | No | — |
+| `paidAmount` | `object` | No | — |
+| `dueDate` | `object` | No | — |
+| `paymentType` | `object` | No | — |
+| `merchantTaxId` | `object` | No | — |
+| `text` | `object` | No | — |
+| `amounts` | `object[]` | No | — |
+| `lineAmounts` | `object[]` | No | — |
+| `numbers` | `object[]` | No | — |
+| `entities` | `object` | No | — |
+| `itemsCount` | `object` | No | — |
+| `trackingId` | `string` | No | Taggun tracking ID; quote it in support requests. |
+| `targetRotation` | `number` | No | — |
+| `elapsed` | `number` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="discountAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paidAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="dueDate full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paymentType full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTaxId full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  text?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[] | {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="amounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="lineAmounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="numbers full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="entities full type">
+
+```ts
+{
+  productLineItems?: {
+    data?: {
+      quantity?: {
+        data?: string | number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      unitPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      totalPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      name?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      sku?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      itemNumber?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      discountAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      category?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }[],
+  multiTaxLineItems?: {
+    data?: {
+      taxAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      netAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      grossAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxRate?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxType?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number
+  }[],
+  invoiceNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  receiptNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  purchaseOrderNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  last4?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  category?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  masterCategory?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  expenseType?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  merchantVerification?: {
+    verificationId?: string,
+    countryCode?: string,
+    vatNo?: string,
+    vies?: {
+      valid?: boolean,
+      name?: string,
+      address?: string
+    }
+  },
+  qrCodeData?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="itemsCount full type">
+
+```ts
+{
+  data?: string | number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  city?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  continent?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  registered_country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  subdivisions?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  }[],
+  postal?: {
+    code?: string
+  },
+  location?: {
+    accuracy_radius?: number,
+    latitude?: number,
+    longitude?: number,
+    time_zone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### url
+
+`verbose.url`
+
+Scan a receipt at an HTTPS URL and return the full extraction: line items, text, helper arrays, per-field confidence and enabled feature blocks
+
+**Risk:** `write`
+
+```ts
+await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png', extractLineItems: true, incognito: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL of the receipt or invoice, reachable by Taggun. Only https is accepted; localhost, loopback, link-local and private-network targets are rejected. |
+| `headers` | `Record<string, string>` | No | Headers to forward when fetching a protected HTTPS URL the document is hosted at. |
+| `extractLineItems` | `boolean` | No | Extract product line items. Taggun defaults this to true; false is faster and omits `entities.productLineItems`. |
+| `language` | `string` | No | Two-letter language hint; leave empty for auto-detection. Taggun documents en, es, fr, jp, he/iw, et, lv, lt, fi, el, zh, th, ar and kh, recommends it for ar, kh, th and he, and ignores a code it does not act on. |
+| `near` | `string` | No | A location to help merchant search, typically city, state, country. |
+| `ipAddress` | `string` | No | End user IP address, used for a GeoIP lookup. |
+| `ignoreMerchantName` | `string` | No | Ignore this merchant name if detected, e.g. a customer name mistaken for the merchant. |
+| `refresh` | `boolean` | No | Force reprocessing when the receipt is already stored. Costs a scan either way. |
+| `incognito` | `boolean` | No | Do not store the receipt: Taggun's per-request storage opt-out. |
+| `userId` | `string` | No | End-user identifier; duplicate checks compare across users with this. |
+| `containerId` | `string` | No | Scope duplicate and similarity checks to scans with the same value; omit to compare account-wide. |
+| `subAccountId` | `string` | No | Attribute usage to a subdivision of your account for reporting. |
+| `referenceId` | `string` | No | Your own identifier for this submission, used by similarity checks and feedback. |
+| `extractTime` | `boolean` | No | Return the receipt time when found; otherwise Taggun sets it to 12:00:00.000. |
+
+`extractLineItems` defaults to true; set it to false to skip product line items, which is faster and omits `entities.productLineItems`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalAmount` | `object` | No | — |
+| `taxAmount` | `object` | No | — |
+| `confidenceLevel` | `number` | No | — |
+| `date` | `object` | No | — |
+| `merchantName` | `object` | No | — |
+| `merchantAddress` | `object` | No | — |
+| `merchantCity` | `object` | No | — |
+| `merchantState` | `object` | No | — |
+| `merchantCountryCode` | `object` | No | — |
+| `merchantPostalCode` | `object` | No | — |
+| `merchantTypes` | `object` | No | — |
+| `discountAmount` | `object` | No | — |
+| `paidAmount` | `object` | No | — |
+| `dueDate` | `object` | No | — |
+| `paymentType` | `object` | No | — |
+| `merchantTaxId` | `object` | No | — |
+| `text` | `object` | No | — |
+| `amounts` | `object[]` | No | — |
+| `lineAmounts` | `object[]` | No | — |
+| `numbers` | `object[]` | No | — |
+| `entities` | `object` | No | — |
+| `itemsCount` | `object` | No | — |
+| `trackingId` | `string` | No | Taggun tracking ID; quote it in support requests. |
+| `targetRotation` | `number` | No | — |
+| `elapsed` | `number` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="totalAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="taxAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTypes full type">
+
+```ts
+{
+  data?: string[],
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="discountAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paidAmount full type">
+
+```ts
+{
+  data?: number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="dueDate full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="paymentType full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="merchantTaxId full type">
+
+```ts
+{
+  data?: string,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  text?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[] | {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="amounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="lineAmounts full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="numbers full type">
+
+```ts
+{
+  data?: number,
+  text?: string,
+  index?: number,
+  classifyResult?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}[]
+```
+</Accordion>
+
+<Accordion title="entities full type">
+
+```ts
+{
+  productLineItems?: {
+    data?: {
+      quantity?: {
+        data?: string | number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      unitPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      totalPrice?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      name?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      sku?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      itemNumber?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      discountAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      category?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }[],
+  multiTaxLineItems?: {
+    data?: {
+      taxAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      netAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      grossAmount?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxRate?: {
+        data?: number,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      },
+      taxType?: {
+        data?: string,
+        confidenceLevel?: number,
+        text?: string,
+        index?: number,
+        keyword?: string,
+        currencyCode?: string,
+        regions?: {
+          x: number,
+          y: number
+        }[][]
+      }
+    },
+    confidenceLevel?: number,
+    text?: string,
+    index?: number
+  }[],
+  invoiceNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  receiptNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  purchaseOrderNumber?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  last4?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  category?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  masterCategory?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  expenseType?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  },
+  merchantVerification?: {
+    verificationId?: string,
+    countryCode?: string,
+    vatNo?: string,
+    vies?: {
+      valid?: boolean,
+      name?: string,
+      address?: string
+    }
+  },
+  qrCodeData?: {
+    data?: string,
+    confidenceLevel?: number,
+    text?: string,
+    index?: number,
+    keyword?: string,
+    currencyCode?: string,
+    regions?: {
+      x: number,
+      y: number
+    }[][]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="itemsCount full type">
+
+```ts
+{
+  data?: string | number,
+  confidenceLevel?: number,
+  text?: string,
+  index?: number,
+  keyword?: string,
+  currencyCode?: string,
+  regions?: {
+    x: number,
+    y: number
+  }[][]
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  city?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  continent?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  registered_country?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  },
+  subdivisions?: {
+    geoname_id?: number,
+    iso_code?: string,
+    code?: string,
+    names?: Record<string, string>
+  }[],
+  postal?: {
+    code?: string
+  },
+  location?: {
+    accuracy_radius?: number,
+    latitude?: number,
+    longitude?: number,
+    time_zone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
