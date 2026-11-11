@@ -31,7 +31,11 @@ function respond(
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can reach
+	// the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
@@ -117,6 +121,11 @@ const describeIfKey = process.env.HAPPYSCRIBE_API_KEY
 
 describeIfKey('live Happy Scribe', () => {
 	const key = process.env.HAPPYSCRIBE_API_KEY as string;
+
+	// These tests call the real API, so they use the real fetch.
+	beforeEach(() => {
+		fetchMock.mockRestore();
+	});
 
 	it('lists organizations from the live account', async () => {
 		const { corsair, testDb } = await createClient({ key });
