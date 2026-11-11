@@ -81,16 +81,27 @@ function readString(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: one entry of an errors array, a string or an object.
+function readErrorEntry(item: unknown): string | undefined {
+	if (typeof item === 'string') return item.length > 0 ? item : undefined;
+	const entry = asRecord(item);
+	const message = readString(entry, 'message') ?? readString(entry, 'code');
+	if (!message) return undefined;
+	const field = readString(entry, 'field');
+	return field ? `${field} ${message}` : message;
+}
+
 // unknown: the body is an untyped error body until asRecord narrows it.
-// Meeting and membership errors answer `{ errors: ["..."] }`.
+// The reference shows `{ errors: ["..."] }`; the live API answers
+// `{ errors: [{ code, message, field? }] }`. Both are read.
 function readErrors(
 	record: Record<string, unknown> | null | undefined,
 ): string | undefined {
 	const value = record?.errors;
 	if (!Array.isArray(value)) return undefined;
-	const messages = value.filter(
-		(item): item is string => typeof item === 'string' && item.length > 0,
-	);
+	const messages = value
+		.map(readErrorEntry)
+		.filter((item): item is string => item !== undefined);
 	return messages.length > 0 ? messages.join('; ') : undefined;
 }
 

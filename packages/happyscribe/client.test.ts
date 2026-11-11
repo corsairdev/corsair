@@ -165,6 +165,39 @@ describe('makeHappyScribeRequest', () => {
 		).toBe('HappyScribe 422: Meeting url must be a valid URL');
 	});
 
+	it('describes the live errors array of objects, with the field', () => {
+		// Bodies the live API sent on 11-11 (meetings, memberships, Intelligence).
+		expect(
+			describeHappyScribeError(
+				422,
+				{
+					errors: [
+						{
+							code: 'invalid',
+							field: 'meeting_url',
+							message: "isn't a meeting link we recognize.",
+						},
+					],
+				},
+				'Unprocessable Entity',
+			),
+		).toBe("HappyScribe 422: meeting_url isn't a meeting link we recognize.");
+		expect(
+			describeHappyScribeError(
+				422,
+				{
+					errors: [
+						{
+							code: 'role_not_allowed',
+							message: 'Role not allowed on current plan',
+						},
+					],
+				},
+				'Unprocessable Entity',
+			),
+		).toBe('HappyScribe 422: Role not allowed on current plan');
+	});
+
 	it('percent-encodes path segments', () => {
 		expect(segment('a b/c')).toBe('a%20b%2Fc');
 	});
