@@ -2792,5 +2792,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/mailsso",
+    "dir": "packages/mailsso",
+    "name": "Mails.so",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/mapbox",
+    "dir": "packages/mapbox",
+    "name": "Mapbox",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-11",
+    "package": "@corsair-dev/melo",
+    "dir": "packages/melo",
+    "name": "Melo",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
