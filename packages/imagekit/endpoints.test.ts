@@ -306,6 +306,12 @@ describe('files.delete and files.bulkDelete', () => {
 		});
 	});
 
+	it('rejects more than 100 ids in one bulk delete before any request', async () => {
+		const ids = Array.from({ length: 101 }, (_, i) => `file-${i}`);
+		await expect(invoke(Files.bulkDelete, { fileIds: ids })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a bulk delete answer without the id list', async () => {
 		respond({ somethingElse: true }, 200);
 		await expect(

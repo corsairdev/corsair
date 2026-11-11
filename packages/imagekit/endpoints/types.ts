@@ -384,8 +384,10 @@ const FilesBulkDeleteInputSchema = z.object({
 	fileIds: z
 		.array(FileIdSchema)
 		.min(1)
+		// ImageKit deletes at most 100 files per call.
+		.max(100)
 		.describe(
-			'File IDs to delete permanently; a 207 answer reports per-file failures.',
+			'Up to 100 file IDs to delete permanently; a 207 answer reports per-file failures.',
 		),
 });
 
