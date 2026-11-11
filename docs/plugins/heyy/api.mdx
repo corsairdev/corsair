@@ -15,12 +15,12 @@ Every `heyy.api.*` operation is listed below with parameter shapes and return ty
 
 `apiWebhooks.create`
 
-Register an HTTPS endpoint to receive message events, optionally limited to specific channels
+Register an HTTPS endpoint for message events on the channels named in each event; Heyy then POSTs every matching message, with its content and sender, to that URL
 
 **Risk:** `write`
 
 ```ts
-await corsair.heyy.api.apiWebhooks.create({ url: 'https://example.com/heyy/events', events: [{ type: 'message.received' }] });
+await corsair.heyy.api.apiWebhooks.create({ url: 'https://example.com/heyy/events', events: [{ type: 'message.received', scopes: [{ type: 'channel', ids: ['b1a2c3d4-0000-4000-8000-000000000000'] }] }] });
 ```
 
 **Input**
@@ -30,7 +30,7 @@ await corsair.heyy.api.apiWebhooks.create({ url: 'https://example.com/heyy/event
 | `url` | `string` | Yes | HTTPS URL that receives the webhook POSTs. |
 | `events` | `object[]` | Yes | The events to deliver to this URL. |
 
-The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each optionally scoped to channel ids.
+The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each scoped to at least one channel id from `channels.search`. Heyy then POSTs every matching message, with its content and sender, to that URL.
 
 <AccordionGroup>
 <Accordion title="events full type">
@@ -38,7 +38,7 @@ The URL must be https. Events are `message.received`, `message.sent`, `message.u
 ```ts
 {
   type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated,
-  scopes?: {
+  scopes: {
     type: channel,
     ids: string[]
   }[]
@@ -141,10 +141,10 @@ await corsair.heyy.api.apiWebhooks.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(status, 'active')". Filterable fields: id, createdAt, updatedAt, status, url, events. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -232,7 +232,7 @@ await corsair.heyy.api.apiWebhooks.update({ webhookId: 'b1a2c3d4-0000-4000-8000-
 ```ts
 {
   type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated,
-  scopes?: {
+  scopes: {
     type: channel,
     ids: string[]
   }[]
@@ -425,10 +425,10 @@ await corsair.heyy.api.attributes.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(type, 'single_select')". Filterable fields: id, createdAt, updatedAt, name, type, displayName, description, visibility, details. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -512,10 +512,10 @@ await corsair.heyy.api.automations.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(status, 'active')". Filterable fields: id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -575,7 +575,7 @@ await corsair.heyy.api.automations.search({});
 
 `channels.search`
 
-List the connected channels, such as WhatsApp, email or Instagram, with their type and connection status
+List the connected channels (WhatsApp, Instagram, Messenger, SMS or live chat) with their type and connection status
 
 **Risk:** `read`
 
@@ -587,10 +587,10 @@ await corsair.heyy.api.channels.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(type, 'whatsapp')". Filterable fields: id, createdAt, updatedAt, name, type, status, vendor, vendorId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -722,7 +722,14 @@ await corsair.heyy.api.contacts.create({ firstName: 'Jordan', lastName: 'Reyes',
     id: string
   })[] | null,
   attributes?: {
-    name?: string | null,
+    id?: string | null,
+    contactId?: string | null,
+    attribute?: {
+      id: string,
+      name: string,
+      displayName?: string | null,
+      type?: string | null
+    } | null,
     value?: string | number | string[] | null
   }[] | null,
   handles?: Record<string, JsonValue>[] | null,
@@ -746,19 +753,19 @@ Search contacts with a structured filter, free-text search, sorting and paging; 
 **Risk:** `read`
 
 ```ts
-await corsair.heyy.api.contacts.search({ query: "contains(fullName, 'Jordan')", pagination: { page: 0, limit: 25 } });
+await corsair.heyy.api.contacts.search({ query: "contains(firstName, 'Jordan')", pagination: { page: 0, limit: 25 } });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(email, 'jordan@acme.com')". Filterable fields: id, createdAt, updatedAt, firstName, lastName, isSubscribed, labels, notes, groups, phoneNumber, email; custom attributes through getBy('attributes', 'name', 'plan'). Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
-`query` is a structured expression such as `equals(email, 'a@b.com')`; `search` is free text. Pass one of them, not both.
+`query` is a structured expression such as `equals(email, 'a@b.com')` over `firstName`, `lastName`, `email`, `phoneNumber`, `isSubscribed`, `labels` and the other listed fields; `search` is free text over name, phone and email. They can be combined.
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -801,7 +808,14 @@ await corsair.heyy.api.contacts.search({ query: "contains(fullName, 'Jordan')", 
     id: string
   })[] | null,
   attributes?: {
-    name?: string | null,
+    id?: string | null,
+    contactId?: string | null,
+    attribute?: {
+      id: string,
+      name: string,
+      displayName?: string | null,
+      type?: string | null
+    } | null,
     value?: string | number | string[] | null
   }[] | null,
   handles?: Record<string, JsonValue>[] | null,
@@ -935,10 +949,10 @@ await corsair.heyy.api.labels.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "contains(name, 'VIP')". Filterable fields: id, createdAt, updatedAt, name. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -1010,10 +1024,10 @@ await corsair.heyy.api.messageTemplates.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | Structured filter, such as "equals(status, 'active')" or "contains(name, 'Acme')". Combine with and(), or(), not(); see the query syntax reference. Omit for no filter. |
 | `sortBy` | `string` | No | Sort expression, such as "desc(createdAt)" or "asc(name)", with an optional null placement like "desc(updatedAt, 'nulls last')". Chain keys with sort(...). |
-| `search` | `string` | No | Free-text search. Only some resources support it; `query` is the field for structured filters. |
+| `search` | `string` | No | Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined. |
 | `pagination` | `object` | No | Paging. Defaults to page 0, limit 10. |
+| `query` | `string` | No | Structured filter, such as "equals(channelId, 'channel-id')". Filterable fields: id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter. |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -1051,7 +1065,7 @@ await corsair.heyy.api.messageTemplates.search({});
   vendorId?: string | null,
   channelId?: string | null,
   messageContent?: Record<string, JsonValue> | null,
-  variables?: Record<string, JsonValue>[] | null,
+  variables?: string[] | null,
   vendorDetails?: Record<string, JsonValue> | null
 }[]
 ```
