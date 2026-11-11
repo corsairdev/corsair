@@ -195,6 +195,27 @@ describe('dataSources.list', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
+	it('reads a null items array as an empty page, as the reference allows', async () => {
+		respond({
+			requestId: 'r',
+			status: 'success',
+			data: {
+				items: null,
+				pagination: { page: 0, pageSize: 25, totalItems: 0 },
+			},
+		});
+
+		const result = await invoke(DataSources.list, {});
+
+		expect(result).toEqual({
+			dataSources: [],
+			page: 0,
+			pageSize: 25,
+			totalItems: 0,
+			nextPage: null,
+		});
+	});
+
 	it('rejects a malformed known field', async () => {
 		respond({
 			requestId: 'r',
@@ -669,6 +690,21 @@ describe('metrics.list', () => {
 			metrics: [expect.objectContaining({ id: 'GoogleAnalytics4@sessions' })],
 			nextPage: 1,
 		});
+	});
+
+	it('reads a null items array as no metrics, as the reference allows', async () => {
+		respond({
+			requestId: 'r',
+			status: 'success',
+			data: {
+				items: null,
+				pagination: { page: 0, pageSize: 25, totalItems: 0 },
+			},
+		});
+
+		const result = await invoke(Metrics.list, { sourceId: 1234567 });
+
+		expect(result).toMatchObject({ metrics: [], nextPage: null });
 	});
 });
 
