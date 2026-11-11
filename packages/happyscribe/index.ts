@@ -450,12 +450,14 @@ const happyScribeEndpointMeta = {
 			'Remove a user from the organization; their existing transcripts stay',
 	},
 	'orders.create': {
-		riskLevel: 'write',
+		// confirm: true submits and charges the organization in the same call.
+		riskLevel: 'destructive',
 		description:
 			'Create a transcription or subtitling order for media at a URL: service auto (the default) is machine work, pro is human work. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag',
 	},
 	'orders.createTranslation': {
-		riskLevel: 'write',
+		// confirm: true submits and charges the organization in the same call.
+		riskLevel: 'destructive',
 		description:
 			'Create a translation order for an existing transcription: service auto (the default) is machine translation, pro is human. Incomplete and unpaid until confirmed',
 	},
@@ -465,9 +467,11 @@ const happyScribeEndpointMeta = {
 			'Read one human-service order: state, operations, languages and pricing',
 	},
 	'orders.confirm': {
-		riskLevel: 'write',
+		// Charges the organization.
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Confirm an incomplete order, which charges the organization and starts the human work; irreversible',
+			'Confirm an incomplete order, which charges the organization and starts the work',
 	},
 	'companies.list': {
 		riskLevel: 'read',

@@ -98,14 +98,18 @@ describe('happyscribe plugin definition', () => {
 		expect(risk['exports.create']).toBe('write');
 		expect(risk['meetings.create']).toBe('write');
 		expect(risk['memberships.add']).toBe('write');
-		expect(risk['orders.confirm']).toBe('write');
+		// Each of these can charge the organization (create and
+		// createTranslation through confirm: true), so cautious mode asks first.
+		expect(risk['orders.confirm']).toBe('destructive');
+		expect(risk['orders.create']).toBe('destructive');
+		expect(risk['orders.createTranslation']).toBe('destructive');
 		expect(risk['transcriptions.delete']).toBe('destructive');
 		expect(risk['memberships.remove']).toBe('destructive');
 	});
 
-	it('marks irreversible deletes', () => {
+	it('marks irreversible operations', () => {
 		const meta = plugin.endpointMeta ?? {};
-		for (const op of ['transcriptions.delete']) {
+		for (const op of ['transcriptions.delete', 'orders.confirm']) {
 			expect(meta[op as keyof typeof meta]).toMatchObject({
 				irreversible: true,
 			});
