@@ -229,6 +229,18 @@ describe('cases', () => {
 		expect(lastRequest().path).toContain('/api/case/v2/ext/1/');
 	});
 
+	it('sends no case type on the external-id lookup, which ignores it', async () => {
+		// HQ's ext view looks the case up by domain and external id only, so
+		// a case_type would read as a filter that never applies.
+		respond(caseList.cases[0]);
+		await invoke(Cases.getByExternalId, {
+			domain: DOMAIN,
+			externalId: '1',
+			caseType: 'household',
+		});
+		expect(lastRequest().query).toEqual({});
+	});
+
 	it('rejects a wrong-shaped case list body', async () => {
 		respond({ objects: 'nope' }, 200);
 		await expect(invoke(Cases.list, { domain: DOMAIN })).rejects.toThrow();

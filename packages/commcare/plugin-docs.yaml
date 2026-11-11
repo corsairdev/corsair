@@ -44,7 +44,7 @@ apiExamples:
   cases.bulkFetch:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseIds: ['abc123', 'def456'], fields: ['case_id'] }"
   cases.getByExternalId:
-    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', externalId: '1', caseType: 'patient' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', externalId: '1' }"
   users.list:
     call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', limit: 50 }"
   users.get:

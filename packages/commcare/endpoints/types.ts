@@ -439,11 +439,9 @@ const CasesGetByExternalIdInputSchema = z.object({
 	externalId: z
 		.string()
 		.min(1)
-		.describe('External id the application assigned to the case.'),
-	caseType: z
-		.string()
-		.optional()
-		.describe('Case type to disambiguate the lookup.'),
+		.describe(
+			'External id the application assigned to the case. The lookup takes no case type; if several cases share the id, CommCare answers 400 and lists them.',
+		),
 });
 
 export type CasesGetByExternalIdInput = z.input<

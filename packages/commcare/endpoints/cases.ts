@@ -108,10 +108,11 @@ export const getByExternalId: CommCareEndpoints['casesGetByExternalId'] = (
 			output: Outputs.casesGetByExternalId,
 		},
 		input,
-		(domain, { externalId, caseType }) => ({
+		// CommCare matches on the external id alone; when several cases share
+		// it, the lookup answers 400 naming them.
+		(domain, { externalId }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/case/v2/ext/${segment(externalId)}/`,
-			query: { ...(caseType !== undefined ? { case_type: caseType } : {}) },
 			replaySafe: true,
 		}),
 	);
