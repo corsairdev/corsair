@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Website and API monitoring with UptimeRobot - create, update, pause and delete monitors of any type, read uptime and response-time statistics, triage incidents and their comments, and manage status pages, announcements, maintenance windows, groups and tags."
+---
+
+Use **UptimeRobot** through Corsair: one client, typed API calls.
+
+Create a key in UptimeRobot under Integrations & API, API keys. Calls go to `https://api.uptimerobot.com/v3` with the key as a Bearer token.
+
+- **This is the v3 API.** The older v2 form-encoded API at `/v2` still exists but is not what this plugin wraps; v3 is JSON in and JSON out, with DELETE, PATCH and per-resource paths. The full contract is published as an OpenAPI document at `https://cdn.uptimerobot.com/api/openapi.yaml`.
+- **A failure is always `{ code, message }`.** The `code` is stable and grouped by area — `003-*` is authentication, `009-*` is resources and validation, `026-*` is status pages. A wrong or revoked key answers `401` with `003-005`. A validation failure instead sends `message` as an *array* of per-field strings, and the plugin keeps them on `details`.
+- **Creating a monitor depends on its type.** The input schema takes the union of all ten types and checks it against the one you chose: `HEARTBEAT` needs no `url` at all and rejects one, `PORT` and `UDP` need a `port`, `KEYWORD` needs `timeout`, `keywordType` and `keywordCaseType`, and everything else needs a `url`. A mismatch is reported before any request is made.
+- **Pausing is not deleting.** `monitors.pause` stops the checks and the alerts and is reversible with `monitors.start`; UptimeRobot also pauses a monitor by itself after repeated failures, and `monitors.start` resumes that too. `monitors.delete` removes the monitor and its history for good.
+- **`monitors.reset` discards history, not the monitor.** It clears the accumulated statistics and incident log while the monitor keeps checking, so it is marked destructive even though the monitor survives.
+- **The interval floor is 30 seconds in the contract.** The free plan enforces a much higher floor (five minutes), and asking for less is refused by the API rather than silently raised.
+- **Paging is a link, and a page can be empty.** Lists answer `nextLink`, which stays set while more pages remain. With a filter on `incidents.list`, a page can hold fewer items than `limit`, or none at all, while `nextLink` is still present — so page on the link, not on the item count. `tags.list` is the exception: it pages by `nextCursorId` instead.
+- **A status page can show everything.** `monitorIds: [0]` on its own is the sentinel for every monitor in the account, and an empty array shows none. `autoAddMonitors` covers monitors created later, but an explicit `monitorIds` wins over it — including an empty one.
+- **Rate limits are tight on the free plan.** It allows 10 requests a minute; paid plans allow twice the monitor limit, capped at 5,000. A `429` was refused before it ran, so the plugin retries it up to three times with backoff, honouring `Retry-After`.
+
+**What you get:**
+
+- 31 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/uptimerobot better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/uptimerobot better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/uptimerobot better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/uptimerobot better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { uptimerobot } from '@corsair-dev/uptimerobot';
+
+export const corsair = createCorsair({
+	plugins: [
+		uptimerobot(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+uptimerobot()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'uptimerobot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List monitors that are down or look down**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.uptimerobot.api.monitors.list({
+	status: ['DOWN', 'LOOKS_DOWN'],
+});
+```
+
+
+**Tighten a storefront check to every minute**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.uptimerobot.api.monitors.update({ id: 778001, friendlyName: 'Acme storefront', interval: 60 });
+```
+
+
+See the full list on the [API](/plugins/uptimerobot/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/uptimerobot/api">
+    Every `uptimerobot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

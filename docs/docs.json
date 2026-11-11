@@ -3716,6 +3716,14 @@
                 ]
               },
               {
+                "group": "UptimeRobot",
+                "pages": [
+                  "plugins/uptimerobot/overview",
+                  "plugins/uptimerobot/api",
+                  "plugins/uptimerobot/database"
+                ]
+              },
+              {
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
