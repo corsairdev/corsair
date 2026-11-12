@@ -3815,5 +3815,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/webex",
+    "dir": "packages/webex",
+    "name": "Webex",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
