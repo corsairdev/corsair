@@ -462,6 +462,20 @@ const UsersListInputSchema = z.object({
 
 export type UsersListInput = z.input<typeof UsersListInputSchema>;
 
+/**
+ * One entry of a user's `events` list. The live answer holds survey activity
+ * records here (seen: `type: 'filled'` with the response and survey IDs), not
+ * the names sent through `users.track`. Undocumented, so every field is nullish.
+ */
+const UserActivitySchema = z
+	.object({
+		type: z.string().nullish().describe('Activity type, e.g. `filled`.'),
+		date: z.string().nullish().describe('UTC timestamp, ISO 8601.'),
+		response: z.string().nullish().describe('Response ID, when there is one.'),
+		campaign: z.string().nullish().describe('Survey ID, when there is one.'),
+	})
+	.loose();
+
 const SatisMeterUserSchema = z
 	.object({
 		id: z
@@ -477,10 +491,10 @@ const SatisMeterUserSchema = z
 		lastSeen: z.string().nullish(),
 		traits: TraitsSchema.nullish(),
 		events: z
-			.array(z.string())
+			.array(z.union([UserActivitySchema, z.string()]))
 			.nullish()
 			.describe(
-				"Event names recorded for this user. Present in the live answer although the provider's article example omits it.",
+				"The user's survey activity, such as `filled` with the response and survey IDs. Present in the live answer although the provider's article example omits it. Events sent through `users.track` do not appear here.",
 			),
 	})
 	.loose();

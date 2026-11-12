@@ -180,6 +180,31 @@ describe('users', () => {
 		expect(result.users[0]?.events).toEqual(['completed-checkout']);
 	});
 
+	it('parses the activity records the live list returns in events', () => {
+		// Trimmed from a live `GET /api/users` on 2026-11-12, after a response was
+		// recorded for the user: each entry is an object, not an event name.
+		const result = parseAs<UsersListResponse>(Outputs.usersList, {
+			users: [
+				{
+					id: '5808e7031a943c7e564cdb20',
+					userId: 'corsair-plugin-test-1',
+					events: [
+						{
+							type: 'filled',
+							date: '2026-11-12T05:37:09.685Z',
+							response: '5808e7031a943c7e564cdb21',
+							campaign: '5808e7031a943c7e564cdb22',
+						},
+					],
+				},
+			],
+		});
+		expect(result.users[0]?.events?.[0]).toMatchObject({
+			type: 'filled',
+			campaign: '5808e7031a943c7e564cdb22',
+		});
+	});
+
 	it('rejects a users answer without the users key', () => {
 		expect(() => parseAs(Outputs.usersList, {})).toThrow();
 	});

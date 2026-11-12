@@ -228,10 +228,10 @@ describeIfWritable('live SatisMeter writes', () => {
 			event: 'corsair-test-event',
 			project: projectId,
 		});
-		// 204: accepted. The event is NOT readable back through the users API,
-		// which was confirmed against the live project: `events` stays [] on both
-		// the list and the single-user read after a successful track. So this
-		// asserts acceptance, not persistence, and says so rather than pretending.
+		// 204: accepted. The event is NOT readable back through the users API:
+		// `events` on the list holds survey activity records (e.g. a filled
+		// response), not tracked event names. So this asserts acceptance, not
+		// persistence, and says so rather than pretending.
 		expect(text).toBe('');
 
 		const listText = await listUser(userId);
