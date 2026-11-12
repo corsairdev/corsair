@@ -120,6 +120,12 @@ describe('routes.get', () => {
 		expect(result.addresses?.[0]?.is_depot).toBe(true);
 	});
 
+	it('fails rather than reading a non-object body as an empty route', async () => {
+		respond(fetchMock, 'Redirecting to login');
+
+		await expect(invoke(Routes.get, { route_id: ROUTE_ID })).rejects.toThrow();
+	});
+
 	it('rejects a route id that is not 32 characters', async () => {
 		await expect(invoke(Routes.get, { route_id: 'short' })).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -427,6 +433,12 @@ describe('optimizations.list', () => {
 		expect(result.optimizations).toHaveLength(1);
 		expect(result.total_records).toBe(1);
 		expect(result.next_offset).toBeNull();
+	});
+
+	it('fails rather than inventing an empty list when optimizations is missing', async () => {
+		respond(fetchMock, { totalRecords: 3 });
+
+		await expect(invoke(Optimizations.list, {})).rejects.toThrow();
 	});
 
 	it('normalises the single-object form into one row', async () => {

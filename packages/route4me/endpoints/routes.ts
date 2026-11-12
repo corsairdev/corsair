@@ -69,7 +69,10 @@ export const get: Route4meEndpoints['routesGet'] = (ctx, input) =>
 		{
 			shape: (raw) => {
 				const record = asRecord(raw);
-				const meta = asRecord(record?.meta);
+				// A non-object 200 (the login page, an empty body) is passed on as is
+				// so the output parse rejects it rather than reading an empty route.
+				if (!record) return raw;
+				const meta = asRecord(record.meta);
 				const current = meta?.current_page;
 				const last = meta?.last_page;
 				const hasNext =
