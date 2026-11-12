@@ -384,6 +384,7 @@ export const BaseProviders = [
 	'reducto',
 	'referralrock',
 	'remoet',
+	'remoteretrieval',
 	'removebg',
 	'render',
 	'rentman',
@@ -882,6 +883,7 @@ export const ProviderDisplayNames = {
 	reducto: 'Reducto',
 	referralrock: 'Referral Rock',
 	remoet: 'Remoet',
+	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
 	render: 'Render',
 	rentman: 'Rentman',
@@ -1387,6 +1389,7 @@ export type AllProviders =
 	| 'reducto'
 	| 'referralrock'
 	| 'remoet'
+	| 'remoteretrieval'
 	| 'removebg'
 	| 'render'
 	| 'rentman'
