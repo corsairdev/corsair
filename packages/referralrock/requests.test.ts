@@ -207,6 +207,16 @@ describe('referrals', () => {
 		expect(result.referrals[0]?.referringMemberId).toBe(MEMBER_ID);
 	});
 
+	it('narrows referrals by email, id or code with query', async () => {
+		respond(fetchMock, REFERRAL_SET);
+
+		await invoke(Endpoints.referralsList, { query: 'jordan@example.com' });
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			query: 'jordan@example.com',
+		});
+	});
+
 	it('creates a referral against a referral code', async () => {
 		respond(fetchMock, { referral: REFERRAL, message: '' });
 

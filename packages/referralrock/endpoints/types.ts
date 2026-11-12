@@ -266,6 +266,12 @@ const ReferralStatusSchema = z
 const ReferralsListInputSchema = z.object({
 	...pagingQuery,
 	program_id: z.string().optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'A value the referral must match on email, internal id, external id or referral code.',
+		),
 	member_id: z.string().optional(),
 	status: ReferralStatusSchema.optional(),
 	sort: ReferralSortSchema.optional(),

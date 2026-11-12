@@ -42,7 +42,7 @@ await corsair.referralrock.api.members.create({ program_id: '86de93f6-95a8-473d-
 | `postal_code` | `string` | No | — |
 | `should_send_email` | `boolean` | No | Send the program’s confirmation email. Defaults to false. |
 
-A refusal arrives as a 200 with a null member and the reason in `message`.
+A refusal (a duplicate email) answers 400 and throws `ReferralrockAPIError` with the reason in `detail`.
 
 
 
@@ -423,6 +423,7 @@ await corsair.referralrock.api.referrals.list({ status: 'Qualified', count: 50 }
 | `date_from` | `string` | No | Only records created after this date. |
 | `date_to` | `string` | No | Only records created before this date. |
 | `program_id` | `string` | No | — |
+| `query` | `string` | No | A value the referral must match on email, internal id, external id or referral code. |
 | `member_id` | `string` | No | — |
 | `status` | `string` | No | The referral status: `pending`, `qualified`, `approved` or `denied`. |
 | `sort` | `Create_Dt_Desc \| Create_Dt_Asc \| Amount_Desc \| Amount_Asc \| Qualified_Dt_Desc \| Qualified_Dt_Asc \| Closed_Dt_Desc \| Closed_Dt_Asc` | No | — |

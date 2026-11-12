@@ -129,6 +129,7 @@ export const referralsList: ReferralrockEndpoints['referralsList'] = (
 			replayable: true,
 			query: queryOf({
 				programId: parsed.program_id,
+				query: parsed.query,
 				memberId: parsed.member_id,
 				status: parsed.status,
 				sort: parsed.sort,
