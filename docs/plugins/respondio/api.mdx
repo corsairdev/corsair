@@ -158,7 +158,7 @@ await corsair.respondio.api.contacts.create({ identifier: 'phone:+60123456789', 
 
 Delete a contact and its conversation history
 
-**Risk:** `destructive`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.respondio.api.contacts.delete({ identifier: 'id:12345' });
@@ -439,7 +439,7 @@ await corsair.respondio.api.contacts.list({ filter: { $and: [{ category: 'contac
 
 Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed
 
-**Risk:** `destructive`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.respondio.api.contacts.merge({ contactIds: [1, 2], firstName: 'Muhammad', email: 'test@example.com' });
