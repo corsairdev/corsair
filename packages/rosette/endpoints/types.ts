@@ -478,17 +478,20 @@ export type NameTranslationResponse = z.infer<
 
 // ── transliteration ───────────────────────────────────────────────────────
 
+/**
+ * The API takes only the document fields here: a `targetScript` is refused with a
+ * 400 (live, 11-12), and the direction follows from `language` and the input's
+ * script.
+ */
 const TransliterationInputSchema = z
 	.object({
 		content: z.string().min(1).describe('The text to transliterate.'),
-		language: LanguageSchema.optional(),
-		targetScript: z
-			.string()
-			.optional()
-			.describe('The ISO 15924 script to transliterate into.'),
+		language: LanguageSchema.optional().describe(
+			'The language of the text, such as ara; it sets which native script Latin text is moved into, or out of.',
+		),
 	})
 	.describe(
-		'Transcribes text between scripts, so the result reads as the same words in another script rather than a translation.',
+		'Transcribes text between Latin and the native script of its language, so the result reads as the same words in the other script rather than a translation.',
 	);
 
 export type TransliterationInput = z.infer<typeof TransliterationInputSchema>;

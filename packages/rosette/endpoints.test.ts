@@ -477,18 +477,29 @@ describe('name similarity and translation', () => {
 });
 
 describe('transliteration', () => {
-	it('transliterates into another script', async () => {
+	it('transliterates with content and language only', async () => {
 		respond(fetchMock, TRANSLITERATION);
 
 		const result = (await invoke(Api.transliteration, {
-			content: 'Хуан Смит',
-			targetScript: 'Latn',
+			content: 'Mohammed Ali',
+			language: 'ara',
 		})) as { transliteration?: string };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/rest/v1/transliteration');
-		expect(request.bodyRecord).toMatchObject({ targetScript: 'Latn' });
-		expect(result.transliteration).toBe('Juan Smith');
+		expect(request.bodyRecord).toEqual({
+			content: 'Mohammed Ali',
+			language: 'ara',
+		});
+		expect(result.transliteration).toBe('محمد علي');
+	});
+
+	it('never sends targetScript, which the API answers with a 400', async () => {
+		respond(fetchMock, TRANSLITERATION);
+
+		await invoke(Api.transliteration, { content: 'x', targetScript: 'Latn' });
+
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({ content: 'x' });
 	});
 
 	it('rejects empty content', async () => {

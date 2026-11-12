@@ -152,7 +152,8 @@ export const NAME_SIMILARITY = { score: 0.81 };
 
 export const NAME_TRANSLATION = { translation: 'Хуан Смит' };
 
-export const TRANSLITERATION = { transliteration: 'Juan Smith' };
+// Live (11-12) for content 'Mohammed Ali' with language 'ara'.
+export const TRANSLITERATION = { transliteration: 'محمد علي' };
 
 // Live, on every endpoint, including with a wrong key.
 export const FORBIDDEN = {

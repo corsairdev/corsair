@@ -417,7 +417,10 @@ export const nameTranslation: RosetteEndpoints['nameTranslation'] = (
 		},
 	);
 
-/** Transliteration between scripts, which keeps the words and changes the script. */
+/**
+ * Transliteration between Latin and the native script of the text's language,
+ * which keeps the words and changes the script.
+ */
 export const transliteration: RosetteEndpoints['transliteration'] = (
 	ctx,
 	input,
@@ -430,10 +433,10 @@ export const transliteration: RosetteEndpoints['transliteration'] = (
 			output: Outputs.transliteration,
 		},
 		input,
-		({ content, language, targetScript }) => ({
+		({ content, language }) => ({
 			method: 'POST',
 			path: '/transliteration',
-			body: { content, language, targetScript },
+			body: { content, language },
 			replayable: true,
 		}),
 		{
