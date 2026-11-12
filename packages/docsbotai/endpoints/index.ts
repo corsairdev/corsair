@@ -1,5 +1,6 @@
 import { makeDocsbotaiRequest } from '../client';
 import type { DocsbotaiContext } from '../index';
+import { rememberUploadUrl, uploadToStorage } from '../upload';
 import type {
 	DocsbotaiEndpointInputs,
 	DocsbotaiEndpointOutputs,
@@ -125,6 +126,7 @@ function endpoint<K extends keyof typeof routes>(name: K) {
 		input: DocsbotaiEndpointInputs[K],
 	): Promise<DocsbotaiEndpointOutputs[K]> => {
 		const parsed = DocsbotaiEndpointInputSchemas[name].parse(input);
+		// The shared router handles many validated input shapes and dynamic path keys.
 		const data: Record<string, unknown> = { ...parsed };
 		const route: Route = routes[name];
 		const path = route.path.replace(/\{(\w+)\}/g, (_match, key: string) => {
@@ -134,6 +136,7 @@ function endpoint<K extends keyof typeof routes>(name: K) {
 				throw new Error(`Missing path parameter ${key}`);
 			return encodeURIComponent(value);
 		});
+		// Provider responses are untrusted until the operation's output schema parses them.
 		const response = await makeDocsbotaiRequest<unknown>(
 			route.host ?? 'admin',
 			path,
@@ -169,23 +172,23 @@ export const Bots = {
 	reports: endpoint('getReports'),
 };
 async function uploadFile(
-	_ctx: DocsbotaiContext,
+	ctx: DocsbotaiContext,
 	input: DocsbotaiEndpointInputs['uploadFile'],
 ): Promise<void> {
 	const { uploadUrl, data } =
 		DocsbotaiEndpointInputSchemas.uploadFile.parse(input);
-	const url = new URL(uploadUrl);
-	if (url.protocol !== 'https:' || url.username || url.password)
-		throw new Error('Upload URL must be HTTPS without embedded credentials');
-	const response = await fetch(url, {
-		method: 'PUT',
-		headers: { 'Content-Type': 'application/octet-stream' },
-		body: new Blob([new Uint8Array(data)]),
-		credentials: 'omit',
-		redirect: 'error',
-	});
-	if (!response.ok)
-		throw new Error(`Storage upload failed (${response.status})`);
+	await uploadToStorage(ctx.key, uploadUrl, data);
+	return DocsbotaiEndpointOutputSchemas.uploadFile.parse(undefined);
+}
+
+const requestUploadUrl = endpoint('getUploadUrl');
+async function getUploadUrl(
+	ctx: DocsbotaiContext,
+	input: DocsbotaiEndpointInputs['getUploadUrl'],
+): Promise<DocsbotaiEndpointOutputs['getUploadUrl']> {
+	const result = await requestUploadUrl(ctx, input);
+	rememberUploadUrl(ctx.key, result.url);
+	return result;
 }
 
 export const Sources = {
@@ -194,7 +197,7 @@ export const Sources = {
 	create: endpoint('createSource'),
 	retry: endpoint('retrySource'),
 	delete: endpoint('deleteSource'),
-	getUploadUrl: endpoint('getUploadUrl'),
+	getUploadUrl,
 	uploadFile,
 };
 export const Questions = {

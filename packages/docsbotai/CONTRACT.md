@@ -15,7 +15,14 @@ Search, lead capture, answer rating, and ticket generation use
 The upload operation currently takes a `Uint8Array`, so it is intended for the
 TypeScript/JavaScript API rather than JSON-only transports.
 The signed storage URL returned by the admin API is a separate credential: file
-bytes are PUT to it without the DocsBot API key or redirects.
+bytes are PUT to it without the DocsBot API key or redirects. Uploads require a
+URL returned by `sources.getUploadUrl` under the same API key in the same process
+within the last 15 minutes. Only the documented `storage.googleapis.com` HTTPS
+host is accepted; the connection is pinned to a public IPv4 DNS answer. Other
+hosts, IPv6-only networks, saved URLs after restart, and cross-process workflows
+are unsupported. Request a fresh URL when the local approval expires. The API
+response itself is trusted to identify DocsBot's bucket: its documentation does
+not name a bucket, and host validation alone cannot establish bucket ownership.
 
 The provider also documents endpoints outside the catalogue, including team
 invitations, source tagging and downloads, research details, lead exports,

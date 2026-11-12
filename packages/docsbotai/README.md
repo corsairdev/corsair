@@ -52,6 +52,15 @@ pnpm add @corsair-dev/docsbotai
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
 
+## File uploads
+
+Call `sources.getUploadUrl` first, then pass its exact `url` and a `Uint8Array`
+to `sources.uploadFile` in the same process and under the same API key. The
+local approval expires after 15 minutes; request a new URL if needed. Uploads
+require a public IPv4 connection to `storage.googleapis.com`, do not follow
+redirects, and never send the DocsBot API key to storage. This API buffers the
+file in memory and does not currently provide a streaming upload interface.
+
 ## Webhooks
 
 The endpoints above manage outbound webhook subscriptions. Inbound webhook

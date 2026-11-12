@@ -337,12 +337,20 @@ export const DocsbotaiEndpointInputSchemas = {
 	}),
 	deleteLead: z.object({ ...bot, leadId: id }),
 	listResearchJobs: z.object({ ...bot, ...paged }),
-	getStats: z.object({
-		...bot,
-		timeDelta: z.number().min(0).max(365).optional(),
-		startDate: z.string().optional(),
-		endDate: z.string().optional(),
-	}),
+	getStats: z
+		.object({
+			...bot,
+			timeDelta: z.number().min(0).max(365).optional(),
+			startDate: z.string().optional(),
+			endDate: z.string().optional(),
+		})
+		.refine(
+			(value) =>
+				(value.startDate === undefined) === (value.endDate === undefined),
+			{
+				message: 'startDate and endDate must be provided together',
+			},
+		),
 	getReports: z.object({ ...bot, month: z.string().optional() }),
 	captureLead: z.object({ ...bot, conversationId: id, metadata }),
 	getTicket: z.object({ ...bot, conversationId: id }),

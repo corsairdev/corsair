@@ -1,7 +1,14 @@
+import { lookup } from 'node:dns/promises';
+import { request as httpsRequest } from 'node:https';
+import { PassThrough } from 'node:stream';
 import { ApiError, request } from 'corsair/http';
 import type { DocsbotaiAPIError } from './client';
+import { DocsbotaiEndpointOutputSchemas } from './endpoints/types';
 import type { DocsbotaiContext } from './index';
 import { docsbotai, docsbotaiEndpointSchemas } from './index';
+
+jest.mock('node:dns/promises', () => ({ lookup: jest.fn() }));
+jest.mock('node:https', () => ({ request: jest.fn() }));
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
@@ -14,7 +21,8 @@ const plugin = docsbotai({ key: 'secret-key' });
 const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
 const ids = { teamId: 'team', botId: 'bot' };
 
-// Contract fixtures exercise each published operation through the plugin boundary.
+// Contract fixtures cover heterogeneous operation inputs and unparsed provider
+// responses, so their shared table cannot assume one request or result shape.
 const cases: Array<{
 	name: string;
 	call: () => Promise<unknown>;
@@ -157,7 +165,10 @@ const cases: Array<{
 		method: 'GET',
 		url: '/teams/team/bots/bot/upload-url',
 		query: { fileName: 'file.pdf' },
-		response: { url: 'https://storage.example.com', file: 'file.pdf' },
+		response: {
+			url: 'https://storage.googleapis.com/bucket/file',
+			file: 'file.pdf',
+		},
 	},
 	{
 		name: 'questions.list',
@@ -507,53 +518,179 @@ describe('DocsBot API boundary', () => {
 		);
 	});
 
-	it('rejects insecure storage URLs and reports upload failures without leaking the URL', async () => {
-		const fetchMock = jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(new Response(null, { status: 403 }));
-		try {
-			await expect(
-				endpoints.sources.uploadFile(ctx, {
-					uploadUrl: 'http://example.com/file',
-					data: new Uint8Array(),
-				}),
-			).rejects.toThrow('HTTPS');
-			expect(fetchMock).not.toHaveBeenCalled();
-			await expect(
-				endpoints.sources.uploadFile(ctx, {
-					uploadUrl: 'https://storage.example.com/file?signature=secret',
-					data: new Uint8Array(),
-				}),
-			).rejects.toThrow('Storage upload failed (403)');
-		} finally {
-			fetchMock.mockRestore();
-		}
+	it('requires both statistics date-range fields', async () => {
+		await expect(
+			endpoints.bots.stats(ctx, { ...ids, startDate: '2024-06-01' }),
+		).rejects.toThrow();
+		await expect(
+			endpoints.bots.stats(ctx, { ...ids, endDate: '2024-06-30' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		mockRequest.mockResolvedValue({});
+		await endpoints.bots.stats(ctx, {
+			...ids,
+			startDate: '2024-06-01',
+			endDate: '2024-06-30',
+		});
+		expect(mockRequest.mock.calls[0]?.[1].query).toEqual({
+			startDate: '2024-06-01',
+			endDate: '2024-06-30',
+		});
 	});
 
-	it('uploads raw bytes without the DocsBot API key', async () => {
-		const fetchMock = jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(new Response(null, { status: 200 }));
-		try {
-			await endpoints.sources.uploadFile(ctx, {
-				uploadUrl:
-					'https://storage.googleapis.com/bucket/object?signature=secret',
+	describe('secure uploads', () => {
+		const url = 'https://storage.googleapis.com/bucket/object?signature=secret';
+		const dns = lookup as jest.Mock;
+		const transport = httpsRequest as jest.Mock;
+		const getUrl = async (value = url) => {
+			mockRequest.mockResolvedValueOnce({ url: value, file: 'file.pdf' });
+			return endpoints.sources.getUploadUrl(ctx, {
+				...ids,
+				fileName: 'file.pdf',
+			});
+		};
+		const upload = (uploadUrl = url, context = ctx) =>
+			endpoints.sources.uploadFile(context, {
+				uploadUrl,
 				data: new Uint8Array([0, 255, 1]),
 			});
-			const [url, options] = fetchMock.mock.calls[0] ?? [];
-			expect(String(url)).toContain('storage.googleapis.com');
-			expect(options).toMatchObject({
-				method: 'PUT',
-				credentials: 'omit',
-				redirect: 'error',
-				headers: { 'Content-Type': 'application/octet-stream' },
+
+		beforeEach(() => {
+			dns.mockReset().mockResolvedValue([{ address: '8.8.8.8', family: 4 }]);
+			transport.mockReset();
+		});
+
+		it('rejects URLs not obtained for the same authenticated account', async () => {
+			await expect(upload(`${url}&modified=1`)).rejects.toThrow();
+			await getUrl();
+			await expect(
+				upload(url, { key: 'different' } as DocsbotaiContext),
+			).rejects.toThrow();
+			expect(dns).not.toHaveBeenCalled();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it.each([
+			'http://storage.googleapis.com/bucket/file',
+			'https://localhost/file',
+			'https://127.0.0.1/file',
+			'https://[::1]/file',
+			'https://storage.googleapis.com.evil.example/file',
+			'https://user:pass@storage.googleapis.com/file',
+			'https://storage.googleapis.com:444/file',
+		])('rejects a provider response pointing to %s', async (badUrl) => {
+			await getUrl(badUrl);
+			await expect(upload(badUrl)).rejects.toThrow();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it.each([
+			'127.0.0.1',
+			'10.0.0.1',
+			'169.254.169.254',
+			'::1',
+			'::ffff:127.0.0.1',
+		])('rejects private DNS answer %s', async (address) => {
+			await getUrl();
+			dns.mockResolvedValueOnce([
+				{ address, family: address.includes(':') ? 6 : 4 },
+			]);
+			await expect(upload()).rejects.toThrow();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('rejects mixed public and private answers without connecting', async () => {
+			await getUrl();
+			dns.mockResolvedValueOnce([
+				{ address: '8.8.8.8', family: 4 },
+				{ address: '10.0.0.1', family: 4 },
+			]);
+			await expect(upload()).rejects.toThrow('not public');
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('expires approval and does not leak signed URLs on lookup errors', async () => {
+			await getUrl();
+			dns.mockRejectedValueOnce(new Error(url));
+			await expect(upload()).rejects.toThrow('Storage address lookup failed');
+			const now = jest
+				.spyOn(Date, 'now')
+				.mockReturnValue(Date.now() + 16 * 60 * 1000);
+			try {
+				await expect(upload()).rejects.toThrow('obtained from DocsBot');
+			} finally {
+				now.mockRestore();
+			}
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('pins a public DNS answer, uploads raw bytes, and validates void output', async () => {
+			await getUrl();
+			const output = jest.spyOn(
+				DocsbotaiEndpointOutputSchemas.uploadFile,
+				'parse',
+			);
+			let sent: Buffer | undefined;
+			transport.mockImplementation((_url, options, callback) => {
+				expect(options.lookup).toBeDefined();
+				options.lookup(
+					'storage.googleapis.com',
+					{},
+					(_error: Error | null, address: string, family: number) => {
+						expect(address).toBe('8.8.8.8');
+						expect(family).toBe(4);
+					},
+				);
+				expect(options.method).toBe('PUT');
+				expect(options.headers).toEqual({
+					'Content-Type': 'application/octet-stream',
+				});
+				expect(options.agent).toBe(false);
+				expect(options.family).toBe(4);
+				const req = new PassThrough();
+				req.on('data', (chunk) => {
+					sent = chunk;
+				});
+				req.on('finish', () => {
+					const response = new PassThrough() as PassThrough & {
+						statusCode: number;
+					};
+					response.statusCode = 200;
+					callback(response);
+					response.end();
+				});
+				return req;
 			});
-			expect(
-				Array.from(new Uint8Array(await (options?.body as Blob).arrayBuffer())),
-			).toEqual([0, 255, 1]);
-			expect(JSON.stringify(options?.headers)).not.toContain('secret-key');
-		} finally {
-			fetchMock.mockRestore();
-		}
+			try {
+				await expect(upload()).resolves.toBeUndefined();
+				expect(sent && Array.from(sent)).toEqual([0, 255, 1]);
+				expect(output).toHaveBeenCalledWith(undefined);
+			} finally {
+				output.mockRestore();
+			}
+		});
+
+		it.each([302, 403])(
+			'rejects status %s without following redirects or exposing URL',
+			async (status) => {
+				await getUrl();
+				transport.mockImplementation((_url, _options, callback) => {
+					const req = new PassThrough();
+					req.on('finish', () => {
+						const response = new PassThrough() as PassThrough & {
+							statusCode: number;
+						};
+						response.statusCode = status;
+						callback(response);
+						response.end();
+					});
+					return req;
+				});
+				await expect(upload()).rejects.toThrow(
+					`Storage upload failed (${status})`,
+				);
+				expect(transport).toHaveBeenCalledTimes(1);
+			},
+		);
 	});
 });

@@ -32,6 +32,7 @@ export async function makeDocsbotaiRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Validated request bodies have different shapes across operations.
 		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -57,7 +58,9 @@ export async function makeDocsbotaiRequest<T>(
 		return await request<T>(config, requestOptions, { rateLimitConfig });
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Error payloads come from the provider and must be narrowed before use.
 			const body: unknown = error.body;
+			// Arbitrary provider error fields have no documented shared value type.
 			const record =
 				body && typeof body === 'object'
 					? (body as Record<string, unknown>)
