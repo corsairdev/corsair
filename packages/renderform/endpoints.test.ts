@@ -490,7 +490,11 @@ describe('template content', () => {
 
 		const result = (await invoke(Templates.content, {
 			templateId: 'template_1234',
-		})) as { html?: string; sampleData?: Record<string, unknown> };
+		})) as {
+			html?: string;
+			// unknown: sample values are whatever JSON the template was previewed with.
+			sampleData?: Record<string, unknown>;
+		};
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/api/v2/my-templates/template_1234/html-editor',

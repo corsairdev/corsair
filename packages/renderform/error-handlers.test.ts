@@ -1,4 +1,4 @@
-import type { ErrorContext } from 'corsair/core';
+import type { ErrorContext, RetryStrategy } from 'corsair/core';
 import { RenderformAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -20,9 +20,12 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
-function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
+function run(
+	name: keyof typeof errorHandlers,
+	error: Error,
+): Promise<RetryStrategy> {
 	const handler = errorHandlers[name].handler;
-	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
+	return (handler as (e: Error, c: ErrorContext) => Promise<RetryStrategy>)(
 		error,
 		context,
 	);
