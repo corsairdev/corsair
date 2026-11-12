@@ -249,7 +249,10 @@ export const KnackFilterSchema = z
 			),
 	})
 	.superRefine((filter, ctx) => {
-		if (filter.value === undefined && KNACK_VALUE_OPERATORS.has(filter.operator)) {
+		if (
+			filter.value === undefined &&
+			KNACK_VALUE_OPERATORS.has(filter.operator)
+		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['value'],
