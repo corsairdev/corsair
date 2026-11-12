@@ -437,6 +437,7 @@ describe('failures reported inside a 200', () => {
 	it('raises the provider reason instead of a schema error', async () => {
 		respond(unreachable);
 
+		// unknown: a rejection value is untyped; the assertions below narrow it.
 		const error = await invoke(Categorize.all, {
 			url: 'https://nope.invalid',
 		}).catch((caught: unknown) => caught);
@@ -454,6 +455,7 @@ describe('failures reported inside a 200', () => {
 		const { errorHandlers } = await import('./error-handlers');
 		respond(unreachable);
 
+		// unknown: a rejection value is untyped; callKlazify only throws Errors.
 		const error = (await invoke(Categorize.all, {
 			url: 'https://nope.invalid',
 		}).catch((caught: unknown) => caught)) as Error;
