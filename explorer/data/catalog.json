@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-12T15:50:02.663Z",
-  "corsairVersion": "0.1.178",
+  "generatedAt": "2026-11-12T18:43:49.660Z",
+  "corsairVersion": "0.1.179",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -5516,6 +5516,22 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 9,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "ramp",
+      "displayName": "Ramp",
+      "description": "Corporate cards and spend management with Ramp - read card transactions, bills, reimbursements, virtual cards, merchants, users and departments, split a transaction into line items, edit a bill and attach memos.",
+      "npmPackageName": "@corsair-dev/ramp",
+      "authTypes": [
+        "api_key",
+        "oauth_2"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
         "webhooks": 0,
         "db": 0
       }
@@ -92787,6 +92803,102 @@
       "kind": "api",
       "shortPath": "profiles.update",
       "haystack": "profiles.update raisely.api.profiles.update update a fundraising profile: its name, description, goal, photo or custom values write"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "bills.get",
+      "haystack": "bills.get ramp.api.bills.get fetch one bill by id, including its vendor, payment details, line items and attachment urls read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "bills.list",
+      "haystack": "bills.list ramp.api.bills.list list bills with filters for vendor, status, approval, payment and date ranges, plus cursor paging read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "bills.update",
+      "haystack": "bills.update ramp.api.bills.update update a bill: its internal memo, the memo shown to the vendor, the invoice number or the due date write"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "business.get",
+      "haystack": "business.get ramp.api.business.get fetch the business profile: legal and card names, billing address, sso and reimbursement settings read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "cards.listVirtual",
+      "haystack": "cards.listvirtual ramp.api.cards.listvirtual list virtual cards with their fund, owner and suspension state; a terminated card is excluded unless asked for read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "departments.create",
+      "haystack": "departments.create ramp.api.departments.create create a department with the given name write"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "departments.list",
+      "haystack": "departments.list ramp.api.departments.list list the departments configured for the business read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "memos.create",
+      "haystack": "memos.create ramp.api.memos.create attach a memo of up to 255 characters to a transaction, replacing the existing one write"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "memos.get",
+      "haystack": "memos.get ramp.api.memos.get read the memo attached to a transaction read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "merchants.list",
+      "haystack": "merchants.list ramp.api.merchants.list list merchants the business has transacted with, optionally filtered by name, domain or transaction date read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "reimbursements.list",
+      "haystack": "reimbursements.list ramp.api.reimbursements.list list reimbursements and repayments with filters for state, direction, user, entity and date ranges read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "transactions.get",
+      "haystack": "transactions.get ramp.api.transactions.get fetch one transaction by id, including its cardholder, merchant location, line items and approval state read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list ramp.api.transactions.list list card transactions with filters for date, merchant, cardholder, state and approval, plus sorting and cursor paging read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "transactions.update",
+      "haystack": "transactions.update ramp.api.transactions.update replace or remove a transaction's line items: the amounts, split into minor units, must sum to the transaction amount write"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get ramp.api.users.get fetch one user by id, including their role, department and manager read"
+    },
+    {
+      "pluginId": "ramp",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list ramp.api.users.list list users with filters for email, role, status, department, location and entity read"
     },
     {
       "pluginId": "razorpay",
