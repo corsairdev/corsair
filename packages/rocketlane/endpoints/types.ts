@@ -59,10 +59,13 @@ const OperatorFilterSchema = z
  */
 const StatusValueSchema = z.union([z.string(), z.number().int()]);
 
+// An empty `oneOf` would be dropped from the query and match every record, so
+// both filters need at least one value. An empty `noneOf` excludes nothing,
+// which is what it says.
 const EnumFilterSchema = z
 	.strictObject({
 		eq: StatusValueSchema.optional(),
-		oneOf: z.array(StatusValueSchema).optional(),
+		oneOf: z.array(StatusValueSchema).min(1).optional(),
 		noneOf: z.array(StatusValueSchema).optional(),
 	})
 	.optional();
@@ -70,7 +73,7 @@ const EnumFilterSchema = z
 const IdFilterSchema = z
 	.strictObject({
 		eq: z.number().int().optional(),
-		oneOf: z.array(z.number().int()).optional(),
+		oneOf: z.array(z.number().int()).min(1).optional(),
 		noneOf: z.array(z.number().int()).optional(),
 	})
 	.optional();

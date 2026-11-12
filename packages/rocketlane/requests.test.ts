@@ -94,6 +94,16 @@ describe('tasks.list', () => {
 		);
 	});
 
+	it('rejects an empty oneOf list before fetch instead of listing everything', async () => {
+		await expect(
+			invoke(Tasks.list, { assignee_user_id: { oneOf: [] } }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Tasks.list, { task_status: { oneOf: [] } }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an operator the filter does not define before fetch', async () => {
 		await expect(
 			invoke(Tasks.list, { task_name: { contains: 'kickoff' } }),
