@@ -5,5 +5,6 @@ overviewNote: >
   OAuth 2 Authorization Code Grant is the recommended setup. Corsair api_key is
   supported only for D2L's deprecated legacy ID-Key scheme; its browser token
   acquisition callback is not implemented, so configure an already-issued
-  User ID/key pair securely. See ROUTE_COVERAGE.md for routes still awaiting
-  per-operation request and response schemas.
+  User ID/key pair securely. Route-specific request and response schemas are
+  still incomplete for most registered operations; see the package README's
+  coverage summary before relying on wrapper-only routes.

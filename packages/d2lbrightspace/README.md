@@ -2,7 +2,7 @@
 
 Corsair integration for the D2L Brightspace REST API.
 
-> **Coverage status:** the D2L routing table currently lists 876 method/path pairs. This package registers 874 route wrappers and explicitly excludes two legacy browser-auth redirect routes. Forty-seven API-version, binary-output, and user-identity operations have operation-specific Zod schemas; 24 multipart/form/resumable-upload routes have transport support. Eight hundred JSON resource schemas remain generic, and three form routes with incomplete field details are pending. See [ROUTE_COVERAGE.md](./ROUTE_COVERAGE.md) before relying on an operation.
+> **Coverage status:** D2L documents 876 method/path operations; this package registers 874 and excludes the two interactive legacy browser-auth redirects. Forty-seven operations have operation-specific Zod schemas, 24 have multipart/form/resumable transport, 800 still use generic JSON resource schemas, and three form routes remain pending. Full route-contract coverage is not yet complete.
 
 ## Authentication
 
@@ -34,11 +34,11 @@ Operations are grouped by D2L product area. JSON routes accept a route envelope:
 }
 ```
 
-Path and query envelopes reject undocumented keys. Route-specific JSON composite schemas are still incomplete for most operations; generic JSON body/output validation is **not a substitute** for the linked D2L resource schema. Binary downloads, multipart/form uploads, and resumable uploads have dedicated transports and limits; routes whose form fields remain unclear are explicitly marked pending in the route ledger.
+Path and query envelopes reject undocumented keys. Route-specific JSON composite schemas are still incomplete for most operations; generic JSON body/output validation is **not a substitute** for the linked D2L resource schema. Binary downloads, multipart/form uploads, and resumable uploads have dedicated transports and limits; three form routes remain pending because their field contracts need further verification.
 
 D2L uses more than one pagination convention, including `bookmark` with `PagingInfo`/`Items` and `Next` URLs in object-list pages. The route wrappers forward the provider's documented query parameters; automatic page traversal is not added. Brightspace applies token-bucket rate limits and returns `Retry-After`; the transport does not retry automatically, and the handler preserves the retry delay. Request timeout defaults to 20 seconds and can be set up to 60 seconds. Documented binary downloads are returned as `{ kind: 'binary', contentType, base64, sizeBytes }`, capped at 25 MiB, and same-origin redirects are followed without forwarding credentials cross-origin. Documented simple and resumable uploads are capped at 25 MiB and exposed through base64 file inputs; three form routes with incomplete field details remain pending.
 
-The route ledger is derived from D2L's official HTTP Routing Table and linked resource documentation. The plugin has no inbound webhooks. Full endpoint paths, scopes, documented params, source URLs, and per-route status are recorded in [ROUTE_COVERAGE.md](./ROUTE_COVERAGE.md).
+The route inventory is derived from D2L's official HTTP Routing Table and linked resource documentation. The two exclusions are `/d2l/auth/api/token` and `/d2l/auth/api/cancel`; both are interactive legacy browser-auth redirects rather than ordinary resource calls. The plugin has no inbound webhooks.
 
 Official references: [routing table](https://docs.valence.desire2learn.com/http-routingtable.html), [API calling conventions, rate limits, and paging](https://docs.valence.desire2learn.com/basic/apicall.html), [API versions](https://docs.valence.desire2learn.com/basic/version.html), [file upload protocol](https://docs.valence.desire2learn.com/basic/fileupload.html).
 
