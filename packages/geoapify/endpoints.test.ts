@@ -1,0 +1,828 @@
+import { logEventFromContext } from 'corsair/core';
+import { GeoapifyAPIError } from './client';
+import {
+	autocomplete,
+	boundaries,
+	elevation,
+	forwardGeocode,
+	ipGeolocation,
+	isoline,
+	placeDetails,
+	placesSearch,
+	postcodeList,
+	postcodeSearch,
+	reverseGeocode,
+	routeMatrix,
+	routing,
+	timezone,
+} from './endpoints';
+import {
+	badRequest,
+	berlin,
+	boundaries as boundariesFixture,
+	elevation as elevationFixture,
+	ipInfo,
+	isoline as isolineFixture,
+	matrix,
+	places,
+	postcodes,
+	quotaExceeded,
+	reverseResult,
+	route,
+	serverError,
+	timezone as timezoneFixture,
+	unauthorized,
+} from './test-fixtures';
+
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
+
+const mockLog = jest.mocked(logEventFromContext);
+const API_KEY = 'geoapify-api-key';
+
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant. Each endpoint returns its own output type, so
+// the shared return is unknown.
+type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+
+// unknown: negative cases pass values no schema accepts.
+function invoke(endpoint: AnyEndpoint, input: unknown) {
+	// The fake context carries what the endpoints read: the option key, and the
+	// stored key behind it.
+	const ctx = {
+		key: API_KEY,
+		options: {},
+		keys: { get_api_key: jest.fn().mockResolvedValue(API_KEY) },
+	};
+	return endpoint(ctx as never, input as never);
+}
+
+let fetchMock: jest.SpyInstance;
+
+// unknown: response bodies are arbitrary JSON.
+function respond(
+	body: unknown,
+	status = 200,
+	headers: Record<string, string> = {},
+) {
+	fetchMock.mockResolvedValueOnce(
+		new Response(JSON.stringify(body), {
+			status,
+			headers: { 'Content-Type': 'application/json', ...headers },
+		}),
+	);
+}
+
+function lastRequest() {
+	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+	const parsed = new URL(url);
+	return {
+		origin: parsed.origin,
+		path: parsed.pathname,
+		// Repeated keys such as `waypoints` are kept as a list.
+		params: parsed.searchParams.getAll.bind(parsed.searchParams),
+		query: Object.fromEntries(parsed.searchParams),
+		method: init.method,
+		// unknown: the request body is whatever the endpoint serialized.
+		body: init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,
+	};
+}
+
+/**
+ * Runs a call that must fail and returns what it threw.
+ */
+// unknown: the rejection value is untyped by definition.
+async function failure(
+	run: Promise<unknown>,
+): Promise<GeoapifyAPIError & Error> {
+	try {
+		await run;
+	} catch (error) {
+		return error as GeoapifyAPIError & Error;
+	}
+	throw new Error('expected the call to fail, but it resolved');
+}
+
+beforeEach(() => {
+	jest.clearAllMocks();
+	fetchMock = jest.spyOn(globalThis, 'fetch');
+});
+
+afterEach(() => {
+	fetchMock.mockRestore();
+});
+
+describe('Geoapify client', () => {
+	it('sends the key as the apiKey query parameter', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin' });
+
+		const sent = lastRequest();
+		expect(sent.origin).toBe('https://api.geoapify.com');
+		expect(sent.query.apiKey).toBe(API_KEY);
+	});
+
+	it('puts v1 operations on /v1 and v2 operations on /v2', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin' });
+		expect(lastRequest().path).toBe('/v1/geocode/search');
+
+		respond(places);
+		await invoke(placesSearch, { categories: ['catering.restaurant'] });
+		expect(lastRequest().path).toBe('/v2/places');
+	});
+
+	it('sends an EU request to the EU host when asked', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin', region: 'eu' });
+
+		expect(lastRequest().origin).toBe('https://api-eu.geoapify.com');
+		expect(lastRequest().path).toBe('/v1/geocode/search');
+	});
+
+	it('defaults to the global host', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin' });
+
+		expect(lastRequest().origin).toBe('https://api.geoapify.com');
+	});
+
+	it('wraps a 401 in GeoapifyAPIError with the gateway message', async () => {
+		respond(unauthorized, 401);
+		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
+
+		expect(error).toBeInstanceOf(GeoapifyAPIError);
+		expect(error.status).toBe(401);
+		expect(error.reason).toBe('Unauthorized');
+		expect(error.isAuthError).toBe(true);
+		expect(error.message).toContain('Invalid apiKey');
+	});
+
+	it('reads the gateway message on a 400', async () => {
+		respond(badRequest, 400);
+		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
+
+		expect(error.isValidationError).toBe(true);
+		expect(error.message).toContain('must be less than or equal to 100');
+	});
+
+	it('reads Retry-After off a 429', async () => {
+		respond(quotaExceeded, 429, { 'Retry-After': '60' });
+		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
+
+		expect(error.isRateLimit).toBe(true);
+		expect(error.retryAfter).toBe(60_000);
+	});
+
+	it('marks a dropped connection as a transport failure', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
+
+		expect(error.transport).toBe(true);
+		expect(error.status).toBeUndefined();
+	});
+});
+
+describe('geoapify.geocode.forward', () => {
+	it('asks for json and returns the results array', async () => {
+		respond(berlin);
+		const result = (await invoke(forwardGeocode, {
+			text: 'Berlin',
+			countrycodes: ['de'],
+		})) as typeof berlin;
+
+		expect(lastRequest().query.format).toBe('json');
+		expect(result.results).toHaveLength(2);
+		expect(result.results[0]?.lat).toBe(52.51704);
+	});
+
+	it('repeats countrycodes so a list is not joined', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, {
+			text: 'Berlin',
+			countrycodes: ['de', 'at'],
+		});
+
+		expect(lastRequest().params('countrycodes')).toEqual(['de', 'at']);
+	});
+
+	it('lets a caller ask for geojson instead', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin', format: 'geojson' });
+
+		expect(lastRequest().query.format).toBe('geojson');
+	});
+
+	it('sends the spatial filter and bias as repeated parameters', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, {
+			text: 'Berlin',
+			filter: ['rect:13.3,52.4,13.5,52.6'],
+			bias: ['proximity:13.4,52.5'],
+		});
+
+		expect(lastRequest().params('filter')).toEqual([
+			'rect:13.3,52.4,13.5,52.6',
+		]);
+		expect(lastRequest().params('bias')).toEqual(['proximity:13.4,52.5']);
+	});
+
+	it('rejects an empty text before making a request', async () => {
+		const error = await failure(invoke(forwardGeocode, { text: '' }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a limit above the documented maximum of 100', async () => {
+		const error = await failure(
+			invoke(forwardGeocode, { text: 'Berlin', limit: 101 }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the counts and confidence, never the address', async () => {
+		respond(berlin);
+		await invoke(forwardGeocode, { text: 'Berlin' });
+
+		const payload = mockLog.mock.calls.at(-1)?.[2];
+		expect(payload).toMatchObject({
+			count: 2,
+			top_country: 'de',
+			top_result_type: 'city',
+			confidence: 0.9876,
+		});
+		expect(JSON.stringify(payload)).not.toContain('Berlin');
+	});
+});
+
+describe('geoapify.geocode.reverse', () => {
+	it('sends the point and returns the address', async () => {
+		respond(reverseResult);
+		const result = (await invoke(reverseGeocode, {
+			lat: 52.517,
+			lon: 13.3893,
+		})) as typeof reverseResult;
+
+		expect(lastRequest().query.lat).toBe('52.517');
+		expect(lastRequest().query.lon).toBe('13.3893');
+		expect(result.results[0]?.housenumber).toBe('1');
+	});
+
+	it('rejects a latitude out of range', async () => {
+		const error = await failure(invoke(reverseGeocode, { lat: 91, lon: 13 }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a longitude out of range', async () => {
+		const error = await failure(invoke(reverseGeocode, { lat: 52, lon: 181 }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the coordinates, which were the caller input', async () => {
+		respond(reverseResult);
+		await invoke(reverseGeocode, { lat: 52.517, lon: 13.3893 });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			lat: 52.517,
+			lon: 13.3893,
+			top_result_type: 'building',
+		});
+	});
+});
+
+describe('geoapify.geocode.autocomplete', () => {
+	it('uses the autocomplete route and returns suggestions', async () => {
+		respond(berlin);
+		const result = (await invoke(autocomplete, {
+			text: '10 Downing',
+		})) as typeof berlin;
+
+		expect(lastRequest().path).toBe('/v1/geocode/autocomplete');
+		expect(result.results).toHaveLength(2);
+	});
+
+	it('rejects an empty prefix before making a request', async () => {
+		const error = await failure(invoke(autocomplete, { text: '' }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('geoapify.places.search', () => {
+	it('reads the v2 feature collection', async () => {
+		respond(places);
+		const result = (await invoke(placesSearch, {
+			categories: ['catering.cafe'],
+			filter: 'circle:13.4,52.5,1000',
+		})) as typeof places;
+
+		expect(lastRequest().path).toBe('/v2/places');
+		expect(result.features).toHaveLength(1);
+		expect(result.features[0]?.properties.category).toBe('catering.cafe');
+	});
+
+	it('repeats categories, since a place can be searched for several', async () => {
+		respond(places);
+		await invoke(placesSearch, {
+			categories: ['catering.cafe', 'catering.restaurant'],
+		});
+
+		expect(lastRequest().params('categories')).toEqual([
+			'catering.cafe',
+			'catering.restaurant',
+		]);
+	});
+
+	it('rejects an empty category list before making a request', async () => {
+		const error = await failure(invoke(placesSearch, { categories: [] }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a limit above 500, which is the places maximum', async () => {
+		const error = await failure(
+			invoke(placesSearch, { categories: ['catering.cafe'], limit: 501 }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the count and the top category', async () => {
+		respond(places);
+		await invoke(placesSearch, { categories: ['catering.cafe'] });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			count: 1,
+			categories: 1,
+			top_category: 'catering.cafe',
+		});
+	});
+});
+
+describe('geoapify.places.details', () => {
+	it('asks for one place by ID', async () => {
+		respond(places);
+		await invoke(placeDetails, { id: 'ab12cd34ef56ab78cd90ef12ab34cd56' });
+
+		expect(lastRequest().path).toBe('/v2/place-details');
+		expect(lastRequest().query.id).toBe('ab12cd34ef56ab78cd90ef12ab34cd56');
+	});
+
+	it('rejects an empty ID before making a request', async () => {
+		const error = await failure(invoke(placeDetails, { id: '' }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the place ID and the match count', async () => {
+		respond(places);
+		await invoke(placeDetails, { id: 'ab12' });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			place_id: 'ab12',
+			found: 1,
+		});
+	});
+});
+
+describe('geoapify.routing.route', () => {
+	it('repeats the waypoints and returns the distance and time', async () => {
+		respond(route);
+		const result = (await invoke(routing, {
+			waypoints: ['52.5,13.4', '52.6,13.5'],
+			mode: 'drive',
+		})) as typeof route;
+
+		expect(lastRequest().params('waypoints')).toEqual([
+			'52.5,13.4',
+			'52.6,13.5',
+		]);
+		expect(result.results?.[0]?.distance).toBe(1420.5);
+		expect(result.results?.[0]?.time).toBe(312);
+	});
+
+	it('requires at least a start and an end', async () => {
+		const error = await failure(
+			invoke(routing, { waypoints: ['52.5,13.4'], mode: 'drive' }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a mode Geoapify does not document', async () => {
+		const error = await failure(
+			invoke(routing, { waypoints: ['a', 'b'], mode: 'hovercraft' }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('defaults the format to json, not the documented geojson', async () => {
+		respond(route);
+		await invoke(routing, { waypoints: ['a', 'b'], mode: 'drive' });
+
+		expect(lastRequest().query.format).toBe('json');
+	});
+
+	it('logs the distance and time without the waypoints', async () => {
+		respond(route);
+		await invoke(routing, {
+			waypoints: ['52.5,13.4', '52.6,13.5'],
+			mode: 'drive',
+		});
+
+		const payload = mockLog.mock.calls.at(-1)?.[2];
+		expect(payload).toMatchObject({
+			mode: 'drive',
+			distance: 1420.5,
+			time: 312,
+		});
+		expect(JSON.stringify(payload)).not.toContain('52.5');
+	});
+});
+
+describe('geoapify.routing.isoline', () => {
+	it('repeats the ranges and returns one polygon per range', async () => {
+		respond(isolineFixture);
+		const result = (await invoke(isoline, {
+			lat: 52.5,
+			lon: 13.4,
+			type: 'time',
+			range: [300, 600],
+		})) as typeof isolineFixture;
+
+		expect(lastRequest().params('range')).toEqual(['300', '600']);
+		expect(result.features).toHaveLength(2);
+	});
+
+	it('requires at least one range', async () => {
+		const error = await failure(
+			invoke(isoline, { lat: 52.5, lon: 13.4, type: 'time', range: [] }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the area and range counts', async () => {
+		respond(isolineFixture);
+		await invoke(isoline, {
+			lat: 52.5,
+			lon: 13.4,
+			type: 'time',
+			range: [300, 600],
+		});
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			areas: 2,
+			type: 'time',
+			ranges: 2,
+			mode: 'drive',
+		});
+	});
+});
+
+describe('geoapify.routing.matrix', () => {
+	it('posts the sources and targets', async () => {
+		respond(matrix);
+		await invoke(routeMatrix, {
+			mode: 'drive',
+			sources: ['52.5,13.4'],
+			targets: ['52.6,13.5'],
+		});
+
+		const sent = lastRequest();
+		expect(sent.path).toBe('/v1/routematrix');
+		expect(sent.method).toBe('POST');
+		expect(sent.body).toMatchObject({
+			mode: 'drive',
+			sources: ['52.5,13.4'],
+			targets: ['52.6,13.5'],
+		});
+	});
+
+	it('keeps a pair with no route as an error cell rather than throwing', async () => {
+		respond(matrix);
+		const result = (await invoke(routeMatrix, {
+			mode: 'drive',
+			sources: ['52.5,13.4'],
+			targets: ['52.6,13.5', '-71.18,44.46'],
+		})) as typeof matrix;
+
+		expect(result.sources_to_targets[0]?.[1]?.error).toBe('NoRoute');
+		expect(result.sources_to_targets[0]?.[0]?.distance).toBe(1420.5);
+	});
+
+	it('requires at least one source and one target', async () => {
+		const error = await failure(
+			invoke(routeMatrix, { mode: 'drive', sources: [], targets: ['a'] }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('counts the unreachable pairs in the log', async () => {
+		respond(matrix);
+		await invoke(routeMatrix, {
+			mode: 'drive',
+			sources: ['52.5,13.4'],
+			targets: ['52.6,13.5', '-71.18,44.46'],
+		});
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			sources: 1,
+			targets: 2,
+			unreachable: 1,
+		});
+	});
+});
+
+describe('geoapify.geo.ip', () => {
+	it('uses the ipinfo route', async () => {
+		respond(ipInfo);
+		await invoke(ipGeolocation, { ip: '54.201.16.177' });
+
+		expect(lastRequest().path).toBe('/v1/ipinfo');
+		expect(lastRequest().query.ip).toBe('54.201.16.177');
+	});
+
+	it('works without an IP, which locates the caller', async () => {
+		respond(ipInfo);
+		await invoke(ipGeolocation, {});
+
+		expect(lastRequest().query.ip).toBeUndefined();
+	});
+
+	it('logs the country and city but never the IP', async () => {
+		respond(ipInfo);
+		await invoke(ipGeolocation, { ip: '54.201.16.177' });
+
+		const payload = mockLog.mock.calls.at(-1)?.[2];
+		expect(payload).toMatchObject({ country: 'US', city: 'Portland' });
+		expect(JSON.stringify(payload)).not.toContain('54.201.16.177');
+	});
+});
+
+describe('geoapify.geo.timezone', () => {
+	it('returns the zone at the point', async () => {
+		respond(timezoneFixture);
+		const result = (await invoke(timezone, {
+			lat: 52.5,
+			lon: 13.4,
+		})) as typeof timezoneFixture;
+
+		expect(result.timezones[0]?.name).toBe('Europe/Berlin');
+		expect(result.timezones[0]?.abbreviation_at_request).toBe('CET');
+	});
+
+	it('passes the moment through, which decides daylight saving', async () => {
+		respond(timezoneFixture);
+		await invoke(timezone, {
+			lat: 52.5,
+			lon: 13.4,
+			at: '2026-07-01T12:00:00Z',
+		});
+
+		expect(lastRequest().query.at).toBe('2026-07-01T12:00:00Z');
+	});
+
+	it('logs the primary zone', async () => {
+		respond(timezoneFixture);
+		await invoke(timezone, { lat: 52.5, lon: 13.4 });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			zones: 1,
+			primary: 'Europe/Berlin',
+		});
+	});
+});
+
+describe('geoapify.geo.postcodeSearch', () => {
+	it('always asks for json, since the default is geojson', async () => {
+		respond(postcodes);
+		await invoke(postcodeSearch, { postcode: '10115', countrycode: 'de' });
+
+		expect(lastRequest().path).toBe('/v1/postcode/search');
+		expect(lastRequest().query.format).toBe('json');
+	});
+
+	it('returns the places the postcode covers', async () => {
+		respond(postcodes);
+		const result = (await invoke(postcodeSearch, {
+			postcode: '10115',
+		})) as typeof postcodes;
+
+		expect(result.results[0]?.city).toBe('Berlin');
+	});
+});
+
+describe('geoapify.geo.postcodeList', () => {
+	it('searches postcodes by prefix', async () => {
+		respond(postcodes);
+		await invoke(postcodeList, { text: '1011' });
+
+		expect(lastRequest().path).toBe('/v1/postcode/list');
+		expect(lastRequest().query.format).toBe('json');
+	});
+
+	it('rejects a limit above 100', async () => {
+		const error = await failure(
+			invoke(postcodeList, { text: '1011', limit: 101 }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('geoapify.geo.boundaries', () => {
+	it('returns the enclosing boundary levels', async () => {
+		respond(boundariesFixture);
+		const result = (await invoke(boundaries, {
+			lat: 52.5,
+			lon: 13.4,
+		})) as typeof boundariesFixture;
+
+		expect(result.features).toHaveLength(2);
+	});
+
+	it('repeats the boundary levels', async () => {
+		respond(boundariesFixture);
+		await invoke(boundaries, {
+			lat: 52.5,
+			lon: 13.4,
+			boundaries: ['city', 'country'],
+		});
+
+		expect(lastRequest().params('boundaries')).toEqual(['city', 'country']);
+	});
+
+	it('rejects an osm_type outside the documented N, W, R', async () => {
+		const error = await failure(
+			invoke(boundaries, { osm_id: 1, osm_type: 'X' }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the number of levels', async () => {
+		respond(boundariesFixture);
+		await invoke(boundaries, { lat: 52.5, lon: 13.4 });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({ levels: 2 });
+	});
+});
+
+describe('geoapify.geo.elevation', () => {
+	it('posts the locations and returns the samples in order', async () => {
+		respond(elevationFixture);
+		const result = (await invoke(elevation, {
+			locations: [
+				{ lat: 52.5, lon: 13.4 },
+				{ lat: 52.6, lon: 13.5 },
+			],
+		})) as typeof elevationFixture;
+
+		expect(lastRequest().path).toBe('/v1/geodata/elevation');
+		expect(lastRequest().method).toBe('POST');
+		expect(result.results).toHaveLength(2);
+		expect(result.results[0]?.elevation).toBe(34);
+	});
+
+	it('requires at least one location', async () => {
+		const error = await failure(invoke(elevation, { locations: [] }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the highest and lowest sample', async () => {
+		respond(elevationFixture);
+		await invoke(elevation, {
+			locations: [
+				{ lat: 52.5, lon: 13.4 },
+				{ lat: 52.6, lon: 13.5 },
+			],
+		});
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			points: 2,
+			units: 'm',
+			highest: 61,
+			lowest: 34,
+		});
+	});
+});
+
+describe('geoapify failures', () => {
+	it('surfaces a 500 as a server error', async () => {
+		respond(serverError, 500);
+		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
+
+		expect(error.status).toBe(500);
+		expect(error.isValidationError).toBe(false);
+	});
+});
+
+describe('geoapify event names', () => {
+	// The event name must be the path a caller writes, so telemetry and the
+	// catalog cannot drift apart. A flat name here was invisible to every
+	// other test because none of them asserted this argument.
+	it.each([
+		[
+			'geoapify.geocode.forward',
+			forwardGeocode,
+			{ text: 'Berlin' },
+			berlin,
+		] as const,
+		[
+			'geoapify.geocode.reverse',
+			reverseGeocode,
+			{ lat: 52.5, lon: 13.4 },
+			reverseResult,
+		] as const,
+		[
+			'geoapify.geocode.autocomplete',
+			autocomplete,
+			{ text: 'Ber' },
+			berlin,
+		] as const,
+		[
+			'geoapify.places.search',
+			placesSearch,
+			{ categories: ['catering.cafe'] },
+			places,
+		] as const,
+		['geoapify.places.details', placeDetails, { id: 'abc' }, places] as const,
+		[
+			'geoapify.routing.route',
+			routing,
+			{ waypoints: ['a', 'b'], mode: 'drive' },
+			route,
+		] as const,
+		[
+			'geoapify.routing.isoline',
+			isoline,
+			{ lat: 1, lon: 2, type: 'time', range: [60] },
+			isolineFixture,
+		] as const,
+		[
+			'geoapify.routing.matrix',
+			routeMatrix,
+			{ mode: 'drive', sources: ['a'], targets: ['b'] },
+			matrix,
+		] as const,
+		['geoapify.geo.ip', ipGeolocation, {}, ipInfo] as const,
+		[
+			'geoapify.geo.timezone',
+			timezone,
+			{ lat: 1, lon: 2 },
+			timezoneFixture,
+		] as const,
+		[
+			'geoapify.geo.postcodeSearch',
+			postcodeSearch,
+			{ postcode: '10115' },
+			postcodes,
+		] as const,
+		[
+			'geoapify.geo.postcodeList',
+			postcodeList,
+			{ text: '1011' },
+			postcodes,
+		] as const,
+		[
+			'geoapify.geo.boundaries',
+			boundaries,
+			{ lat: 1, lon: 2 },
+			boundariesFixture,
+		] as const,
+		[
+			'geoapify.geo.elevation',
+			elevation,
+			{ locations: [{ lat: 1, lon: 2 }] },
+			elevationFixture,
+		] as const,
+	])('emits %s', async (expected, endpoint, args, fixture) => {
+		respond(fixture);
+		await invoke(endpoint as never, args as never);
+		expect(mockLog.mock.calls.at(-1)?.[1]).toBe(expected);
+	});
+});
