@@ -65,21 +65,26 @@ describe('makeUserflowRequest', () => {
 		expect(sent.body).toEqual({ id: 'u1', attributes: { name: 'Evelyn' } });
 	});
 
-	it('repeats an array query key, which is how order_by[] is sent', async () => {
+	it('sends an array as key[] pairs, since Userflow keeps only the last bare repeat', async () => {
+		// Live 11-12: /users?order_by=a&order_by=b answered url /users?order_by=b.
 		respond(fetchMock, { object: 'list', data: [] });
 
 		await makeUserflowRequest(API_KEY, {
 			method: 'GET',
-			path: '/users',
-			query: { order_by: ['created_at', 'attributes.name'] },
+			path: '/attribute_definitions',
+			query: {
+				order_by: ['created_at', 'attributes.name'],
+				event_name: ['flow_started', 'flow_ended'],
+				scope: 'user',
+			},
 		});
 
-		const pairs = lastRequest(fetchMock).queryPairs.filter(
-			([key]) => key === 'order_by',
-		);
-		expect(pairs).toEqual([
-			['order_by', 'created_at'],
-			['order_by', 'attributes.name'],
+		expect(lastRequest(fetchMock).queryPairs).toEqual([
+			['order_by[]', 'created_at'],
+			['order_by[]', 'attributes.name'],
+			['event_name[]', 'flow_started'],
+			['event_name[]', 'flow_ended'],
+			['scope', 'user'],
 		]);
 	});
 

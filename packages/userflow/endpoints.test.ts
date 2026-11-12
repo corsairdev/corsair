@@ -148,7 +148,7 @@ describe('users', () => {
 		expect(lastRequest(fetchMock).method).toBe('DELETE');
 	});
 
-	it('lists users, repeating order_by', async () => {
+	it('lists users, sending order_by[] for several fields', async () => {
 		respond(fetchMock, usersPage);
 
 		const result = await invoke(Users.list, {
@@ -157,12 +157,12 @@ describe('users', () => {
 		});
 
 		expect(result).toEqual(usersPage);
-		const pairs = lastRequest(fetchMock).queryPairs.filter(
-			([key]) => key === 'order_by',
+		const pairs = lastRequest(fetchMock).queryPairs.filter(([key]) =>
+			key.startsWith('order_by'),
 		);
 		expect(pairs).toEqual([
-			['order_by', 'created_at'],
-			['order_by', 'attributes.name'],
+			['order_by[]', 'created_at'],
+			['order_by[]', 'attributes.name'],
 		]);
 	});
 
@@ -703,12 +703,11 @@ describe('error surface', () => {
 });
 
 describe('ordering and filters', () => {
-	it('accepts a scalar order_by and sends it as an array', async () => {
+	it('accepts a scalar order_by and sends it as one bare pair', async () => {
 		respond(fetchMock, usersPage);
 
 		await invoke(Users.list, { order_by: 'created_at' });
 
-		// A scalar is normalised to a one-item array and serialised as one pair.
 		const pairs = lastRequest(fetchMock).queryPairs.filter(([key]) =>
 			key.startsWith('order_by'),
 		);
@@ -723,7 +722,7 @@ describe('ordering and filters', () => {
 		const pairs = lastRequest(fetchMock).queryPairs.filter(([key]) =>
 			key.startsWith('order_by'),
 		);
-		expect(pairs).toEqual([['order_by', '-created_at']]);
+		expect(pairs).toEqual([['order_by[]', '-created_at']]);
 	});
 
 	it('rejects an order_by field the API does not document', async () => {

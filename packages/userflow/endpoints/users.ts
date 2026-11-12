@@ -104,8 +104,7 @@ export const list: UserflowEndpoints['usersList'] = (ctx, input) =>
 				group_id,
 				segment_id,
 				condition,
-				// Userflow takes order_by[] as a repeated key; corsair/http
-				// repeats an array, which is the documented form.
+				// The client sends an array as order_by[]=a&order_by[]=b.
 				order_by,
 				expand,
 			},
