@@ -4,6 +4,17 @@ description: Manage DigiCert CertCentral, Report Library, Account Manager, Priva
 recommendedAuth: api_key
 overviewNote: |
   The plugin implements all 656 currently documented non-webhook HTTP endpoints across DigiCert families and all 663 route/query modes. CertCentral and Report Library use `X-DC-DEVKEY`; DigiCert ONE APIs use a separate service-user token in `x-api-key`; Content Trust operations that document OAuth2 also accept `authType: 'oauth_2'` with the `service` scope. Public TLM version and CSC info operations need no key. Webhook operations are out of scope, five deprecated TLM routes are excluded, and 14 CertCentral Discovery catalog operations were discontinued on October 1, 2026. DigiCert ONE also offers mTLS, which this plugin does not implement. See `route-inventory.md` for per-family counts, exclusions, and sources.
+examples:
+  read:
+    path: accountManager.locales
+    title: List Account Manager locales
+  write:
+    path: trustLifecycle.addCertificateTags
+    title: Add tags to a certificate
+    args:
+      certificateId: '00000000-0000-0000-0000-000000000000'
+      tags:
+        - reviewed
 apiExamples:
   users.list:
     call: '{}'

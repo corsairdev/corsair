@@ -109,7 +109,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accountManager.locales`**
+**List Account Manager locales**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -117,11 +117,14 @@ await tenant.digicert.api.accountManager.locales({});
 ```
 
 
-**`accountManagerApi.createAccount`**
+**Add tags to a certificate**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.digicert.api.accountManagerApi.createAccount({});
+await tenant.digicert.api.trustLifecycle.addCertificateTags({
+	certificateId: '00000000-0000-0000-0000-000000000000',
+	tags: ['reviewed'],
+});
 ```
 
 
