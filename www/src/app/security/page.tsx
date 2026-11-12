@@ -13,7 +13,7 @@ import { socialMetadata } from '@/lib/social-metadata';
 
 const TITLE = 'Security';
 const DESCRIPTION =
-	'How Corsair keeps your API keys, tokens and app data safe: envelope encryption for every account, keys held in AWS KMS that rotate automatically, no cross-tenant access, sandboxed scripts and approvals.';
+	'How Corsair keeps API keys, tokens and app data safe: envelope encryption per account, keys in AWS KMS, no cross-tenant access, sandboxed scripts, approvals.';
 
 export const metadata: Metadata = {
 	title: TITLE,

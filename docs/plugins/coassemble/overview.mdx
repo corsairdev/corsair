@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Coassemble plugin"
+sidebarTitle: "Overview"
 description: "Course and training platform. List clients, courses and users, and read learners' progress through a course."
 ---
 
@@ -19,16 +20,20 @@ Coassemble's operations return live data but don't save it to the local database
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/coassemble
+npm install corsair @corsair-dev/coassemble better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/coassemble
+yarn add corsair @corsair-dev/coassemble better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/coassemble
+pnpm install corsair @corsair-dev/coassemble better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/coassemble
+bun add corsair @corsair-dev/coassemble better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
