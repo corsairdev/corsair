@@ -357,7 +357,10 @@ export type RecordsDeleteInput = z.infer<typeof RecordsDeleteInputSchema>;
 /** Live: `{"msg":"The record has been moved to recycle bin.","ragicId":2}`. */
 const RecordsDeleteResponseSchema = z
 	.object({
-		msg: z.string().nullish().describe('Says the record went to the recycle bin.'),
+		msg: z
+			.string()
+			.nullish()
+			.describe('Says the record went to the recycle bin.'),
 		ragicId: z.number().nullish().describe('The deleted record id.'),
 		status: z.string().nullish(),
 	})
