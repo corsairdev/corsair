@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { makeAhrefsRequest } from '../client';
 import { ahrefs } from '../index';
 
@@ -19,6 +21,17 @@ if (!plugin.endpoints) throw new Error('ahrefs plugin has no endpoints');
 const endpoints = plugin.endpoints;
 
 let warn: jest.SpyInstance;
+// Recorded Ahrefs responses, keyed by action; each test hands its action a
+// real response so the output check passes and only the request is asserted.
+const recorded = JSON.parse(
+	readFileSync(
+		join(__dirname, '..', '__fixtures__', 'live-responses.json'),
+		'utf8',
+	),
+) as Record<string, { response: object }>;
+const respondWith = (action: string) =>
+	mockedRequest.mockResolvedValueOnce(recorded[action]?.response ?? {});
+
 beforeEach(() => {
 	mockedRequest.mockClear();
 	warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -27,6 +40,7 @@ afterEach(() => warn.mockRestore());
 
 describe('callAhrefs request building', () => {
 	it('sends GET reads as query parameters only', async () => {
+		respondWith('webAnalytics.browsers');
 		await endpoints.webAnalytics.browsers(ctx, {
 			project_id: 7,
 			from: '2026-10-01',
@@ -44,6 +58,7 @@ describe('callAhrefs request building', () => {
 	});
 
 	it('splits a PUT into query id and JSON body', async () => {
+		respondWith('management.addProjectKeywords');
 		await endpoints.management.addProjectKeywords(ctx, {
 			project_id: 9,
 			keywords: [{ keyword: 'example' }],
@@ -64,6 +79,7 @@ describe('callAhrefs request building', () => {
 	});
 
 	it('sends a DELETE with ids in the query', async () => {
+		respondWith('management.deleteKeywordLists');
 		await endpoints.management.deleteKeywordLists(ctx, {
 			keyword_list_ids: '12,13',
 		});
@@ -79,6 +95,7 @@ describe('callAhrefs request building', () => {
 	});
 
 	it('sends Brand Radar entity reads as a POST body', async () => {
+		respondWith('brandRadar.sovOverviewEntities');
 		await endpoints.brandRadar.sovOverviewEntities(ctx, {
 			data_source: ['chatgpt'],
 			brands: [{ names: ['example'] }],
@@ -105,6 +122,7 @@ describe('callAhrefs schema checks', () => {
 	});
 
 	it('drops input keys the endpoint does not declare', async () => {
+		respondWith('public.domainRatingFree');
 		await endpoints.public.domainRatingFree(ctx, {
 			target: 'ahrefs.com',
 			...({ injected: 'x' } as object),
@@ -128,15 +146,11 @@ describe('callAhrefs schema checks', () => {
 		expect(warn).not.toHaveBeenCalled();
 	});
 
-	it('warns once and returns the raw response when it drifts', async () => {
-		mockedRequest.mockResolvedValue({ unexpected: [] });
-		const first = await endpoints.public.crawlerIps(ctx, {});
-		await endpoints.public.crawlerIps(ctx, {});
-		expect(first).toEqual({ unexpected: [] });
-		expect(warn).toHaveBeenCalledTimes(1);
-		expect(warn.mock.calls[0]?.[0]).toContain('ahrefs.public.crawlerIps');
-		mockedRequest.mockReset();
-		mockedRequest.mockResolvedValue({ ok: true });
+	it('throws when a response does not match the schema', async () => {
+		mockedRequest.mockResolvedValueOnce({ unexpected: [] });
+		await expect(endpoints.public.crawlerIps(ctx, {})).rejects.toThrow(
+			'ahrefs.public.crawlerIps',
+		);
 	});
 
 	it('keeps the Ahrefs parameters the original actions used to drop', async () => {
@@ -173,14 +187,12 @@ describe('callAhrefs schema checks', () => {
 
 	it('checks responses on the original actions too', async () => {
 		mockedRequest.mockResolvedValueOnce({ unexpected: true });
-		const result = await endpoints.siteExplorer.getDomainRating(ctx, {
-			target: 'ahrefs.com',
-			date: '2026-11-01',
-		});
-		expect(result).toEqual({ unexpected: true });
-		expect(warn).toHaveBeenCalledWith(
-			expect.stringContaining('ahrefs.siteExplorer.getDomainRating'),
-		);
+		await expect(
+			endpoints.siteExplorer.getDomainRating(ctx, {
+				target: 'ahrefs.com',
+				date: '2026-11-01',
+			}),
+		).rejects.toThrow('ahrefs.siteExplorer.getDomainRating');
 	});
 
 	it('validates input on the original Site Explorer actions too', async () => {

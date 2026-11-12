@@ -23,14 +23,11 @@ export type AhrefsCall<K extends AhrefsEndpointKey> = {
 	logKeys?: readonly string[];
 };
 
-// Response drift is reported once per endpoint, not on every call.
-const warnedEndpoints = new Set<string>();
-
 /**
- * Checks a raw Ahrefs response against the endpoint's output schema. A match
- * returns the parsed data; a mismatch logs one warning per event and returns
- * the response unchanged, because Ahrefs' responses drift from its spec and a
- * schema gap should not fail a call the API answered.
+ * Checks a raw Ahrefs response against the endpoint's output schema and
+ * returns the parsed data. A response that does not match throws, naming the
+ * action and the first field that failed, so callers never get data that
+ * breaks the declared output type.
  */
 export function checkAhrefsOutput<K extends AhrefsEndpointKey>(
 	endpoint: K,
@@ -39,28 +36,25 @@ export function checkAhrefsOutput<K extends AhrefsEndpointKey>(
 	raw: unknown,
 ): AhrefsEndpointOutputs[K] {
 	const checked = AhrefsEndpointOutputSchemas[endpoint].safeParse(raw);
-	if (!checked.success && !warnedEndpoints.has(event)) {
-		warnedEndpoints.add(event);
+	if (!checked.success) {
 		const issue = checked.error.issues[0];
-		console.warn(
+		throw new Error(
 			`[ahrefs] ${event}: response does not match the schema at "${
 				issue?.path.join('.') ?? ''
-			}" (${issue?.message ?? 'unknown issue'}); returning it unchanged`,
+			}" (${issue?.message ?? 'unknown issue'})`,
 		);
 	}
 	// TypeScript cannot tie the indexed schema map back to K, so the parsed
-	// data (or the unchanged response on drift) is returned as K's output type.
-	return (checked.success ? checked.data : raw) as AhrefsEndpointOutputs[K];
+	// data is returned as K's output type.
+	return checked.data as AhrefsEndpointOutputs[K];
 }
 
 /**
  * Sends one Ahrefs API call. The input is parsed with the endpoint's input
  * schema first (invalid input throws before any request, unknown keys are
  * dropped), then split into query string and JSON body. The response is
- * checked against the endpoint's output schema: a match returns the parsed
- * data; a mismatch logs one warning and returns the raw response, because
- * Ahrefs' responses drift from its spec and a schema gap should not fail a
- * call that the API answered.
+ * checked against the endpoint's output schema and returned parsed; a
+ * response that does not match throws (see checkAhrefsOutput).
  */
 export async function callAhrefs<K extends AhrefsEndpointKey>(
 	ctx: AhrefsContext,
