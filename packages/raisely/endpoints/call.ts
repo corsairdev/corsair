@@ -39,13 +39,17 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/** One value in a custom-fields map: a scalar, or a nested map of scalars. */
+/**
+ * One value in a custom-fields map: a scalar, a list of scalars, or a nested map
+ * of scalars.
+ */
 export type RaiselyCustomValue =
 	| string
 	| number
 	| boolean
 	| null
 	| undefined
+	| Array<string | number | boolean>
 	| Record<string, string | number | boolean | null | undefined>;
 
 /**

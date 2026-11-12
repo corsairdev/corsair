@@ -398,3 +398,32 @@ describe('campaign secret key', () => {
 		expect(JSON.stringify(result)).not.toContain('priv_456');
 	});
 });
+
+describe('profiles.update clearing and lists', () => {
+	it('sends null to clear a field, as Raisely reads a PATCH', async () => {
+		respond(fetchMock, { data: PROFILE });
+
+		await invoke(Endpoints.profilesUpdate, {
+			profile_path: 'jordan-lee',
+			description: null,
+			photoUrl: null,
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			data: { description: null, photoUrl: null },
+		});
+	});
+
+	it('sends a list-valued custom field', async () => {
+		respond(fetchMock, { data: PROFILE });
+
+		await invoke(Endpoints.profilesUpdate, {
+			profile_path: 'jordan-lee',
+			public: { tags: ['volunteer', 'runner'] },
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			data: { public: { tags: ['volunteer', 'runner'] } },
+		});
+	});
+});

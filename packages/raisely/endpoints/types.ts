@@ -119,8 +119,8 @@ export const NestedUserSchema = z
 
 /**
  * Raisely returns the account's own custom values under `public` and `private`
- * maps with no fixed shape, so each value is a scalar; the keys are the
- * account's.
+ * maps with no fixed shape, so each value is a scalar, a list of scalars (a
+ * multi-select field) or one nested map; the keys are the account's.
  */
 export const CustomValuesSchema = z
 	.record(
@@ -135,6 +135,7 @@ export const CustomValuesSchema = z
 					z.string(),
 					z.union([z.string(), z.number(), z.boolean()]).nullish(),
 				),
+				z.array(z.union([z.string(), z.number(), z.boolean()])),
 			])
 			.nullish(),
 	)
@@ -508,10 +509,24 @@ export type ProfilesGetResponse = z.infer<typeof ProfilesGetResponseSchema>;
 const ProfilesUpdateInputSchema = z.object({
 	profile_path: z.string().min(1),
 	name: z.string().optional(),
-	description: z.string().optional(),
+	// Raisely clears a field on a PATCH only when it is sent as null; leaving it
+	// out keeps the old value.
+	description: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('The profile description; null clears it.'),
 	goal: z.number().int().min(0).optional(),
-	photoUrl: z.string().optional(),
-	pronouns: z.string().optional(),
+	photoUrl: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('The profile photo URL; null clears it.'),
+	pronouns: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('The fundraiser pronouns; null clears them.'),
 	shared: z.boolean().optional(),
 	status: z.string().optional(),
 	public: CustomValuesSchema,
