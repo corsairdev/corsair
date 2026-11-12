@@ -16,6 +16,13 @@ export const DIALPAD_REPORT_TIMEOUT_MS = 20_000;
 export const DIALPAD_REPORT_MAX_BYTES = 25 * 1024 * 1024;
 const DIALPAD_REPORT_ERROR_MAX_BYTES = 64 * 1024;
 
+export type DialpadBinaryResponse = {
+	kind: 'binary';
+	contentType: string;
+	base64: string;
+	sizeBytes: number;
+};
+
 const SENSITIVE_FIELD_NAMES = new Set([
 	'accesskeyid',
 	'accesstoken',
@@ -66,7 +73,7 @@ function sensitiveValues(value: unknown, fieldName = ''): string[] {
 	if (typeof value !== 'object' || value === null) {
 		return SENSITIVE_FIELD_NAMES.has(normalizedFieldName(fieldName)) &&
 			typeof value === 'string' &&
-			value.length > 0
+			value.length >= 4
 			? [value]
 			: [];
 	}
@@ -82,6 +89,27 @@ export function redactSensitiveValues(
 	return secrets.reduce(
 		(result, secret) => result.split(secret).join('[REDACTED]'),
 		message,
+	);
+}
+
+// `unknown` is needed because provider error bodies can be arbitrary JSON or plain text.
+function sanitizeErrorBody(
+	value: unknown,
+	secrets: readonly string[],
+): unknown {
+	const sanitized = sanitizeSensitiveFields(value);
+	if (typeof sanitized === 'string') {
+		return redactSensitiveValues(sanitized, secrets);
+	}
+	if (Array.isArray(sanitized)) {
+		return sanitized.map((entry) => sanitizeErrorBody(entry, secrets));
+	}
+	if (typeof sanitized !== 'object' || sanitized === null) return sanitized;
+	return Object.fromEntries(
+		Object.entries(sanitized).map(([field, entry]) => [
+			field,
+			sanitizeErrorBody(entry, secrets),
+		]),
 	);
 }
 
@@ -168,7 +196,7 @@ async function makeScheduledStatsDownload(
 	input: DialpadRequestInput,
 	config: OpenAPIConfig,
 	apiKey: string | undefined,
-): Promise<unknown> {
+): Promise<DialpadBinaryResponse> {
 	const query = input.query ?? {};
 	const reportType = query.t;
 	const reportDate = query.d;
@@ -218,7 +246,8 @@ async function makeScheduledStatsDownload(
 			isRecord(errorBody) && typeof errorBody.message === 'string'
 				? errorBody.message
 				: `Dialpad report download failed (HTTP ${response.status})`;
-		const safeBody = sanitizeSensitiveFields(errorBody);
+		const secrets = apiKey ? [apiKey] : [];
+		const safeBody = sanitizeErrorBody(errorBody, secrets);
 		throw new ApiError(
 			requestOptions,
 			{
@@ -228,7 +257,7 @@ async function makeScheduledStatsDownload(
 				statusText: response.statusText,
 				body: safeBody,
 			},
-			redactSensitiveValues(message, apiKey ? [apiKey] : []),
+			redactSensitiveValues(message, secrets),
 			{ retryAfter: retryAfterMilliseconds(response) },
 		);
 	}
@@ -238,6 +267,86 @@ async function makeScheduledStatsDownload(
 		kind: 'binary',
 		contentType:
 			response.headers.get('content-type') ?? 'application/octet-stream',
+		base64: Buffer.from(bytes).toString('base64'),
+		sizeBytes: bytes.byteLength,
+	};
+}
+
+async function makeRecordingDownload(
+	definition: DialpadOperationDefinition,
+	input: DialpadRequestInput,
+	apiKey: string | undefined,
+	environment: 'production' | 'sandbox' | undefined,
+): Promise<DialpadBinaryResponse> {
+	if (environment === 'sandbox') {
+		throw new Error(
+			'Dialpad documents recording download URLs only on the production host',
+		);
+	}
+	const pathValues = input.path ?? {};
+	const path = definition.path.replace(
+		/\{([^}]+)\}/g,
+		(_match, field: string) => {
+			const value = pathValues[field];
+			if (typeof value !== 'string' && typeof value !== 'number') {
+				throw new Error(`Missing or invalid Dialpad path parameter: ${field}`);
+			}
+			return encodeURIComponent(String(value));
+		},
+	);
+	const url = new URL(path, DIALPAD_API_BASES.production);
+	const requestOptions: ApiRequestOptions = { method: 'GET', url: path };
+	const headers = new Headers({ Accept: 'audio/mpeg' });
+	if (apiKey) headers.set('Authorization', `Bearer ${apiKey}`);
+	const response = await fetch(url, {
+		method: 'GET',
+		headers,
+		signal: AbortSignal.timeout(DIALPAD_REPORT_TIMEOUT_MS),
+	});
+
+	if (!response.ok) {
+		// `unknown` because Dialpad documents an error body but not a closed schema for every status.
+		let errorBody: unknown;
+		try {
+			const errorBytes = await readCappedBody(
+				response,
+				DIALPAD_REPORT_ERROR_MAX_BYTES,
+			);
+			const errorText = new TextDecoder().decode(errorBytes);
+			if (response.headers.get('content-type')?.includes('json')) {
+				try {
+					errorBody = JSON.parse(errorText);
+				} catch {
+					errorBody = errorText;
+				}
+			} else {
+				errorBody = errorText;
+			}
+		} catch {
+			await response.body?.cancel().catch(() => undefined);
+		}
+		const message =
+			isRecord(errorBody) && typeof errorBody.message === 'string'
+				? errorBody.message
+				: `Dialpad recording download failed (HTTP ${response.status})`;
+		throw new ApiError(
+			requestOptions,
+			{
+				url: url.toString(),
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body: sanitizeErrorBody(errorBody, apiKey ? [apiKey] : []),
+			},
+			redactSensitiveValues(message, apiKey ? [apiKey] : []),
+			{ retryAfter: retryAfterMilliseconds(response) },
+		);
+	}
+
+	const bytes = await readCappedBody(response, DIALPAD_REPORT_MAX_BYTES);
+	return {
+		kind: 'binary',
+		contentType: response.headers.get('content-type') ?? 'audio/mpeg',
 		base64: Buffer.from(bytes).toString('base64'),
 		sizeBytes: bytes.byteLength,
 	};
@@ -256,6 +365,18 @@ export async function makeDialpadRequest(
 			input,
 			config,
 			options.apiKey,
+		);
+	}
+	if (
+		definition.path.startsWith('/r/') ||
+		definition.path.startsWith('/v/') ||
+		definition.path.startsWith('/recording/admincallrecording/')
+	) {
+		return makeRecordingDownload(
+			definition,
+			input,
+			options.apiKey,
+			options.environment,
 		);
 	}
 	const pathValues = input.path ?? {};
@@ -285,8 +406,11 @@ export async function makeDialpadRequest(
 	} catch (error: unknown) {
 		// `unknown` because rejected values have no static type and need runtime narrowing.
 		if (error instanceof ApiError) {
-			const secrets = sensitiveValues(input.body);
-			const sanitizedBody = sanitizeSensitiveFields(error.body);
+			const secrets = [
+				...sensitiveValues(input.body),
+				...(options.apiKey ? [options.apiKey] : []),
+			];
+			const sanitizedBody = sanitizeErrorBody(error.body, secrets);
 			const sanitizedRequest = {
 				...error.request,
 				body: sanitizeSensitiveFields(error.request.body),

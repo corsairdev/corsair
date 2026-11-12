@@ -3763,6 +3763,42 @@ export const DialpadOperationDefinitions = {
 		description:
 			'Downloads the requested scheduled report when available. The official page documents the report type user_voiceline and a YYYY-MM-DD date, but does not publish a success content type or response schema; the plugin returns the report bytes in a validated base64 envelope.',
 	},
+	'recordings.call.download': {
+		method: 'GET',
+		path: '/r/{recording_id}',
+		pathParams: ['recording_id'],
+		hasQuery: false,
+		hasBody: false,
+		source:
+			'https://developers.dialpad.com/docs/downloading-call-recordings.md',
+		summary: 'Call Recording -- Download',
+		description:
+			'Downloads a completed call recording as audio/mpeg. The key must have the recordings_export scope.',
+	},
+	'recordings.voicemail.download': {
+		method: 'GET',
+		path: '/v/{recording_id}',
+		pathParams: ['recording_id'],
+		hasQuery: false,
+		hasBody: false,
+		source:
+			'https://developers.dialpad.com/docs/downloading-call-recordings.md',
+		summary: 'Voicemail Recording -- Download',
+		description:
+			'Downloads a voicemail recording as audio/mpeg. The key must have the recordings_export scope.',
+	},
+	'recordings.admin_call.download': {
+		method: 'GET',
+		path: '/recording/admincallrecording/{share_link_id}',
+		pathParams: ['share_link_id'],
+		hasQuery: false,
+		hasBody: false,
+		source:
+			'https://developers.dialpad.com/docs/downloading-call-recordings.md',
+		summary: 'Admin Call Recording -- Download',
+		description:
+			'Downloads an admin call recording using the share-link ID returned by recording_share_link.create. The direct admin recording URL is browser-only; this authenticated route returns MP3 bytes.',
+	},
 } as const;
 
 export const DialpadOperationKeys = [
@@ -4113,6 +4149,9 @@ export const DialpadOperationKeys = [
 	'powerdialer.updateRule',
 	'powerdialer.getRule',
 	'reports.scheduledstats.download',
+	'recordings.call.download',
+	'recordings.voicemail.download',
+	'recordings.admin_call.download',
 ] as const;
 export type DialpadOperationKey = keyof typeof DialpadOperationDefinitions;
 export type DialpadOperationDefinition =

@@ -17,11 +17,15 @@ Use `environment: 'sandbox'` for `https://sandbox.dialpad.com`; the default is p
 
 Every operation has a strict Zod input and output schema. Path parameters go under `path`, query parameters under `query`, and JSON request bodies under `body`. List operations preserve the documented cursor and other pagination arguments. Error handling preserves rate-limit metadata including `Retry-After`; automatic retries are disabled to avoid duplicating non-idempotent operations. Call, SMS, callback, billing, anonymization, and other writes may have provider-side effects or permission requirements; check the linked provider reference and the operation metadata before use.
 
+Operations whose official success response documents no content return `undefined` after the HTTP response is checked.
+
 The legacy [Report Download API](https://developers.dialpad.com/page/report-download-api.md) returns report bytes but does not document a successful media type. `reports.scheduledstats.download` returns `{ kind: 'binary', contentType, base64, sizeBytes }`, reads with a 20-second timeout, and caps responses at 25 MiB. The cap and timeout are plugin safety guards, not provider-published limits.
+
+The [recording download guide](https://developers.dialpad.com/docs/downloading-call-recordings.md) documents call, voicemail, and admin recording URLs as MP3 downloads. These return the same bounded binary envelope; admin recording downloads require a share-link ID created by `recording_share_link.create`. The provider does not publish sandbox recording URLs or a maximum file size, so those routes are production-host only with the same 20-second timeout and 25 MiB plugin safety cap.
 
 ## Operations
 
-347 documented request/response operations are implemented. The route and official per-operation reference for each are listed below.
+350 documented request/response operations are implemented. The route and official per-operation reference for each are listed below.
 
 | Corsair operation | Method | Route | Documentation |
 |---|---:|---|---|
@@ -372,6 +376,9 @@ The legacy [Report Download API](https://developers.dialpad.com/page/report-down
 | `powerdialer.updateRule` | PATCH | `/api/v2/powerdialer/rule/{rule_id}` | [Official reference](https://developers.dialpad.com/reference/updaterule.md) |
 | `powerdialer.getRule` | GET | `/api/v2/powerdialer/rule/{rule_id}` | [Official reference](https://developers.dialpad.com/reference/getrule.md) |
 | `reports.scheduledstats.download` | GET | `/dl/stats/scheduledstats` | [Official reference](https://developers.dialpad.com/page/report-download-api.md) |
+| `recordings.call.download` | GET | `/r/{recording_id}` | [Official reference](https://developers.dialpad.com/docs/downloading-call-recordings.md) |
+| `recordings.voicemail.download` | GET | `/v/{recording_id}` | [Official reference](https://developers.dialpad.com/docs/downloading-call-recordings.md) |
+| `recordings.admin_call.download` | GET | `/recording/admincallrecording/{share_link_id}` | [Official reference](https://developers.dialpad.com/docs/downloading-call-recordings.md) |
 
 ## Exclusions
 

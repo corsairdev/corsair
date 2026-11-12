@@ -146,7 +146,17 @@ export const DialpadOperationFixtures = {
 		input: {
 			query: {},
 		},
-		output: {},
+		output: {
+			enabled: true,
+			is_preferred_service: false,
+			settings: {
+				call_logging_enabled: true,
+				call_recording_logging_enabled: false,
+				voicemail_logging_enabled: true,
+				sms_logging_enabled: false,
+				custom_company_setting: 'enabled',
+			},
+		},
 	},
 	'blockednumbers.get': {
 		input: {
@@ -166,7 +176,6 @@ export const DialpadOperationFixtures = {
 		input: {
 			body: {},
 		},
-		output: {},
 	},
 	'blockednumbers.list': {
 		input: {
@@ -178,7 +187,6 @@ export const DialpadOperationFixtures = {
 		input: {
 			body: {},
 		},
-		output: {},
 	},
 	'call.assign': {
 		input: {
@@ -240,7 +248,39 @@ export const DialpadOperationFixtures = {
 		input: {
 			query: {},
 		},
-		output: {},
+		output: {
+			cursor: 'next-page-cursor',
+			items: [
+				{
+					call_id: 1002,
+					contact: {
+						id: '1001',
+						name: 'Taylor Example',
+						phone: '+14155557777',
+						type: 'local',
+					},
+					date_connected: 1356998400000,
+					direction: 'inbound',
+					duration: 12000,
+					is_transferred: false,
+					recording_details: [
+						{
+							duration: 12000,
+							id: 'recording-1002',
+							recording_type: 'callrecording',
+							start_time: 1356998400000,
+							url: 'https://dialpad.com/r/recording-1002',
+						},
+					],
+					target: {
+						id: '2',
+						name: 'Taylor Example',
+						type: 'user',
+					},
+					was_recorded: true,
+				},
+			],
+		},
 	},
 	'call.initiate_ivr_call': {
 		input: {
@@ -279,7 +319,43 @@ export const DialpadOperationFixtures = {
 				id: 1,
 			},
 		},
-		output: {},
+		output: {
+			call_id: 1002,
+			contact: {
+				email: '',
+				id: '1001',
+				name: 'Taylor Example',
+				phone: '+14155557777',
+				type: 'local',
+			},
+			custom_data: '{"source":"fixture"}',
+			date_connected: 1356998400000,
+			date_rang: 1356998400000,
+			date_started: 1356998400000,
+			direction: 'inbound',
+			entry_point_call_id: 1000,
+			entry_point_target: {
+				id: '124',
+				name: 'Example Office',
+				phone: '+14155551000',
+				type: 'office',
+			},
+			event_timestamp: 1356998400000,
+			external_number: '+14155557777',
+			group_id: 'Office:124',
+			internal_number: '+14155551001',
+			is_transferred: false,
+			proxy_target: {},
+			state: 'connected',
+			target: {
+				email: 'taylor@example.com',
+				id: '2',
+				name: 'Taylor Example',
+				phone: '+14155551001',
+				type: 'user',
+			},
+			was_recorded: true,
+		},
 	},
 	'call.unassign_operator': {
 		input: {
@@ -325,7 +401,6 @@ export const DialpadOperationFixtures = {
 				id: 1,
 			},
 		},
-		output: {},
 	},
 	'callbacks.list': {
 		input: {
@@ -528,7 +603,6 @@ export const DialpadOperationFixtures = {
 				id: 'sample-value',
 			},
 		},
-		output: {},
 	},
 	'callrouters.create': {
 		input: {
@@ -585,7 +659,6 @@ export const DialpadOperationFixtures = {
 				id: 1,
 			},
 		},
-		output: {},
 	},
 	'channels.get': {
 		input: {
@@ -610,7 +683,19 @@ export const DialpadOperationFixtures = {
 		input: {
 			query: {},
 		},
-		output: {},
+		output: {
+			cursor: 'next-page-cursor',
+			items: [
+				{
+					hashtag: '#support',
+					id: 42,
+					member_count: 7,
+					name: 'Support',
+					office_id: 1,
+					privacy: 'public',
+				},
+			],
+		},
 	},
 	'coaching_team.get': {
 		input: {
@@ -650,7 +735,6 @@ export const DialpadOperationFixtures = {
 				user_id: 1,
 			},
 		},
-		output: {},
 	},
 	'channels.members.add': {
 		input: {
@@ -742,7 +826,24 @@ export const DialpadOperationFixtures = {
 		input: {
 			query: {},
 		},
-		output: {},
+		output: {
+			cursor: 'next-page-cursor',
+			items: [
+				{
+					company_name: 'Example Co.',
+					display_name: 'Taylor Example',
+					emails: ['taylor@example.com'],
+					first_name: 'Taylor',
+					id: 'contact-1001',
+					last_name: 'Example',
+					owner_id: '2',
+					phones: ['+14155557777'],
+					primary_email: 'taylor@example.com',
+					primary_phone: '+14155557777',
+					type: 'local',
+				},
+			],
+		},
 	},
 	'contacts.get': {
 		input: {
@@ -890,7 +991,6 @@ export const DialpadOperationFixtures = {
 				id: 1,
 			},
 		},
-		output: {},
 	},
 	'digital.sessions.list': {
 		input: {
@@ -1434,7 +1534,6 @@ export const DialpadOperationFixtures = {
 				parent_id: 1,
 			},
 		},
-		output: {},
 	},
 	'schedule_reports.update': {
 		input: {
@@ -1628,7 +1727,6 @@ export const DialpadOperationFixtures = {
 				parent_id: 1,
 			},
 		},
-		output: {},
 	},
 	'caller_id.users.get': {
 		input: {
@@ -1756,7 +1854,31 @@ export const DialpadOperationFixtures = {
 		input: {
 			query: {},
 		},
-		output: {},
+		output: {
+			cursor: 'next-page-cursor',
+			items: [
+				{
+					company_id: 1,
+					display_name: 'Taylor Example',
+					emails: ['taylor@example.com'],
+					extension: '1001',
+					first_name: 'Taylor',
+					forwarding_numbers: [],
+					group_details: [
+						{ group_id: 12, group_type: 'department', role: 'operator' },
+					],
+					id: 2,
+					is_available: true,
+					is_company_admin: false,
+					is_on_duty: true,
+					last_name: 'Example',
+					onboarding_completed: true,
+					phone_numbers: ['+14155551001'],
+					state: 'active',
+					voicemail: {},
+				},
+			],
+		},
 	},
 	'users.update': {
 		input: {
@@ -1996,7 +2118,6 @@ export const DialpadOperationFixtures = {
 			},
 			query: {},
 		},
-		output: {},
 	},
 	'powerdialer.createCustomProperties': {
 		input: {
@@ -2638,7 +2759,6 @@ export const DialpadOperationFixtures = {
 				campaign_group_id: 'sample-value',
 			},
 		},
-		output: {},
 	},
 	'powerdialer.getCampaignGroup': {
 		input: {
@@ -3464,9 +3584,36 @@ export const DialpadOperationFixtures = {
 		},
 		output: {
 			kind: 'binary',
-			contentType: 'application/octet-stream',
-			base64: 'YQ==',
+			contentType: 'sample-value',
+			base64: 'sample-value',
 			sizeBytes: 1,
+		},
+	},
+	'recordings.call.download': {
+		input: { path: { recording_id: '6086754856781234' } },
+		output: {
+			kind: 'binary',
+			contentType: 'audio/mpeg',
+			base64: 'AQID',
+			sizeBytes: 3,
+		},
+	},
+	'recordings.voicemail.download': {
+		input: { path: { recording_id: '6086754856787890' } },
+		output: {
+			kind: 'binary',
+			contentType: 'audio/mpeg',
+			base64: 'AQID',
+			sizeBytes: 3,
+		},
+	},
+	'recordings.admin_call.download': {
+		input: { path: { share_link_id: 'share-link-123' } },
+		output: {
+			kind: 'binary',
+			contentType: 'audio/mpeg',
+			base64: 'AQID',
+			sizeBytes: 3,
 		},
 	},
 } as const;
@@ -3818,4 +3965,7 @@ export const DialpadOperationKeys = [
 	'powerdialer.updateRule',
 	'powerdialer.getRule',
 	'reports.scheduledstats.download',
+	'recordings.call.download',
+	'recordings.voicemail.download',
+	'recordings.admin_call.download',
 ] as const;

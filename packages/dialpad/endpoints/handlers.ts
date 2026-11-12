@@ -7588,6 +7588,75 @@ export const DialpadOperationFunctions = {
 		);
 		return output;
 	},
+	'recordings.call.download': async (
+		ctx: DialpadContext,
+		input: DialpadEndpointInputs['recordings.call.download'],
+	) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.call.download'].parse(input);
+		const response = await makeDialpadRequest(
+			DialpadOperationDefinitions['recordings.call.download'],
+			parsedInput,
+			{ apiKey: ctx.key, environment: ctx.options.environment },
+		);
+		const output =
+			DialpadEndpointOutputSchemas['recordings.call.download'].parse(response);
+		await logEventFromContext(
+			ctx,
+			'dialpad.recordings.call.download',
+			{ operation: 'recordings.call.download' },
+			'completed',
+		);
+		return output;
+	},
+	'recordings.voicemail.download': async (
+		ctx: DialpadContext,
+		input: DialpadEndpointInputs['recordings.voicemail.download'],
+	) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.voicemail.download'].parse(input);
+		const response = await makeDialpadRequest(
+			DialpadOperationDefinitions['recordings.voicemail.download'],
+			parsedInput,
+			{ apiKey: ctx.key, environment: ctx.options.environment },
+		);
+		const output =
+			DialpadEndpointOutputSchemas['recordings.voicemail.download'].parse(
+				response,
+			);
+		await logEventFromContext(
+			ctx,
+			'dialpad.recordings.voicemail.download',
+			{ operation: 'recordings.voicemail.download' },
+			'completed',
+		);
+		return output;
+	},
+	'recordings.admin_call.download': async (
+		ctx: DialpadContext,
+		input: DialpadEndpointInputs['recordings.admin_call.download'],
+	) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.admin_call.download'].parse(
+				input,
+			);
+		const response = await makeDialpadRequest(
+			DialpadOperationDefinitions['recordings.admin_call.download'],
+			parsedInput,
+			{ apiKey: ctx.key, environment: ctx.options.environment },
+		);
+		const output =
+			DialpadEndpointOutputSchemas['recordings.admin_call.download'].parse(
+				response,
+			);
+		await logEventFromContext(
+			ctx,
+			'dialpad.recordings.admin_call.download',
+			{ operation: 'recordings.admin_call.download' },
+			'completed',
+		);
+		return output;
+	},
 } as const;
 
 //
@@ -9979,6 +10048,32 @@ export const DialpadOperationCallers: {
 				input,
 			);
 		return DialpadOperationFunctions['reports.scheduledstats.download'](
+			ctx,
+			parsedInput,
+		);
+	},
+	'recordings.call.download': async (ctx, input) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.call.download'].parse(input);
+		return DialpadOperationFunctions['recordings.call.download'](
+			ctx,
+			parsedInput,
+		);
+	},
+	'recordings.voicemail.download': async (ctx, input) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.voicemail.download'].parse(input);
+		return DialpadOperationFunctions['recordings.voicemail.download'](
+			ctx,
+			parsedInput,
+		);
+	},
+	'recordings.admin_call.download': async (ctx, input) => {
+		const parsedInput =
+			DialpadEndpointInputSchemas['recordings.admin_call.download'].parse(
+				input,
+			);
+		return DialpadOperationFunctions['recordings.admin_call.download'](
 			ctx,
 			parsedInput,
 		);

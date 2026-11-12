@@ -16,7 +16,7 @@ Webhook/event-subscription management, OAuth token lifecycle endpoints, webhook 
 
 **What you get:**
 
-- 347 typed API operations
+- 350 typed API operations
 
 ## Setup
 
@@ -115,19 +115,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accesscontrolpolicies.assignments`**
+**List assignments for an access control policy**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dialpad.api.accesscontrolpolicies.assignments({});
+await tenant.dialpad.api.accesscontrolpolicies.assignments({
+	path: { id: 1 },
+	query: {},
+});
 ```
 
 
-**`accesscontrolpolicies.assign`**
+**Assign a user to an access control policy**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dialpad.api.accesscontrolpolicies.assign({});
+await tenant.dialpad.api.accesscontrolpolicies.assign({
+	path: { id: 1 },
+	body: { user_id: 2 },
+});
 ```
 
 

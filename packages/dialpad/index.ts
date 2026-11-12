@@ -1487,6 +1487,18 @@ export const dialpadEndpointSchemas: RequiredPluginEndpointSchemas<
 		input: DialpadEndpointInputSchemas['reports.scheduledstats.download'],
 		output: DialpadEndpointOutputSchemas['reports.scheduledstats.download'],
 	},
+	'recordings.call.download': {
+		input: DialpadEndpointInputSchemas['recordings.call.download'],
+		output: DialpadEndpointOutputSchemas['recordings.call.download'],
+	},
+	'recordings.voicemail.download': {
+		input: DialpadEndpointInputSchemas['recordings.voicemail.download'],
+		output: DialpadEndpointOutputSchemas['recordings.voicemail.download'],
+	},
+	'recordings.admin_call.download': {
+		input: DialpadEndpointInputSchemas['recordings.admin_call.download'],
+		output: DialpadEndpointOutputSchemas['recordings.admin_call.download'],
+	},
 };
 
 const dialpadEndpointMetaValue = {
@@ -1586,7 +1598,7 @@ const dialpadEndpointMetaValue = {
 			'Call -- Assigned Operators. Get all assigned operators from a call queued in a contact center. Only contact center calls are eligible for this operation. Rate limit: 250 per minute.',
 	},
 	'anonymization.callcontent': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Call Content -- Delete (Bulk). Removes call recordings, screen recordings, transcripts, and AI data from the specified calls. The call records themselves are preserved. This operation is asynchronous — queues a task and returns a request_id for status polling. Rate limit: 10 per minute.',
 	},
@@ -3161,6 +3173,21 @@ const dialpadEndpointMetaValue = {
 		riskLevel: 'read',
 		description:
 			'Report Download API -- Download scheduled stats. Downloads the requested scheduled report when available. The official page documents the report type user_voiceline and a YYYY-MM-DD date, but does not publish a success content type or response schema; the plugin returns the report bytes in a validated base64 envelope.',
+	},
+	'recordings.call.download': {
+		riskLevel: 'read',
+		description:
+			'Call Recording -- Download. Downloads completed call audio as a bounded base64 result; requires recordings_export scope.',
+	},
+	'recordings.voicemail.download': {
+		riskLevel: 'read',
+		description:
+			'Voicemail Recording -- Download. Downloads voicemail audio as a bounded base64 result; requires recordings_export scope.',
+	},
+	'recordings.admin_call.download': {
+		riskLevel: 'read',
+		description:
+			'Admin Call Recording -- Download. Downloads an admin recording through its share-link ID as a bounded base64 result.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof dialpadEndpointsNested>;
 

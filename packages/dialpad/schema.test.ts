@@ -10,6 +10,12 @@ import { dialpadEndpointMeta, dialpadEndpointSchemas } from './index';
 import { DialpadOperationFixtures } from './operation-fixtures';
 
 describe('operation schema registry', () => {
+	it('marks bulk call-content deletion destructive for cautious-mode approval', () => {
+		expect(dialpadEndpointMeta['anonymization.callcontent'].riskLevel).toBe(
+			'destructive',
+		);
+	});
+
 	it('keeps endpoint definitions, schemas, and metadata in sync', () => {
 		const expected = [...DialpadOperationKeys].sort();
 

@@ -192,9 +192,9 @@ describe('Dialpad authentication paths', () => {
 
 		try {
 			// `unknown` because a rejected auth helper may throw any value.
-			const error = await getOAuthKeyBuilder()(context, 'endpoint').catch(
-				(caught: unknown) => caught,
-			);
+			const error = await Promise.resolve(
+				getOAuthKeyBuilder()(context, 'endpoint'),
+			).catch((caught: unknown) => caught);
 			expect(error).toBeInstanceOf(Error);
 			if (!(error instanceof Error)) {
 				throw new Error('Expected an OAuth refresh error');
@@ -326,6 +326,53 @@ describe('Dialpad HTTP request behavior', () => {
 		expect(DIALPAD_REPORT_MAX_BYTES).toBe(25 * 1024 * 1024);
 	});
 
+	it.each([
+		[
+			'recordings.call.download',
+			{ path: { recording_id: '6086754856781234' } },
+			'https://dialpad.com/r/6086754856781234',
+		],
+		[
+			'recordings.voicemail.download',
+			{ path: { recording_id: '6086754856787890' } },
+			'https://dialpad.com/v/6086754856787890',
+		],
+		[
+			'recordings.admin_call.download',
+			{ path: { share_link_id: 'share-link-123' } },
+			'https://dialpad.com/recording/admincallrecording/share-link-123',
+		],
+	] as const)(
+		'downloads documented MP3 route %s with Bearer auth',
+		async (key, input, url) => {
+			fetchMock.mockResolvedValue(
+				new Response(new Blob([new Uint8Array([0, 1, 2])]), {
+					status: 200,
+					headers: { 'Content-Type': 'audio/mpeg' },
+				}),
+			);
+
+			const result = await makeDialpadRequest(
+				DialpadOperationDefinitions[key],
+				input,
+				{ apiKey: 'safe-test-token' },
+			);
+
+			expect(result).toEqual({
+				kind: 'binary',
+				contentType: 'audio/mpeg',
+				base64: 'AAEC',
+				sizeBytes: 3,
+			});
+			const request = fetchMock.mock.calls[0];
+			if (!request) throw new Error('Expected the recording download request');
+			expect(String(request[0])).toBe(url);
+			expect(new Headers(request[1]?.headers).get('authorization')).toBe(
+				'Bearer safe-test-token',
+			);
+		},
+	);
+
 	it('preserves report download Retry-After metadata without retrying', async () => {
 		fetchMock.mockResolvedValue(
 			new Response(JSON.stringify({ error_code: 429, message: 'Try later' }), {
@@ -402,7 +449,7 @@ describe('Dialpad HTTP request behavior', () => {
 		}
 		expect(error.body).toEqual({
 			password: '[REDACTED]',
-			message: 'Rejected short-secret',
+			message: 'Rejected [REDACTED]',
 		});
 		expect(error.request.body).toEqual({ password: '[REDACTED]' });
 		expect(error.message).not.toContain('short-secret');

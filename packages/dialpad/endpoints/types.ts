@@ -985,7 +985,8 @@ const Output11 = z
 	.object({
 		enabled: z.boolean().nullable().optional(),
 		is_preferred_service: z.boolean().nullable().optional(),
-		settings: z.object({}).strict().nullable().optional(),
+		// unknown values are required because Dialpad documents this settings map as provider-defined.
+		settings: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
 	.strict();
 
@@ -1050,8 +1051,7 @@ const Input14 = z
 	})
 	.strict();
 
-const Output14 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output14 = z.undefined();
 
 const Input15 = z
 	.object({
@@ -1091,8 +1091,7 @@ const Input16 = z
 	})
 	.strict();
 
-const Output16 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output16 = z.undefined();
 
 const Input17 = z
 	.object({
@@ -1911,8 +1910,7 @@ const Input31 = z
 	})
 	.strict();
 
-const Output31 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output31 = z.undefined();
 
 const Input32 = z
 	.object({
@@ -4380,8 +4378,7 @@ const Input54 = z
 	})
 	.strict();
 
-const Output54 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output54 = z.undefined();
 
 const Input55 = z
 	.object({
@@ -4670,8 +4667,7 @@ const Input60 = z
 	})
 	.strict();
 
-const Output60 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output60 = z.undefined();
 
 const Input61 = z
 	.object({
@@ -4908,8 +4904,7 @@ const Input67 = z
 	})
 	.strict();
 
-const Output67 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output67 = z.undefined();
 
 const Input68 = z
 	.object({
@@ -7851,8 +7846,7 @@ const Input95 = z
 	})
 	.strict();
 
-const Output95 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output95 = z.undefined();
 
 const Input96 = z
 	.object({
@@ -12661,8 +12655,7 @@ const Input155 = z
 	})
 	.strict();
 
-const Output155 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output155 = z.undefined();
 
 const Input156 = z
 	.object({
@@ -13887,8 +13880,7 @@ const Input176 = z
 	})
 	.strict();
 
-const Output176 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output176 = z.undefined();
 
 const Input177 = z
 	.object({
@@ -16495,8 +16487,7 @@ const Input215 = z
 	})
 	.strict();
 
-const Output215 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output215 = z.undefined();
 
 const Input216 = z
 	.object({
@@ -22678,8 +22669,7 @@ const Input274 = z
 	})
 	.strict();
 
-const Output274 =
-	/* unknown because this operation has no documented response schema. */ z.unknown();
+const Output274 = z.undefined();
 
 const Input275 = z
 	.object({
@@ -35235,6 +35225,24 @@ const Output346 = z
 	})
 	.strict();
 
+const RecordingDownloadInput347 = z
+	.object({ path: z.object({ recording_id: z.string().min(1) }).strict() })
+	.strict();
+const RecordingDownloadInput348 = z
+	.object({ path: z.object({ recording_id: z.string().min(1) }).strict() })
+	.strict();
+const RecordingDownloadInput349 = z
+	.object({ path: z.object({ share_link_id: z.string().min(1) }).strict() })
+	.strict();
+const RecordingDownloadOutput = z
+	.object({
+		kind: z.literal('binary'),
+		contentType: z.string().min(1),
+		base64: z.string(),
+		sizeBytes: z.number().int().min(0),
+	})
+	.strict();
+
 export const DialpadEndpointInputSchemas = {
 	'accesscontrolpolicies.assign': Input0,
 	'accesscontrolpolicies.delete': Input1,
@@ -35583,6 +35591,9 @@ export const DialpadEndpointInputSchemas = {
 	'powerdialer.updateRule': Input344,
 	'powerdialer.getRule': Input345,
 	'reports.scheduledstats.download': Input346,
+	'recordings.call.download': RecordingDownloadInput347,
+	'recordings.voicemail.download': RecordingDownloadInput348,
+	'recordings.admin_call.download': RecordingDownloadInput349,
 } as const;
 export const DialpadEndpointOutputSchemas = {
 	'accesscontrolpolicies.assign': Output0,
@@ -35932,6 +35943,9 @@ export const DialpadEndpointOutputSchemas = {
 	'powerdialer.updateRule': Output344,
 	'powerdialer.getRule': Output345,
 	'reports.scheduledstats.download': Output346,
+	'recordings.call.download': RecordingDownloadOutput,
+	'recordings.voicemail.download': RecordingDownloadOutput,
+	'recordings.admin_call.download': RecordingDownloadOutput,
 } as const;
 export type DialpadEndpointKey = keyof typeof DialpadEndpointInputSchemas;
 export type DialpadEndpointInputs = {

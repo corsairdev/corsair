@@ -560,6 +560,17 @@ export const DialpadOperations = {
 			download: DialpadOperationFunctions['reports.scheduledstats.download'],
 		},
 	},
+	recordings: {
+		call: {
+			download: DialpadOperationFunctions['recordings.call.download'],
+		},
+		voicemail: {
+			download: DialpadOperationFunctions['recordings.voicemail.download'],
+		},
+		admin_call: {
+			download: DialpadOperationFunctions['recordings.admin_call.download'],
+		},
+	},
 } as const;
 export * from './definitions';
 export * from './types';

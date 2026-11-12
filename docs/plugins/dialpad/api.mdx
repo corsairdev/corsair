@@ -716,7 +716,7 @@ await corsair.dialpad.api.agentgroup.get({ path: {"id":"sample-value"} });
 
 Call Content -- Delete (Bulk). Removes call recordings, screen recordings, transcripts, and AI data from the specified calls. The call records themselves are preserved. This operation is asynchronous — queues a task and returns a request_id for status polling. Rate limit: 10 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.anonymization.callcontent({ body: {"call_ids":[]} });
@@ -891,17 +891,7 @@ await corsair.dialpad.api.app_settings.get({ query: {} });
 |------|------|----------|-------------|
 | `enabled` | `boolean \| null` | No | — |
 | `is_preferred_service` | `boolean \| null` | No | — |
-| `settings` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="settings full type">
-
-```ts
-{
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `settings` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -1059,7 +1049,7 @@ await corsair.dialpad.api.blockednumbers.add({ body: {} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -1189,7 +1179,7 @@ await corsair.dialpad.api.blockednumbers.remove({ body: {} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -2123,7 +2113,7 @@ await corsair.dialpad.api.call.hangup({ path: {"id":1} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -4825,7 +4815,7 @@ await corsair.dialpad.api.callrouters.delete({ path: {"id":"sample-value"} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -5119,7 +5109,7 @@ await corsair.dialpad.api.channels.delete({ path: {"id":1} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -5322,7 +5312,7 @@ await corsair.dialpad.api.channels.members.delete({ path: {"id":1}, body: {"user
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -7758,7 +7748,7 @@ await corsair.dialpad.api.deskphones.rooms.delete({ path: {"id":"sample-value","
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -7917,7 +7907,7 @@ await corsair.dialpad.api.deskphones.users.delete({ path: {"id":"sample-value","
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -8273,7 +8263,7 @@ await corsair.dialpad.api.dispositions.delete({ path: {"id":1} });
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -13130,7 +13120,7 @@ await corsair.dialpad.api.powerdialer.deleteCampaignGroup({ path: {"campaign_gro
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -13321,7 +13311,7 @@ await corsair.dialpad.api.powerdialer.deleteModelsByKeysOfKind({ path: {"kind":"
 
 
 
-**Output:** `any`
+**Output:** `undefined`
 
 
 ---
@@ -22668,6 +22658,146 @@ await corsair.dialpad.api.recording_share_link.update({ path: {"id":"sample-valu
 
 ---
 
+## Recordings
+
+### admin_call.download
+
+`recordings.admin_call.download`
+
+Admin Call Recording -- Download. Downloads an admin recording through its share-link ID as a bounded base64 result.
+
+**Risk:** `read`
+
+```ts
+await corsair.dialpad.api.recordings.admin_call.download({ path: {"share_link_id":"share-link-123"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+Admin recordings cannot be downloaded from their browser-only URL. Create a recording share link first and pass its ID here; the plugin returns the bytes in the bounded base64 result envelope.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  share_link_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### call.download
+
+`recordings.call.download`
+
+Call Recording -- Download. Downloads completed call audio as a bounded base64 result; requires recordings_export scope.
+
+**Risk:** `read`
+
+```ts
+await corsair.dialpad.api.recordings.call.download({ path: {"recording_id":"6086754856781234"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  recording_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### voicemail.download
+
+`recordings.voicemail.download`
+
+Voicemail Recording -- Download. Downloads voicemail audio as a bounded base64 result; requires recordings_export scope.
+
+**Risk:** `read`
+
+```ts
+await corsair.dialpad.api.recordings.voicemail.download({ path: {"recording_id":"6086754856787890"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  recording_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
 ## Reports
 
 ### scheduledstats.download
@@ -24229,7 +24359,7 @@ SMS -- Send. Sends an SMS message to a phone number or to a Dialpad channel on b
 **Risk:** `write`
 
 ```ts
-await corsair.dialpad.api.sms.send({ body: {} });
+await corsair.dialpad.api.sms.send({ body: {"to_numbers":["+14155557777"],"text":"Test text","user_id":2} });
 ```
 
 **Input**

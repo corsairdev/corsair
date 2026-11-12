@@ -10,6 +10,22 @@ overviewNote: |
   List endpoints expose documented cursors as input/output fields; pass the returned cursor to fetch the next page. Async reporting and anonymization operations return request IDs that must be polled with their documented status endpoints. Rate-limit responses preserve Dialpad's `Retry-After` value; the plugin does not automatically retry operations.
 
   Webhook/event-subscription management, OAuth token lifecycle endpoints, webhook callbacks, and multipart CSV uploads are not exposed. The plugin includes ordinary REST operations that create and manage WebSocket resources, but does not open long-lived event streams.
+examples:
+  read:
+    path: accesscontrolpolicies.assignments
+    title: List assignments for an access control policy
+    args:
+      path:
+        id: 1
+      query: {}
+  write:
+    path: accesscontrolpolicies.assign
+    title: Assign a user to an access control policy
+    args:
+      path:
+        id: 1
+      body:
+        user_id: 2
 references:
   - title: Dialpad API reference
     url: https://developers.dialpad.com/reference
@@ -22,6 +38,12 @@ references:
 apiNotes:
   reports.scheduledstats.download: |
     The official Report Download API page does not specify the successful response media type or maximum report size. The plugin returns bytes as `{ kind: 'binary', contentType, base64, sizeBytes }`, with a 25 MiB client safety cap and 20-second timeout. The `t` field currently accepts the only documented report type, `user_voiceline`.
+  recordings.call.download: |
+    Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+  recordings.voicemail.download: |
+    Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+  recordings.admin_call.download: |
+    Admin recordings cannot be downloaded from their browser-only URL. Create a recording share link first and pass its ID here; the plugin returns the bytes in the bounded base64 result envelope.
 apiExamples:
   "accesscontrolpolicies.assign":
     call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
@@ -358,7 +380,7 @@ apiExamples:
   "stats.export.get":
     call: "{ path: {\"id\":\"sample-value\"} }"
   "sms.send":
-    call: "{ body: {} }"
+    call: "{ body: {\"to_numbers\":[\"+14155557777\"],\"text\":\"Test text\",\"user_id\":2} }"
   "users.initiate_call":
     call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
   "users.toggle_call_vi":
@@ -717,3 +739,9 @@ apiExamples:
     call: "{ path: {\"rule_id\":\"sample-value\"} }"
   "reports.scheduledstats.download":
     call: "{ query: {\"t\":\"user_voiceline\",\"d\":\"2024-06-01\"} }"
+  "recordings.call.download":
+    call: "{ path: {\"recording_id\":\"6086754856781234\"} }"
+  "recordings.voicemail.download":
+    call: "{ path: {\"recording_id\":\"6086754856787890\"} }"
+  "recordings.admin_call.download":
+    call: "{ path: {\"share_link_id\":\"share-link-123\"} }"
