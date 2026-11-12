@@ -1,0 +1,746 @@
+{
+  "id": "heyy",
+  "displayName": "Heyy",
+  "description": "Customer messaging over WhatsApp, SMS and Instagram from Heyy - search and create contacts, define custom attributes and labels, and manage the webhook endpoints that deliver message events.",
+  "npmPackageName": "@corsair-dev/heyy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "heyy.api.apiWebhooks.create",
+      "shortPath": "apiWebhooks.create",
+      "description": "Register an HTTPS endpoint for message events on the channels named in each event; Heyy then POSTs every matching message, with its content and sender, to that URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL that receives the webhook POSTs."
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated, scopes: { type: channel, ids: string[] }[] }[]",
+            "description": "The events to deliver to this URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, url: string, status: string, events?: { type: string, scopes?: { type: string, ids: string[] }[] | null }[] | null }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.apiWebhooks.remove",
+      "shortPath": "apiWebhooks.remove",
+      "description": "Delete a webhook endpoint by id; Heyy stops delivering to it immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to delete, a UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ deletedIds: string[], notFoundIds: string[] }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.apiWebhooks.search",
+      "shortPath": "apiWebhooks.search",
+      "description": "List the registered webhook endpoints with their URL, status and subscribed events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(status, 'active')\". Filterable fields: id, createdAt, updatedAt, status, url, events. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, url: string, status: string, events?: { type: string, scopes?: { type: string, ids: string[] }[] | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.apiWebhooks.update",
+      "shortPath": "apiWebhooks.update",
+      "description": "Change a webhook's URL or events, or pause deliveries by setting it inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to change, a UUID."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "New HTTPS URL for deliveries."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | inactive",
+            "description": "Pause deliveries with `inactive`."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ type: whatsapp_message_received | whatsapp_message_status | message.received | message.sent | message.updated, scopes: { type: channel, ids: string[] }[] }[]",
+            "description": "Replace the delivered events."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, url: string, status: string, events?: { type: string, scopes?: { type: string, ids: string[] }[] | null }[] | null }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.attributes.create",
+      "shortPath": "attributes.create",
+      "description": "Define a custom contact attribute: text, number, select or date, with the options a select needs and where it appears",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | number | single_select | multi_select | date | datetime",
+            "description": "The kind of value the attribute holds."
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string",
+            "description": "The name shown in the app."
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "{ inbox: boolean, contacts: boolean, create: boolean }",
+            "description": "Where the attribute appears in Heyy."
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ options?: { value: string, color: string }[] }",
+            "description": "Options for a single_select or multi_select attribute. Required for those two types."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attribute",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, type: string, displayName?: string | null, visibility?: { inbox: boolean, contacts: boolean, create: boolean } | null, details?: { options?: { value: string, color: string }[] | null } | null }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.attributes.remove",
+      "shortPath": "attributes.remove",
+      "description": "Delete a custom contact attribute by id; the values contacts had for it are gone and cannot be restored. An id that does not exist fails with 404 attribute_not_found",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributeId",
+            "optional": false,
+            "type": "string",
+            "description": "The attribute to delete, a UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ deletedIds: string[], notFoundIds: string[] }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.attributes.search",
+      "shortPath": "attributes.search",
+      "description": "Search the custom contact attributes defined on the workspace, with their type, options and where they appear in Heyy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(type, 'single_select')\". Filterable fields: id, createdAt, updatedAt, name, type, displayName, description, visibility, details. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, type: string, displayName?: string | null, visibility?: { inbox: boolean, contacts: boolean, create: boolean } | null, details?: { options?: { value: string, color: string }[] | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.automations.search",
+      "shortPath": "automations.search",
+      "description": "List the automation workflows on the workspace with their status: draft, active or paused",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(status, 'active')\". Filterable fields: id, createdAt, updatedAt, name, status, activeVersionId, activeVersionTriggerType, activeVersionTriggerParametersChannelId, latestVersionTriggerType, latestVersionTriggerParametersChannelId, latestVersionId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "automations",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, status: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.channels.search",
+      "shortPath": "channels.search",
+      "description": "List the connected channels (WhatsApp, Instagram, Messenger, SMS or live chat) with their type and connection status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(type, 'whatsapp')\". Filterable fields: id, createdAt, updatedAt, name, type, status, vendor, vendorId. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, type: string, status: string, vendor?: string | null, vendorId?: string | null, vendorDetails?: Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact with a name, phone number or email, attach labels by id and set custom attribute values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name."
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "Phone number, in E.164 where the channel needs it."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact email address."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ id: string, value: string | number | string[] | null }[]",
+            "description": "Custom attribute values."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id: string }[]",
+            "description": "Label ids, from `labels.search`, to attach on creation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, displayName?: string | null, isSubscribed?: boolean | null, phoneNumber?: string | null, email?: string | null, labels?: (string | { id: string })[] | null, attributes?: { id?: string | null, contactId?: string | null, attribute?: { id: string, name: string, displayName?: string | null, type?: string | null } | null, value?: string | number | string[] | null }[] | null, handles?: Record<string, JsonValue>[] | null, chats?: Record<string, JsonValue>[] | null, metadata?: Record<string, JsonValue> | null }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search contacts with a structured filter, free-text search, sorting and paging; returns the matched contacts with their labels and attribute values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(email, 'jordan@acme.com')\". Filterable fields: id, createdAt, updatedAt, firstName, lastName, isSubscribed, labels, notes, groups, phoneNumber, email; custom attributes through getBy('attributes', 'name', 'plan'). Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, displayName?: string | null, isSubscribed?: boolean | null, phoneNumber?: string | null, email?: string | null, labels?: (string | { id: string })[] | null, attributes?: { id?: string | null, contactId?: string | null, attribute?: { id: string, name: string, displayName?: string | null, type?: string | null } | null, value?: string | number | string[] | null }[] | null, handles?: Record<string, JsonValue>[] | null, chats?: Record<string, JsonValue>[] | null, metadata?: Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a label with a name and a hex colour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Label name."
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string",
+            "description": "Hex colour for the label, such as #3B82F6."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, color?: string | null }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.labels.remove",
+      "shortPath": "labels.remove",
+      "description": "Delete a label by id; it is detached from every contact that carried it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labelId",
+            "optional": false,
+            "type": "string",
+            "description": "The label to delete, a UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ deletedIds: string[], notFoundIds: string[] }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.labels.search",
+      "shortPath": "labels.search",
+      "description": "Search the labels used to group contacts, with their colours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"contains(name, 'VIP')\". Filterable fields: id, createdAt, updatedAt, name. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, color?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heyy.api.messageTemplates.search",
+      "shortPath": "messageTemplates.search",
+      "description": "List the message templates available for a channel, with their status, content and variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, such as \"desc(createdAt)\" or \"asc(name)\", with an optional null placement like \"desc(updatedAt, 'nulls last')\". Chain keys with sort(...)."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over the resource's searchable fields. `query` is the field for structured filters; the two can be combined."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number }",
+            "description": "Paging. Defaults to page 0, limit 10."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Structured filter, such as \"equals(channelId, 'channel-id')\". Filterable fields: id, createdAt, updatedAt, name, vendorId, status, channelId, type, vendorDetailsName. Combine with and(), or(), not(); see the query syntax reference. Can be combined with `search`. Omit for no filter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageTemplates",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, name: string, type?: string | null, status?: string | null, vendorId?: string | null, channelId?: string | null, messageContent?: Record<string, JsonValue> | null, variables?: string[] | null, vendorDetails?: Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, limit: number, total: number }"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

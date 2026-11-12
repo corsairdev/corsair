@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Starton plugin"
+sidebarTitle: "Overview"
 description: "Web3 backend for deploying and calling smart contracts, managing wallets, watching blockchain events, and pinning files to IPFS."
 ---
 
@@ -17,16 +18,20 @@ Use **Starton** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/starton
+npm install corsair @corsair-dev/starton better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/starton
+yarn add corsair @corsair-dev/starton better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/starton
+pnpm install corsair @corsair-dev/starton better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/starton
+bun add corsair @corsair-dev/starton better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

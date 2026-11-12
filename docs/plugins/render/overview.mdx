@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Render plugin"
+sidebarTitle: "Overview"
 description: "Manage Render services and deploys, Postgres and Key Value databases, env groups, environments, custom domains, disks, logs, metrics, webhooks and workflows."
 ---
 
@@ -25,16 +26,20 @@ Create an API key in the Render Dashboard under Account Settings, API Keys. A ke
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/render
+npm install corsair @corsair-dev/render better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/render
+yarn add corsair @corsair-dev/render better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/render
+pnpm install corsair @corsair-dev/render better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/render
+bun add corsair @corsair-dev/render better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
