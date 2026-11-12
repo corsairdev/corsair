@@ -81,9 +81,12 @@ export class RiteKitAPIError extends Error {
 		return this.status === 400 || this.status === 422;
 	}
 
-	/** Out of monthly credits, which retrying cannot fix. */
+	/**
+	 * Out of monthly credits, which retrying cannot fix. A 429 is the per-second
+	 * rate limit instead, which a short wait clears.
+	 */
 	get isQuotaExhausted(): boolean {
-		return this.status === 402 || this.status === 429;
+		return this.status === 402;
 	}
 }
 

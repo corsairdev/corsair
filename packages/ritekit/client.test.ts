@@ -176,6 +176,21 @@ describe('RiteKit client', () => {
 		expect(error.status).toBe(402);
 	});
 
+	it('does not report a 429 rate limit as exhausted credits', async () => {
+		respond(RATE_LIMITED, 429);
+
+		const error = await failure(
+			makeRiteKitRequest(API_KEY, {
+				method: 'GET',
+				path: '/v1/stats/multiple-hashtags',
+				replayable: true,
+			}),
+		);
+
+		expect(error.status).toBe(429);
+		expect(error.isQuotaExhausted).toBe(false);
+	});
+
 	it('records whether the failed call may be replayed', async () => {
 		respond(RATE_LIMITED, 429, { 'Retry-After': '3' });
 
