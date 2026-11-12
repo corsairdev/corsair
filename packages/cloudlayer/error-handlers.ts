@@ -17,7 +17,7 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 2, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {

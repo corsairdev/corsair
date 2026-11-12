@@ -1,8 +1,8 @@
 # @corsair-dev/cloudlayer
 
-Cloudlayer plugin for Corsair. It exposes the documented v2 API and the
-synchronous v1 generation routes, returning raw file responses as base64
-artifacts.
+Cloudlayer plugin for Corsair. It exposes the documented v2 API and v1
+generation routes. V2 returns JSON job responses, including completed jobs for
+`async: false`; v1 generation responses are returned as base64 artifacts.
 
 ## Install
 
@@ -49,21 +49,22 @@ as the provider's JSON-string form field. These multipart requests send only
 the documented `template` and `data` fields. URL captures support their
 documented POST options and GET shortcuts. Jobs and assets list inputs support
 the documented `limit` and `startAfterId` parameters. V2 generation defaults
-to a JSON job response; setting `async: false` returns a `BinaryArtifact` with
-base64-encoded bytes and the response content type. The explicitly versioned
-v1 generation operations return the same artifact shape.
+to JSON job responses; `async: false` waits for completion and returns a
+completed job per the API overview. The explicitly versioned v1 generation
+operations return `BinaryArtifact` values with base64-encoded bytes and the
+response content type.
 
 ## Binary response handling
 
-Cloudlayer's v1 routes and v2 POST `async: false` modes contain raw PDF/image
-bytes. These are fetched through a plugin-local binary transport and returned
-as `{ kind: 'binary', contentType, base64 }`; the shared `corsair/http`
-transport is not used for raw bytes because it decodes non-JSON responses as
-text. V2 template multipart requests accept only the documented `template`
-and `data` parts and remain in the default asynchronous job mode; the plugin
-does not add an `async` part to the multipart schema. Consequently, the v2
-multipart `async: false` binary mode is intentionally unavailable for template
-PDF/image uploads; use the JSON form for the documented synchronous mode. See
+Synchronous v1 routes are fetched through a plugin-local transport and
+returned as `{ kind: 'binary', contentType, base64 }`; the shared `corsair/http`
+transport decodes non-JSON responses as text. Synchronous v2 requests use the
+same bounded transport so long renders can finish; JSON responses are parsed
+as completed jobs. Current provider API overview docs specify JSON for v2,
+though some endpoint-page introductions still describe raw bytes, so the
+transport also adapts a raw v2 file response if returned. V2 template multipart
+requests accept only the documented `template` and `data` parts and remain in
+job mode; the plugin does not add an `async` part to the multipart schema. See
 [Template to PDF](https://cloudlayer.io/docs/template-to-pdf/) and
 [Template to Image](https://cloudlayer.io/docs/template-to-image/).
 

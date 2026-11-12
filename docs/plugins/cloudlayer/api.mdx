@@ -138,7 +138,7 @@ await corsair.cloudlayer.api.assets.list({});
 
 `html.toImage`
 
-Render base64 HTML to a PNG, JPG, WebP or SVG image; returns a job by default or a base64 artifact with async:false. Docs: https://cloudlayer.io/docs/html-to-image/
+Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/
 
 **Risk:** `write`
 
@@ -173,7 +173,7 @@ await corsair.cloudlayer.api.html.toImage({ html: 'PGgxPkhlbGxvPC9oMT4=' });
 | `async` | `boolean` | No | — |
 | `storage` | `boolean` | No | — |
 
-V2 defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `html.toImageV1` exposes the documented v1 binary route. See https://cloudlayer.io/docs/html-to-image/.
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `html.toImageV1` exposes the v1 raw binary route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-image/.
 
 <AccordionGroup>
 <Accordion title="viewPort full type">
@@ -322,7 +322,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 `html.toPdf`
 
-Render base64 HTML to a PDF; returns a job by default or a base64 artifact with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/
+Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/
 
 **Risk:** `write`
 
@@ -360,7 +360,7 @@ await corsair.cloudlayer.api.html.toPdf({ html: 'PGgxPkhlbGxvPC9oMT4=' });
 | `async` | `boolean` | No | — |
 | `storage` | `boolean` | No | — |
 
-V2 defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `html.toPdfV1` exposes the documented v1 binary route. See https://cloudlayer.io/docs/html-to-pdf/.
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `html.toPdfV1` exposes the v1 raw binary route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-pdf/.
 
 <AccordionGroup>
 <Accordion title="viewPort full type">
@@ -913,7 +913,7 @@ await corsair.cloudlayer.api.storage.remove({ id: 'storage-id' });
 
 `template.toImage`
 
-Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; JSON async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/template-to-image/
+Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/
 
 **Risk:** `write`
 
@@ -926,7 +926,7 @@ await corsair.cloudlayer.api.template.toImage({
 
 **Input:** `object`
 
-V2 defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `template.toImageV1` exposes the v1 JSON route as a binary artifact. Multipart input is supported in v2 job mode with `{ template: Blob, data: object }`; only the documented `template` and `data` parts are sent, so the multipart `async: false` mode is not represented. See https://cloudlayer.io/docs/template-to-image/.
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `template.toImageV1` exposes the v1 route as a base64-encoded binary artifact. Multipart input uses `{ template: Blob, data: object }`; `template` must be a `Blob` and `data` is a JSON object. Multipart requests remain in v2 job mode; only the documented `template` and `data` parts are sent. See https://cloudlayer.io/docs/template-to-image/.
 
 <AccordionGroup>
 <Accordion title="Input full type">
@@ -1100,7 +1100,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 `template.toPdf`
 
-Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; JSON async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/
+Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/
 
 **Risk:** `write`
 
@@ -1113,7 +1113,7 @@ await corsair.cloudlayer.api.template.toPdf({
 
 **Input:** `object`
 
-V2 defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `template.toPdfV1` exposes the v1 JSON route as a binary artifact. Multipart input is supported in v2 job mode with `{ template: Blob, data: object }`; only the documented `template` and `data` parts are sent, so the multipart `async: false` mode is not represented. See https://cloudlayer.io/docs/template-to-pdf/.
+V2 returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `template.toPdfV1` exposes the v1 route as a base64-encoded binary artifact. Multipart input uses `{ template: Blob, data: object }`; `template` must be a `Blob` and `data` is a JSON object. Multipart requests remain in v2 job mode; only the documented `template` and `data` parts are sent. See https://cloudlayer.io/docs/template-to-pdf/.
 
 <AccordionGroup>
 <Accordion title="Input full type">
@@ -1389,7 +1389,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 `url.toImage`
 
-Screenshot a live web page with full viewport, cookie and auth control; async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/url-to-image/
+Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/
 
 **Risk:** `write`
 
@@ -1426,7 +1426,7 @@ await corsair.cloudlayer.api.url.toImage({ url: 'https://capture.invalid/report'
 | `async` | `boolean` | No | — |
 | `storage` | `boolean` | No | — |
 
-V2 POST defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `url.toImageV1` exposes v1 POST, and `url.toImageQuickV1` exposes v1 GET. See https://cloudlayer.io/docs/url-to-image/.
+V2 POST returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `url.toImageV1` exposes v1 POST, and `url.toImageQuickV1` exposes v1 GET as base64-encoded binary artifacts. See https://cloudlayer.io/docs/url-to-image/.
 
 <AccordionGroup>
 <Accordion title="authentication full type">
@@ -1705,7 +1705,7 @@ The v1 POST response is binary and is returned as a base64-encoded `BinaryArtifa
 
 `url.toPdf`
 
-Capture a live web page (or a batch of URLs) as a PDF; async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/
+Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/
 
 **Risk:** `write`
 
@@ -1746,7 +1746,7 @@ await corsair.cloudlayer.api.url.toPdf({ url: 'https://capture.invalid/report' }
 | `async` | `boolean` | No | — |
 | `storage` | `boolean` | No | — |
 
-V2 POST defaults to a JSON job; set `async: false` for a base64-encoded `BinaryArtifact`. `url.toPdfV1` exposes the documented v1 POST route. See https://cloudlayer.io/docs/url-to-pdf/.
+V2 POST returns a JSON job; `async: false` waits for completion and returns the completed JSON job per the API overview. `url.toPdfV1` exposes the v1 POST route as a base64-encoded `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
 
 <AccordionGroup>
 <Accordion title="authentication full type">

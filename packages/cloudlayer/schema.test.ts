@@ -486,7 +486,7 @@ describe('Cloudlayer endpoint schemas', () => {
 		['url.toImage', CloudlayerEndpointInputSchemas['url.toImage']],
 		['template.toPdf', CloudlayerEndpointInputSchemas['template.toPdf']],
 		['template.toImage', CloudlayerEndpointInputSchemas['template.toImage']],
-	] as const)('validates binary async:false mode for %s', (name, schema) => {
+	] as const)('validates async:false input mode for %s', (name, schema) => {
 		expect(
 			schema.safeParse({ ...inputFixtures[name], async: false }).success,
 		).toBe(true);

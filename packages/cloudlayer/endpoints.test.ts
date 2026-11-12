@@ -21,13 +21,13 @@ jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
 	return {
 		...actual,
-		makeCloudlayerBinaryRequest: jest.fn(),
+		makeCloudlayerSyncRequest: jest.fn(),
 		makeCloudlayerRequest: jest.fn(),
 	};
 });
 
 const mockedRequest = jest.mocked(client.makeCloudlayerRequest);
-const mockedBinaryRequest = jest.mocked(client.makeCloudlayerBinaryRequest);
+const mockedSyncRequest = jest.mocked(client.makeCloudlayerSyncRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
 type Ctx = Parameters<typeof Html.toPdf>[0];
 
@@ -112,7 +112,7 @@ function expectSafeLog(eventName: string, payload: object): void {
 
 beforeEach(() => {
 	mockedRequest.mockReset();
-	mockedBinaryRequest.mockReset();
+	mockedSyncRequest.mockReset();
 	mockedLogEvent.mockReset();
 });
 
@@ -138,14 +138,14 @@ describe('Cloudlayer endpoints', () => {
 		);
 	});
 
-	it('html.toPdf returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+	it('html.toPdf returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = { html: 'cHJpdmF0ZS1kb2N1bWVudA==', async: false };
 
 		const result = await Html.toPdf(ctx, input);
 
-		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/html/pdf', ctx.key, {
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/html/pdf', ctx.key, {
 			method: 'POST',
 			body: input,
 		});
@@ -154,13 +154,13 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('html.toPdfV1 returns a base64 artifact from the v1 route', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+		mockedSyncRequest.mockResolvedValue(binaryArtifact);
 		const input = { html: 'cHJpdmF0ZS1kb2N1bWVudA==' };
 
 		const result = await Html.toPdfV1(ctx, input);
 
 		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/html/pdf', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/html/pdf', ctx.key, {
 			method: 'POST',
 			apiVersion: 'v1',
 			body: input,
@@ -189,14 +189,14 @@ describe('Cloudlayer endpoints', () => {
 		);
 	});
 
-	it('html.toImage returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+	it('html.toImage returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = { html: 'cHJpdmF0ZS1pbWFnZQ==', async: false };
 
 		const result = await Html.toImage(ctx, input);
 
-		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/html/image', ctx.key, {
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/html/image', ctx.key, {
 			method: 'POST',
 			body: input,
 		});
@@ -205,7 +205,7 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('html.toImageV1 returns a base64 artifact from the v1 route', async () => {
-		mockedBinaryRequest.mockResolvedValue({
+		mockedSyncRequest.mockResolvedValue({
 			...binaryArtifact,
 			contentType: 'image/png',
 		});
@@ -214,7 +214,7 @@ describe('Cloudlayer endpoints', () => {
 		const result = await Html.toImageV1(ctx, input);
 
 		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/html/image', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/html/image', ctx.key, {
 			method: 'POST',
 			apiVersion: 'v1',
 			body: input,
@@ -246,8 +246,8 @@ describe('Cloudlayer endpoints', () => {
 		);
 	});
 
-	it('url.toPdf returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+	it('url.toPdf returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = {
 			url: 'https://private.invalid/report',
 			format: 'a4' as const,
@@ -256,8 +256,8 @@ describe('Cloudlayer endpoints', () => {
 
 		const result = await Url.toPdf(ctx, input);
 
-		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
 			method: 'POST',
 			body: input,
 		});
@@ -266,13 +266,13 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('url.toPdfV1 returns a base64 artifact from the v1 POST route', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+		mockedSyncRequest.mockResolvedValue(binaryArtifact);
 		const input = { url: 'https://private.invalid/report' };
 
 		const result = await Url.toPdfV1(ctx, input);
 
 		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
 			method: 'POST',
 			apiVersion: 'v1',
 			body: input,
@@ -302,13 +302,13 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('url.toPdfQuickV1 returns a base64 artifact from the v1 GET route', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+		mockedSyncRequest.mockResolvedValue(binaryArtifact);
 		const input = { url: 'https://capture.invalid/report', timeout: 5000 };
 
 		const result = await Url.toPdfQuickV1(ctx, input);
 
 		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/pdf', ctx.key, {
 			method: 'GET',
 			apiVersion: 'v1',
 			query: input,
@@ -338,11 +338,8 @@ describe('Cloudlayer endpoints', () => {
 		expectSafeLog('cloudlayer.url.toImage', { count: 1 });
 	});
 
-	it('url.toImage returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue({
-			...binaryArtifact,
-			contentType: 'image/png',
-		});
+	it('url.toImage returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = {
 			url: 'https://private.invalid/image',
 			imageType: 'png' as const,
@@ -351,8 +348,8 @@ describe('Cloudlayer endpoints', () => {
 
 		const result = await Url.toImage(ctx, input);
 
-		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
 			method: 'POST',
 			body: input,
 		});
@@ -361,7 +358,7 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('url.toImageV1 returns a base64 artifact from the v1 POST route', async () => {
-		mockedBinaryRequest.mockResolvedValue({
+		mockedSyncRequest.mockResolvedValue({
 			...binaryArtifact,
 			contentType: 'image/png',
 		});
@@ -370,7 +367,7 @@ describe('Cloudlayer endpoints', () => {
 		const result = await Url.toImageV1(ctx, input);
 
 		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
 			method: 'POST',
 			apiVersion: 'v1',
 			body: input,
@@ -379,7 +376,7 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('url.toImageQuickV1 returns a base64 artifact from the v1 GET route', async () => {
-		mockedBinaryRequest.mockResolvedValue({
+		mockedSyncRequest.mockResolvedValue({
 			...binaryArtifact,
 			contentType: 'image/png',
 		});
@@ -388,7 +385,7 @@ describe('Cloudlayer endpoints', () => {
 		const result = await Url.toImageQuickV1(ctx, input);
 
 		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
+		expect(mockedSyncRequest).toHaveBeenCalledWith('/url/image', ctx.key, {
 			method: 'GET',
 			apiVersion: 'v1',
 			query: input,
@@ -454,14 +451,14 @@ describe('Cloudlayer endpoints', () => {
 		expectSafeLog('cloudlayer.template.toPdf', { count: 1 });
 	});
 
-	it('template.toPdf returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+	it('template.toPdf returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = { templateId: 'invoice-template', async: false };
 
 		const result = await Template.toPdf(ctx, input);
 
-		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith(
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith(
 			'/template/pdf',
 			'unit-test-api-key',
 			{ method: 'POST', body: input },
@@ -471,13 +468,13 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('template.toPdfV1 returns a base64 artifact from the v1 route', async () => {
-		mockedBinaryRequest.mockResolvedValue(binaryArtifact);
+		mockedSyncRequest.mockResolvedValue(binaryArtifact);
 		const input = { templateId: 'invoice-template', data: { number: 'INV-6' } };
 
 		const result = await Template.toPdfV1(ctx, input);
 
 		expect(result).toEqual(binaryArtifact);
-		expect(mockedBinaryRequest).toHaveBeenCalledWith(
+		expect(mockedSyncRequest).toHaveBeenCalledWith(
 			'/template/pdf',
 			'unit-test-api-key',
 			{ method: 'POST', apiVersion: 'v1', body: input },
@@ -523,11 +520,8 @@ describe('Cloudlayer endpoints', () => {
 		expectSafeLog('cloudlayer.template.toImage', { count: 1 });
 	});
 
-	it('template.toImage returns base64 bytes for the documented async:false mode', async () => {
-		mockedBinaryRequest.mockResolvedValue({
-			...binaryArtifact,
-			contentType: 'image/png',
-		});
+	it('template.toImage returns the completed JSON job for the documented async:false mode', async () => {
+		mockedSyncRequest.mockResolvedValue({ ...job, status: 'success' });
 		const input = {
 			templateId: 'invoice-template',
 			imageType: 'png' as const,
@@ -536,8 +530,8 @@ describe('Cloudlayer endpoints', () => {
 
 		const result = await Template.toImage(ctx, input);
 
-		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith(
+		expect(result).toEqual({ ...job, status: 'success' });
+		expect(mockedSyncRequest).toHaveBeenCalledWith(
 			'/template/image',
 			'unit-test-api-key',
 			{ method: 'POST', body: input },
@@ -547,7 +541,7 @@ describe('Cloudlayer endpoints', () => {
 	});
 
 	it('template.toImageV1 returns a base64 artifact from the v1 route', async () => {
-		mockedBinaryRequest.mockResolvedValue({
+		mockedSyncRequest.mockResolvedValue({
 			...binaryArtifact,
 			contentType: 'image/png',
 		});
@@ -556,7 +550,7 @@ describe('Cloudlayer endpoints', () => {
 		const result = await Template.toImageV1(ctx, input);
 
 		expect(result).toEqual({ ...binaryArtifact, contentType: 'image/png' });
-		expect(mockedBinaryRequest).toHaveBeenCalledWith(
+		expect(mockedSyncRequest).toHaveBeenCalledWith(
 			'/template/image',
 			'unit-test-api-key',
 			{ method: 'POST', apiVersion: 'v1', body: input },

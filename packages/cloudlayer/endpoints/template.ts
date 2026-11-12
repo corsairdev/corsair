@@ -1,13 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudlayerEndpoints } from '..';
-import { makeCloudlayerBinaryRequest, makeCloudlayerRequest } from '../client';
+import { makeCloudlayerRequest, makeCloudlayerSyncRequest } from '../client';
 import type { TemplateToImageOutput, TemplateToPdfOutput } from './types';
 import {
 	CloudlayerEndpointInputSchemas,
 	CloudlayerEndpointOutputSchemas,
 } from './types';
 
-// https://cloudlayer.io/docs/template-to-pdf/ — POST /v2/template/pdf
+// https://cloudlayer.io/docs/template-to-pdf/ — POST /v2/template/pdf; async:false is JSON
 export const templateToPdf: CloudlayerEndpoints['template']['toPdf'] = async (
 	ctx,
 	input,
@@ -29,7 +29,7 @@ export const templateToPdf: CloudlayerEndpoints['template']['toPdf'] = async (
 					},
 				)
 			: 'async' in parsedInput && parsedInput.async === false
-				? await makeCloudlayerBinaryRequest('/template/pdf', ctx.key, {
+				? await makeCloudlayerSyncRequest('/template/pdf', ctx.key, {
 						method: 'POST',
 						body: parsedInput,
 					})
@@ -59,15 +59,11 @@ export const templateToPdfV1: CloudlayerEndpoints['template']['toPdfV1'] =
 	async (ctx, input) => {
 		const parsedInput =
 			CloudlayerEndpointInputSchemas['template.toPdfV1'].parse(input);
-		const response = await makeCloudlayerBinaryRequest(
-			'/template/pdf',
-			ctx.key,
-			{
-				method: 'POST',
-				apiVersion: 'v1',
-				body: parsedInput,
-			},
-		);
+		const response = await makeCloudlayerSyncRequest('/template/pdf', ctx.key, {
+			method: 'POST',
+			apiVersion: 'v1',
+			body: parsedInput,
+		});
 		const parsed =
 			CloudlayerEndpointOutputSchemas['template.toPdfV1'].parse(response);
 
@@ -80,7 +76,7 @@ export const templateToPdfV1: CloudlayerEndpoints['template']['toPdfV1'] =
 		return parsed;
 	};
 
-// https://cloudlayer.io/docs/template-to-image/ — POST /v2/template/image
+// https://cloudlayer.io/docs/template-to-image/ — POST /v2/template/image; async:false is JSON
 export const templateToImage: CloudlayerEndpoints['template']['toImage'] =
 	async (ctx, input) => {
 		const parsedInput =
@@ -100,7 +96,7 @@ export const templateToImage: CloudlayerEndpoints['template']['toImage'] =
 						},
 					)
 				: 'async' in parsedInput && parsedInput.async === false
-					? await makeCloudlayerBinaryRequest('/template/image', ctx.key, {
+					? await makeCloudlayerSyncRequest('/template/image', ctx.key, {
 							method: 'POST',
 							body: parsedInput,
 						})
@@ -130,7 +126,7 @@ export const templateToImageV1: CloudlayerEndpoints['template']['toImageV1'] =
 	async (ctx, input) => {
 		const parsedInput =
 			CloudlayerEndpointInputSchemas['template.toImageV1'].parse(input);
-		const response = await makeCloudlayerBinaryRequest(
+		const response = await makeCloudlayerSyncRequest(
 			'/template/image',
 			ctx.key,
 			{ method: 'POST', apiVersion: 'v1', body: parsedInput },

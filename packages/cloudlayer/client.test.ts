@@ -4,8 +4,9 @@ import {
 	CLOUDLAYER_API_BASE,
 	CLOUDLAYER_API_KEY_HEADER,
 	CLOUDLAYER_API_V1_BASE,
-	makeCloudlayerBinaryRequest,
+	CLOUDLAYER_SYNC_TIMEOUT_MS,
 	makeCloudlayerRequest,
+	makeCloudlayerSyncRequest,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -50,6 +51,9 @@ describe('makeCloudlayerRequest', () => {
 		});
 
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
+		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
+			rateLimitConfig: { enabled: false, maxRetries: 0 },
+		});
 		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: CLOUDLAYER_API_BASE,
 			HEADERS: {
@@ -137,22 +141,48 @@ describe('makeCloudlayerRequest', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
-		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 3000 });
+		).resolves.toEqual({ maxRetries: 2, headersRetryAfterMs: 3000 });
 	});
 
-	it('returns synchronous v2 file bytes as a base64 artifact', async () => {
+	it('uses the bounded sync timeout and parses the documented v2 job response', async () => {
+		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(Response.json({ id: 'job-1', status: 'success' }));
+
+		const result = await makeCloudlayerSyncRequest(
+			'/html/pdf',
+			'unit-test-key',
+			{
+				method: 'POST',
+				body: { html: 'encoded-html', async: false },
+				apiVersion: 'v2',
+			},
+		);
+
+		expect(result).toEqual({ id: 'job-1', status: 'success' });
+		expect(timeoutSpy).toHaveBeenCalledWith(CLOUDLAYER_SYNC_TIMEOUT_MS);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+			'https://api.cloudlayer.io/v2/html/pdf',
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('returns v1 file bytes as a base64 artifact', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(new Uint8Array([0x25, 0x50, 0x44, 0x46]), {
 				headers: { 'Content-Type': 'application/pdf' },
 			}),
 		);
 
-		const result = await makeCloudlayerBinaryRequest(
+		const result = await makeCloudlayerSyncRequest(
 			'/html/pdf',
 			'unit-test-key',
 			{
 				method: 'POST',
-				body: { html: 'encoded-html', async: false },
+				apiVersion: 'v1',
+				body: { html: 'encoded-html' },
 			},
 		);
 
@@ -163,7 +193,7 @@ describe('makeCloudlayerRequest', () => {
 		});
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
-			'https://api.cloudlayer.io/v2/html/pdf',
+			'https://api.cloudlayer.io/v1/html/pdf',
 		);
 		expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({
 			method: 'POST',
@@ -171,10 +201,69 @@ describe('makeCloudlayerRequest', () => {
 				'Content-Type': 'application/json',
 				'X-API-Key': 'unit-test-key',
 			},
-			body: '{"html":"encoded-html","async":false}',
+			body: '{"html":"encoded-html"}',
 			credentials: 'omit',
 		});
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('adapts a raw v2 response as a binary artifact if the provider returns one', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(new Uint8Array([0x25, 0x50, 0x44, 0x46]), {
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+
+		await expect(
+			makeCloudlayerSyncRequest('/html/pdf', 'unit-test-key', {
+				method: 'POST',
+				apiVersion: 'v2',
+				body: { html: 'encoded-html', async: false },
+			}),
+		).resolves.toEqual({
+			kind: 'binary',
+			contentType: 'application/pdf',
+			base64: 'JVBERg==',
+		});
+	});
+
+	it('preserves safe JSON provider errors without echoing request data or keys', async () => {
+		const apiKey = 'unit-test-private-key';
+		const html = 'private-document-marker';
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
+		const consoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			Response.json(
+				{
+					statusCode: 400,
+					message: `Invalid HTML ${html}; key ${apiKey}`,
+					input: { html },
+				},
+				{ status: 400, statusText: 'Bad Request' },
+			),
+		);
+
+		const error = await makeCloudlayerSyncRequest('/html/pdf', apiKey, {
+			method: 'POST',
+			body: { html, async: false },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected sync request to throw ApiError');
+		}
+		expect(error.message).toBe('Invalid HTML [REDACTED]; key [REDACTED]');
+		expect(error.body).toEqual({
+			statusCode: 400,
+			message: 'Invalid HTML [REDACTED]; key [REDACTED]',
+		});
+		expect(JSON.stringify(error.body)).not.toContain(html);
+		expect(JSON.stringify(error.body)).not.toContain(apiKey);
+		expect(error.request).toEqual({ method: 'POST', url: '/html/pdf' });
+		expect(consoleError).not.toHaveBeenCalled();
+		expect(consoleLog).not.toHaveBeenCalled();
 	});
 
 	it('uses the v1 URL route and preserves retry-after on binary errors', async () => {
@@ -188,7 +277,7 @@ describe('makeCloudlayerRequest', () => {
 		const url = 'https://capture.invalid/report?view=full';
 
 		// Fetch rejections are untyped at runtime; narrow to ApiError below.
-		const error = await makeCloudlayerBinaryRequest(
+		const error = await makeCloudlayerSyncRequest(
 			'/url/image',
 			'unit-test-key',
 			{
@@ -199,15 +288,16 @@ describe('makeCloudlayerRequest', () => {
 		).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		if (!(error instanceof ApiError)) {
-			throw new Error('Expected binary request to throw ApiError');
+			throw new Error('Expected sync request to throw ApiError');
 		}
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);
+		expect(error.body).toBeUndefined();
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({
-			maxRetries: 5,
+			maxRetries: 2,
 			headersRetryAfterMs: 2000,
 		});
 

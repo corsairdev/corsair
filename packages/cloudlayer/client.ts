@@ -1,6 +1,12 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { BinaryArtifact, GenerationJob } from './endpoints/types';
+import { GenerationJobSchema } from './endpoints/types';
 
 export class CloudlayerAPIError extends Error {
 	constructor(
@@ -14,9 +20,10 @@ export class CloudlayerAPIError extends Error {
 
 /**
  * cloudlayer.io serves resources from versioned base URLs. V2 generation
- * defaults to JSON job responses; synchronous v1 and v2 responses use the
- * plugin-local binary transport so raw bytes are returned as base64 artifacts.
- * Documented at https://cloudlayer.io/docs/api-overview/ ("Base URL").
+ * returns JSON job responses, including completed jobs for `async: false`;
+ * v1 generation routes return raw files. The sync transport also accepts raw
+ * v2 file responses because the provider's endpoint pages conflict with its
+ * API overview on that detail. See https://cloudlayer.io/docs/api-overview/.
  */
 export const CLOUDLAYER_API_BASE = 'https://api.cloudlayer.io/v2';
 
@@ -30,11 +37,18 @@ export const CLOUDLAYER_API_V1_BASE = 'https://api.cloudlayer.io/v1';
  */
 export const CLOUDLAYER_API_KEY_HEADER = 'X-API-Key';
 
-type CloudlayerBinaryRequestOptions = {
-	method: 'GET' | 'POST';
-	body?: object;
-	query?: Record<string, string | number | boolean | undefined>;
-	apiVersion?: 'v1' | 'v2';
+/** Bound long-running v1 and synchronous v2 renders without hanging forever. */
+export const CLOUDLAYER_SYNC_TIMEOUT_MS = 120_000;
+
+// Let Corsair's endpoint error handler own 429 retries for every transport.
+// Otherwise the shared HTTP transport retries three times inside each of the
+// endpoint handler's retries, multiplying requests against Cloudlayer's limit.
+const CLOUDLAYER_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {},
 };
 
 function parseRetryAfterMs(value: string | null): number | undefined {
@@ -45,16 +59,92 @@ function parseRetryAfterMs(value: string | null): number | undefined {
 	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function collectRequestStrings(value: unknown, strings: Set<string>): void {
+	if (typeof value === 'string') {
+		if (value.length >= 8) strings.add(value);
+		return;
+	}
+	if (Array.isArray(value)) {
+		for (const item of value) collectRequestStrings(item, strings);
+		return;
+	}
+	if (isRecord(value)) {
+		for (const item of Object.values(value))
+			collectRequestStrings(item, strings);
+	}
+}
+
+function sanitizeProviderMessage(
+	message: string,
+	apiKey: string,
+	options: CloudlayerSyncRequestOptions,
+): string {
+	const privateValues = new Set<string>();
+	if (apiKey.length >= 4) privateValues.add(apiKey);
+	collectRequestStrings(options.body, privateValues);
+	collectRequestStrings(options.query, privateValues);
+
+	return [...privateValues]
+		.sort((left, right) => right.length - left.length)
+		.reduce(
+			(safeMessage, value) => safeMessage.split(value).join('[REDACTED]'),
+			message,
+		);
+}
+
+async function readProviderError(
+	response: Response,
+	apiKey: string,
+	options: CloudlayerSyncRequestOptions,
+): Promise<{ body?: Record<string, unknown>; message?: string }> {
+	let parsed: unknown;
+	try {
+		parsed = await response.json();
+	} catch {
+		return {};
+	}
+	if (!isRecord(parsed)) return {};
+
+	const messageValue = [parsed.message, parsed.error, parsed.detail].find(
+		(value): value is string => typeof value === 'string',
+	);
+	const message =
+		messageValue === undefined
+			? undefined
+			: sanitizeProviderMessage(messageValue, apiKey, options);
+	const body: Record<string, unknown> = {};
+	if (typeof parsed.statusCode === 'number')
+		body.statusCode = parsed.statusCode;
+	if (parsed.status === 'error') body.status = parsed.status;
+	if (message !== undefined) body.message = message;
+
+	return {
+		...(Object.keys(body).length > 0 ? { body } : {}),
+		...(message === undefined ? {} : { message }),
+	};
+}
+
+type CloudlayerSyncRequestOptions = {
+	method: 'GET' | 'POST';
+	body?: object;
+	query?: Record<string, string | number | boolean | undefined>;
+	apiVersion?: 'v1' | 'v2';
+};
+
 /**
- * Fetch a synchronous generation response as bytes. `corsair/http` returns
- * non-JSON responses as text, so this plugin-local path base64-encodes the
- * artifact before it enters the JSON-shaped Corsair operation result.
+ * Fetch a synchronous generation response with a bounded long-render timeout.
+ * V2 JSON responses are validated as completed jobs; v1 raw bytes (and any raw
+ * v2 response) are base64-encoded before entering Corsair's JSON-shaped result.
  */
-export async function makeCloudlayerBinaryRequest(
+export async function makeCloudlayerSyncRequest(
 	endpoint: string,
 	apiKey: string,
-	options: CloudlayerBinaryRequestOptions,
-): Promise<{ kind: 'binary'; contentType: string; base64: string }> {
+	options: CloudlayerSyncRequestOptions,
+): Promise<BinaryArtifact | GenerationJob> {
 	if (apiKey.length === 0) {
 		throw new AuthMissingError('cloudlayer', 'api_key');
 	}
@@ -77,11 +167,12 @@ export async function makeCloudlayerBinaryRequest(
 		},
 		body: options.body === undefined ? undefined : JSON.stringify(options.body),
 		credentials: 'omit',
-		signal: AbortSignal.timeout(20_000),
+		signal: AbortSignal.timeout(CLOUDLAYER_SYNC_TIMEOUT_MS),
 	});
 
 	if (!response.ok) {
 		const retryAfterMs = parseRetryAfterMs(response.headers.get('Retry-After'));
+		const providerError = await readProviderError(response, apiKey, options);
 		throw new ApiError(
 			{ method: options.method, url: endpoint },
 			{
@@ -89,11 +180,23 @@ export async function makeCloudlayerBinaryRequest(
 				ok: false,
 				status: response.status,
 				statusText: response.statusText,
-				body: undefined,
+				body: providerError.body,
 			},
-			response.statusText || `Cloudlayer request failed (${response.status})`,
+			providerError.message ||
+				response.statusText ||
+				`Cloudlayer request failed (${response.status})`,
 			retryAfterMs === undefined ? undefined : { retryAfter: retryAfterMs },
 		);
+	}
+
+	const contentType = response.headers.get('Content-Type') ?? '';
+	if (
+		apiVersion === 'v2' &&
+		(contentType.toLowerCase().includes('application/json') ||
+			contentType.toLowerCase().includes('+json'))
+	) {
+		const body: unknown = await response.json();
+		return GenerationJobSchema.parse(body);
 	}
 
 	const bytes = Buffer.from(await response.arrayBuffer());
@@ -154,7 +257,9 @@ export async function makeCloudlayerRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: CLOUDLAYER_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			throw error;

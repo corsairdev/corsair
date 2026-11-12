@@ -227,7 +227,7 @@ const cloudlayerEndpointMeta = {
 	'html.toPdf': {
 		riskLevel: 'write',
 		description:
-			'Render base64 HTML to a PDF; returns a job by default or a base64 artifact with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/',
+			'Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/',
 	},
 	'html.toPdfV1': {
 		riskLevel: 'write',
@@ -237,7 +237,7 @@ const cloudlayerEndpointMeta = {
 	'html.toImage': {
 		riskLevel: 'write',
 		description:
-			'Render base64 HTML to a PNG, JPG, WebP or SVG image; returns a job by default or a base64 artifact with async:false. Docs: https://cloudlayer.io/docs/html-to-image/',
+			'Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/',
 	},
 	'html.toImageV1': {
 		riskLevel: 'write',
@@ -247,7 +247,7 @@ const cloudlayerEndpointMeta = {
 	'url.toPdf': {
 		riskLevel: 'write',
 		description:
-			'Capture a live web page (or a batch of URLs) as a PDF; async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/',
+			'Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/',
 	},
 	'url.toPdfV1': {
 		riskLevel: 'write',
@@ -267,7 +267,7 @@ const cloudlayerEndpointMeta = {
 	'url.toImage': {
 		riskLevel: 'write',
 		description:
-			'Screenshot a live web page with full viewport, cookie and auth control; async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/url-to-image/',
+			'Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/',
 	},
 	'url.toImageV1': {
 		riskLevel: 'write',
@@ -287,7 +287,7 @@ const cloudlayerEndpointMeta = {
 	'template.toPdf': {
 		riskLevel: 'write',
 		description:
-			'Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; JSON async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/',
+			'Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/',
 	},
 	'template.toPdfV1': {
 		riskLevel: 'write',
@@ -297,7 +297,7 @@ const cloudlayerEndpointMeta = {
 	'template.toImage': {
 		riskLevel: 'write',
 		description:
-			'Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; JSON async:false returns a base64 artifact. Docs: https://cloudlayer.io/docs/template-to-image/',
+			'Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/',
 	},
 	'template.toImageV1': {
 		riskLevel: 'write',

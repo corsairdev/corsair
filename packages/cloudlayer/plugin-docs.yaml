@@ -1,8 +1,19 @@
 displayName: Cloudlayer
 description: Generate PDFs and images from HTML, URLs, and templates, and manage Cloudlayer jobs, assets, and storage.
 overviewNote: >-
-  V2 generation defaults to JSON job responses; synchronous binary responses
-  are returned as base64 artifacts by a plugin-local transport.
+  V2 generation returns JSON job responses, including a completed job when
+  `async: false`; v1 generation routes return base64 artifacts. Run the Corsair
+  database migration once before passing the connection to `createCorsair`;
+  creating a SQLite file does not create Corsair's tables. Before creating a
+  tenant connect link, mount a Hub delivery handler as described in [Connect /
+  OAuth](/management/connect). Cloudlayer does not prompt for an API key on the
+  first request: connect the tenant through Hub or store its key before making
+  API calls.
+factory:
+  note: >-
+    The generic first-request API-key prompt does not apply to Cloudlayer.
+    Missing keys fail with `AuthMissingError`; connect the tenant through Hub
+    below or store the key with `tenant.cloudlayer.keys.set_api_key(...)` first.
 examples:
   read:
     path: account.get
@@ -70,23 +81,26 @@ apiExamples:
     id: storage-id
 apiNotes:
   html.toPdf: >-
-    V2 defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `html.toPdfV1` exposes the documented v1 binary route.
-    See https://cloudlayer.io/docs/html-to-pdf/.
+    V2 returns a JSON job; `async: false` waits for completion and returns the
+    completed JSON job per the API overview. `html.toPdfV1` exposes the v1 raw
+    binary route as a base64-encoded `BinaryArtifact`. See
+    https://cloudlayer.io/docs/html-to-pdf/.
   html.toPdfV1: >-
     The v1 response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-pdf/.
   html.toImage: >-
-    V2 defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `html.toImageV1` exposes the documented v1 binary route.
-    See https://cloudlayer.io/docs/html-to-image/.
+    V2 returns a JSON job; `async: false` waits for completion and returns the
+    completed JSON job per the API overview. `html.toImageV1` exposes the v1 raw
+    binary route as a base64-encoded `BinaryArtifact`. See
+    https://cloudlayer.io/docs/html-to-image/.
   html.toImageV1: >-
     The v1 response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/html-to-image/.
   url.toPdf: >-
-    V2 POST defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `url.toPdfV1` exposes the documented v1 POST route.
-    See https://cloudlayer.io/docs/url-to-pdf/.
+    V2 POST returns a JSON job; `async: false` waits for completion and returns
+    the completed JSON job per the API overview. `url.toPdfV1` exposes the v1
+    POST route as a base64-encoded `BinaryArtifact`. See
+    https://cloudlayer.io/docs/url-to-pdf/.
   url.toPdfV1: >-
     The v1 POST response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
@@ -98,10 +112,10 @@ apiNotes:
     The v1 GET response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-pdf/.
   url.toImage: >-
-    V2 POST defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `url.toImageV1` exposes v1 POST, and
-    `url.toImageQuickV1` exposes v1 GET. See
-    https://cloudlayer.io/docs/url-to-image/.
+    V2 POST returns a JSON job; `async: false` waits for completion and returns
+    the completed JSON job per the API overview. `url.toImageV1` exposes v1
+    POST, and `url.toImageQuickV1` exposes v1 GET as base64-encoded binary
+    artifacts. See https://cloudlayer.io/docs/url-to-image/.
   url.toImageV1: >-
     The v1 POST response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-image/.
@@ -113,22 +127,24 @@ apiNotes:
     The v1 GET response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/url-to-image/.
   template.toPdf: >-
-    V2 defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `template.toPdfV1` exposes the v1 JSON route as a binary
-    artifact. Multipart input is supported in v2 job mode with `{ template:
-    Blob, data: object }`; only the documented `template` and `data` parts are
-    sent, so the multipart `async: false` mode is not represented. See
+    V2 returns a JSON job; `async: false` waits for completion and returns the
+    completed JSON job per the API overview. `template.toPdfV1` exposes the v1
+    route as a base64-encoded binary artifact. Multipart input uses
+    `{ template: Blob, data: object }`; `template` must be a `Blob` and `data`
+    is a JSON object. Multipart requests remain in v2 job mode; only the
+    documented `template` and `data` parts are sent. See
     https://cloudlayer.io/docs/template-to-pdf/.
   template.toPdfV1: >-
     The v1 response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/template-to-pdf/.
   template.toImage: >-
-    V2 defaults to a JSON job; set `async: false` for a base64-encoded
-    `BinaryArtifact`. `template.toImageV1` exposes the v1 JSON route as a
-    binary artifact. Multipart input is supported in v2 job mode with
-    `{ template: Blob, data: object }`; only the documented `template` and
-    `data` parts are sent, so the multipart `async: false` mode is not
-    represented. See https://cloudlayer.io/docs/template-to-image/.
+    V2 returns a JSON job; `async: false` waits for completion and returns the
+    completed JSON job per the API overview. `template.toImageV1` exposes the
+    v1 route as a base64-encoded binary artifact. Multipart input uses
+    `{ template: Blob, data: object }`; `template` must be a `Blob` and `data`
+    is a JSON object. Multipart requests remain in v2 job mode; only the
+    documented `template` and `data` parts are sent. See
+    https://cloudlayer.io/docs/template-to-image/.
   template.toImageV1: >-
     The v1 response is binary and is returned as a base64-encoded
     `BinaryArtifact`. See https://cloudlayer.io/docs/template-to-image/.

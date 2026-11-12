@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudlayerEndpoints } from '..';
-import { makeCloudlayerBinaryRequest, makeCloudlayerRequest } from '../client';
+import { makeCloudlayerRequest, makeCloudlayerSyncRequest } from '../client';
 import type {
 	UrlToImageOutput,
 	UrlToImageQuickOutput,
@@ -12,7 +12,7 @@ import {
 	CloudlayerEndpointOutputSchemas,
 } from './types';
 
-// https://cloudlayer.io/docs/url-to-pdf/ — POST /v2/url/pdf
+// https://cloudlayer.io/docs/url-to-pdf/ — POST /v2/url/pdf; async:false is JSON
 export const urlToPdf: CloudlayerEndpoints['url']['toPdf'] = async (
 	ctx,
 	input,
@@ -21,7 +21,7 @@ export const urlToPdf: CloudlayerEndpoints['url']['toPdf'] = async (
 
 	const response =
 		parsedInput.async === false
-			? await makeCloudlayerBinaryRequest('/url/pdf', ctx.key, {
+			? await makeCloudlayerSyncRequest('/url/pdf', ctx.key, {
 					method: 'POST',
 					body: parsedInput,
 				})
@@ -51,7 +51,7 @@ export const urlToPdfV1: CloudlayerEndpoints['url']['toPdfV1'] = async (
 ) => {
 	const parsedInput =
 		CloudlayerEndpointInputSchemas['url.toPdfV1'].parse(input);
-	const response = await makeCloudlayerBinaryRequest('/url/pdf', ctx.key, {
+	const response = await makeCloudlayerSyncRequest('/url/pdf', ctx.key, {
 		method: 'POST',
 		apiVersion: 'v1',
 		body: parsedInput,
@@ -102,7 +102,7 @@ export const urlToPdfQuickV1: CloudlayerEndpoints['url']['toPdfQuickV1'] =
 	async (ctx, input) => {
 		const parsedInput =
 			CloudlayerEndpointInputSchemas['url.toPdfQuickV1'].parse(input);
-		const response = await makeCloudlayerBinaryRequest('/url/pdf', ctx.key, {
+		const response = await makeCloudlayerSyncRequest('/url/pdf', ctx.key, {
 			method: 'GET',
 			apiVersion: 'v1',
 			query: { url: parsedInput.url, timeout: parsedInput.timeout },
@@ -119,7 +119,7 @@ export const urlToPdfQuickV1: CloudlayerEndpoints['url']['toPdfQuickV1'] =
 		return parsed;
 	};
 
-// https://cloudlayer.io/docs/url-to-image/ — POST /v2/url/image
+// https://cloudlayer.io/docs/url-to-image/ — POST /v2/url/image; async:false is JSON
 export const urlToImage: CloudlayerEndpoints['url']['toImage'] = async (
 	ctx,
 	input,
@@ -129,7 +129,7 @@ export const urlToImage: CloudlayerEndpoints['url']['toImage'] = async (
 
 	const response =
 		parsedInput.async === false
-			? await makeCloudlayerBinaryRequest('/url/image', ctx.key, {
+			? await makeCloudlayerSyncRequest('/url/image', ctx.key, {
 					method: 'POST',
 					body: parsedInput,
 				})
@@ -157,7 +157,7 @@ export const urlToImageV1: CloudlayerEndpoints['url']['toImageV1'] = async (
 ) => {
 	const parsedInput =
 		CloudlayerEndpointInputSchemas['url.toImageV1'].parse(input);
-	const response = await makeCloudlayerBinaryRequest('/url/image', ctx.key, {
+	const response = await makeCloudlayerSyncRequest('/url/image', ctx.key, {
 		method: 'POST',
 		apiVersion: 'v1',
 		body: parsedInput,
@@ -207,7 +207,7 @@ export const urlToImageQuickV1: CloudlayerEndpoints['url']['toImageQuickV1'] =
 	async (ctx, input) => {
 		const parsedInput =
 			CloudlayerEndpointInputSchemas['url.toImageQuickV1'].parse(input);
-		const response = await makeCloudlayerBinaryRequest('/url/image', ctx.key, {
+		const response = await makeCloudlayerSyncRequest('/url/image', ctx.key, {
 			method: 'GET',
 			apiVersion: 'v1',
 			query: { url: parsedInput.url, timeout: parsedInput.timeout },
