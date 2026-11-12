@@ -1,9 +1,8 @@
 ---
-title: API
+title: "Referral Rock API reference"
+sidebarTitle: "API"
 description: "API reference for Referral Rock: every `referralrock.api.*` operation with input and output types."
 ---
-
-Every `referralrock.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -425,8 +424,8 @@ await corsair.referralrock.api.referrals.list({ status: 'Qualified', count: 50 }
 | `date_to` | `string` | No | Only records created before this date. |
 | `program_id` | `string` | No | — |
 | `member_id` | `string` | No | — |
-| `status` | `string` | No | The referral status, such as `Pending`, `Approved`, `Qualified` or `Denied`. |
-| `sort` | `Create_Dt_Desc \| Create_Dt_Asc \| Referral_Status_Desc \| Referral_Status_Asc \| Referral_Amount_Desc \| Referral_Amount_Asc` | No | — |
+| `status` | `string` | No | The referral status: `pending`, `qualified`, `approved` or `denied`. |
+| `sort` | `Create_Dt_Desc \| Create_Dt_Asc \| Amount_Desc \| Amount_Asc \| Qualified_Dt_Desc \| Qualified_Dt_Asc \| Closed_Dt_Desc \| Closed_Dt_Asc` | No | — |
 
 
 
@@ -508,7 +507,7 @@ await corsair.referralrock.api.referrals.list({ status: 'Qualified', count: 50 }
 
 `rewards.create`
 
-Issue a reward to a member for an optional referral, with its amount and payout type
+Create a pending reward for a member or for a referred person, with its amount and payout
 
 **Risk:** `write`
 
@@ -520,12 +519,12 @@ await corsair.referralrock.api.rewards.create({ member_id: '19548e00-1a17-42e1-b
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `member_id` | `string` | Yes | The member the reward is for. |
+| `member_id` | `string` | No | A member to reward. Give this or `referral_id`, not both. |
+| `referral_id` | `string` | No | A referral (the referred person) to reward. Give this or `member_id`, not both. |
 | `amount` | `number` | Yes | The reward amount. |
-| `payout_id` | `string` | No | The payout type to issue. |
+| `payout_id` | `string` | Yes | The payout the reward is paid through. Referral Rock requires it; payouts exist once a reward rule uses them. |
 | `description` | `string` | No | — |
 | `eligibility_date` | `string` | No | When the reward becomes eligible, as ISO 8601. |
-| `referral_id` | `string` | No | The referral the reward is attributed to. |
 
 Sent as an array of reward infos, each naming its member and optional referral.
 
@@ -536,7 +535,8 @@ Sent as an array of reward infos, each naming its member and optional referral.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reward` | `object \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `status` | `string \| null` | No | The `resultInfo.Status` Referral Rock reported for the reward. |
+| `message` | `string \| null` | No | The `resultInfo.Message`; when `reward` is null it says why nothing was created. |
 
 <AccordionGroup>
 <Accordion title="reward full type">
@@ -605,7 +605,7 @@ await corsair.referralrock.api.rewards.list({ status: 'Issued', count: 50 });
 | `program_id` | `string` | No | — |
 | `member_id` | `string` | No | — |
 | `query` | `string` | No | — |
-| `status` | `string` | No | The reward status, such as `Pending`, `Issued` or `Paid`. |
+| `status` | `string` | No | The reward status: `Pending`, `Processing` or `Issued`. |
 | `sort` | `string` | No | — |
 
 
