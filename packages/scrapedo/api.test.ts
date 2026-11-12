@@ -96,28 +96,30 @@ describeIfKey('live Scrape.do API', () => {
 		// second when this was written, and later sat `queued` with its task
 		// `pending` for 45s+ while the pool was busy. Give it 2 minutes, and fail
 		// with what was actually seen rather than asserting a fast answer.
+		// `queuing`, `queued`, `pending` and `rotating` all mean still running, so
+		// poll until a terminal status rather than until `queued` ends.
+		const terminal = ['success', 'error', 'canceled'];
 		const deadline = Date.now() + 120_000;
 		let status = 'queued';
-		while (Date.now() < deadline && status === 'queued') {
+		while (Date.now() < deadline && !terminal.includes(status)) {
 			const read = await makeScrapeDoRequest(key, {
 				kind: 'async',
 				method: 'GET',
 				path: `/jobs/${started.job_id}`,
 			});
 			status = String(parseJsonObject(read.body).Status);
-			if (status === 'queued') {
+			if (!terminal.includes(status)) {
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 			}
 		}
-		if (status === 'queued') {
-			// Not a plugin failure: the provider accepted the job and never started
+		if (!terminal.includes(status)) {
+			// Not a plugin failure: the provider accepted the job and never finished
 			// it. Saying that plainly beats a bare expect mismatch, which read as a
 			// plugin bug the first time this happened.
 			throw new Error(
-				`Scrape.do queued job ${started.job_id} for 2 minutes without starting it; its async pool was not draining. The plugin sent the job correctly.`,
+				`Scrape.do left job ${started.job_id} \`${status}\` for 2 minutes; its async pool was not draining. The plugin sent the job correctly.`,
 			);
 		}
-		expect(['success', 'error', 'canceled']).toContain(status);
 
 		const taskId = started.task_ids[0];
 		expect(taskId).toBeDefined();
