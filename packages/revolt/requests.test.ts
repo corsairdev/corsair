@@ -10,6 +10,7 @@ import {
 	MESSAGE_LIST,
 	SERVER,
 	SERVER_ID,
+	SERVER_WITH_CHANNELS,
 	USER,
 	USER_ID,
 } from './test-fixtures';
@@ -85,6 +86,7 @@ describe('channels', () => {
 
 		expect(result.channel.name).toBe('general');
 		expect(result.channel.channel_type).toBe('TextChannel');
+		expect(result.channel.default_permissions).toEqual({ a: 0, d: 0 });
 	});
 
 	it('patches a channel name', async () => {
@@ -252,8 +254,23 @@ describe('reactions.add', () => {
 });
 
 describe('servers', () => {
-	it('reads a server with its channels', async () => {
+	it('reads a server with its roles and channel ids', async () => {
 		respond(fetchMock, SERVER);
+
+		const result = (await invoke(Endpoints.serverGet, {
+			server_id: SERVER_ID,
+		})) as Awaited<ReturnType<typeof Endpoints.serverGet>>;
+
+		expect(lastRequest(fetchMock).query).toEqual({});
+		expect(result.server.name).toBe('Acme');
+		expect(result.server.channels).toEqual([CHANNEL_ID]);
+		expect(
+			result.server.roles?.['01F8Z6F7G8H9J0K1L2M3N4P5Q6']?.permissions,
+		).toEqual({ a: 1, d: 0 });
+	});
+
+	it('reads a server with its channels as objects', async () => {
+		respond(fetchMock, SERVER_WITH_CHANNELS);
 
 		const result = (await invoke(Endpoints.serverGet, {
 			server_id: SERVER_ID,
@@ -263,8 +280,7 @@ describe('servers', () => {
 		expect(lastRequest(fetchMock).query).toEqual({
 			include_channels: 'true',
 		});
-		expect(result.server.name).toBe('Acme');
-		expect(result.server.channels).toEqual([CHANNEL_ID]);
+		expect(result.server.channels?.[0]).toMatchObject({ name: 'general' });
 	});
 
 	it('lists the server members with their users', async () => {
@@ -279,6 +295,10 @@ describe('servers', () => {
 			exclude_offline: 'true',
 		});
 		expect(result.members[0]?.nickname).toBe('Sam');
+		expect(result.members[0]?._id).toEqual({
+			server: SERVER_ID,
+			user: USER_ID,
+		});
 		expect(result.users[0]?.username).toBe('sam');
 	});
 });

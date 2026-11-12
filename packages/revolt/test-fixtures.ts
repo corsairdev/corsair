@@ -68,10 +68,9 @@ export const USER = {
 	status: { text: 'Building things', presence: 'Online' },
 };
 
+/** A member's `_id` is the server and user pair, not a string (live, 11-12). */
 export const MEMBER = {
-	_id: `${SERVER_ID}:${USER_ID}`,
-	server: SERVER_ID,
-	user: USER_ID,
+	_id: { server: SERVER_ID, user: USER_ID },
 	nickname: 'Sam',
 	joined_at: '2026-01-01T00:00:00.000Z',
 	roles: [],
@@ -107,15 +106,15 @@ export const MESSAGE_LIST = {
 /** Without `include_users` the same route answers a bare array (live, 11-12). */
 export const MESSAGE_ARRAY = [MESSAGE];
 
+/** A server channel's permissions are allow/deny overrides, not a number. */
 export const CHANNEL = {
 	_id: CHANNEL_ID,
 	channel_type: 'TextChannel',
 	name: 'general',
 	description: 'General chat',
 	server: SERVER_ID,
-	owner: null,
-	recipients: null,
-	default_permissions: 0,
+	default_permissions: { a: 0, d: 0 },
+	role_permissions: { '01F8Z6F7G8H9J0K1L2M3N4P5Q6': { a: 1, d: 0 } },
 	icon: null,
 };
 
@@ -137,13 +136,25 @@ export const SERVER = {
 	description: 'The Acme server',
 	channels: [CHANNEL_ID],
 	categories: [],
-	roles: {},
-	default_permissions: 0,
+	// A role's permissions are allow/deny overrides, like a channel's.
+	roles: {
+		'01F8Z6F7G8H9J0K1L2M3N4P5Q6': {
+			_id: '01F8Z6F7G8H9J0K1L2M3N4P5Q6',
+			name: 'Moderator',
+			permissions: { a: 1, d: 0 },
+			rank: 0,
+		},
+	},
+	default_permissions: 2276038022144,
+	approximate_member_count: 2,
 	icon: null,
 	banner: null,
 	flags: 0,
 	analytics: false,
 	discoverable: true,
 };
+
+/** With `include_channels=true` the channel ids become channel objects. */
+export const SERVER_WITH_CHANNELS = { ...SERVER, channels: [CHANNEL] };
 
 export const MEMBER_LIST = { members: [MEMBER], users: [USER] };

@@ -67,6 +67,17 @@ export const EmbedSchema = z
 	})
 	.loose();
 
+/**
+ * A permission override as Revolt stores it on roles and server channels: `a`
+ * is the allowed bit set and `d` the denied one.
+ */
+export const OverrideFieldSchema = z
+	.object({
+		a: z.number().nullish(),
+		d: z.number().nullish(),
+	})
+	.loose();
+
 /** A server's category, which groups channels and carries their permissions. */
 export const CategorySchema = z
 	.object({
@@ -76,11 +87,12 @@ export const CategorySchema = z
 	})
 	.loose();
 
-/** A server role's permission flag bag. The fields vary by API version. */
+/** A server role. Its permissions are an allow/deny override, not a number. */
 export const RoleSchema = z
 	.object({
+		_id: z.string().nullish(),
 		name: z.string().nullish(),
-		permissions: z.number().nullish(),
+		permissions: OverrideFieldSchema.nullish(),
 		colour: z.string().nullish(),
 		hoist: z.boolean().nullish(),
 		rank: z.number().nullish(),
@@ -149,16 +161,24 @@ export const UserSchema = z
 
 export type RevoltUser = z.infer<typeof UserSchema>;
 
-/** A server member's profile within one server. */
+/**
+ * A server member's profile within one server. Its `_id` is the pair of server
+ * and user ids, not a string.
+ */
 export const MemberSchema = z
 	.object({
-		_id: z.string().nullish(),
-		server: z.string().nullish(),
-		user: z.string().nullish(),
+		_id: z
+			.object({
+				server: z.string().nullish(),
+				user: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
 		nickname: z.string().nullish(),
 		joined_at: z.string().nullish(),
 		roles: z.array(z.string()).nullish(),
 		avatar: FileSchema.nullish(),
+		timeout: z.string().nullish(),
 	})
 	.loose();
 
@@ -216,13 +236,22 @@ const ChannelSchema = z
 		channel_type: z
 			.string()
 			.nullish()
-			.describe('`DirectMessage`, `Group`, `TextChannel` or `VoiceChannel`.'),
+			.describe(
+				'`SavedMessages`, `DirectMessage`, `Group`, `TextChannel` or `VoiceChannel`.',
+			),
 		name: z.string().nullish(),
 		description: z.string().nullish(),
 		server: z.string().nullish(),
 		owner: z.string().nullish(),
 		recipients: z.array(z.string()).nullish(),
-		default_permissions: z.number().nullish(),
+		active: z.boolean().nullish(),
+		last_message_id: z.string().nullish(),
+		// A group carries a permission number; a server channel carries
+		// allow/deny overrides, as defaults and per role.
+		permissions: z.number().nullish(),
+		default_permissions: z.union([z.number(), OverrideFieldSchema]).nullish(),
+		role_permissions: z.record(z.string(), OverrideFieldSchema).nullish(),
+		nsfw: z.boolean().nullish(),
 		icon: FileSchema.nullish(),
 	})
 	.loose();
@@ -250,7 +279,10 @@ const ChannelEditInputSchema = z.object({
 	channel_id: z.string().min(1),
 	name: z.string().optional(),
 	description: z.string().optional(),
-	icon: z.string().optional().describe('An emoji id or a URL.'),
+	icon: z
+		.string()
+		.optional()
+		.describe('An attachment id returned by the Autumn upload service.'),
 });
 
 export type ChannelEditInput = z.input<typeof ChannelEditInputSchema>;
@@ -407,7 +439,10 @@ export type ReactionsAddResponse = z.infer<typeof ReactionsAddResponseSchema>;
 
 const ServerGetInputSchema = z.object({
 	server_id: z.string().min(1),
-	include_channels: z.boolean().optional(),
+	include_channels: z
+		.boolean()
+		.optional()
+		.describe('Return `channels` as channel objects instead of ids.'),
 });
 
 export type ServerGetInput = z.input<typeof ServerGetInputSchema>;
@@ -418,10 +453,13 @@ const ServerSchema = z
 		name: z.string().nullish(),
 		owner: z.string().nullish(),
 		description: z.string().nullish(),
-		channels: z.array(z.string()).nullish(),
+		// Channel ids, or channel objects when `include_channels` is set.
+		channels: z.array(z.union([z.string(), ChannelSchema])).nullish(),
 		categories: z.array(CategorySchema).nullish(),
 		roles: z.record(z.string(), RoleSchema).nullish(),
 		default_permissions: z.number().nullish(),
+		approximate_member_count: z.number().nullish(),
+		nsfw: z.boolean().nullish(),
 		icon: FileSchema.nullish(),
 		banner: FileSchema.nullish(),
 		flags: z.number().nullish(),
