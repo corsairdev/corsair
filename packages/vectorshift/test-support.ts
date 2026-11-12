@@ -12,10 +12,18 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint(testContext, input as never);
 }
 
+// A call with no queued response throws instead of reaching the real API.
+function refuseUnmockedFetch(): never {
+	throw new Error('Unmocked fetch: queue a response with respond() first');
+}
+
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(refuseUnmockedFetch);
 	afterEach(() => {
 		fetchMock.mockReset();
+		fetchMock.mockImplementation(refuseUnmockedFetch);
 	});
 	return fetchMock;
 }

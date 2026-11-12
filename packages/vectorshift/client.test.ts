@@ -24,6 +24,13 @@ import {
 describe('makeVectorshiftRequest', () => {
 	const fetchMock = installFetchMock();
 
+	it('never reaches the network when a test forgets to mock a response', async () => {
+		await expect(
+			makeVectorshiftRequest(API_KEY, { method: 'GET', path: '/pipelines' }),
+		).rejects.toThrow('Unmocked fetch');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it('sends the key as a bearer token against v1', async () => {
 		respond(fetchMock, { status: 'success' });
 
