@@ -87,6 +87,7 @@ export async function runDeployHQOperation<Key extends DeployHQOperationKey>(
 		method: operation.method,
 		query,
 		binary: operationKey === 'invoices.getAccountInvoice',
+		signup: operationKey === 'signup.createSignup',
 		...(operation.bodyKind === 'form'
 			? { formData }
 			: requestBody !== undefined

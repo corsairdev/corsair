@@ -20,12 +20,12 @@ All account requests use `https://<accountSubdomain>.deployhq.com/`. Public rout
 
 - The 216 supported operations below reflect the REST operations in the published OpenAPI document. Every row links to the official operation in that document.
 - Query and body fields follow the operation schema; the plugin does not invent pagination parameters or automatically follow pages.
-- Safe `GET` calls use the shared HTTP transport's bounded retry behavior and honor `Retry-After` when returned. Writes are not automatically retried to avoid duplicating deployments, invitations, credentials, or other side effects. The API guide documents `503` and `Retry-After`.
+- Safe `GET` calls use the shared HTTP transport's bounded retry behavior and honor numeric-seconds `Retry-After` values for `429`/`503`. Writes are not automatically retried to avoid duplicating deployments, invitations, credentials, or other side effects. The invoice downloader also parses HTTP-date `Retry-After`; date-form headers on JSON routes need shared-core support outside this plugin's R1 scope.
 - Invoice downloads preserve non-JSON response bytes as `{ kind: 'binary', contentType, base64, sizeBytes }`; JSON string responses are also accepted because the OpenAPI response schema documents a string. Binary reads have a 20-second per-request timeout and a 10 MiB plugin safety cap (not a DeployHQ limit).
 - Public routes include account signup, password reset, deployment IP ranges, packages/prices, public templates, and status badges.
 - The API reference does not define an inbound webhook contract; this plugin exposes no webhooks.
 - The OpenAPI document has inconsistent path parameter declarations for several routes. The URL template is used as the path source of truth: the build-language routes put `override_build_configuration_id` in the path but describe it as an optional query parameter; `/projects/{id}/insights` declares both `project_id` and `id` as path parameters; `/projects/{project_id}/build_configuration` and `/security/api_keys/{id}` declare extra path parameters absent from their URL templates; and `/templates/{id}/public/{id}` repeats the `id` placeholder. Confirm these conflicts with DeployHQ before relying on the affected operations.
-- The OpenAPI server is account-subdomain based and does not declare a separate host for `POST /api/v1/signup`. Signup currently uses the configured account subdomain; verify the correct target host with DeployHQ before using that operation.
+- Account operations use the configured account subdomain. The official [signup guide](https://www.deployhq.com/support/api/signup) specifies `https://deployhq.com/api/v1/signup`, so account creation is public and does not require an existing permalink.
 - Status-badge routes are documented as returning SVG source. The transport handles non-JSON response content as text and the operation output schema is a string; no binary envelope or byte decoding is used.
 
 ## Official documentation
@@ -33,6 +33,7 @@ All account requests use `https://<accountSubdomain>.deployhq.com/`. Public rout
 - [DeployHQ API guide](https://www.deployhq.com/support/api)
 - [DeployHQ interactive API reference](https://api.deployhq.com/docs)
 - [Official OpenAPI JSON](https://api.deployhq.com/docs.json)
+- [Signup API guide](https://www.deployhq.com/support/api/signup)
 
 ## Operation matrix
 

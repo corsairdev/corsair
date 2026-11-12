@@ -29,6 +29,7 @@ export type DeployHQRequestOptions = {
 	formData?: Record<string, string | boolean>;
 	binary?: boolean;
 	public?: boolean;
+	signup?: boolean;
 };
 
 export class DeployHQAPIError extends Error {
@@ -262,11 +263,10 @@ export async function makeDeployHQRequest(
 	options: DeployHQRequestOptions = {},
 ): Promise<unknown> {
 	const method = options.method ?? 'GET';
-	const accountSubdomain = resolveAccountSubdomain(
-		credentials.accountSubdomain,
-	);
-	const baseUrl = `https://${accountSubdomain}.deployhq.com`;
 	const isPublic = options.public === true;
+	const baseUrl = options.signup
+		? 'https://deployhq.com'
+		: `https://${resolveAccountSubdomain(credentials.accountSubdomain)}.deployhq.com`;
 	let headers: Record<string, string> = {
 		Accept: 'application/json',
 		'Content-Type': 'application/json',

@@ -61,6 +61,32 @@ describe('DeployHQ client', () => {
 		expect(new Headers(call[1]?.headers).has('authorization')).toBe(false);
 	});
 
+	it('creates an account on the documented public signup host without an existing permalink', async () => {
+		mockedFetch.mockResolvedValueOnce(
+			jsonResponse({ account: {}, api_key: 'key' }, 201),
+		);
+		await makeDeployHQRequest(
+			'/api/v1/signup',
+			{},
+			{
+				method: 'POST',
+				body: { email: 'agent@example.com', password: 'secure-test-password' },
+				public: true,
+				signup: true,
+			},
+		);
+		const call = mockedFetch.mock.calls[0];
+		expect(call).toBeDefined();
+		if (!call) return;
+		expect(new URL(String(call[0])).origin).toBe('https://deployhq.com');
+		expect(call[1]?.method).toBe('POST');
+		expect(new Headers(call[1]?.headers).has('authorization')).toBe(false);
+		expect(JSON.parse(String(call[1]?.body))).toEqual({
+			email: 'agent@example.com',
+			password: 'secure-test-password',
+		});
+	});
+
 	it('preserves invoice PDF bytes in a validated base64 envelope', async () => {
 		const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x00, 0xff, 0x80]);
 		mockedFetch.mockResolvedValueOnce(
