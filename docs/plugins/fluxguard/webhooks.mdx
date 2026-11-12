@@ -1,0 +1,181 @@
+---
+title: "Fluxguard webhooks"
+sidebarTitle: "Webhooks"
+description: "Fluxguard incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Fluxguard plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/fluxguard/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `change`
+  - `detected` (`change.detected`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // Read the raw text, not `request.json()`. Fluxguard signs the exact bytes
+    // it sent, and passing the parsed object makes processWebhook rebuild the
+    // body with JSON.stringify, which changes key order and whitespace and
+    // fails verification.
+    const body = await request.text();
+    // With `multiTenancy`, register each tenant's webhook URL with
+    // `?tenantId=<id>` so the delivery is checked against that tenant's secret.
+    // Without it processWebhook uses the `default` tenant.
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    // `result.response` is a plain object, not a Response. No match means no
+    // plugin claimed the delivery, so answer 404 rather than 200.
+    // `success` is false only when the handler threw, which is how a rejected
+    // signature or an unparseable payload surfaces here.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
+}
+```
+
+Three details decide whether a bad delivery is visible:
+
+- **A rejected signature must throw.** `processWebhook` ignores a handler's `statusCode` and answers `{ success: true }` for a returned `success: false`, keeping a failure only when the handler throws. The plugin's handler throws on a bad signature and on an unparseable payload for that reason, so `success` is a reliable failure signal here.
+- **A signature needs the exact body.** Verification is HMAC over `<t>.<raw body>`, so mount the route without a JSON parser in front of it.
+- **Fluxguard documents no retries.** Treat a delivery as sent once: answering 500 keeps the failure visible in your own logs instead of acknowledging a change alert you did not process.
+
+## Events
+
+## Change
+
+### Detected
+
+`change.detected`
+
+A monitored page changed: Fluxguard posts the captured version with references to its HTML, screenshot and diff files
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | URL where the change was detected |
+| `finalUrl` | `string \| null` | No | URL after redirects |
+| `capturedAt` | `string \| null` | No | When the version was captured |
+| `comparisonType` | `string \| null` | No | HTML, visual, text or network |
+| `orgId` | `string \| null` | No | — |
+| `orgName` | `string \| null` | No | — |
+| `title` | `string \| null` | No | Title of the page |
+| `statusCode` | `number \| null` | No | — |
+| `aiFlagged` | `string \| null` | No | warning for a significant change, serenity otherwise |
+| `summary` | `string \| null` | No | AI summary of the captured version |
+| `diffSummary` | `string \| null` | No | AI summary of what changed since the previous version |
+| `diffUrl` | `string \| null` | No | Console URL for this version |
+| `fileBaseUrl` | `string \| null` | No | Prefix to append every filename under files to |
+| `site` | `object \| null` | No | — |
+| `session` | `object \| null` | No | — |
+| `page` | `object \| null` | No | — |
+| `siteCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
+| `pageCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
+| `files` | `Record<string, unknown> \| null` | No | Captured file names, e.g. `{ captures: { html, visual, txt }, diffs: { visual } }` |
+| `alarms` | `Record<string, unknown>[] \| null` | No | Account-defined alarms, each with at least `name` and `value` |
+
+<AccordionGroup>
+<Accordion title="site full type">
+
+```ts
+{
+  id?: string | null,
+  origin?: string | null,
+  nickname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="session full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  id?: string | null,
+  path?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  url?: string | null,
+  finalUrl?: string | null,
+  capturedAt?: string | null,
+  comparisonType?: string | null,
+  orgId?: string | null,
+  orgName?: string | null,
+  title?: string | null,
+  statusCode?: number | null,
+  aiFlagged?: string | null,
+  summary?: string | null,
+  diffSummary?: string | null,
+  diffUrl?: string | null,
+  fileBaseUrl?: string | null,
+  site?: {
+    id?: string | null,
+    origin?: string | null,
+    nickname?: string | null
+  } | null,
+  session?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  page?: {
+    id?: string | null,
+    path?: string | null
+  } | null,
+  siteCategories?: string[] | null,
+  pageCategories?: string[] | null,
+  files?: Record<string, unknown> | null,
+  alarms?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fluxguard({
+    webhookHooks: {
+        change: {
+            detected: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

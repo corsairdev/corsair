@@ -1,0 +1,155 @@
+---
+title: "Shippo plugin"
+sidebarTitle: "Overview"
+description: "Multi-carrier shipping with Shippo - quote rates across carriers, buy and refund labels, track parcels, declare customs and manage pickup paperwork."
+---
+
+Use **Shippo** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Shippo authenticates with a token in an `Authorization: ShippoToken <token>` header — not `Bearer`. Create one at https://goshippo.com/user/apikeys/; a token starting `shippo_test_` acts in test mode, where labels are free and carriers are simulated. Every request this plugin sends also carries `SHIPPO-API-VERSION: 2018-02-08`, so behaviour cannot drift to whatever "latest" means.
+
+Things to know before you ship:
+
+- **Weights and dimensions are strings.** Shippo types `weight`, `length`, `width` and `height` as decimal strings (`"12"`, `"5.5"`), and the plugin keeps them that way. A number is rejected rather than silently coerced.
+- **Async is the default.** `shipments.create` and `transactions.create` return before the work is done unless you pass `async: false`. A shipment created that way has `status: QUEUED` and no `rates`; read them with `shipments.rates`. A transaction without `label_url` is still being bought.
+- **A label purchase spends money.** `transactions.create` charges the account's carrier for the chosen rate, and `batches.purchase` charges once per shipment. Neither is retried on a 5xx, since the carrier may already have applied it. `refunds.create` is the way back, and the carrier can refuse.
+- **`label_url` expires.** Its `Expires` query parameter is a Unix timestamp; re-read the transaction with `transactions.get` rather than reusing an old URL.
+- **Rate limits are per endpoint and per verb, per minute**, and much tighter in test mode — a list request allows 10 a minute in test, 50 in live. A 429 is retried with a 60-second wait, since every window is a minute.
+- **Auth is checked before routing.** An unknown path answers 401, not 404, so a 401 always means the token.
+- **A bad country is silently truncated.** Shippo accepted `country: "USA"` and stored `US`, answering 201, so the two-letter rule is enforced here instead — a typo fails before it reaches an address you then ship to.
+- **Route webhook deliveries per tenant in the URL.** A Shippo delivery carries no account id, so `processWebhook` falls back to the `default` tenant. Put `?tenantId=` on each subscription URL and pass `{ tenantId }` as the fourth argument; read the query from `request.url`, and read the body with `request.text()` rather than `request.json()`.
+- **Webhooks carry the whole object.** The body is `{ event, test, data }`, where `data` is the full track, transaction or batch — not a notification pointing at one.
+- **Webhook security is opt-in, and this plugin verifies HMAC when you configure a secret.** Shippo offers three protections: an inbound IP allowlist, a self-generated `?token=` on the subscription URL, and HMAC. HMAC is arranged with Shippo support (it is not a field on `POST /webhooks`) and they issue a shared secret; set it as `webhookSecret` or store it with `set_webhook_signature`, and the plugin checks `Shippo-Auth-Signature` — SHA-256 over `<timestamp>.<raw body>` — on every delivery, in constant time. With no secret configured, deliveries are accepted unsigned and the handler reports `signatureVerified: false`, so an unchecked delivery is visible rather than implied. Either way the receiving URL must be private, and the raw body must reach `processWebhook` as text for verification to work.
+- **One webhook per label.** Shippo creates a tracking webhook automatically for every label it sells, so `webhooks.list` grows on its own.
+
+**What you get:**
+
+- 57 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/shippo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/shippo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/shippo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/shippo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { shippo } from '@corsair-dev/shippo';
+
+export const corsair = createCorsair({
+	plugins: [
+		shippo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Create a token at [your Shippo API settings page](https://goshippo.com/user/apikeys/) and store it with `set_api_key`, or pass `key` to `shippo()`. A token starting `shippo_test_` acts in test mode, where labels are free and carriers are simulated. A call with no saved key throws `AuthMissingError`, whose `connectUrl` sends the tenant to the connect page.
+
+If Shippo issued you an HMAC secret for webhooks, pass it as `webhookSecret` or store it with `set_webhook_signature`; deliveries are then verified before any hook runs.
+
+```ts
+shippo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'shippo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent shipments**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shippo.api.shipments.list({ results: 10 });
+```
+
+
+**Buy a label from a rate, waiting for the result**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shippo.api.transactions.create({ rate: 'ec9f0d3adc9441449c85d315f0997fd5', async: false });
+```
+
+
+See the full list on the [API](/plugins/shippo/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/shippo/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/shippo/api">
+    Every `shippo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/shippo/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

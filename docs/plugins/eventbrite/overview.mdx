@@ -1,0 +1,176 @@
+---
+title: "Eventbrite plugin"
+sidebarTitle: "Overview"
+description: "Manage events and registrations with Eventbrite - read and edit events, ticket classes, registration questions, orders and attendees, and create venues, discount codes and webhook subscriptions."
+---
+
+Use **Eventbrite** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Eventbrite authenticates with a private token (their UI also calls it a "personal OAuth token") sent as `Authorization: Bearer …`. Create one at https://www.eventbrite.com/platform/api-keys while signed in; a token is issued for a user, and every call acts as that user. The API key and client secret on the same page are only for the OAuth flow that acts on behalf of *other* users, which this plugin does not need.
+
+Almost every call needs an `organization_id`. `organizations.list` reads the organizations the token's user belongs to; a token whose user belongs to none gets an empty list back, and every organization route then answers 404 or 403 for that organization.
+
+Things to know before you write:
+
+- **Ids are strings.** Eventbrite types every id as a string (`"2000937221092"`), and the plugin accepts a number too but always sends and returns the string.
+- **`name` is not the same type everywhere.** `events.create` and `events.update` need `{ html }` for the event name, description and question text; `ticketClasses.create`, `venues.create` and discount `code` take plain strings. The schema enforces each, so the mistake fails before a request is spent. `summary` is always plain text, capped at 140 characters.
+- **`summary` and `description` are mutually exclusive**, as are `listed` with `invite_only` or `password`, and `online_event` with `venue_id`. Eventbrite answers 400 `ARGUMENTS_ERROR` for each; the schemas reject them first.
+- **Writes that need a clean event.** `events.publish` needs a name, an organizer, at least one ticket and valid payment options. `events.delete` and `events.cancel` are refused while any order is pending or completed, and `ticketClasses.delete` is refused once a ticket has sold, or for the last ticket while the event is live.
+- **Expansions.** Event reads take `expand` (`venue`, `organizer`, `category`, `format`, `logo`, `ticket_availability`, …), which inlines related objects instead of making a second call. Each one slows the response slightly.
+- **Paging is a continuation token.** Every list returns `pagination.continuation` with `has_more_items`; pass the token back as `continuation` to walk the list. `page_size` defaults to 50 and Eventbrite caps it at 300 — a larger value is silently answered with 300, which is why the schema rejects anything above 300.
+- **Rate limits are 2,000 calls an hour and 48,000 a day** per token, with `events.create`, `events.copy` and `events.publish` limited to 200 an hour. A 429 carries `HIT_RATE_LIMIT` and no `Retry-After` header, so the plugin retries with a fixed 60-second wait.
+- **A webhook delivery is a notification, not the object.** The POST body holds only `api_url` (where the changed object lives on the v3 API) and `config.action` (what fired). Eventbrite does not sign deliveries and does not allow a custom header on the subscription, so the receiving URL must be private; the plugin exposes the notification, and reading the object back is a normal authenticated call.
+- **Orders and attendees are private.** They need a token whose user is an organizer of the event; a bare private token for a user with no organization gets 403 on those routes. `venues.list` answers 500 for an organization with no venues instead of an empty page.
+
+**What you get:**
+
+- 46 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/eventbrite better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/eventbrite better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/eventbrite better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/eventbrite better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { eventbrite } from '@corsair-dev/eventbrite';
+
+export const corsair = createCorsair({
+	plugins: [
+		eventbrite(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+eventbrite()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'eventbrite',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List an organization's live events**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.eventbrite.api.events.listByOrganization({ organization_id: '154830740213', name_filter: 'Launch' });
+```
+
+
+**Create a draft event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.eventbrite.api.events.create({
+	organization_id: '154830740213',
+	event: {
+		name: { html: 'Product launch night' },
+		start: { timezone: 'America/New_York', utc: '2027-06-01T14:00:00Z' },
+		end: { timezone: 'America/New_York', utc: '2027-06-01T18:00:00Z' },
+		currency: 'USD',
+		listed: false,
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/eventbrite/api) page.
+
+## Webhooks
+
+A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object; the plugin only accepts a delivery whose `api_url` is on eventbriteapi.com, so that read never goes to another host. Eventbrite signs neither the delivery nor a custom header, so a delivery cannot be proven to come from Eventbrite: keep the receiving URL private.
+
+```ts
+eventbrite({
+    webhookHooks: {
+        notifications: {
+            delivery: {
+                after: async (ctx, result) => {
+                    if (result.data?.action === 'order.placed') console.log('order at', result.data.api_url);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/eventbrite/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/eventbrite/api">
+    Every `eventbrite.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/eventbrite/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

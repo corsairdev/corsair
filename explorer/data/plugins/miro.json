@@ -1,0 +1,2376 @@
+{
+  "id": "miro",
+  "displayName": "Miro",
+  "description": "Collaborative whiteboard boards from Miro - create and manage boards, add sticky notes, shapes, cards, text, frames, embeds and connectors, and organise a board with tags and members.",
+  "npmPackageName": "@corsair-dev/miro",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "miro.api.boards.copy",
+      "shortPath": "boards.copy",
+      "description": "Copy an existing board, including its content, into a new board with its own name and team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board to copy."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the copy."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Team to put the copy in."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The board owner."
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The team the board belongs to."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currentUserMembership",
+            "optional": true,
+            "type": "{ role?: string | null } | null"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: string | null, copyAccess?: string | null, sharingAccess?: string | null } | null, sharingPolicy?: { access?: string | null, inviteToAccountAndBoardLinkAccess?: string | null, organizationAccess?: string | null, teamAccess?: string | null } | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Create a board with a name, description and sharing policy, optionally in a given team or project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Board name, up to 60 characters."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Board description, up to 300 characters."
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "The team to create it in."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: all_editors | board_owners_and_coowners, copyAccess?: anyone | team_members | team_editors | board_owner, sharingAccess?: team_members_with_editing_rights | owner_and_coowners }, sharingPolicy?: { access?: private | view | comment | edit, inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor, teamAccess?: private | view | comment | edit } }",
+            "description": "Sharing and permission settings."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The board owner."
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The team the board belongs to."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currentUserMembership",
+            "optional": true,
+            "type": "{ role?: string | null } | null"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: string | null, copyAccess?: string | null, sharingAccess?: string | null } | null, sharingPolicy?: { access?: string | null, inviteToAccountAndBoardLinkAccess?: string | null, organizationAccess?: string | null, teamAccess?: string | null } | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.boards.get",
+      "shortPath": "boards.get",
+      "description": "Read one board: its name, owner, team, project, sharing policy and the membership of the calling user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The board owner."
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The team the board belongs to."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currentUserMembership",
+            "optional": true,
+            "type": "{ role?: string | null } | null"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: string | null, copyAccess?: string | null, sharingAccess?: string | null } | null, sharingPolicy?: { access?: string | null, inviteToAccountAndBoardLinkAccess?: string | null, organizationAccess?: string | null, teamAccess?: string | null } | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List the boards the token can reach, filtered by team, project, owner or name, with offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Only boards in this team."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Only boards in this project."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Only boards whose name contains this text."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string",
+            "description": "Only boards owned by this user id."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "default | last_modified | last_opened | last_created | alphabetically",
+            "description": "Board ordering. Defaults to Miro own order."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 50. Defaults to 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset of the first result. Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, owner?: { id?: string | null, type?: string | null, name?: string | null } | null, team?: { id?: string | null, type?: string | null, name?: string | null } | null, organization?: { id?: string | null, type?: string | null, name?: string | null } | null, projectId?: string | null, viewLink?: string | null, type?: string | null, currentUserMembership?: { role?: string | null } | null, policy?: { permissionsPolicy?: { collaborationToolsStartAccess?: string | null, copyAccess?: string | null, sharingAccess?: string | null } | null, sharingPolicy?: { access?: string | null, inviteToAccountAndBoardLinkAccess?: string | null, organizationAccess?: string | null, teamAccess?: string | null } | null } | null, links?: { self?: string | null } | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows matching the filters, across pages."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this page."
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.boards.remove",
+      "shortPath": "boards.remove",
+      "description": "Delete a board and everything on it; Miro moves it to Trash, where an owner can restore it in the Miro UI for 90 days, but there is no API call to do so",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.boards.update",
+      "shortPath": "boards.update",
+      "description": "Change a board name, description or sharing policy; the policy controls who can view, comment and edit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: all_editors | board_owners_and_coowners, copyAccess?: anyone | team_members | team_editors | board_owner, sharingAccess?: team_members_with_editing_rights | owner_and_coowners }, sharingPolicy?: { access?: private | view | comment | edit, inviteToAccountAndBoardLinkAccess?: no_access | viewer | commenter | editor, teamAccess?: private | view | comment | edit } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedBy",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The board owner."
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null",
+            "description": "The team the board belongs to."
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "viewLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currentUserMembership",
+            "optional": true,
+            "type": "{ role?: string | null } | null"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ permissionsPolicy?: { collaborationToolsStartAccess?: string | null, copyAccess?: string | null, sharingAccess?: string | null } | null, sharingPolicy?: { access?: string | null, inviteToAccountAndBoardLinkAccess?: string | null, organizationAccess?: string | null, teamAccess?: string | null } | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.cards.create",
+      "shortPath": "cards.create",
+      "description": "Add a card with a title, description, due date and assignee, for task boards",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Card title."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 due date, such as 2026-12-01T00:00:00Z."
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string",
+            "description": "User id of the assignee."
+          },
+          {
+            "key": "cardTheme",
+            "optional": true,
+            "type": "string",
+            "description": "Card colour theme."
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, description?: string | null, dueDate?: string | null, assigneeId?: string | null } | null, style?: { cardTheme?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.cards.update",
+      "shortPath": "cards.update",
+      "description": "Change a card title, description, due date, assignee or position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "cardTheme",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, description?: string | null, dueDate?: string | null, assigneeId?: string | null } | null, style?: { cardTheme?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.connectors.create",
+      "shortPath": "connectors.create",
+      "description": "Connect two existing items with an arrow, line style, caps and captions; both endpoints must already exist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "startItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The item the connector starts from."
+          },
+          {
+            "key": "endItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The item the connector points at."
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "straight | elbowed | elbow | curved",
+            "description": "The route the line takes. Defaults to `curved`."
+          },
+          {
+            "key": "strokeColor",
+            "optional": true,
+            "type": "string",
+            "description": "Line colour, such as #4262ff."
+          },
+          {
+            "key": "strokeWidth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "strokeStyle",
+            "optional": true,
+            "type": "normal | dotted | dashed"
+          },
+          {
+            "key": "startStrokeCap",
+            "optional": true,
+            "type": "none | stealth | rounded_stealth | arrow | triangle | filled_triangle"
+          },
+          {
+            "key": "endStrokeCap",
+            "optional": true,
+            "type": "none | stealth | rounded_stealth | arrow | triangle | filled_triangle"
+          },
+          {
+            "key": "captions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Labels shown along the line: up to 20, each up to 200 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, startItem?: { id?: string | null, links?: { self?: string | null } | null } | null, endItem?: { id?: string | null, links?: { self?: string | null } | null } | null, shape?: string | null, style?: { strokeColor?: string | null, strokeWidth?: string | null, strokeStyle?: string | null, startStrokeCap?: string | null, endStrokeCap?: string | null } | null, captions?: { content?: string | null, position?: string | null, textAlignVertical?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.connectors.get",
+      "shortPath": "connectors.get",
+      "description": "Read one connector by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "connectorId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, startItem?: { id?: string | null, links?: { self?: string | null } | null } | null, endItem?: { id?: string | null, links?: { self?: string | null } | null } | null, shape?: string | null, style?: { strokeColor?: string | null, strokeWidth?: string | null, strokeStyle?: string | null, startStrokeCap?: string | null, endStrokeCap?: string | null } | null, captions?: { content?: string | null, position?: string | null, textAlignVertical?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.connectors.list",
+      "shortPath": "connectors.list",
+      "description": "Page through the connectors on a board, with their endpoints and style",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `cursor` from the previous page; omit for the first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectors",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, startItem?: { id?: string | null, links?: { self?: string | null } | null } | null, endItem?: { id?: string | null, links?: { self?: string | null } | null } | null, shape?: string | null, style?: { strokeColor?: string | null, strokeWidth?: string | null, strokeStyle?: string | null, startStrokeCap?: string | null, endStrokeCap?: string | null } | null, captions?: { content?: string | null, position?: string | null, textAlignVertical?: string | null }[] | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.connectors.remove",
+      "shortPath": "connectors.remove",
+      "description": "Delete a connector; the two items it joined stay on the board",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "connectorId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.connectors.update",
+      "shortPath": "connectors.update",
+      "description": "Change a connector shape, stroke style or captions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "connectorId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "straight | elbowed | elbow | curved"
+          },
+          {
+            "key": "strokeColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "strokeWidth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "strokeStyle",
+            "optional": true,
+            "type": "normal | dotted | dashed"
+          },
+          {
+            "key": "captions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the labels; pass an empty list to remove them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, startItem?: { id?: string | null, links?: { self?: string | null } | null } | null, endItem?: { id?: string | null, links?: { self?: string | null } | null } | null, shape?: string | null, style?: { strokeColor?: string | null, strokeWidth?: string | null, strokeStyle?: string | null, startStrokeCap?: string | null, endStrokeCap?: string | null } | null, captions?: { content?: string | null, position?: string | null, textAlignVertical?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.embeds.create",
+      "shortPath": "embeds.create",
+      "description": "Embed content from a URL, such as a video or a web page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page or media URL to embed."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "inline | modal",
+            "description": "Defaults to `inline`."
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { url?: string | null, mode?: string | null, previewUrl?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.embeds.update",
+      "shortPath": "embeds.update",
+      "description": "Change an embed URL, mode, position or size",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "inline | modal"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { url?: string | null, mode?: string | null, previewUrl?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.frames.create",
+      "shortPath": "frames.create",
+      "description": "Add a frame, which groups other items into a region such as a section or a slide",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Frame title, shown as its label."
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }",
+            "description": "Frames need width and height; rotation is not allowed."
+          },
+          {
+            "key": "showContent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, type?: string | null, format?: string | null, showContent?: boolean | null } | null, style?: { fillColor?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.frames.update",
+      "shortPath": "frames.update",
+      "description": "Change a frame title, position, size or whether it shows its content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "showContent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, type?: string | null, format?: string | null, showContent?: boolean | null } | null, style?: { fillColor?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.items.get",
+      "shortPath": "items.get",
+      "description": "Read one item by id, whatever its kind: sticky note, shape, card, text, frame, embed or connector",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, startItem?: { id?: string | null, links?: { self?: string | null } | null } | null, endItem?: { id?: string | null, links?: { self?: string | null } | null } | null, shape?: string | null, style?: { strokeColor?: string | null, strokeWidth?: string | null, strokeStyle?: string | null, startStrokeCap?: string | null, endStrokeCap?: string | null } | null, captions?: { content?: string | null, position?: string | null, textAlignVertical?: string | null }[] | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null, shape?: string | null } | null, style?: { fillColor?: string | null, textAlign?: string | null, textAlignVertical?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { shape?: string | null, content?: string | null } | null, style?: { fillColor?: string | null, fillOpacity?: string | number | null, borderColor?: string | null, borderWidth?: string | number | null, borderStyle?: string | null, borderOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null, textAlignVertical?: string | null, color?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, description?: string | null, dueDate?: string | null, assigneeId?: string | null } | null, style?: { cardTheme?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null } | null, style?: { color?: string | null, fillColor?: string | null, fillOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { title?: string | null, type?: string | null, format?: string | null, showContent?: boolean | null } | null, style?: { fillColor?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null } } | { item: { id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { url?: string | null, mode?: string | null, previewUrl?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null } }"
+      }
+    },
+    {
+      "path": "miro.api.items.list",
+      "shortPath": "items.list",
+      "description": "Page through a board items, optionally only one type or only what sits inside a frame",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "(app_card | card | data_table_format | doc_format | document | embed | frame | image | preview | shape | sticky_note | text)[]",
+            "description": "Only this item kind. Miro filters on one type per call, so pass a single value."
+          },
+          {
+            "key": "parentItemId",
+            "optional": true,
+            "type": "string",
+            "description": "Only items inside this frame or parent item."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 10 to 50. Defaults to 10; Miro rejects anything below 10 on this route."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `cursor` from the previous page; omit for the first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, data?: Record<string, JsonValue> | null, parent?: { id?: string | null } | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` for the next page."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.items.remove",
+      "shortPath": "items.remove",
+      "description": "Delete any board item by id; its content cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.members.get",
+      "shortPath": "members.get",
+      "description": "Read one board member's role and details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "memberId",
+            "optional": false,
+            "type": "string",
+            "description": "The board member id, not a user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.members.list",
+      "shortPath": "members.list",
+      "description": "List who has access to a board, with their role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 50. Defaults to 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset of the first result. Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id: string, role?: string | null, name?: string | null, type?: string | null, email?: string | null, createdAt?: string | null, modifiedAt?: string | null, links?: { self?: string | null } | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Members across all pages."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.members.remove",
+      "shortPath": "members.remove",
+      "description": "Remove a member's access to a board; their role cannot be restored by another call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "memberId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.members.share",
+      "shortPath": "members.share",
+      "description": "Invite email addresses to a board with a role, which grants them access to its content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "Email addresses to invite to the board, up to 20 per call."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "viewer | commenter | editor | coowner | owner",
+            "description": "The role they get. Defaults to `commenter`; `owner` is treated as `coowner`."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Note included in the invitation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successful",
+            "optional": true,
+            "type": "(string | number)[] | null",
+            "description": "Ids of the invitations that were sent, one per address that worked."
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "{ email?: string | null, reason?: string | null }[] | null",
+            "description": "The addresses that could not be invited, each with a reason."
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.members.update",
+      "shortPath": "members.update",
+      "description": "Change a board member's role, for example promoting a viewer to an editor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "memberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "viewer | commenter | editor | coowner | owner",
+            "description": "The new role."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.shapes.create",
+      "shortPath": "shapes.create",
+      "description": "Draw a shape such as a rectangle, circle or flowchart node, with text and styling, for diagrams",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "rectangle | round_rectangle | circle | triangle | rhombus | parallelogram | trapezoid | pentagon | hexagon | octagon | wedge_round_rectangle_callout | star | flow_chart_predefined_process | cloud | cross | can | right_arrow | left_arrow | left_right_arrow | left_brace | right_brace | flow_chart_connector | flow_chart_process | flow_chart_decision | flow_chart_input_output | flow_chart_internal_storage | flow_chart_cloud",
+            "description": "The shape to draw. Defaults to `rectangle`."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Text inside the shape."
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ fillColor?: string, fillOpacity?: number, borderColor?: string, borderWidth?: number, borderStyle?: normal | dashed | dotted, borderOpacity?: number, fontSize?: number, fontFamily?: string, textAlign?: left | center | right, textAlignVertical?: top | middle | bottom, color?: string }"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { shape?: string | null, content?: string | null } | null, style?: { fillColor?: string | null, fillOpacity?: string | number | null, borderColor?: string | null, borderWidth?: string | number | null, borderStyle?: string | null, borderOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null, textAlignVertical?: string | null, color?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.shapes.update",
+      "shortPath": "shapes.update",
+      "description": "Change a shape text, style, position or size",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ fillColor?: string, fillOpacity?: number, borderColor?: string, borderWidth?: number, borderStyle?: normal | dashed | dotted, borderOpacity?: number, fontSize?: number, fontFamily?: string, textAlign?: left | center | right, textAlignVertical?: top | middle | bottom, color?: string }"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { shape?: string | null, content?: string | null } | null, style?: { fillColor?: string | null, fillOpacity?: string | number | null, borderColor?: string | null, borderWidth?: string | number | null, borderStyle?: string | null, borderOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null, textAlignVertical?: string | null, color?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.stickyNotes.create",
+      "shortPath": "stickyNotes.create",
+      "description": "Add a sticky note with text, shape and colour at a position, optionally inside a frame",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The note text."
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "square | rectangle"
+          },
+          {
+            "key": "fillColor",
+            "optional": true,
+            "type": "gray | light_yellow | yellow | orange | light_green | green | dark_green | cyan | light_pink | pink | violet | red | light_blue | blue | dark_blue | black"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string",
+            "description": "Frame or parent item to place it inside."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null, shape?: string | null } | null, style?: { fillColor?: string | null, textAlign?: string | null, textAlignVertical?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.stickyNotes.update",
+      "shortPath": "stickyNotes.update",
+      "description": "Change a sticky note text, shape, colour, position or size",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shape",
+            "optional": true,
+            "type": "square | rectangle"
+          },
+          {
+            "key": "fillColor",
+            "optional": true,
+            "type": "gray | light_yellow | yellow | orange | light_green | green | dark_green | cyan | light_pink | pink | violet | red | light_blue | blue | dark_blue | black"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null, shape?: string | null } | null, style?: { fillColor?: string | null, textAlign?: string | null, textAlignVertical?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.attach",
+      "shortPath": "tags.attach",
+      "description": "Attach an existing tag to an item; card and sticky items accept up to eight",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string",
+            "description": "The tag to attach to the item."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag with a title and colour for categorising board items",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Tag text, up to 120 characters."
+          },
+          {
+            "key": "fillColor",
+            "optional": true,
+            "type": "red | light_green | cyan | yellow | magenta | green | blue | gray | violet | dark_green | dark_blue | black",
+            "description": "Tag colour. Defaults to `red`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, title?: string | null, fillColor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Read one tag by id, with its title, colour and links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, title?: string | null, fillColor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.items",
+      "shortPath": "tags.items",
+      "description": "List the items that carry a given tag, with offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, data?: Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags defined on a board, with their colours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 50. Defaults to 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset of the first result. Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, title?: string | null, fillColor?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.ofItem",
+      "shortPath": "tags.ofItem",
+      "description": "List the tags attached to one item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, title?: string | null, fillColor?: string | null }[]"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.remove",
+      "shortPath": "tags.remove",
+      "description": "Delete a tag from the board; it is detached from every item that carried it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.removeFromItem",
+      "shortPath": "tags.removeFromItem",
+      "description": "Detach a tag from one item; the tag itself stays on the board",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Change a tag title or colour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fillColor",
+            "optional": true,
+            "type": "red | light_green | cyan | yellow | magenta | green | blue | gray | violet | dark_green | dark_blue | black"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, title?: string | null, fillColor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.texts.create",
+      "shortPath": "texts.create",
+      "description": "Add a text item, for labels and annotations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "The text."
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ color?: string, fontSize?: number, fontFamily?: string, textAlign?: left | center | right }"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null } | null, style?: { color?: string | null, fillColor?: string | null, fillOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "miro.api.texts.update",
+      "shortPath": "texts.update",
+      "description": "Change a text item content, style, position or size",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board id, as shown in the board URL."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ color?: string, fontSize?: number, fontFamily?: string, textAlign?: left | center | right }"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ x: number, y: number, origin?: string }"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "{ width?: number, height?: number, rotation?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, createdAt?: string | null, createdBy?: { id?: string | null, type?: string | null, name?: string | null } | null, modifiedAt?: string | null, modifiedBy?: { id?: string | null, type?: string | null, name?: string | null } | null, links?: { self?: string | null } | null, data?: { content?: string | null } | null, style?: { color?: string | null, fillColor?: string | null, fillOpacity?: string | number | null, fontSize?: string | number | null, fontFamily?: string | null, textAlign?: string | null } | null, position?: { x?: number | null, y?: number | null, origin?: string | null, relativeTo?: string | null } | null, geometry?: { width?: number | null, height?: number | null, rotation?: number | null } | null, parent?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
