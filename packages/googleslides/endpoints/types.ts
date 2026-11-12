@@ -875,6 +875,14 @@ const BatchUpdateResponseSchema = z
 			})
 			.loose()
 			.nullish(),
+		// A batch that carries comment requests can apply its edits and still
+		// fail to save the comments; this is the only place Google says so.
+		commentUpdateState: z
+			.string()
+			.nullish()
+			.describe(
+				'Whether comment requests in the batch were saved: NO_UPDATES_REQUESTED, ALL_SAVED or ALL_FAILED_UNKNOWN_REASON',
+			),
 	})
 	.loose();
 

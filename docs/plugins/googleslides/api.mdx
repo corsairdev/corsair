@@ -62,6 +62,7 @@ Accepts any of the 49 `batchUpdate` request types except the deletions. `deleteO
 | `presentationId` | `string` | Yes | — |
 | `replies` | `object[]` | Yes | — |
 | `writeControl` | `object \| null` | No | — |
+| `commentUpdateState` | `string \| null` | No | Whether comment requests in the batch were saved: NO_UPDATES_REQUESTED, ALL_SAVED or ALL_FAILED_UNKNOWN_REASON |
 
 <AccordionGroup>
 <Accordion title="replies full type">

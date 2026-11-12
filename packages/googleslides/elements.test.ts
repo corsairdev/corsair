@@ -424,6 +424,21 @@ describe('batch.update', () => {
 		expect(sentBody().writeControl).toBeUndefined();
 	});
 
+	it('returns commentUpdateState, so a failed comment save is visible', async () => {
+		mockRequest.mockResolvedValue({
+			presentationId: 'deck-1',
+			replies: [{}],
+			commentUpdateState: 'ALL_FAILED_UNKNOWN_REASON',
+		});
+
+		const result = await BatchEndpoints.update(ctx, {
+			presentationId: 'deck-1',
+			requests: [{ insertComment: { objectId: 'shape-1' } }],
+		});
+
+		expect(result.commentUpdateState).toBe('ALL_FAILED_UNKNOWN_REASON');
+	});
+
 	it('rejects an empty batch, which the API would refuse', async () => {
 		await expect(
 			BatchEndpoints.update(ctx, {
@@ -442,7 +457,7 @@ describe('batch.update refusal of irreversible requests', () => {
 				presentationId: 'deck-1',
 				requests: [{ deleteObject: { objectId: 'slide-1' } }],
 			}),
-		).rejects.toThrow(/deleteObject.*typed operation/s);
+		).rejects.toThrow(/deleteObject.*slides\.remove/s);
 		// Nothing was sent, so no deletion can happen under a write-level approval.
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
@@ -471,6 +486,20 @@ describe('batch.update refusal of irreversible requests', () => {
 				],
 			}),
 		).rejects.toThrow(/deleteText/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('says when no operation in the plugin covers a refused deletion', async () => {
+		// Pointing the caller at a typed operation that does not exist would send
+		// an agent looking for one.
+		const refusal = BatchEndpoints.update(ctx, {
+			presentationId: 'deck-1',
+			requests: [
+				{ deleteTableRow: { tableObjectId: 'table-1', cellLocation: {} } },
+			],
+		});
+		await expect(refusal).rejects.toThrow(/deleteTableRow.*no operation/s);
+		await expect(refusal).rejects.not.toThrow(/use the typed operation/);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 

@@ -22,6 +22,20 @@ const IRREVERSIBLE_REQUEST_TYPES = [
 ] as const;
 
 /**
+ * The typed operation that performs each refused request, where one exists.
+ * The refusal names it, or says there is none, so an agent does not go looking
+ * for an operation the plugin lacks.
+ */
+const TYPED_DELETIONS: Partial<
+	Record<(typeof IRREVERSIBLE_REQUEST_TYPES)[number], string>
+> = {
+	deleteObject:
+		'slides.remove deletes a slide; page elements have no delete operation in this plugin',
+	deleteText: 'use text.delete',
+	deleteParagraphBullets: 'use text.removeBullets',
+};
+
+/**
  * The typed groups cover the common edits. This exposes the rest of the 49
  * batchUpdate request types (mergeTableCells, updateParagraphStyle, comments,
  * Sheets chart refreshes) without a schema per type, which is the only way to
@@ -62,8 +76,12 @@ export const batchUpdate: GoogleSlidesEndpoints['batchUpdate'] = async (
 					),
 				);
 			if (irreversible.length > 0) {
+				const routes = [...new Set(irreversible)].map(
+					(key) =>
+						`${key}: ${TYPED_DELETIONS[key as keyof typeof TYPED_DELETIONS] ?? 'no operation in this plugin performs it'}`,
+				);
 				throw new Error(
-					`batch.update cannot carry ${irreversible.join(', ')}: use the typed operation for that request, which marks it destructive and asks for approval.`,
+					`batch.update cannot carry deletions, which need their own destructive operation and approval. ${routes.join('. ')}.`,
 				);
 			}
 
@@ -87,6 +105,7 @@ export const batchUpdate: GoogleSlidesEndpoints['batchUpdate'] = async (
 				writeControl: response.writeControl
 					? { requiredRevisionId: response.writeControl.requiredRevisionId }
 					: undefined,
+				commentUpdateState: response.commentUpdateState,
 			};
 		},
 		(parsed) => ({ requestCount: parsed.requests.length }),
