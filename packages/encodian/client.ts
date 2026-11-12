@@ -1,61 +1,92 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+import type { EncodianOperationRoutes } from './endpoints/generated';
 
-export class EncodianAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'EncodianAPIError';
-	}
-}
+const ENCODIAN_API_BASE = 'https://api.apps-encodian.com';
+const REDACTED = '[REDACTED]';
 
-// TODO: Update with your API base URL
-const ENCODIAN_API_BASE = 'https://api.example.com';
+const RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
-export async function makeEncodianRequest<T>(
-	endpoint: string,
+type EncodianRoute =
+	(typeof EncodianOperationRoutes)[keyof typeof EncodianOperationRoutes];
+
+// `unknown` because provider responses stay untrusted until the operation output schema parses them.
+export async function makeEncodianRequest(
+	route: EncodianRoute,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+	input: {
+		// `unknown` because each route has a different request DTO validated before reaching this transport.
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
+		path?: Record<string, string | number>;
+	},
+	): Promise<unknown> {
+	const path = route.path.replace(
+		/\{([^}]+)\}/g,
+		(_match, parameter: string) => {
+			const value = input.path?.[parameter];
+			return encodeURIComponent(String(value ?? ''));
+		},
+	);
 	const config: OpenAPIConfig = {
 		BASE: ENCODIAN_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
+			Accept: 'application/json',
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'X-ApiKey': apiKey,
 		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		method: route.method,
+		url: path,
+		body: input.body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: input.query,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new EncodianAPIError(error.message);
+		// `unknown` because HTTP JSON is untrusted until the operation output schema parses it.
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: RATE_LIMIT_CONFIG,
+		});
+	// `unknown` because transport rejections do not have a guaranteed runtime class.
+	} catch (error: unknown) {
+		if (error instanceof ApiError) {
+			throw new ApiError(
+				{
+					...error.request,
+					body: error.request.body === undefined ? undefined : REDACTED,
+				},
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: REDACTED,
+				},
+				`Encodian request failed with HTTP ${error.status}`,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-		throw new EncodianAPIError('Unknown error');
+		throw error;
 	}
 }

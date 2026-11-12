@@ -1,29 +1,19 @@
-import { z } from 'zod';
+import type { z } from 'zod';
+import type {
+	EncodianEndpointInputSchemas,
+	EncodianEndpointOutputSchemas,
+} from './generated';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
-});
-
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
-
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
-});
-
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
-
+export {
+	EncodianEndpointInputSchemas,
+	EncodianEndpointOutputSchemas,
+} from './generated';
+export type EncodianOperationId = keyof typeof EncodianEndpointInputSchemas;
 export type EncodianEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	[K in EncodianOperationId]: z.infer<(typeof EncodianEndpointInputSchemas)[K]>;
 };
-
 export type EncodianEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	[K in EncodianOperationId]: z.infer<
+		(typeof EncodianEndpointOutputSchemas)[K]
+	>;
 };
-
-export const EncodianEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
-} as const;
-
-export const EncodianEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
-} as const;
