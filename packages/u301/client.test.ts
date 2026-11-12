@@ -63,6 +63,7 @@ describe('U301 client', () => {
 			replayable: false,
 		});
 
+		// The spy records fetch's arguments untyped; the client calls fetch(url, init).
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		const parsed = new URL(url);
 		expect(parsed.origin + parsed.pathname).toBe(
@@ -85,6 +86,7 @@ describe('U301 client', () => {
 			replayable: true,
 		});
 
+		// The spy records fetch's arguments untyped; the first one is the URL string.
 		const [url] = fetchMock.mock.calls[0] as [string];
 		expect(new URL(url).searchParams.has('workspaceId')).toBe(false);
 	});
@@ -99,6 +101,7 @@ describe('U301 client', () => {
 			replayable: false,
 		});
 
+		// The spy records fetch's arguments untyped; the second one is the init.
 		const init = fetchMock.mock.calls[0][1] as RequestInit;
 		expect(new Headers(init.headers).get('content-type')).toContain(
 			'application/json',

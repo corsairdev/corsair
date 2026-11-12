@@ -30,9 +30,20 @@ function liveContext(): U301Context {
 	return { key: `${apiKey}\n${workspaceId}` } as unknown as U301Context;
 }
 
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant, and Output is inferred from the endpoint. The
+// endpoints read only `key` off the context, and each input below fits its
+// operation's schema, which parses it again.
+function live<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
+	input: object,
+): Promise<Output> {
+	return endpoint(liveContext() as never, input as never);
+}
+
 describeIfKey('live U301 API', () => {
 	it('lists the workspace domains through the output schema', async () => {
-		const result = await Api.domainList(liveContext() as never, {} as never);
+		const result = await live(Api.domainList, {});
 
 		expect(Array.isArray(result)).toBe(true);
 		// The shared u301.co domain is on every workspace.
@@ -43,13 +54,10 @@ describeIfKey('live U301 API', () => {
 	});
 
 	it('lists short links through the output schema', async () => {
-		const result = await Api.list(
-			liveContext() as never,
-			{
-				page: 1,
-				perPage: 10,
-			} as never,
-		);
+		const result = await live(Api.list, {
+			page: 1,
+			perPage: 10,
+		});
 
 		expect(Array.isArray(result.links)).toBe(true);
 		// The page count is in `metadata`, not at the top level.
@@ -57,13 +65,10 @@ describeIfKey('live U301 API', () => {
 	});
 
 	it('reads one link by its short form and echoes the slug', async () => {
-		const listed = await Api.list(
-			liveContext() as never,
-			{
-				page: 1,
-				perPage: 10,
-			} as never,
-		);
+		const listed = await live(Api.list, {
+			page: 1,
+			perPage: 10,
+		});
 		// A list row names its short link `shortUrl`, with a scheme the endpoint
 		// strips. An empty workspace has nothing to read, which is logged rather
 		// than passed silently.
@@ -73,25 +78,19 @@ describeIfKey('live U301 API', () => {
 			return;
 		}
 
-		const one = await Api.get(
-			liveContext() as never,
-			{
-				shortlink,
-			} as never,
-		);
+		const one = await live(Api.get, {
+			shortlink,
+		});
 
 		expect(typeof one.slug).toBe('string');
 		expect(one.slug).toBe(shortlink.split('/').pop());
 	});
 
 	it('reads click buckets through the output schema', async () => {
-		const result = await Api.clicks(
-			liveContext() as never,
-			{
-				range: '7d',
-				granularity: 'day',
-			} as never,
-		);
+		const result = await live(Api.clicks, {
+			range: '7d',
+			granularity: 'day',
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 		// The real field is `click`, singular; a `clicks` model would leave this
@@ -101,13 +100,10 @@ describeIfKey('live U301 API', () => {
 	});
 
 	it('reads an audience breakdown through its envelope schema', async () => {
-		const result = await Api.audience(
-			liveContext() as never,
-			{
-				dimension: 'countries',
-				range: '30d',
-			} as never,
-		);
+		const result = await live(Api.audience, {
+			dimension: 'countries',
+			range: '30d',
+		});
 
 		// The route answers an envelope, not a bare array.
 		expect(Array.isArray(result.data)).toBe(true);
@@ -116,8 +112,9 @@ describeIfKey('live U301 API', () => {
 	});
 
 	it('never exposes the API key in a returned object', async () => {
-		const result = await Api.domainList(liveContext() as never, {} as never);
+		const result = await live(Api.domainList, {});
 
+		// describeIfKey runs this only when U301_API_KEY is set.
 		expect(JSON.stringify(result)).not.toContain(apiKey as string);
 	});
 });

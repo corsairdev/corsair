@@ -41,6 +41,7 @@ async function matches(error: Error): Promise<string | undefined> {
 			return name;
 		}
 	}
+	// DEFAULT's matcher ignores the context, so it is called with the error alone.
 	return (errorHandlers.DEFAULT.match as (e: Error) => boolean)(error)
 		? 'DEFAULT'
 		: undefined;
@@ -79,6 +80,7 @@ describe('U301 error handlers', () => {
 
 	it('treats a ZodError as a validation failure without a status', async () => {
 		const { z } = require('zod');
+		// require() gives an untyped zod; a failed safeParse always has a ZodError.
 		const error = z.object({ url: z.string() }).safeParse({}).error as Error;
 
 		expect(await matches(error)).toBe('VALIDATION_ERROR');

@@ -14,12 +14,16 @@ export function testContext(key = 'u301-test-key\nws_test_123') {
 }
 
 // never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant. Each endpoint returns its own output type, so
-// the shared return is unknown.
-export type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
-
+// parameters are contravariant. Output is inferred from the endpoint, so each
+// result keeps its real type.
 // unknown: negative cases pass values no schema accepts.
-export function invoke(endpoint: AnyEndpoint, input: unknown, key?: string) {
+export function invoke<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
+	input: unknown,
+	key?: string,
+): Promise<Output> {
+	// never: the endpoint reads only key and log off the fake context, and its
+	// input schema parses whatever the test passes.
 	return endpoint(testContext(key) as never, input as never);
 }
 
@@ -38,6 +42,8 @@ export type CapturedRequest = {
 };
 
 export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
+	// The spy records fetch's arguments untyped; makeU301Request always calls
+	// fetch(url string, init).
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	// unknown: JSON.parse returns any; the body is narrowed by asRecord below.

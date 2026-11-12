@@ -246,6 +246,8 @@ export type InternalU301Plugin = BaseU301Plugin<U301PluginOptions>;
 export type ExternalU301Plugin<T extends U301PluginOptions> = BaseU301Plugin<T>;
 
 export function u301<const T extends U301PluginOptions>(
+	// {} fits U301PluginOptions (every field is optional); T only adds literal
+	// types the caller chose, so an empty default is safe.
 	incomingOptions: U301PluginOptions & T = {} as U301PluginOptions & T,
 ): ExternalU301Plugin<T> {
 	const options = {

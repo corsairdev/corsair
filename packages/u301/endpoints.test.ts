@@ -45,9 +45,9 @@ describe('links.create', () => {
 	it('posts a one-element array to the bulk route', async () => {
 		respond(fetchMock, LINK_CREATED_ARRAY);
 
-		const result = (await invoke(Api.create, {
+		const result = await invoke(Api.create, {
 			url: 'https://example.com',
-		})) as { slug?: string; shortLink?: string; isReused?: boolean };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v3/shorten/bulk');
@@ -61,11 +61,9 @@ describe('links.create', () => {
 	it('unwraps the array the bulk route answers even for one link', async () => {
 		respond(fetchMock, LINK_CREATED_ARRAY);
 
-		const result = (await invoke(Api.create, {
+		const result = await invoke(Api.create, {
 			url: 'https://example.com',
-		})) as {
-			id?: string;
-		};
+		});
 
 		// A caller gets the link, not a one-element array.
 		expect(result.id).toBe('019a7d8c-4a85-7aa4-9862-ee2008f54854');
@@ -99,10 +97,10 @@ describe('links.create', () => {
 	it('reports a reuse, which spends no allowance', async () => {
 		respond(fetchMock, [LINK_REUSED]);
 
-		const result = (await invoke(Api.create, {
+		const result = await invoke(Api.create, {
 			url: 'https://example.com',
 			reuseExisting: true,
-		})) as { isReused?: boolean };
+		});
 
 		expect(result.isReused).toBe(true);
 	});
@@ -166,9 +164,7 @@ describe('links.list', () => {
 	it('reads the rows from the links key', async () => {
 		respond(fetchMock, LINKS);
 
-		const result = (await invoke(Api.list, {})) as {
-			links?: { slug?: string; statsClicks?: number }[];
-		};
+		const result = await invoke(Api.list, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v3/shorten/list');
 		expect(result.links).toHaveLength(2);
@@ -187,7 +183,7 @@ describe('links.list', () => {
 			metadata: { total: 0, perPage: 10, page: 1 },
 		});
 
-		const result = (await invoke(Api.list, {})) as { links?: unknown[] };
+		const result = await invoke(Api.list, {});
 
 		expect(result.links).toEqual([]);
 	});
@@ -243,11 +239,7 @@ describe('links.get', () => {
 	it('puts the whole short link in the path, keeping its slash', async () => {
 		respond(fetchMock, LINK);
 
-		const result = (await invoke(Api.get, { shortlink: 'u301.co/jtyZ' })) as {
-			slug?: string;
-			statsClicks?: number;
-			archived?: boolean;
-		};
+		const result = await invoke(Api.get, { shortlink: 'u301.co/jtyZ' });
 
 		// The slash is part of the path the API expects, not an encoded %2F.
 		expect(lastRequest(fetchMock).path).toBe('/v3/shorten/u301.co/jtyZ');
@@ -319,9 +311,9 @@ describe('links.delete', () => {
 	it('deletes by short link and reads the bare success message', async () => {
 		respond(fetchMock, LINK_DELETED);
 
-		const result = (await invoke(Api.remove, {
+		const result = await invoke(Api.remove, {
 			shortlink: 'u301.co/jtyZ',
-		})) as { message?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('DELETE');
@@ -334,11 +326,7 @@ describe('domains', () => {
 	it('lists domains with their slug length and origin', async () => {
 		respond(fetchMock, DOMAINS);
 
-		const result = (await invoke(Api.domainList, {})) as {
-			domain?: string;
-			randomCodeLength?: number;
-			isGlobal?: boolean;
-		}[];
+		const result = await invoke(Api.domainList, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v3/shorten/domains');
 		expect(result).toHaveLength(2);
@@ -349,10 +337,10 @@ describe('domains', () => {
 	it('creates a domain with PUT and a slug length', async () => {
 		respond(fetchMock, DOMAIN_CREATED);
 
-		const result = (await invoke(Api.domainCreate, {
+		const result = await invoke(Api.domainCreate, {
 			domain: 'go.example.com',
 			shortCodeLength: 5,
-		})) as { message?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PUT');
@@ -379,9 +367,9 @@ describe('domains', () => {
 	it('accepts the documented success true answer', async () => {
 		respond(fetchMock, { success: true });
 
-		const result = (await invoke(Api.domainCreate, {
+		const result = await invoke(Api.domainCreate, {
 			domain: 'go.example.com',
-		})) as { success?: boolean };
+		});
 
 		expect(result.success).toBe(true);
 	});
@@ -410,12 +398,9 @@ describe('domains', () => {
 	it('reads one domain with its redirect settings', async () => {
 		respond(fetchMock, DOMAIN_DETAIL);
 
-		const result = (await invoke(Api.domainGet, {
+		const result = await invoke(Api.domainGet, {
 			domain: 'go.example.com',
-		})) as {
-			isValid?: boolean;
-			homePageRedirectUrl?: string;
-		};
+		});
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/v3/shorten/domains/go.example.com',
@@ -443,9 +428,9 @@ describe('domains', () => {
 	it('checks the active status, whose field is spelled actived', async () => {
 		respond(fetchMock, DOMAIN_ACTIVE);
 
-		const result = (await invoke(Api.domainActive, {
+		const result = await invoke(Api.domainActive, {
 			domain: 'go.example.com',
-		})) as { actived?: boolean; message?: string };
+		});
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/v3/shorten/domains/active/go.example.com',
@@ -458,9 +443,9 @@ describe('domains', () => {
 	it('reports a domain whose challenge has not resolved', async () => {
 		respond(fetchMock, DOMAIN_NOT_READY);
 
-		const result = (await invoke(Api.domainActive, {
+		const result = await invoke(Api.domainActive, {
 			domain: 'go.example.com',
-		})) as { actived?: boolean; message?: string };
+		});
 
 		expect(result.actived).toBe(false);
 		expect(result.message).toBe('Challenge not ready');
@@ -530,10 +515,10 @@ describe('analytics', () => {
 	it('reads click buckets for a range and granularity', async () => {
 		respond(fetchMock, CLICKS);
 
-		const result = (await invoke(Api.clicks, {
+		const result = await invoke(Api.clicks, {
 			range: '7d',
 			granularity: 'day',
-		})) as { data?: { date?: string; click?: number }[] };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v3/shorten/analytics/clicks');
@@ -570,10 +555,10 @@ describe('analytics', () => {
 	it('puts the audience dimension in the path', async () => {
 		respond(fetchMock, AUDIENCE);
 
-		const result = (await invoke(Api.audience, {
+		const result = await invoke(Api.audience, {
 			dimension: 'countries',
 			range: '30d',
-		})) as { data?: { label?: string; click?: number }[] };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v3/shorten/analytics/top-countries');
@@ -585,10 +570,10 @@ describe('analytics', () => {
 	it('does not fail a read when the API echoes a range it adds later', async () => {
 		respond(fetchMock, { ...AUDIENCE, range: '90d' });
 
-		const result = (await invoke(Api.audience, {
+		const result = await invoke(Api.audience, {
 			dimension: 'countries',
 			range: '30d',
-		})) as { range?: string };
+		});
 
 		expect(result.range).toBe('90d');
 	});
@@ -632,6 +617,8 @@ describe('error propagation', () => {
 		expect(String(error)).toContain(
 			'perPage: Number must be greater than or equal to 10',
 		);
+		// unknown: details is whatever U301 sent; toEqual checks its shape. The
+		// cast reads one field off the Error the catch returned.
 		expect((error as { details?: unknown }).details).toEqual([
 			{
 				field: 'perPage',

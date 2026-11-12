@@ -18,7 +18,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof u301EndpointSchemas)[] = [
 	'analytics.audience',
 	'analytics.clicks',
 	'domains.active',
@@ -42,6 +42,8 @@ describe('u301 plugin definition', () => {
 		expect(plugin.id).toBe('u301');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
+		// never: the matcher takes a full webhook request; it returns false before
+		// reading any field, since U301 has no webhooks.
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
@@ -58,7 +60,7 @@ describe('u301 plugin definition', () => {
 		const schemas = plugin.endpointSchemas ?? {};
 		expect(Object.keys(schemas).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = schemas[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
@@ -68,7 +70,7 @@ describe('u301 plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = meta[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
@@ -77,8 +79,7 @@ describe('u301 plugin definition', () => {
 	it('marks the two deletes as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+			(operation) => meta[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive.sort()).toEqual(['domains.delete', 'links.delete']);
@@ -86,7 +87,7 @@ describe('u301 plugin definition', () => {
 
 	it('marks link creation as a write, since it spends an allowance slot', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['links.create' as keyof typeof meta]?.riskLevel).toBe('write');
+		expect(meta['links.create']?.riskLevel).toBe('write');
 	});
 
 	it('exports the endpoint schema map for the host', () => {
