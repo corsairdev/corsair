@@ -514,6 +514,8 @@ export type ExternalUserflowPlugin<T extends UserflowPluginOptions> =
 	BaseUserflowPlugin<T>;
 
 export function userflow<const T extends UserflowPluginOptions>(
+	// {} fits UserflowPluginOptions (every field is optional); T only adds literal
+	// types the caller chose, so an empty default is safe.
 	incomingOptions: UserflowPluginOptions & T = {} as UserflowPluginOptions & T,
 ): ExternalUserflowPlugin<T> {
 	const options = {

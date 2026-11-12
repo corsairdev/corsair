@@ -38,14 +38,23 @@ function liveContext(key?: string): UserflowContext {
 	return { key, options: { region: 'us' } } as unknown as UserflowContext;
 }
 
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant, and Output is inferred from the endpoint. The
+// endpoints read only `key` and `options.region` off the context, and each
+// input below fits its operation's schema, which parses it again.
+function live<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
+	key: string | undefined,
+	input: object,
+): Promise<Output> {
+	return endpoint(liveContext(key) as never, input as never);
+}
+
 describeIfKey('live Userflow Users API', () => {
 	it('lists users through the output schema', async () => {
-		const result = await Users.list(
-			liveContext(apiKey) as never,
-			{
-				limit: 5,
-			} as never,
-		);
+		const result = await live(Users.list, apiKey, {
+			limit: 5,
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 		for (const user of result.data ?? []) {
@@ -54,46 +63,34 @@ describeIfKey('live Userflow Users API', () => {
 	});
 
 	it('lists groups through the output schema', async () => {
-		const result = await Groups.list(
-			liveContext(apiKey) as never,
-			{
-				limit: 5,
-			} as never,
-		);
+		const result = await live(Groups.list, apiKey, {
+			limit: 5,
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 	});
 
 	it('lists attribute definitions through the output schema', async () => {
-		const result = await Attributes.listAttributes(
-			liveContext(apiKey) as never,
-			{
-				limit: 5,
-			} as never,
-		);
+		const result = await live(Attributes.listAttributes, apiKey, {
+			limit: 5,
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 	});
 
 	it('lists content through the output schema', async () => {
-		const result = await Content.list(
-			liveContext(apiKey) as never,
-			{
-				limit: 5,
-			} as never,
-		);
+		const result = await live(Content.list, apiKey, {
+			limit: 5,
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 	});
 
 	it('accepts a descending order_by over the wire', async () => {
-		const result = await Users.list(
-			liveContext(apiKey) as never,
-			{
-				limit: 1,
-				order_by: ['-created_at'],
-			} as never,
-		);
+		const result = await live(Users.list, apiKey, {
+			limit: 1,
+			order_by: ['-created_at'],
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 	});
@@ -101,25 +98,20 @@ describeIfKey('live Userflow Users API', () => {
 
 describeIfPersonal('live Userflow Accounts API', () => {
 	it('lists accounts through the output schema', async () => {
-		const result = await Accounts.listAccounts(
-			liveContext(personalKey) as never,
-			{
-				limit: 5,
-			} as never,
-		);
+		const result = await live(Accounts.listAccounts, personalKey, {
+			limit: 5,
+		});
 
 		expect(Array.isArray(result.data)).toBe(true);
 	});
 
 	it('never exposes either key in a returned object', async () => {
-		const result = await Accounts.listAccounts(
-			liveContext(personalKey) as never,
-			{
-				limit: 1,
-			} as never,
-		);
+		const result = await live(Accounts.listAccounts, personalKey, {
+			limit: 1,
+		});
 		const text = JSON.stringify(result);
 
+		// Each key is a string here: this suite runs only when both are set.
 		expect(text).not.toContain(apiKey as string);
 		expect(text).not.toContain(personalKey as string);
 	});

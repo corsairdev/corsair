@@ -60,6 +60,11 @@ beforeEach(() => {
 	fetchMock.mockReset();
 });
 
+// unknown: the order_by table mixes eight list endpoints with different output
+// types; widening each to this type (an annotation, not a cast) lets one invoke
+// call take any of them.
+type ListEndpoint = (ctx: never, input: never) => Promise<unknown>;
+
 describe('users', () => {
 	it('creates or updates a user, merging the attributes', async () => {
 		respond(fetchMock, user);
@@ -101,6 +106,8 @@ describe('users', () => {
 			groups: [{ id: group.id, attributes: { name: 'Acme Inc.' } }],
 		});
 
+		// unknown: the body is the JSON the endpoint sent; upsert always sends an
+		// object, so it is read as a record of fields.
 		const body = lastRequest(fetchMock).body as Record<string, unknown>;
 		expect(body.groups).toEqual([
 			{ id: group.id, attributes: { name: 'Acme Inc.' } },
@@ -210,9 +217,7 @@ describe('users', () => {
 	it('reports no more pages when has_more is false', async () => {
 		respond(fetchMock, usersLastPage);
 
-		const result = (await invoke(Users.list, {})) as {
-			has_more?: boolean | null;
-		};
+		const result = await invoke(Users.list, {});
 		expect(result.has_more).toBe(false);
 	});
 
@@ -577,10 +582,10 @@ describe('accounts', () => {
 	it('reads the region of an expanded environment', async () => {
 		respond(fetchMock, accountWithEnvironments);
 
-		const result = (await invoke(AccountsApi.get, {
+		const result = await invoke(AccountsApi.get, {
 			id: account.id,
 			expand: 'environments',
-		})) as { environments?: { region?: string | null }[] | null };
+		});
 
 		expect(result.environments?.[0]?.region).toBe('US');
 	});
@@ -775,19 +780,44 @@ describe('ordering and filters', () => {
 	});
 
 	it.each([
-		['content', () => Content.list, {}, ['-name']],
-		['sessions', () => ContentSessions.list, {}, ['-last_activity_at']],
-		['attributes', () => Attributes.listAttributes, {}, '-created_at'],
-		['event definitions', () => Attributes.listEvents, {}, ['-name']],
-		['accounts', () => Accounts.listAccounts, {}, '-name'],
+		['content', (): ListEndpoint => Content.list, {}, ['-name']],
+		[
+			'sessions',
+			(): ListEndpoint => ContentSessions.list,
+			{},
+			['-last_activity_at'],
+		],
+		[
+			'attributes',
+			(): ListEndpoint => Attributes.listAttributes,
+			{},
+			'-created_at',
+		],
+		[
+			'event definitions',
+			(): ListEndpoint => Attributes.listEvents,
+			{},
+			['-name'],
+		],
+		['accounts', (): ListEndpoint => Accounts.listAccounts, {}, '-name'],
 		[
 			'members',
-			() => Accounts.listMembers,
+			(): ListEndpoint => Accounts.listMembers,
 			{ account_id: 'a_1' },
 			'-created_at',
 		],
-		['invites', () => Accounts.listInvites, { account_id: 'a_1' }, ['-name']],
-		['webhook subscriptions', () => WebhookSubscriptions.list, {}, '-url'],
+		[
+			'invites',
+			(): ListEndpoint => Accounts.listInvites,
+			{ account_id: 'a_1' },
+			['-name'],
+		],
+		[
+			'webhook subscriptions',
+			(): ListEndpoint => WebhookSubscriptions.list,
+			{},
+			'-url',
+		],
 	] as const)(
 		'accepts a descending or scalar order_by on %s and sends it',
 		async (_name, endpoint, extra, orderBy) => {

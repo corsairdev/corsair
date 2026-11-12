@@ -18,7 +18,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof userflowEndpointSchemas)[] = [
 	'accounts.get',
 	'accounts.list',
 	'attributes.list',
@@ -66,6 +66,8 @@ describe('userflow plugin definition', () => {
 		// notifications is left to the host, since each subscription has its own
 		// secret rather than one workspace-wide signing key.
 		expect(plugin.webhooks).toEqual({});
+		// never: the matcher takes a full webhook request and returns false
+		// before reading any field.
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
@@ -82,7 +84,7 @@ describe('userflow plugin definition', () => {
 		const schemas = plugin.endpointSchemas ?? {};
 		expect(Object.keys(schemas).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = schemas[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
@@ -92,7 +94,7 @@ describe('userflow plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = meta[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
@@ -101,8 +103,7 @@ describe('userflow plugin definition', () => {
 	it('marks the unrecoverable deletes as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+			(operation) => meta[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive.sort()).toEqual([
@@ -117,21 +118,19 @@ describe('userflow plugin definition', () => {
 
 	it('marks removing a membership as a write, since both sides survive', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['memberships.remove' as keyof typeof meta]?.riskLevel).toBe(
-			'write',
-		);
+		expect(meta['memberships.remove']?.riskLevel).toBe('write');
 	});
 
 	it('marks the two upserts as writes', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['users.upsert' as keyof typeof meta]?.riskLevel).toBe('write');
-		expect(meta['groups.upsert' as keyof typeof meta]?.riskLevel).toBe('write');
+		expect(meta['users.upsert']?.riskLevel).toBe('write');
+		expect(meta['groups.upsert']?.riskLevel).toBe('write');
 	});
 
 	it('marks every lookup as a read', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const reads = operations.filter(
-			(operation) => meta[operation as keyof typeof meta]?.riskLevel === 'read',
+			(operation) => meta[operation]?.riskLevel === 'read',
 		);
 
 		expect(reads.sort()).toEqual([

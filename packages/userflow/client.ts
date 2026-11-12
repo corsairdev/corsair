@@ -203,6 +203,8 @@ export async function makeUserflowRequest(
 	};
 
 	try {
+		// unknown: the body is provider JSON until the caller's output schema
+		// parses it.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: USERFLOW_RATE_LIMIT_CONFIG,
 		});

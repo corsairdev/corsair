@@ -9,6 +9,7 @@ jest.mock('corsair/core', () => ({
 }));
 
 const fetchMock = installFetchMock();
+// jest.mock above replaced the import with a jest.fn, which this type exposes.
 const logged = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;

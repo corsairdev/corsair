@@ -137,11 +137,14 @@ describe('makeUserflowRequest', () => {
 		expect(error.requestId).toBe('GOczx44z6cvnpTsYBp0E');
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error.body)).not.toContain(API_KEY);
+		// cause is typed unknown on Error; the client sets it to the core ApiError,
+		// which carries a message and the response body.
 		expect(
 			String((error.cause as Error | undefined)?.message ?? ''),
 		).not.toContain(API_KEY);
 		expect(
 			JSON.stringify(
+				// unknown: the body is provider JSON; only its text is checked.
 				(error.cause as { body?: unknown } | undefined)?.body ?? null,
 			),
 		).not.toContain(API_KEY);

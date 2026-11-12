@@ -39,16 +39,16 @@ function orderBySchema<const T extends readonly [string, ...string[]]>(
 	const base = z.enum(fields);
 	const withDescending = z.union([
 		base,
-		z
-			.string()
-			.refine(
-				(value): boolean =>
-					value.startsWith('-') &&
-					(fields as readonly string[]).includes(value.slice(1)),
-				{
-					message: `Use one of ${fields.join(', ')}, optionally prefixed with "-".`,
-				},
-			),
+		z.string().refine(
+			(value): boolean =>
+				value.startsWith('-') &&
+				// includes() on the literal tuple only takes its members; the
+				// sliced string is the candidate being checked.
+				(fields as readonly string[]).includes(value.slice(1)),
+			{
+				message: `Use one of ${fields.join(', ')}, optionally prefixed with "-".`,
+			},
+		),
 	]);
 	return z
 		.union([withDescending, z.array(withDescending).min(1)])
