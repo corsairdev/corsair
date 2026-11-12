@@ -162,7 +162,7 @@ await corsair.u301.api.domains.create({ domain: 'go.example.com', shortCodeLengt
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | "Domain created" on success. |
-| `success` | `boolean \| null` | No | — |
+| `success` | `true \| null` | No | — |
 
 
 
@@ -193,7 +193,7 @@ await corsair.u301.api.domains.delete({ domain: 'go.example.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | "success" on deletion. |
-| `success` | `boolean \| null` | No | — |
+| `success` | `true \| null` | No | — |
 
 
 
@@ -529,8 +529,8 @@ await corsair.u301.api.links.list({ page: 1, perPage: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `links` | `object[] \| null` | No | — |
-| `metadata` | `object \| null` | No | — |
+| `links` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="links full type">
@@ -554,7 +554,7 @@ await corsair.u301.api.links.list({ page: 1, perPage: 20 });
   comment?: string | null,
   createdAt?: string | null,
   updatedAt?: string | null
-}[] | null
+}[]
 ```
 </Accordion>
 
@@ -565,7 +565,7 @@ await corsair.u301.api.links.list({ page: 1, perPage: 20 });
   total?: number | null,
   perPage?: number | null,
   page?: number | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
