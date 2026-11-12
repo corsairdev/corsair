@@ -1,6 +1,7 @@
 import { defineApiEndpoint, PROJECT, pathId } from './api';
 
 export const personsList = defineApiEndpoint<'personsList'>(
+	'personsList',
 	'posthog.persons.list',
 	(input) => ({
 		path: `${PROJECT}/persons/`,
@@ -10,6 +11,7 @@ export const personsList = defineApiEndpoint<'personsList'>(
 );
 
 export const personsGet = defineApiEndpoint<'personsGet'>(
+	'personsGet',
 	'posthog.persons.get',
 	(input) => ({
 		path: `${PROJECT}/persons/${pathId(input.id)}/`,
@@ -21,6 +23,7 @@ export const personsGet = defineApiEndpoint<'personsGet'>(
 // asynchronously through ingestion), so the output echoes what was sent.
 
 export const personsUpdateProperty = defineApiEndpoint<'personsUpdateProperty'>(
+	'personsUpdateProperty',
 	'posthog.persons.updateProperty',
 	({ id, key, value }) => ({
 		path: `${PROJECT}/persons/${pathId(id)}/update_property/`,
@@ -32,6 +35,7 @@ export const personsUpdateProperty = defineApiEndpoint<'personsUpdateProperty'>(
 );
 
 export const personsDeleteProperty = defineApiEndpoint<'personsDeleteProperty'>(
+	'personsDeleteProperty',
 	'posthog.persons.deleteProperty',
 	({ id, key }) => ({
 		path: `${PROJECT}/persons/${pathId(id)}/delete_property/`,
@@ -43,11 +47,13 @@ export const personsDeleteProperty = defineApiEndpoint<'personsDeleteProperty'>(
 );
 
 export const cohortsList = defineApiEndpoint<'cohortsList'>(
+	'cohortsList',
 	'posthog.cohorts.list',
 	(input) => ({ path: `${PROJECT}/cohorts/`, query: input, log: input }),
 );
 
 export const cohortsGet = defineApiEndpoint<'cohortsGet'>(
+	'cohortsGet',
 	'posthog.cohorts.get',
 	(input) => ({
 		path: `${PROJECT}/cohorts/${pathId(input.id)}/`,
@@ -56,6 +62,7 @@ export const cohortsGet = defineApiEndpoint<'cohortsGet'>(
 );
 
 export const cohortsCreate = defineApiEndpoint<'cohortsCreate'>(
+	'cohortsCreate',
 	'posthog.cohorts.create',
 	(input) => ({
 		path: `${PROJECT}/cohorts/`,
@@ -66,6 +73,7 @@ export const cohortsCreate = defineApiEndpoint<'cohortsCreate'>(
 );
 
 export const cohortsUpdate = defineApiEndpoint<'cohortsUpdate'>(
+	'cohortsUpdate',
 	'posthog.cohorts.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/cohorts/${pathId(id)}/`,

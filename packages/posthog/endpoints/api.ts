@@ -3,6 +3,10 @@ import type { PostHogApiOptions } from '../client';
 import { makePostHogApiRequest, unpackPostHogCredentials } from '../client';
 import type { PostHogEndpoints } from '../index';
 import type { PostHogEndpointInputs } from './types';
+import {
+	PostHogEndpointInputSchemas,
+	PostHogEndpointOutputSchemas,
+} from './types';
 
 type CaptureEndpointKey =
 	| 'aliasCreate'
@@ -27,7 +31,10 @@ export type ApiRequest = {
 	body?: Record<string, unknown>;
 	/** Small payload for the event log: ids and filters, never results. */
 	log?: Record<string, unknown>;
-	/** Turns PostHog's answer into the endpoint's output (e.g. empty 204s). */
+	/**
+	 * Turns PostHog's answer into the endpoint's output (e.g. empty 204s).
+	 * `unknown` in and out: the output schema checks the result afterwards.
+	 */
 	transform?: (response: unknown) => unknown;
 };
 
@@ -57,16 +64,23 @@ export function compact<T extends Record<string, unknown>>(value: T): T {
  * a parameter.
  */
 export function defineApiEndpoint<K extends ApiEndpointKey>(
+	key: K,
 	eventType: string,
 	build: (input: ScopedInput<K>) => ApiRequest,
 ): PostHogEndpoints[K] {
+	const inputSchema = PostHogEndpointInputSchemas[key];
+	const outputSchema = PostHogEndpointOutputSchemas[key];
+
 	const endpoint = async (
 		ctx: Parameters<PostHogEndpoints[K]>[0],
-		input: PostHogEndpointInputs[K],
+		rawInput: PostHogEndpointInputs[K],
 	) => {
-		const { project_id, ...rest } = input as PostHogEndpointInputs[K] & {
+		// Validates and strips keys the schema doesn't know (e.g. a start_date
+		// sent to experiments.create), whatever the caller passed in.
+		const input = inputSchema.parse(rawInput) as PostHogEndpointInputs[K] & {
 			project_id?: string | number;
 		};
+		const { project_id, ...rest } = input;
 		const request = build(rest as ScopedInput<K>);
 		const response = await makePostHogApiRequest<unknown>(
 			unpackPostHogCredentials(ctx.key),
@@ -84,7 +98,19 @@ export function defineApiEndpoint<K extends ApiEndpointKey>(
 			{ ...(request.log ?? {}), ...(project_id ? { project_id } : {}) },
 			'completed',
 		);
-		return request.transform ? request.transform(response) : response;
+
+		const result = request.transform ? request.transform(response) : response;
+		const parsed = outputSchema.safeParse(result);
+		if (parsed.success) return parsed.data;
+		// PostHog changed a shape we rely on: hand back what it sent and say so.
+		const issue = parsed.error.issues[0];
+		console.warn(
+			`[posthog] ${eventType}: response did not match the schema at ${issue?.path.join('.') || '(root)'}: ${issue?.message}`,
+		);
+		return result;
 	};
+	// The handler's parameter and return types come from the zod schemas for
+	// key K; TypeScript can't relate them to PostHogEndpoints[K] generically,
+	// so the cast goes through unknown.
 	return endpoint as unknown as PostHogEndpoints[K];
 }

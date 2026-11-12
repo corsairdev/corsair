@@ -9,8 +9,21 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<PostHogAPIError>).status;
 }
 
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<PostHogAPIError>).retryAfter;
+const CAPTURE_OPERATIONS = new Set([
+	'aliasCreate',
+	'eventCreate',
+	'identityCreate',
+	'trackPage',
+	'trackScreen',
+]);
+
+/**
+ * True for actions that create something (`insights.create`,
+ * `notebooks.create`, ...) and for the five capture actions (`events.*`).
+ */
+export function isNonIdempotent(operation: string): boolean {
+	const action = operation.split('.').pop() ?? '';
+	return action === 'create' || CAPTURE_OPERATIONS.has(action);
 }
 
 export const errorHandlers = {
@@ -20,11 +33,9 @@ export const errorHandlers = {
 			const message = error.message.toLowerCase();
 			return message.includes('429') || message.includes('rate limit');
 		},
-		handler: async (error) => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-			headersRetryAfterMs: getRetryAfter(error),
-		}),
+		// corsair/http already retried the 429 (3 times, honouring Retry-After)
+		// before the error got here; retrying again would multiply the waits.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error) => {
@@ -85,10 +96,15 @@ export const errorHandlers = {
 			const message = error.message.toLowerCase();
 			return message.includes('500') || message.includes('server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// A create or a capture may have gone through before the 5xx, so
+		// sending it again could make a duplicate. Reads and updates retry.
+		handler: async (_error, context) =>
+			isNonIdempotent(context.operation)
+				? { maxRetries: 0 }
+				: {
+						maxRetries: 2,
+						retryStrategy: 'exponential_backoff' as const,
+					},
 	},
 	DEFAULT: {
 		match: () => true,

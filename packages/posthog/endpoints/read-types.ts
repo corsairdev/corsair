@@ -734,6 +734,7 @@ export const WebAnalyticsStatsInputSchema = ProjectScopeSchema.extend({
 	breakdown_by: z.enum(WEB_STATS_BREAKDOWNS),
 	...DateRangeInput,
 	limit: z.number().int().min(1).max(1000).optional(),
+	offset: z.number().int().min(0).optional(),
 	filter_test_accounts: z.boolean().optional(),
 });
 

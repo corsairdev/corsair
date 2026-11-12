@@ -1,6 +1,7 @@
 import { defineApiEndpoint, PROJECT, pathId } from './api';
 
 export const featureFlagsList = defineApiEndpoint<'featureFlagsList'>(
+	'featureFlagsList',
 	'posthog.featureFlags.list',
 	({ active, ...rest }) => ({
 		path: `${PROJECT}/feature_flags/`,
@@ -13,6 +14,7 @@ export const featureFlagsList = defineApiEndpoint<'featureFlagsList'>(
 );
 
 export const featureFlagsGet = defineApiEndpoint<'featureFlagsGet'>(
+	'featureFlagsGet',
 	'posthog.featureFlags.get',
 	(input) => ({
 		path: `${PROJECT}/feature_flags/${pathId(input.id)}/`,
@@ -21,6 +23,7 @@ export const featureFlagsGet = defineApiEndpoint<'featureFlagsGet'>(
 );
 
 export const featureFlagsCreate = defineApiEndpoint<'featureFlagsCreate'>(
+	'featureFlagsCreate',
 	'posthog.featureFlags.create',
 	({ rollout_percentage, filters, ...rest }) => ({
 		path: `${PROJECT}/feature_flags/`,
@@ -38,6 +41,7 @@ export const featureFlagsCreate = defineApiEndpoint<'featureFlagsCreate'>(
 );
 
 export const featureFlagsUpdate = defineApiEndpoint<'featureFlagsUpdate'>(
+	'featureFlagsUpdate',
 	'posthog.featureFlags.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/feature_flags/${pathId(id)}/`,
@@ -48,6 +52,7 @@ export const featureFlagsUpdate = defineApiEndpoint<'featureFlagsUpdate'>(
 );
 
 export const featureFlagsDelete = defineApiEndpoint<'featureFlagsDelete'>(
+	'featureFlagsDelete',
 	'posthog.featureFlags.delete',
 	({ id }) => ({
 		// Soft delete, as in PostHog's UI; the flag can be restored there.
@@ -59,11 +64,13 @@ export const featureFlagsDelete = defineApiEndpoint<'featureFlagsDelete'>(
 );
 
 export const experimentsList = defineApiEndpoint<'experimentsList'>(
+	'experimentsList',
 	'posthog.experiments.list',
 	(input) => ({ path: `${PROJECT}/experiments/`, query: input, log: input }),
 );
 
 export const experimentsGet = defineApiEndpoint<'experimentsGet'>(
+	'experimentsGet',
 	'posthog.experiments.get',
 	(input) => ({
 		path: `${PROJECT}/experiments/${pathId(input.id)}/`,
@@ -74,6 +81,7 @@ export const experimentsGet = defineApiEndpoint<'experimentsGet'>(
 // No start/end dates in these inputs: experiments stay drafts until someone
 // launches them in PostHog.
 export const experimentsCreate = defineApiEndpoint<'experimentsCreate'>(
+	'experimentsCreate',
 	'posthog.experiments.create',
 	(input) => ({
 		path: `${PROJECT}/experiments/`,
@@ -84,6 +92,7 @@ export const experimentsCreate = defineApiEndpoint<'experimentsCreate'>(
 );
 
 export const experimentsUpdate = defineApiEndpoint<'experimentsUpdate'>(
+	'experimentsUpdate',
 	'posthog.experiments.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/experiments/${pathId(id)}/`,
@@ -94,11 +103,13 @@ export const experimentsUpdate = defineApiEndpoint<'experimentsUpdate'>(
 );
 
 export const surveysList = defineApiEndpoint<'surveysList'>(
+	'surveysList',
 	'posthog.surveys.list',
 	(input) => ({ path: `${PROJECT}/surveys/`, query: input, log: input }),
 );
 
 export const surveysGet = defineApiEndpoint<'surveysGet'>(
+	'surveysGet',
 	'posthog.surveys.get',
 	(input) => ({
 		path: `${PROJECT}/surveys/${pathId(input.id)}/`,
@@ -108,6 +119,7 @@ export const surveysGet = defineApiEndpoint<'surveysGet'>(
 
 // Like experiments, surveys are created and edited as drafts (no start date).
 export const surveysCreate = defineApiEndpoint<'surveysCreate'>(
+	'surveysCreate',
 	'posthog.surveys.create',
 	(input) => ({
 		path: `${PROJECT}/surveys/`,
@@ -118,6 +130,7 @@ export const surveysCreate = defineApiEndpoint<'surveysCreate'>(
 );
 
 export const surveysUpdate = defineApiEndpoint<'surveysUpdate'>(
+	'surveysUpdate',
 	'posthog.surveys.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/surveys/${pathId(id)}/`,
@@ -128,6 +141,7 @@ export const surveysUpdate = defineApiEndpoint<'surveysUpdate'>(
 );
 
 export const surveysDelete = defineApiEndpoint<'surveysDelete'>(
+	'surveysDelete',
 	'posthog.surveys.delete',
 	({ id }) => ({
 		path: `${PROJECT}/surveys/${pathId(id)}/`,
@@ -140,6 +154,7 @@ export const surveysDelete = defineApiEndpoint<'surveysDelete'>(
 
 export const earlyAccessFeaturesList =
 	defineApiEndpoint<'earlyAccessFeaturesList'>(
+		'earlyAccessFeaturesList',
 		'posthog.earlyAccessFeatures.list',
 		(input) => ({
 			path: `${PROJECT}/early_access_feature/`,

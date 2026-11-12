@@ -4,11 +4,13 @@ import { defineApiEndpoint, PROJECT, pathId } from './api';
 // can be restored from PostHog afterwards.
 
 export const insightsList = defineApiEndpoint<'insightsList'>(
+	'insightsList',
 	'posthog.insights.list',
 	(input) => ({ path: `${PROJECT}/insights/`, query: input, log: input }),
 );
 
 export const insightsGet = defineApiEndpoint<'insightsGet'>(
+	'insightsGet',
 	'posthog.insights.get',
 	(input) => ({
 		path: `${PROJECT}/insights/${pathId(input.id)}/`,
@@ -18,6 +20,7 @@ export const insightsGet = defineApiEndpoint<'insightsGet'>(
 );
 
 export const insightsCreate = defineApiEndpoint<'insightsCreate'>(
+	'insightsCreate',
 	'posthog.insights.create',
 	(input) => ({
 		path: `${PROJECT}/insights/`,
@@ -28,6 +31,7 @@ export const insightsCreate = defineApiEndpoint<'insightsCreate'>(
 );
 
 export const insightsUpdate = defineApiEndpoint<'insightsUpdate'>(
+	'insightsUpdate',
 	'posthog.insights.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/insights/${pathId(id)}/`,
@@ -38,6 +42,7 @@ export const insightsUpdate = defineApiEndpoint<'insightsUpdate'>(
 );
 
 export const insightsDelete = defineApiEndpoint<'insightsDelete'>(
+	'insightsDelete',
 	'posthog.insights.delete',
 	({ id }) => ({
 		path: `${PROJECT}/insights/${pathId(id)}/`,
@@ -48,11 +53,13 @@ export const insightsDelete = defineApiEndpoint<'insightsDelete'>(
 );
 
 export const dashboardsList = defineApiEndpoint<'dashboardsList'>(
+	'dashboardsList',
 	'posthog.dashboards.list',
 	(input) => ({ path: `${PROJECT}/dashboards/`, query: input, log: input }),
 );
 
 export const dashboardsGet = defineApiEndpoint<'dashboardsGet'>(
+	'dashboardsGet',
 	'posthog.dashboards.get',
 	(input) => ({
 		path: `${PROJECT}/dashboards/${pathId(input.id)}/`,
@@ -61,6 +68,7 @@ export const dashboardsGet = defineApiEndpoint<'dashboardsGet'>(
 );
 
 export const dashboardsCreate = defineApiEndpoint<'dashboardsCreate'>(
+	'dashboardsCreate',
 	'posthog.dashboards.create',
 	(input) => ({
 		path: `${PROJECT}/dashboards/`,
@@ -71,6 +79,7 @@ export const dashboardsCreate = defineApiEndpoint<'dashboardsCreate'>(
 );
 
 export const dashboardsUpdate = defineApiEndpoint<'dashboardsUpdate'>(
+	'dashboardsUpdate',
 	'posthog.dashboards.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/dashboards/${pathId(id)}/`,
@@ -81,6 +90,7 @@ export const dashboardsUpdate = defineApiEndpoint<'dashboardsUpdate'>(
 );
 
 export const dashboardsDelete = defineApiEndpoint<'dashboardsDelete'>(
+	'dashboardsDelete',
 	'posthog.dashboards.delete',
 	({ id, delete_insights }) => ({
 		path: `${PROJECT}/dashboards/${pathId(id)}/`,

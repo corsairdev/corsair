@@ -86,13 +86,35 @@ function normalizeHost(host: string): string {
 
 // Which region a personal key works in, learned on first use.
 const resolvedHosts = new Map<string, string>();
+/** How long a project token looked up with a personal key is reused. */
+export const CAPTURE_TOKEN_TTL_MS = 10 * 60 * 1000;
+
 // Project token per personal key + project, for capture with a phx_ key.
-const captureTokens = new Map<string, string>();
+const captureTokens = new Map<string, { token: string; expiresAt: number }>();
+// Lookups in flight, so concurrent cold-start captures share one request.
+const captureTokenLookups = new Map<string, Promise<string>>();
 
 /** Test hook: forget learned regions and project tokens. */
 export function resetPostHogClientCache(): void {
 	resolvedHosts.clear();
 	captureTokens.clear();
+	captureTokenLookups.clear();
+}
+
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * A personal key can read and change the whole project, so it only goes over
+ * HTTPS; plain http is allowed for a self-hosted PostHog on this machine.
+ */
+function assertSafeHostForPersonalKey(host: string): void {
+	const url = new URL(host);
+	if (url.protocol === 'http:' && !LOCAL_HOSTS.has(url.hostname)) {
+		throw new PostHogAPIError(
+			`Refusing to send a PostHog personal API key over plain http to ${url.hostname}; use an https host.`,
+			'insecure_host',
+		);
+	}
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -102,6 +124,8 @@ type PostHogQuery = Record<
 	string | number | boolean | string[] | undefined
 >;
 
+// The body is any JSON object PostHog accepts; each endpoint's zod input
+// schema has already validated what goes into it.
 export type PostHogApiOptions = {
 	method?: HttpMethod;
 	body?: Record<string, unknown>;
@@ -225,12 +249,9 @@ export async function makePostHogApiRequest<T>(
 		: path;
 
 	if (credentials.host) {
-		return sendPostHogRequest<T>(
-			normalizeHost(credentials.host),
-			endpoint,
-			key,
-			requestOptions,
-		);
+		const host = normalizeHost(credentials.host);
+		assertSafeHostForPersonalKey(host);
+		return sendPostHogRequest<T>(host, endpoint, key, requestOptions);
 	}
 
 	const known = resolvedHosts.get(key);
@@ -292,28 +313,57 @@ export async function resolveCaptureTarget(
 	}
 
 	const key = requirePersonalKey(credentials);
-	const projectId = requireProjectId(credentials);
-	const cacheKey = `${key}:${projectId}`;
-	let token = captureTokens.get(cacheKey);
-	if (!token) {
-		const project = await makePostHogApiRequest<{ api_token?: string }>(
-			credentials,
-			'/api/projects/{project_id}/',
-		);
-		if (!project.api_token) {
-			throw new PostHogAPIError(
-				'PostHog did not return a project token for this project.',
-				'api_token',
-			);
+	const cacheKey = captureCacheKey(credentials);
+	const cached = captureTokens.get(cacheKey);
+	let token: string;
+	if (cached && cached.expiresAt > Date.now()) {
+		token = cached.token;
+	} else {
+		let lookup = captureTokenLookups.get(cacheKey);
+		if (!lookup) {
+			lookup = lookUpProjectToken(credentials).finally(() => {
+				captureTokenLookups.delete(cacheKey);
+			});
+			captureTokenLookups.set(cacheKey, lookup);
 		}
-		token = project.api_token;
-		captureTokens.set(cacheKey, token);
+		token = await lookup;
 	}
 
 	const appHost = credentials.host
 		? normalizeHost(credentials.host)
 		: (resolvedHosts.get(key) ?? POSTHOG_US_HOST);
 	return { token, base: captureHostFor(appHost) };
+}
+
+function captureCacheKey(credentials: PostHogCredentials): string {
+	return `${credentials.key}:${requireProjectId(credentials)}`;
+}
+
+async function lookUpProjectToken(
+	credentials: PostHogCredentials,
+): Promise<string> {
+	const project = await makePostHogApiRequest<{ api_token?: string }>(
+		credentials,
+		'/api/projects/{project_id}/',
+	);
+	if (!project.api_token) {
+		throw new PostHogAPIError(
+			'PostHog did not return a project token for this project.',
+			'api_token',
+		);
+	}
+	captureTokens.set(captureCacheKey(credentials), {
+		token: project.api_token,
+		expiresAt: Date.now() + CAPTURE_TOKEN_TTL_MS,
+	});
+	return project.api_token;
+}
+
+/** Forgets the cached project token, e.g. after PostHog rejected it. */
+export function invalidateCaptureToken(credentials: PostHogCredentials): void {
+	if (isPersonalApiKey(credentials.key) && credentials.projectId) {
+		captureTokens.delete(captureCacheKey(credentials));
+	}
 }
 
 export type PostHogEventHandler<T extends PostHogEventName> = (

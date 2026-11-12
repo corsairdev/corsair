@@ -11,6 +11,7 @@ function dateRange(
 }
 
 export const queryRun = defineApiEndpoint<'queryRun'>(
+	'queryRun',
 	'posthog.query.run',
 	(input) => {
 		// A bare string is HogQL; any other query kind is passed through as is.
@@ -28,6 +29,7 @@ export const queryRun = defineApiEndpoint<'queryRun'>(
 );
 
 export const eventsList = defineApiEndpoint<'eventsList'>(
+	'eventsList',
 	'posthog.events.list',
 	(input) => ({
 		// /api/projects/:id/events/ is deprecated; EventsQuery is its replacement.
@@ -59,6 +61,7 @@ export const eventsList = defineApiEndpoint<'eventsList'>(
 
 export const errorTrackingIssuesList =
 	defineApiEndpoint<'errorTrackingIssuesList'>(
+		'errorTrackingIssuesList',
 		'posthog.errorTracking.issuesList',
 		(input) => ({
 			// PostHog's REST issues list has no occurrence counts; the
@@ -93,6 +96,7 @@ export const errorTrackingIssuesList =
 	);
 
 export const webAnalyticsOverview = defineApiEndpoint<'webAnalyticsOverview'>(
+	'webAnalyticsOverview',
 	'posthog.webAnalytics.overview',
 	(input) => ({
 		path: QUERY_PATH,
@@ -111,6 +115,7 @@ export const webAnalyticsOverview = defineApiEndpoint<'webAnalyticsOverview'>(
 );
 
 export const webAnalyticsStats = defineApiEndpoint<'webAnalyticsStats'>(
+	'webAnalyticsStats',
 	'posthog.webAnalytics.stats',
 	(input) => ({
 		path: QUERY_PATH,
@@ -122,6 +127,7 @@ export const webAnalyticsStats = defineApiEndpoint<'webAnalyticsStats'>(
 				dateRange: dateRange(input.date_from, input.date_to, '-7d'),
 				properties: [],
 				limit: input.limit ?? 20,
+				offset: input.offset,
 				filterTestAccounts: input.filter_test_accounts,
 			},
 		},
@@ -130,6 +136,7 @@ export const webAnalyticsStats = defineApiEndpoint<'webAnalyticsStats'>(
 );
 
 export const llmAnalyticsTraces = defineApiEndpoint<'llmAnalyticsTraces'>(
+	'llmAnalyticsTraces',
 	'posthog.llmAnalytics.traces',
 	(input) => ({
 		path: QUERY_PATH,
@@ -148,6 +155,7 @@ export const llmAnalyticsTraces = defineApiEndpoint<'llmAnalyticsTraces'>(
 );
 
 export const llmAnalyticsCosts = defineApiEndpoint<'llmAnalyticsCosts'>(
+	'llmAnalyticsCosts',
 	'posthog.llmAnalytics.costs',
 	(input) => {
 		// `days` is a validated integer, so it is safe to place in the query.
@@ -167,6 +175,7 @@ export const llmAnalyticsCosts = defineApiEndpoint<'llmAnalyticsCosts'>(
 );
 
 export const logsQuery = defineApiEndpoint<'logsQuery'>(
+	'logsQuery',
 	'posthog.logs.query',
 	(input) => ({
 		path: `${ENVIRONMENT}/logs/query/`,
@@ -177,7 +186,11 @@ export const logsQuery = defineApiEndpoint<'logsQuery'>(
 				serviceNames: input.service_names,
 				severityLevels: input.severity_levels,
 				searchTerm: input.search,
-				filterGroup: input.filters,
+				// PostHog's property group: an AND of one AND group. A single-level
+				// { type, values: [filter] } is rejected by the logs endpoint (500).
+				filterGroup: input.filters?.length
+					? { type: 'AND', values: [{ type: 'AND', values: input.filters }] }
+					: undefined,
 				orderBy: input.order_by,
 				limit: input.limit ?? 100,
 				after: input.after,

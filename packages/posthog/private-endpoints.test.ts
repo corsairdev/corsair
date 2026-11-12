@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+	CAPTURE_TOKEN_TTL_MS,
 	isPersonalApiKey,
 	makePostHogApiRequest,
 	PERSONAL_KEY_REQUIRED_MESSAGE,
@@ -21,13 +22,15 @@ jest.mock('corsair/core', () => ({
 
 import { insightsCreate, insightsDelete } from './endpoints/analytics';
 import {
+	annotationsCreate,
 	notebookDocument,
 	notebooksCreate,
 	propertyDefinitionsList,
 } from './endpoints/data';
 // Imported after the mock so endpoint modules get the stubbed logger.
-import { eventCreate } from './endpoints/events';
+import { eventCreate, trackPage } from './endpoints/events';
 import {
+	experimentsCreate,
 	featureFlagsCreate,
 	featureFlagsUpdate,
 	surveysDelete,
@@ -42,6 +45,8 @@ import {
 	queryRun as run,
 	webAnalyticsStats,
 } from './endpoints/query';
+import { errorHandlers, isNonIdempotent } from './error-handlers';
+import { posthog, posthogEndpointSchemas } from './index';
 
 type OutputKey = keyof typeof PostHogEndpointOutputSchemas;
 
@@ -89,6 +94,8 @@ function jsonBody(call: FetchCall): Record<string, unknown> {
 }
 
 const PHX = 'phx_test_personal_key';
+// Handlers only read `key`, `$getAccountId` and `db` from their context; the
+// full plugin context type is large, so the stub is cast with `as never`.
 const ctxFor = (credentials: Parameters<typeof packPostHogCredentials>[0]) =>
 	({
 		key: packPostHogCredentials(credentials),
@@ -262,7 +269,7 @@ describe('PostHog private API routing', () => {
 
 	it('retries on the EU cloud after a US 401 and remembers it', async () => {
 		const calls = mockFetch((url) =>
-			url.startsWith('https://us.')
+			new URL(url).host === 'us.posthog.com'
 				? { status: 401, body: { detail: 'invalid key' } }
 				: { status: 200, body: { id: 7 } },
 		);
@@ -335,7 +342,7 @@ describe('PostHog capture target', () => {
 
 	it('captures with the looked-up token on the EU ingestion host', async () => {
 		const calls = mockFetch((url) => {
-			if (url.startsWith('https://us.posthog.com')) {
+			if (new URL(url).host === 'us.posthog.com') {
 				return { status: 401, body: { detail: 'invalid key' } };
 			}
 			if (url.includes('/api/projects/')) {
@@ -535,10 +542,17 @@ describe('PostHog query-backed reads', () => {
 			status: 200,
 			body: fixture('logsQuery'),
 		}));
+		const filter = {
+			key: 'message',
+			type: 'log' as const,
+			operator: 'icontains',
+			value: 'timeout',
+		};
 		await logsQuery(ctx, {
 			service_names: ['api'],
 			severity_levels: ['error'],
 			search: 'timeout',
+			filters: [filter],
 		});
 		expect(calls[0]!.url).toBe(
 			'https://us.posthog.com/api/environments/5/logs/query/',
@@ -548,7 +562,20 @@ describe('PostHog query-backed reads', () => {
 			severityLevels: ['error'],
 			searchTerm: 'timeout',
 			dateRange: { date_from: '-1h' },
+			filterGroup: {
+				type: 'AND',
+				values: [{ type: 'AND', values: [filter] }],
+			},
 		});
+	});
+
+	it('pages web analytics breakdowns with offset', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('webAnalyticsStats'),
+		}));
+		await webAnalyticsStats(ctx, { breakdown_by: 'Page', limit: 2, offset: 2 });
+		expect(jsonBody(calls[0]!).query).toMatchObject({ limit: 2, offset: 2 });
 	});
 });
 
@@ -661,5 +688,451 @@ describe('PostHog writes', () => {
 		expect(() =>
 			PostHogEndpointInputSchemas.surveysUpdate.parse({ id: 's1' }),
 		).toThrow();
+	});
+});
+
+describe('PostHog input and output validation', () => {
+	const ctx = ctxFor({
+		key: PHX,
+		projectId: '5',
+		host: 'https://us.posthog.com',
+	});
+
+	it('drops start_date from experiments.create even from plain JS', async () => {
+		const calls = mockFetch(() => ({
+			status: 201,
+			body: fixture('experimentsCreate'),
+		}));
+		// A plain object with a key the schema doesn't have, as an agent or a
+		// JS caller could send it; `as never` skips the compile-time check.
+		await experimentsCreate(ctx, {
+			name: 'Pricing',
+			feature_flag_key: 'pricing-test',
+			start_date: '2026-01-01T00:00:00Z',
+			end_date: '2026-02-01T00:00:00Z',
+		} as never);
+		const body = jsonBody(calls[0]!);
+		expect(body).toMatchObject({
+			name: 'Pricing',
+			feature_flag_key: 'pricing-test',
+		});
+		expect(body).not.toHaveProperty('start_date');
+		expect(body).not.toHaveProperty('end_date');
+	});
+
+	it('rejects invalid input before calling PostHog', async () => {
+		const calls = mockFetch(() => ({ status: 200, body: {} }));
+		await expect(
+			featureFlagsCreate(ctx, { key: 'has space' } as never),
+		).rejects.toThrow();
+		await expect(
+			trackPage(ctxFor({ key: 'phc_abc' }), { distinct_id: 'u' } as never),
+		).rejects.toThrow();
+		expect(calls).toHaveLength(0);
+	});
+
+	it('returns the raw response with a warning when PostHog changes a shape', async () => {
+		mockFetch(() => ({ status: 200, body: { unexpected: true } }));
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const result = await insightsDelete(ctx, { id: 7 });
+		expect(result).toEqual({ unexpected: true });
+		expect(warn).toHaveBeenCalledWith(
+			expect.stringContaining('posthog.insights.delete'),
+		);
+	});
+
+	it('scopes an annotation to its insight', async () => {
+		const calls = mockFetch(() => ({
+			status: 201,
+			body: fixture('annotationsCreate'),
+		}));
+		await annotationsCreate(ctx, { content: 'Deploy', dashboard_item: 12 });
+		await annotationsCreate(ctx, { content: 'Deploy' });
+		expect(jsonBody(calls[0]!)).toMatchObject({
+			scope: 'dashboard_item',
+			dashboard_item: 12,
+		});
+		expect(jsonBody(calls[1]!)).toMatchObject({ scope: 'project' });
+	});
+});
+
+describe('PostHog sends each action to the right place', () => {
+	// Hand-written from PostHog's API reference, not derived from the code:
+	// [operation, minimal input, method, path, a key the body must carry].
+	const P = '/api/projects/5';
+	const E = '/api/environments/5';
+	const cases: [string, Record<string, unknown>, string, string, string?][] = [
+		['organizations.list', {}, 'GET', '/api/organizations/'],
+		['organizations.get', {}, 'GET', '/api/organizations/@current/'],
+		['projects.list', {}, 'GET', '/api/organizations/@current/projects/'],
+		['projects.get', {}, 'GET', `${P}/`],
+		['query.run', { query: 'select 1' }, 'POST', `${P}/query/`, 'query'],
+		['events.list', {}, 'POST', `${P}/query/`, 'query'],
+		['errorTracking.issuesList', {}, 'POST', `${P}/query/`, 'query'],
+		['webAnalytics.overview', {}, 'POST', `${P}/query/`, 'query'],
+		[
+			'webAnalytics.stats',
+			{ breakdown_by: 'Page' },
+			'POST',
+			`${P}/query/`,
+			'query',
+		],
+		['llmAnalytics.traces', {}, 'POST', `${P}/query/`, 'query'],
+		['llmAnalytics.costs', {}, 'POST', `${P}/query/`, 'query'],
+		['logs.query', {}, 'POST', `${E}/logs/query/`, 'query'],
+		['insights.list', {}, 'GET', `${P}/insights/`],
+		['insights.get', { id: 1 }, 'GET', `${P}/insights/1/`],
+		[
+			'insights.create',
+			{ name: 'n', query: { kind: 'TrendsQuery' } },
+			'POST',
+			`${P}/insights/`,
+			'name',
+		],
+		[
+			'insights.update',
+			{ id: 1, name: 'n' },
+			'PATCH',
+			`${P}/insights/1/`,
+			'name',
+		],
+		['insights.delete', { id: 1 }, 'PATCH', `${P}/insights/1/`, 'deleted'],
+		['dashboards.list', {}, 'GET', `${P}/dashboards/`],
+		['dashboards.get', { id: 1 }, 'GET', `${P}/dashboards/1/`],
+		['dashboards.create', { name: 'n' }, 'POST', `${P}/dashboards/`, 'name'],
+		[
+			'dashboards.update',
+			{ id: 1, name: 'n' },
+			'PATCH',
+			`${P}/dashboards/1/`,
+			'name',
+		],
+		['dashboards.delete', { id: 1 }, 'PATCH', `${P}/dashboards/1/`, 'deleted'],
+		['persons.list', {}, 'GET', `${P}/persons/`],
+		['persons.get', { id: 'p1' }, 'GET', `${P}/persons/p1/`],
+		[
+			'persons.updateProperty',
+			{ id: 'p1', key: 'plan', value: 'pro' },
+			'POST',
+			`${P}/persons/p1/update_property/`,
+			'key',
+		],
+		[
+			'persons.deleteProperty',
+			{ id: 'p1', key: 'plan' },
+			'POST',
+			`${P}/persons/p1/delete_property/`,
+			'$unset',
+		],
+		['cohorts.list', {}, 'GET', `${P}/cohorts/`],
+		['cohorts.get', { id: 1 }, 'GET', `${P}/cohorts/1/`],
+		['cohorts.create', { name: 'n' }, 'POST', `${P}/cohorts/`, 'name'],
+		[
+			'cohorts.update',
+			{ id: 1, name: 'n' },
+			'PATCH',
+			`${P}/cohorts/1/`,
+			'name',
+		],
+		['actions.list', {}, 'GET', `${P}/actions/`],
+		['actions.get', { id: 1 }, 'GET', `${P}/actions/1/`],
+		[
+			'actions.create',
+			{ name: 'n', steps: [{ event: 'signed_up' }] },
+			'POST',
+			`${P}/actions/`,
+			'steps',
+		],
+		['annotations.list', {}, 'GET', `${P}/annotations/`],
+		[
+			'annotations.create',
+			{ content: 'c' },
+			'POST',
+			`${P}/annotations/`,
+			'content',
+		],
+		[
+			'annotations.update',
+			{ id: 1, content: 'c' },
+			'PATCH',
+			`${P}/annotations/1/`,
+			'content',
+		],
+		[
+			'annotations.delete',
+			{ id: 1 },
+			'PATCH',
+			`${P}/annotations/1/`,
+			'deleted',
+		],
+		['eventDefinitions.list', {}, 'GET', `${P}/event_definitions/`],
+		['propertyDefinitions.list', {}, 'GET', `${P}/property_definitions/`],
+		['notebooks.list', {}, 'GET', `${P}/notebooks/`],
+		['notebooks.get', { short_id: 'abc' }, 'GET', `${P}/notebooks/abc/`],
+		['notebooks.create', { title: 't' }, 'POST', `${P}/notebooks/`, 'content'],
+		['alerts.list', {}, 'GET', `${P}/alerts/`],
+		['alerts.get', { id: 'a1' }, 'GET', `${P}/alerts/a1/`],
+		['featureFlags.list', {}, 'GET', `${P}/feature_flags/`],
+		['featureFlags.get', { id: 1 }, 'GET', `${P}/feature_flags/1/`],
+		['featureFlags.create', { key: 'k' }, 'POST', `${P}/feature_flags/`, 'key'],
+		[
+			'featureFlags.update',
+			{ id: 1, active: false },
+			'PATCH',
+			`${P}/feature_flags/1/`,
+			'active',
+		],
+		[
+			'featureFlags.delete',
+			{ id: 1 },
+			'PATCH',
+			`${P}/feature_flags/1/`,
+			'deleted',
+		],
+		['experiments.list', {}, 'GET', `${P}/experiments/`],
+		['experiments.get', { id: 1 }, 'GET', `${P}/experiments/1/`],
+		[
+			'experiments.create',
+			{ name: 'n', feature_flag_key: 'k' },
+			'POST',
+			`${P}/experiments/`,
+			'feature_flag_key',
+		],
+		[
+			'experiments.update',
+			{ id: 1, name: 'n' },
+			'PATCH',
+			`${P}/experiments/1/`,
+			'name',
+		],
+		['surveys.list', {}, 'GET', `${P}/surveys/`],
+		['surveys.get', { id: 's1' }, 'GET', `${P}/surveys/s1/`],
+		[
+			'surveys.create',
+			{ name: 'n', questions: [{ type: 'open', question: 'q' }] },
+			'POST',
+			`${P}/surveys/`,
+			'questions',
+		],
+		[
+			'surveys.update',
+			{ id: 's1', name: 'n' },
+			'PATCH',
+			`${P}/surveys/s1/`,
+			'name',
+		],
+		['surveys.delete', { id: 's1' }, 'DELETE', `${P}/surveys/s1/`],
+		['earlyAccessFeatures.list', {}, 'GET', `${P}/early_access_feature/`],
+		['sessionRecordings.list', {}, 'GET', `${E}/session_recordings/`],
+		[
+			'sessionRecordings.get',
+			{ id: 'r1' },
+			'GET',
+			`${E}/session_recordings/r1/`,
+		],
+		[
+			'sessionRecordingPlaylists.list',
+			{},
+			'GET',
+			`${P}/session_recording_playlists/`,
+		],
+		['batchExports.list', {}, 'GET', `${P}/batch_exports/`],
+		['hogFunctions.list', {}, 'GET', `${P}/hog_functions/`],
+		['hogFunctions.get', { id: 'h1' }, 'GET', `${P}/hog_functions/h1/`],
+		['warehouseTables.list', {}, 'GET', `${P}/warehouse_tables/`],
+	];
+
+	// Handlers by "group.method", straight from the plugin's endpoint tree.
+	const tree = posthog().endpoints as unknown as Record<
+		string,
+		Record<string, (ctx: never, input: never) => Promise<unknown>>
+	>;
+	const ctx = ctxFor({
+		key: PHX,
+		projectId: '5',
+		host: 'https://us.posthog.com',
+	});
+
+	it('covers every private-API action', () => {
+		const capture = new Set([
+			'events.aliasCreate',
+			'events.eventCreate',
+			'events.identityCreate',
+			'events.trackPage',
+			'events.trackScreen',
+		]);
+		const expected = Object.keys(posthogEndpointSchemas).filter(
+			(op) => !capture.has(op),
+		);
+		expect(cases.map(([op]) => op).sort()).toEqual(expected.sort());
+	});
+
+	// Rows become objects: a 4-field row would hand jest's `done` callback to
+	// a fifth positional parameter and the test would wait for it.
+	const rows = cases.map(([operation, input, method, path, bodyKey]) => ({
+		operation,
+		input,
+		method,
+		path,
+		bodyKey,
+	}));
+
+	it.each(rows)(
+		'$operation → $method $path',
+		async ({ operation, input, method, path, bodyKey }) => {
+			jest.spyOn(console, 'warn').mockImplementation(() => {});
+			const calls = mockFetch(() => ({ status: 200, body: {} }));
+			const [group, action] = operation.split('.') as [string, string];
+			const handler = tree[group]?.[action];
+			expect(handler).toBeDefined();
+			await handler!(ctx, input as never);
+			expect(calls).toHaveLength(1);
+			expect(calls[0]!.init.method ?? 'GET').toBe(method);
+			expect(new URL(calls[0]!.url).pathname).toBe(path);
+			if (bodyKey) expect(jsonBody(calls[0]!)).toHaveProperty([bodyKey]);
+		},
+	);
+});
+
+describe('PostHog retries', () => {
+	// The error-handler context carries more fields; these handlers only read
+	// `operation`, so the stub is cast.
+	const context = (operation: string) =>
+		({ operation, pluginId: 'posthog', args: {} }) as never;
+	const serverError = Object.assign(new Error('Internal Server Error'), {
+		status: 500,
+	});
+	const rateLimited = Object.assign(new Error('Too Many Requests'), {
+		status: 429,
+	});
+
+	it('marks creates and captures as not safe to resend', () => {
+		expect(isNonIdempotent('insights.create')).toBe(true);
+		expect(isNonIdempotent('notebooks.create')).toBe(true);
+		expect(isNonIdempotent('events.eventCreate')).toBe(true);
+		expect(isNonIdempotent('events.trackPage')).toBe(true);
+		expect(isNonIdempotent('insights.update')).toBe(false);
+		expect(isNonIdempotent('query.run')).toBe(false);
+	});
+
+	it('retries a 5xx only for reads and updates', async () => {
+		const handle = errorHandlers.SERVER_ERROR.handler;
+		expect(errorHandlers.SERVER_ERROR.match(serverError)).toBe(true);
+		expect(
+			(await handle(serverError, context('insights.list'))).maxRetries,
+		).toBe(2);
+		expect(
+			(await handle(serverError, context('featureFlags.update'))).maxRetries,
+		).toBe(2);
+		expect(
+			(await handle(serverError, context('insights.create'))).maxRetries,
+		).toBe(0);
+		expect(
+			(await handle(serverError, context('events.identityCreate'))).maxRetries,
+		).toBe(0);
+	});
+
+	it('leaves 429 retries to the HTTP layer', async () => {
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
+		expect((await errorHandlers.RATE_LIMIT_ERROR.handler()).maxRetries).toBe(0);
+	});
+});
+
+describe('PostHog key safety and token cache', () => {
+	it('refuses to send a personal key over plain http', async () => {
+		const calls = mockFetch(() => ({ status: 200, body: {} }));
+		await expect(
+			makePostHogApiRequest(
+				{ key: PHX, projectId: '1', host: 'http://posthog.example.com' },
+				'/api/projects/{project_id}/',
+			),
+		).rejects.toThrow('plain http');
+		expect(calls).toHaveLength(0);
+
+		await makePostHogApiRequest(
+			{ key: PHX, projectId: '1', host: 'http://localhost:8000' },
+			'/api/projects/{project_id}/',
+		);
+		expect(calls[0]!.url).toBe('http://localhost:8000/api/projects/1/');
+	});
+
+	it('shares one token lookup between concurrent captures', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: { id: 1, api_token: 'phc_shared' },
+		}));
+		const creds = { key: PHX, projectId: '1' };
+		const targets = await Promise.all([
+			resolveCaptureTarget(creds),
+			resolveCaptureTarget(creds),
+			resolveCaptureTarget(creds),
+		]);
+		expect(targets.map((t) => t.token)).toEqual([
+			'phc_shared',
+			'phc_shared',
+			'phc_shared',
+		]);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('forgets a failed lookup so the next capture tries again', async () => {
+		let attempt = 0;
+		const calls = mockFetch(() =>
+			++attempt === 1
+				? { status: 403, body: { detail: 'missing project:read' } }
+				: { status: 200, body: { id: 1, api_token: 'phc_ok' } },
+		);
+		const creds = { key: PHX, projectId: '1' };
+		await expect(resolveCaptureTarget(creds)).rejects.toBeInstanceOf(
+			PostHogAPIError,
+		);
+		expect((await resolveCaptureTarget(creds)).token).toBe('phc_ok');
+		expect(calls).toHaveLength(2);
+	});
+
+	it('looks the token up again after the TTL', async () => {
+		const now = jest.spyOn(Date, 'now').mockReturnValue(1_000_000);
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: { id: 1, api_token: 'phc_ttl' },
+		}));
+		const creds = { key: PHX, projectId: '1' };
+		await resolveCaptureTarget(creds);
+		now.mockReturnValue(1_000_000 + CAPTURE_TOKEN_TTL_MS - 1);
+		await resolveCaptureTarget(creds);
+		expect(calls).toHaveLength(1);
+		now.mockReturnValue(1_000_000 + CAPTURE_TOKEN_TTL_MS + 1);
+		await resolveCaptureTarget(creds);
+		expect(calls).toHaveLength(2);
+	});
+
+	it('refreshes a rotated project token once after a capture 401', async () => {
+		let lookups = 0;
+		const calls = mockFetch((url, init) => {
+			if (new URL(url).pathname === '/api/projects/9/') {
+				lookups += 1;
+				return {
+					status: 200,
+					body: { id: 9, api_token: lookups === 1 ? 'phc_old' : 'phc_new' },
+				};
+			}
+			const token = (JSON.parse(String(init.body)) as { api_key: string })
+				.api_key;
+			return token === 'phc_old'
+				? { status: 401, body: { detail: 'invalid token' } }
+				: { status: 200, body: { status: 1 } };
+		});
+		await eventCreate(ctxFor({ key: PHX, projectId: '9' }), {
+			distinct_id: 'user-1',
+			event: 'signed_up',
+		});
+		const captures = calls.filter(
+			(c) => new URL(c.url).pathname === '/capture/',
+		);
+		expect(captures.map((c) => jsonBody(c).api_key)).toEqual([
+			'phc_old',
+			'phc_new',
+		]);
+		expect(lookups).toBe(2);
 	});
 });

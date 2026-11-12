@@ -1,11 +1,13 @@
 import { defineApiEndpoint, PROJECT, pathId } from './api';
 
 export const actionsList = defineApiEndpoint<'actionsList'>(
+	'actionsList',
 	'posthog.actions.list',
 	(input) => ({ path: `${PROJECT}/actions/`, query: input, log: input }),
 );
 
 export const actionsGet = defineApiEndpoint<'actionsGet'>(
+	'actionsGet',
 	'posthog.actions.get',
 	(input) => ({
 		path: `${PROJECT}/actions/${pathId(input.id)}/`,
@@ -14,6 +16,7 @@ export const actionsGet = defineApiEndpoint<'actionsGet'>(
 );
 
 export const actionsCreate = defineApiEndpoint<'actionsCreate'>(
+	'actionsCreate',
 	'posthog.actions.create',
 	(input) => ({
 		path: `${PROJECT}/actions/`,
@@ -24,11 +27,24 @@ export const actionsCreate = defineApiEndpoint<'actionsCreate'>(
 );
 
 export const annotationsList = defineApiEndpoint<'annotationsList'>(
+	'annotationsList',
 	'posthog.annotations.list',
 	(input) => ({ path: `${PROJECT}/annotations/`, query: input, log: input }),
 );
 
+/** An annotation tied to an insight is scoped to it unless told otherwise. */
+function annotationScope(input: {
+	scope?: 'project' | 'organization' | 'dashboard_item';
+	dashboard_item?: number;
+}) {
+	return (
+		input.scope ??
+		(input.dashboard_item !== undefined ? 'dashboard_item' : 'project')
+	);
+}
+
 export const annotationsCreate = defineApiEndpoint<'annotationsCreate'>(
+	'annotationsCreate',
 	'posthog.annotations.create',
 	(input) => ({
 		path: `${PROJECT}/annotations/`,
@@ -36,14 +52,15 @@ export const annotationsCreate = defineApiEndpoint<'annotationsCreate'>(
 		body: {
 			content: input.content,
 			date_marker: input.date_marker ?? new Date().toISOString(),
-			scope: input.scope ?? 'project',
+			scope: annotationScope(input),
 			dashboard_item: input.dashboard_item,
 		},
-		log: { scope: input.scope ?? 'project', date_marker: input.date_marker },
+		log: { scope: annotationScope(input), date_marker: input.date_marker },
 	}),
 );
 
 export const annotationsUpdate = defineApiEndpoint<'annotationsUpdate'>(
+	'annotationsUpdate',
 	'posthog.annotations.update',
 	({ id, ...changes }) => ({
 		path: `${PROJECT}/annotations/${pathId(id)}/`,
@@ -54,6 +71,7 @@ export const annotationsUpdate = defineApiEndpoint<'annotationsUpdate'>(
 );
 
 export const annotationsDelete = defineApiEndpoint<'annotationsDelete'>(
+	'annotationsDelete',
 	'posthog.annotations.delete',
 	({ id }) => ({
 		path: `${PROJECT}/annotations/${pathId(id)}/`,
@@ -64,6 +82,7 @@ export const annotationsDelete = defineApiEndpoint<'annotationsDelete'>(
 );
 
 export const eventDefinitionsList = defineApiEndpoint<'eventDefinitionsList'>(
+	'eventDefinitionsList',
 	'posthog.eventDefinitions.list',
 	(input) => ({
 		path: `${PROJECT}/event_definitions/`,
@@ -74,6 +93,7 @@ export const eventDefinitionsList = defineApiEndpoint<'eventDefinitionsList'>(
 
 export const propertyDefinitionsList =
 	defineApiEndpoint<'propertyDefinitionsList'>(
+		'propertyDefinitionsList',
 		'posthog.propertyDefinitions.list',
 		({ event_names, ...rest }) => ({
 			path: `${PROJECT}/property_definitions/`,
@@ -91,11 +111,13 @@ export const propertyDefinitionsList =
 	);
 
 export const notebooksList = defineApiEndpoint<'notebooksList'>(
+	'notebooksList',
 	'posthog.notebooks.list',
 	(input) => ({ path: `${PROJECT}/notebooks/`, query: input, log: input }),
 );
 
 export const notebooksGet = defineApiEndpoint<'notebooksGet'>(
+	'notebooksGet',
 	'posthog.notebooks.get',
 	(input) => ({
 		path: `${PROJECT}/notebooks/${pathId(input.short_id)}/`,
@@ -127,6 +149,7 @@ export function notebookDocument(title: string, text?: string) {
 }
 
 export const notebooksCreate = defineApiEndpoint<'notebooksCreate'>(
+	'notebooksCreate',
 	'posthog.notebooks.create',
 	(input) => ({
 		path: `${PROJECT}/notebooks/`,
@@ -143,11 +166,13 @@ export const notebooksCreate = defineApiEndpoint<'notebooksCreate'>(
 );
 
 export const alertsList = defineApiEndpoint<'alertsList'>(
+	'alertsList',
 	'posthog.alerts.list',
 	(input) => ({ path: `${PROJECT}/alerts/`, query: input, log: input }),
 );
 
 export const alertsGet = defineApiEndpoint<'alertsGet'>(
+	'alertsGet',
 	'posthog.alerts.get',
 	(input) => ({
 		path: `${PROJECT}/alerts/${pathId(input.id)}/`,

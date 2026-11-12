@@ -4,6 +4,7 @@ import { defineApiEndpoint, ENVIRONMENT, PROJECT, pathId } from './api';
 // id is the project id.
 
 export const sessionRecordingsList = defineApiEndpoint<'sessionRecordingsList'>(
+	'sessionRecordingsList',
 	'posthog.sessionRecordings.list',
 	(input) => ({
 		path: `${ENVIRONMENT}/session_recordings/`,
@@ -13,6 +14,7 @@ export const sessionRecordingsList = defineApiEndpoint<'sessionRecordingsList'>(
 );
 
 export const sessionRecordingsGet = defineApiEndpoint<'sessionRecordingsGet'>(
+	'sessionRecordingsGet',
 	'posthog.sessionRecordings.get',
 	(input) => ({
 		path: `${ENVIRONMENT}/session_recordings/${pathId(input.id)}/`,
@@ -22,6 +24,7 @@ export const sessionRecordingsGet = defineApiEndpoint<'sessionRecordingsGet'>(
 
 export const sessionRecordingPlaylistsList =
 	defineApiEndpoint<'sessionRecordingPlaylistsList'>(
+		'sessionRecordingPlaylistsList',
 		'posthog.sessionRecordingPlaylists.list',
 		(input) => ({
 			path: `${PROJECT}/session_recording_playlists/`,

@@ -88,11 +88,11 @@ pnpm add @corsair-dev/posthog
 
 Auth: API key plus `project_id`. Corsair prompts your tenant for credentials on first use.
 
-- A **personal API key** (`phx_...`) unlocks every action. Give it read scopes for the areas you use and write scopes only where the agent may change things. Capture actions look up the project token with it.
-- A key scoped to **all projects** works across them: every project action takes an optional `project_id` that overrides the connected one, and `organizations.list` / `projects.list` show what the key reaches.
+- A **personal API key** (`phx_...`) unlocks every action. Give it read scopes for the areas you use and write scopes only where the agent may change things. Capture looks up the project token with it (needs `project:read`).
+- A key scoped to **all projects** works across them: every private-API action (not capture) takes an optional `project_id` that overrides the connected one, and `organizations.list` / `projects.list` show what the key reaches.
 - A **project token** (`phc_...`) works for the five `events.*` capture actions only.
 
-US and EU cloud are detected on the first call; pass `host` for self-hosted PostHog. Setup steps: https://docs.corsair.dev/plugins/posthog/get-credentials
+With a personal key, US and EU cloud are detected on the first call; a project token uses the US host unless `host` is set. Pass `host` for self-hosted PostHog. Setup steps: https://docs.corsair.dev/plugins/posthog/get-credentials
 
 ## Webhooks
 
