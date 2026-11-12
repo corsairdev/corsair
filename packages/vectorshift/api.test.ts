@@ -54,13 +54,10 @@ describeIfKey('live VectorShift API', () => {
 
 describeIfPipeline('live VectorShift pipeline run', () => {
 	it('runs a pipeline and returns its node outputs', async () => {
-		const result = await Pipelines.run(
-			liveContext() as never,
-			{
-				pipelineId,
-				inputs: {},
-			} as never,
-		);
+		const result = await Pipelines.run(liveContext() as never, {
+			id: pipelineId as string,
+			inputs: {},
+		});
 
 		// A failed run throws rather than returning `status: 'failed'`, so reaching
 		// here means the run succeeded.

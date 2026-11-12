@@ -167,6 +167,7 @@ describe('a failed run reported inside a 200', () => {
 	it('raises rather than returning an empty success', async () => {
 		respond(fetchMock, failedRun);
 
+		// unknown: a promise can reject with any value; the cast below narrows it.
 		const error = (await invoke(Pipelines.run, { id: 'pl_7f3a2b' }).catch(
 			(thrown: unknown) => thrown,
 		)) as VectorshiftRunFailedError;
@@ -179,6 +180,7 @@ describe('a failed run reported inside a 200', () => {
 	it('says so when no reason was given', async () => {
 		respond(fetchMock, failedWithoutReason);
 
+		// unknown: a promise can reject with any value; the cast below narrows it.
 		const error = (await invoke(Pipelines.run, { id: 'pl_7f3a2b' }).catch(
 			(thrown: unknown) => thrown,
 		)) as VectorshiftRunFailedError;
@@ -479,6 +481,7 @@ describe('error surface', () => {
 	it('surfaces a bad key as a VectorshiftAPIError', async () => {
 		respond(fetchMock, invalidKey, 401);
 
+		// unknown: a promise can reject with any value; the cast below narrows it.
 		const error = (await invoke(Pipelines.list, {}).catch(
 			(thrown: unknown) => thrown,
 		)) as VectorshiftAPIError;
