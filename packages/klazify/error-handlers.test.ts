@@ -155,6 +155,18 @@ describe('server failures', () => {
 		expect(name).toBe('SERVER_ERROR');
 		expect(result.maxRetries).toBeGreaterThan(0);
 	});
+
+	// Same for a gateway body that mentions "unauthorized": the status decides.
+	it('retries a 5xx whose body says unauthorized', async () => {
+		const error = new KlazifyAPIError('Klazify 503: upstream unauthorized', {
+			status: 503,
+			detail: 'upstream unauthorized',
+		});
+		const { name, result } = await resolve(error);
+
+		expect(name).toBe('SERVER_ERROR');
+		expect(result.maxRetries).toBeGreaterThan(0);
+	});
 });
 
 describe('unrecognised failures', () => {

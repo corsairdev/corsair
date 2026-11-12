@@ -20,11 +20,12 @@ export const errorHandlers = {
 			error instanceof KlazifyAPIError && error.isPlanRequired,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// Status only: the client copies Klazify's message into the error, so a
+	// 5xx body that says "unauthorized" must still reach SERVER_ERROR.
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof KlazifyAPIError && error.isAuthError) return true;
-			const message = error.message.toLowerCase();
-			return message.includes('unauthorized');
+			const status = statusOf(error);
+			return status === 401 || status === 403;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
