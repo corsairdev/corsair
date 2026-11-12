@@ -16,7 +16,7 @@ pnpm add @corsair-dev/vectorshift
 | `chatbots.run` | `vectorshift.api.chatbots.run` | `write` | Send a text or audio message to a chatbot and read its reply, continuing a conversation by id |
 | `knowledgeBases.create` | `vectorshift.api.knowledgeBases.create` | `write` | Create a knowledge base, choosing the file parser, chunk size and overlap |
 | `knowledgeBases.get` | `vectorshift.api.knowledgeBases.get` | `read` | Read one knowledge base by id, or by name with an optional owner |
-| `knowledgeBases.query` | `vectorshift.api.knowledgeBases.query` | `write` | Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches |
+| `knowledgeBases.query` | `vectorshift.api.knowledgeBases.query` | `read` | Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches |
 | `pipelines.bulkRun` | `vectorshift.api.pipelines.bulkRun` | `write` | Run one pipeline once per entry in parallel, with separate inputs and a run id each |
 | `pipelines.create` | `vectorshift.api.pipelines.create` | `write` | Create a pipeline from a builder graph, passed through unchanged |
 | `pipelines.list` | `vectorshift.api.pipelines.list` | `read` | List pipeline ids, optionally including shared pipelines and the full objects |
