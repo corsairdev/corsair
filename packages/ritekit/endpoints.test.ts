@@ -30,6 +30,7 @@ import {
 	HASHTAGS_TRENDING,
 	LINK_PREVIEW,
 	NAME_FROM_EMAIL,
+	NAME_FROM_EMAIL_LIVE,
 	NAME_TO_DOMAIN,
 	QUOTE_IMAGE,
 	SHORT_LINK,
@@ -460,6 +461,22 @@ describe('person insights', () => {
 		);
 		expect(result.info?.givenName).toBe('john');
 		expect(result.info?.surname).toBe('doe');
+	});
+
+	it('accepts the name as one string, the way the live API sends it', async () => {
+		respond(fetchMock, NAME_FROM_EMAIL_LIVE);
+
+		const result = (await invoke(Person.nameFromEmail, {
+			email: 'john.doe@test.com',
+		})) as { info?: unknown };
+
+		expect(result.info).toBe('John Doe');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'ritekit.person.nameFromEmail',
+			{ named: true },
+			'completed',
+		);
 	});
 });
 

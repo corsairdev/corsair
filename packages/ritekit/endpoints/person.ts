@@ -90,8 +90,9 @@ export const nameFromEmail: RiteKitEndpoints['personNameFromEmail'] = (
 		{
 			log: (_, result) => ({
 				named:
-					result.info?.givenName !== undefined &&
-					result.info?.givenName !== null,
+					typeof result.info === 'string'
+						? result.info.length > 0
+						: typeof result.info?.givenName === 'string',
 			}),
 		},
 	);

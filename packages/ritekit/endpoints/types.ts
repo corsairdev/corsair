@@ -462,14 +462,21 @@ const NameFromEmailInputSchema = z.object({
 
 export type NameFromEmailInput = z.infer<typeof NameFromEmailInputSchema>;
 
+// The Postman sample shows `info` as { givenName, surname }; the live API (11-12)
+// and RiteKit's Python client read it as one string, such as "John Doe".
 const NameFromEmailResponseSchema = EmailResponseSchema.extend({
 	info: z
-		.object({
-			givenName: z.string().nullish(),
-			surname: z.string().nullish(),
-		})
-		.loose()
-		.nullish(),
+		.union([
+			z.string(),
+			z
+				.object({
+					givenName: z.string().nullish(),
+					surname: z.string().nullish(),
+				})
+				.loose(),
+		])
+		.nullish()
+		.describe('The derived name: a string such as "John Doe" in live answers.'),
 });
 
 export type NameFromEmailResponse = z.infer<typeof NameFromEmailResponseSchema>;

@@ -214,6 +214,15 @@ export const EMAIL_TYPO = {
 	],
 };
 
+// Live 11-12: the API answers `info` as one string, not the object the
+// Postman sample shows.
+export const NAME_FROM_EMAIL_LIVE = {
+	result: true,
+	message: 'OK',
+	email: 'john.doe@test.com',
+	info: 'John Doe',
+};
+
 export const NAME_FROM_EMAIL = {
 	result: true,
 	message: 'OK',
