@@ -1,0 +1,81 @@
+displayName: ImageKit
+description: Image and video media library and CDN with ImageKit - upload files, list and search assets, organize folders, tag files, read versions and metadata, run folder jobs and purge CDN cache.
+domain: imagekit.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a private API key in the ImageKit dashboard under Developer options, API keys. Things to know before you call:
+
+  - **Uploads accept a URL or base64.** `files.upload` takes an https URL ImageKit fetches, or base64-encoded content. It is exempt from rate limits but the largest payloads take a while, so the client allows 120 seconds.
+  - **Deletes are permanent.** `files.delete`, `files.bulkDelete`, `fileVersions.delete` and `folders.delete` cannot be undone; ImageKit keeps no trash. Version restore works only while the version still exists.
+  - **Bulk calls can partly succeed.** The three bulk tag calls cap at 50 files per request; `files.bulkDelete` and the bulk tag calls answer 207 with per-file errors when some targets failed, which this plugin parses as a result, not as a thrown error.
+  - **Folder operations run as jobs.** `folders.copy`, `folders.move` and `folders.rename` answer a `jobId` at once; poll `folders.getJobStatus` until status is `Completed`. `cache.purge` does the same with a `requestId` and `cache.getPurgeStatus`.
+  - **Rate limits.** Every endpoint except upload is rate limited per account; a 429 carries `X-RateLimit-Reset` in milliseconds. The plugin retries 429s up to three times with backoff starting at one second.
+  - **Paging.** `files.list` pages with `limit` (up to 1000) and `skip`; there is no cursor, so pages past a concurrent change can overlap.
+  - **Search.** `files.list` narrows with a `searchQuery` expression over name, tags, type, size and createdAt, e.g. `name = "summer" AND tags IN ["sale"]`. In a query, `type` is `file`, `file-version` or `folder`; to keep only images, also pass `fileType: 'image'`.
+examples:
+  read:
+    path: files.list
+    title: List files in a folder
+    args:
+      path: /products/
+      limit: 25
+  write:
+    path: files.upload
+    title: Upload a file into the media library
+    args:
+      file: https://example.com/product-photo.jpg
+      fileName: product-photo.jpg
+      folder: /products/
+apiExamples:
+  files.list:
+    call: "{ path: '/products/', limit: 25, skip: 25 }"
+  files.getDetails:
+    call: "{ fileId: '598821f949c0a938d57563bd' }"
+  files.upload:
+    call: "{ file: 'https://example.com/photo.jpg', fileName: 'photo.jpg', folder: '/products/', tags: ['summer'] }"
+  files.updateDetails:
+    call: "{ fileId: '598821f949c0a938d57563bd', tags: ['summer', 'sale'] }"
+  files.delete:
+    call: "{ fileId: '598821f949c0a938d57563bd' }"
+  files.bulkDelete:
+    call: "{ fileIds: ['598821f949c0a938d57563bd', '598821f949c0a938d57563be'] }"
+  files.copy:
+    call: "{ sourceFilePath: '/products/photo.jpg', destinationPath: '/archive/' }"
+  files.move:
+    call: "{ sourceFilePath: '/products/photo.jpg', destinationPath: '/archive/' }"
+  files.rename:
+    call: "{ filePath: '/products/old.jpg', newFileName: 'new.jpg', purgeCache: true }"
+  files.addTags:
+    call: "{ fileIds: ['598821f949c0a938d57563bd'], tags: ['summer'] }"
+  files.removeTags:
+    call: "{ fileIds: ['598821f949c0a938d57563bd'], tags: ['draft'] }"
+  files.removeAITags:
+    call: "{ fileIds: ['598821f949c0a938d57563bd'], AITags: ['blurry'] }"
+  fileVersions.list:
+    call: "{ fileId: '598821f949c0a938d57563bd' }"
+  fileVersions.getDetails:
+    call: "{ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' }"
+  fileVersions.delete:
+    call: "{ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' }"
+  fileVersions.restore:
+    call: "{ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' }"
+  metadata.getByFileId:
+    call: "{ fileId: '598821f949c0a938d57563bd' }"
+  metadata.getByUrl:
+    call: "{ url: 'https://ik.imagekit.io/your_id/photo.jpg?tr=w-200' }"
+  folders.create:
+    call: "{ folderName: 'spring', parentFolderPath: '/products/' }"
+  folders.delete:
+    call: "{ folderPath: '/products/spring/' }"
+  folders.copy:
+    call: "{ sourceFolderPath: '/products/spring', destinationPath: '/archive/', includeVersions: true }"
+  folders.move:
+    call: "{ sourceFolderPath: '/products/spring', destinationPath: '/archive/' }"
+  folders.rename:
+    call: "{ folderPath: '/products/spring', newFolderName: 'summer', purgeCache: true }"
+  folders.getJobStatus:
+    call: "{ jobId: '5d5b1a9b4c8c4c0001f3e4a2' }"
+  cache.purge:
+    call: "{ url: 'https://ik.imagekit.io/your_id/photo.jpg' }"
+  cache.getPurgeStatus:
+    call: "{ requestId: '5d5b1a9b4c8c4c0001f3e4a2' }"
