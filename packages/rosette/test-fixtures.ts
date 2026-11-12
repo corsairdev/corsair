@@ -84,11 +84,17 @@ export const SENTENCES = {
 	],
 };
 
+// Live from /morphology/complete (11-12): a compound splits into its parts, and a
+// token with no parts (or no Han reading) is null in the same position.
 export const MORPHOLOGY = {
-	tokens: ['runs', 'running'],
-	lemmas: ['run', 'run'],
-	posTags: ['VBZ', 'VBG'],
-	compoundComponents: [{ lemma: 'run', components: ['run', 's'] }],
+	tokens: ['Rechtsschutzversicherungsgesellschaften', 'running'],
+	posTags: ['NOUN', 'ADV'],
+	lemmas: ['Rechtsschutzversicherungsgesellschaft', 'running'],
+	compoundComponents: [
+		['Recht', 'Schutz', 'Versicherung', 'Gesellschaft'],
+		null,
+	],
+	hanReadings: [null, null],
 };
 
 export const CATEGORIES = {

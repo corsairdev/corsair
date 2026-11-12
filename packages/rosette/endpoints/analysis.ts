@@ -182,7 +182,11 @@ export const sentences: RosetteEndpoints['sentences'] = (ctx, input) =>
 		},
 	);
 
-/** Morphological analysis: lemmas, part-of-speech tags and compound parts. */
+/**
+ * Morphological analysis: lemmas, part-of-speech tags, compound parts and Han
+ * readings. The bare `/morphology` route answers 404; the API serves one route per
+ * facet, and `complete` returns every facet at once.
+ */
 export const morphology: RosetteEndpoints['morphology'] = (ctx, input) =>
 	call(
 		ctx,
@@ -194,7 +198,7 @@ export const morphology: RosetteEndpoints['morphology'] = (ctx, input) =>
 		input,
 		(parsed) => ({
 			method: 'POST',
-			path: '/morphology',
+			path: '/morphology/complete',
 			query: documentQuery(parsed),
 			body: documentBody(parsed),
 			replayable: true,
@@ -202,7 +206,9 @@ export const morphology: RosetteEndpoints['morphology'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				tokens: result.tokens?.length ?? 0,
-				compounds: result.compoundComponents?.length ?? 0,
+				compounds:
+					result.compoundComponents?.filter((parts) => parts !== null).length ??
+					0,
 			}),
 		},
 	);

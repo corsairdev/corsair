@@ -271,14 +271,24 @@ const SentencesResponseSchema = z
 
 export type SentencesResponse = z.infer<typeof SentencesResponseSchema>;
 
+/**
+ * Per-token arrays in the same order as `tokens`. `compoundComponents` and
+ * `hanReadings` hold one entry per token, null where the token has no parts or no
+ * reading.
+ */
 const MorphologyResponseSchema = z
 	.object({
 		tokens: z.array(z.string()).nullish(),
 		lemmas: z.array(z.string()).nullish(),
 		posTags: z.array(z.string()).nullish(),
 		compoundComponents: z
-			.array(z.record(z.string(), JsonValueSchema))
-			.nullish(),
+			.array(z.array(z.string()).nullable())
+			.nullish()
+			.describe('The parts of each compound token, null for a non-compound.'),
+		hanReadings: z
+			.array(z.array(z.string()).nullable())
+			.nullish()
+			.describe('Readings of each Han token, null for other tokens.'),
 	})
 	.loose();
 

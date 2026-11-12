@@ -256,17 +256,30 @@ describe('tokens, sentences and morphology', () => {
 		expect(result.sentenceDetections?.[0]?.end).toBe(19);
 	});
 
-	it('analyses morphology including compounds', async () => {
+	it('analyses morphology on the complete route, including compounds', async () => {
 		respond(fetchMock, MORPHOLOGY);
 
-		const result = (await invoke(Api.morphology, { content: 'runs' })) as {
+		const result = (await invoke(Api.morphology, {
+			content: 'Rechtsschutzversicherungsgesellschaften running',
+			language: 'deu',
+		})) as {
 			lemmas?: string[];
-			compoundComponents?: unknown[];
+			compoundComponents?: (string[] | null)[];
+			hanReadings?: (string[] | null)[];
 		};
 
-		expect(lastRequest(fetchMock).path).toBe('/rest/v1/morphology');
-		expect(result.lemmas?.[0]).toBe('run');
-		expect(result.compoundComponents).toHaveLength(1);
+		// The bare /morphology route answers 404; the binding calls a facet, and
+		// "complete" returns all of them.
+		expect(lastRequest(fetchMock).path).toBe('/rest/v1/morphology/complete');
+		expect(result.lemmas?.[0]).toBe('Rechtsschutzversicherungsgesellschaft');
+		expect(result.compoundComponents?.[0]).toEqual([
+			'Recht',
+			'Schutz',
+			'Versicherung',
+			'Gesellschaft',
+		]);
+		expect(result.compoundComponents?.[1]).toBeNull();
+		expect(result.hanReadings).toEqual([null, null]);
 	});
 });
 
