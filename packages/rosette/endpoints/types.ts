@@ -72,7 +72,10 @@ const DocumentShape = {
 		.describe('A saved language profile to apply.'),
 } as const;
 
-const documentSchema = z.object(DocumentShape).superRefine((value, ctx) => {
+function requireOneSource(
+	value: { content?: string; contentUri?: string },
+	ctx: z.RefinementCtx,
+): void {
 	if (value.content === undefined && value.contentUri === undefined) {
 		ctx.addIssue({
 			code: 'custom',
@@ -89,7 +92,9 @@ const documentSchema = z.object(DocumentShape).superRefine((value, ctx) => {
 				'Give either content or contentUri, not both; Rosette treats them as alternatives.',
 		});
 	}
-});
+}
+
+const documentSchema = z.object(DocumentShape).superRefine(requireOneSource);
 
 const DocumentInputSchema = documentSchema;
 
@@ -371,18 +376,41 @@ const VectorResponseSchema = z
 
 export type VectorResponse = z.infer<typeof VectorResponseSchema>;
 
+/**
+ * Similar terms need the languages to answer in: the API reads them from
+ * `options.resultLanguages` and refuses the call without at least one.
+ */
+const SimilarTermsInputSchema = z
+	.object({
+		...DocumentShape,
+		content: DocumentShape.content.describe(
+			'The term to find neighbours for. Mutually exclusive with contentUri.',
+		),
+		resultLanguages: z
+			.array(LanguageSchema)
+			.min(1)
+			.describe(
+				'The languages to return similar terms in, such as ["eng", "spa"]. Required by the API.',
+			),
+	})
+	.superRefine(requireOneSource);
+
+export type SimilarTermsInput = z.infer<typeof SimilarTermsInputSchema>;
+
 /** A neighbouring term and how close it sits. */
 const SimilarTermSchema = z
 	.object({
 		term: z.string().nullish(),
 		similarity: z.number().nullish(),
-		embedding: z.array(z.number()).nullish(),
 	})
 	.loose();
 
 const SimilarTermsResponseSchema = z
 	.object({
-		terms: z.array(SimilarTermSchema).nullish(),
+		similarTerms: z
+			.record(z.string(), z.array(SimilarTermSchema))
+			.nullish()
+			.describe('Similar terms keyed by result language, closest first.'),
 	})
 	.loose();
 
@@ -489,7 +517,7 @@ export type RosetteEndpointInputs = {
 	categories: RosetteDocumentInput;
 	topics: TopicsInput;
 	relationships: RelationshipsInput;
-	similarTerms: RosetteDocumentInput;
+	similarTerms: SimilarTermsInput;
 	textEmbedding: VectorInput;
 	nameSimilarity: NameSimilarityInput;
 	nameTranslation: NameTranslationInput;
@@ -527,7 +555,7 @@ export const RosetteEndpointInputSchemas = {
 	categories: DocumentInputSchema,
 	topics: TopicsInputSchema,
 	relationships: RelationshipsInputSchema,
-	similarTerms: DocumentInputSchema,
+	similarTerms: SimilarTermsInputSchema,
 	textEmbedding: VectorInputSchema,
 	nameSimilarity: NameSimilarityInputSchema,
 	nameTranslation: NameTranslationInputSchema,

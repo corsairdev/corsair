@@ -290,7 +290,7 @@ export const relationships: RosetteEndpoints['relationships'] = (ctx, input) =>
 		},
 	);
 
-/** Terms near the input in embedding space. */
+/** Terms near the input in embedding space, in each requested language. */
 export const similarTerms: RosetteEndpoints['similarTerms'] = (ctx, input) =>
 	call(
 		ctx,
@@ -304,11 +304,20 @@ export const similarTerms: RosetteEndpoints['similarTerms'] = (ctx, input) =>
 			method: 'POST',
 			path: '/semantics/similar',
 			query: documentQuery(parsed),
-			body: documentBody(parsed),
+			body: {
+				...documentBody(parsed),
+				options: { resultLanguages: parsed.resultLanguages },
+			},
 			replayable: true,
 		}),
 		{
-			log: (_, result) => ({ terms: result.terms?.length ?? 0 }),
+			log: (_, result) => {
+				const lists = Object.values(result.similarTerms ?? {});
+				return {
+					terms: lists.reduce((sum, list) => sum + list.length, 0),
+					languages: lists.length,
+				};
+			},
 		},
 	);
 

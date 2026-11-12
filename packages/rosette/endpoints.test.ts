@@ -32,7 +32,10 @@ const mockLog = jest.mocked(logEventFromContext);
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued response must fail the test rather than reach the real API.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unmocked fetch'));
 	mockLog.mockClear();
 });
 
@@ -327,16 +330,51 @@ describe('categories, topics and relationships', () => {
 });
 
 describe('semantics', () => {
-	it('finds similar terms', async () => {
+	it('finds similar terms per result language', async () => {
 		respond(fetchMock, SIMILAR_TERMS);
 
-		const result = (await invoke(Api.similarTerms, { content: 'car' })) as {
-			terms?: { term?: string; similarity?: number }[];
+		const result = (await invoke(Api.similarTerms, {
+			content: 'car',
+			resultLanguages: ['eng', 'spa'],
+		})) as {
+			similarTerms?: Record<string, { term?: string; similarity?: number }[]>;
 		};
 
-		expect(lastRequest(fetchMock).path).toBe('/rest/v1/semantics/similar');
-		expect(result.terms?.[0]?.term).toBe('automobile');
-		expect(result.terms?.[0]?.similarity).toBe(0.91);
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/rest/v1/semantics/similar');
+		// The API reads the languages from `options` and refuses the call without them.
+		expect(request.bodyRecord).toEqual({
+			content: 'car',
+			options: { resultLanguages: ['eng', 'spa'] },
+		});
+		expect(result.similarTerms?.eng?.[1]?.term).toBe('sunbeam_automobile');
+		expect(result.similarTerms?.spa).toHaveLength(1);
+	});
+
+	it('requires at least one result language before calling', async () => {
+		await expect(
+			invoke(Api.similarTerms, { content: 'car' }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Api.similarTerms, { content: 'car', resultLanguages: [] }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs the term count across languages', async () => {
+		respond(fetchMock, SIMILAR_TERMS);
+
+		await invoke(Api.similarTerms, {
+			content: 'car',
+			resultLanguages: ['eng'],
+		});
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'rosette.semantics.similarTerms',
+			{ terms: 3, languages: 2 },
+			'completed',
+		);
 	});
 
 	it('computes a text embedding', async () => {

@@ -124,11 +124,23 @@ export const RELATIONSHIPS = {
 	],
 };
 
+// Live from /semantics/similar (11-12), trimmed: terms keyed by result language.
 export const SIMILAR_TERMS = {
-	terms: [
-		{ term: 'automobile', similarity: 0.91, embedding: [0.1, 0.2] },
-		{ term: 'vehicle', similarity: 0.88 },
-	],
+	similarTerms: {
+		eng: [
+			{ term: 'car', similarity: 1.0 },
+			{ term: 'sunbeam_automobile', similarity: 0.97575432 },
+		],
+		spa: [{ term: 'automóvil', similarity: 0.9123 }],
+	},
+};
+
+// Live (11-12): the route refuses a request without resultLanguages.
+export const SIMILAR_TERMS_NO_LANGUAGES = {
+	code: 'badRequestFormat',
+	message:
+		"/semantics/similar endpoint requires a non-empty 'resultLanguages' option",
+	stack: null,
 };
 
 export const VECTOR = {
