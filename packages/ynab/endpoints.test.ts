@@ -9,6 +9,7 @@ import {
 	Transactions,
 	User,
 } from './endpoints';
+import { YnabEndpointInputSchemas } from './endpoints/types';
 import {
 	account,
 	accountId,
@@ -637,5 +638,24 @@ describe('calendar and response validation', () => {
 		).resolves.toMatchObject({
 			data: { transaction: { cleared: 'future-status' } },
 		});
+	});
+});
+
+describe('scheduled transaction input', () => {
+	it('does not advertise fields a scheduled transaction lacks', () => {
+		const shape =
+			YnabEndpointInputSchemas.scheduledCreate.shape.scheduled_transaction
+				.shape;
+		// SaveScheduledTransaction has no cleared, approved or import_id.
+		expect(Object.keys(shape)).not.toEqual(expect.arrayContaining(['cleared']));
+		expect(Object.keys(shape)).not.toEqual(
+			expect.arrayContaining(['approved']),
+		);
+		expect(Object.keys(shape)).not.toEqual(
+			expect.arrayContaining(['import_id']),
+		);
+		expect(Object.keys(shape)).toEqual(
+			expect.arrayContaining(['account_id', 'date', 'amount', 'frequency']),
+		);
 	});
 });

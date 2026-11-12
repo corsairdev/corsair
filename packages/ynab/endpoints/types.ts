@@ -69,7 +69,7 @@ const AccountSchema = z
 			.string()
 			.nullish()
 			.describe(
-				'Checking, Savings, Cash, CreditCard, LineOfCredit, or a loan type.',
+				'checking, savings, cash, creditCard, lineOfCredit, otherAsset, otherLiability, or a loan or debt type such as mortgage or studentLoan.',
 			),
 		on_budget: z
 			.boolean()
@@ -730,11 +730,23 @@ const ScheduledGetResponseSchema = envelope(
 
 export type ScheduledGetResponse = z.infer<typeof ScheduledGetResponseSchema>;
 
+// A scheduled transaction takes the transaction fields except cleared, approved
+// and import_id, which YNAB's SaveScheduledTransaction does not have.
+const {
+	cleared: _cleared,
+	approved: _approved,
+	import_id: _importId,
+	...ScheduledTransactionInputShape
+} = TransactionInputShape;
+
 const ScheduledCreateInputSchema = z.object({
 	budgetId: BudgetIdSchema,
 	scheduled_transaction: z
 		.object({
-			...TransactionInputShape,
+			...ScheduledTransactionInputShape,
+			date: DateSchema.describe(
+				'The first date, as `yyyy-MM-dd`: a future date no more than 5 years ahead.',
+			),
 			frequency: z.enum([
 				'never',
 				'daily',
