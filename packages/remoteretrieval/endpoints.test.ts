@@ -77,6 +77,7 @@ describe('orders.create', () => {
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/api/v1/create-order');
+		// unknown: the sent body is plain JSON; the test reads single fields.
 		const orders = request.bodyRecord?.orders as Record<string, unknown>[];
 		expect(orders).toHaveLength(1);
 		expect(orders[0]?.type_of_equipment).toBe('Laptop');
@@ -90,6 +91,7 @@ describe('orders.create', () => {
 
 		await invoke(Api.create, { orders: [ORDER] });
 
+		// unknown: the sent body is plain JSON; the test reads single fields.
 		const orders = lastRequest(fetchMock).bodyRecord?.orders as {
 			employee_info?: Record<string, unknown>;
 			company_info?: Record<string, unknown>;
@@ -137,6 +139,7 @@ describe('orders.create', () => {
 			],
 		});
 
+		// unknown: the sent body is plain JSON; the test reads single fields.
 		const orders = lastRequest(fetchMock).bodyRecord?.orders as {
 			new_employee_info?: Record<string, unknown>;
 		}[];
@@ -256,6 +259,7 @@ describe('orders.new', () => {
 	it('reads the new orders', async () => {
 		respond(fetchMock, ORDERS_PENDING);
 
+		// unknown: only the array length is checked.
 		const result = (await invoke(Api.newOrders, {})) as unknown[];
 
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/new-orders');

@@ -21,6 +21,7 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler returns its own retry options; the tests match on fields.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
@@ -71,6 +72,7 @@ describe('Remote Retrieval error handlers', () => {
 
 	it('treats a ZodError as a validation failure without a status', async () => {
 		const { z } = require('zod');
+		// any: only the missing `orders` key matters here, not the item shape.
 		const error = z.object({ orders: z.array(z.any()) }).safeParse({})
 			.error as Error;
 

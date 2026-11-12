@@ -44,7 +44,7 @@ describe('remoteretrieval plugin definition', () => {
 
 	it('exposes exactly the nine catalog operations', () => {
 		// This tree mixes a flat root (validate, prices) with groups, so both shapes
-		// are walked.
+		// are walked. unknown: a node is either an endpoint function or a group.
 		const endpointNames = (
 			tree: Record<string, unknown>,
 			prefix = '',
