@@ -3,6 +3,7 @@ import type { DocumensoOperationName } from './endpoints/definitions';
 import { DocumensoOperationDefinitions } from './endpoints/definitions';
 
 const DEFAULT_TIMEOUT_MS = 20_000;
+const TRANSFER_TIMEOUT_MS = 120_000;
 const MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024;
 const MAX_UPLOAD_BYTES = 16 * 1024 * 1024;
 const MAX_UPLOAD_TOTAL_BYTES = 32 * 1024 * 1024;
@@ -43,6 +44,16 @@ function normalizedBaseUrl(baseUrl?: string): string {
 	) {
 		throw new DocumensoAPIError(
 			'Documenso base URL must be an HTTP(S) URL without credentials, query, or fragment',
+			0,
+		);
+	}
+	const localHttpHosts = new Set(['localhost', '127.0.0.1', '[::1]']);
+	if (
+		parsed.protocol === 'http:' &&
+		!localHttpHosts.has(parsed.hostname.toLowerCase())
+	) {
+		throw new DocumensoAPIError(
+			'Documenso base URL must use HTTPS except for localhost loopback',
 			0,
 		);
 	}
@@ -210,7 +221,17 @@ async function binaryResponse(response: Response): Promise<unknown> {
 	const chunks: Uint8Array[] = [];
 	let total = 0;
 	while (true) {
-		const { done, value } = await reader.read();
+		let next: ReadableStreamReadResult<Uint8Array>;
+		try {
+			next = await reader.read();
+		} catch {
+			await reader.cancel().catch(() => undefined);
+			throw new DocumensoAPIError(
+				'Documenso PDF response body failed or timed out',
+				0,
+			);
+		}
+		const { done, value } = next;
 		if (done) break;
 		if (!value) continue;
 		total += value.byteLength;
@@ -269,13 +290,17 @@ export async function makeDocumensoRequest(
 	}
 
 	let response: Response;
+	const timeoutMs =
+		definition.binaryUpload || definition.binaryDownload
+			? TRANSFER_TIMEOUT_MS
+			: DEFAULT_TIMEOUT_MS;
 	try {
 		response = await fetch(url, {
 			method: definition.method,
 			headers,
 			body: requestBodyValue,
 			credentials: 'omit',
-			signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+			signal: AbortSignal.timeout(timeoutMs),
 		});
 	} catch {
 		throw new DocumensoAPIError('Documenso request failed or timed out', 0);
@@ -305,6 +330,7 @@ export async function makeDocumensoRequest(
 }
 
 export const DOCUMENSO_REQUEST_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
+export const DOCUMENSO_TRANSFER_TIMEOUT_MS = TRANSFER_TIMEOUT_MS;
 export const DOCUMENSO_MAX_DOWNLOAD_BYTES = MAX_DOWNLOAD_BYTES;
 export const DOCUMENSO_MAX_UPLOAD_BYTES = MAX_UPLOAD_BYTES;
 export const DOCUMENSO_MAX_UPLOAD_TOTAL_BYTES = MAX_UPLOAD_TOTAL_BYTES;

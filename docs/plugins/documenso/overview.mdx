@@ -6,11 +6,13 @@ description: "Create and manage Documenso signing envelopes, legacy documents an
 
 Use **Documenso** through Corsair: one client, typed API calls.
 
-Generate a team-scoped API token in Documenso Team Settings / API Tokens and store it as the Corsair `api_key`. Documenso expects the raw token in `Authorization` (no Bearer prefix). The current base URL is `/api/v2`; set `baseUrl` for staging or a self-hosted instance.
+Generate a team-scoped API token in Documenso Team Settings / API Tokens and store it as the Corsair `api_key`. Documenso expects the raw token in `Authorization` (no Bearer prefix). The current base URL is `/api/v2`; set `baseUrl` for staging or a self-hosted instance. HTTPS is required except for localhost loopback development URLs.
 
 The OpenAPI reference still lists deprecated v2 `/document/*`, `/template/*`, and matching field/recipient routes. They are included here for migration compatibility and scheduled for removal on 1 March 2027; use `/envelope/*` operations for new integrations. The plugin does not implement v1, v2-beta, or webhooks.
 
 PDF downloads return `{ kind: "binary", contentType, base64, size }` and are limited to 20 MiB per response. PDF uploads use `files: [{ filename, contentType, contentBase64 }]` or the legacy single `file` shape; they are capped at 16 MiB per file and 32 MiB total per request for bounded transport. These plugin-side limits are not Documenso plan limits.
+
+Standard requests time out after 20 seconds; multipart uploads and PDF downloads use a bounded 120-second timeout so permitted transfers can complete on slower links.
 
 **What you get:**
 

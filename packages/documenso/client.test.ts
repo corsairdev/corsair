@@ -4,6 +4,7 @@ import {
 	DOCUMENSO_MAX_UPLOAD_BYTES,
 	DOCUMENSO_MAX_UPLOAD_TOTAL_BYTES,
 	DOCUMENSO_REQUEST_TIMEOUT_MS,
+	DOCUMENSO_TRANSFER_TIMEOUT_MS,
 	DocumensoAPIError,
 	makeDocumensoRequest,
 } from './client';
@@ -144,14 +145,16 @@ describe('Documenso HTTP client', () => {
 	});
 
 	it('keeps the production v2 base URL when no override is supplied', async () => {
-		fetchSpy.mockResolvedValue(
-			Response.json({
-				data: [],
-				count: 0,
-				currentPage: 1,
-				perPage: 10,
-				totalPages: 0,
-			}),
+		fetchSpy.mockImplementation(() =>
+			Promise.resolve(
+				Response.json({
+					data: [],
+					count: 0,
+					currentPage: 1,
+					perPage: 10,
+					totalPages: 0,
+				}),
+			),
 		);
 		await makeDocumensoRequest('envelopeFind', { key: 'api_test' }, {});
 		expect(requestUrlAt().origin + requestUrlAt().pathname).toBe(
@@ -159,15 +162,17 @@ describe('Documenso HTTP client', () => {
 		);
 	});
 
-	it('supports self-hosted base URLs but rejects credential-bearing or non-HTTP URLs', async () => {
-		fetchSpy.mockResolvedValue(
-			Response.json({
-				data: [],
-				count: 0,
-				currentPage: 1,
-				perPage: 10,
-				totalPages: 0,
-			}),
+	it('allows HTTPS self-hosted URLs and loopback HTTP only', async () => {
+		fetchSpy.mockImplementation(() =>
+			Promise.resolve(
+				Response.json({
+					data: [],
+					count: 0,
+					currentPage: 1,
+					perPage: 10,
+					totalPages: 0,
+				}),
+			),
 		);
 		await makeDocumensoRequest(
 			'envelopeFind',
@@ -180,6 +185,21 @@ describe('Documenso HTTP client', () => {
 		expect(requestUrlAt().origin + requestUrlAt().pathname).toBe(
 			'https://selfhost.documenso.invalid/api/v2/envelope',
 		);
+		await makeDocumensoRequest(
+			'envelopeFind',
+			{ key: 'api_test', baseUrl: 'http://127.0.0.1/api/v2' },
+			{},
+		);
+		expect(requestUrlAt(1).origin + requestUrlAt(1).pathname).toBe(
+			'http://127.0.0.1/api/v2/envelope',
+		);
+		await expect(
+			makeDocumensoRequest(
+				'envelopeFind',
+				{ key: 'api_test', baseUrl: 'http://documenso.internal/api/v2' },
+				{},
+			),
+		).rejects.toThrow('HTTPS except for localhost loopback');
 		await expect(
 			makeDocumensoRequest(
 				'envelopeFind',
@@ -197,6 +217,49 @@ describe('Documenso HTTP client', () => {
 				{},
 			),
 		).rejects.toThrow('HTTP(S) URL');
+	});
+
+	it('uses a longer but bounded timeout for multipart and PDF transfers', async () => {
+		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
+		fetchSpy.mockImplementation(() =>
+			Promise.resolve(
+				Response.json({
+					data: [],
+					count: 0,
+					currentPage: 1,
+					perPage: 10,
+					totalPages: 0,
+				}),
+			),
+		);
+		try {
+			await makeDocumensoRequest('envelopeFind', { key: 'api_test' }, {});
+			await makeDocumensoRequest(
+				'envelopeCreate',
+				{ key: 'api_test' },
+				DocumensoOperationDefinitions.envelopeCreate.inputExample,
+			);
+			await makeDocumensoRequest(
+				'envelopeItemDownload',
+				{ key: 'api_test' },
+				DocumensoOperationDefinitions.envelopeItemDownload.inputExample,
+			);
+			expect(DOCUMENSO_TRANSFER_TIMEOUT_MS).toBe(120_000);
+			expect(timeoutSpy).toHaveBeenNthCalledWith(
+				1,
+				DOCUMENSO_REQUEST_TIMEOUT_MS,
+			);
+			expect(timeoutSpy).toHaveBeenNthCalledWith(
+				2,
+				DOCUMENSO_TRANSFER_TIMEOUT_MS,
+			);
+			expect(timeoutSpy).toHaveBeenNthCalledWith(
+				3,
+				DOCUMENSO_TRANSFER_TIMEOUT_MS,
+			);
+		} finally {
+			timeoutSpy.mockRestore();
+		}
 	});
 
 	it('preserves Retry-After from a real transport response without replaying the request', async () => {
@@ -311,5 +374,30 @@ describe('Documenso HTTP client', () => {
 				DocumensoOperationDefinitions.envelopeItemDownload.inputExample,
 			),
 		).rejects.toThrow('plugin limit');
+	});
+
+	it('wraps PDF body-read failures in a sanitized Documenso API error', async () => {
+		const failedBody = new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.error(new Error('api_key must not escape'));
+			},
+		});
+		fetchSpy.mockResolvedValue(
+			new Response(failedBody, {
+				headers: { 'content-type': 'application/pdf' },
+			}),
+		);
+		const failure = await captureFailure(
+			makeDocumensoRequest(
+				'envelopeItemDownload',
+				{ key: 'api_test' },
+				DocumensoOperationDefinitions.envelopeItemDownload.inputExample,
+			),
+		);
+		expect(failure).toBeInstanceOf(DocumensoAPIError);
+		if (!(failure instanceof DocumensoAPIError))
+			throw new Error('Expected a Documenso API error');
+		expect(failure.status).toBe(0);
+		expect(failure.message).not.toContain('api_key must not escape');
 	});
 });

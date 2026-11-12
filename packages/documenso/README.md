@@ -10,7 +10,7 @@ pnpm add @corsair-dev/documenso
 
 Create a team-scoped API token under Documenso Team Settings → API Tokens and store the raw token as Corsair `api_key`. Documenso expects that token verbatim in `Authorization`; do not add `Bearer`. The official v2 OpenAPI defines only the `apiKey` header security scheme for every operation. OAuth2 is not documented for the REST API and is not supported by this plugin.
 
-The production base is `https://app.documenso.com/api/v2`. Configure `baseUrl` to use the documented staging host or a self-hosted instance, including its `/api/v2` prefix.
+The production base is `https://app.documenso.com/api/v2`. Configure `baseUrl` to use the documented staging host or a self-hosted instance, including its `/api/v2` prefix. HTTPS is required except for localhost loopback development URLs.
 
 ## Supported REST operations
 
@@ -112,7 +112,7 @@ All entries below are v2 routes, require the API key header, and are validated w
 
 List operations forward the documented `page` and `perPage` query fields; envelope, document, and template filtering is forwarded without automatic page aggregation. Documenso documents a global 1,000-request-per-minute-per-IP ceiling and may return lower organization limits. The client preserves `Retry-After` in milliseconds and never automatically replays writes or quota-consuming operations.
 
-PDF downloads return `{ kind: "binary", contentType, base64, size }`. Downloads are capped at 20 MiB; uploads are capped at 16 MiB per file and 32 MiB total per request by this plugin to bound buffering. These are plugin transport limits, not provider limits. Envelope multipart inputs accept `files: [{ filename, contentType, contentBase64 }]`; deprecated document/template create routes accept one `file` object with the same fields.
+PDF downloads return `{ kind: "binary", contentType, base64, size }`. Downloads are capped at 20 MiB; uploads are capped at 16 MiB per file and 32 MiB total per request by this plugin to bound buffering. Standard requests time out after 20 seconds, while multipart/PDF transfers time out after 120 seconds. These are plugin transport limits, not provider limits. Envelope multipart inputs accept `files: [{ filename, contentType, contentBase64 }]`; deprecated document/template create routes accept one `file` object with the same fields.
 
 ## Scope
 
