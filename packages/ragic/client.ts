@@ -300,10 +300,11 @@ export async function makeRagicRequest(
  * Builds a `where` filter: `fieldId,operand,value`.
  *
  * Ragic joins the three parts with commas and repeats the parameter for more
- * conditions. A comma inside the value would split it, so only the value is
- * encoded, and only its commas. A literal `%` must additionally be encoded by the
- * caller, because the docs require a second encoding for one and only they know
- * which values are literal text.
+ * conditions, and decodes each value a second time after splitting it. So the
+ * value is encoded once here (only `%` and `,`, the two characters that second
+ * decode reads) and once more by the query string: `ABC%DEF` arrives as
+ * `ABC%2525DEF`, which is the reference's own example, and a comma cannot split
+ * the filter.
  */
 export function whereFilter(
 	fieldId: number | string,
@@ -313,7 +314,8 @@ export function whereFilter(
 	const head = `${fieldId},${operand}`;
 	// No value at all is how Ragic asks for an empty field.
 	if (value === undefined) return head;
-	return `${head},${String(value).replace(/,/g, '%2C')}`;
+	const escaped = String(value).replace(/%/g, '%25').replace(/,/g, '%2C');
+	return `${head},${escaped}`;
 }
 
 /** Builds an `order` parameter: `fieldId,ASC` or `fieldId,DESC`. */

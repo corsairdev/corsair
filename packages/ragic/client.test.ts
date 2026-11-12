@@ -287,6 +287,13 @@ describe('whereFilter', () => {
 		expect(filter.endsWith('a%2Cb')).toBe(true);
 	});
 
+	it('encodes a literal % once, so the query string makes it the double encoding Ragic asks for', () => {
+		expect(whereFilter(1000002, 'eq', 'ABC%DEF')).toBe('1000002,eq,ABC%25DEF');
+		expect(encodeURIComponent(whereFilter(1000002, 'eq', 'ABC%DEF'))).toBe(
+			'1000002%2Ceq%2CABC%2525DEF',
+		);
+	});
+
 	it('keeps a numeric value a number', () => {
 		expect(whereFilter(105, 'gte', 20251001)).toBe('105,gte,20251001');
 	});
