@@ -212,6 +212,22 @@ describe('projects', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('rejects a customer on a project write instead of dropping it', async () => {
+		await expect(
+			invoke(Catalog.projectsCreate, {
+				name: 'Festival 2026',
+				customer: `/contacts/${CONTACT_ID}`,
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			invoke(Catalog.projectsUpdate, {
+				project_id: PROJECT_ID,
+				customer: CONTACT_ID,
+			} as never),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('equipment', () => {

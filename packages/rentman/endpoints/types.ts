@@ -410,24 +410,28 @@ export type ProjectsGetResponse = z.infer<typeof ProjectsGetResponseSchema>;
 /**
  * Rentman answers 400 "not permitted to set the following field: customer" to
  * a project write that names a customer, so the customer is set in the app.
+ * The object is strict so a `customer` (or any other unknown key) fails here
+ * instead of being dropped from a request that then reports success.
  */
-const ProjectsCreateInputSchema = z.object({
-	name: z.string().min(1).describe('The project name.'),
-	number: z.string().optional(),
-	reference: z.string().optional(),
-	account_manager: z
-		.number()
-		.int()
-		.positive()
-		.optional()
-		.describe('A crew member id, sent as the link `/crew/<id>`.'),
-	deposit_status: z
-		.enum(['no_deposit_paid', 'deposit_paid', 'deposit_returned'])
-		.optional(),
-	color: z.string().optional(),
-	conditions: z.string().optional(),
-	refundabledeposit: z.number().optional(),
-});
+const ProjectsCreateInputSchema = z
+	.object({
+		name: z.string().min(1).describe('The project name.'),
+		number: z.string().optional(),
+		reference: z.string().optional(),
+		account_manager: z
+			.number()
+			.int()
+			.positive()
+			.optional()
+			.describe('A crew member id, sent as the link `/crew/<id>`.'),
+		deposit_status: z
+			.enum(['no_deposit_paid', 'deposit_paid', 'deposit_returned'])
+			.optional(),
+		color: z.string().optional(),
+		conditions: z.string().optional(),
+		refundabledeposit: z.number().optional(),
+	})
+	.strict();
 
 export type ProjectsCreateInput = z.input<typeof ProjectsCreateInputSchema>;
 
