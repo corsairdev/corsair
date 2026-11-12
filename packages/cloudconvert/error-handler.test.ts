@@ -30,15 +30,13 @@ function route(error: Error): string {
 }
 
 describe('CloudConvert error handlers', () => {
-	it('routes 429 to RATE_LIMIT_ERROR and forwards retryAfter', async () => {
+	it('leaves 429 retrying to the shared HTTP client', async () => {
 		const error = apiError(429, 'Too Many Requests', 2500);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 2500,
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
 		});
+		expect(error.retryAfter).toBe(2500);
 	});
 
 	it('routes the documented TOO_MANY_REQUESTS code to the rate-limit handler', () => {

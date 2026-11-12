@@ -137,6 +137,16 @@ describe('CloudConvert endpoint input and output schemas', () => {
 			}).success,
 		).toBe(false);
 		expect(Inputs.jobsCreate.safeParse({ tasks: {} }).success).toBe(false);
+		expect(
+			Inputs.jobsCreate.safeParse({
+				tasks: {
+					export: {
+						operation: 'export/s3',
+						secret_access_key: 'must-not-be-an-argument',
+					},
+				},
+			}).success,
+		).toBe(false);
 
 		const tooManyTasks = Object.fromEntries(
 			Array.from({ length: 2001 }, (_, index) => [
@@ -230,33 +240,34 @@ describe('CloudConvert endpoint input and output schemas', () => {
 	});
 
 	it('validates Google Cloud Storage export-job input and output', () => {
+		const validInput = {
+			exportTaskName: 'export',
+			sourceTasks: {
+				converted: { operation: 'convert', input: 'upload' },
+				upload: {
+					operation: 'import/url',
+					url: 'https://files.test/input.pdf',
+				},
+			},
+			input: 'converted',
+			bucket: 'converted-files',
+			filePrefix: 'converted/',
+		};
+		expect(
+			Inputs.tasksCreateExportGoogleCloudStorage.safeParse(validInput).success,
+		).toBe(true);
 		expect(
 			Inputs.tasksCreateExportGoogleCloudStorage.safeParse({
-				exportTaskName: 'export',
-				sourceTasks: {
-					converted: { operation: 'convert', input: 'upload' },
-					upload: {
-						operation: 'import/url',
-						url: 'https://files.test/input.pdf',
-					},
-				},
-				input: 'converted',
-				projectId: 'project-123',
-				bucket: 'converted-files',
-				clientEmail: 'worker@project-123.iam.gserviceaccount.com',
-				privateKey: 'fixture-private-key',
-				filePrefix: 'converted/',
+				...validInput,
+				privateKey: 'must-not-be-an-argument',
 			}).success,
-		).toBe(true);
+		).toBe(false);
 		expect(
 			Inputs.tasksCreateExportGoogleCloudStorage.safeParse({
 				exportTaskName: 'export',
 				sourceTasks: { upload: { operation: 'import/url' } },
 				input: 'missing',
-				projectId: 'project-123',
 				bucket: '',
-				clientEmail: 'worker@project-123.iam.gserviceaccount.com',
-				privateKey: 'fixture-private-key',
 			}).success,
 		).toBe(false);
 		expect(
@@ -271,19 +282,22 @@ describe('CloudConvert endpoint input and output schemas', () => {
 	});
 
 	it('validates S3 export-job input and output', () => {
+		const validInput = {
+			exportTaskName: 'export',
+			sourceTasks: { converted: { operation: 'convert' } },
+			input: 'converted',
+			bucket: 'converted-files',
+			region: 'eu-west-1',
+			acl: 'private',
+			serverSideEncryption: 'AES256',
+		};
+		expect(Inputs.tasksCreateExportS3.safeParse(validInput).success).toBe(true);
 		expect(
 			Inputs.tasksCreateExportS3.safeParse({
-				exportTaskName: 'export',
-				sourceTasks: { converted: { operation: 'convert' } },
-				input: 'converted',
-				bucket: 'converted-files',
-				region: 'eu-west-1',
-				accessKeyId: 'fixture-access-key',
-				secretAccessKey: 'fixture-secret-key',
-				acl: 'private',
-				serverSideEncryption: 'AES256',
+				...validInput,
+				secretAccessKey: 'must-not-be-an-argument',
 			}).success,
-		).toBe(true);
+		).toBe(false);
 		expect(
 			Inputs.tasksCreateExportS3.safeParse({
 				exportTaskName: 'export',
@@ -291,8 +305,6 @@ describe('CloudConvert endpoint input and output schemas', () => {
 				input: 'converted',
 				bucket: 'converted-files',
 				region: 'eu-west-1',
-				accessKeyId: 'fixture-access-key',
-				secretAccessKey: 'fixture-secret-key',
 				key: 'output.pdf',
 				keyPrefix: 'output/',
 			}).success,

@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import {
 	CLOUDCONVERT_API_BASE,
 	CLOUDCONVERT_SYNC_API_BASE,
+	DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
 	makeCloudConvertRequest,
 } from './client';
 import { errorHandlers } from './error-handlers';
@@ -87,6 +88,9 @@ describe('makeCloudConvertRequest', () => {
 		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe(
 			CLOUDCONVERT_SYNC_API_BASE,
 		);
+		expect(mockedRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(
+			DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+		);
 		expect(mockedRequest.mock.calls[0]?.[0]?.HEADERS).toMatchObject({
 			Authorization: 'Bearer fixture-api-key',
 		});
@@ -99,12 +103,14 @@ describe('makeCloudConvertRequest', () => {
 			method: 'POST',
 			path: '/jobs',
 			host: 'sync',
+			timeoutMs: 120_000,
 			body: { tasks: { export: { operation: 'export/url' } }, redirect: false },
 		});
 
 		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe(
 			CLOUDCONVERT_SYNC_API_BASE,
 		);
+		expect(mockedRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(120_000);
 		expect(mockedRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
 				method: 'POST',
@@ -154,11 +160,80 @@ describe('makeCloudConvertRequest', () => {
 			}),
 		).rejects.toBe(error);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 1800,
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
+	it('redacts export credentials from propagated ApiError request bodies', async () => {
+		const requestBody = {
+			tasks: {
+				export: {
+					operation: 'export/s3',
+					project_id: 'fixture-project',
+					client_email: 'fixture@example.test',
+					access_key_id: 'fixture-access-key',
+					secret_access_key: 'fixture-secret-key',
+					private_key: 'fixture-private-key',
+					session_token: 'fixture-session-token',
+				},
+			},
+		};
+		const error = new ApiError(
+			{ method: 'POST', url: '/jobs', body: requestBody },
+			{
+				url: 'https://api.cloudconvert.com/v2/jobs',
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: { code: 'INVALID_DATA' },
+			},
+			'Unprocessable Entity',
+			{
+				retryAfter: 1500,
+				rateLimitReset: 1_800_000_000_000,
+				rateLimitRemaining: 3,
+				rateLimitLimit: 10,
+			},
+		);
+		mockedRequest.mockRejectedValue(error);
+
+		let propagated: unknown;
+		try {
+			await makeCloudConvertRequest('fixture-api-key', {
+				method: 'POST',
+				path: '/jobs',
+				body: requestBody,
+			});
+		} catch (error) {
+			propagated = error;
+		}
+
+		expect(propagated).toBeInstanceOf(ApiError);
+		if (!(propagated instanceof ApiError)) {
+			throw new Error(
+				'Expected the CloudConvert request to throw an ApiError.',
+			);
+		}
+		expect(propagated).not.toBe(error);
+		expect(propagated.status).toBe(422);
+		expect(propagated.retryAfter).toBe(1500);
+		expect(propagated.rateLimitReset).toBe(1_800_000_000_000);
+		expect(propagated.rateLimitRemaining).toBe(3);
+		expect(propagated.rateLimitLimit).toBe(10);
+		expect(propagated.stack).toBe(error.stack);
+		expect(propagated.request.body).toEqual({
+			tasks: {
+				export: {
+					operation: 'export/s3',
+					project_id: '[REDACTED]',
+					client_email: '[REDACTED]',
+					access_key_id: '[REDACTED]',
+					secret_access_key: '[REDACTED]',
+					private_key: '[REDACTED]',
+					session_token: '[REDACTED]',
+				},
+			},
 		});
 	});
 });

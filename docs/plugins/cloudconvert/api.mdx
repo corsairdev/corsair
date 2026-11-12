@@ -100,6 +100,7 @@ await corsair.cloudconvert.api.jobs.create({
 	tasks: {
 		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
 		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
 	},
 	tag: 'request-123',
 });
@@ -112,6 +113,8 @@ await corsair.cloudconvert.api.jobs.create({
 | `tasks` | `object` | Yes | — |
 | `tag` | `string` | No | — |
 
+This example includes an `export/url` task so the completed job has a downloadable file. Read `result.files[].url` from the finished export task; use `jobs.get` for status polling on long jobs. The generic task schema rejects credential fields such as `private_key` and `secret_access_key`.
+
 <AccordionGroup>
 <Accordion title="tasks full type">
 
@@ -120,7 +123,7 @@ Record<string, {
   operation: string,
   input?: string | string[],
   ignore_error?: boolean
-}>
+}& Record<string, JsonValue>>
 ```
 </Accordion>
 </AccordionGroup>
@@ -222,6 +225,7 @@ await corsair.cloudconvert.api.jobs.createAndWait({
 	tasks: {
 		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
 		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
 	},
 });
 ```
@@ -234,6 +238,8 @@ await corsair.cloudconvert.api.jobs.createAndWait({
 | `tag` | `string` | No | — |
 | `redirect` | `false` | No | Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent. |
 
+This example includes an `export/url` task. Read `result.files[].url` from the completed export task. Synchronous calls are bounded by `syncTimeoutMs` (5 minutes by default, up to 10 minutes); use async jobs for long work.
+
 <AccordionGroup>
 <Accordion title="tasks full type">
 
@@ -242,7 +248,7 @@ Record<string, {
   operation: string,
   input?: string | string[],
   ignore_error?: boolean
-}>
+}& Record<string, JsonValue>>
 ```
 </Accordion>
 </AccordionGroup>
@@ -895,10 +901,7 @@ await corsair.cloudconvert.api.tasks.createExportGoogleCloudStorage({
 		imported: { operation: 'import/url', url: 'https://example.test/input.pdf' },
 	},
 	input: 'imported',
-	projectId: 'project-id',
 	bucket: 'bucket-name',
-	clientEmail: 'service-account@example.test',
-	privateKey: '<service-account-private-key>',
 });
 ```
 
@@ -909,12 +912,11 @@ await corsair.cloudconvert.api.tasks.createExportGoogleCloudStorage({
 | `exportTaskName` | `string` | Yes | Name to assign to the export task. |
 | `sourceTasks` | `object` | Yes | Other tasks to include in the same job, such as import and conversion tasks. |
 | `input` | `string \| string[]` | Yes | The name or names of source tasks whose files this export task will export. |
-| `projectId` | `string` | Yes | Google Cloud Project ID. |
 | `bucket` | `string` | Yes | Google Cloud Storage bucket name. |
-| `clientEmail` | `string` | Yes | Google service-account client email. |
-| `privateKey` | `string` | Yes | Google service-account private key. |
 | `file` | `string` | No | Destination filename in the bucket. |
 | `filePrefix` | `string` | No | Destination filename prefix; use instead of file. |
+
+Before calling, store `export_gcs_project_id`, `export_gcs_client_email`, and `export_gcs_private_key` with the tenant's CloudConvert key manager. The private key is encrypted at rest and is resolved after approval; it is not part of this endpoint's arguments.
 
 <AccordionGroup>
 <Accordion title="sourceTasks full type">
@@ -924,7 +926,7 @@ Record<string, {
   operation: string,
   input?: string | string[],
   ignore_error?: boolean
-}>
+}& Record<string, JsonValue>>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1030,8 +1032,6 @@ await corsair.cloudconvert.api.tasks.createExportS3({
 	input: 'imported',
 	bucket: 'bucket-name',
 	region: 'us-east-1',
-	accessKeyId: '<access-key-id>',
-	secretAccessKey: '<secret-access-key>',
 });
 ```
 
@@ -1044,12 +1044,9 @@ await corsair.cloudconvert.api.tasks.createExportS3({
 | `input` | `string \| string[]` | Yes | The name or names of source tasks whose files this export task will export. |
 | `bucket` | `string` | Yes | Amazon S3 bucket name. |
 | `region` | `string` | Yes | Amazon S3 region or compatible endpoint region. |
-| `accessKeyId` | `string` | Yes | S3 access key ID. |
-| `secretAccessKey` | `string` | Yes | S3 secret access key. |
 | `endpoint` | `string` | No | Custom S3-compatible API endpoint. |
 | `key` | `string` | No | Destination object key. |
 | `keyPrefix` | `string` | No | Destination object-key prefix; use instead of key. |
-| `sessionToken` | `string` | No | Temporary AWS session token. |
 | `acl` | `private \| public-read \| public-read-write \| authenticated-read \| bucket-owner-read \| bucket-owner-full-control` | No | — |
 | `cacheControl` | `string` | No | — |
 | `contentDisposition` | `string` | No | — |
@@ -1057,6 +1054,8 @@ await corsair.cloudconvert.api.tasks.createExportS3({
 | `metadata` | `Record<string, JsonValue>` | No | — |
 | `serverSideEncryption` | `AES256 \| aws:kms` | No | — |
 | `tagging` | `Record<string, JsonValue>` | No | — |
+
+Before calling, store `export_s3_access_key_id` and `export_s3_secret_access_key` with the tenant's CloudConvert key manager. Store `export_s3_session_token` when using temporary credentials. These credential fields are encrypted at rest and are not endpoint arguments.
 
 <AccordionGroup>
 <Accordion title="sourceTasks full type">
@@ -1066,7 +1065,7 @@ Record<string, {
   operation: string,
   input?: string | string[],
   ignore_error?: boolean
-}>
+}& Record<string, JsonValue>>
 ```
 </Accordion>
 </AccordionGroup>

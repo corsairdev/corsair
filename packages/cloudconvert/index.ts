@@ -12,6 +12,10 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import {
+	DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+	MAX_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+} from './client';
 import { Formats, Jobs, Operations, Tasks, Users } from './endpoints';
 import type {
 	CloudConvertEndpointInputs,
@@ -24,9 +28,26 @@ import {
 import { errorHandlers } from './error-handlers';
 import { CloudConvertSchema } from './schema';
 
+export const cloudConvertAuthConfig = {
+	api_key: {
+		account: [
+			'export_gcs_project_id',
+			'export_gcs_client_email',
+			'export_gcs_private_key',
+			'export_s3_access_key_id',
+			'export_s3_secret_access_key',
+			'export_s3_session_token',
+		] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
+type CloudConvertAuthConfig = typeof cloudConvertAuthConfig;
+
 export type CloudConvertPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Per-request timeout for sync endpoints, bounded to 10 minutes. */
+	syncTimeoutMs?: number;
 	hooks?: InternalCloudConvertPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof cloudConvertEndpointsNested>;
@@ -34,7 +55,9 @@ export type CloudConvertPluginOptions = {
 
 export type CloudConvertContext = CorsairPluginContext<
 	typeof CloudConvertSchema,
-	CloudConvertPluginOptions
+	CloudConvertPluginOptions,
+	undefined,
+	CloudConvertAuthConfig
 >;
 
 export type CloudConvertKeyBuilderContext =
@@ -267,10 +290,6 @@ const cloudConvertEndpointMeta = {
 	typeof cloudConvertEndpointsNested
 >;
 
-export const cloudConvertAuthConfig = {
-	api_key: {},
-} as const satisfies PluginAuthConfig;
-
 export type BaseCloudConvertPlugin<T extends CloudConvertPluginOptions> =
 	CorsairPlugin<
 		'cloudconvert',
@@ -278,7 +297,8 @@ export type BaseCloudConvertPlugin<T extends CloudConvertPluginOptions> =
 		typeof cloudConvertEndpointsNested,
 		Record<string, never>,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		CloudConvertAuthConfig
 	>;
 
 export type InternalCloudConvertPlugin =
@@ -291,9 +311,22 @@ export function cloudconvert<const T extends CloudConvertPluginOptions>(
 	incomingOptions: CloudConvertPluginOptions &
 		T = {} as CloudConvertPluginOptions & T,
 ): ExternalCloudConvertPlugin<T> {
+	const syncTimeoutMs =
+		incomingOptions.syncTimeoutMs ?? DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS;
+	if (
+		!Number.isSafeInteger(syncTimeoutMs) ||
+		syncTimeoutMs <= 0 ||
+		syncTimeoutMs > MAX_CLOUDCONVERT_SYNC_TIMEOUT_MS
+	) {
+		throw new RangeError(
+			`syncTimeoutMs must be a positive integer no greater than ${MAX_CLOUDCONVERT_SYNC_TIMEOUT_MS}.`,
+		);
+	}
+
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
+		syncTimeoutMs,
 	};
 
 	return {

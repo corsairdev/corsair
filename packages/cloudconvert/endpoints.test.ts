@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
+import { DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS } from './client';
 import { Formats, Jobs, Operations, Tasks, Users } from './endpoints';
 import { CloudConvertEndpointInputSchemas as Inputs } from './endpoints/types';
 import type { CloudConvertContext } from './index';
@@ -19,12 +20,27 @@ const mockedRequest = jest.mocked(client.makeCloudConvertRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
 type Ctx = Parameters<typeof Tasks.list>[0];
 
-function buildCtx(): Ctx {
+const storedExportCredentials = {
+	exportGcsProjectId: 'project-123',
+	exportGcsClientEmail: 'worker@project-123.iam.gserviceaccount.com',
+	exportGcsPrivateKey: 'fixture-private-key',
+	exportS3AccessKeyId: 'fixture-access-key',
+	exportS3SecretAccessKey: 'fixture-secret-key',
+	exportS3SessionToken: 'fixture-session-token',
+};
+
+function buildCtx(
+	credentialOverrides: Partial<
+		Record<keyof typeof storedExportCredentials, string | null>
+	> = {},
+	syncTimeoutMs = DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+): Ctx {
+	const credentials = { ...storedExportCredentials, ...credentialOverrides };
 	const ctx: CloudConvertContext = {
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('fixture-account'),
 		key: 'fixture-api-key',
-		options: {},
+		options: { syncTimeoutMs },
 		keys: {
 			get_dek: () => Promise.resolve('fixture-dek'),
 			issue_new_dek: () => Promise.resolve('fixture-dek'),
@@ -32,6 +48,24 @@ function buildCtx(): Ctx {
 			set_api_key: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
+			get_export_gcs_project_id: () =>
+				Promise.resolve(credentials.exportGcsProjectId),
+			set_export_gcs_project_id: () => Promise.resolve(),
+			get_export_gcs_client_email: () =>
+				Promise.resolve(credentials.exportGcsClientEmail),
+			set_export_gcs_client_email: () => Promise.resolve(),
+			get_export_gcs_private_key: () =>
+				Promise.resolve(credentials.exportGcsPrivateKey),
+			set_export_gcs_private_key: () => Promise.resolve(),
+			get_export_s3_access_key_id: () =>
+				Promise.resolve(credentials.exportS3AccessKeyId),
+			set_export_s3_access_key_id: () => Promise.resolve(),
+			get_export_s3_secret_access_key: () =>
+				Promise.resolve(credentials.exportS3SecretAccessKey),
+			set_export_s3_secret_access_key: () => Promise.resolve(),
+			get_export_s3_session_token: () =>
+				Promise.resolve(credentials.exportS3SessionToken),
+			set_export_s3_session_token: () => Promise.resolve(),
 		},
 		db: {},
 	};
@@ -128,7 +162,18 @@ describe('jobs.createAndWait', () => {
 		mockedRequest.mockResolvedValue(jobResponse);
 
 		const result = await Jobs.createAndWait(ctx, {
-			tasks: { export: { operation: 'export/url', input: 'convert' } },
+			tasks: {
+				import_file: {
+					operation: 'import/url',
+					url: 'https://files.test/a.pdf',
+				},
+				convert: {
+					operation: 'convert',
+					input: 'import_file',
+					output_format: 'pdf',
+				},
+				export: { operation: 'export/url', input: 'convert' },
+			},
 			tag: 'request-123',
 			redirect: false,
 		});
@@ -138,8 +183,20 @@ describe('jobs.createAndWait', () => {
 			method: 'POST',
 			path: '/jobs',
 			host: 'sync',
+			timeoutMs: DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
 			body: {
-				tasks: { export: { operation: 'export/url', input: 'convert' } },
+				tasks: {
+					import_file: {
+						operation: 'import/url',
+						url: 'https://files.test/a.pdf',
+					},
+					convert: {
+						operation: 'convert',
+						input: 'import_file',
+						output_format: 'pdf',
+					},
+					export: { operation: 'export/url', input: 'convert' },
+				},
 				tag: 'request-123',
 				redirect: false,
 			},
@@ -147,7 +204,7 @@ describe('jobs.createAndWait', () => {
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'cloudconvert.jobs.createAndWait',
-			{ taskCount: 1 },
+			{ taskCount: 3 },
 			'completed',
 		);
 	});
@@ -181,6 +238,22 @@ describe('jobs.get and jobs.wait', () => {
 			method: 'GET',
 			path: '/jobs/job-123',
 			host: 'sync',
+			timeoutMs: DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+			query: { redirect: false },
+		});
+	});
+
+	it('uses the configured timeout for synchronous waits', async () => {
+		mockedRequest.mockResolvedValue(jobResponse);
+		const customCtx = buildCtx({}, 75_000);
+
+		await Jobs.wait(customCtx, { jobId: 'job-123', redirect: false });
+
+		expect(mockedRequest).toHaveBeenCalledWith('fixture-api-key', {
+			method: 'GET',
+			path: '/jobs/job-123',
+			host: 'sync',
+			timeoutMs: 75_000,
 			query: { redirect: false },
 		});
 	});
@@ -278,13 +351,14 @@ describe('tasks.createExportGoogleCloudStorage', () => {
 					operation: 'import/url',
 					url: 'https://files.test/input.pdf',
 				},
-				converted: { operation: 'convert', input: 'imported' },
+				converted: {
+					operation: 'convert',
+					input: 'imported',
+					output_format: 'pdf',
+				},
 			},
 			input: 'converted',
-			projectId: 'project-123',
 			bucket: 'fixture-bucket',
-			clientEmail: 'worker@project-123.iam.gserviceaccount.com',
-			privateKey: 'fixture-private-key',
 			file: 'output.pdf',
 		});
 
@@ -298,7 +372,11 @@ describe('tasks.createExportGoogleCloudStorage', () => {
 						operation: 'import/url',
 						url: 'https://files.test/input.pdf',
 					},
-					converted: { operation: 'convert', input: 'imported' },
+					converted: {
+						operation: 'convert',
+						input: 'imported',
+						output_format: 'pdf',
+					},
 					exported: {
 						operation: 'export/google-cloud-storage',
 						input: 'converted',
@@ -323,6 +401,25 @@ describe('tasks.createExportGoogleCloudStorage', () => {
 		expect(JSON.stringify(payload)).not.toContain('fixture-bucket');
 		expect(JSON.stringify(payload)).not.toContain('files.test');
 	});
+
+	it('requires saved export credentials and keeps them out of endpoint arguments', async () => {
+		const missingKeyContext = buildCtx({ exportGcsPrivateKey: null });
+
+		await expect(
+			Tasks.createExportGoogleCloudStorage(missingKeyContext, {
+				exportTaskName: 'exported',
+				sourceTasks: {
+					imported: {
+						operation: 'import/url',
+						url: 'https://files.test/input.pdf',
+					},
+				},
+				input: 'imported',
+				bucket: 'fixture-bucket',
+			}),
+		).rejects.toThrow('keys.set_export_gcs_private_key()');
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('tasks.createExportS3', () => {
@@ -332,7 +429,11 @@ describe('tasks.createExportS3', () => {
 		const result = await Tasks.createExportS3(ctx, {
 			exportTaskName: 'exported',
 			sourceTasks: {
-				converted: { operation: 'convert', input: 'imported' },
+				converted: {
+					operation: 'convert',
+					input: 'imported',
+					output_format: 'pdf',
+				},
 				imported: {
 					operation: 'import/url',
 					url: 'https://files.test/input.pdf',
@@ -341,11 +442,8 @@ describe('tasks.createExportS3', () => {
 			input: 'converted',
 			bucket: 'fixture-bucket',
 			region: 'eu-west-1',
-			accessKeyId: 'fixture-access-key',
-			secretAccessKey: 'fixture-secret-key',
 			endpoint: 'https://s3.compat.test',
 			key: 'exports/output.pdf',
-			sessionToken: 'fixture-session-token',
 			acl: 'bucket-owner-full-control',
 			cacheControl: 'max-age=3600',
 			contentDisposition: 'attachment',
@@ -361,7 +459,11 @@ describe('tasks.createExportS3', () => {
 			path: '/jobs',
 			body: {
 				tasks: {
-					converted: { operation: 'convert', input: 'imported' },
+					converted: {
+						operation: 'convert',
+						input: 'imported',
+						output_format: 'pdf',
+					},
 					imported: {
 						operation: 'import/url',
 						url: 'https://files.test/input.pdf',
@@ -408,8 +510,6 @@ describe('tasks.createExportS3', () => {
 				input: 'missing',
 				bucket: 'fixture-bucket',
 				region: 'eu-west-1',
-				accessKeyId: 'fixture-access-key',
-				secretAccessKey: 'fixture-secret-key',
 			}),
 		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
@@ -543,6 +643,7 @@ describe('tasks.wait', () => {
 			method: 'GET',
 			path: '/tasks/task-123',
 			host: 'sync',
+			timeoutMs: DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
 		});
 	});
 });
@@ -755,12 +856,30 @@ describe('CloudConvert plugin shape', () => {
 	it('uses API-key auth, declares no webhook support, and registers schemas', () => {
 		const plugin = cloudconvert({ authType: 'api_key' });
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({ api_key: {} });
+		expect(plugin.authConfig?.api_key?.account).toEqual([
+			'export_gcs_project_id',
+			'export_gcs_client_email',
+			'export_gcs_private_key',
+			'export_s3_access_key_id',
+			'export_s3_secret_access_key',
+			'export_s3_session_token',
+		]);
+		expect(plugin.options).toMatchObject({
+			syncTimeoutMs: DEFAULT_CLOUDCONVERT_SYNC_TIMEOUT_MS,
+		});
 		expect(plugin.webhooks).toEqual({});
 		expect(Object.keys(cloudConvertEndpointSchemas)).toHaveLength(17);
 		for (const schema of Object.values(cloudConvertEndpointSchemas)) {
 			expect(schema.input).toBeDefined();
 			expect(schema.output).toBeDefined();
 		}
+	});
+
+	it('bounds the configured synchronous timeout', () => {
+		expect(cloudconvert({ syncTimeoutMs: 30_000 }).options?.syncTimeoutMs).toBe(
+			30_000,
+		);
+		expect(() => cloudconvert({ syncTimeoutMs: 0 })).toThrow(RangeError);
+		expect(() => cloudconvert({ syncTimeoutMs: 600_001 })).toThrow(RangeError);
 	});
 });

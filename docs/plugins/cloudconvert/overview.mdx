@@ -6,7 +6,7 @@ description: "Create, wait for, inspect, list and delete CloudConvert jobs and t
 
 Use **CloudConvert** through Corsair: one client, typed API calls.
 
-CloudConvert warns that its synchronous endpoints can time out for long-running jobs and tasks. Prefer async jobs plus status reads for long work. The provider's `redirect=true` returns raw export-file content; this JSON plugin rejects that option. Job-level `webhook_url` is not exposed.
+CloudConvert warns that its synchronous endpoints can time out for long-running jobs and tasks. Prefer async jobs plus status reads for long work. The provider's `redirect=true` returns raw export-file content; this JSON plugin rejects that option. Job-level `webhook_url` is not exposed. Export credentials are stored in Corsair's encrypted per-tenant key manager and are not endpoint arguments. Add an `export/url` task to make a downloadable URL available in the finished export task's `result.files[].url`. Do not send credentials as extra task fields: when an endpoint requires approval (including strict mode), Corsair records raw incoming arguments before endpoint validation, so an invalid request containing secret fields could still expose them to the local permissions table or hosted Hub approval.
 
 **What you get:**
 
@@ -112,6 +112,7 @@ await tenant.cloudconvert.api.jobs.create({
 	tasks: {
 		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
 		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
 	},
 	tag: 'request-123',
 });

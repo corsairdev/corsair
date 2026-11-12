@@ -44,13 +44,36 @@ const TaskInputNamesSchema = z.union([
 	z.array(TaskNameSchema).min(1),
 ]);
 
+const SENSITIVE_TASK_CREDENTIAL_FIELDS = new Set([
+	'accesskeyid',
+	'clientemail',
+	'privatekey',
+	'projectid',
+	'secretaccesskey',
+	'sessiontoken',
+]);
+
 const JobTaskInputSchema = z
 	.object({
 		operation: z.string().min(1),
 		input: TaskInputNamesSchema.optional(),
 		ignore_error: z.boolean().optional(),
 	})
-	.catchall(JsonValueSchema);
+	.catchall(JsonValueSchema)
+	.and(JsonObjectSchema)
+	.superRefine((task, ctx) => {
+		for (const field of Object.keys(task)) {
+			const normalized = field.replace(/[_-]/g, '').toLowerCase();
+			if (SENSITIVE_TASK_CREDENTIAL_FIELDS.has(normalized)) {
+				ctx.addIssue({
+					code: 'custom',
+					path: [field],
+					message:
+						'CloudConvert export/import credentials must be stored with the tenant key manager, not passed in task arguments.',
+				});
+			}
+		}
+	});
 
 const JobTasksSchema = z
 	.record(TaskNameSchema, JobTaskInputSchema)
@@ -149,16 +172,7 @@ function validateExportTaskGraph(
 const TasksCreateExportGoogleCloudStorageInputSchema = z
 	.object({
 		...ExportTaskGraphFields,
-		projectId: z.string().min(1).describe('Google Cloud Project ID.'),
 		bucket: z.string().min(1).describe('Google Cloud Storage bucket name.'),
-		clientEmail: z
-			.string()
-			.min(1)
-			.describe('Google service-account client email.'),
-		privateKey: z
-			.string()
-			.min(1)
-			.describe('Google service-account private key.'),
 		file: z
 			.string()
 			.min(1)
@@ -182,9 +196,27 @@ const TasksCreateExportGoogleCloudStorageInputSchema = z
 		}
 	});
 
-export type TasksCreateExportGoogleCloudStorageInput = z.input<
-	typeof TasksCreateExportGoogleCloudStorageInputSchema
->;
+type JobTaskInput = z.input<typeof JobTaskInputSchema> & {
+	access_key_id?: never;
+	accessKeyId?: never;
+	client_email?: never;
+	clientEmail?: never;
+	private_key?: never;
+	privateKey?: never;
+	project_id?: never;
+	projectId?: never;
+	secret_access_key?: never;
+	secretAccessKey?: never;
+	session_token?: never;
+	sessionToken?: never;
+};
+
+type JobTaskMap = Record<string, JobTaskInput>;
+
+export type TasksCreateExportGoogleCloudStorageInput = Omit<
+	z.input<typeof TasksCreateExportGoogleCloudStorageInputSchema>,
+	'sourceTasks'
+> & { sourceTasks: JobTaskMap };
 
 const TasksCreateExportS3InputSchema = z
 	.object({
@@ -194,8 +226,6 @@ const TasksCreateExportS3InputSchema = z
 			.string()
 			.min(1)
 			.describe('Amazon S3 region or compatible endpoint region.'),
-		accessKeyId: z.string().min(1).describe('S3 access key ID.'),
-		secretAccessKey: z.string().min(1).describe('S3 secret access key.'),
 		endpoint: z
 			.string()
 			.min(1)
@@ -207,11 +237,6 @@ const TasksCreateExportS3InputSchema = z
 			.min(1)
 			.optional()
 			.describe('Destination object-key prefix; use instead of key.'),
-		sessionToken: z
-			.string()
-			.min(1)
-			.optional()
-			.describe('Temporary AWS session token.'),
 		acl: z
 			.enum([
 				'private',
@@ -241,9 +266,10 @@ const TasksCreateExportS3InputSchema = z
 		}
 	});
 
-export type TasksCreateExportS3Input = z.input<
-	typeof TasksCreateExportS3InputSchema
->;
+export type TasksCreateExportS3Input = Omit<
+	z.input<typeof TasksCreateExportS3InputSchema>,
+	'sourceTasks'
+> & { sourceTasks: JobTaskMap };
 
 const JobsCreateInputSchema = z
 	.object({
@@ -252,7 +278,10 @@ const JobsCreateInputSchema = z
 	})
 	.strict();
 
-export type JobsCreateInput = z.input<typeof JobsCreateInputSchema>;
+export type JobsCreateInput = Omit<
+	z.input<typeof JobsCreateInputSchema>,
+	'tasks'
+> & { tasks: JobTaskMap };
 
 const JobsCreateAndWaitInputSchema = z
 	.object({
@@ -262,9 +291,10 @@ const JobsCreateAndWaitInputSchema = z
 	})
 	.strict();
 
-export type JobsCreateAndWaitInput = z.input<
-	typeof JobsCreateAndWaitInputSchema
->;
+export type JobsCreateAndWaitInput = Omit<
+	z.input<typeof JobsCreateAndWaitInputSchema>,
+	'tasks'
+> & { tasks: JobTaskMap };
 
 const JobsGetInputSchema = z
 	.object({

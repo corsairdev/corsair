@@ -10,7 +10,14 @@ overviewNote: >-
   CloudConvert warns that its synchronous endpoints can time out for long-running
   jobs and tasks. Prefer async jobs plus status reads for long work. The
   provider's `redirect=true` returns raw export-file content; this JSON plugin
-  rejects that option. Job-level `webhook_url` is not exposed.
+  rejects that option. Job-level `webhook_url` is not exposed. Export credentials
+  are stored in Corsair's encrypted per-tenant key manager and are not endpoint
+  arguments. Add an `export/url` task to make a downloadable URL available in
+  the finished export task's `result.files[].url`. Do not send credentials as
+  extra task fields: when an endpoint requires approval (including strict
+  mode), Corsair records raw incoming arguments before endpoint validation, so
+  an invalid request containing secret fields could still expose them to the
+  local permissions table or hosted Hub approval.
 examples:
   read:
     path: jobs.list
@@ -29,7 +36,30 @@ examples:
           operation: convert
           input: import_file
           output_format: pdf
+        export_file:
+          operation: export/url
+          input: convert
       tag: request-123
+apiNotes:
+  jobs.create: >-
+    This example includes an `export/url` task so the completed job has a
+    downloadable file. Read `result.files[].url` from the finished export task;
+    use `jobs.get` for status polling on long jobs. The generic task schema
+    rejects credential fields such as `private_key` and `secret_access_key`.
+  jobs.createAndWait: >-
+    This example includes an `export/url` task. Read `result.files[].url` from
+    the completed export task. Synchronous calls are bounded by `syncTimeoutMs`
+    (5 minutes by default, up to 10 minutes); use async jobs for long work.
+  tasks.createExportGoogleCloudStorage: >-
+    Before calling, store `export_gcs_project_id`, `export_gcs_client_email`,
+    and `export_gcs_private_key` with the tenant's CloudConvert key manager.
+    The private key is encrypted at rest and is resolved after approval; it is
+    not part of this endpoint's arguments.
+  tasks.createExportS3: >-
+    Before calling, store `export_s3_access_key_id` and
+    `export_s3_secret_access_key` with the tenant's CloudConvert key manager.
+    Store `export_s3_session_token` when using temporary credentials. These
+    credential fields are encrypted at rest and are not endpoint arguments.
 apiExamples:
   jobs.create:
     tasks:
@@ -40,6 +70,9 @@ apiExamples:
         operation: convert
         input: import_file
         output_format: pdf
+      export_file:
+        operation: export/url
+        input: convert
     tag: request-123
   jobs.createAndWait:
     tasks:
@@ -50,6 +83,9 @@ apiExamples:
         operation: convert
         input: import_file
         output_format: pdf
+      export_file:
+        operation: export/url
+        input: convert
   jobs.get:
     jobId: job-id
   jobs.wait:
@@ -67,10 +103,7 @@ apiExamples:
         operation: import/url
         url: https://example.test/input.pdf
     input: imported
-    projectId: project-id
     bucket: bucket-name
-    clientEmail: service-account@example.test
-    privateKey: <service-account-private-key>
   tasks.createExportS3:
     exportTaskName: export
     sourceTasks:
@@ -80,8 +113,6 @@ apiExamples:
     input: imported
     bucket: bucket-name
     region: us-east-1
-    accessKeyId: <access-key-id>
-    secretAccessKey: <secret-access-key>
   tasks.list:
     include:
       - retries

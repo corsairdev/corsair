@@ -17,11 +17,9 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			(error instanceof ApiError && error.status === 429) ||
 			codeOf(error) === 'TOO_MANY_REQUESTS',
-		handler: async (error: Error) => ({
-			maxRetries: 5,
-			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-		}),
+		// corsair/http owns 429 retries and exhausts its bounded Retry-After budget
+		// before this handler runs; do not start a second retry loop here.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) =>
