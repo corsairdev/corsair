@@ -101,9 +101,9 @@ describe('Documenso HTTP client', () => {
 				const body = init?.body;
 				if (typeof body !== 'string')
 					throw new Error('Expected JSON request body');
-				// `unknown` keeps parsed JSON untrusted; this loop covers different per-operation body shapes and compares each at runtime.
+				// `unknown` is necessary because JSON.parse is untrusted and this loop covers heterogeneous per-operation body shapes; no narrower static type is safe before schema validation.
 				const parsedBody: unknown = JSON.parse(body);
-				// `unknown` is necessary because these expected fields vary by operation and are assembled dynamically from its schema-validated fixture.
+				// `unknown` is necessary because request keys and value types vary by operation; this expected record is assembled dynamically and checked against each operation's Zod schema in the endpoint tests.
 				const expectedBody: Record<string, unknown> = {};
 				for (const key of definition.bodyKeys) {
 					const value = valueAt(definition.inputExample, key);
