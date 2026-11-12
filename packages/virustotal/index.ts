@@ -265,7 +265,8 @@ const virustotalEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List comments across the account, optionally filtered',
+		description:
+			'List the latest comments anyone posted on VirusTotal, not only your own; filter by tag, e.g. tag:malware',
 	},
 	'comments.get': {
 		riskLevel: 'read',

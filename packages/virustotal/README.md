@@ -15,7 +15,7 @@ pnpm add @corsair-dev/virustotal
 | `analyses.get` | `virustotal.api.analyses.get` | `read` | Read an analysis a scan produced; its status moves from queued to completed |
 | `comments.delete` | `virustotal.api.comments.delete` | `destructive` | Permanently delete one of your own comments, which cannot be restored |
 | `comments.get` | `virustotal.api.comments.get` | `read` | Read one comment |
-| `comments.list` | `virustotal.api.comments.list` | `read` | List comments across the account, optionally filtered |
+| `comments.list` | `virustotal.api.comments.list` | `read` | List the latest comments anyone posted on VirusTotal, not only your own; filter by tag, e.g. tag:malware |
 | `domains.get` | `virustotal.api.domains.get` | `read` | Read a domain report: registrar, dates, categories, DNS records and engine verdicts |
 | `domains.rescan` | `virustotal.api.domains.rescan` | `write` | Ask VirusTotal to reanalyse a domain |
 | `files.addComment` | `virustotal.api.files.addComment` | `write` | Comment on a file publicly; a word starting with # becomes a tag, and only the author can delete it |

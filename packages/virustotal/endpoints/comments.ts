@@ -6,7 +6,10 @@ import {
 	VirustotalEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** Lists comments across the account, optionally filtered. */
+/**
+ * Lists the latest comments anyone posted on VirusTotal, newest first, not only
+ * your own. `filter` narrows them, e.g. `tag:malware`.
+ */
 export const list: VirustotalEndpoints['commentsList'] = (ctx, input) =>
 	call(
 		ctx,

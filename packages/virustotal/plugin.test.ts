@@ -133,6 +133,15 @@ describe('virustotal plugin definition', () => {
 		]);
 	});
 
+	it('describes comments.list as the latest comments on VirusTotal, not your own', () => {
+		const meta = plugin.endpointMeta ?? {};
+
+		expect(meta['comments.list']?.description).toMatch(
+			/latest comments.*VirusTotal/i,
+		);
+		expect(meta['comments.list']?.description).not.toMatch(/account/i);
+	});
+
 	it('exports the endpoint schema map for the host', () => {
 		expect(virustotalEndpointSchemas['files.get'].input).toBeDefined();
 		expect(Object.keys(virustotalEndpointSchemas).sort()).toEqual(operations);

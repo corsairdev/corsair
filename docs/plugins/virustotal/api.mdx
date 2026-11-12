@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for VirusTotal: every `virustotal.api.*` operation with input and output types."
+title: "VirusTotal API reference"
+sidebarTitle: "API"
+description: "API reference for the VirusTotal plugin in Corsair: every `virustotal.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `virustotal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -151,7 +150,7 @@ await corsair.virustotal.api.comments.get({ id: 'u-011915942db556bbab5137f761efe
 
 `comments.list`
 
-List comments across the account, optionally filtered
+List the latest comments anyone posted on VirusTotal, not only your own; filter by tag, e.g. tag:malware
 
 **Risk:** `read`
 
@@ -592,7 +591,7 @@ await corsair.virustotal.api.files.vote({ id: '275a021bbfb6489e54d471899f7db9d16
   type?: vote | null,
   id?: string | null,
   attributes?: {
-    verdict?: malicious | harmless | null,
+    verdict?: malicious | harmless | string | null,
     date?: number | null
   } | null,
   links?: Record<string, any> | null
@@ -643,7 +642,7 @@ await corsair.virustotal.api.files.votes({ id: '275a021bbfb6489e54d471899f7db9d1
   type?: vote | null,
   id?: string | null,
   attributes?: {
-    verdict?: malicious | harmless | null,
+    verdict?: malicious | harmless | string | null,
     date?: number | null
   } | null,
   links?: Record<string, any> | null
