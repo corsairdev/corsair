@@ -230,6 +230,7 @@ describe('account info', () => {
 
 	it('reports the IsActive false answer as an auth error, like the async API 401', () => {
 		const raw = RawAccountInfoSchema.parse(ACCOUNT_INFO_INACTIVE_BODY);
+		// unknown: a thrown value can be anything; the assertions below narrow it.
 		let caught: unknown;
 		try {
 			parseAccountInfo(raw);
