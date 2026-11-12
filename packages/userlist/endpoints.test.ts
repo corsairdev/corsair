@@ -139,6 +139,24 @@ describe('companies', () => {
 		});
 	});
 
+	it('sends the users a company is pushed with', async () => {
+		respondEmpty(fetchMock);
+
+		await invoke(Companies.upsert, {
+			identifier: 'company-42',
+			user: 'user-123',
+			users: ['user-124'],
+			relationships: [{ user: 'user-125', properties: { role: 'owner' } }],
+		});
+
+		expect(lastRequest(fetchMock).body).toEqual({
+			identifier: 'company-42',
+			user: 'user-123',
+			users: ['user-124'],
+			relationships: [{ user: 'user-125', properties: { role: 'owner' } }],
+		});
+	});
+
 	it('requires an identifier', async () => {
 		await expect(invoke(Companies.upsert, { name: 'No id' })).rejects.toThrow();
 	});

@@ -141,6 +141,30 @@ const CompaniesUpsertInputSchema = z.object({
 	name: z.string().optional(),
 	signed_up_at: TimestampSchema.optional(),
 	properties: PropertiesSchema.optional(),
+	user: UserRefSchema.optional().describe(
+		'A single user, as a shortcut for one relationship.',
+	),
+	users: z
+		.array(UserRefSchema)
+		.min(1)
+		.optional()
+		.describe(
+			'Several users, as a shortcut for relationships without properties.',
+		),
+	relationships: z
+		.array(
+			z
+				.object({
+					user: UserRefSchema,
+					properties: PropertiesSchema.optional(),
+				})
+				.loose(),
+		)
+		.min(1)
+		.optional()
+		.describe(
+			'Relationships to users, which can each hold their own properties.',
+		),
 });
 
 export type CompaniesUpsertInput = z.infer<typeof CompaniesUpsertInputSchema>;
