@@ -3160,6 +3160,14 @@
                 ]
               },
               {
+                "group": "Raisely",
+                "pages": [
+                  "plugins/raisely/overview",
+                  "plugins/raisely/api",
+                  "plugins/raisely/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",
