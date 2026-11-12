@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Renderform plugin"
+sidebarTitle: "Overview"
 description: "Render templates to images, PDFs and video, manage templates and their html-editor content, capture screenshots and PDFs, and read usage and fonts with Renderform."
 ---
 
@@ -122,7 +123,7 @@ await tenant.renderform.api.usage({});
 const tenant = corsair.withTenant('acme');
 await tenant.renderform.api.render({
 	template: 'template_1234',
-	data: { my-text.text: 'John' },
+	data: { 'my-text.text': 'John' },
 	fileName: 'welcome-card',
 });
 ```

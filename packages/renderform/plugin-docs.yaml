@@ -28,7 +28,9 @@ examples:
     args:
       template: template_1234
       data:
-        my-text.text: John
+        # Quoted inside the key: the docs generator prints keys as written, and
+        # a merge field with a dot or a dash is not a bare TypeScript key.
+        "'my-text.text'": John
       fileName: welcome-card
 apiExamples:
   render:
