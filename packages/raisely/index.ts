@@ -147,7 +147,7 @@ const raiselyEndpointMeta = {
 	'donations.create': {
 		riskLevel: 'write',
 		description:
-			'Record a donation for a campaign, with the donor details and the gateway it came through',
+			'Record a donation already paid elsewhere, with the donor details and the gateway it came through; it charges no one and sends no receipt',
 	},
 	'profiles.list': {
 		riskLevel: 'read',

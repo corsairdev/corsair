@@ -374,7 +374,9 @@ const DonationsCreateInputSchema = z.object({
 		),
 	type: z
 		.enum(['ONLINE', 'OFFLINE'])
-		.describe('Whether the donation was taken online or recorded by hand.'),
+		.describe(
+			'How the payment was taken. Either way this only records a payment made elsewhere; Raisely charges nothing on this route.',
+		),
 	campaign_uuid: z
 		.string()
 		.optional()
