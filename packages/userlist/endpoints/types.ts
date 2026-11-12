@@ -232,7 +232,7 @@ export type EventsCreateInput = z.infer<typeof EventsCreateInputSchema>;
 /** A part of a multipart body. */
 const MessagePartSchema = z
 	.object({
-		type: z.string().describe('The part media type, such as `text/plain`.'),
+		type: z.string().describe('The part type: `html` or `text`.'),
 		content: z.string(),
 	})
 	.loose();

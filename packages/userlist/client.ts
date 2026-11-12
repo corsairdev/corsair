@@ -50,7 +50,7 @@ export class UserlistAPIError extends Error {
 	readonly status?: number;
 	/** The stable code, e.g. `unauthorized` or `unprocessable_content`. */
 	readonly code?: string;
-	/** Every message Userflow sent, one per failed field when validating. */
+	/** Every message Userlist sent, one per failed field when validating. */
 	readonly errors?: readonly string[];
 	/** Milliseconds from a Retry-After header, when Userlist sent one. */
 	readonly retryAfter?: number;
@@ -104,7 +104,7 @@ export class UserlistAPIError extends Error {
 	 * cannot succeed, so the caller has to send less.
 	 */
 	get isTooLarge(): boolean {
-		return this.status === 413 || this.code === 'payload_too_large';
+		return this.status === 413 || this.code === 'content_too_large';
 	}
 }
 

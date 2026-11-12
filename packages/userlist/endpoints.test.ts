@@ -369,8 +369,8 @@ describe('messages', () => {
 			body: {
 				type: 'multipart',
 				content: [
-					{ type: 'text/plain', content: 'Thanks.' },
-					{ type: 'text/html', content: '<p>Thanks.</p>' },
+					{ type: 'text', content: 'Thanks.' },
+					{ type: 'html', content: '<p>Thanks.</p>' },
 				],
 			},
 		});

@@ -147,8 +147,8 @@ export const unprocessable = {
 
 export const tooLarge = {
 	status: 413,
-	code: 'payload_too_large',
-	errors: ['The payload is too large.'],
+	code: 'content_too_large',
+	errors: ['Payload is too large. Request was 1 MB, but the limit is 100 KB.'],
 };
 
 export const rateLimited = {
