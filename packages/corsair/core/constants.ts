@@ -495,6 +495,7 @@ export const BaseProviders = [
 	'uploadcare',
 	'u301',
 	'uptimerobot',
+	'userflow',
 	'vapi',
 	'vaquill',
 	'vectorshift',
@@ -1023,6 +1024,7 @@ export const ProviderDisplayNames = {
 	uploadcare: 'Uploadcare',
 	u301: 'U301',
 	uptimerobot: 'UptimeRobot',
+	userflow: 'Userflow',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
 	vectorshift: 'VectorShift',
@@ -1558,6 +1560,7 @@ export type AllProviders =
 	| 'uploadcare'
 	| 'u301'
 	| 'uptimerobot'
+	| 'userflow'
 	| 'vapi'
 	| 'vaquill'
 	| 'vectorshift'

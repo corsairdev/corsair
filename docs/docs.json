@@ -4125,6 +4125,14 @@
                 ]
               },
               {
+                "group": "Userflow",
+                "pages": [
+                  "plugins/userflow/overview",
+                  "plugins/userflow/api",
+                  "plugins/userflow/database"
+                ]
+              },
+              {
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
