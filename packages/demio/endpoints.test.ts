@@ -67,7 +67,10 @@ function expectAuthenticated() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued request fails the test instead of reaching Demio.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch: queue a response for every request');
+	});
 	mockLog.mockClear();
 });
 
