@@ -30,7 +30,10 @@ export const JSON_BODY = {
 	content: HTML_BODY,
 };
 
-/** `screenShot=true&returnJSON=true` answer. The images are base64 PNGs. */
+/**
+ * `screenShot=true&returnJSON=true` answer, captured live 11-12: each entry is
+ * an object with the base64 PNG in `image`, not a bare string.
+ */
 export const SCREENSHOT_BODY = {
 	statusCode: 200,
 	networkRequests: [],
@@ -38,7 +41,12 @@ export const SCREENSHOT_BODY = {
 	actionResults: [],
 	content: HTML_BODY,
 	screenShots: [
-		'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==',
+		{
+			type: 'ScreenShot',
+			image:
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==',
+			error: '',
+		},
 	],
 };
 

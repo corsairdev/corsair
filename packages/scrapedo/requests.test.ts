@@ -170,7 +170,21 @@ describe('scrape.screenshot', () => {
 		// The live API answers 400 for screenShot without returnJSON.
 		expect(sentQuery().get('returnJSON')).toBe('true');
 		expect(sentQuery().get('screenShot')).toBe('true');
-		expect(result.screenshots).toHaveLength(1);
+		expect(result.screenshots).toEqual([SCREENSHOT_BODY.screenShots[0]?.image]);
+	});
+
+	it('reports a screenshot the provider could not take', async () => {
+		respond({
+			...SCREENSHOT_BODY,
+			screenShots: [{ type: 'ScreenShot', image: '', error: 'capture failed' }],
+		});
+
+		await expect(
+			endpoints().scrape.screenshot(makeCtx(), {
+				url: 'https://example.com/',
+				render: true,
+			}),
+		).rejects.toThrow(/capture failed/);
 	});
 
 	it('asks for the full page when fullPage is set', async () => {

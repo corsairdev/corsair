@@ -303,11 +303,12 @@ export type ScrapeScreenshotInput = z.input<typeof ScrapeScreenshotInputSchema>;
  * naming the dependency. So this operation always sets both and reads the
  * screenshots array.
  */
-const ScreenshotSchema = z
+// Captured live: `{ type: 'ScreenShot', image: '<base64 PNG>', error: '' }`.
+export const RawScreenshotSchema = z
 	.object({
-		// unknown: the provider sends a base64 image and does not document the
-		// other keys, so only the image field is named.
-		screenshot: z.string().nullish(),
+		type: z.string().nullish(),
+		image: z.string().nullish(),
+		error: z.string().nullish(),
 	})
 	.loose();
 

@@ -273,7 +273,7 @@ describe('output schemas', () => {
 
 	it('parses screenshots', () => {
 		const result = Outputs.scrapeScreenshot.parse({
-			screenshots: SCREENSHOT_BODY.screenShots,
+			screenshots: SCREENSHOT_BODY.screenShots.map((shot) => shot.image),
 			status_code: SCREENSHOT_BODY.statusCode,
 		}) as ScrapeScreenshotResponse;
 		expect(result.screenshots).toHaveLength(1);

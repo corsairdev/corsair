@@ -1,9 +1,10 @@
 import type { ScrapeDoEndpoints } from '..';
-import { parseJsonObject } from '../client';
+import { parseJsonObject, ScrapeDoAPIError } from '../client';
 import { call, scrapeQuery } from './call';
 import {
 	ScrapeDoEndpointInputSchemas as Inputs,
 	ScrapeDoEndpointOutputSchemas as Outputs,
+	RawScreenshotSchema,
 } from './types';
 
 export const html: ScrapeDoEndpoints['scrapeHtml'] = (ctx, input) =>
@@ -135,8 +136,24 @@ export const screenshot: ScrapeDoEndpoints['scrapeScreenshot'] = (ctx, input) =>
 		{
 			shape: (answer) => {
 				const body = parseJsonObject(answer.body);
+				// Each entry is `{ type, image, error }`; the image is the base64 PNG.
+				const shots = RawScreenshotSchema.array().parse(body.screenShots ?? []);
+				const images = shots.flatMap((shot) =>
+					shot.image ? [shot.image] : [],
+				);
+				const failure = shots.find((shot) => shot.error)?.error;
+				if (images.length === 0 && failure) {
+					throw new ScrapeDoAPIError(
+						`Scrape.do could not take the screenshot: ${failure}`,
+						{
+							status: answer.status,
+							message: failure,
+							method: 'GET',
+						},
+					);
+				}
 				return {
-					screenshots: body.screenShots,
+					screenshots: images,
 					status_code: body.statusCode,
 				};
 			},
