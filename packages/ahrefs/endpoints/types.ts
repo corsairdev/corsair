@@ -26,6 +26,7 @@ export const AHREFS_TARGET_MODES = [
 export const AHREFS_OUTPUT_FORMATS = ['json'] as const;
 export const AHREFS_TARGET_POSITIONS = ['in_top10', 'in_top100'] as const;
 export const AHREFS_VOLUME_MODES = ['monthly', 'average'] as const;
+export const AHREFS_TRAFFIC_MODES = ['static', 'adaptive'] as const;
 export const AHREFS_RANK_TRACKER_DEVICES = ['desktop', 'mobile'] as const;
 
 const BaseSiteExplorerInputSchema = z.object({
@@ -44,8 +45,12 @@ export const DomainRatingResponseSchema = z.object({
 	}),
 });
 
+/** Ahrefs portfolio; when set it takes precedence over `target`. */
+const portfolioId = z.number().int().positive().optional();
+
 export const BacklinksStatsInputSchema = BaseSiteExplorerInputSchema.extend({
 	mode: z.enum(AHREFS_TARGET_MODES).default('subdomains').optional(),
+	portfolio_id: portfolioId,
 });
 
 export const BacklinksStatsResponseSchema = z.object({
@@ -58,7 +63,8 @@ export const BacklinksStatsResponseSchema = z.object({
 });
 
 const SiteExplorerTableInputSchema = BaseSiteExplorerInputSchema.extend({
-	timeout: z.number().int().positive().optional(),
+	timeout: z.number().int().nonnegative().optional(),
+	portfolio_id: portfolioId,
 	limit: z.number().int().positive().default(1000).optional(),
 	order_by: z.string().optional(),
 	where: z.string().optional(),
@@ -70,6 +76,7 @@ export const OrganicKeywordsInputSchema = SiteExplorerTableInputSchema.extend({
 	country: z.string().length(2),
 	date_compared: isoDateString.optional(),
 	volume_mode: z.enum(AHREFS_VOLUME_MODES).default('monthly').optional(),
+	traffic_mode: z.enum(AHREFS_TRAFFIC_MODES).optional(),
 });
 
 export const RefdomainsInputSchema = SiteExplorerTableInputSchema.extend({
@@ -80,17 +87,21 @@ export const TopPagesInputSchema = SiteExplorerTableInputSchema.extend({
 	country: z.string().length(2),
 	date_compared: isoDateString.optional(),
 	volume_mode: z.enum(AHREFS_VOLUME_MODES).default('monthly').optional(),
+	traffic_mode: z.enum(AHREFS_TRAFFIC_MODES).optional(),
 });
 
 export const KeywordsOverviewInputSchema = z
 	.object({
-		timeout: z.number().int().positive().optional(),
+		timeout: z.number().int().nonnegative().optional(),
 		limit: z.number().int().positive().default(1000).optional(),
 		order_by: z.string().optional(),
 		where: z.string().optional(),
 		select: z.string().min(1),
 		volume_monthly_date_to: isoDateString.optional(),
 		volume_monthly_date_from: isoDateString.optional(),
+		/** Scope of `target`. */
+		mode: z.enum(AHREFS_TARGET_MODES).optional(),
+		/** Older name for `mode`, still accepted; sent to Ahrefs as `mode`. */
 		target_mode: z.enum(AHREFS_TARGET_MODES).optional(),
 		target: z.string().min(1).optional(),
 		target_position: z.enum(AHREFS_TARGET_POSITIONS).optional(),
@@ -205,7 +216,7 @@ export const TopPagesResponseSchema = z.object({
 });
 
 export const RankTrackerOverviewInputSchema = z.object({
-	timeout: z.number().int().positive().optional(),
+	timeout: z.number().int().nonnegative().optional(),
 	limit: z.number().int().positive().default(1000).optional(),
 	order_by: z.string().optional(),
 	where: z.string().optional(),
@@ -243,6 +254,10 @@ export const SerpOverviewInputSchema = z.object({
 	date: isoDateString.optional(),
 	country: z.string().length(2),
 	keyword: z.string().min(1),
+	/** Comma-separated extra countries to return ranks in for the same URLs. */
+	comparison_countries: z.string().min(2).optional(),
+	/** Comma-separated SERP feature types to keep, e.g. `organic,snippet`. */
+	type: z.string().min(1).optional(),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).default('json').optional(),
 });
 

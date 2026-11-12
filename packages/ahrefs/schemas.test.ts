@@ -154,6 +154,20 @@ describe('Ahrefs endpoint risk levels', () => {
 });
 
 describe('Ahrefs input validation', () => {
+	it('accepts the SERP overview filters Ahrefs documents', () => {
+		const parsed = AhrefsEndpointInputSchemas.serpOverview.parse({
+			keyword: 'ahrefs',
+			country: 'us',
+			select: 'position,url',
+			comparison_countries: 'gb,de',
+			type: 'organic,snippet',
+		});
+		expect(parsed).toMatchObject({
+			comparison_countries: 'gb,de',
+			type: 'organic,snippet',
+		});
+	});
+
 	it('accepts all as the country for Keywords Explorer', () => {
 		expect(
 			AhrefsEndpointInputSchemas.matchingTerms.safeParse({

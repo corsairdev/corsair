@@ -13,12 +13,16 @@ export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 		? input.keywords.join(',')
 		: input.keywords;
 
+	const { target_mode, ...parsed } =
+		AhrefsEndpointInputSchemas.keywordsOverview.parse(input);
+
 	const response = await makeAhrefsRequest<KeywordsOverviewResponse>(
 		'/keywords-explorer/overview',
 		ctx.key,
 		{
 			query: {
-				...AhrefsEndpointInputSchemas.keywordsOverview.parse(input),
+				...parsed,
+				mode: parsed.mode ?? target_mode,
 				keywords,
 			},
 		},

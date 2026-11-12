@@ -139,6 +139,38 @@ describe('callAhrefs schema checks', () => {
 		mockedRequest.mockResolvedValue({ ok: true });
 	});
 
+	it('keeps the Ahrefs parameters the original actions used to drop', async () => {
+		mockedRequest.mockResolvedValueOnce({ keywords: [] });
+		await endpoints.siteExplorer.organicKeywords(ctx, {
+			target: 'ahrefs.com',
+			date: '2026-11-01',
+			country: 'us',
+			select: 'keyword',
+			portfolio_id: 12,
+			traffic_mode: 'static',
+			timeout: 0,
+		});
+		const [, , options] = mockedRequest.mock.calls[0] ?? [];
+		expect(options?.query).toMatchObject({
+			portfolio_id: 12,
+			traffic_mode: 'static',
+			timeout: 0,
+		});
+	});
+
+	it('sends the older target_mode to Ahrefs as mode', async () => {
+		mockedRequest.mockResolvedValueOnce({ keywords: [] });
+		await endpoints.keywordsExplorer.overview(ctx, {
+			target: 'ahrefs.com',
+			target_mode: 'domain',
+			country: 'us',
+			select: 'keyword',
+		});
+		const [, , options] = mockedRequest.mock.calls[0] ?? [];
+		expect(options?.query).toMatchObject({ mode: 'domain' });
+		expect(options?.query).not.toHaveProperty('target_mode');
+	});
+
 	it('validates input on the original Site Explorer actions too', async () => {
 		await expect(
 			endpoints.siteExplorer.getDomainRating(ctx, {
