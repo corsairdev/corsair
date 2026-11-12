@@ -496,9 +496,14 @@ export type UserAssignmentsCreateInput = z.infer<
 	typeof UserAssignmentsCreateInputSchema
 >;
 
+/**
+ * The PUT documents four settings: hourly rate, the time-logging flag and the two
+ * time windows. Role is not among them, so it is not offered here.
+ */
 const UserAssignmentsUpdateInputSchema = UserAssignmentsCreateInputSchema.omit({
 	project_id: true,
 	user_id: true,
+	role: true,
 }).extend({
 	project_id: z.number().int(),
 	user_assignment_id: z.number().int(),

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { WorksnapsAPIError } from './client';
 import { Assignments, Projects, Tasks, TimeEntries, Users } from './endpoints';
+import { WorksnapsEndpointInputSchemas as Inputs } from './endpoints/types';
 import {
 	meXml,
 	projectReportXml,
@@ -437,6 +438,21 @@ describe('assignments', () => {
 		expect(sent.path).toBe('/api/projects/3456/user_assignments/21.xml');
 	});
 
+	it('does not offer role on a membership update, which the PUT does not document', async () => {
+		respondText(fetchMock, userAssignmentXml);
+
+		await invoke(Assignments.userUpdate, {
+			project_id: 3456,
+			user_assignment_id: 21,
+			role: 'manager',
+			hourly_rate: 50,
+		});
+
+		expect(lastRequest(fetchMock).rawBody).not.toContain('<role>');
+		expect(Object.keys(Inputs.userAssignmentsUpdate.shape)).not.toContain(
+			'role',
+		);
+	});
 });
 
 describe('users and reports', () => {

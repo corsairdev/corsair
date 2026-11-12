@@ -357,7 +357,8 @@ const worksnapsEndpointMeta = {
 	},
 	'userAssignments.update': {
 		riskLevel: 'write',
-		description: 'Change a member role, rate or time-logging windows',
+		description:
+			'Change a member hourly rate, time logging or time-logging windows in a project',
 	},
 	'users.list': {
 		riskLevel: 'read',

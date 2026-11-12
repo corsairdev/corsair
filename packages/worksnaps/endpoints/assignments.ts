@@ -185,7 +185,6 @@ export const userUpdate: WorksnapsEndpoints['userAssignmentsUpdate'] = (
 		({
 			project_id,
 			user_assignment_id,
-			role,
 			hourly_rate,
 			flag_allow_logging_time,
 			window_for_deleting_time,
@@ -194,7 +193,6 @@ export const userUpdate: WorksnapsEndpoints['userAssignmentsUpdate'] = (
 			method: 'PUT',
 			path: `/projects/${segment(project_id)}/user_assignments/${segment(user_assignment_id)}.xml`,
 			body: toXml('user_assignment', {
-				role,
 				hourly_rate,
 				flag_allow_logging_time: asFlag(flag_allow_logging_time),
 				window_for_deleting_time,
@@ -204,7 +202,6 @@ export const userUpdate: WorksnapsEndpoints['userAssignmentsUpdate'] = (
 		{
 			log: (parsed, result) => ({
 				id: result.user_assignment?.id ?? parsed.user_assignment_id,
-				role: parsed.role,
 			}),
 		},
 	);
