@@ -98,6 +98,17 @@ describe('vectorshift plugin definition', () => {
 		}
 	});
 
+	it('tells callers in the output schema that a failed status is thrown', () => {
+		const schemas = plugin.endpointSchemas ?? {};
+		for (const operation of operations) {
+			const output = schemas[operation as keyof typeof schemas]?.output;
+			const status = (
+				output as { shape?: Record<string, { description?: string }> }
+			)?.shape?.status;
+			expect(status?.description).toContain('VectorshiftRunFailedError');
+		}
+	});
+
 	it('marks nothing destructive, since the API has no delete routes', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(

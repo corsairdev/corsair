@@ -18,7 +18,12 @@ const OutputsSchema = z
 
 // Open on purpose: the beta API may add a status, and only `failed` is raised
 // as an error, so an unknown value passes through instead of failing the parse.
-const RunStatusSchema = z.enum(['success', 'failed']).or(z.string());
+const RunStatusSchema = z
+	.enum(['success', 'failed'])
+	.or(z.string())
+	.describe(
+		'Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError.',
+	);
 
 // ── pipelines ─────────────────────────────────────────────────────────────
 
