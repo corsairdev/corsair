@@ -1,7 +1,7 @@
 {
-  "id": 1069265,
-  "name": "corsair plugin test (updated)",
-  "key": "corsair-plugin-test-1794488087",
+  "id": 1069365,
+  "name": "corsair-plugin-test-1794490650",
+  "key": "corsair-plugin-test-1794490650",
   "filters": {
     "groups": [
       {
@@ -26,8 +26,8 @@
     "hedgehog_config": null,
     "role_at_organization": "engineering"
   },
-  "created_at": "2026-11-12T12:54:48.423339Z",
-  "updated_at": "2026-11-12T12:56:01.871456Z",
+  "created_at": "2026-11-12T13:38:11.185612Z",
+  "updated_at": "2026-11-12T13:38:11.584191Z",
   "version": 2,
   "last_modified_by": {
     "id": 823519,

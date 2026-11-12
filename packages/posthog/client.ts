@@ -106,6 +106,8 @@ export type PostHogApiOptions = {
 	method?: HttpMethod;
 	body?: Record<string, unknown>;
 	query?: PostHogQuery;
+	/** Overrides the connection's project for this call. */
+	projectId?: string | number;
 };
 
 async function sendPostHogRequest<T>(
@@ -180,26 +182,32 @@ export async function makePostHogRequest<T>(
 	);
 }
 
-function requirePersonalCredentials(credentials: PostHogCredentials): {
-	key: string;
-	projectId: string;
-} {
+function requirePersonalKey(credentials: PostHogCredentials): string {
 	if (!isPersonalApiKey(credentials.key)) {
 		throw new PostHogAPIError(PERSONAL_KEY_REQUIRED_MESSAGE, 'personal_key');
 	}
-	if (!credentials.projectId) {
+	return credentials.key;
+}
+
+function requireProjectId(
+	credentials: PostHogCredentials,
+	override?: string | number,
+): string {
+	const projectId =
+		override !== undefined ? String(override) : credentials.projectId;
+	if (!projectId) {
 		throw new PostHogAPIError(
-			'PostHog read actions need the project id; add it to the PostHog connection.',
+			'PostHog read actions need the project id; add it to the PostHog connection or pass project_id.',
 			'project_id',
 		);
 	}
-	return { key: credentials.key, projectId: credentials.projectId };
+	return projectId;
 }
 
 /**
  * Private API request with a personal API key. `path` may contain
- * `{project_id}`, filled from the credentials. Without a configured host the
- * US cloud is tried first; a 401 there retries once on the EU cloud, and the
+ * `{project_id}`, filled from `options.projectId` or the credentials.
+ * Without a configured host the US cloud is tried first; a 401 there retries once on the EU cloud, and the
  * host that answered is remembered for the key.
  */
 export async function makePostHogApiRequest<T>(
@@ -207,21 +215,27 @@ export async function makePostHogApiRequest<T>(
 	path: string,
 	options: PostHogApiOptions = {},
 ): Promise<T> {
-	const { key, projectId } = requirePersonalCredentials(credentials);
-	const endpoint = path.replace('{project_id}', encodeURIComponent(projectId));
+	const key = requirePersonalKey(credentials);
+	const { projectId: projectOverride, ...requestOptions } = options;
+	const endpoint = path.includes('{project_id}')
+		? path.replace(
+				'{project_id}',
+				encodeURIComponent(requireProjectId(credentials, projectOverride)),
+			)
+		: path;
 
 	if (credentials.host) {
 		return sendPostHogRequest<T>(
 			normalizeHost(credentials.host),
 			endpoint,
 			key,
-			options,
+			requestOptions,
 		);
 	}
 
 	const known = resolvedHosts.get(key);
 	if (known) {
-		return sendPostHogRequest<T>(known, endpoint, key, options);
+		return sendPostHogRequest<T>(known, endpoint, key, requestOptions);
 	}
 
 	try {
@@ -229,7 +243,7 @@ export async function makePostHogApiRequest<T>(
 			POSTHOG_US_HOST,
 			endpoint,
 			key,
-			options,
+			requestOptions,
 		);
 		resolvedHosts.set(key, POSTHOG_US_HOST);
 		return result;
@@ -242,7 +256,7 @@ export async function makePostHogApiRequest<T>(
 				POSTHOG_EU_HOST,
 				endpoint,
 				key,
-				options,
+				requestOptions,
 			);
 			resolvedHosts.set(key, POSTHOG_EU_HOST);
 			return result;
@@ -277,7 +291,8 @@ export async function resolveCaptureTarget(
 		};
 	}
 
-	const { key, projectId } = requirePersonalCredentials(credentials);
+	const key = requirePersonalKey(credentials);
+	const projectId = requireProjectId(credentials);
 	const cacheKey = `${key}:${projectId}`;
 	let token = captureTokens.get(cacheKey);
 	if (!token) {

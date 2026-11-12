@@ -1,34 +1,30 @@
 {
   "results": [
     {
-      "id": "01a1cfd2-fecd-7c65-a41c-2939593464d6",
+      "id": "01a1cff9-d34d-7542-943f-506a7d21a825",
       "distinct_id": "distinct-id-1",
       "viewed": false,
       "viewers": [],
-      "recording_duration": 13,
-      "active_seconds": 13,
+      "recording_duration": 7,
+      "active_seconds": 7,
       "inactive_seconds": 0,
-      "start_time": "2026-11-12T12:54:34.655000Z",
-      "end_time": "2026-11-12T12:54:47.909000Z",
-      "click_count": 2,
-      "keypress_count": 1,
-      "mouse_activity_count": 30,
+      "start_time": "2026-11-12T13:37:01.114000Z",
+      "end_time": "2026-11-12T13:37:08.963000Z",
+      "click_count": 0,
+      "keypress_count": 0,
+      "mouse_activity_count": 18,
       "console_log_count": 0,
       "console_warn_count": 0,
       "console_error_count": 0,
-      "start_url": "https://corsair.dev/oss/thanks_io",
+      "start_url": "https://corsair.dev/blog/google-workspace-api-integration",
       "person": {
-        "id": 33368110574,
-        "name": "01a029a2-38e3-7f4c-94ce-f31bcf7362ba",
+        "id": null,
+        "name": null,
         "distinct_ids": ["distinct-id-1"],
-        "properties": {
-          "$initial_os": "Windows",
-          "$initial_browser": "Chrome",
-          "$geoip_country_code": "IN"
-        },
-        "created_at": "2026-09-07T16:44:04.572000Z",
-        "uuid": "91a0e73b-ef30-5b73-b3f2-fce42b8b1e13",
-        "last_seen_at": "2026-09-07T16:00:00Z"
+        "properties": {},
+        "created_at": null,
+        "uuid": "8c887703-bf3f-5aa6-9a8a-a3fd030056a5",
+        "last_seen_at": null
       },
       "retention_period_days": 30,
       "expiry_time": "2026-12-12T00:00:00Z",
@@ -36,7 +32,7 @@
       "snapshot_source": "web",
       "snapshot_library": null,
       "ongoing": true,
-      "activity_score": 37.71,
+      "activity_score": 30.87,
       "external_references": [],
       "matches_filters": true,
       "total_size": null,
@@ -45,5 +41,5 @@
   ],
   "has_next": true,
   "version": 4,
-  "next_cursor": "eyJvcmRlcl92YWx1ZSI6ICIyMDI2LTExLTEyVDEyOjQyOjQ0LjYxMzAwMCswMDowMCIsICJzZWNvbmRhcnlfdmFsdWUiOiAiMDFhMWNmYzgtMTUzZC03OGU0LWFlZWQtNDI1MzAzNTUzNDY4In0="
+  "next_cursor": "eyJvcmRlcl92YWx1ZSI6ICIyMDI2LTExLTEyVDEzOjI3OjAzLjI1OTAwMCswMDowMCIsICJzZWNvbmRhcnlfdmFsdWUiOiAiMDFhMWNmZjAtYmI2YS03M2M5LWJhZTMtYTk3NmU1MjQ3YzkyIn0="
 }

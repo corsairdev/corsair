@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
 	isPersonalApiKey,
@@ -19,11 +19,29 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => null),
 }));
 
+import { insightsCreate, insightsDelete } from './endpoints/analytics';
+import {
+	notebookDocument,
+	notebooksCreate,
+	propertyDefinitionsList,
+} from './endpoints/data';
 // Imported after the mock so endpoint modules get the stubbed logger.
 import { eventCreate } from './endpoints/events';
-import { featureFlagsUpdate } from './endpoints/feature-management';
-import { propertyDefinitionsList } from './endpoints/product-analytics';
-import { errorTrackingIssuesList, run } from './endpoints/query';
+import {
+	featureFlagsCreate,
+	featureFlagsUpdate,
+	surveysDelete,
+} from './endpoints/features';
+import { organizationsGet, projectsList } from './endpoints/organization';
+import { personsDeleteProperty } from './endpoints/people';
+import {
+	errorTrackingIssuesList,
+	eventsList,
+	llmAnalyticsCosts,
+	logsQuery,
+	queryRun as run,
+	webAnalyticsStats,
+} from './endpoints/query';
 
 type OutputKey = keyof typeof PostHogEndpointOutputSchemas;
 
@@ -86,31 +104,25 @@ beforeEach(() => {
 describe('PostHog read schemas parse real responses', () => {
 	// Fixtures are trimmed, scrubbed responses from a live run against a real
 	// project on 2026-11-12.
-	const outputs: OutputKey[] = [
-		'queryRun',
-		'projectsGet',
-		'insightsList',
-		'insightsGet',
-		'dashboardsList',
-		'dashboardsGet',
-		'personsList',
-		'personsGet',
-		'featureFlagsList',
-		'featureFlagsGet',
-		'featureFlagsUpdate',
-		'sessionRecordingsList',
-		'sessionRecordingsGet',
-		'errorTrackingIssuesList',
-		'experimentsList',
-		'surveysList',
-		'cohortsList',
-		'actionsList',
-		'annotationsList',
-		'annotationsCreate',
-		'eventDefinitionsList',
-		'propertyDefinitionsList',
-		'eventCreate',
-	];
+	const fixtureNames = readdirSync(join(__dirname, 'test-data')).map((f) =>
+		f.replace(/\.json$/, ''),
+	);
+	const outputs = fixtureNames.filter(
+		(name): name is OutputKey => name in PostHogEndpointOutputSchemas,
+	);
+
+	it('has a real response for every private-API endpoint', () => {
+		const missing = Object.keys(PostHogEndpointOutputSchemas).filter(
+			(key) =>
+				!fixtureNames.includes(key) &&
+				![
+					// The test project has no alerts; the schema is covered by a
+					// made-up alert below.
+					'alertsGet',
+				].includes(key),
+		);
+		expect(missing).toEqual([]);
+	});
 
 	it.each(outputs)('%s', (name) => {
 		const parsed = PostHogEndpointOutputSchemas[name].parse(fixture(name));
@@ -123,6 +135,21 @@ describe('PostHog read schemas parse real responses', () => {
 		);
 		expect(parsed.columns).toEqual(['event', 'count()']);
 		expect(Array.isArray(parsed.results)).toBe(true);
+	});
+
+	it('parses an alert', () => {
+		expect(
+			PostHogEndpointOutputSchemas.alertsGet.parse({
+				id: '0190-alert',
+				name: 'Signups dropped',
+				enabled: true,
+				state: 'Not firing',
+				condition: { type: 'absolute_value' },
+				threshold: {
+					configuration: { type: 'absolute', bounds: { lower: 5 } },
+				},
+			}).name,
+		).toBe('Signups dropped');
 	});
 
 	it('parses experiment and survey objects', () => {
@@ -406,5 +433,221 @@ describe('PostHog read endpoints build the right requests', () => {
 		);
 		expect(calls[0]!.init.method).toBe('PATCH');
 		expect(jsonBody(calls[0]!)).toEqual({ active: false });
+	});
+});
+
+describe('PostHog project scope', () => {
+	const ctx = ctxFor({
+		key: PHX,
+		projectId: '5',
+		host: 'https://us.posthog.com',
+	});
+
+	it('uses a per-call project_id and never sends it to PostHog', async () => {
+		const calls = mockFetch(() => ({ status: 200, body: fixture('queryRun') }));
+		await run(ctx, { query: 'select 1', project_id: 99 });
+		expect(calls[0]!.url).toBe('https://us.posthog.com/api/projects/99/query/');
+		expect(jsonBody(calls[0]!)).not.toHaveProperty('project_id');
+
+		await propertyDefinitionsList(ctx, { project_id: '42', limit: 1 });
+		const url = new URL(calls[1]!.url);
+		expect(url.pathname).toBe('/api/projects/42/property_definitions/');
+		expect(url.searchParams.has('project_id')).toBe(false);
+	});
+
+	it('reaches organization endpoints without a project id', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('projectsList'),
+		}));
+		const noProject = ctxFor({ key: PHX, host: 'https://us.posthog.com' });
+		await projectsList(noProject, {});
+		await organizationsGet(noProject, { id: 'org-uuid' });
+		expect(calls.map((c) => new URL(c.url).pathname)).toEqual([
+			'/api/organizations/@current/projects/',
+			'/api/organizations/org-uuid/',
+		]);
+	});
+});
+
+describe('PostHog query-backed reads', () => {
+	const ctx = ctxFor({
+		key: PHX,
+		projectId: '5',
+		host: 'https://us.posthog.com',
+	});
+
+	it('lists events through an EventsQuery', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('eventsList'),
+		}));
+		await eventsList(ctx, { event: '$pageview', limit: 2 });
+		expect(jsonBody(calls[0]!).query).toMatchObject({
+			kind: 'EventsQuery',
+			event: '$pageview',
+			after: '-24h',
+			orderBy: ['timestamp DESC'],
+			limit: 2,
+		});
+	});
+
+	it('asks for a web analytics breakdown', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('webAnalyticsStats'),
+		}));
+		await webAnalyticsStats(ctx, { breakdown_by: 'InitialUTMSource' });
+		expect(jsonBody(calls[0]!).query).toMatchObject({
+			kind: 'WebStatsTableQuery',
+			breakdownBy: 'InitialUTMSource',
+			dateRange: { date_from: '-7d' },
+		});
+	});
+
+	it('puts only a whole number of days into the LLM cost query', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('llmAnalyticsCosts'),
+		}));
+		await llmAnalyticsCosts(ctx, { days: 14 });
+		const query = (jsonBody(calls[0]!).query as { query: string }).query;
+		expect(query).toContain('interval 14 day');
+		expect(() =>
+			PostHogEndpointInputSchemas.llmAnalyticsCosts.parse({ days: '7; drop' }),
+		).toThrow();
+	});
+
+	it('queries logs on the environment logs endpoint', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('logsQuery'),
+		}));
+		await logsQuery(ctx, {
+			service_names: ['api'],
+			severity_levels: ['error'],
+			search: 'timeout',
+		});
+		expect(calls[0]!.url).toBe(
+			'https://us.posthog.com/api/environments/5/logs/query/',
+		);
+		expect(jsonBody(calls[0]!).query).toMatchObject({
+			serviceNames: ['api'],
+			severityLevels: ['error'],
+			searchTerm: 'timeout',
+			dateRange: { date_from: '-1h' },
+		});
+	});
+});
+
+describe('PostHog writes', () => {
+	const ctx = ctxFor({
+		key: PHX,
+		projectId: '5',
+		host: 'https://us.posthog.com',
+	});
+
+	it('saves a new insight', async () => {
+		const calls = mockFetch(() => ({
+			status: 201,
+			body: fixture('insightsCreate'),
+		}));
+		await insightsCreate(ctx, {
+			name: 'Pageviews',
+			query: { kind: 'InsightVizNode', source: { kind: 'TrendsQuery' } },
+		});
+		expect(calls[0]!.init.method).toBe('POST');
+		expect(jsonBody(calls[0]!)).toMatchObject({
+			name: 'Pageviews',
+			saved: true,
+		});
+	});
+
+	it('deletes by flagging the object deleted', async () => {
+		const calls = mockFetch(() => ({
+			status: 200,
+			body: fixture('insightsDelete'),
+		}));
+		await insightsDelete(ctx, { id: 7 });
+		expect(calls[0]!.url).toBe(
+			'https://us.posthog.com/api/projects/5/insights/7/',
+		);
+		expect(calls[0]!.init.method).toBe('PATCH');
+		expect(jsonBody(calls[0]!)).toEqual({ deleted: true });
+	});
+
+	it('turns rollout_percentage into a release condition', async () => {
+		const calls = mockFetch(() => ({
+			status: 201,
+			body: fixture('featureFlagsCreate'),
+		}));
+		await featureFlagsCreate(ctx, {
+			key: 'new-onboarding',
+			active: false,
+			rollout_percentage: 20,
+		});
+		expect(jsonBody(calls[0]!)).toEqual({
+			key: 'new-onboarding',
+			active: false,
+			filters: { groups: [{ properties: [], rollout_percentage: 20 }] },
+		});
+		expect(() =>
+			PostHogEndpointInputSchemas.featureFlagsCreate.parse({
+				key: 'has space',
+			}),
+		).toThrow();
+	});
+
+	it('returns a confirmation for a survey delete (PostHog sends 204)', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(null, { status: 204 }));
+		await expect(surveysDelete(ctx, { id: 'abc' })).resolves.toEqual({
+			id: 'abc',
+			deleted: true,
+		});
+	});
+
+	it('unsets one person property', async () => {
+		const calls = mockFetch(() => ({ status: 202, body: {} }));
+		const result = await personsDeleteProperty(ctx, {
+			id: 'uuid-1',
+			key: 'plan',
+		});
+		expect(calls[0]!.url).toBe(
+			'https://us.posthog.com/api/projects/5/persons/uuid-1/delete_property/',
+		);
+		expect(jsonBody(calls[0]!)).toEqual({ $unset: 'plan' });
+		expect(result).toEqual({ id: 'uuid-1', key: 'plan', success: true });
+	});
+
+	it('builds a notebook from a title and text', async () => {
+		const calls = mockFetch(() => ({
+			status: 201,
+			body: fixture('notebooksCreate'),
+		}));
+		await notebooksCreate(ctx, { title: 'Weekly review', text: 'One\n\nTwo' });
+		expect(jsonBody(calls[0]!).content).toEqual(
+			notebookDocument('Weekly review', 'One\n\nTwo'),
+		);
+		expect(notebookDocument('T', 'One\n\nTwo').content).toHaveLength(3);
+	});
+
+	it('keeps experiments and surveys as drafts', () => {
+		const experiment = PostHogEndpointInputSchemas.experimentsCreate.parse({
+			name: 'Pricing',
+			feature_flag_key: 'pricing-test',
+			start_date: '2026-01-01',
+		});
+		expect(experiment).not.toHaveProperty('start_date');
+		const survey = PostHogEndpointInputSchemas.surveysUpdate.parse({
+			id: 's1',
+			name: 'NPS',
+			start_date: '2026-01-01',
+		});
+		expect(survey).not.toHaveProperty('start_date');
+		expect(() =>
+			PostHogEndpointInputSchemas.surveysUpdate.parse({ id: 's1' }),
+		).toThrow();
 	});
 });

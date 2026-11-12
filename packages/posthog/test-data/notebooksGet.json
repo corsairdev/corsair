@@ -1,0 +1,47 @@
+{
+  "id": "01a1cffb-1115-0000-fae1-ead9170ca0bd",
+  "short_id": "jKU7gHXK",
+  "title": "corsair-plugin-test-1794490650",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "ph-markdown-notebook",
+        "attrs": {
+          "nodeId": "markdown-notebook-v2",
+          "markdown": "# corsair-plugin-test-1794490650\n\nCreated by the Corsair plugin test.\n\nSafe to delete."
+        }
+      }
+    ]
+  },
+  "text_content": "# corsair-plugin-test-1794490650\n\nCreated by the Corsair plugin test.\n\nSafe to delete.",
+  "version": 0,
+  "deleted": false,
+  "created_at": "2026-11-12T13:38:20.054115Z",
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "last_modified_at": "2026-11-12T13:38:20.053806Z",
+  "last_modified_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "user_access_level": "manager",
+  "parent_resource": null,
+  "variables": null
+}

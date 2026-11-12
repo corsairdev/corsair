@@ -1,6 +1,6 @@
 {
   "cache_key": "cache_309833_55781b60d8324fcb9189e990362b617d70b0b19a9823110870e7cd0457e4bece",
-  "cache_target_age": "2026-11-12T13:00:57.886116Z",
+  "cache_target_age": "2026-11-12T13:42:38.153992Z",
   "calculation_trigger": null,
   "columns": [
     "id",
@@ -22,9 +22,9 @@
   "error": null,
   "hasMore": true,
   "is_cached": false,
-  "last_refresh": "2026-11-12T12:55:57.886116Z",
+  "last_refresh": "2026-11-12T13:37:38.153992Z",
   "limit": 2,
-  "next_allowed_client_refresh": "2026-11-12T12:56:57.886116Z",
+  "next_allowed_client_refresh": "2026-11-12T13:38:38.153992Z",
   "offset": 0,
   "query_scan": null,
   "query_status": null,

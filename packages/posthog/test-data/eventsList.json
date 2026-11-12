@@ -1,0 +1,37 @@
+{
+  "cache_key": "cache_309833_3f552d978f57574ae23fe1b6d27017ee679ab265670d24ba1a32b87e2495fe4d",
+  "cache_target_age": "2026-11-12T13:42:35.776774Z",
+  "calculation_trigger": null,
+  "columns": ["uuid", "event", "timestamp", "properties.$current_url"],
+  "error": null,
+  "hasMore": true,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:35.776774Z",
+  "limit": 2,
+  "nextCursor": "2026-11-12T13:19:01.258000+00:00|01a1cfe9-6166-77ef-b21d-6f0faccb8216",
+  "next_allowed_client_refresh": "2026-11-12T13:38:35.776774Z",
+  "offset": 0,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [
+    [
+      "01a1cff0-bb5b-7b7e-a234-837d9f45d7f5",
+      "$pageview",
+      "2026-11-12T13:27:03.209000Z",
+      "https://corsair.dev/"
+    ],
+    [
+      "01a1cfe9-6166-77ef-b21d-6f0faccb8216",
+      "$pageview",
+      "2026-11-12T13:19:01.258000Z",
+      "https://hub.corsair.dev/me/l/claude/pm"
+    ]
+  ],
+  "timezone": "UTC",
+  "types": ["UUID", "String", "DateTime64(6, 'UTC')", "Nullable(String)"],
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}

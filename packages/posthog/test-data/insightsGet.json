@@ -108,7 +108,6 @@
   "timezone": null,
   "is_cached": false,
   "query_status": null,
-  "hogql": null,
   "types": null,
   "resolved_date_range": null,
   "resolved_compare_date_range": null,

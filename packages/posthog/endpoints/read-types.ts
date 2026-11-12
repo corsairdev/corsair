@@ -8,14 +8,25 @@ import { z } from 'zod';
 // shape depends on the query kind or flag type; typing them strictly would
 // break on the next PostHog release without making callers any safer.
 
-const Timestamp = z.string().nullable().optional();
+export const Timestamp = z.string().nullable().optional();
 
-const PaginationInputSchema = z.object({
+/**
+ * Every project-scoped action takes an optional `project_id`. It overrides the
+ * connected project for that one call, so a key with access to several
+ * projects can read any of them.
+ */
+export const ProjectScopeSchema = z.object({
+	project_id: z
+		.union([z.string().min(1), z.number().int().positive()])
+		.optional(),
+});
+
+export const PaginationInputSchema = ProjectScopeSchema.extend({
 	limit: z.number().int().min(1).max(1000).optional(),
 	offset: z.number().int().min(0).optional(),
 });
 
-function paginated<T extends z.ZodTypeAny>(item: T) {
+export function paginated<T extends z.ZodTypeAny>(item: T) {
 	return z
 		.object({
 			count: z.number().int().nullable().optional(),
@@ -26,7 +37,7 @@ function paginated<T extends z.ZodTypeAny>(item: T) {
 		.loose();
 }
 
-const UserBasicSchema = z
+export const UserBasicSchema = z
 	.object({
 		id: z.number().int().optional(),
 		uuid: z.string().optional(),
@@ -41,7 +52,7 @@ const UserBasicSchema = z
 
 // ── Query ────────────────────────────────────────────────────────────────────
 
-export const QueryRunInputSchema = z.object({
+export const QueryRunInputSchema = ProjectScopeSchema.extend({
 	query: z.union([
 		z.string().min(1),
 		z
@@ -111,7 +122,7 @@ export const InsightsListInputSchema = PaginationInputSchema.extend({
 });
 export const InsightsListResponseSchema = paginated(InsightSchema);
 
-export const InsightsGetInputSchema = z.object({
+export const InsightsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.number().int().positive(),
 	refresh: QueryRunInputSchema.shape.refresh,
 });
@@ -146,7 +157,7 @@ export const DashboardSchema = z
 
 export const DashboardsListInputSchema = PaginationInputSchema;
 export const DashboardsListResponseSchema = paginated(DashboardSchema);
-export const DashboardsGetInputSchema = z.object({
+export const DashboardsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.number().int().positive(),
 });
 
@@ -170,7 +181,7 @@ export const PersonsListInputSchema = PaginationInputSchema.extend({
 	email: z.string().optional(),
 });
 export const PersonsListResponseSchema = paginated(PersonSchema);
-export const PersonsGetInputSchema = z.object({
+export const PersonsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.string().min(1),
 });
 
@@ -200,28 +211,26 @@ export const FeatureFlagsListInputSchema = PaginationInputSchema.extend({
 	active: z.union([z.boolean(), z.literal('STALE')]).optional(),
 });
 export const FeatureFlagsListResponseSchema = paginated(FeatureFlagSchema);
-export const FeatureFlagsGetInputSchema = z.object({
+export const FeatureFlagsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.number().int().positive(),
 });
-export const FeatureFlagsUpdateInputSchema = z
-	.object({
-		id: z.number().int().positive(),
-		name: z.string().optional(),
-		active: z.boolean().optional(),
-		/** Full release conditions; replaces the flag's existing `filters`. */
-		filters: z.record(z.string(), z.unknown()).optional(),
-		tags: z.array(z.string()).optional(),
-		ensure_experience_continuity: z.boolean().optional(),
-	})
-	.refine(
-		(value) =>
-			value.name !== undefined ||
-			value.active !== undefined ||
-			value.filters !== undefined ||
-			value.tags !== undefined ||
-			value.ensure_experience_continuity !== undefined,
-		{ message: 'Provide at least one field to update' },
-	);
+export const FeatureFlagsUpdateInputSchema = ProjectScopeSchema.extend({
+	id: z.number().int().positive(),
+	name: z.string().optional(),
+	active: z.boolean().optional(),
+	/** Full release conditions; replaces the flag's existing `filters`. */
+	filters: z.record(z.string(), z.unknown()).optional(),
+	tags: z.array(z.string()).optional(),
+	ensure_experience_continuity: z.boolean().optional(),
+}).refine(
+	(value) =>
+		value.name !== undefined ||
+		value.active !== undefined ||
+		value.filters !== undefined ||
+		value.tags !== undefined ||
+		value.ensure_experience_continuity !== undefined,
+	{ message: 'Provide at least one field to update' },
+);
 
 // ── Session recordings ───────────────────────────────────────────────────────
 
@@ -256,7 +265,7 @@ export const SessionRecordingsListResponseSchema = z
 		next: z.string().nullable().optional(),
 	})
 	.loose();
-export const SessionRecordingsGetInputSchema = z.object({
+export const SessionRecordingsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.string().min(1),
 });
 
@@ -334,7 +343,7 @@ export const ExperimentSchema = z
 
 export const ExperimentsListInputSchema = PaginationInputSchema;
 export const ExperimentsListResponseSchema = paginated(ExperimentSchema);
-export const ExperimentsGetInputSchema = z.object({
+export const ExperimentsGetInputSchema = ProjectScopeSchema.extend({
 	id: z.number().int().positive(),
 });
 
@@ -357,7 +366,7 @@ export const SurveysListInputSchema = PaginationInputSchema.extend({
 	search: z.string().optional(),
 });
 export const SurveysListResponseSchema = paginated(SurveySchema);
-export const SurveysGetInputSchema = z.object({
+export const SurveysGetInputSchema = ProjectScopeSchema.extend({
 	id: z.string().min(1),
 });
 
@@ -415,7 +424,7 @@ export const AnnotationsListInputSchema = PaginationInputSchema.extend({
 	search: z.string().optional(),
 });
 export const AnnotationsListResponseSchema = paginated(AnnotationSchema);
-export const AnnotationsCreateInputSchema = z.object({
+export const AnnotationsCreateInputSchema = ProjectScopeSchema.extend({
 	content: z.string().min(1),
 	/** ISO 8601 timestamp the annotation marks; defaults to now. */
 	date_marker: z.string().optional(),
@@ -471,7 +480,7 @@ export const PropertyDefinitionsListResponseSchema = paginated(
 
 // ── Project ──────────────────────────────────────────────────────────────────
 
-export const ProjectsGetInputSchema = z.object({});
+export const ProjectsGetInputSchema = ProjectScopeSchema;
 export const ProjectSchema = z
 	.object({
 		id: z.number().int(),
@@ -481,5 +490,332 @@ export const ProjectSchema = z
 		/** The project token (phc_...) used for capture. */
 		api_token: z.string().optional(),
 		created_at: Timestamp,
+	})
+	.loose();
+
+// ── Organizations and projects ───────────────────────────────────────────────
+
+export const OrganizationSchema = z
+	.object({
+		id: z.string(),
+		name: z.string().optional(),
+		slug: z.string().nullable().optional(),
+		membership_level: z.number().nullable().optional(),
+		created_at: Timestamp,
+		teams: z.array(z.unknown()).optional(),
+		projects: z.array(z.unknown()).optional(),
+	})
+	.loose();
+
+export const OrganizationsListInputSchema = z.object({
+	limit: z.number().int().min(1).max(1000).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export const OrganizationsListResponseSchema = paginated(OrganizationSchema);
+export const OrganizationsGetInputSchema = z.object({
+	/** Organization id (UUID); defaults to the key's current organization. */
+	id: z.string().min(1).optional(),
+});
+
+export const ProjectsListInputSchema = OrganizationsListInputSchema.extend({
+	/** Organization id (UUID); defaults to the key's current organization. */
+	organization_id: z.string().min(1).optional(),
+});
+export const ProjectsListResponseSchema = paginated(ProjectSchema);
+
+// ── Notebooks ────────────────────────────────────────────────────────────────
+
+export const NotebookSchema = z
+	.object({
+		id: z.string(),
+		short_id: z.string(),
+		title: z.string().nullable().optional(),
+		content: z.unknown().optional(),
+		text_content: z.string().nullable().optional(),
+		version: z.number().int().optional(),
+		deleted: z.boolean().optional(),
+		created_at: Timestamp,
+		created_by: UserBasicSchema,
+		last_modified_at: Timestamp,
+	})
+	.loose();
+
+export const NotebooksListInputSchema = PaginationInputSchema.extend({
+	search: z.string().optional(),
+});
+export const NotebooksListResponseSchema = paginated(NotebookSchema);
+export const NotebooksGetInputSchema = ProjectScopeSchema.extend({
+	short_id: z.string().min(1),
+});
+
+// ── Alerts, early access, pipelines, warehouse, playlists ────────────────────
+
+export const AlertSchema = z
+	.object({
+		id: z.string(),
+		name: z.string().nullable().optional(),
+		enabled: z.boolean().optional(),
+		state: z.string().nullable().optional(),
+		condition: z.unknown().optional(),
+		threshold: z.unknown().optional(),
+		insight: z.unknown().optional(),
+		calculation_interval: z.string().nullable().optional(),
+		last_checked_at: Timestamp,
+		created_at: Timestamp,
+	})
+	.loose();
+
+export const AlertsListInputSchema = PaginationInputSchema;
+export const AlertsListResponseSchema = paginated(AlertSchema);
+export const AlertsGetInputSchema = ProjectScopeSchema.extend({
+	id: z.string().min(1),
+});
+
+export const EarlyAccessFeatureSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		stage: z.string().optional(),
+		documentation_url: z.string().nullable().optional(),
+		feature_flag: z.unknown().optional(),
+		created_at: Timestamp,
+	})
+	.loose();
+
+export const EarlyAccessFeaturesListInputSchema = PaginationInputSchema;
+export const EarlyAccessFeaturesListResponseSchema = paginated(
+	EarlyAccessFeatureSchema,
+);
+
+export const BatchExportSchema = z
+	.object({
+		id: z.string(),
+		name: z.string().optional(),
+		model: z.string().nullable().optional(),
+		destination: z.unknown().optional(),
+		interval: z.string().optional(),
+		paused: z.boolean().optional(),
+		created_at: Timestamp,
+		last_updated_at: Timestamp,
+		last_paused_at: Timestamp,
+	})
+	.loose();
+
+export const BatchExportsListInputSchema = PaginationInputSchema;
+export const BatchExportsListResponseSchema = paginated(BatchExportSchema);
+
+export const HogFunctionSchema = z
+	.object({
+		id: z.string(),
+		type: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		enabled: z.boolean().optional(),
+		deleted: z.boolean().optional(),
+		hog: z.string().optional(),
+		inputs_schema: z.unknown().optional(),
+		inputs: z.unknown().optional(),
+		filters: z.unknown().optional(),
+		status: z.unknown().optional(),
+		template: z.unknown().optional(),
+		created_at: Timestamp,
+		updated_at: Timestamp,
+	})
+	.loose();
+
+export const HogFunctionsListInputSchema = PaginationInputSchema.extend({
+	/** e.g. destination, transformation, site_app, source_webhook. */
+	type: z.string().min(1).optional(),
+	search: z.string().optional(),
+	enabled: z.boolean().optional(),
+});
+export const HogFunctionsListResponseSchema = paginated(HogFunctionSchema);
+export const HogFunctionsGetInputSchema = ProjectScopeSchema.extend({
+	id: z.string().min(1),
+});
+
+export const WarehouseTableSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		format: z.string().nullable().optional(),
+		url_pattern: z.string().nullable().optional(),
+		row_count: z.number().nullable().optional(),
+		columns: z.unknown().optional(),
+		external_data_source: z.unknown().optional(),
+		created_at: Timestamp,
+	})
+	.loose();
+
+export const WarehouseTablesListInputSchema = PaginationInputSchema.extend({
+	search: z.string().optional(),
+});
+export const WarehouseTablesListResponseSchema =
+	paginated(WarehouseTableSchema);
+
+export const SessionRecordingPlaylistSchema = z
+	.object({
+		id: z.number().int(),
+		short_id: z.string().optional(),
+		name: z.string().nullable().optional(),
+		derived_name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		pinned: z.boolean().optional(),
+		deleted: z.boolean().optional(),
+		type: z.string().nullable().optional(),
+		filters: z.unknown().optional(),
+		recordings_counts: z.unknown().optional(),
+		created_at: Timestamp,
+		last_modified_at: Timestamp,
+	})
+	.loose();
+
+export const SessionRecordingPlaylistsListInputSchema =
+	PaginationInputSchema.extend({
+		search: z.string().optional(),
+		pinned: z.boolean().optional(),
+	});
+export const SessionRecordingPlaylistsListResponseSchema = paginated(
+	SessionRecordingPlaylistSchema,
+);
+
+// ── Query-backed reads (web analytics, LLM analytics, events, logs) ──────────
+
+const DateRangeInput = {
+	/** ISO timestamp or relative date such as -7d, -24h. */
+	date_from: z.string().min(1).optional(),
+	date_to: z.string().min(1).optional(),
+};
+
+export const WebAnalyticsOverviewInputSchema = ProjectScopeSchema.extend({
+	...DateRangeInput,
+	filter_test_accounts: z.boolean().optional(),
+	/** Also return the previous period for each metric. */
+	compare: z.boolean().optional(),
+});
+export const WebAnalyticsOverviewResponseSchema = QueryRunResponseSchema.extend(
+	{
+		results: z.array(
+			z
+				.object({
+					key: z.string(),
+					kind: z.string().optional(),
+					value: z.number().nullable().optional(),
+					previous: z.number().nullable().optional(),
+					changeFromPreviousPct: z.number().nullable().optional(),
+				})
+				.loose(),
+		),
+	},
+);
+
+export const WEB_STATS_BREAKDOWNS = [
+	'Page',
+	'InitialPage',
+	'ExitPage',
+	'InitialReferringDomain',
+	'InitialUTMSource',
+	'InitialUTMCampaign',
+	'InitialUTMMedium',
+	'InitialUTMTerm',
+	'InitialUTMContent',
+	'Browser',
+	'OS',
+	'DeviceType',
+	'Country',
+	'Region',
+	'City',
+	'Language',
+	'Timezone',
+] as const;
+
+export const WebAnalyticsStatsInputSchema = ProjectScopeSchema.extend({
+	breakdown_by: z.enum(WEB_STATS_BREAKDOWNS),
+	...DateRangeInput,
+	limit: z.number().int().min(1).max(1000).optional(),
+	filter_test_accounts: z.boolean().optional(),
+});
+
+export const LlmAnalyticsTracesInputSchema = PaginationInputSchema.extend({
+	...DateRangeInput,
+	filter_test_accounts: z.boolean().optional(),
+});
+
+export const LlmAnalyticsCostsInputSchema = ProjectScopeSchema.extend({
+	/** Look-back window in days. */
+	days: z.number().int().min(1).max(365).optional(),
+});
+
+export const EventsListInputSchema = ProjectScopeSchema.extend({
+	/** Only this event name, e.g. $pageview. */
+	event: z.string().min(1).optional(),
+	/** Only events of this person (UUID). */
+	person_id: z.string().min(1).optional(),
+	/** HogQL columns; defaults to uuid, event, timestamp, distinct_id, properties. */
+	select: z.array(z.string().min(1)).min(1).optional(),
+	/** HogQL conditions combined with AND, e.g. "properties.$browser = 'Chrome'". */
+	where: z.array(z.string().min(1)).optional(),
+	/** ISO timestamp or relative date; defaults to -24h. */
+	after: z.string().min(1).optional(),
+	before: z.string().min(1).optional(),
+	order_by: z.array(z.string().min(1)).optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+
+export const LOG_SEVERITIES = [
+	'trace',
+	'debug',
+	'info',
+	'warn',
+	'error',
+	'fatal',
+] as const;
+
+export const LogsQueryInputSchema = ProjectScopeSchema.extend({
+	...DateRangeInput,
+	service_names: z.array(z.string().min(1)).optional(),
+	severity_levels: z.array(z.enum(LOG_SEVERITIES)).optional(),
+	/** Full-text search over log bodies. */
+	search: z.string().min(1).optional(),
+	/** Property filters ({ key, type, operator, value }), combined with AND. */
+	filters: z
+		.array(
+			z
+				.object({
+					key: z.string().min(1),
+					type: z.enum(['log', 'log_attribute', 'log_resource_attribute']),
+					operator: z.string().min(1),
+					value: z.unknown().optional(),
+				})
+				.loose(),
+		)
+		.optional(),
+	order_by: z.enum(['latest', 'earliest']).optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
+	/** `nextCursor` from the previous page. */
+	after: z.string().min(1).optional(),
+	exclude_attributes: z.boolean().optional(),
+});
+
+export const LogsQueryResponseSchema = z
+	.object({
+		results: z.array(
+			z
+				.object({
+					uuid: z.string().optional(),
+					timestamp: Timestamp,
+					body: z.string().nullable().optional(),
+					severity_text: z.string().nullable().optional(),
+					service_name: z.string().nullable().optional(),
+					attributes: z.record(z.string(), z.unknown()).optional(),
+					resource_attributes: z.record(z.string(), z.unknown()).optional(),
+				})
+				.loose(),
+		),
+		hasMore: z.boolean().nullable().optional(),
+		nextCursor: z.string().nullable().optional(),
+		columns: z.unknown().optional(),
 	})
 	.loose();

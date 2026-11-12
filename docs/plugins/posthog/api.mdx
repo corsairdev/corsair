@@ -10,6 +10,134 @@ description: "API reference for the PostHog plugin in Corsair: every `posthog.ap
 
 ## Actions
 
+### create
+
+`actions.create`
+
+Create an action from event, URL or element steps
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.actions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `steps` | `object[]` | Yes | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  event?: string | null,
+  url?: string | null,
+  url_matching?: contains | regex | exact,
+  selector?: string | null,
+  text?: string | null,
+  href?: string | null,
+  properties?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `steps` | `any[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`actions.get`
+
+Get an action with its steps
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.actions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `steps` | `any[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### list
 
 `actions.list`
@@ -26,6 +154,7 @@ await corsair.posthog.api.actions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -69,6 +198,103 @@ await corsair.posthog.api.actions.list({});
 
 ---
 
+## Alerts
+
+### get
+
+`alerts.get`
+
+Get an insight alert
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.alerts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+| `state` | `string \| null` | No | — |
+| `condition` | `any` | No | — |
+| `threshold` | `any` | No | — |
+| `insight` | `any` | No | — |
+| `calculation_interval` | `string \| null` | No | — |
+| `last_checked_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`alerts.list`
+
+List insight alerts
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.alerts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  enabled?: boolean,
+  state?: string | null,
+  condition?: any,
+  threshold?: any,
+  insight?: any,
+  calculation_interval?: string | null,
+  last_checked_at?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Annotations
 
 ### create
@@ -87,10 +313,66 @@ await corsair.posthog.api.annotations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `content` | `string` | Yes | — |
 | `date_marker` | `string` | No | — |
 | `scope` | `project \| organization \| dashboard_item` | No | — |
 | `dashboard_item` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `content` | `string \| null` | No | — |
+| `date_marker` | `string \| null` | No | — |
+| `scope` | `string` | No | — |
+| `dashboard_item` | `number \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`annotations.delete`
+
+Delete an annotation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.posthog.api.annotations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
 
 
 
@@ -144,6 +426,7 @@ await corsair.posthog.api.annotations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -189,7 +472,236 @@ await corsair.posthog.api.annotations.list({});
 
 ---
 
+### update
+
+`annotations.update`
+
+Update an annotation
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.annotations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `content` | `string` | No | — |
+| `date_marker` | `string` | No | — |
+| `scope` | `project \| organization \| dashboard_item` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `content` | `string \| null` | No | — |
+| `date_marker` | `string \| null` | No | — |
+| `scope` | `string` | No | — |
+| `dashboard_item` | `number \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Batch Exports
+
+### list
+
+`batchExports.list`
+
+List batch exports
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.batchExports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  model?: string | null,
+  destination?: any,
+  interval?: string,
+  paused?: boolean,
+  created_at?: string | null,
+  last_updated_at?: string | null,
+  last_paused_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Cohorts
+
+### create
+
+`cohorts.create`
+
+Create a cohort
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.cohorts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `filters` | `Record<string, any>` | No | — |
+| `is_static` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `is_static` | `boolean` | No | — |
+| `is_calculating` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `filters` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`cohorts.get`
+
+Get a cohort with its matching rules
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.cohorts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `is_static` | `boolean` | No | — |
+| `is_calculating` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `filters` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### list
 
@@ -207,6 +719,7 @@ await corsair.posthog.api.cohorts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -252,7 +765,252 @@ await corsair.posthog.api.cohorts.list({});
 
 ---
 
+### update
+
+`cohorts.update`
+
+Update a cohort (name, description, rules)
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.cohorts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `filters` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `is_static` | `boolean` | No | — |
+| `is_calculating` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `filters` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Dashboards
+
+### create
+
+`dashboards.create`
+
+Create a dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.dashboards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `pinned` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_accessed_at` | `string \| null` | No | — |
+| `tiles` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="tiles full type">
+
+```ts
+{
+  id?: number,
+  insight?: {
+    id: number,
+    short_id?: string,
+    name?: string | null,
+    derived_name?: string | null,
+    description?: string | null,
+    query?: any,
+    result?: any,
+    favorited?: boolean,
+    saved?: boolean,
+    deleted?: boolean,
+    tags?: string[],
+    dashboards?: number[],
+    created_at?: string | null,
+    created_by?: {
+      id?: number,
+      uuid?: string,
+      distinct_id?: string | null,
+      first_name?: string,
+      last_name?: string,
+      email?: string
+    } | null,
+    last_modified_at?: string | null,
+    last_refresh?: string | null
+  } | null,
+  text?: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`dashboards.delete`
+
+Delete a dashboard (PostHog keeps it restorable)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.posthog.api.dashboards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `delete_insights` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `pinned` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_accessed_at` | `string \| null` | No | — |
+| `tiles` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="tiles full type">
+
+```ts
+{
+  id?: number,
+  insight?: {
+    id: number,
+    short_id?: string,
+    name?: string | null,
+    derived_name?: string | null,
+    description?: string | null,
+    query?: any,
+    result?: any,
+    favorited?: boolean,
+    saved?: boolean,
+    deleted?: boolean,
+    tags?: string[],
+    dashboards?: number[],
+    created_at?: string | null,
+    created_by?: {
+      id?: number,
+      uuid?: string,
+      distinct_id?: string | null,
+      first_name?: string,
+      last_name?: string,
+      email?: string
+    } | null,
+    last_modified_at?: string | null,
+    last_refresh?: string | null
+  } | null,
+  text?: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### get
 
@@ -270,6 +1028,7 @@ await corsair.posthog.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `number` | Yes | — |
 
 
@@ -360,6 +1119,7 @@ await corsair.posthog.api.dashboards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -433,6 +1193,155 @@ await corsair.posthog.api.dashboards.list({});
 
 ---
 
+### update
+
+`dashboards.update`
+
+Update a dashboard (name, description, pinned, tags)
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.dashboards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `pinned` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_accessed_at` | `string \| null` | No | — |
+| `tiles` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="tiles full type">
+
+```ts
+{
+  id?: number,
+  insight?: {
+    id: number,
+    short_id?: string,
+    name?: string | null,
+    derived_name?: string | null,
+    description?: string | null,
+    query?: any,
+    result?: any,
+    favorited?: boolean,
+    saved?: boolean,
+    deleted?: boolean,
+    tags?: string[],
+    dashboards?: number[],
+    created_at?: string | null,
+    created_by?: {
+      id?: number,
+      uuid?: string,
+      distinct_id?: string | null,
+      first_name?: string,
+      last_name?: string,
+      email?: string
+    } | null,
+    last_modified_at?: string | null,
+    last_refresh?: string | null
+  } | null,
+  text?: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Early Access Features
+
+### list
+
+`earlyAccessFeatures.list`
+
+List early access features
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.earlyAccessFeatures.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  stage?: string,
+  documentation_url?: string | null,
+  feature_flag?: any,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Error Tracking
 
 ### issuesList
@@ -451,6 +1360,7 @@ await corsair.posthog.api.errorTracking.issuesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `status` | `active \| resolved \| suppressed \| pending_release \| archived \| all` | No | — |
@@ -518,6 +1428,7 @@ await corsair.posthog.api.eventDefinitions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -674,6 +1585,55 @@ number | string | {
 
 ---
 
+### list
+
+`events.list`
+
+List recent events with chosen columns and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `event` | `string` | No | — |
+| `person_id` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `where` | `string[]` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `order_by` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `any[] \| null` | No | — |
+| `types` | `any[] \| null` | No | — |
+| `results` | `any` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `hogql` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `is_cached` | `boolean` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+
+
+---
+
 ### trackPage
 
 `events.trackPage`
@@ -758,6 +1718,68 @@ number | string | {
 
 ## Experiments
 
+### create
+
+`experiments.create`
+
+Create a draft experiment and its feature flag
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.experiments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `feature_flag_key` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `parameters` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>[]` | No | — |
+| `metrics_secondary` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `feature_flag_key` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `parameters` | `any` | No | — |
+| `metrics` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### get
 
 `experiments.get`
@@ -774,6 +1796,7 @@ await corsair.posthog.api.experiments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `number` | Yes | — |
 
 
@@ -830,6 +1853,7 @@ await corsair.posthog.api.experiments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -876,7 +1900,196 @@ await corsair.posthog.api.experiments.list({});
 
 ---
 
+### update
+
+`experiments.update`
+
+Update an experiment (name, description, variants, metrics, archived)
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.experiments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `parameters` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>[]` | No | — |
+| `metrics_secondary` | `Record<string, any>[]` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `feature_flag_key` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `parameters` | `any` | No | — |
+| `metrics` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Feature Flags
+
+### create
+
+`featureFlags.create`
+
+Create a feature flag
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.featureFlags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `filters` | `Record<string, any>` | No | — |
+| `rollout_percentage` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `ensure_experience_continuity` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `filters` | `Record<string, any>` | No | — |
+| `rollout_percentage` | `number \| null` | No | — |
+| `ensure_experience_continuity` | `boolean \| null` | No | — |
+| `status` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_called_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`featureFlags.delete`
+
+Delete a feature flag (PostHog keeps it restorable)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.posthog.api.featureFlags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `filters` | `Record<string, any>` | No | — |
+| `rollout_percentage` | `number \| null` | No | — |
+| `ensure_experience_continuity` | `boolean \| null` | No | — |
+| `status` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_called_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### get
 
@@ -894,6 +2107,7 @@ await corsair.posthog.api.featureFlags.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `number` | Yes | — |
 
 
@@ -953,6 +2167,7 @@ await corsair.posthog.api.featureFlags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1020,6 +2235,7 @@ await corsair.posthog.api.featureFlags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `active` | `boolean` | No | — |
@@ -1068,7 +2284,255 @@ await corsair.posthog.api.featureFlags.update({});
 
 ---
 
+## Hog Functions
+
+### get
+
+`hogFunctions.get`
+
+Get a Hog function with its code, inputs and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.hogFunctions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `hog` | `string` | No | — |
+| `inputs_schema` | `any` | No | — |
+| `inputs` | `any` | No | — |
+| `filters` | `any` | No | — |
+| `status` | `any` | No | — |
+| `template` | `any` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`hogFunctions.list`
+
+List destinations, transformations and other Hog functions
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.hogFunctions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `type` | `string` | No | — |
+| `search` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  name?: string | null,
+  description?: string | null,
+  enabled?: boolean,
+  deleted?: boolean,
+  hog?: string,
+  inputs_schema?: any,
+  inputs?: any,
+  filters?: any,
+  status?: any,
+  template?: any,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Insights
+
+### create
+
+`insights.create`
+
+Save a new insight from a query
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.insights.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+| `description` | `string` | No | — |
+| `dashboards` | `number[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `favorited` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  kind: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `short_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `derived_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `query` | `any` | No | — |
+| `result` | `any` | No | — |
+| `favorited` | `boolean` | No | — |
+| `saved` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `dashboards` | `number[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_modified_at` | `string \| null` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`insights.delete`
+
+Delete an insight (PostHog keeps it restorable)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.posthog.api.insights.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `short_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `derived_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `query` | `any` | No | — |
+| `result` | `any` | No | — |
+| `favorited` | `boolean` | No | — |
+| `saved` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `dashboards` | `number[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_modified_at` | `string \| null` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### get
 
@@ -1086,6 +2550,7 @@ await corsair.posthog.api.insights.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `number` | Yes | — |
 | `refresh` | `blocking \| async \| lazy_async \| force_blocking \| force_async \| force_cache \| async_except_on_cache_miss` | No | — |
 
@@ -1148,6 +2613,7 @@ await corsair.posthog.api.insights.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1203,7 +2669,552 @@ await corsair.posthog.api.insights.list({});
 
 ---
 
+### update
+
+`insights.update`
+
+Update an insight (name, query, description, dashboards, tags)
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.insights.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `query` | `object` | No | — |
+| `description` | `string` | No | — |
+| `dashboards` | `number[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `favorited` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  kind: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `short_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `derived_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `query` | `any` | No | — |
+| `result` | `any` | No | — |
+| `favorited` | `boolean` | No | — |
+| `saved` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `dashboards` | `number[]` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_modified_at` | `string \| null` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Llm Analytics
+
+### costs
+
+`llmAnalytics.costs`
+
+Get LLM generation counts and cost per model
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.llmAnalytics.costs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `days` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `any[] \| null` | No | — |
+| `types` | `any[] \| null` | No | — |
+| `results` | `any` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `hogql` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `is_cached` | `boolean` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+
+
+---
+
+### traces
+
+`llmAnalytics.traces`
+
+List LLM traces with latency, tokens and cost
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.llmAnalytics.traces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `filter_test_accounts` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `any[] \| null` | No | — |
+| `types` | `any[] \| null` | No | — |
+| `results` | `any` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `hogql` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `is_cached` | `boolean` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+
+
+---
+
+## Logs
+
+### query
+
+`logs.query`
+
+Search logs by service, severity, text or attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.logs.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `service_names` | `string[]` | No | — |
+| `severity_levels` | `(trace \| debug \| info \| warn \| error \| fatal)[]` | No | — |
+| `search` | `string` | No | — |
+| `filters` | `object[]` | No | — |
+| `order_by` | `latest \| earliest` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `exclude_attributes` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: string,
+  type: log | log_attribute | log_resource_attribute,
+  operator: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `nextCursor` | `string \| null` | No | — |
+| `columns` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string,
+  timestamp?: string | null,
+  body?: string | null,
+  severity_text?: string | null,
+  service_name?: string | null,
+  attributes?: Record<string, any>,
+  resource_attributes?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notebooks
+
+### create
+
+`notebooks.create`
+
+Create a notebook from a title and text
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.notebooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `title` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `content` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `short_id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `content` | `any` | No | — |
+| `text_content` | `string \| null` | No | — |
+| `version` | `number` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_modified_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`notebooks.get`
+
+Get a notebook with its content
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.notebooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `short_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `short_id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `content` | `any` | No | — |
+| `text_content` | `string \| null` | No | — |
+| `version` | `number` | No | — |
+| `deleted` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `last_modified_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`notebooks.list`
+
+List notebooks
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.notebooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  short_id: string,
+  title?: string | null,
+  content?: any,
+  text_content?: string | null,
+  version?: number,
+  deleted?: boolean,
+  created_at?: string | null,
+  created_by?: {
+    id?: number,
+    uuid?: string,
+    distinct_id?: string | null,
+    first_name?: string,
+    last_name?: string,
+    email?: string
+  } | null,
+  last_modified_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### get
+
+`organizations.get`
+
+Get an organization (defaults to the current one)
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `membership_level` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `teams` | `any[]` | No | — |
+| `projects` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List the organizations the key can access
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  slug?: string | null,
+  membership_level?: number | null,
+  created_at?: string | null,
+  teams?: any[],
+  projects?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Persons
+
+### deleteProperty
+
+`persons.deleteProperty`
+
+Remove one property from a person
+
+**Risk:** `destructive`
+
+```ts
+await corsair.posthog.api.persons.deleteProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `success` | `boolean` | Yes | — |
+
+
+
+---
 
 ### get
 
@@ -1221,6 +3232,7 @@ await corsair.posthog.api.persons.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `string` | Yes | — |
 
 
@@ -1257,6 +3269,7 @@ await corsair.posthog.api.persons.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1295,6 +3308,41 @@ await corsair.posthog.api.persons.list({});
 
 ---
 
+### updateProperty
+
+`persons.updateProperty`
+
+Set one property on a person
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.persons.updateProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
 ## Projects
 
 ### get
@@ -1309,7 +3357,12 @@ Get the project settings (timezone, name, project token)
 await corsair.posthog.api.projects.get({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+
 
 
 **Output**
@@ -1322,6 +3375,57 @@ await corsair.posthog.api.projects.get({});
 | `timezone` | `string` | No | — |
 | `api_token` | `string` | No | — |
 | `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the projects of an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organization_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  organization?: string,
+  timezone?: string,
+  api_token?: string,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1345,6 +3449,7 @@ await corsair.posthog.api.propertyDefinitions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1402,6 +3507,7 @@ await corsair.posthog.api.query.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `query` | `string \| object` | Yes | — |
 | `name` | `string` | No | — |
 | `refresh` | `blocking \| async \| lazy_async \| force_blocking \| force_async \| force_cache \| async_except_on_cache_miss` | No | — |
@@ -1439,6 +3545,67 @@ string | {
 
 ---
 
+## Session Recording Playlists
+
+### list
+
+`sessionRecordingPlaylists.list`
+
+List saved recording playlists and collections
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.sessionRecordingPlaylists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  short_id?: string,
+  name?: string | null,
+  derived_name?: string | null,
+  description?: string | null,
+  pinned?: boolean,
+  deleted?: boolean,
+  type?: string | null,
+  filters?: any,
+  recordings_counts?: any,
+  created_at?: string | null,
+  last_modified_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Session Recordings
 
 ### get
@@ -1457,6 +3624,7 @@ await corsair.posthog.api.sessionRecordings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `string` | Yes | — |
 
 
@@ -1500,6 +3668,7 @@ await corsair.posthog.api.sessionRecordings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `date_from` | `string` | No | — |
@@ -1546,6 +3715,112 @@ await corsair.posthog.api.sessionRecordings.list({});
 
 ## Surveys
 
+### create
+
+`surveys.create`
+
+Create a draft survey
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.surveys.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `popover \| widget \| api \| external_survey` | No | — |
+| `questions` | `object[]` | Yes | — |
+| `description` | `string` | No | — |
+| `linked_flag_id` | `number` | No | — |
+| `appearance` | `Record<string, any>` | No | — |
+| `conditions` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  type: string,
+  question: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `questions` | `any[] \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`surveys.delete`
+
+Delete a survey and its settings
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.posthog.api.surveys.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
 ### get
 
 `surveys.get`
@@ -1562,6 +3837,7 @@ await corsair.posthog.api.surveys.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `id` | `string` | Yes | — |
 
 
@@ -1617,6 +3893,7 @@ await corsair.posthog.api.surveys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1658,6 +3935,242 @@ await corsair.posthog.api.surveys.list({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### update
+
+`surveys.update`
+
+Update a survey (name, description, questions, archived)
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.surveys.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `questions` | `object[]` | No | — |
+| `appearance` | `Record<string, any>` | No | — |
+| `conditions` | `Record<string, any>` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  type: string,
+  question: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `questions` | `any[] \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  distinct_id?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Warehouse Tables
+
+### list
+
+`warehouseTables.list`
+
+List data warehouse tables
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.warehouseTables.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  format?: string | null,
+  url_pattern?: string | null,
+  row_count?: number | null,
+  columns?: any,
+  external_data_source?: any,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web Analytics
+
+### overview
+
+`webAnalytics.overview`
+
+Get web analytics totals (visitors, views, sessions, bounce rate, duration)
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.webAnalytics.overview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `filter_test_accounts` | `boolean` | No | — |
+| `compare` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `any[] \| null` | No | — |
+| `types` | `any[] \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `hogql` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `is_cached` | `boolean` | No | — |
+| `last_refresh` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  key: string,
+  kind?: string,
+  value?: number | null,
+  previous?: number | null,
+  changeFromPreviousPct?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`webAnalytics.stats`
+
+Get web analytics by page, source, UTM, device, browser or country
+
+**Risk:** `read`
+
+```ts
+await corsair.posthog.api.webAnalytics.stats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `breakdown_by` | `Page \| InitialPage \| ExitPage \| InitialReferringDomain \| InitialUTMSource \| InitialUTMCampaign \| InitialUTMMedium \| InitialUTMTerm \| InitialUTMContent \| Browser \| OS \| DeviceType \| Country \| Region \| City \| Language \| Timezone` | Yes | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filter_test_accounts` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `any[] \| null` | No | — |
+| `types` | `any[] \| null` | No | — |
+| `results` | `any` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `hogql` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `is_cached` | `boolean` | No | — |
+| `last_refresh` | `string \| null` | No | — |
 
 
 
