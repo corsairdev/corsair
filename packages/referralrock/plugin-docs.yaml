@@ -45,7 +45,7 @@ apiExamples:
     call: "{ member_id: '19548e00-1a17-42e1-b18b-b7bf140cd21d', amount: 10, payout_id: 'paypal' }"
 apiNotes:
   'members.list': 'The sort values are case-sensitive; the API silently ignores an unrecognised one.'
-  'members.create': 'A refusal arrives as a 200 with a null member and the reason in `message`.'
+  'members.create': 'A refusal (a duplicate email) answers 400 and throws `ReferralrockAPIError` with the reason in `detail`.'
   'referrals.create': 'The code is the referring member’s, and `amount` is what reward rules key on.'
   'rewards.create': 'Sent as an array of reward infos, each naming its member and optional referral.'
   'programs.list': 'A program id, name or title narrows the result to one program.'
