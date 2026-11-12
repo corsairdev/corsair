@@ -135,6 +135,27 @@ describe('render', () => {
 		).rejects.toThrow();
 	});
 
+	it('sends width and height, which crop the output', async () => {
+		respond(fetchMock, RENDERED);
+
+		await invoke(Render.render, { template: 't1', width: 800, height: 600 });
+
+		expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+			template: 't1',
+			width: 800,
+			height: 600,
+		});
+	});
+
+	it('rejects a width that is not a positive integer', async () => {
+		respond(fetchMock, RENDERED);
+
+		await expect(
+			invoke(Render.render, { template: 't1', width: 0 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a render with no template', async () => {
 		await expect(invoke(Render.render, {})).rejects.toThrow();
 	});

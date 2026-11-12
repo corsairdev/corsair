@@ -117,6 +117,22 @@ const RenderInputSchema = z.object({
 		.describe(
 			'Defaults to true. False forces a fresh render and skips the cache, which costs credits.',
 		),
+	width: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Output width in pixels. Renderform crops the image to it from the top left corner.',
+		),
+	height: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Output height in pixels. Renderform crops the image to it from the top left corner.',
+		),
 	waitTime: z
 		.number()
 		.int()
