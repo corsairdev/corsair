@@ -323,7 +323,7 @@ describe('campaigns.create', () => {
 		expect(request.path).toBe('/api/v1/stores/1/campaigns');
 		const body = request.bodyRecord as {
 			type?: string;
-			actions?: { subject?: string; rules?: unknown[] }[];
+			actions?: { subject?: string; rules?: { type?: string }[] }[];
 		};
 		expect(body.type).toBe('abandoned-cart');
 		expect(body.actions?.[0]?.subject).toBe('Your cart misses you');
@@ -514,7 +514,7 @@ describe('campaigns.types', () => {
 
 		const result = (await invoke(Campaigns.types, {
 			storeId: STORE_ID,
-		})) as Record<string, unknown>;
+		})) as Record<string, object>;
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/api/v1/stores/1/campaigns/types',
