@@ -20,16 +20,10 @@ examples:
     title: List contact lists
     args: {}
   write:
-    path: contacts.subscribe
-    title: Add a contact without a confirmation email
+    path: lists.create
+    title: Create a contact list
     args:
-      list_ids:
-        - 1
-      email: jordan@acme-logistics.com
-      fields:
-        Name: Jordan
-        source: website
-      double_optin: 3
+      title: Newsletter
 apiExamples:
   lists.list: {}
   lists.create:
