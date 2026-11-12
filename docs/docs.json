@@ -1881,6 +1881,14 @@
                 ]
               },
               {
+                "group": "Endorsal",
+                "pages": [
+                  "plugins/endorsal/overview",
+                  "plugins/endorsal/api",
+                  "plugins/endorsal/database"
+                ]
+              },
+              {
                 "group": "Enginemailer",
                 "pages": [
                   "plugins/enginemailer/overview",
