@@ -52,7 +52,11 @@ describe('makeCloudlayerRequest', () => {
 
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
-			rateLimitConfig: { enabled: false, maxRetries: 0 },
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 0,
+				headerNames: { retryAfter: 'retry-after' },
+			},
 		});
 		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: CLOUDLAYER_API_BASE,

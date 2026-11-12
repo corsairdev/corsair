@@ -41,14 +41,14 @@ export const CLOUDLAYER_API_KEY_HEADER = 'X-API-Key';
 export const CLOUDLAYER_SYNC_TIMEOUT_MS = 120_000;
 
 // Let Corsair's endpoint error handler own 429 retries for every transport.
-// Otherwise the shared HTTP transport retries three times inside each of the
-// endpoint handler's retries, multiplying requests against Cloudlayer's limit.
+// Keep header extraction enabled with zero transport retries so the handler
+// still receives Cloudlayer's Retry-After value instead of a fixed delay.
 const CLOUDLAYER_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: false,
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
-	headerNames: {},
+	headerNames: { retryAfter: 'retry-after' },
 };
 
 function parseRetryAfterMs(value: string | null): number | undefined {
@@ -59,10 +59,13 @@ function parseRetryAfterMs(value: string | null): number | undefined {
 	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }
 
+// `unknown` because provider JSON is untrusted until runtime-checked here.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// `unknown` because request payloads are arbitrary JSON values traversed
+// recursively; each branch narrows the value before reading it.
 function collectRequestStrings(value: unknown, strings: Set<string>): void {
 	if (typeof value === 'string') {
 		if (value.length >= 8) strings.add(value);
@@ -101,6 +104,8 @@ async function readProviderError(
 	apiKey: string,
 	options: CloudlayerSyncRequestOptions,
 ): Promise<{ body?: Record<string, unknown>; message?: string }> {
+	// `unknown` because response.json() returns untrusted data; isRecord
+	// narrows it before any field is read.
 	let parsed: unknown;
 	try {
 		parsed = await response.json();
@@ -195,6 +200,8 @@ export async function makeCloudlayerSyncRequest(
 		(contentType.toLowerCase().includes('application/json') ||
 			contentType.toLowerCase().includes('+json'))
 	) {
+		// `unknown` because response.json() returns untrusted data; the Zod
+		// schema below performs the narrowing.
 		const body: unknown = await response.json();
 		return GenerationJobSchema.parse(body);
 	}
