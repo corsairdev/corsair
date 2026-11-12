@@ -285,7 +285,8 @@ await corsair.worksnaps.api.reports.project({ project_id: 3456, user_ids: [12], 
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }[] | {
 } | ""
 ```
@@ -735,7 +736,8 @@ await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12, 
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }[] | {
 } | ""
 ```
@@ -790,7 +792,8 @@ await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, 
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }[] | {
 } | ""
 ```
@@ -875,7 +878,8 @@ await corsair.worksnaps.api.timeEntries.get({ project_id: 3456, time_entry_id: 9
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }
 ```
 </Accordion>
@@ -928,7 +932,8 @@ await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, user_ids: [12],
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }[] | {
 } | ""
 ```
@@ -982,7 +987,8 @@ await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id
   logged_timestamp?: string | null,
   duration_in_minutes?: number | string | null,
   type?: string | null,
-  task_name?: string | null
+  task_name?: string | null,
+  thumbnail_url?: string | null
 }[] | {
 } | ""
 ```
@@ -1151,7 +1157,7 @@ await corsair.worksnaps.api.userAssignments.list({ project_id: 3456 });
 
 `userAssignments.update`
 
-Change a member role, rate or time-logging windows
+Change a member hourly rate, time logging or time-logging windows in a project
 
 **Risk:** `write`
 
@@ -1163,7 +1169,6 @@ await corsair.worksnaps.api.userAssignments.update({ project_id: 3456, user_assi
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `role` | `string` | No | The member role in this project, such as member or manager. |
 | `hourly_rate` | `number` | No | — |
 | `flag_allow_logging_time` | `boolean` | No | — |
 | `window_for_deleting_time` | `number` | No | — |

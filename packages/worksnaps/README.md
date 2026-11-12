@@ -36,7 +36,7 @@ pnpm add @corsair-dev/worksnaps
 | `userAssignments.create` | `worksnaps.api.userAssignments.create` | `write` | Add a member to a project with a role, rate and time-logging windows |
 | `userAssignments.get` | `worksnaps.api.userAssignments.get` | `read` | Read one project membership |
 | `userAssignments.list` | `worksnaps.api.userAssignments.list` | `read` | List the members of a project with their roles and rates |
-| `userAssignments.update` | `worksnaps.api.userAssignments.update` | `write` | Change a member role, rate or time-logging windows |
+| `userAssignments.update` | `worksnaps.api.userAssignments.update` | `write` | Change a member hourly rate, time logging or time-logging windows in a project |
 | `users.create` | `worksnaps.api.users.create` | `write` | Create a user; a privileged call that needs the partner API token rather than a normal one |
 | `users.get` | `worksnaps.api.users.get` | `read` | Read one user |
 | `users.list` | `worksnaps.api.users.list` | `read` | List the users on the account |
