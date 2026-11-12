@@ -10,7 +10,7 @@ pnpm add @corsair-dev/digicert
 
 ## Implemented operations
 
-See [`route-inventory.md`](./route-inventory.md) for catalog reconciliation and exclusions.
+See [`route-inventory.md`](./route-inventory.md) for per-family counts, exclusions, and sources.
 
 | Operation | DigiCert route | Auth | Official route documentation |
 |---|---|---|---|
@@ -36,11 +36,11 @@ CertCentral defaults to the US API base URL. Set `certCentralRegion: 'eu'` for C
 
 CertCentral documents rolling rate limits of 100 requests per 5 seconds and 1,000 per 3 minutes, per API key. A 429 response uses an `errors` array with `request_limit_exceeded`; this client leaves rate-limit retries to Corsair's HTTP transport. See [rate limits](https://dev.digicert.com/certcentral-apis/services-api/rate-limits.html) and [error formats](https://dev.digicert.com/certcentral-apis/services-api/errors.html).
 
-## Auth and coverage limitations
+## Authentication and coverage
 
-CertCentral operations use the CertCentral key in `api_key`, sent as `X-DC-DEVKEY`. Account Manager and Private CA use a separate DigiCert ONE service-user token in `digicert_one_api_key`, sent as `x-api-key`. Corsair requires both fields for this combined plugin; provision both credentials for the connected tenant. A single credential is never reused across product families. Public Trust Lifecycle version and CSC info calls send no key. DigiCert ONE documents mTLS as an alternative, but this plugin uses its documented default API-token method; it does not implement client-certificate handling.
+CertCentral Services and Report Library use the CertCentral `api_key`, sent as `X-DC-DEVKEY`. DigiCert ONE Account Manager, Private CA, TLM, and CSC API-key routes use the separate `digicert_one_api_key`, sent as `x-api-key`; credentials are never reused across products. Public TLM version and CSC info calls send no key. CSC routes whose OpenAPI security permits OAuth2 also support `authType: 'oauth_2'` and send the access token as a Bearer credential. OAuth2 is not used for other API families. Private CA SCEP GET relies on the SCEP profile challenge/authentication encoded by the protocol request, rather than a DigiCert ONE API-key header. DigiCert ONE also documents mTLS, which this plugin does not implement.
 
-This implementation is **partial**. The full official API audit covers about 660 distinct HTTP endpoints across DigiCert product families, plus two Custom Reports GraphQL query modes on one endpoint. Nine CertCentral webhook subscription/configuration routes are excluded as requested; five deprecated TLM routes and the 14 discontinued CertCentral Discovery catalog operations are not current. The audited target is about 651 non-webhook HTTP endpoints (about 652 operation modes), of which 16 routes / 17 modes are implemented and approximately 635 endpoints remain. Of the 87 currently supported OSS catalog operation IDs, 12 are implemented (GraphQL has two query modes), leaving 75 catalog operation IDs pending. Do not treat this package as complete coverage.
+The current official route inventory is implemented: **656/656 distinct HTTP endpoints and 663/663 documented operation modes**, including the two Custom Reports GraphQL query modes on one endpoint. Nine webhook subscription/configuration operations, five deprecated TLM operations, and 14 discontinued CertCentral Discovery catalog operations are excluded as requested. The [`route-inventory.md`](./route-inventory.md) summary records per-family counts, the excluded routes, the credential for each family, and the official source links. Response schemas are generated from OpenAPI or official parameter tables where available; routes whose references publish no response model validate JSON values dynamically. This worktree has not run live API calls because no credentials were supplied, and the Draft PR still requires genuine R4 proof and review completion.
 
 DigiCert discontinued the CertCentral Discovery API on October 1, 2026. Its routes are excluded; Trust Lifecycle Manager is not a drop-in replacement. See the [official notice](https://dev.digicert.com/certcentral-apis/discovery-api.html).
 
