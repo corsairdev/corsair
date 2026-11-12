@@ -75,9 +75,13 @@ function buildContext(): Context {
 
 const ctx = buildContext();
 
-function expectRedactedLog(eventName: string, privateValues: string[]) {
+function expectRedactedLog(
+	eventName: string,
+	privateValues: string[],
+	context: Context = ctx,
+) {
 	expect(mockedLogEvent).toHaveBeenCalledWith(
-		ctx,
+		context,
 		eventName,
 		expect.any(Object),
 		'completed',
@@ -461,11 +465,11 @@ describe('Browser Run binary Quick Actions', () => {
 				timeoutMs: 30_000,
 			},
 		);
-		expectRedactedLog('cloudflarebrowserrendering.pdf.render', [
-			privateHtml,
-			'test-token',
-			'JVBERg==',
-		]);
+		expectRedactedLog(
+			'cloudflarebrowserrendering.pdf.render',
+			[privateHtml, 'test-token', 'JVBERg=='],
+			timeoutContext,
+		);
 	});
 });
 
