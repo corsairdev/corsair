@@ -10,12 +10,12 @@ overviewNote: |
   - **Two distinct 401s.** `missing_token` means no key was sent at all; `invalid_token` means one was sent and is wrong, malformed or expired. Both are auth errors, but the difference tells you whether the credential was configured at all, so the plugin exposes both.
   - **A 403 is not only a scope problem.** The docs are explicit that the role, the plan and access to a particular channel can each cause it, so the plugin treats it as a permission error rather than blaming the scope.
   - **Free text only works inside 24 hours.** `messages.sendText` is refused outside the customer service window; `messages.sendTemplate` is the only route through. That is why they are separate operations rather than one with a flag.
-  - **`broadcast_name` makes a send a campaign.** It groups the template send as a campaign in WATI, and the plugin requires `parameters` alongside it — a campaign with nothing bound only makes sense for a template with no placeholders.
+  - **Every template send is a campaign.** WATI requires `broadcast_name` even for one recipient and records the send under it. Leave out `parameters` for a template with no placeholders. A 200 can still carry `success: false` with `error`, and each recipient row can carry its own `errors`.
   - **A conversation target is not a contact ID.** `conversations.messages` takes a wa_id, a phone number or a conversation ID, and the docs warn against substituting a bare contact ID, which is a different value.
-  - **A leading `+` has to be encoded.** A contact target may start with `+`, which is percent-encoded so the value stays one path segment rather than becoming a space.
+  - **A leading `+` has to be encoded in a path.** A contact target may start with `+`, which is percent-encoded when it is part of the URL so it stays one path segment. Send routes take the target in the JSON body, where it is sent as given.
   - **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page.
   - **Custom attributes are pairs, not a map.** A contact's `custom_params` is a list of `{ name, value }`, which is WATI's own shape.
-  - **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version.
+  - **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version. The V3 list has no paging.
 examples:
   read:
     path: contacts.list
@@ -29,6 +29,7 @@ examples:
     args:
       whatsapp_number: "1234567890"
       template_name: order_update
+      broadcast_name: order_update_jordan
       parameters:
         - name: "1"
           value: Jordan
@@ -49,14 +50,15 @@ apiExamples:
   messages.sendText:
     call: "{ target: 'conv-1', text: 'Your order shipped.' }"
   messages.sendTemplate:
-    call: "{ whatsapp_number: '1234567890', template_name: 'order_update', parameters: [{ name: '1', value: 'Jordan' }] }"
+    call: "{ whatsapp_number: '1234567890', template_name: 'order_update', broadcast_name: 'order_update_jordan', parameters: [{ name: '1', value: 'Jordan' }] }"
   messages.sendFile:
     call: "{ target: 'conv-1', url: 'https://acme.example/invoice.pdf', caption: 'Your invoice' }"
   templates.list:
     call: "{ page_number: 1, page_size: 20 }"
   templates.get:
     call: "{ template_id: 'tpl-1' }"
-  channels.list: {}
+  channels.list:
+    call: "{ page_number: 1, page_size: 20 }"
   account.credits: {}
   broadcasts.list:
     call: "{ page_number: 1 }"
@@ -69,9 +71,8 @@ apiExamples:
   segments.get:
     call: "{ segmentId: 'seg-1' }"
   segments.evaluate:
-    call: "{ segmentId: 'seg-1' }"
-  webhooks.list:
-    call: "{ page_number: 1 }"
+    call: "{ groups: [{ operator: 'AND', conditions: [{ attribute: 'contact_status', operator: 'eq', value: 'active' }] }] }"
+  webhooks.list: {}
   webhooks.get:
     call: "{ id: 'wh-1' }"
   webhooks.delete:
