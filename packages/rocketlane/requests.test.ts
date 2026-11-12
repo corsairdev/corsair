@@ -230,6 +230,34 @@ describe('tasks.create', () => {
 		});
 	});
 
+	it('does not send billable, which the create reference does not take', async () => {
+		respond(fetchMock, TASK, 201);
+
+		// Live 11-12: Rocketlane drops billable on create and never returns it.
+		await invoke(Tasks.create, {
+			task_name: 'Kickoff',
+			project_id: PROJECT_ID,
+			billable: true,
+		});
+
+		expect(lastRequest(fetchMock).json()).not.toHaveProperty('billable');
+	});
+
+	it('sends multiple-choice values as the numeric option values', async () => {
+		respond(fetchMock, TASK, 201);
+
+		// Live 11-12: [1, 2] selects options 1 and 2; ["1", "2"] matches none.
+		await invoke(Tasks.create, {
+			task_name: 'Kickoff',
+			project_id: PROJECT_ID,
+			fields: [{ fieldId: 7, value: [1, 2] }],
+		});
+
+		expect(lastRequest(fetchMock).json()).toMatchObject({
+			fields: [{ fieldId: 7, fieldValue: [1, 2] }],
+		});
+	});
+
 	it('rejects a status given by name, which the API does not take', async () => {
 		await expect(
 			invoke(Tasks.create, {
@@ -562,6 +590,20 @@ describe('companies', () => {
 			companyUrl: 'https://acme.example.com',
 			visibility: 'EVERYONE',
 			fields: [{ fieldId: 9, fieldValue: 'Gold' }],
+		});
+	});
+
+	it('sends multiple-choice company values as numeric option values', async () => {
+		respond(fetchMock, COMPANY, 201);
+
+		await invoke(Directory.companiesCreate, {
+			company_name: 'Acme Inc',
+			account_owner: { user_id: USER_ID },
+			fields: [{ fieldId: 9, value: [1, 2] }],
+		});
+
+		expect(lastRequest(fetchMock).json()).toMatchObject({
+			fields: [{ fieldId: 9, fieldValue: [1, 2] }],
 		});
 	});
 

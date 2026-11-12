@@ -506,7 +506,6 @@ const TasksWriteInputSchema = z.object({
 	status: TaskStatusSchema,
 	external_reference_id: z.string().optional(),
 	private: z.boolean().optional(),
-	billable: z.boolean().optional(),
 	assignees: z.array(AssigneeInputSchema).optional(),
 	follower_ids: z.array(z.number().int()).optional(),
 	parent_task_id: z.number().int().optional(),
@@ -519,6 +518,8 @@ const TasksWriteInputSchema = z.object({
 					z.number(),
 					z.boolean(),
 					z.array(z.string()),
+					// Multiple-choice fields take the numeric optionValue ids.
+					z.array(z.number().int()),
 				]),
 			}),
 		)
@@ -540,7 +541,6 @@ const TasksUpdateInputSchema = TasksWriteInputSchema.omit({
 	assignees: true,
 	follower_ids: true,
 	parent_task_id: true,
-	billable: true,
 })
 	.partial()
 	.extend({
@@ -708,7 +708,14 @@ const ProjectOwnerInputSchema = z
 
 const ProjectCustomFieldInputSchema = z.object({
 	fieldId: z.number().int(),
-	value: z.union([z.string(), z.number(), z.boolean(), z.array(z.string())]),
+	value: z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.array(z.string()),
+		// Multiple-choice fields take the numeric optionValue ids.
+		z.array(z.number().int()),
+	]),
 });
 
 const ProjectsWriteInputSchema = z.object({

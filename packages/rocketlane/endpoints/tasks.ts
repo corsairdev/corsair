@@ -121,7 +121,6 @@ function taskBody(input: TaskWriteBody): Record<string, unknown> {
 		status: input.status ? { value: input.status.value } : undefined,
 		externalReferenceId: input.external_reference_id,
 		private: input.private,
-		billable: input.billable,
 		assignees: input.assignees
 			? {
 					// The API names these userId and emailId in the body.
