@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ScrapeDoAPIError } from '../client';
 
 /**
  * Request and response shapes for Scrape.do.
@@ -428,8 +429,11 @@ export const RawAccountInfoSchema = z
  */
 export function parseAccountInfo(raw: z.infer<typeof RawAccountInfoSchema>) {
 	if (!raw.IsActive) {
-		throw new Error(
+		// Status 401 is what the async API answers for the same token, so this
+		// reaches the AUTH_ERROR handler and `isAuthError` the same way.
+		throw new ScrapeDoAPIError(
 			'Scrape.do rejected this token: /info answered IsActive false. Check the token in the dashboard at https://dashboard.scrape.do',
+			{ status: 401, method: 'GET' },
 		);
 	}
 	return {

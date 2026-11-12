@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import { ScrapeDoAPIError } from './client';
 import type {
 	AccountInfoResponse,
 	AsyncAccountResponse,
@@ -14,6 +15,7 @@ import {
 	parseAccountInfo,
 	RawAccountInfoSchema,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { ScrapeDoKeyBuilderContext } from './index';
 import { scrapeDoEndpointSchemas, scrapedo } from './index';
 import {
@@ -224,6 +226,19 @@ describe('account info', () => {
 		// dead. A client checking status alone would report a dead account as fine.
 		const raw = RawAccountInfoSchema.parse(ACCOUNT_INFO_INACTIVE_BODY);
 		expect(() => parseAccountInfo(raw)).toThrow(/IsActive false/);
+	});
+
+	it('reports the IsActive false answer as an auth error, like the async API 401', () => {
+		const raw = RawAccountInfoSchema.parse(ACCOUNT_INFO_INACTIVE_BODY);
+		let caught: unknown;
+		try {
+			parseAccountInfo(raw);
+		} catch (error) {
+			caught = error;
+		}
+		expect(caught).toBeInstanceOf(ScrapeDoAPIError);
+		expect((caught as ScrapeDoAPIError).isAuthError).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(caught as Error)).toBe(true);
 	});
 
 	it('translates the async answer, including the provider typo', () => {
