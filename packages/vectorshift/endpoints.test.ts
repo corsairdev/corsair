@@ -58,6 +58,15 @@ describe('pipelines', () => {
 		expect(sent.path).toBe('/v1/pipelines');
 	});
 
+	it('accepts a status value VectorShift adds later', async () => {
+		// The beta API warns response formats may change; only `failed` is an error.
+		respond(fetchMock, { ...pipelines, status: 'partial' });
+
+		const result = await invoke(Pipelines.list, {});
+
+		expect(result).toEqual({ ...pipelines, status: 'partial' });
+	});
+
 	it('asks for shared pipelines and full objects', async () => {
 		respond(fetchMock, pipelinesVerbose);
 

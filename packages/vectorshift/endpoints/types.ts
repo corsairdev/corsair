@@ -16,7 +16,9 @@ const OutputsSchema = z
 		'Output name to value. A value may be a string, number, boolean, list, map or file.',
 	);
 
-const RunStatusSchema = z.enum(['success', 'failed']);
+// Open on purpose: the beta API may add a status, and only `failed` is raised
+// as an error, so an unknown value passes through instead of failing the parse.
+const RunStatusSchema = z.enum(['success', 'failed']).or(z.string());
 
 // ── pipelines ─────────────────────────────────────────────────────────────
 
