@@ -3986,5 +3986,23 @@
     "version": "0.1.22",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.50",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.30",
+    "isNew": false,
+    "changes": []
   }
 ]
