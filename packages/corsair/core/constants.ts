@@ -199,6 +199,7 @@ export const BaseProviders = [
 	'dataforseo',
 	'datarobot',
 	'deepseek',
+	'demio',
 	'desktime',
 	'devinmcp',
 	'diffbot',
@@ -271,6 +272,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'googleslides',
 	'grafana',
 	'griptape',
 	'groqcloud',
@@ -305,7 +307,9 @@ export const BaseProviders = [
 	'keenable',
 	'kibana',
 	'klaviyo',
+	'klazify',
 	'kling',
+	'knack',
 	'leexi',
 	'leiga',
 	'lemonsqueezy',
@@ -373,20 +377,32 @@ export const BaseProviders = [
 	'qdrant',
 	'quaderno',
 	'radar',
+	'raisely',
 	'razorpay',
+	'realphonevalidation',
 	'reamaze',
+	'route4me',
 	'recallai',
+	'redcircle',
 	'reddit',
 	'reducto',
+	'referralrock',
 	'remoet',
+	'remoteretrieval',
 	'removebg',
 	'render',
+	'rentman',
+	'repairshopr',
 	'replicate',
 	'replyio',
 	'resend',
+	'respondio',
 	'retailed',
 	'retellai',
+	'retently',
 	'revai',
+	'roam',
+	'rocketlane',
 	'rootly',
 	'runpod',
 	'salesflare',
@@ -394,8 +410,11 @@ export const BaseProviders = [
 	'sanity',
 	'saperly',
 	'sapsuccessfactors',
+	'satismeter',
 	'scaleai',
+	'scrapedo',
 	'scrapegraphai',
+	'scrapingant',
 	'search1api',
 	'securitytrails',
 	'semanticscholar',
@@ -458,16 +477,22 @@ export const BaseProviders = [
 	'typesafe',
 	'unione',
 	'unipile',
+	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
+	'u301',
 	'vapi',
 	'vaquill',
+	'vectorshift',
 	'vercel',
 	'veriphone',
 	'vestaboard',
+	'virustotal',
 	'waboxapp',
+	'wachete',
 	'wakatime',
+	'wati',
 	'webflow',
 	'webscrapingai',
 	'webvizio',
@@ -482,10 +507,13 @@ export const BaseProviders = [
 	'workable',
 	'workday',
 	'workiom',
+	'worksnaps',
 	'worldnewsapi',
+	'wrike',
 	'writer',
 	'xero',
 	'xquik',
+	'yandex',
 	'youcom',
 	'youtube',
 	'zendesk',
@@ -686,6 +714,7 @@ export const ProviderDisplayNames = {
 	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
+	demio: 'Demio',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -758,6 +787,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	googleslides: 'Google Slides',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
@@ -792,7 +822,9 @@ export const ProviderDisplayNames = {
 	keenable: 'Keenable',
 	kibana: 'Kibana',
 	klaviyo: 'Klaviyo',
+	klazify: 'Klazify',
 	kling: 'Kling',
+	knack: 'Knack',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
@@ -860,20 +892,32 @@ export const ProviderDisplayNames = {
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
 	radar: 'Radar',
+	raisely: 'Raisely',
+	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
+	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
+	redcircle: 'RedCircle API',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
+	referralrock: 'Referral Rock',
 	remoet: 'Remoet',
+	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
 	render: 'Render',
+	rentman: 'Rentman',
+	repairshopr: 'RepairShopr',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
+	respondio: 'respond.io',
 	retailed: 'Retailed',
 	retellai: 'Retell AI',
+	retently: 'Retently',
 	revai: 'RevAI',
+	roam: 'Roam HQ',
+	rocketlane: 'Rocketlane',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
@@ -881,8 +925,11 @@ export const ProviderDisplayNames = {
 	sanity: 'Sanity',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
+	satismeter: 'SatisMeter',
 	scaleai: 'Scale AI',
+	scrapedo: 'Scrape.do',
 	scrapegraphai: 'ScrapeGraphAI',
+	scrapingant: 'ScrapingAnt',
 	search1api: 'Search1API',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
@@ -945,16 +992,22 @@ export const ProviderDisplayNames = {
 	typesafe: 'TypeSafe',
 	unione: 'Unione',
 	unipile: 'Unipile',
+	unisender: 'Unisender',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
+	u301: 'U301',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
+	vectorshift: 'VectorShift',
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
+	virustotal: 'VirusTotal',
 	waboxapp: 'Waboxapp',
+	wachete: 'Wachete',
 	wakatime: 'WakaTime',
+	wati: 'Wati',
 	webflow: 'Webflow',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
@@ -969,10 +1022,13 @@ export const ProviderDisplayNames = {
 	workable: 'Workable',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worksnaps: 'Worksnaps',
 	worldnewsapi: 'World News API',
+	wrike: 'Wrike',
 	writer: 'Writer',
 	xero: 'Xero',
 	xquik: 'XQuik',
+	yandex: 'Yandex',
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -1180,6 +1236,7 @@ export type AllProviders =
 	| 'dataforseo'
 	| 'datarobot'
 	| 'deepseek'
+	| 'demio'
 	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'
@@ -1252,6 +1309,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'googleslides'
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
@@ -1286,7 +1344,9 @@ export type AllProviders =
 	| 'keenable'
 	| 'kibana'
 	| 'klaviyo'
+	| 'klazify'
 	| 'kling'
+	| 'knack'
 	| 'leexi'
 	| 'leiga'
 	| 'lemonsqueezy'
@@ -1354,20 +1414,32 @@ export type AllProviders =
 	| 'qdrant'
 	| 'quaderno'
 	| 'radar'
+	| 'raisely'
 	| 'razorpay'
+	| 'realphonevalidation'
 	| 'reamaze'
+	| 'route4me'
 	| 'recallai'
+	| 'redcircle'
 	| 'reddit'
 	| 'reducto'
+	| 'referralrock'
 	| 'remoet'
+	| 'remoteretrieval'
 	| 'removebg'
 	| 'render'
+	| 'rentman'
+	| 'repairshopr'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
+	| 'respondio'
 	| 'retailed'
 	| 'retellai'
+	| 'retently'
 	| 'revai'
+	| 'roam'
+	| 'rocketlane'
 	| 'rootly'
 	| 'runpod'
 	| 'salesflare'
@@ -1375,8 +1447,11 @@ export type AllProviders =
 	| 'sanity'
 	| 'saperly'
 	| 'sapsuccessfactors'
+	| 'satismeter'
 	| 'scaleai'
+	| 'scrapedo'
 	| 'scrapegraphai'
+	| 'scrapingant'
 	| 'search1api'
 	| 'securitytrails'
 	| 'semanticscholar'
@@ -1439,16 +1514,22 @@ export type AllProviders =
 	| 'typesafe'
 	| 'unione'
 	| 'unipile'
+	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
+	| 'u301'
 	| 'vapi'
 	| 'vaquill'
+	| 'vectorshift'
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
+	| 'virustotal'
 	| 'waboxapp'
+	| 'wachete'
 	| 'wakatime'
+	| 'wati'
 	| 'webflow'
 	| 'webscrapingai'
 	| 'webvizio'
@@ -1463,10 +1544,13 @@ export type AllProviders =
 	| 'workable'
 	| 'workday'
 	| 'workiom'
+	| 'worksnaps'
 	| 'worldnewsapi'
+	| 'wrike'
 	| 'writer'
 	| 'xero'
 	| 'xquik'
+	| 'yandex'
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
