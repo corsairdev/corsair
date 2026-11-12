@@ -2580,6 +2580,14 @@
                 ]
               },
               {
+                "group": "Kommo",
+                "pages": [
+                  "plugins/kommo/overview",
+                  "plugins/kommo/api",
+                  "plugins/kommo/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",

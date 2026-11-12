@@ -1,0 +1,151 @@
+---
+title: "Kommo plugin"
+sidebarTitle: "Overview"
+description: "CRM with Kommo - manage leads, contacts, companies and tasks, and read the pipelines with their stages, the account users and the account itself."
+---
+
+Use **Kommo** through Corsair: one client, typed API calls.
+
+Create a private integration in Kommo, then generate a long-lived token under its Keys and scopes tab. A token lasts from one day to five years, and only an account administrator can create one. It is sent as a bearer token.
+
+Two things are needed before the first call:
+
+- **The account subdomain.** Every account is served from its own host: `acme` for `acme.kommo.com`, under `/api/v4`. Connect delivers it as the `subdomain` credential; the plugin option of the same name overrides it. A call with neither throws before any request is sent.
+- **A pipeline and stage.** A lead's `pipeline_id` and `status_id` come from `pipelines.list`. A lead created without them lands in the first stage of the main pipeline.
+
+Things to know before you call:
+
+- **Timestamps are Unix seconds.** `created_at`, `updated_at`, `closed_at`, `closest_task_at` and a task's `complete_till` are integers counting seconds, not ISO strings. The plugin passes them through as Kommo sends them.
+- **Paging is by page number.** A list takes `page` and `limit` (250 at most) and returns a `_page` and `_links` block. The plugin adds `next_page`, which is null on the last page.
+- **Filters are bracketed query keys.** `pipeline_id`, `status_id` and the date filters become `filter[pipeline_id][]` and `filter[created_at][from]` on the wire, which is how Kommo documents them. Kommo allows only one stage in one pipeline per request.
+- **A write takes an array.** `leads.create` and `contacts.create` post up to 250 entities at once, and the update routes are PATCH with each entity carrying its `id`. A field left out of an update is untouched.
+- **Custom field values go by `field_id` or `field_code`.** The plugin refuses a value that names neither, because Kommo would reject it. A value's type follows its `field_type`, so a `date_time` field takes a Unix timestamp.
+- **A contact needs a name.** `name`, or `first_name` and `last_name`; a contact with neither is refused before the call.
+- **A task needs a deadline.** `complete_till` is required, in Unix seconds.
+- **Rate limits.** Kommo allows two requests a second with a burst of seven, and sends `Retry-After` on a 429, which the plugin honours before backing off. A 402 means the account's plan does not include that entity, and is not retried. Only reads are replayed after a 5xx, because a retried lead create would make a second lead.
+- **Webhooks.** Kommo does send webhooks, but this plugin does not receive them; that is a separate integration surface.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/kommo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/kommo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/kommo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/kommo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { kommo } from '@corsair-dev/kommo';
+
+export const corsair = createCorsair({
+	plugins: [
+		kommo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one. Kommo also needs the account subdomain, delivered as the `subdomain` credential beside the key.
+
+```ts
+kommo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'kommo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of leads**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kommo.api.leads.list({
+	limit: 50,
+	with: ['contacts'],
+});
+```
+
+
+**Create a lead**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kommo.api.leads.create({
+	leads: [{ name: 'Acme renewal', price: 5000 }],
+});
+```
+
+
+See the full list on the [API](/plugins/kommo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/kommo/api">
+    Every `kommo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

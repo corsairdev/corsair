@@ -1,0 +1,1227 @@
+---
+title: "Kommo API reference"
+sidebarTitle: "API"
+description: "API reference for the Kommo plugin in Corsair: every `kommo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+The account itself: its name, subdomain, currency and country
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `subdomain` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `_embedded` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Companies
+
+### list
+
+`companies.list`
+
+Companies by owner or update date, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.companies.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `limit` | `number` | No | Entities per page. Defaults to 250, which is the maximum. |
+| `query` | `string` | No | A search across the entity’s filled fields. |
+| `responsible_user_id` | `number` | No | — |
+| `updated_from` | `string` | No | — |
+| `updated_to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_page` | `number \| null` | No | — |
+| `_links` | `object \| null` | No | — |
+| `_embedded` | `object` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null
+  } | null,
+  next?: {
+    href?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  companies: {
+    id: number,
+    name?: string | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    is_deleted?: boolean | null,
+    account_id?: number | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create contacts, each with a name or a first and last name, and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.kommo.api.contacts.create({ contacts: [{ first_name: 'Jordan', last_name: 'Lee', custom_fields_values: [{ field_code: 'PHONE', values: [{ value: '+15550100' }] }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+A contact needs a `name`, or a `first_name` and `last_name`.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  responsible_user_id?: number,
+  custom_fields_values?: {
+    values?: Record<string, any>[],
+    field_id?: number,
+    field_code?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  contacts: {
+    id: number,
+    name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    is_deleted?: boolean | null,
+    account_id?: number | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+One contact with its custom field values
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.contacts.get({ contactId: 30012345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The Kommo entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `responsible_user_id` | `number \| null` | No | — |
+| `group_id` | `number \| null` | No | — |
+| `created_by` | `number \| null` | No | — |
+| `updated_by` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `is_deleted` | `boolean \| null` | No | — |
+| `account_id` | `number \| null` | No | — |
+| `custom_fields_values` | `object[] \| null` | No | — |
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields_values full type">
+
+```ts
+{
+  field_id?: number | null,
+  field_name?: string | null,
+  field_code?: string | null,
+  field_type?: string | null,
+  values?: {
+    value: any,
+    enum_id?: number | null,
+    enum_code?: string | null
+  }[] | null,
+  is_computed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  contacts?: {
+    id: number
+  }[] | null,
+  companies?: {
+    id: number
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Contacts by owner or update date, paged, optionally with their leads
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.contacts.list({ limit: 50, with: ['leads'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `limit` | `number` | No | Entities per page. Defaults to 250, which is the maximum. |
+| `query` | `string` | No | A search across the entity’s filled fields. |
+| `with` | `leads[]` | No | Embed the leads each contact is linked to. |
+| `responsible_user_id` | `number` | No | — |
+| `updated_from` | `string` | No | — |
+| `updated_to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_page` | `number \| null` | No | — |
+| `_links` | `object \| null` | No | — |
+| `_embedded` | `object` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null
+  } | null,
+  next?: {
+    href?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  contacts: {
+    id: number,
+    name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    is_deleted?: boolean | null,
+    account_id?: number | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change fields on one or more contacts, each named by its `id`
+
+**Risk:** `write`
+
+```ts
+await corsair.kommo.api.contacts.update({ contacts: [{ id: 30012345, first_name: 'Jordy' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  responsible_user_id?: number,
+  custom_fields_values?: {
+    values?: Record<string, any>[],
+    field_id?: number,
+    field_code?: string
+  }[],
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  contacts: {
+    id: number,
+    name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    is_deleted?: boolean | null,
+    account_id?: number | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### create
+
+`leads.create`
+
+Create up to 250 leads in one request, each with its price, stage, pipeline and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.kommo.api.leads.create({ leads: [{ name: 'Acme renewal', price: 5000, pipeline_id: 12215168, custom_fields_values: [{ field_id: 1928052, values: [{ value: 'Diagnostic', enum_id: 1669868 }] }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | At most 250 in one request. A lead without `status_id` or `pipeline_id` lands in the first stage of the main pipeline. |
+
+Posts an array of up to 250. A lead without `pipeline_id` or `status_id` lands in the first stage of the main pipeline.
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  name: nonoptional,
+  price?: number,
+  status_id?: number,
+  pipeline_id?: number,
+  responsible_user_id?: number,
+  loss_reason_id?: number,
+  custom_fields_values?: {
+    values?: Record<string, any>[],
+    field_id?: number,
+    field_code?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  leads: {
+    id: number,
+    name?: string | null,
+    price?: number | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    status_id?: number | null,
+    pipeline_id?: number | null,
+    loss_reason_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    closed_at?: number | null,
+    closest_task_at?: number | null,
+    is_deleted?: boolean | null,
+    score?: number | null,
+    account_id?: number | null,
+    labor_cost?: number | null,
+    is_price_computed?: boolean | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leads.get`
+
+One lead with its custom field values and, on request, its contacts, loss reason and source
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.leads.get({ leadId: 20024930, with: ['contacts', 'loss_reason'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `number` | Yes | The Kommo entity ID. |
+| `with` | `(contacts \| loss_reason \| catalog_elements \| source)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `responsible_user_id` | `number \| null` | No | — |
+| `group_id` | `number \| null` | No | — |
+| `status_id` | `number \| null` | No | — |
+| `pipeline_id` | `number \| null` | No | — |
+| `loss_reason_id` | `number \| null` | No | — |
+| `created_by` | `number \| null` | No | — |
+| `updated_by` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `closed_at` | `number \| null` | No | — |
+| `closest_task_at` | `number \| null` | No | — |
+| `is_deleted` | `boolean \| null` | No | — |
+| `score` | `number \| null` | No | — |
+| `account_id` | `number \| null` | No | — |
+| `labor_cost` | `number \| null` | No | — |
+| `is_price_computed` | `boolean \| null` | No | — |
+| `custom_fields_values` | `object[] \| null` | No | — |
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields_values full type">
+
+```ts
+{
+  field_id?: number | null,
+  field_name?: string | null,
+  field_code?: string | null,
+  field_type?: string | null,
+  values?: {
+    value: any,
+    enum_id?: number | null,
+    enum_code?: string | null
+  }[] | null,
+  is_computed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  contacts?: {
+    id: number
+  }[] | null,
+  companies?: {
+    id: number
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+Leads by pipeline, stage, owner or date, paged 250 at a time; `next_page` says whether another exists
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.leads.list({ limit: 50, pipeline_id: 12215168, with: ['contacts'], order_by: 'created_at', order_direction: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `limit` | `number` | No | Entities per page. Defaults to 250, which is the maximum. |
+| `query` | `string` | No | A search across the entity’s filled fields. |
+| `with` | `(contacts \| loss_reason \| catalog_elements \| source)[]` | No | Embed these extra details on each lead. |
+| `pipeline_id` | `number` | No | — |
+| `status_id` | `number` | No | — |
+| `responsible_user_id` | `number` | No | — |
+| `created_from` | `string` | No | ISO 8601 or a Unix timestamp. |
+| `created_to` | `string` | No | — |
+| `updated_from` | `string` | No | — |
+| `updated_to` | `string` | No | — |
+| `order_by` | `created_at \| updated_at \| id` | No | — |
+| `order_direction` | `asc \| desc` | No | — |
+
+Pages by number, 250 at most. `next_page` is null on the last page. Kommo allows one stage in one pipeline per request.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_page` | `number \| null` | No | — |
+| `_links` | `object \| null` | No | — |
+| `_embedded` | `object` | Yes | — |
+| `next_page` | `number \| null` | Yes | The page after this one while Kommo says another exists; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null
+  } | null,
+  next?: {
+    href?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  leads: {
+    id: number,
+    name?: string | null,
+    price?: number | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    status_id?: number | null,
+    pipeline_id?: number | null,
+    loss_reason_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    closed_at?: number | null,
+    closest_task_at?: number | null,
+    is_deleted?: boolean | null,
+    score?: number | null,
+    account_id?: number | null,
+    labor_cost?: number | null,
+    is_price_computed?: boolean | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leads.update`
+
+Change fields on one or more leads, each named by its `id`; a field left out is untouched
+
+**Risk:** `write`
+
+```ts
+await corsair.kommo.api.leads.update({ leads: [{ id: 20024930, price: 7000, status_id: 94386188 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | Each lead carries its `id` and the fields to change. |
+
+PATCH with an array, each lead carrying its `id`. A field left out is untouched.
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  name?: string,
+  price?: number,
+  status_id?: number,
+  pipeline_id?: number,
+  responsible_user_id?: number,
+  loss_reason_id?: number,
+  custom_fields_values?: {
+    values?: Record<string, any>[],
+    field_id?: number,
+    field_code?: string
+  }[],
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  leads: {
+    id: number,
+    name?: string | null,
+    price?: number | null,
+    responsible_user_id?: number | null,
+    group_id?: number | null,
+    status_id?: number | null,
+    pipeline_id?: number | null,
+    loss_reason_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    closed_at?: number | null,
+    closest_task_at?: number | null,
+    is_deleted?: boolean | null,
+    score?: number | null,
+    account_id?: number | null,
+    labor_cost?: number | null,
+    is_price_computed?: boolean | null,
+    custom_fields_values?: {
+      field_id?: number | null,
+      field_name?: string | null,
+      field_code?: string | null,
+      field_type?: string | null,
+      values?: {
+        value: any,
+        enum_id?: number | null,
+        enum_code?: string | null
+      }[] | null,
+      is_computed?: boolean | null
+    }[] | null,
+    _embedded?: {
+      tags?: {
+        id?: number | null,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      contacts?: {
+        id: number
+      }[] | null,
+      companies?: {
+        id: number
+      }[] | null
+    } | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pipelines
+
+### list
+
+`pipelines.list`
+
+The lead pipelines with their stages, which is where a lead’s `pipeline_id` and `status_id` come from
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.pipelines.list({});
+```
+
+**Input:** _empty object_
+
+Where a lead’s `pipeline_id` and `status_id` come from.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  pipelines: {
+    id: number,
+    name?: string | null,
+    sort?: number | null,
+    is_main?: boolean | null,
+    is_unsorted_on?: boolean | null,
+    is_archive?: boolean | null,
+    account_id?: number | null,
+    _embedded?: {
+      statuses?: {
+        id: number,
+        name?: string | null,
+        sort?: number | null,
+        color?: string | null,
+        is_editable?: boolean | null,
+        pipeline_id?: number | null
+      }[] | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create tasks against a lead, contact or company; every task needs a `complete_till` deadline
+
+**Risk:** `write`
+
+```ts
+await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1762000000 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+
+`complete_till` is required and is Unix seconds.
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  entity_id: number,
+  entity_type: leads | contacts | companies,
+  text: string,
+  complete_till: number,
+  task_type_id?: number,
+  responsible_user_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  tasks: {
+    id: number,
+    entity_id?: number | null,
+    entity_type?: string | null,
+    is_completed?: boolean | null,
+    task_type_id?: number | null,
+    text?: string | null,
+    result?: {
+      text?: string | null,
+      id?: number | null
+    } | null,
+    responsible_user_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    complete_till?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    account_id?: number | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+Tasks by entity, owner or completion, paged; the deadline is a Unix timestamp
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.tasks.list({ entity_type: 'leads', is_completed: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `limit` | `number` | No | Entities per page. Defaults to 250, which is the maximum. |
+| `query` | `string` | No | A search across the entity’s filled fields. |
+| `entity_type` | `leads \| contacts \| companies` | No | Only tasks on this kind of entity. |
+| `entity_id` | `number` | No | — |
+| `responsible_user_id` | `number` | No | — |
+| `is_completed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_page` | `number \| null` | No | — |
+| `_links` | `object \| null` | No | — |
+| `_embedded` | `object` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null
+  } | null,
+  next?: {
+    href?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  tasks: {
+    id: number,
+    entity_id?: number | null,
+    entity_type?: string | null,
+    is_completed?: boolean | null,
+    task_type_id?: number | null,
+    text?: string | null,
+    result?: {
+      text?: string | null,
+      id?: number | null
+    } | null,
+    responsible_user_id?: number | null,
+    created_by?: number | null,
+    updated_by?: number | null,
+    complete_till?: number | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    account_id?: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+The account’s users, for looking up a responsible user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kommo.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_page` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  users: {
+    id: number,
+    name?: string | null,
+    email?: string | null,
+    lang?: string | null,
+    rights?: Record<string, any> | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
