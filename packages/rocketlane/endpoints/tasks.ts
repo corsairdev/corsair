@@ -16,6 +16,14 @@ import {
  */
 type TaskWriteBody = Partial<z.output<(typeof Inputs)['tasksCreate']>>;
 
+/** Custom field values go out as `{ fieldId, fieldValue }`. */
+function fieldsBody(fields: TaskWriteBody['fields']) {
+	return fields?.map((field) => ({
+		fieldId: field.fieldId,
+		fieldValue: field.value,
+	}));
+}
+
 export const list: RocketlaneEndpoints['tasksList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -95,7 +103,10 @@ export const get: RocketlaneEndpoints['tasksGet'] = (ctx, input) =>
 function taskBody(input: TaskWriteBody): Record<string, unknown> {
 	return {
 		taskName: input.task_name,
-		project: { projectId: input.project_id },
+		project:
+			input.project_id === undefined
+				? undefined
+				: { projectId: input.project_id },
 		taskDescription: input.task_description,
 		taskPrivateNote: input.task_private_note,
 		startDate: input.start_date,
@@ -107,24 +118,24 @@ function taskBody(input: TaskWriteBody): Record<string, unknown> {
 		phase: input.phase
 			? { phaseId: input.phase.phaseId, phaseName: input.phase.phaseName }
 			: undefined,
-		status: input.status
-			? { statusId: input.status.statusId, statusName: input.status.statusName }
-			: undefined,
+		status: input.status ? { value: input.status.value } : undefined,
 		externalReferenceId: input.external_reference_id,
 		private: input.private,
 		billable: input.billable,
 		assignees: input.assignees
 			? {
 					// The API names these userId and emailId in the body.
-					users: input.assignees.map((assignee) => ({
+					members: input.assignees.map((assignee) => ({
 						userId: assignee.user_id,
 						emailId: assignee.email,
 					})),
 				}
 			: undefined,
-		followers: input.follower_ids?.map((userId) => ({ userId })),
+		followers: input.follower_ids
+			? { members: input.follower_ids.map((userId) => ({ userId })) }
+			: undefined,
 		parent: input.parent_task_id ? { taskId: input.parent_task_id } : undefined,
-		fields: input.fields,
+		fields: fieldsBody(input.fields),
 	};
 }
 

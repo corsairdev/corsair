@@ -197,26 +197,40 @@ describe('tasks.create', () => {
 			project: { projectId: PROJECT_ID },
 			startDate: '2026-11-10',
 			effortInMinutes: 240,
-			assignees: { users: [{ userId: USER_ID }] },
-			followers: [{ userId: USER_ID }],
+			// The reference wraps both lists in `members`.
+			assignees: { members: [{ userId: USER_ID }] },
+			followers: { members: [{ userId: USER_ID }] },
 		});
 		expect(result.task.taskId).toBe(TASK_ID);
 	});
 
-	it('sends the status and phase by id or name', async () => {
+	it('sends the status as its value, the phase, and custom fields as fieldValue', async () => {
 		respond(fetchMock, TASK, 201);
 
 		await invoke(Tasks.create, {
 			task_name: 'Kickoff',
 			project_id: PROJECT_ID,
-			status: { statusName: 'In progress' },
+			status: { value: 2 },
 			phase: { phaseId: 11 },
+			fields: [{ fieldId: 7, value: 3 }],
 		});
 
 		expect(lastRequest(fetchMock).json()).toMatchObject({
-			status: { statusName: 'In progress' },
+			status: { value: 2 },
 			phase: { phaseId: 11 },
+			fields: [{ fieldId: 7, fieldValue: 3 }],
 		});
+	});
+
+	it('rejects a status given by name, which the API does not take', async () => {
+		await expect(
+			invoke(Tasks.create, {
+				task_name: 'x',
+				project_id: PROJECT_ID,
+				status: { statusName: 'In progress' },
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an assignee with no id and no email', async () => {
@@ -262,12 +276,19 @@ describe('tasks.update', () => {
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PUT');
 		expect(request.path).toBe(`/api/1.0/tasks/${TASK_ID}`);
-		const body = request.json();
-		expect(body.progress).toBe(80);
-		expect(body.dueDate).toBe('2026-11-20');
-		expect(body).not.toHaveProperty('taskId');
-		expect(body).not.toHaveProperty('task_id');
+		// Only the changed fields: no empty project block, no id.
+		expect(request.json()).toEqual({ progress: 80, dueDate: '2026-11-20' });
 		expect(result.task.taskId).toBe(TASK_ID);
+	});
+
+	it('rejects fields the update reference does not take', async () => {
+		await expect(
+			invoke(Tasks.update, { task_id: TASK_ID, assignees: [{ user_id: 1 }] }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Tasks.update, { task_id: TASK_ID, project_id: PROJECT_ID }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an update with no id', async () => {
@@ -356,7 +377,8 @@ describe('projects.create', () => {
 			owner: { emailId: 'sam@example.com' },
 			startDate: '2026-11-01',
 			currency: 'USD',
-			teamMembers: [{ userId: USER_ID }],
+			// The reference wraps members in a `members` list.
+			teamMembers: { members: [{ userId: USER_ID }] },
 		});
 		expect(result.project.projectId).toBe(PROJECT_ID);
 	});
@@ -426,6 +448,37 @@ describe('projects.update and delete', () => {
 		expect(request.json()).toEqual({ projectName: 'Acme onboarding v2' });
 	});
 
+	it('sends the documented visibility and custom fields as fieldValue', async () => {
+		respond(fetchMock, PROJECT);
+
+		await invoke(Projects.update, {
+			project_id: PROJECT_ID,
+			visibility: 'MEMBERS',
+			fields: [{ fieldId: 8, value: 'EMEA' }],
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			visibility: 'MEMBERS',
+			fields: [{ fieldId: 8, fieldValue: 'EMEA' }],
+		});
+	});
+
+	it('rejects create-only fields on update', async () => {
+		await expect(
+			invoke(Projects.update, {
+				project_id: PROJECT_ID,
+				team_member_ids: [USER_ID],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Projects.update, {
+				project_id: PROJECT_ID,
+				customer: { company_id: COMPANY_ID },
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('deletes a project and reports the id', async () => {
 		respondNoContent(fetchMock);
 
@@ -486,13 +539,28 @@ describe('companies', () => {
 			company_name: 'Acme Inc',
 			account_owner: { user_id: USER_ID },
 			company_url: 'https://acme.example.com',
+			visibility: 'EVERYONE',
+			fields: [{ fieldId: 9, value: 'Gold' }],
 		});
 
 		expect(lastRequest(fetchMock).json()).toEqual({
 			companyName: 'Acme Inc',
 			accountOwner: { userId: USER_ID },
 			companyUrl: 'https://acme.example.com',
+			visibility: 'EVERYONE',
+			fields: [{ fieldId: 9, fieldValue: 'Gold' }],
 		});
+	});
+
+	it('rejects a visibility the reference does not define', async () => {
+		await expect(
+			invoke(Directory.companiesCreate, {
+				company_name: 'Acme Inc',
+				account_owner: { user_id: USER_ID },
+				visibility: 'CUSTOMER',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a company with no account owner', async () => {

@@ -114,7 +114,7 @@ function projectBody(input: ProjectWriteBody): Record<string, unknown> {
 		dueDate: input.due_date,
 		visibility: input.visibility,
 		teamMembers: input.team_member_ids
-			? (input.team_member_ids as number[]).map((userId) => ({ userId }))
+			? { members: input.team_member_ids.map((userId) => ({ userId })) }
 			: undefined,
 		currency: input.currency,
 		annualizedRecurringRevenue: input.annualized_recurring_revenue,
@@ -123,7 +123,10 @@ function projectBody(input: ProjectWriteBody): Record<string, unknown> {
 		externalReferenceId: input.external_reference_id,
 		autoCreateCompany: input.auto_create_company,
 		assignProjectOwner: input.assign_project_owner,
-		fields: input.fields,
+		fields: input.fields?.map((field) => ({
+			fieldId: field.fieldId,
+			fieldValue: field.value,
+		})),
 	};
 }
 

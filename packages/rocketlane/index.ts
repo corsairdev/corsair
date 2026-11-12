@@ -224,7 +224,7 @@ const rocketlaneEndpointMeta = {
 	'tasks.update': {
 		riskLevel: 'write',
 		description:
-			'Update a task: its name, dates, effort, progress, status, phase or custom fields',
+			'Update a task: its name, description, dates, effort, progress, status or custom fields',
 	},
 	'tasks.delete': {
 		riskLevel: 'destructive',
@@ -244,12 +244,12 @@ const rocketlaneEndpointMeta = {
 	'projects.create': {
 		riskLevel: 'write',
 		description:
-			'Create a project from a customer and an owner, with its dates, visibility and financial details',
+			'Create a project from a customer and an owner, with its dates, visibility and financial details; Rocketlane emails an invite to each team member added',
 	},
 	'projects.update': {
 		riskLevel: 'write',
 		description:
-			'Update a project: its name, dates, visibility, team members or financial details',
+			'Update a project: its name, dates, visibility, owner, custom fields or financial figures',
 	},
 	'projects.delete': {
 		riskLevel: 'destructive',

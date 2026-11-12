@@ -323,12 +323,15 @@ export type RocketlaneFieldValue = z.infer<typeof FieldValueSchema>;
 // ── tasks ─────────────────────────────────────────────────────────────────
 
 const TaskStatusSchema = z
-	.object({
-		statusId: z.number().int().optional(),
-		statusName: z.string().optional(),
+	.strictObject({
+		value: z
+			.number()
+			.int()
+			.positive()
+			.describe("The status's numeric value, as a task's `status.value` shows."),
 	})
 	.optional()
-	.describe('Pick the status by id or by name.');
+	.describe('The task status, by its numeric value.');
 
 const TaskPhaseRefSchema = z
 	.object({
@@ -506,9 +509,25 @@ const TasksWriteInputSchema = z.object({
 export type TasksCreateInput = z.input<typeof TasksWriteInputSchema>;
 export type TasksUpdateInput = z.input<typeof TasksUpdateInputSchema>;
 
-const TasksUpdateInputSchema = TasksWriteInputSchema.partial().extend({
-	task_id: z.number().int().positive(),
-});
+/**
+ * The update body takes a narrower set than create: the project, phase,
+ * assignees, followers and parent each have their own action endpoint, and
+ * Rocketlane's update reference lists none of them.
+ */
+const TasksUpdateInputSchema = TasksWriteInputSchema.omit({
+	project_id: true,
+	phase: true,
+	assignees: true,
+	follower_ids: true,
+	parent_task_id: true,
+	billable: true,
+})
+	.partial()
+	.extend({
+		task_id: z.number().int().positive(),
+	})
+	// Strict, so a create-only field fails loudly instead of being dropped.
+	.strict();
 
 const TasksCreateResponseSchema = z.object({ task: TaskSchema });
 export type TasksCreateResponse = z.infer<typeof TasksCreateResponseSchema>;
@@ -682,13 +701,17 @@ const ProjectsWriteInputSchema = z.object({
 		.optional()
 		.describe('An ISO date on or after `start_date`.'),
 	visibility: z
-		.enum(['PRIVATE', 'PUBLIC', 'CUSTOMER'])
+		.enum(['EVERYONE', 'MEMBERS'])
 		.optional()
-		.describe('Who can see the project.'),
+		.describe(
+			'`EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members.',
+		),
 	team_member_ids: z
 		.array(z.number().int())
 		.optional()
-		.describe('Users to add to the project.'),
+		.describe(
+			'Users to add to the project. Rocketlane emails each of them an invite.',
+		),
 	currency: z.string().optional().describe('A three-letter currency code.'),
 	annualized_recurring_revenue: z.number().optional(),
 	project_fee: z.number().optional(),
@@ -709,9 +732,24 @@ export type ProjectsCreateResponse = z.infer<
 	typeof ProjectsCreateResponseSchema
 >;
 
-const ProjectsUpdateInputSchema = ProjectsWriteInputSchema.partial().extend({
-	project_id: z.number().int().positive(),
-});
+/**
+ * The update reference takes the name, dates, visibility, owner, custom fields
+ * and financial figures. The customer, members and currency are set at
+ * create time or through their own endpoints.
+ */
+const ProjectsUpdateInputSchema = ProjectsWriteInputSchema.omit({
+	customer: true,
+	team_member_ids: true,
+	currency: true,
+	auto_create_company: true,
+	assign_project_owner: true,
+})
+	.partial()
+	.extend({
+		project_id: z.number().int().positive(),
+	})
+	// Strict, so a create-only field fails loudly instead of being dropped.
+	.strict();
 
 export type ProjectsUpdateInput = z.input<typeof ProjectsUpdateInputSchema>;
 
@@ -808,7 +846,7 @@ const CompaniesWriteInputSchema = z.object({
 	company_name: z.string().min(1).describe('The company name.'),
 	account_owner: ProjectOwnerInputSchema,
 	company_url: z.string().optional().describe('The company website.'),
-	visibility: z.enum(['PRIVATE', 'PUBLIC', 'CUSTOMER']).optional(),
+	visibility: z.enum(['EVERYONE', 'MEMBERS']).optional(),
 	description: z.string().optional(),
 	fields: z.array(ProjectCustomFieldInputSchema).optional(),
 });
@@ -824,7 +862,7 @@ const CompaniesUpdateInputSchema = CompaniesWriteInputSchema.partial().extend({
 	company_id: z.number().int().positive(),
 });
 
-export type CompaniesUpdateInput = z.input<typeof CompaniesWriteInputSchema>;
+export type CompaniesUpdateInput = z.input<typeof CompaniesUpdateInputSchema>;
 
 const CompaniesUpdateResponseSchema = z.object({ company: CompanySchema });
 export type CompaniesUpdateResponse = z.infer<

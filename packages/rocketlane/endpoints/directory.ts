@@ -90,7 +90,10 @@ function companyBody(input: CompanyWriteBody): Record<string, unknown> {
 		companyUrl: input.company_url,
 		visibility: input.visibility,
 		description: input.description,
-		fields: input.fields,
+		fields: input.fields?.map((field) => ({
+			fieldId: field.fieldId,
+			fieldValue: field.value,
+		})),
 	};
 }
 
