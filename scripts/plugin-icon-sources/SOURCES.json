@@ -105,6 +105,10 @@
     "from": "https://svgl.app/library/cursor_light.svg",
     "note": "stylesheet (one fill rule) inlined"
   },
+  "databox": {
+    "from": "https://media.brand.dev/637dcc37-8b39-462e-9981-097c284ad89f.svg",
+    "note": "found with the context.dev Brand API for databox.com"
+  },
   "datadog": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/datadog.svg"
   },
@@ -181,6 +185,10 @@
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
   },
+  "gong": {
+    "from": "https://media.brand.dev/1eded259-b947-4ae6-95ad-1498fd75e2fb.svg",
+    "note": "found with the context.dev Brand API for gong.io"
+  },
   "googleaddressvalidation": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_address_validation.svg"
   },
@@ -217,6 +225,10 @@
   },
   "hackernews": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hackernews.svg"
+  },
+  "happyscribe": {
+    "from": "https://media.brand.dev/1ff45b54-45f6-4bbd-ad8d-a456dc06b9a8.svg",
+    "note": "found with the context.dev Brand API for happyscribe.com"
   },
   "hashnode": {
     "from": "https://svgl.app/library/hashnode.svg"
@@ -269,6 +281,10 @@
   },
   "onedrive": {
     "from": "https://svgl.app/library/microsoft-onedrive.svg"
+  },
+  "opengraph": {
+    "from": "https://media.brand.dev/50603ee1-07ce-4b63-bdf9-db93b9861bbb.svg",
+    "note": "found with the context.dev Brand API for opengraph.io"
   },
   "opensea": {
     "from": "https://media.brand.dev/82aa8325-542b-44b6-b392-6f8e52afdf0e.svg",

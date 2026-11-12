@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "ClassMarker plugin"
+sidebarTitle: "Overview"
 description: "Online exam platform. Manage tests, users, groups, question banks, categories, and access lists, and read results, certificates, and webhooks."
 ---
 
@@ -17,16 +18,20 @@ Use **ClassMarker** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/classmarker
+npm install corsair @corsair-dev/classmarker better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/classmarker
+yarn add corsair @corsair-dev/classmarker better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/classmarker
+pnpm install corsair @corsair-dev/classmarker better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/classmarker
+bun add corsair @corsair-dev/classmarker better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
