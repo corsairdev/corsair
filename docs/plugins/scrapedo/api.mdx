@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Scrape.do: every `scrapedo.api.*` operation with input and output types."
+title: "Scrape.do API reference"
+sidebarTitle: "API"
+description: "API reference for the Scrape.do plugin in Corsair: every `scrapedo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `scrapedo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -125,7 +124,7 @@ await corsair.scrapedo.api.jobs.get({ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d2
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | The `job_id` from `jobs.start`. |
 
-A job is `queued`, then `success`, `error` or `canceled`. Each task is `pending` before the pool picks it up, `rotating` while it runs, then `success` or `error`. Queueing latency is the provider's: a one-URL job can finish in about a second or wait over a minute when its pool is busy, so poll with a real deadline rather than a fixed attempt count.
+A job can be `queuing`, `queued`, `pending` or `rotating` before it reaches `success`, `error` or `canceled`; keep polling until it reaches one of those three. Each task is `pending` before the pool picks it up, `rotating` while it runs, then `success` or `error`. Queueing latency is the provider's: a one-URL job can finish in about a second or wait over a minute when its pool is busy, so poll with a real deadline rather than a fixed attempt count.
 
 
 
@@ -134,7 +133,7 @@ A job is `queued`, then `success`, `error` or `canceled`. Each task is `pending`
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `job_id` | `string` | Yes | — |
-| `status` | `string` | Yes | queued while waiting, then success, error or canceled. Poll until this leaves queued. |
+| `status` | `string` | Yes | Poll until the status is success, error or canceled; queuing, queued, pending and rotating all mean the job is still running. |
 | `tasks` | `object[]` | Yes | — |
 | `job` | `object` | Yes | The job as sent, with its timing and tasks. |
 
@@ -421,7 +420,7 @@ Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `netw
   url?: string | null,
   status?: number | null,
   method?: string | null,
-  headers?: Record<string, unknown> | null,
+  headers?: Record<string, any> | null,
   body?: string | null
 }[]
 ```

@@ -184,7 +184,8 @@ const scrapeDoEndpointMeta = {
 				op: 'jobs.get',
 				idArg: 'jobId',
 				statusPath: 'status',
-				// Captured live: queued -> success | error | canceled.
+				// The docs list queuing, queued, pending and rotating as running states;
+				// these are the terminal ones.
 				done: ['success'],
 				failed: ['error', 'canceled'],
 			},

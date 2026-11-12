@@ -508,8 +508,13 @@ const JobTaskSchema = z
 const JobSchema = z
 	.object({
 		job_id: z.string(),
-		// Live values: queued, success, error, canceled.
-		status: z.string().describe('queued, success, error or canceled.'),
+		// The docs list queuing, queued, pending and rotating before the terminal
+		// success, error and canceled.
+		status: z
+			.string()
+			.describe(
+				'queuing, queued, pending or rotating while the job runs, then success, error or canceled.',
+			),
 		start_time: z.string().nullish(),
 		end_time: z.string().nullish(),
 		canceled: z.boolean().nullish(),
@@ -522,7 +527,7 @@ const JobsGetResponseSchema = z.object({
 	status: z
 		.string()
 		.describe(
-			'queued while waiting, then success, error or canceled. Poll until this leaves queued.',
+			'Poll until the status is success, error or canceled; queuing, queued, pending and rotating all mean the job is still running.',
 		),
 	tasks: z.array(JobTaskSchema),
 	job: JobSchema.describe('The job as sent, with its timing and tasks.'),

@@ -11,9 +11,10 @@ import {
  * JSON in PascalCase. Every field is renamed once here rather than through a
  * `.transform()`, so the generated reference shows the names callers receive.
  *
- * The job status vocabulary was captured live rather than read from the docs,
- * which do not list it: a job is `queued`, then `success`, `error` or
- * `canceled`; a task is `rotating`, then `success` or `error`.
+ * Job statuses, from https://scrape.do/documentation/async-api/get-job/:
+ * `queuing`, `queued`, `pending` and `rotating` while the job runs, then
+ * `success`, `error` or `canceled`. A task is `pending`, then `rotating`, then
+ * `success` or `error`.
  */
 
 // unknown: the async answers are PascalCase objects whose fields are renamed
