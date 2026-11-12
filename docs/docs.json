@@ -2540,6 +2540,14 @@
                 ]
               },
               {
+                "group": "Kadoa",
+                "pages": [
+                  "plugins/kadoa/overview",
+                  "plugins/kadoa/api",
+                  "plugins/kadoa/database"
+                ]
+              },
+              {
                 "group": "Kaggle",
                 "pages": [
                   "plugins/kaggle/overview",
