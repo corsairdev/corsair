@@ -9,6 +9,8 @@ import {
 	folderContent,
 	folderId,
 	invalidToken,
+	liveDiffHistory,
+	liveTask,
 	notification,
 	notificationHtml,
 	notificationsLastPage,
@@ -555,5 +557,29 @@ describe('read-back values the input schemas do not list', () => {
 		const result = await invoke(Tasks.pages, { id: 'portal-1' });
 
 		expect(result).toEqual([page]);
+	});
+});
+
+describe('responses captured from the live API', () => {
+	it('reads a monitor whose location is an Azure region name', async () => {
+		respond(fetchMock, liveTask);
+
+		const result = await invoke(Tasks.get, { id: liveTask.id });
+
+		expect(result).toEqual(liveTask);
+	});
+
+	it('reads diff entries as the short o and t fields the API answers', async () => {
+		respond(fetchMock, liveDiffHistory);
+
+		const result = await invoke(Data.list, {
+			id: liveTask.id,
+			returnDiff: true,
+		});
+
+		expect(result).toEqual(liveDiffHistory);
+		expect((result as typeof liveDiffHistory).data[0]?.diff[0]?.t).toBe(
+			'Example Domain',
+		);
 	});
 });

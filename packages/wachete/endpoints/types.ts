@@ -152,9 +152,15 @@ const UrlFilterSchema = z
  */
 const OutputEnumSchema = z.union([z.string(), z.number()]);
 
-/** `DiffElement`: one diff operation and its text. */
+/**
+ * One diff operation and its text. The OpenAPI document names the fields
+ * `operation` and `text` (`DiffElement`), but the live API answers `o` and `t`
+ * (checked 2026-11-12), so both spellings are read.
+ */
 const DiffElementSchema = z
 	.object({
+		o: z.number().nullish().describe('The diff operation.'),
+		t: z.string().nullish().describe('The text it applies to.'),
 		operation: z.number().nullish(),
 		text: z.string().nullish(),
 	})
@@ -373,7 +379,9 @@ const TasksSearchInputSchema = z.object({
 	query: z
 		.string()
 		.min(1)
-		.describe('A search term matched against monitor names.'),
+		.describe(
+			'A word matched against monitor names and URLs. Whole words only: a hyphenated name is found by one of its words, not the full name.',
+		),
 });
 
 export type TasksSearchInput = z.infer<typeof TasksSearchInputSchema>;

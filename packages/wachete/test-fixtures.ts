@@ -179,3 +179,59 @@ export const missingAuth = {
 export const invalidToken = { message: 'Invalid token', code: 'Unauthorized' };
 
 export const notFound = { message: 'Task not found', code: 'NotFound' };
+
+/**
+ * Captured from the live API on 2026-11-12 (ids replaced): `location` is an
+ * Azure region name, the root `folderId` is an empty string, and `data` has no
+ * `diff` key when no diff was asked for.
+ */
+export const liveTask = {
+	id: '0b6f2a54-0000-4000-8000-000000000001',
+	name: 'corsair-plugin-test',
+	method: null,
+	url: 'https://example.com/',
+	headers: null,
+	body: null,
+	xPath: '/',
+	excludeXPath: null,
+	regex: null,
+	alerts: [
+		{ type: 'Error', value: null },
+		{ type: 'NotEq', value: null },
+	],
+	recurrenceInSeconds: 86_400,
+	folderId: '',
+	data: {
+		lastCheckTimestamp: '2026-11-12T05:28:18.7582158Z',
+		valueChangedTimestamp: '2026-11-12T05:28:18.5121371Z',
+		raw: 'Processing...',
+		error: null,
+	},
+	notificationEndpoints: null,
+	proxies: null,
+	location: 'northeurope',
+	dynamicContent: false,
+	scrollPage: false,
+	ignoreInvalidPages: false,
+	collectRawHtml: false,
+	jobType: 'SinglePage',
+	crawlingDepth: 0,
+	crawlBinaryContent: false,
+	urlFilter: null,
+	crawlPagesFromAllDomains: false,
+	note: null,
+};
+
+/** `data.list` with `returnDiff`, captured live: diff entries are `{ o, t }`. */
+export const liveDiffHistory = {
+	data: [
+		{
+			lastCheckTimestamp: '2026-11-12T05:28:18.8216058Z',
+			valueChangedTimestamp: '2026-11-12T05:28:18.8216058Z',
+			raw: null,
+			error: null,
+			diff: [{ o: 0, t: 'Example Domain' }],
+		},
+	],
+	continuationToken: null,
+};
