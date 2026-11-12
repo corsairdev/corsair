@@ -74,9 +74,9 @@ await corsair.raisely.api.campaigns.get({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaa
     photoUrl?: string | null
   } | null,
   urls?: string[] | null,
-  config?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  config?: Record<string, any> | null,
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -164,9 +164,9 @@ await corsair.raisely.api.campaigns.list({ status: 'ACTIVE', limit: 100, sort: '
     photoUrl?: string | null
   } | null,
   urls?: string[] | null,
-  config?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  config?: Record<string, any> | null,
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -396,8 +396,8 @@ The record is sent under `data`; amounts are integers in the smallest currency u
   }[] | null,
   itemTypes?: string[] | null,
   context?: Record<string, string> | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -512,8 +512,8 @@ await corsair.raisely.api.donations.get({ donation_uuid: 'bbbbbbbb-bbbb-bbbb-bbb
   }[] | null,
   itemTypes?: string[] | null,
   context?: Record<string, string> | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -646,8 +646,8 @@ await corsair.raisely.api.donations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aa
   }[] | null,
   itemTypes?: string[] | null,
   context?: Record<string, string> | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -771,8 +771,8 @@ await corsair.raisely.api.profiles.get({ profile_path: 'jordan-lee' });
     photoUrl?: string | null
   } | null,
   tags?: string[] | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -894,8 +894,8 @@ Raisely requires `campaign` on this route, so the schema makes it mandatory.
     photoUrl?: string | null
   } | null,
   tags?: string[] | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1027,8 +1027,8 @@ The body is sent under `data`, and the path identifies the record rather than th
     photoUrl?: string | null
   } | null,
   tags?: string[] | null,
-  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
-  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+  public?: Record<string, any> | null,
+  private?: Record<string, any> | null
 }
 ```
 </Accordion>
