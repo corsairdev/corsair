@@ -160,17 +160,16 @@ export const AUTO_EMOJIFY = {
 };
 
 // The quote and animate samples are not published; the docs describe a URL.
-export const QUOTE_IMAGE = {
-	result: true,
-	message: 'OK',
-	url: 'https://cdn.ritekit.com/quote/abc123.jpg',
-};
+// Live 11-12: images.quote and images.animate answer with the image itself
+// (`image/png`, `image/gif`), not the JSON URL the docs describe. These are the
+// first bytes of each.
+export const QUOTE_IMAGE = new Uint8Array([
+	0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+]);
 
-export const ANIMATED_IMAGE = {
-	result: true,
-	message: 'OK',
-	url: 'https://cdn.ritekit.com/animate/def456.gif',
-};
+export const ANIMATED_IMAGE = new Uint8Array([
+	0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x80, 0x02, 0x40, 0x01,
+]);
 
 export const TOP_IMAGE = {
 	result: true,

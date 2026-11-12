@@ -36,7 +36,7 @@ import {
 	SHORT_LINK,
 	TOP_IMAGE,
 } from './test-fixtures';
-import { invoke, lastRequest, respond } from './test-support';
+import { invoke, lastRequest, respond, respondBytes } from './test-support';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -301,7 +301,7 @@ describe('emojis', () => {
 
 describe('images', () => {
 	it('renders a quote with the style parameters', async () => {
-		respond(fetchMock, QUOTE_IMAGE);
+		respondBytes(fetchMock, QUOTE_IMAGE, 'image/png');
 
 		const result = (await invoke(Images.quote, {
 			text: 'If you love life, do not waste time',
@@ -325,7 +325,31 @@ describe('images', () => {
 		});
 		// The # of a color survives encoding.
 		expect(request.query.textColor).toBe('#000000');
-		expect(result.url).toBe('https://cdn.ritekit.com/quote/abc123.jpg');
+		expect(request.query.client_id).toBe('ritekit-test-key');
+		expect(result).toMatchObject({
+			url: `data:image/png;base64,${Buffer.from(QUOTE_IMAGE).toString('base64')}`,
+			contentType: 'image/png',
+			bytes: QUOTE_IMAGE.length,
+		});
+	});
+
+	it('reports a refused image call as a RiteKit error without the Client ID', async () => {
+		respond(
+			fetchMock,
+			{ result: false, message: 'Verification failed', code: 401 },
+			401,
+		);
+
+		const error = await invoke(Images.quote, {
+			text: 'hello',
+			author: 'someone',
+		}).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(RiteKitAPIError);
+		expect((error as RiteKitAPIError).status).toBe(401);
+		expect((error as RiteKitAPIError).isAuthError).toBe(true);
+		expect((error as Error).message).toContain('Verification failed');
+		expect((error as Error).message).not.toContain('ritekit-test-key');
 	});
 
 	it('rejects a quote with no author', async () => {
@@ -333,7 +357,7 @@ describe('images', () => {
 	});
 
 	it('animates a still image', async () => {
-		respond(fetchMock, ANIMATED_IMAGE);
+		respondBytes(fetchMock, ANIMATED_IMAGE, 'image/gif');
 
 		const result = (await invoke(Images.animate, {
 			url: 'https://jpeg.org/images/jpeg-home.jpg',
@@ -343,7 +367,7 @@ describe('images', () => {
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/images/animate');
 		expect(request.query.type).toBe('glint');
-		expect(result.url).toContain('.gif');
+		expect(result.url).toMatch(/^data:image\/gif;base64,R0lGODlh/);
 	});
 
 	it('rejects an animation type RiteKit does not document', async () => {

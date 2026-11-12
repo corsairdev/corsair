@@ -319,13 +319,19 @@ const ImagesQuoteInputSchema = z.object({
 export type ImagesQuoteInput = z.infer<typeof ImagesQuoteInputSchema>;
 
 /**
- * The sample for this route is not published; the docs say it returns "URL of an
- * image created from text according to given style parameters", so `url` is the
- * documented field and the rest of the envelope is the usual one.
+ * The docs say these routes return "URL of an image"; live (11-12) they answer
+ * with the image bytes (`image/png`, `image/gif`), as RiteKit's Python client
+ * expects. The client returns them as a data URL.
  */
-const ImagesQuoteResponseSchema = EnvelopeSchema.extend({
-	url: z.string().nullish().describe('The rendered image.'),
+const RenderedImageSchema = z.object({
+	url: z.string().describe('The image as a data URL (data:<type>;base64,...).'),
+	contentType: z.string().describe('Such as image/png or image/gif.'),
+	bytes: z.number().describe('Size of the image in bytes.'),
 });
+
+const ImagesQuoteResponseSchema = RenderedImageSchema.describe(
+	'The rendered quote, a PNG.',
+);
 
 export type ImagesQuoteResponse = z.infer<typeof ImagesQuoteResponseSchema>;
 
@@ -343,10 +349,8 @@ const ImagesAnimateInputSchema = z.object({
 
 export type ImagesAnimateInput = z.infer<typeof ImagesAnimateInputSchema>;
 
-/** The sample is not published; the docs say it returns "URL of an animated GIF". */
-const ImagesAnimateResponseSchema = EnvelopeSchema.extend({
-	url: z.string().nullish().describe('The animated GIF.'),
-});
+const ImagesAnimateResponseSchema =
+	RenderedImageSchema.describe('The animated GIF.');
 
 export type ImagesAnimateResponse = z.infer<typeof ImagesAnimateResponseSchema>;
 

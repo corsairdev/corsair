@@ -19,6 +19,7 @@ export const quote: RiteKitEndpoints['imagesQuote'] = (ctx, input) =>
 			path: '/v2/image/quote',
 			query: params,
 			replayable: true,
+			binary: true,
 		}),
 		{
 			log: (parsed, result) => ({
@@ -43,6 +44,7 @@ export const animate: RiteKitEndpoints['imagesAnimate'] = (ctx, input) =>
 			path: '/v1/images/animate',
 			query: { url, type },
 			replayable: true,
+			binary: true,
 		}),
 		{
 			log: (_, result) => ({

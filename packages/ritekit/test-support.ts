@@ -48,6 +48,20 @@ export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
 	};
 }
 
+/** Queues a binary answer, the way RiteKit sends a rendered image. */
+export function respondBytes(
+	fetchMock: jest.SpyInstance,
+	bytes: Uint8Array,
+	contentType: string,
+) {
+	fetchMock.mockResolvedValueOnce(
+		new Response(bytes, {
+			status: 200,
+			headers: { 'Content-Type': contentType },
+		}),
+	);
+}
+
 // unknown: response bodies are arbitrary JSON.
 export function respond(
 	fetchMock: jest.SpyInstance,

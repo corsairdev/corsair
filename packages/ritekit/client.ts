@@ -157,7 +157,90 @@ export type RiteKitRequest = {
 	accept?: string;
 	/** Overrides corsair/http's 20 s default, for a route RiteKit answers slowly. */
 	timeoutMs?: number;
+	/**
+	 * The route answers with the image itself rather than JSON. corsair/http reads
+	 * a non-JSON body as text, which corrupts the bytes, so these calls are
+	 * fetched here and returned as a data URL.
+	 */
+	binary?: boolean;
 };
+
+/** What a binary route resolves to: the image as a data URL. */
+export type RiteKitImage = {
+	url: string;
+	contentType: string;
+	bytes: number;
+};
+
+const RITEKIT_IMAGE_TIMEOUT_MS = 60_000;
+
+/**
+ * Fetches a route that answers with an image. A refusal still arrives as JSON
+ * and goes through the same error mapping as every other call; the URL, which
+ * carries the Client ID, is never put in an error.
+ */
+async function fetchRiteKitImage(
+	apiKey: string,
+	path: string,
+	query: RiteKitQuery | undefined,
+	replayable: boolean,
+): Promise<RiteKitImage> {
+	const url = new URL(path, RITEKIT_API_BASE);
+	for (const [name, value] of Object.entries(query ?? {})) {
+		if (value !== undefined && name !== 'client_id') {
+			url.searchParams.set(name, String(value));
+		}
+	}
+	url.searchParams.set('client_id', apiKey);
+
+	let response: Response;
+	try {
+		response = await fetch(url.toString(), {
+			method: 'GET',
+			headers: { Accept: 'image/*, application/json' },
+			signal: AbortSignal.timeout(RITEKIT_IMAGE_TIMEOUT_MS),
+		});
+	} catch (error) {
+		const message =
+			error instanceof Error ? error.message : 'Unknown RiteKit error';
+		throw new RiteKitAPIError(message, { method: 'GET', replayable });
+	}
+
+	const contentType = response.headers.get('content-type') ?? '';
+	if (!response.ok || !contentType.startsWith('image/')) {
+		// unknown: a refusal body is provider JSON, or text when it is not JSON.
+		let body: unknown;
+		try {
+			body = contentType.includes('json')
+				? await response.json()
+				: await response.text();
+		} catch {
+			body = undefined;
+		}
+		const fields = refusal(body);
+		const fallback = response.ok
+			? `RiteKit answered ${contentType || 'no content type'} where an image was expected`
+			: response.statusText || 'Request failed';
+		throw new RiteKitAPIError(
+			describeRiteKitError(response.status, body, fallback),
+			{
+				status: response.status,
+				code: fields.code,
+				info: fields.info,
+				method: 'GET',
+				replayable,
+			},
+		);
+	}
+
+	const bytes = Buffer.from(await response.arrayBuffer());
+	const type = contentType.split(';')[0]?.trim() || 'image/png';
+	return {
+		url: `data:${type};base64,${bytes.toString('base64')}`,
+		contentType: type,
+		bytes: bytes.length,
+	};
+}
 
 /**
  * RiteKit allows **100 calls per second** across all endpoints. It documents no
@@ -192,8 +275,19 @@ function configWith(apiKey: string): OpenAPIConfig {
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeRiteKitRequest(
 	apiKey: string,
-	{ method, path, query, body, replayable, accept, timeoutMs }: RiteKitRequest,
+	{
+		method,
+		path,
+		query,
+		body,
+		replayable,
+		accept,
+		timeoutMs,
+		binary,
+	}: RiteKitRequest,
 ): Promise<unknown> {
+	if (binary) return fetchRiteKitImage(apiKey, path, query, replayable);
+
 	const config = configWith(apiKey);
 	if (accept) config.HEADERS = { Accept: accept };
 	if (timeoutMs) config.TIMEOUT = timeoutMs;
