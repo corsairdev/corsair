@@ -3161,6 +3161,14 @@
                 ]
               },
               {
+                "group": "RealPhoneValidation",
+                "pages": [
+                  "plugins/realphonevalidation/overview",
+                  "plugins/realphonevalidation/api",
+                  "plugins/realphonevalidation/database"
+                ]
+              },
+              {
                 "group": "Recall.ai",
                 "pages": [
                   "plugins/recallai/overview",

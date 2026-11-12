@@ -375,6 +375,7 @@ export const BaseProviders = [
 	'qdrant',
 	'quaderno',
 	'razorpay',
+	'realphonevalidation',
 	'reamaze',
 	'route4me',
 	'recallai',
@@ -872,6 +873,7 @@ export const ProviderDisplayNames = {
 	quaderno: 'Quaderno',
 	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
+	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
 	redcircle: 'RedCircle API',
@@ -1374,6 +1376,7 @@ export type AllProviders =
 	| 'qdrant'
 	| 'quaderno'
 	| 'razorpay'
+	| 'realphonevalidation'
 	| 'reamaze'
 	| 'route4me'
 	| 'recallai'
