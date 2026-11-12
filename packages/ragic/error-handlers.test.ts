@@ -70,8 +70,8 @@ describe('Ragic error handlers', () => {
 		}
 	});
 
-	it('treats 104, 201 and 202 as validation failures', async () => {
-		for (const code of [104, 201, 202]) {
+	it('treats 104, 201, 202 and a locked record (402) as validation failures', async () => {
+		for (const code of [104, 201, 202, 402]) {
 			expect(await matches(apiError({ code }))).toBe('VALIDATION_ERROR');
 		}
 	});

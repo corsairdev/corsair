@@ -88,11 +88,15 @@ export class RagicAPIError extends Error {
 	}
 
 	/**
-	 * A request Ragic would not process: 201 bad parameters, 202 could not execute,
-	 * 104 a POST to a custom form, or a `400`. The caller has to change something.
+	 * A request Ragic would not process: 201 bad parameters, 202 could not execute
+	 * (also a failed field rule), 104 a POST to a custom form, 402 a locked record,
+	 * or a `400`. The caller has to change something.
 	 */
 	get isValidationError(): boolean {
 		return (
+			// 402 in the body: the record is locked (seen live on an update with
+			// checkLock); it has to be unlocked first.
+			this.code === 402 ||
 			this.code === 104 ||
 			this.code === 201 ||
 			this.code === 202 ||
