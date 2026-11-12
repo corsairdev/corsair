@@ -4049,6 +4049,14 @@
                 ]
               },
               {
+                "group": "WATI",
+                "pages": [
+                  "plugins/wati/overview",
+                  "plugins/wati/api",
+                  "plugins/wati/database"
+                ]
+              },
+              {
                 "group": "Webflow",
                 "pages": [
                   "plugins/webflow/overview",

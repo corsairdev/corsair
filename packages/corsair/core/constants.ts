@@ -485,6 +485,7 @@ export const BaseProviders = [
 	'waboxapp',
 	'wachete',
 	'wakatime',
+	'wati',
 	'webflow',
 	'webscrapingai',
 	'webvizio',
@@ -989,6 +990,7 @@ export const ProviderDisplayNames = {
 	waboxapp: 'Waboxapp',
 	wachete: 'Wachete',
 	wakatime: 'WakaTime',
+	wati: 'Wati',
 	webflow: 'Webflow',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
@@ -1500,6 +1502,7 @@ export type AllProviders =
 	| 'waboxapp'
 	| 'wachete'
 	| 'wakatime'
+	| 'wati'
 	| 'webflow'
 	| 'webscrapingai'
 	| 'webvizio'
