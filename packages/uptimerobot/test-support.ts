@@ -16,9 +16,17 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 }
 
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can reach
+	// the real API. mockReset drops the implementation, so it is set again.
+	const throwUnmocked = () => {
+		throw new Error('unmocked fetch in a unit test');
+	};
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(throwUnmocked);
 	afterEach(() => {
 		fetchMock.mockReset();
+		fetchMock.mockImplementation(throwUnmocked);
 	});
 	return fetchMock;
 }
