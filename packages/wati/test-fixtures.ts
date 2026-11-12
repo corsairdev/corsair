@@ -139,12 +139,13 @@ export const channel = {
 
 export const channelList = { channels: [channel] };
 
+/** As the live trial answered it (snake_case, unlike the reference). */
 export const credits = {
 	credit: 12.5,
-	welcomeCredit: 0,
-	remainingFreeConversationsCount: 1000,
-	currency: 'USD',
-	autoChargeEnabled: false,
+	currency: 'INR',
+	welcome_credit: 0,
+	remaining_free_conversations_count: 1000,
+	auto_charge_enabled: false,
 };
 
 export const broadcast = {
@@ -223,21 +224,23 @@ export const segmentEvaluation = {
 
 export const webhook = {
 	id: 'wh-1',
-	phoneNumber: '1234567890',
+	phone_number: '1234567890',
 	url: 'https://acme.example/hooks/wati',
 	status: 'Enabled',
-	// The V3 reference names this field `eventTypes`.
-	eventTypes: ['message', 'contact'],
+	// V3 responses use `event_types`, per WATI's webhook migration guide.
+	event_types: ['message', 'contact'],
 	created: '2024-01-01T00:00:00Z',
 };
 
 /** The V3 list answers a bare array, with no envelope or paging. */
 export const webhookList = [webhook];
 
+/** As the live trial answered a contact delete. */
 export const deleted = {
-	contactId: '507f1f77bcf86cd799439011',
+	success: true,
 	deleted: true,
-	cleanupCompleted: true,
+	contact_id: '507f1f77bcf86cd799439011',
+	cleanup_completed: true,
 };
 
 export const webhookDeleted = { id: 'wh-1' };
@@ -251,6 +254,21 @@ export const missingToken = {
 	message:
 		"No access token was provided. Send your API key as 'Authorization: Bearer <key>'.",
 	timestamp: '2026-11-11T05:42:55.3689141Z',
+};
+
+/** What the live API answered for a key from another region. */
+export const invalidApiKey = {
+	error: 'invalid_api_key',
+	code: 401,
+	message: 'The API key is invalid, has been revoked, or has expired.',
+	timestamp: '2026-11-12T09:14:52.1054585Z',
+};
+
+/** A live 400: the campaign list without its required dates. */
+export const datesRequired = {
+	code: 400,
+	message: 'Date from is required. Date to is required',
+	timestamp: '2026-11-12T09:16:28.9979137Z',
 };
 
 export const invalidToken = {

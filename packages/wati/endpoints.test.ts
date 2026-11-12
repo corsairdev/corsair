@@ -17,6 +17,7 @@ import {
 	contactList,
 	conversationList,
 	credits,
+	datesRequired,
 	deleted,
 	invalidToken,
 	messageList,
@@ -444,10 +445,14 @@ describe('workspace', () => {
 	it('reads the credit balance', async () => {
 		respond(fetchMock, credits);
 
-		const result = (await invoke(Workspace.credits, {})) as { credit?: number };
+		const result = (await invoke(Workspace.credits, {})) as {
+			credit?: number;
+			remaining_free_conversations_count?: number;
+		};
 
 		expect(result).toEqual(credits);
 		expect(result.credit).toBe(12.5);
+		expect(result.remaining_free_conversations_count).toBe(1000);
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'wati.account.credits',
@@ -460,11 +465,35 @@ describe('workspace', () => {
 	it('lists campaigns', async () => {
 		respond(fetchMock, broadcastList);
 
-		await invoke(Workspace.broadcasts, { page_number: 1, channel: 'Support' });
+		await invoke(Workspace.broadcasts, {
+			page_number: 1,
+			channel: 'Support',
+			date_from: '2026-11-01',
+			date_to: '2026-11-12',
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/api/ext/v3/broadcasts');
-		expect(request.query.channel).toBe('Support');
+		expect(request.query).toMatchObject({
+			channel: 'Support',
+			date_from: '2026-11-01',
+			date_to: '2026-11-12',
+		});
+	});
+
+	it('requires both dates on the campaign list, which the live API refuses without', async () => {
+		await expect(
+			invoke(Workspace.broadcasts, { page_number: 1 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('surfaces the live 400 for missing dates as a WatiAPIError', async () => {
+		respond(fetchMock, datesRequired, 400);
+
+		await expect(
+			invoke(Workspace.broadcasts, { date_from: 'x', date_to: 'y' }),
+		).rejects.toThrow('WATI 400: Date from is required');
 	});
 
 	it('reads one campaign', async () => {

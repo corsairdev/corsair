@@ -141,10 +141,10 @@ const DeleteResponseSchema = z
 		success: z.boolean().nullish(),
 		/** The deleted webhook's id. */
 		id: z.string().nullish(),
-		/** The deleted contact's id. */
-		contactId: z.string().nullish(),
+		/** The deleted contact's id (snake_case live, camelCase in the reference). */
+		contact_id: z.string().nullish(),
 		deleted: z.boolean().nullish(),
-		cleanupCompleted: z.boolean().nullish(),
+		cleanup_completed: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -466,10 +466,11 @@ export type CreditsInput = z.infer<typeof CreditsInputSchema>;
 const CreditsResponseSchema = z
 	.object({
 		credit: z.number().nullish().describe('The credit balance.'),
-		welcomeCredit: z.number().nullish(),
-		remainingFreeConversationsCount: z.number().nullish(),
+		// The live API answers these in snake_case; the reference shows camelCase.
+		welcome_credit: z.number().nullish(),
+		remaining_free_conversations_count: z.number().nullish(),
 		currency: z.string().nullish(),
-		autoChargeEnabled: z.boolean().nullish(),
+		auto_charge_enabled: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -503,6 +504,16 @@ export type WatiBroadcast = z.infer<typeof BroadcastSchema>;
 
 const BroadcastsListInputSchema = z.object({
 	...PageSchema,
+	// The live API refuses the list without both dates, though the reference
+	// does not mark them.
+	date_from: z
+		.string()
+		.min(1)
+		.describe('Campaigns created from this date, e.g. 2026-11-01.'),
+	date_to: z
+		.string()
+		.min(1)
+		.describe('Campaigns created up to this date, e.g. 2026-11-30.'),
 	channel: z
 		.string()
 		.min(1)
@@ -685,8 +696,10 @@ const WebhookSchema = z
 		url: z.string().nullish(),
 		name: z.string().nullish(),
 		/** The WhatsApp number the subscription belongs to. */
-		phoneNumber: z.string().nullish(),
-		// The V3 reference names this `eventTypes` (camelCase).
+		phone_number: z.string().nullish(),
+		// WATI's webhook migration guide says V3 responses use `event_types`; the
+		// OpenAPI page shows `eventTypes`, so both are read.
+		event_types: z.array(z.string()).nullish(),
 		eventTypes: z.array(z.string()).nullish(),
 		status: z.string().nullish().describe('Enabled, Disabled or Defective.'),
 		created: z.string().nullish(),

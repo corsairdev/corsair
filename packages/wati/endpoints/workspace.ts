@@ -52,10 +52,10 @@ export const broadcasts: WatiEndpoints['broadcastsList'] = (ctx, input) =>
 			output: Outputs.broadcastsList,
 		},
 		input,
-		({ page_number, page_size, channel }) => ({
+		({ page_number, page_size, channel, date_from, date_to }) => ({
 			method: 'GET',
 			path: '/broadcasts',
-			query: { page_number, page_size, channel },
+			query: { page_number, page_size, channel, date_from, date_to },
 		}),
 		{
 			log: (_, result) => ({
