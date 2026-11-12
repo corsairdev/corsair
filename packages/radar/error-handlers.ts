@@ -28,7 +28,10 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => statusOf(error) === 429,
+		match: (error: Error) =>
+			error instanceof RadarAPIError &&
+			error.status === 429 &&
+			error.replayable,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:

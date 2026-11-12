@@ -181,12 +181,11 @@ const radarEndpointMeta = {
 	'search.places': {
 		riskLevel: 'read',
 		description:
-			'Search the places database near a point, filtered by name, chain, category or country',
+			'Search the places database near a point, filtered by chain or category within a radius',
 	},
 	'search.geofences': {
 		riskLevel: 'read',
-		description:
-			'Search geofences near a point, filtered by tag or external id',
+		description: 'Search geofences near a point, filtered by tag',
 	},
 	'users.list': {
 		riskLevel: 'read',

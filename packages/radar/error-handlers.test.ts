@@ -74,18 +74,28 @@ describe('rate limit handling', () => {
 		const result = await decide(
 			handlers,
 			'RATE_LIMIT_ERROR',
-			radarError({ status: 429 }),
+			radarError({ status: 429, replayable: true }),
 		);
 
 		expect(result?.maxRetries).toBe(3);
 		expect(result?.retryStrategy).toBe('exponential_backoff');
 	});
 
+	it('does not claim non-replayable rate-limited writes', async () => {
+		const error = radarError({
+			status: 429,
+			replayable: false,
+			method: 'POST',
+		});
+		expect(firstMatch(handlers, error)).toBe('DEFAULT');
+		expect((await decide(handlers, 'DEFAULT', error))?.maxRetries).toBe(0);
+	});
+
 	it('passes a Retry-After through when one arrives', async () => {
 		const result = await decide(
 			handlers,
 			'RATE_LIMIT_ERROR',
-			radarError({ status: 429, retryAfter: 2_000 }),
+			radarError({ status: 429, retryAfter: 2_000, replayable: true }),
 		);
 
 		expect(result?.headersRetryAfterMs).toBe(2_000);

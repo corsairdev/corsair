@@ -117,6 +117,27 @@ describe('retry behaviour', () => {
 		}
 	});
 
+	it('does not replay a rate-limited track write', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'radar-key' });
+		try {
+			respond(fetchMock, { meta: { code: 429, message: 'Too many' } }, 429);
+			await expect(
+				withFakeTimers(
+					corsair.radar.api.track.update({
+						device_id: 'device-1',
+						latitude: 40.7,
+						longitude: -73.9,
+						accuracy: 10,
+					}),
+				),
+			).rejects.toThrow(/Radar 429/);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('retries a read that failed with a 5xx', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: 'radar-key' });

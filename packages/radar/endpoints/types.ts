@@ -203,24 +203,23 @@ export type GeocodeReverseResponse = z.infer<
 
 // ── search ────────────────────────────────────────────────────────────────
 
-const SearchPlacesInputSchema = z.object({
-	near: z
-		.string()
-		.min(1)
-		.describe(
-			'`latitude,longitude` for the search centre, or a place id prefixed with `placeId:`.',
-		),
-	query: z.string().optional().describe('A name to match.'),
-	chains: z.array(z.string()).optional(),
-	categories: z
-		.array(z.string())
-		.optional()
-		.describe('Place categories, such as `restaurant` or `coffee-shop`.'),
-	groups: z.array(z.string()).optional(),
-	limit: z.number().int().min(1).max(100).optional(),
-	country: z.array(z.string()).optional(),
-	lang: z.string().optional(),
-});
+const SearchPlacesInputSchema = z
+	.strictObject({
+		near: z
+			.string()
+			.min(1)
+			.describe('`latitude,longitude` for the search centre.'),
+		chains: z.array(z.string().min(1)).min(1).optional(),
+		categories: z.array(z.string().min(1)).min(1).optional(),
+		radius: z.number().min(1).max(10000).optional(),
+		limit: z.number().int().min(1).max(100).optional(),
+	})
+	.refine(
+		(value) => value.chains !== undefined || value.categories !== undefined,
+		{
+			message: 'A place search needs `chains` or `categories`.',
+		},
+	);
 
 export type SearchPlacesInput = z.input<typeof SearchPlacesInputSchema>;
 
@@ -230,7 +229,15 @@ const PlaceSchema = z
 		name: z.string().nullish(),
 		location: GeometrySchema.nullish(),
 		categories: z.array(z.string()).nullish(),
-		chain: z.record(z.string(), z.string()).nullish(),
+		chain: z
+			.object({
+				name: z.string().nullish(),
+				slug: z.string().nullish(),
+				externalId: z.string().nullish(),
+				metadata: MetadataSchema.nullish(),
+			})
+			.loose()
+			.nullish(),
 		address: AddressSchema.nullish(),
 	})
 	.loose();
@@ -244,14 +251,13 @@ const SearchPlacesResponseSchema = z.object({
 
 export type SearchPlacesResponse = z.infer<typeof SearchPlacesResponseSchema>;
 
-const SearchGeofencesInputSchema = z.object({
+const SearchGeofencesInputSchema = z.strictObject({
 	near: z
 		.string()
 		.min(1)
 		.describe('`latitude,longitude` for the search centre.'),
 	radius: z.number().positive().optional().describe('Search radius in meters.'),
 	tags: z.array(z.string()).optional(),
-	externalIds: z.array(z.string()).optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 });
 
@@ -393,11 +399,17 @@ const GeofencesUpsertInputSchema = z
 		external_id: z.string().min(1).describe('A stable id within the tag.'),
 		description: z.string().min(1),
 		type: z.enum(['circle', 'polygon', 'isochrone']),
+		mode: z
+			.enum(['foot', 'bike', 'car'])
+			.optional()
+			.describe('Required travel mode for an isochrone.'),
 		radius: z
 			.number()
 			.positive()
 			.optional()
-			.describe('Required for `circle` and `isochrone`, in meters.'),
+			.describe(
+				'Required for circle in meters, or isochrone in travel minutes.',
+			),
 		center: z
 			.array(z.number())
 			.length(2)
@@ -416,6 +428,13 @@ const GeofencesUpsertInputSchema = z
 			.optional(),
 	})
 	.superRefine((value, ctx) => {
+		if (value.type === 'isochrone' && !value.mode) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'An isochrone needs a travel `mode`.',
+				path: ['mode'],
+			});
+		}
 		if (value.type === 'polygon' && !value.ring) {
 			ctx.addIssue({
 				code: 'custom',
@@ -463,7 +482,7 @@ export type GeofencesDeleteResponse = z.infer<
 
 // ── trips ─────────────────────────────────────────────────────────────────
 
-const TripsListInputSchema = z.object({
+const TripsListInputSchema = z.strictObject({
 	limit: LimitSchema,
 	status: z
 		.array(
@@ -486,8 +505,6 @@ const TripsListInputSchema = z.object({
 	include_locations: z.boolean().optional(),
 	created_after: z.string().optional(),
 	created_before: z.string().optional(),
-	updated_after: AfterSchema,
-	updated_before: BeforeSchema,
 	sort_by: z.enum(['createdAt', 'updatedAt']).optional(),
 	delayed: z.boolean().optional(),
 });
@@ -563,17 +580,14 @@ export type TripsCreateResponse = z.infer<typeof TripsCreateResponseSchema>;
 
 const TripsUpdateInputSchema = z.object({
 	trip_id: z.string().min(1),
-	status: z
-		.enum([
-			'pending',
-			'started',
-			'approaching',
-			'arrived',
-			'completed',
-			'canceled',
-			'expired',
-		])
-		.optional(),
+	status: z.enum([
+		'pending',
+		'started',
+		'approaching',
+		'arrived',
+		'completed',
+		'canceled',
+	]),
 	mode: z.enum(['foot', 'bike', 'car']).optional(),
 	destination_geofence_tag: z.string().optional(),
 	destination_geofence_external_id: z.string().optional(),

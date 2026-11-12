@@ -29,8 +29,7 @@ export function listShape(key: string) {
 
 /**
  * Reads a single-object answer. Radar names the record beside `meta` — `user`,
- * `geofence`, `trip` or `event` — so the named key is lifted, and the rest of
- * the body is used only when the name is absent.
+ * `geofence`, `trip` or `event` — so the named key is lifted. A missing key fails output validation.
  */
 export function singleShape(key: string) {
 	return (
@@ -41,10 +40,9 @@ export function singleShape(key: string) {
 		const record = asRecord(raw);
 		if (!record) return { [key]: raw };
 		if (record[key] !== undefined) return { [key]: record[key] };
-		// A few Radar routes answer the record without its own name, so the body
-		// minus `meta` is the record itself.
-		const { meta: _meta, ...rest } = record;
-		return { [key]: rest };
+		// Named single-record routes must contain that record. A meta-only
+		// response must fail output validation rather than become an empty row.
+		return { [key]: undefined };
 	};
 }
 

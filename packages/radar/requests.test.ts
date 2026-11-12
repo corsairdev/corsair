@@ -77,7 +77,7 @@ describe('search', () => {
 
 		const result = (await invoke(Endpoints.searchPlaces, {
 			near: '40.70390,-73.98670',
-			query: 'coffee',
+			radius: 1500,
 			categories: ['coffee-shop'],
 			limit: 10,
 		})) as Awaited<ReturnType<typeof Endpoints.searchPlaces>>;
@@ -85,11 +85,64 @@ describe('search', () => {
 		expect(lastRequest(fetchMock).path).toBe('/v1/search/places');
 		expect(lastRequest(fetchMock).query).toEqual({
 			near: '40.70390,-73.98670',
-			query: 'coffee',
+			radius: '1500',
 			categories: 'coffee-shop',
 			limit: '10',
 		});
 		expect(result.places[0]?.name).toBe('Blue Bottle Coffee');
+	});
+
+	it('accepts the documented place chain metadata', async () => {
+		respond(fetchMock, {
+			places: [
+				{
+					name: 'Store',
+					chain: {
+						name: 'Store',
+						slug: 'store',
+						metadata: { customFlag: true },
+					},
+				},
+			],
+		});
+		const result = await invoke(Endpoints.searchPlaces, {
+			near: '40.7,-73.9',
+			chains: ['store'],
+		});
+		expect(result).toMatchObject({
+			places: [{ chain: { metadata: { customFlag: true } } }],
+		});
+	});
+
+	it('rejects place searches without a chain or category', async () => {
+		await expect(
+			invoke(Endpoints.searchPlaces, { near: '40.7,-73.9' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it.each(['query', 'groups', 'country', 'lang'])(
+		'rejects the unsupported place filter %s',
+		async (field) => {
+			await expect(
+				invoke(Endpoints.searchPlaces, {
+					near: '40.7,-73.9',
+					categories: ['coffee-shop'],
+					[field]: 'ignored',
+				}),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('rejects the unsupported geofence externalIds filter', async () => {
+		await expect(
+			invoke(Endpoints.searchGeofences, {
+				near: '40.7,-73.9',
+				externalIds: ['ignored'],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('searches geofences near a point', async () => {
@@ -247,6 +300,37 @@ describe('geofences', () => {
 		});
 	});
 
+	it('sends the required travel mode for an isochrone', async () => {
+		respond(fetchMock, { geofence: GEOFENCE });
+		await invoke(Endpoints.geofencesUpsert, {
+			tag: 'zone',
+			external_id: 'drive',
+			description: 'Drive time',
+			type: 'isochrone',
+			center: [-73.9, 40.7],
+			radius: 10,
+			mode: 'car',
+		});
+		expect(lastRequest(fetchMock).json()).toMatchObject({
+			mode: 'car',
+			radius: 10,
+		});
+	});
+
+	it('rejects an isochrone without its required travel mode', async () => {
+		await expect(
+			invoke(Endpoints.geofencesUpsert, {
+				tag: 'zone',
+				external_id: 'drive',
+				description: 'Drive time',
+				type: 'isochrone',
+				center: [-73.9, 40.7],
+				radius: 10,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a polygon with no ring', async () => {
 		await expect(
 			invoke(Endpoints.geofencesUpsert, {
@@ -300,6 +384,28 @@ describe('trips', () => {
 		expect(result.trips[0]?.externalId).toBe('order-42');
 	});
 
+	it('pages trips by creation time', async () => {
+		respond(fetchMock, TRIP_PAGE);
+		await invoke(Endpoints.tripsList, {
+			sort_by: 'createdAt',
+			created_before: '2026-11-01T00:00:00.000Z',
+		});
+		expect(lastRequest(fetchMock).query).toEqual({
+			sortBy: 'createdAt',
+			createdBefore: '2026-11-01T00:00:00.000Z',
+		});
+	});
+
+	it.each(['updated_before', 'updated_after'])(
+		'rejects the undocumented trip cursor %s',
+		async (field) => {
+			await expect(
+				invoke(Endpoints.tripsList, { [field]: '2026-11-01T00:00:00.000Z' }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
 	it('reads one trip with its ETA', async () => {
 		respond(fetchMock, { meta: { code: 200 }, trip: TRIP });
 
@@ -345,9 +451,19 @@ describe('trips', () => {
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PATCH');
-		expect(request.path).toBe(`/v1/trips/${TRIP_ID}`);
+		expect(request.path).toBe(`/v1/trips/${TRIP_ID}/update`);
 		expect(request.json()).toEqual({ status: 'arrived' });
 	});
+
+	it.each([undefined, 'expired'])(
+		'rejects an invalid update status %s',
+		async (status) => {
+			await expect(
+				invoke(Endpoints.tripsUpdate, { trip_id: TRIP_ID, status }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('rejects a status Radar does not define', async () => {
 		await expect(
@@ -452,6 +568,16 @@ describe('events.conversion', () => {
 });
 
 describe('envelope handling', () => {
+	it.each([
+		[Endpoints.usersGet, { user_id: 'u' }],
+		[Endpoints.geofencesGet, { geofence_id: 'g' }],
+		[Endpoints.tripsGet, { trip_id: 't' }],
+		[Endpoints.eventsConversion, { name: 'signup', user_id: 'u' }],
+	])('rejects a response missing the named record', async (endpoint, input) => {
+		respond(fetchMock, { meta: { code: 200 } });
+		await expect(invoke(endpoint, input)).rejects.toThrow();
+	});
+
 	it('fails rather than inventing an empty list when the key is missing', async () => {
 		respond(fetchMock, { meta: { code: 200 } });
 

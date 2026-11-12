@@ -74,13 +74,10 @@ export const searchPlaces: RadarEndpoints['searchPlaces'] = (ctx, input) =>
 			replayable: true,
 			query: queryOf({
 				near: parsed.near,
-				query: parsed.query,
+				radius: parsed.radius,
 				chains: parsed.chains?.join(','),
 				categories: parsed.categories?.join(','),
-				groups: parsed.groups?.join(','),
 				limit: parsed.limit,
-				country: parsed.country?.join(','),
-				lang: parsed.lang,
 			}),
 		}),
 		{
@@ -109,7 +106,6 @@ export const searchGeofences: RadarEndpoints['searchGeofences'] = (
 				near: parsed.near,
 				radius: parsed.radius,
 				tags: parsed.tags?.join(','),
-				externalIds: parsed.externalIds?.join(','),
 				limit: parsed.limit,
 			}),
 		}),
@@ -253,6 +249,7 @@ export const geofencesUpsert: RadarEndpoints['geofencesUpsert'] = (
 					coordinates,
 					address: parsed.address,
 					radius: parsed.radius,
+					mode: parsed.mode,
 					metadata: parsed.metadata,
 				}),
 			};
@@ -309,8 +306,6 @@ export const tripsList: RadarEndpoints['tripsList'] = (ctx, input) =>
 				includeLocations: parsed.include_locations,
 				createdAfter: parsed.created_after,
 				createdBefore: parsed.created_before,
-				updatedAfter: parsed.updated_after,
-				updatedBefore: parsed.updated_before,
 				sortBy: parsed.sort_by,
 				delayed: parsed.delayed,
 			}),
@@ -387,7 +382,7 @@ export const tripsUpdate: RadarEndpoints['tripsUpdate'] = (ctx, input) =>
 		input,
 		(parsed) => ({
 			method: 'PATCH',
-			path: `/trips/${segment(parsed.trip_id)}`,
+			path: `/trips/${segment(parsed.trip_id)}/update`,
 			replayable: false,
 			body: queryOf({
 				status: parsed.status,

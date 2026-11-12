@@ -6,14 +6,14 @@ overviewNote: |
   Create an API key on the **Settings** page of the Radar dashboard. Radar has two kinds: a **publishable** key (`pk`) for the routes that are safe to call client-side, and a **secret** key (`sk`) for the server-side routes. Send it **bare** in the `Authorization` header — no `Bearer` prefix — and use the test keys for non-production. Things to know before you call:
 
   - **No `Bearer` prefix.** Radar reads the raw key, so `Authorization: prj_live_sk_…` is correct and `Authorization: Bearer …` is not. The plugin sets the header literally for that reason.
-  - **Every response is wrapped in `meta`.** A success and a failure differ only in `meta.code`, which repeats the HTTP status, so `meta.code === 200` is the check.
+  - **Results follow the operation schema.** Radar wire responses include `meta`, but the plugin returns fields such as `addresses`, `user` or `geofence`. A resolved call has passed output validation. Only read `meta.code` on results that retain `meta`, such as list results.
   - **A 402 is a spent quota, not a rate limit.** It means the organisation is disabled or the usage allowance is exhausted, and no retry fixes it. The plugin matches it first and stops immediately.
-  - **`429` may mean selective throttling.** Radar says no state changed in that case, so a read is safe to repeat; the plugin retries three times and honours `Retry-After`.
+  - **`429` may mean selective throttling.** Radar says no state changed in that case, so a read is safe to repeat; the plugin retries replayable reads three times and honours `Retry-After`. Writes are never replayed.
   - **`451` is a country blocklist.** It is a legal refusal, not a request defect, and no retry clears it.
-  - **Paging is by timestamp, not a token.** Lists return `meta.hasMore` and are ordered by `updatedAt`; page by passing the last row's timestamp as `updated_before`. The plugin exposes `has_more` and the raw `meta`.
-  - **Choosing a geofence type.** `type` takes `circle`, `polygon` or `isochrone`; a circle and an isochrone take a centre and a radius, while a polygon takes a closed ring.
+  - **Paging is by timestamp.** Users and geofences use the last row's `updatedAt` as `updated_before`. Trips use `created_before` with `sort_by: createdAt`. List results retain `meta`; `has_more` is true only when Radar supplies `meta.hasMore`. If that flag is absent, continue until an empty page.
+  - **Choosing a geofence type.** `type` takes `circle`, `polygon` or `isochrone`; a circle takes a centre and a radius in meters, an isochrone takes a centre, travel mode and duration in minutes, and a polygon takes a closed ring.
   - **A geofence is a circle, a polygon or an isochrone.** A circle takes a `center` and a `radius`, a polygon takes a closed `ring` with the first point repeated last, and the schema rejects a shape that is missing its required part.
-  - **`geofences.upsert` is an upsert.** Supplying a tag and external id creates the geofence when none matches; supplying the Radar id updates that one instead.
+  - **`geofences.upsert` is an upsert.** Supplying a tag and external id creates the geofence when none matches; supplying `geofence_id` selects an update by Radar id. The plugin still requires `tag`, `external_id`, `description`, `type` and the geometry inputs for that type.
   - **`track` creates a user.** It is the write that turns a location update into a user, so it needs a `device_id`, both coordinates and a positive `accuracy`. The plugin never replays it.
   - **Coordinates are `[longitude, latitude]` in bodies.** Geofence geometry follows the GeoJSON convention, which is the reverse of the `latitude,longitude` string the geocode routes take.
 examples:
@@ -29,6 +29,7 @@ examples:
       tag: store
       external_id: store-42
       description: Brooklyn store
+      type: circle
       center:
         - -73.9867
         - 40.7039
@@ -68,7 +69,7 @@ apiExamples:
     call: "{ name: 'in_app_purchase', user_id: 'user-1', revenue: 499 }"
 apiNotes:
   'geocode.forward': 'Layers and countries are comma-separated on the wire; the confidence is `exact`, `interpolated` or `fallback`.'
-  'geofences.upsert': 'A polygon takes a closed `ring` instead of a centre and radius; geometry is `[longitude, latitude]`.'
+  'geofences.upsert': 'A polygon takes a closed `ring`; geometry is `[longitude, latitude]`. An isochrone requires `mode`, and its `radius` is travel minutes.'
   'track.update': 'Creates or updates the user; a positive `accuracy` is required and a replay is never attempted.'
   'trips.update': 'The status values are validated before the request, because Radar rejects an unknown one.'
-  'events.conversion': 'The name may only contain letters, digits and underscores, and one identifier is required.'
+  'events.conversion': 'Requires the Enterprise plan. The name may only contain letters, digits and underscores, and one identifier is required.'
