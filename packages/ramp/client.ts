@@ -12,6 +12,29 @@ import { ApiError, request } from 'corsair/http';
  */
 export const RAMP_API_BASE = 'https://api.ramp.com';
 
+/** Sandbox REST host. A sandbox token is refused by production and vice versa. */
+export const RAMP_SANDBOX_API_BASE = 'https://demo-api.ramp.com';
+
+/** Which Ramp environment a connection lives in; tokens only work in one. */
+export type RampEnvironment = 'production' | 'sandbox';
+
+/** The API host for an environment. */
+export function rampApiBase(environment?: RampEnvironment): string {
+	return environment === 'sandbox' ? RAMP_SANDBOX_API_BASE : RAMP_API_BASE;
+}
+
+/** Where a user approves an authorization-code connection. */
+export function rampAuthorizeUrl(environment?: RampEnvironment): string {
+	return environment === 'sandbox'
+		? 'https://demo.ramp.com/v1/authorize'
+		: 'https://app.ramp.com/v1/authorize';
+}
+
+/** The token endpoint for every grant: authorization code, refresh, client credentials. */
+export function rampTokenUrl(environment?: RampEnvironment): string {
+	return `${rampApiBase(environment)}/developer/v1/token`;
+}
+
 /** Path prefix every Developer API route sits under. */
 export const RAMP_API_PREFIX = '/developer/v1';
 
@@ -174,9 +197,9 @@ const RAMP_RATE_LIMIT_CONFIG: RateLimitConfig = {
 /** Ramp documents a 60 second block after a 429 as the cooldown to allow for. */
 export const RAMP_RATE_LIMIT_COOLDOWN_MS = 60_000;
 
-function configWith(apiKey: string): OpenAPIConfig {
+function configWith(apiKey: string, base: string): OpenAPIConfig {
 	return {
-		BASE: RAMP_API_BASE,
+		BASE: base,
 		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -216,6 +239,7 @@ export function readNextUrl(page: unknown): string | null {
 export async function makeRampRequest(
 	apiKey: string,
 	{ method, path, query, body }: RampRequest,
+	base: string = RAMP_API_BASE,
 ): Promise<unknown> {
 	const requestOptions: ApiRequestOptions = {
 		method,
@@ -228,7 +252,7 @@ export async function makeRampRequest(
 	try {
 		// unknown: the body is provider JSON until the caller's output schema
 		// parses it; `request` cannot know the operation's shape.
-		return await request<unknown>(configWith(apiKey), requestOptions, {
+		return await request<unknown>(configWith(apiKey, base), requestOptions, {
 			rateLimitConfig: RAMP_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
@@ -256,4 +280,73 @@ export async function makeRampRequest(
 		}
 		throw new RampAPIError('Unknown Ramp error', { method });
 	}
+}
+
+export type RampClientCredentialsToken = {
+	access_token: string;
+	/** Seconds; Ramp issues client-credentials tokens for 864,000 (10 days). */
+	expires_in: number;
+};
+
+/**
+ * Mints an access token with the Client Credentials grant. Ramp sends no
+ * refresh token for this grant, so the caller mints a new one when it expires.
+ * The client secret goes in the Basic header only; neither it nor the token
+ * appears in an error message.
+ */
+export async function requestRampClientCredentialsToken({
+	clientId,
+	clientSecret,
+	scopes,
+	environment,
+}: {
+	clientId: string;
+	clientSecret: string;
+	scopes: readonly string[];
+	environment?: RampEnvironment;
+}): Promise<RampClientCredentialsToken> {
+	const response = await fetch(rampTokenUrl(environment), {
+		method: 'POST',
+		headers: {
+			Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Accept: 'application/json',
+		},
+		body: new URLSearchParams({
+			grant_type: 'client_credentials',
+			scope: scopes.join(' '),
+		}).toString(),
+	});
+	const text = await response.text();
+	let body: unknown;
+	try {
+		body = text ? JSON.parse(text) : undefined;
+	} catch {
+		body = undefined;
+	}
+	if (!response.ok) {
+		const structured = errorV2(body);
+		throw new RampAPIError(
+			`Ramp token request failed (${response.status}): ${readString(structured, 'message') ?? readString(asRecord(asRecord(body)?.error), 'message') ?? 'no error message'}`,
+			{
+				status: response.status,
+				code: readString(structured, 'error_code'),
+				errorId: readString(structured, 'error_id'),
+				method: 'POST',
+			},
+		);
+	}
+	const record = asRecord(body);
+	const accessToken = record?.access_token;
+	const expiresIn = record?.expires_in;
+	if (typeof accessToken !== 'string' || accessToken.length === 0) {
+		throw new RampAPIError('Ramp token response had no access_token', {
+			status: response.status,
+			method: 'POST',
+		});
+	}
+	return {
+		access_token: accessToken,
+		expires_in: typeof expiresIn === 'number' ? expiresIn : 864_000,
+	};
 }

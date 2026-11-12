@@ -6,11 +6,18 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import type { RampEnvironment } from './client';
+import {
+	rampAuthorizeUrl,
+	rampTokenUrl,
+	requestRampClientCredentialsToken,
+} from './client';
 import { Org, Spend, Transactions } from './endpoints';
 import type {
 	RampEndpointInputs,
@@ -23,9 +30,39 @@ import {
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { RampSchema } from './schema';
 
+/**
+ * Every scope the plugin's operations use. A connection with fewer works for the
+ * routes it covers; the rest answer 403 (`DEVELOPER_7100`).
+ */
+export const RAMP_DEFAULT_SCOPES = [
+	'transactions:read',
+	'transactions:write',
+	'merchants:read',
+	'cards:read',
+	'bills:read',
+	'bills:write',
+	'reimbursements:read',
+	'memos:read',
+	'memos:write',
+	'departments:read',
+	'departments:write',
+	'users:read',
+	'business:read',
+] as const;
+
 export type RampPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	/**
+	 * `api_key`: a pasted access token (it stops working when Ramp expires it).
+	 * `oauth_2`: the plugin keeps the token current itself, from a refresh token
+	 * (authorization-code connection) or from the client ID and secret alone
+	 * (Client Credentials).
+	 */
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	/** Defaults to production. Sandbox tokens only work against the sandbox. */
+	environment?: RampEnvironment;
+	/** Scopes to request; defaults to every scope the operations use. */
+	scopes?: readonly string[];
 	hooks?: InternalRampPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof rampEndpointsNested>;
@@ -171,6 +208,14 @@ export const rampEndpointSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const rampAuthConfig = {
+	api_key: { account: [] as const },
+	oauth_2: { account: [] as const },
+} as const satisfies PluginAuthConfig;
+
+/** Re-mint a client-credentials token this long before Ramp expires it. */
+const TOKEN_REFRESH_BUFFER_SECONDS = 5 * 60;
+
 const rampEndpointMeta = {
 	'transactions.list': {
 		riskLevel: 'read',
@@ -273,8 +318,18 @@ export function ramp<const T extends RampPluginOptions>(
 	};
 	return {
 		id: 'ramp',
+		authConfig: rampAuthConfig,
 		schema: RampSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Ramp',
+			authUrl: rampAuthorizeUrl(options.environment),
+			tokenUrl: rampTokenUrl(options.environment),
+			scopes: [...(options.scopes ?? RAMP_DEFAULT_SCOPES)],
+			tokenAuthMethod: 'basic',
+			// Ramp only accepts a redirect URI registered on the app, exactly.
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		endpoints: rampEndpointsNested,
 		webhooks: {},
@@ -292,12 +347,64 @@ export function ramp<const T extends RampPluginOptions>(
 				if (res) return res;
 			}
 
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [credentials, refreshToken] = await Promise.all([
+					ctx.keys.get_integration_credentials(),
+					ctx.keys.get_refresh_token(),
+				]);
+				// An authorization-code connection has a refresh token: core refreshes
+				// it (Basic auth at the token URL; Ramp keeps the same refresh token).
+				// Without one, a client ID and secret mint a Client Credentials token,
+				// which Ramp issues for 10 days with no refresh token.
+				if (
+					!refreshToken &&
+					credentials.client_id &&
+					credentials.client_secret
+				) {
+					const [accessToken, expiresAt] = await Promise.all([
+						ctx.keys.get_access_token(),
+						ctx.keys.get_expires_at(),
+					]);
+					const now = Math.floor(Date.now() / 1000);
+					if (
+						accessToken &&
+						expiresAt &&
+						Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
+					) {
+						return accessToken;
+					}
+					const token = await requestRampClientCredentialsToken({
+						clientId: credentials.client_id,
+						clientSecret: credentials.client_secret,
+						scopes: options.scopes ?? RAMP_DEFAULT_SCOPES,
+						environment: options.environment,
+					});
+					await Promise.all([
+						ctx.keys.set_access_token(token.access_token),
+						ctx.keys.set_expires_at(String(now + token.expires_in)),
+					]);
+					return token.access_token;
+				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'ramp',
+					tokenUrl: rampTokenUrl(options.environment),
+					tokenAuthMethod: 'basic',
+				});
+			}
+
 			throw new AuthMissingError('ramp', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalRampPlugin;
 }
 
-export { RampAPIError } from './client';
+export {
+	RAMP_API_BASE,
+	RAMP_SANDBOX_API_BASE,
+	RampAPIError,
+	type RampEnvironment,
+	rampAuthorizeUrl,
+	rampTokenUrl,
+} from './client';
 
 export type {
 	BillsGetInput,

@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { RampContext } from '..';
 import type { RampRequest } from '../client';
-import { makeRampRequest } from '../client';
+import { makeRampRequest, rampApiBase } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -25,7 +25,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeRampRequest(ctx.key, toRequest(parsed));
+	const raw = await makeRampRequest(
+		ctx.key,
+		toRequest(parsed),
+		rampApiBase(ctx.options?.environment),
+	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

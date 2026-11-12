@@ -1,31 +1,56 @@
 /**
- * Live smoke tests. CI skips this file by name, and it skips itself without a
- * token. Every read goes through its operation's output schema, so a field the
- * schema gets wrong fails here rather than in a caller's hands.
+ * Live smoke tests. CI skips this file by name, and it skips itself without
+ * credentials. Every read goes through its operation's output schema, so a
+ * field the schema gets wrong fails here rather than in a caller's hands.
  *
- * Run with `RAMP_API_TOKEN=... pnpm --filter @corsair-dev/ramp test:live`.
+ * Run with a token, or with an app's client ID and secret (the suite mints a
+ * Client Credentials token itself):
+ *
+ *   RAMP_API_TOKEN=... pnpm --filter @corsair-dev/ramp test:live
+ *   RAMP_CLIENT_ID=... RAMP_CLIENT_SECRET=... RAMP_ENVIRONMENT=sandbox pnpm --filter @corsair-dev/ramp test:live
  */
 
+import type { RampEnvironment } from './client';
+import { requestRampClientCredentialsToken } from './client';
 import * as Org from './endpoints/org';
 import * as Spend from './endpoints/spend';
 import * as Transactions from './endpoints/transactions';
 import type { RampContext } from './index';
+import { RAMP_DEFAULT_SCOPES } from './index';
 
-const token = process.env.RAMP_API_TOKEN;
+const environment: RampEnvironment =
+	process.env.RAMP_ENVIRONMENT === 'sandbox' ? 'sandbox' : 'production';
+const clientId = process.env.RAMP_CLIENT_ID;
+const clientSecret = process.env.RAMP_CLIENT_SECRET;
+let token = process.env.RAMP_API_TOKEN;
 
-const describeIfToken = token ? describe : describe.skip;
+const hasCredentials = Boolean(token || (clientId && clientSecret));
+const describeIfToken = hasCredentials ? describe : describe.skip;
 
-if (!token) {
+if (!hasCredentials) {
 	// A skipped run must not read as a green one.
 	console.warn(
-		'RAMP_API_TOKEN is not set: the live Ramp suite is skipped, not passing.',
+		'Neither RAMP_API_TOKEN nor RAMP_CLIENT_ID + RAMP_CLIENT_SECRET is set: the live Ramp suite is skipped, not passing.',
 	);
 }
 
+beforeAll(async () => {
+	if (token || !clientId || !clientSecret) return;
+	token = (
+		await requestRampClientCredentialsToken({
+			clientId,
+			clientSecret,
+			scopes: RAMP_DEFAULT_SCOPES,
+			environment,
+		})
+	).access_token;
+});
+
 function liveContext(): RampContext {
 	// unknown: a real context also carries the database, hooks and key manager;
-	// the endpoints read only `key`, so the fixture is cast at this boundary.
-	return { key: token } as unknown as RampContext;
+	// the endpoints read only `key` and `options.environment`, so the fixture is
+	// cast at this boundary.
+	return { key: token, options: { environment } } as unknown as RampContext;
 }
 
 describeIfToken('live Ramp API', () => {
