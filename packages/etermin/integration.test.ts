@@ -69,15 +69,36 @@ const context = {
 
 describe('eTermin public endpoint seams', () => {
 	beforeEach(() => mockRequest.mockReset());
+	afterEach(() => jest.restoreAllMocks());
 
-	it.each(
-		eTerminOperations.filter(
-			(operation) => operation.key !== 'appointmentSyncList',
-		),
-	)(
+	it.each(eTerminOperations)(
 		'$group.$action forwards its documented method, path, and query',
 		async (operation) => {
 			const input = minimalInput(operation);
+			if (operation.key === 'appointmentSyncList') {
+				const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue(
+					new Response(JSON.stringify([{ id: 'appointment-42' }]), {
+						status: 200,
+						headers: { synctoken: '2' },
+					}),
+				);
+
+				await expect(
+					publicEndpoint(operation.group as EndpointGroup, operation.action)(
+						context as ETerminContext,
+						input,
+					),
+				).resolves.toEqual({
+					appointments: [{ id: 'appointment-42' }],
+					synctoken: 2,
+				});
+				const [url, options] = fetchMock.mock.calls[0] ?? [];
+				expect(String(url)).toBe(
+					'https://www.etermin.net/api/appointmentsync?synctoken=1',
+				);
+				expect(options).toMatchObject({ method: 'GET' });
+				return;
+			}
 			const response = responseFor(operation);
 			mockRequest.mockResolvedValue(response);
 
