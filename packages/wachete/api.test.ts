@@ -39,18 +39,21 @@ function liveContext(): WacheteContext {
 }
 
 describeIfKey('live Wachete API', () => {
-	it('lists the account folders through the output schema', async () => {
+	it('lists the root folder through the output schema', async () => {
 		const result = await Folders.list(liveContext() as never, {} as never);
 
-		expect(Array.isArray(result)).toBe(true);
+		// An object with `subfolders`, `tasks`, `path` and `continuationToken`.
+		expect(Array.isArray(result)).toBe(false);
+		expect(Array.isArray(result.subfolders ?? [])).toBe(true);
+		expect(Array.isArray(result.tasks ?? [])).toBe(true);
 	});
 
 	it('searches monitors through the output schema, which answers an array', async () => {
+		// Search matches whole words in names and URLs; an empty query is
+		// rejected by the input schema.
 		const result = await Tasks.search(
 			liveContext() as never,
-			{
-				query: '',
-			} as never,
+			{ query: 'example' } as never,
 		);
 
 		// A bare array, not an object with a `tasks` field.
@@ -61,20 +64,13 @@ describeIfKey('live Wachete API', () => {
 	});
 
 	it('reads one monitor by id', async () => {
-		const list = await Tasks.search(
-			liveContext() as never,
-			{
-				query: '',
-			} as never,
-		);
-		const first = list[0];
+		const root = await Folders.list(liveContext() as never, {} as never);
+		const first = root.tasks?.[0];
 		if (!first?.id) return;
 
 		const one = await Tasks.get(
 			liveContext() as never,
-			{
-				id: first.id,
-			} as never,
+			{ id: first.id } as never,
 		);
 
 		expect(one.id).toBe(first.id);
@@ -83,10 +79,11 @@ describeIfKey('live Wachete API', () => {
 	it('lists triggered notifications through the output schema', async () => {
 		const result = await Notifications.list(
 			liveContext() as never,
-			{} as never,
+			{ count: 5 } as never,
 		);
 
-		expect(Array.isArray(result)).toBe(true);
+		// An object with `data` and `continuationToken`.
+		expect(Array.isArray(result.data ?? [])).toBe(true);
 	});
 
 	it('never exposes the API key in a returned object', async () => {
