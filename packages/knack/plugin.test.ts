@@ -113,16 +113,31 @@ describe('knack plugin', () => {
 	});
 
 	describe('keyBuilder', () => {
-		// unknown: the fixture implements only the two accessors the key builder
-		// reads, not the full AccountKeyManager an api_key context carries.
-		const keyContext = (applicationId?: string, apiKey?: string) =>
-			({
+		// A complete api_key context: the key builder reads the two getters, and
+		// the rest of the key manager fails loudly if it is ever called.
+		const keyContext = (
+			applicationId?: string,
+			apiKey?: string,
+		): KnackKeyBuilderContext => {
+			const unused = async (): Promise<never> => {
+				throw new Error('the key builder must not call this');
+			};
+			return {
 				authType: 'api_key',
+				options: {},
+				tenantId: 'default',
 				keys: {
-					get_api_key: async () => applicationId,
-					get_api_secret: async () => apiKey,
+					get_api_key: async () => applicationId ?? null,
+					get_api_secret: async () => apiKey ?? null,
+					set_api_key: unused,
+					set_api_secret: unused,
+					get_webhook_signature: unused,
+					set_webhook_signature: unused,
+					get_dek: unused,
+					issue_new_dek: unused,
 				},
-			}) as unknown as KnackKeyBuilderContext;
+			};
+		};
 
 		it('returns the explicitly configured key', async () => {
 			const packed = packKnackCredentials({ applicationId: 'a', apiKey: 'k' });
