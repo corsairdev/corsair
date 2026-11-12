@@ -13,7 +13,7 @@ overviewNote: |
   - **Every template send is a campaign.** WATI requires `broadcast_name` even for one recipient and records the send under it. Leave out `parameters` for a template with no placeholders. A 200 can still carry `success: false` with `error`, and each recipient row can carry its own `errors`.
   - **A conversation target is not a contact ID.** `conversations.messages` takes a wa_id, a phone number or a conversation ID, and the docs warn against substituting a bare contact ID, which is a different value.
   - **A leading `+` has to be encoded in a path.** A contact target may start with `+`, which is percent-encoded when it is part of the URL so it stays one path segment. Send routes take the target in the JSON body, where it is sent as given.
-  - **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page.
+  - **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page. `broadcasts.list` also needs `date_from` and `date_to`: the live API refuses the list without them, though the reference does not mark them.
   - **Custom attributes are pairs, not a map.** A contact's `custom_params` is a list of `{ name, value }`, which is WATI's own shape.
   - **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version. The V3 list has no paging.
 examples:
@@ -61,7 +61,7 @@ apiExamples:
     call: "{ page_number: 1, page_size: 20 }"
   account.credits: {}
   broadcasts.list:
-    call: "{ page_number: 1 }"
+    call: "{ page_number: 1, date_from: '2026-11-01', date_to: '2026-11-30' }"
   broadcasts.get:
     call: "{ broadcast_id: 'bc-1' }"
   broadcasts.recipients:
