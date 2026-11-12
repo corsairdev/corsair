@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { thanksIoEndpointsNested } from './endpoints';
+import type { ThanksIoContext } from './index';
 import { thanksIoEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -12,7 +13,24 @@ jest.mock('corsair/http', () => ({
 }));
 
 const mockRequest = jest.mocked(request);
+// Only key is read by these endpoints; event logging is mocked, so constructing
+// a full Corsair context adds no coverage. This partial fixture is test-only.
 const ctx = { key: 'test-token' } as never;
+
+// Jest's heterogeneous rows lose the relationship between each endpoint name
+// and its input type. Runtime schemas validate every input; erasing only the
+// callback's argument type lets the same table exercise those public boundaries.
+// Inputs remain unknown so invalid fixtures can test validation at runtime.
+// The result is unknown because different operations return different schemas;
+// each test compares it with the expected provider fixture.
+function invokeEndpoint(
+	endpoint: (context: ThanksIoContext, input: never) => Promise<unknown>,
+	input: unknown,
+): Promise<unknown> {
+	// The endpoint parses this untrusted fixture before building a request;
+	// its specific input type is not recoverable from a heterogeneous test row.
+	return endpoint(ctx, input as never);
+}
 
 beforeEach(() => mockRequest.mockReset());
 
@@ -62,15 +80,13 @@ it.each([
 	'recipients.%s validates the public seam and forwards the request',
 	async (name, input, method, path, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.recipients[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
 		expect(
 			thanksIoEndpointSchemas[`recipients.${name}`].input.safeParse(input)
 				.success,
 		).toBe(true);
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.recipients[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -84,18 +100,18 @@ it.each([
 it('rejects unsafe IDs and invalid recipient bodies before network access', async () => {
 	for (const recipientId of ['', '.', '..', '/', '\\', '"', "'"]) {
 		await expect(
-			thanksIoEndpointsNested.recipients.get(ctx, { recipientId } as never),
+			invokeEndpoint(thanksIoEndpointsNested.recipients.get, { recipientId }),
 		).rejects.toThrow();
 	}
 	await expect(
-		thanksIoEndpointsNested.recipients.create(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.recipients.create, {
 			body: { mailing_list_id: 1 },
-		} as never),
+		}),
 	).rejects.toThrow();
 	await expect(
-		thanksIoEndpointsNested.recipients.deleteByAddress(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.recipients.deleteByAddress, {
 			body: { mailing_list_id: 1, address: 'Main' },
-		} as never),
+		}),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -219,15 +235,13 @@ it.each([
 	'mailingLists.%s forwards its contract and validates its response',
 	async (name, input, method, url, query, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.mailingLists[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
 		expect(
 			thanksIoEndpointSchemas[`mailingLists.${name}`].input.safeParse(input)
 				.success,
 		).toBe(true);
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.mailingLists[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -240,9 +254,9 @@ it.each([
 
 it('rejects invalid mailing-list IDs and out-of-range radius purchases', async () => {
 	await expect(
-		thanksIoEndpointsNested.mailingLists.get(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.mailingLists.get, {
 			mailingListId: '../1',
-		} as never),
+		}),
 	).rejects.toThrow();
 	await expect(
 		thanksIoEndpointsNested.mailingLists.buyRadiusSearch(ctx, {
@@ -340,16 +354,14 @@ it.each([
 	'webhookDestinations.%s forwards the outbound webhook contract',
 	async (name, input, method, url, query, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.webhookDestinations[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
 		expect(
 			thanksIoEndpointSchemas[`webhookDestinations.${name}`].input.safeParse(
 				input,
 			).success,
 		).toBe(true);
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.webhookDestinations[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -371,9 +383,9 @@ it('requires a stage for scan-board webhook destinations and rejects unsafe IDs'
 		}),
 	).rejects.toThrow();
 	await expect(
-		thanksIoEndpointsNested.webhookDestinations.delete(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.webhookDestinations.delete, {
 			webhookId: '../1',
-		} as never),
+		}),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -423,15 +435,13 @@ it.each([
 	'subAccounts.%s forwards its documented request',
 	async (name, input, method, url, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.subAccounts[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
 		expect(
 			thanksIoEndpointSchemas[`subAccounts.${name}`].input.safeParse(input)
 				.success,
 		).toBe(true);
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.subAccounts[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -444,15 +454,15 @@ it.each([
 
 it('rejects invalid sub-account IDs and missing required titles', async () => {
 	await expect(
-		thanksIoEndpointsNested.subAccounts.get(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.subAccounts.get, {
 			subAccountId: '../1',
-		} as never),
+		}),
 	).rejects.toThrow();
 	await expect(
-		thanksIoEndpointsNested.subAccounts.update(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.subAccounts.update, {
 			subAccountId: 1,
 			body: {},
-		} as never),
+		}),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -528,15 +538,13 @@ it.each([
 	'messageTemplates.%s forwards the template contract',
 	async (name, input, method, url, query, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.messageTemplates[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
 		expect(
 			thanksIoEndpointSchemas[`messageTemplates.${name}`].input.safeParse(input)
 				.success,
 		).toBe(true);
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.messageTemplates[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -554,9 +562,9 @@ it('enforces giftcard template creation fields and safe IDs', async () => {
 		}),
 	).rejects.toThrow();
 	await expect(
-		thanksIoEndpointsNested.messageTemplates.get(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.messageTemplates.get, {
 			messageTemplateId: '..',
-		} as never),
+		}),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -618,12 +626,11 @@ it.each([
 	'%s.%s preserves read response and pagination',
 	async (family, name, input, url, query, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = (
+		const endpoint =
 			family === 'imageTemplates'
 				? thanksIoEndpointsNested.imageTemplates.list
-				: thanksIoEndpointsNested.creatives[name]
-		) as (context: never, input: never) => Promise<unknown>;
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+				: thanksIoEndpointsNested.creatives[name];
+		await expect(invokeEndpoint(endpoint, input)).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -636,7 +643,7 @@ it.each([
 
 it('rejects unsafe creative IDs', async () => {
 	await expect(
-		thanksIoEndpointsNested.creatives.get(ctx, { creativeId: '..' } as never),
+		invokeEndpoint(thanksIoEndpointsNested.creatives.get, { creativeId: '..' }),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -677,12 +684,11 @@ it.each([
 	'%s.%s accepts documented catalog examples',
 	async (family, name, url, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = (
+		const endpoint =
 			family === 'handwritingStyles'
 				? thanksIoEndpointsNested.handwritingStyles.list
-				: thanksIoEndpointsNested.giftcardBrands[name]
-		) as (context: never, input: never) => Promise<unknown>;
-		await expect(endpoint(ctx, {} as never)).resolves.toEqual(response);
+				: thanksIoEndpointsNested.giftcardBrands[name];
+		await expect(invokeEndpoint(endpoint, {})).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -701,6 +707,41 @@ it('also accepts the flat giftcard list array declared by the schema', async () 
 	await expect(
 		thanksIoEndpointsNested.giftcardBrands.listFlat(ctx, {}),
 	).resolves.toEqual(response);
+});
+
+it('preserves provider-open creative fields and arbitrary customer metadata', async () => {
+	const creative = {
+		data: {
+			id: 501,
+			image_template: { deleted: false, details: { variant: 3 } },
+			message_template: { deleted: true, content: 'Hello' },
+			back_background: { colors: ['blue', 'white'] },
+		},
+	};
+	mockRequest.mockResolvedValueOnce(creative);
+	await expect(
+		thanksIoEndpointsNested.creatives.get(ctx, { creativeId: 501 }),
+	).resolves.toEqual(creative);
+
+	const metadata = {
+		campaign: 'spring',
+		custom: { score: 2, tags: ['vip'], optedIn: true },
+	};
+	const body = {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+		metadata,
+	};
+	const result = { id: 42664, metadata };
+	mockRequest.mockResolvedValueOnce(result);
+	await expect(
+		thanksIoEndpointsNested.send.postcard(ctx, { body }),
+	).resolves.toEqual(result);
+	expect(mockRequest).toHaveBeenLastCalledWith(
+		expect.anything(),
+		expect.objectContaining({ method: 'POST', url: '/send/postcard', body }),
+		expect.anything(),
+	);
 });
 
 it.each([
@@ -790,11 +831,9 @@ it.each([
 	'orders.%s preserves its request and response',
 	async (name, input, method, url, query, body, response) => {
 		mockRequest.mockResolvedValueOnce(response);
-		const endpoint = thanksIoEndpointsNested.orders[name] as (
-			context: never,
-			input: never,
-		) => Promise<unknown>;
-		await expect(endpoint(ctx, input as never)).resolves.toEqual(response);
+		await expect(
+			invokeEndpoint(thanksIoEndpointsNested.orders[name], input),
+		).resolves.toEqual(response);
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Bearer test-token' },
@@ -847,10 +886,10 @@ it('rejects dangerous order paths, oversized pages and address-less replays', as
 		}),
 	).rejects.toThrow();
 	await expect(
-		thanksIoEndpointsNested.orders.replay(ctx, {
+		invokeEndpoint(thanksIoEndpointsNested.orders.replay, {
 			orderId: 1,
 			body: { recipients: [{}] },
-		} as never),
+		}),
 	).rejects.toThrow();
 	expect(mockRequest).not.toHaveBeenCalled();
 });
@@ -878,7 +917,7 @@ it.each([
 		};
 		mockRequest.mockResolvedValueOnce(result);
 		await expect(
-			thanksIoEndpointsNested.send[name](ctx, { body } as never),
+			invokeEndpoint(thanksIoEndpointsNested.send[name], { body }),
 		).resolves.toEqual(result);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			expect.objectContaining({
@@ -899,7 +938,7 @@ it.each([
 		};
 		mockRequest.mockResolvedValueOnce(estimate);
 		await expect(
-			thanksIoEndpointsNested.estimate[name](ctx, { body } as never),
+			invokeEndpoint(thanksIoEndpointsNested.estimate[name], { body }),
 		).resolves.toEqual(estimate);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			expect.anything(),

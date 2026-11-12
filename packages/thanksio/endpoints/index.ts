@@ -19,7 +19,11 @@ function endpoint<K extends Operation>(
 		ctx: ThanksIoContext,
 		raw: ThanksIoEndpointInputs[K],
 	): Promise<ThanksIoEndpointOutputs[K]> => {
+		// The input type is inferred from this keyed schema. TypeScript loses the
+		// key-to-schema correlation on indexed access, while parse validates it.
 		const input = Inputs[key].parse(raw ?? {}) as ThanksIoEndpointInputs[K];
+		// The output type is inferred from the matching keyed schema. Indexed
+		// access loses that correlation, but parse validates the untrusted response.
 		const result = Outputs[key].parse(
 			await makeThanksIoRequest(ctx.key, build(input)),
 		) as ThanksIoEndpointOutputs[K];

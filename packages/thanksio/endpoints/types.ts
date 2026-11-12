@@ -306,7 +306,8 @@ const creativeSchema = z
 		share_url: nullableString,
 		is_complete: z.boolean().optional(),
 		needs: z.array(z.string()).optional(),
-		// The provider leaves the nested front, message and background object shapes open.
+		// OpenAPI specifies only nullable objects for these nested creative fields,
+		// without property schemas, so narrower value types would invent a contract.
 		image_template: z.record(z.string(), z.unknown()).nullable().optional(),
 		message_template: z.record(z.string(), z.unknown()).nullable().optional(),
 		back_background: z.record(z.string(), z.unknown()).nullable().optional(),
@@ -332,6 +333,8 @@ const brandGroupSchema = z
 const flatBrandListSchema = z
 	.object({ brands: z.array(brandSchema).optional() })
 	.passthrough();
+// OpenAPI permits arbitrary customer-supplied metadata values and returns them
+// unchanged; narrower value types would reject valid provider data.
 const metadata = z.record(z.string(), z.unknown()).nullable().optional();
 const orderSchema = z
 	.object({

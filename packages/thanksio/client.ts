@@ -18,6 +18,7 @@ const rateLimitConfig: RateLimitConfig = {
 
 export class ThanksIoAPIError extends Error {
 	status?: number;
+	// Error bodies can be arbitrary JSON or text, so no narrower shape is reliable.
 	body?: unknown;
 	retryAfter?: number;
 	readonly method: string;
@@ -77,9 +78,13 @@ export type ThanksIoRequest = {
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: Record<string, string | number | boolean | undefined>;
+	// The shared transport accepts different validated bodies for each operation;
+	// a single narrower shape would exclude valid endpoint-specific payloads.
 	body?: unknown;
 };
 
+// Responses vary by operation and are untrusted until the endpoint's output schema
+// parses them; assigning one narrower transport return type would be unsound.
 export async function makeThanksIoRequest(
 	key: string,
 	spec: ThanksIoRequest,
@@ -100,6 +105,8 @@ export async function makeThanksIoRequest(
 		mediaType: spec.body === undefined ? undefined : 'application/json',
 	};
 	try {
+		// The shared HTTP client cannot know the endpoint-specific response schema;
+		// keep its result unknown until the caller validates it.
 		return await request<unknown>(config, options, { rateLimitConfig });
 	} catch (error) {
 		throw new ThanksIoAPIError(

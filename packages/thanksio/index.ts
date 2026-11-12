@@ -437,6 +437,8 @@ export type ExternalThanksIoPlugin<T extends ThanksIoPluginOptions> =
 	BaseThanksIoPlugin<T>;
 
 export function thanksio<const T extends ThanksIoPluginOptions>(
+	// With no argument all option fields are optional; TypeScript cannot express
+	// that default for a caller-specific generic T without this narrow assertion.
 	incomingOptions: ThanksIoPluginOptions & T = {} as ThanksIoPluginOptions & T,
 ): ExternalThanksIoPlugin<T> {
 	const options = {
