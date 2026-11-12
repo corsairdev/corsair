@@ -222,10 +222,12 @@ async function readRaw(
 		body = await response.text();
 	} catch (error) {
 		// Headers arrived, so ScrapingAnt already ran and charged for the
-		// scrape. This is deliberately neither `transport` nor `timedOut`: both
-		// of those are replayable, and replaying here would pay a second time
-		// for a scrape that did happen. The deadline is the usual cause, but a
-		// dropped connection mid-body looks the same and costs the same.
+		// scrape. This is `bodyReadFailed`, never `transport`: replaying would
+		// pay a second time for a scrape that did happen. `timedOut` is still set
+		// for a deadline or abort so the cause stays visible, and the
+		// `BODY_READ_ERROR` handler, which never retries, matches before the
+		// timeout one. A dropped connection mid-body looks the same and costs
+		// the same.
 		const timedOut =
 			error instanceof Error &&
 			(error.name === 'TimeoutError' || error.name === 'AbortError');
