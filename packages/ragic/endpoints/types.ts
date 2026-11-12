@@ -301,7 +301,9 @@ const WriteOptionsShape = {
 	checkLock: z
 		.boolean()
 		.optional()
-		.describe('Refuse the update when the record is locked.'),
+		.describe(
+			'Refuse the update when the record is locked. Without it Ragic ignores the lock and saves the update.',
+		),
 } as const;
 
 const RecordsCreateInputSchema = SheetSchema.extend({
@@ -338,6 +340,9 @@ export type WriteResponse = z.infer<typeof WriteResponseSchema>;
 
 const RecordsUpdateInputSchema = RecordsCreateInputSchema.extend({
 	recordId: RecordIdSchema,
+	fields: JsonObjectSchema.describe(
+		'Field ID to value, only for the fields to change. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss. A subtable is `_subtable_<id>` keyed by row id: an existing row’s positive id (read from the record) edits that row, a negative id adds a new row. `_DELSUB_<subtable id>` with an array of row ids deletes those rows.',
+	),
 });
 
 export type RecordsUpdateInput = z.infer<typeof RecordsUpdateInputSchema>;

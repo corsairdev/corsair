@@ -156,7 +156,7 @@ const ragicEndpointMeta = {
 	'records.lock': {
 		riskLevel: 'write',
 		description:
-			'Lock a record so it cannot be edited until it is unlocked; the same permission as locking in the form',
+			'Lock a record so it cannot be edited in the Ragic UI until it is unlocked; an API update still saves unless it passes checkLock: true. The same permission as locking in the form',
 	},
 	'records.unlock': {
 		riskLevel: 'write',

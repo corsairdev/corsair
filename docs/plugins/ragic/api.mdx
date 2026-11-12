@@ -66,7 +66,7 @@ await corsair.ragic.api.records.create({ account: 'demo', path: '/sales', sheetI
 | `doAIAgent` | `boolean` | No | False skips the AI Agents, which otherwise run. |
 | `notification` | `boolean` | No | Defaults to true: the save sends notifications. |
 | `doValidation` | `boolean` | No | Run the sheet’s field validation rules first. A failing field rejects the save. |
-| `checkLock` | `boolean` | No | Refuse the update when the record is locked. |
+| `checkLock` | `boolean` | No | Refuse the update when the record is locked. Without it Ragic ignores the lock and saves the update. |
 
 
 
@@ -238,7 +238,7 @@ Record<string, Record<string, JsonValue>> | {
 
 `records.lock`
 
-Lock a record so it cannot be edited until it is unlocked; the same permission as locking in the form
+Lock a record so it cannot be edited in the Ragic UI until it is unlocked; an API update still saves unless it passes checkLock: true. The same permission as locking in the form
 
 **Risk:** `write`
 
@@ -321,7 +321,7 @@ await corsair.ragic.api.records.update({ account: 'demo', path: '/sales', sheetI
 | `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
 | `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
 | `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
-| `fields` | `Record<string, JsonValue>` | Yes | Field ID to value. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss; a subtable is `_subtable_<id>` keyed by a negative row id that groups a row’s values. |
+| `fields` | `Record<string, JsonValue>` | Yes | Field ID to value, only for the fields to change. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss. A subtable is `_subtable_<id>` keyed by row id: an existing row’s positive id (read from the record) edits that row, a negative id adds a new row. `_DELSUB_<subtable id>` with an array of row ids deletes those rows. |
 | `doFormula` | `boolean` | No | Recalculate every formula before saving. |
 | `doDefaultValue` | `boolean` | No | Load every default value before saving. |
 | `doLinkLoad` | `boolean \| first` | No | Run link and load operations: true after the formula recalculation, "first" before it. Either way doFormula must also be set when a recalculation is needed. |
@@ -329,7 +329,7 @@ await corsair.ragic.api.records.update({ account: 'demo', path: '/sales', sheetI
 | `doAIAgent` | `boolean` | No | False skips the AI Agents, which otherwise run. |
 | `notification` | `boolean` | No | Defaults to true: the save sends notifications. |
 | `doValidation` | `boolean` | No | Run the sheet’s field validation rules first. A failing field rejects the save. |
-| `checkLock` | `boolean` | No | Refuse the update when the record is locked. |
+| `checkLock` | `boolean` | No | Refuse the update when the record is locked. Without it Ragic ignores the lock and saves the update. |
 | `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
 
 
