@@ -356,7 +356,9 @@ const ImageUploadInputSchema = z.object({
 		.string()
 		.min(1)
 		.regex(/^[^/]+(?:\/[^/]+)?$/)
-		.describe('The project URL slug or workspace/project ID.'),
+		.describe(
+			"The project URL slug, or a workspace/project ID whose workspace is the API key's own.",
+		),
 	image: z
 		.string()
 		.min(1)

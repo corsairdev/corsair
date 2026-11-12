@@ -1,5 +1,5 @@
-import type { RoboflowEndpoints } from '..';
-import { segment } from '../client';
+import type { RoboflowContext, RoboflowEndpoints } from '..';
+import { makeRoboflowRequest, RoboflowAPIError, segment } from '../client';
 import { call } from './call';
 import {
 	RoboflowEndpointInputSchemas as Inputs,
@@ -215,14 +215,51 @@ export const models: RoboflowEndpoints['modelsList'] = (ctx, input) =>
 	);
 
 /**
+ * The upload route takes a project slug and the API key picks the workspace, so a
+ * workspace named in a workspace/project ID would otherwise be dropped and the
+ * image could land in a same-named project of the key's own workspace. The named
+ * workspace is checked against the key's before anything is uploaded.
+ */
+async function assertKeyWorkspace(
+	ctx: RoboflowContext,
+	named: string,
+): Promise<void> {
+	const root = await makeRoboflowRequest(ctx.key, {
+		method: 'GET',
+		path: '/',
+		replayable: true,
+	});
+	const own =
+		root !== null && typeof root === 'object' && !Array.isArray(root)
+			? (root as Record<string, unknown>).workspace
+			: undefined;
+	if (typeof own !== 'string') {
+		throw new RoboflowAPIError(
+			`Could not confirm that the API key belongs to workspace "${named}"; nothing was uploaded.`,
+		);
+	}
+	if (own !== named) {
+		throw new RoboflowAPIError(
+			`The API key belongs to workspace "${own}", not "${named}"; nothing was uploaded.`,
+		);
+	}
+}
+
+/**
  * Uploads one image to a project, by URL or as base64.
  *
- * The upload route takes the project slug. For a workspace/project ID, extract
- * the slug; the API key selects the workspace. The documented workspace alias
- * returns 404 on the live host.
+ * The upload route takes the project slug. For a workspace/project ID, the
+ * workspace must be the API key's own (checked first), then the slug is used. The
+ * documented workspace alias returns 404 on the live host.
  */
-export const upload: RoboflowEndpoints['imageUpload'] = (ctx, input) =>
-	call(
+export const upload: RoboflowEndpoints['imageUpload'] = async (ctx, input) => {
+	const { project: projectId } = Inputs.imageUpload.parse(input ?? {});
+	const [named, slug] = projectId.includes('/')
+		? (projectId.split('/') as [string, string])
+		: [undefined, projectId];
+	if (named !== undefined) await assertKeyWorkspace(ctx, named);
+
+	return call(
 		ctx,
 		{
 			event: 'images.upload',
@@ -230,9 +267,9 @@ export const upload: RoboflowEndpoints['imageUpload'] = (ctx, input) =>
 			output: Outputs.imageUpload,
 		},
 		input,
-		({ project: projectId, image, name, batch, tag }) => ({
+		({ image, name, batch, tag }) => ({
 			method: 'POST',
-			path: `/dataset/${segment(projectId.split('/').at(-1) ?? projectId)}/upload`,
+			path: `/dataset/${segment(slug)}/upload`,
 			query: {
 				name,
 				batch,
@@ -253,3 +290,4 @@ export const upload: RoboflowEndpoints['imageUpload'] = (ctx, input) =>
 			}),
 		},
 	);
+};

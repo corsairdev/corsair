@@ -330,10 +330,11 @@ describe('models.list', () => {
 
 describe('images.upload', () => {
 	it('uploads by URL to the project ID route', async () => {
+		respond(fetchMock, AUTHENTICATED);
 		respond(fetchMock, IMAGE_UPLOADED);
 
 		const result = (await invoke(Platform.upload, {
-			project: 'roboflow/chess-sample-4ckfl',
+			project: 'my-workspace/chess-sample-4ckfl',
 			image: 'https://x.com/a.jpg',
 			batch: 'batch-1',
 			tag: ['chess'],
@@ -359,7 +360,7 @@ describe('images.upload', () => {
 	it('uploads base64 as the raw form body', async () => {
 		respond(fetchMock, IMAGE_UPLOADED);
 		await invoke(Platform.upload, {
-			project: 'w/p',
+			project: 'p',
 			image: 'data:image/png;base64,aGVsbG8=',
 		});
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -374,13 +375,63 @@ describe('images.upload', () => {
 		respond(fetchMock, IMAGE_DUPLICATE);
 
 		const result = (await invoke(Platform.upload, {
-			project: 'roboflow/chess',
+			project: 'chess',
 			image: 'https://x.com/a.jpg',
 		})) as { duplicate?: boolean; id?: string };
 
 		expect(result.duplicate).toBe(true);
 		// The existing image's id still comes back.
 		expect(result.id).toBeDefined();
+	});
+
+	it('checks a workspace/project ID against the key before uploading', async () => {
+		respond(fetchMock, AUTHENTICATED);
+		respond(fetchMock, IMAGE_UPLOADED);
+
+		await invoke(Platform.upload, {
+			project: 'my-workspace/photos',
+			image: 'https://x.com/a.jpg',
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		const [rootUrl] = fetchMock.mock.calls[0] as [string];
+		expect(new URL(rootUrl).pathname).toBe('/');
+		expect(lastRequest(fetchMock).path).toBe('/dataset/photos/upload');
+	});
+
+	it('refuses a workspace the key does not belong to, without uploading', async () => {
+		respond(fetchMock, AUTHENTICATED);
+
+		await expect(
+			invoke(Platform.upload, {
+				project: 'other-workspace/photos',
+				image: 'https://x.com/a.jpg',
+			}),
+		).rejects.toThrow(/other-workspace/);
+		// Only the workspace check went out; no upload.
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('refuses a workspace/project ID when the key names no workspace', async () => {
+		respond(fetchMock, UNATTENDED);
+
+		await expect(
+			invoke(Platform.upload, {
+				project: 'my-workspace/photos',
+				image: 'https://x.com/a.jpg',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('refuses a project ID with more than two segments, without a request', async () => {
+		await expect(
+			invoke(Platform.upload, {
+				project: 'a/b/c',
+				image: 'https://x.com/a.jpg',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an empty image', async () => {
