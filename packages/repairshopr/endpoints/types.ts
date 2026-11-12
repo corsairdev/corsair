@@ -67,7 +67,9 @@ const CustomersListInputSchema = z.object({
 	sort: z
 		.string()
 		.optional()
-		.describe('A column to sort on; prefix with `-` for descending.'),
+		.describe(
+			'A column and direction, such as `firstname ASC` or `city DESC`.',
+		),
 });
 
 export type CustomersListInput = z.input<typeof CustomersListInputSchema>;
@@ -87,8 +89,9 @@ const CustomerSchema = z
 		city: z.string().nullish(),
 		state: z.string().nullish(),
 		zip: z.string().nullish(),
-		latitude: z.number().nullish(),
-		longitude: z.number().nullish(),
+		// The spec types a customer's coordinates as strings, a contact's as numbers.
+		latitude: z.union([z.number(), z.string()]).nullish(),
+		longitude: z.union([z.number(), z.string()]).nullish(),
 		notes: z.string().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
@@ -162,7 +165,7 @@ const CustomersUpdateInputSchema = CustomersWriteInputSchema.partial().extend({
 	customer_id: z.number().int().positive(),
 });
 
-export type CustomersUpdateInput = z.input<typeof CustomersWriteInputSchema>;
+export type CustomersUpdateInput = z.input<typeof CustomersUpdateInputSchema>;
 
 const CustomersUpdateResponseSchema = z.object({ customer: CustomerSchema });
 export type CustomersUpdateResponse = z.infer<
@@ -255,13 +258,18 @@ export type TicketsGetInput = z.input<typeof TicketsGetInputSchema>;
 const TicketsGetResponseSchema = z.object({ ticket: TicketSchema });
 export type TicketsGetResponse = z.infer<typeof TicketsGetResponseSchema>;
 
-const TicketStatusSchema = z.enum([
-	'New',
-	'In Progress',
-	'Waiting on Customer',
-	'Waiting on Parts',
-	'Resolved',
-]);
+/**
+ * Each account edits its own ticket status list, so any name the account uses is
+ * accepted. RepairShopr's defaults are `New`, `In Progress`, `Resolved`,
+ * `Invoiced`, `Waiting for Parts`, `Waiting on Customer`, `Scheduled` and
+ * `Customer Reply`.
+ */
+const TicketStatusSchema = z
+	.string()
+	.min(1)
+	.describe(
+		'A status name from the account, such as `New`, `In Progress`, `Waiting for Parts` or `Resolved`.',
+	);
 
 const TicketsWriteInputSchema = z.object({
 	customer_id: z
@@ -299,7 +307,7 @@ const TicketsUpdateInputSchema = TicketsWriteInputSchema.partial().extend({
 	ticket_id: z.number().int().positive(),
 });
 
-export type TicketsUpdateInput = z.input<typeof TicketsWriteInputSchema>;
+export type TicketsUpdateInput = z.input<typeof TicketsUpdateInputSchema>;
 
 const TicketsUpdateResponseSchema = z.object({ ticket: TicketSchema });
 export type TicketsUpdateResponse = z.infer<typeof TicketsUpdateResponseSchema>;
@@ -325,8 +333,11 @@ const InvoicesListInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
+		.max(25)
 		.optional()
-		.describe('Invoices per page; the one collection that accepts it.'),
+		.describe(
+			'Invoices per page, at most 25; the one collection that accepts it.',
+		),
 	ticket_id: z.number().int().optional(),
 	paid: z.boolean().optional(),
 	unpaid: z.boolean().optional(),
@@ -340,7 +351,8 @@ const InvoiceSchema = z
 		id: z.number().nullish(),
 		name: z.string().nullish(),
 		number: z.string().nullish(),
-		external_id: z.string().nullish(),
+		// The spec types this as an integer; a string is accepted too.
+		external_id: z.union([z.number(), z.string()]).nullish(),
 		schedule_id: z.number().nullish(),
 		qbsdk_external_id: z.string().nullish(),
 		xero_id: z.string().nullish(),
@@ -393,7 +405,10 @@ const ProductsListInputSchema = z.object({
 	category_id: z.number().int().optional(),
 	id: z.number().int().optional(),
 	id_not: z.number().int().optional(),
-	sort: z.string().optional(),
+	sort: z
+		.string()
+		.optional()
+		.describe('A column and direction, such as `name ASC`.'),
 });
 
 export type ProductsListInput = z.input<typeof ProductsListInputSchema>;
@@ -454,10 +469,7 @@ export type ProductsGetResponse = z.infer<typeof ProductsGetResponseSchema>;
 
 const ProductsWriteInputSchema = z.object({
 	name: z.string().min(1),
-	description: z
-		.string()
-		.min(1)
-		.describe('Required by RepairShopr, so it is required here.'),
+	description: z.string().min(1).describe('Required when creating a product.'),
 	price_cost: z.number().min(0).optional(),
 	price_retail: z.number().min(0).optional(),
 	price_wholesale: z.number().min(0).optional(),
@@ -488,7 +500,7 @@ const ProductsUpdateInputSchema = ProductsWriteInputSchema.partial().extend({
 	product_id: z.number().int().positive(),
 });
 
-export type ProductsUpdateInput = z.input<typeof ProductsWriteInputSchema>;
+export type ProductsUpdateInput = z.input<typeof ProductsUpdateInputSchema>;
 
 const ProductsUpdateResponseSchema = z.object({ product: ProductSchema });
 export type ProductsUpdateResponse = z.infer<

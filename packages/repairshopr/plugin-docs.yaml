@@ -7,11 +7,12 @@ overviewNote: |
 
   - **The subdomain is half the credential.** Pass it when you create the plugin, or store it on the account beside the key. A missing or malformed value fails before a request is sent rather than resolving to a host that does not exist.
   - **A 401 covers three different problems.** `Failed to authenticate account` means a bad key, a wrong subdomain, or a key that belongs to another account; RepairShopr does not separate them, so the plugin reports one auth error rather than guessing.
-  - **Paging is by page number.** Collections answer with their own array plus a `meta` block carrying `total_pages`, and `next_page` is derived from it. Only `invoices` accepts `per_page`; the others use the account default.
+  - **Paging is by page number.** Collections answer with their own array plus a `meta` block carrying `total_pages`, and `next_page` is derived from it. Only `invoices` accepts `per_page` (at most 25); the others use the account default.
+  - **Sorting names a column and a direction**, such as `firstname ASC` or `created_at DESC`.
   - **Products and vendors carry no `meta`.** Their collections cannot be paged, so `next_page` is always null there rather than an invented number.
   - **Money is a string on invoices.** `subtotal`, `total` and `tax` come back as decimal strings such as `"181.50"`, while product prices are numbers.
   - **A contact spells its address differently from a customer.** A contact has `address1`/`address2`; a customer has `address`/`address_2`. Both are modelled as the API sends them.
-  - **Ticket status and priority are enums.** `status` takes one of `New`, `In Progress`, `Waiting on Customer`, `Waiting on Parts` or `Resolved`; `priority` takes one of `Urgent`, `High`, `Medium` or `Low`. An unknown value is rejected before the request is sent.
+  - **Ticket status is the account's own list.** `status` takes any status name the account uses; the defaults are `New`, `In Progress`, `Resolved`, `Invoiced`, `Waiting for Parts`, `Waiting on Customer`, `Scheduled` and `Customer Reply`. `priority` takes one of `Urgent`, `High`, `Medium` or `Low`.
   - **Creating a product needs a description.** RepairShopr rejects a product without one, so the schema requires it rather than letting the API return `Name can't be blank`.
   - **A rejection echoes what you sent.** A `422` body carries every message at fault in `message` and the offending values in `params`, both exposed on the error.
   - **Deletes are permanent.** `customers.delete` and `tickets.delete` have no undo and are marked destructive.
@@ -31,7 +32,7 @@ examples:
       subject: Laptop will not boot
 apiExamples:
   customers.list:
-    call: "{ page: 1, query: 'walkin', sort: '-created_at' }"
+    call: "{ page: 1, query: 'walkin', sort: 'created_at DESC' }"
   customers.get:
     call: "{ customer_id: 1 }"
   customers.create:
@@ -68,7 +69,7 @@ apiExamples:
     call: "{ page: 1 }"
 apiNotes:
   'customers.list': 'Pages by number; `meta.total_pages` is what `next_page` is derived from.'
-  'tickets.create': 'The status and priority values are validated before the request, because RepairShopr rejects an unknown one.'
+  'tickets.create': 'The status is a name from the account''s own status list.'
   'invoices.list': 'Money fields come back as decimal strings on this resource.'
   'products.list': 'This collection has no `meta` block, so `next_page` is always null.'
   'products.create': 'The description is required; RepairShopr rejects a product without one.'
