@@ -137,6 +137,49 @@ describe('makeDigicertRequest', () => {
 		});
 	});
 
+	it('uses a Bearer access token for CSC OAuth2 operations', async () => {
+		mockRequest.mockResolvedValue({ data: { credentials: [] } });
+		await makeDigicertRequest(
+			'contentTrust',
+			'/csc/v1/credentials/list',
+			'access-token',
+			{
+				authScheme: 'oauth_2',
+				method: 'POST',
+				body: { userID: 'user-123' },
+			},
+		);
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			HEADERS: { Authorization: 'Bearer access-token' },
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/csc/v1/credentials/list',
+			method: 'POST',
+		});
+	});
+
+	it('uses Bearer authorization for documented Content Trust OAuth2 routes', async () => {
+		mockRequest.mockResolvedValue({ data: { credentials: [] } });
+		await makeDigicertRequest(
+			'contentTrust',
+			'/csc/v1/credentials/list',
+			'access-token',
+			{
+				authScheme: 'oauth_2',
+				method: 'POST',
+				body: { userID: 'user-123' },
+			},
+		);
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			HEADERS: { Authorization: 'Bearer access-token' },
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/csc/v1/credentials/list',
+			method: 'POST',
+			body: { userID: 'user-123' },
+		});
+	});
+
 	it('rejects an empty CertCentral key before network I/O', async () => {
 		await expect(
 			makeDigicertRequest('certcentral', '/user', ''),

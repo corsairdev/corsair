@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDigicertRequest } from './client';
 import { endpoints } from './endpoints';
+import { generatedDocTestCases } from './endpoints/generated-docs';
+import {
+	generatedOpenApiOAuthOperationIds,
+	generatedOpenApiTestCases,
+} from './endpoints/generated-openapi';
 import type { DigicertContext, DigicertKeyBuilderContext } from './index';
 import { digicert } from './index';
 
@@ -24,6 +29,20 @@ function buildCtx(): EndpointContext {
 		keys: {
 			get_dek: () => Promise.resolve('test-dek'),
 			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_expires_at: () => Promise.resolve(null),
+			set_expires_at: () => Promise.resolve(),
+			get_access_token: () => Promise.resolve('test-oauth-token'),
+			set_access_token: () => Promise.resolve(),
+			get_refresh_token: () => Promise.resolve(null),
+			set_refresh_token: () => Promise.resolve(),
+			get_scope: () => Promise.resolve(null),
+			set_scope: () => Promise.resolve(),
+			get_integration_credentials: () =>
+				Promise.resolve({
+					client_id: 'client-id',
+					client_secret: 'client-secret',
+					redirect_url: 'https://example.test/callback',
+				}),
 			get_api_key: () => Promise.resolve('test-key'),
 			set_api_key: () => Promise.resolve(),
 			get_digicert_one_api_key: () => Promise.resolve('test-one-key'),
@@ -43,6 +62,43 @@ beforeEach(() => {
 
 describe('DigiCert endpoint requests', () => {
 	const ctx = buildCtx();
+	it('dispatches every generated OpenAPI route with its documented shape', async () => {
+		for (const testCase of generatedOpenApiTestCases) {
+			call.mockResolvedValueOnce(testCase.outputExample);
+			const result = await testCase.endpoint(ctx, testCase.input);
+			expect(result).toEqual(testCase.outputExample);
+			expect(call).toHaveBeenLastCalledWith(
+				testCase.expected.family,
+				testCase.expected.path,
+				testCase.expected.public ? undefined : 'test-key',
+				expect.objectContaining({
+					method: testCase.expected.method,
+					path: testCase.input.path,
+					query: testCase.input.query,
+					public: testCase.expected.public,
+				}),
+			);
+		}
+	});
+
+	it('dispatches every sitemap-generated CertCentral and Report Library route', async () => {
+		for (const testCase of generatedDocTestCases) {
+			call.mockResolvedValueOnce(testCase.outputExample);
+			const result = await testCase.endpoint(ctx, testCase.input);
+			expect(result).toEqual(testCase.outputExample);
+			expect(call).toHaveBeenLastCalledWith(
+				testCase.expected.family,
+				testCase.expected.path,
+				'test-key',
+				expect.objectContaining({
+					method: testCase.expected.method,
+					path: testCase.input.path,
+					query: testCase.input.query,
+				}),
+			);
+		}
+	});
+
 	it('calls CertCentral user, order, and organization list routes with documented paging queries', async () => {
 		call.mockResolvedValueOnce({
 			users: [],
@@ -215,6 +271,22 @@ describe('DigiCert endpoint requests', () => {
 		expect(call.mock.calls[3]?.[1]).toBe(`/report/${report.report_identifier}`);
 	});
 
+	it('routes an OpenAPI-generated Account Manager operation through its family host', async () => {
+		call.mockResolvedValueOnce([{ id: 'api-token-1', name: 'automation' }]);
+		await endpoints.accountManagerApi.listApiTokens(ctx, {
+			query: { user_id: 'user-123' },
+		});
+		expect(call).toHaveBeenCalledWith(
+			'accountManager',
+			'/account/api/v1/api-access-token',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { user_id: 'user-123' },
+			}),
+		);
+	});
+
 	it('encodes both documented Custom Reports GraphQL query modes on the same route', async () => {
 		call.mockResolvedValue({
 			data: { order_details: [{ id: '123', status: 'issued' }] },
@@ -289,6 +361,20 @@ describe('DigiCert endpoint requests', () => {
 			keys: {
 				get_dek: () => Promise.resolve('dek'),
 				issue_new_dek: () => Promise.resolve('dek'),
+				get_expires_at: () => Promise.resolve(null),
+				set_expires_at: () => Promise.resolve(),
+				get_access_token: () => Promise.resolve('test-oauth-token'),
+				set_access_token: () => Promise.resolve(),
+				get_refresh_token: () => Promise.resolve(null),
+				set_refresh_token: () => Promise.resolve(),
+				get_scope: () => Promise.resolve(null),
+				set_scope: () => Promise.resolve(),
+				get_integration_credentials: () =>
+					Promise.resolve({
+						client_id: 'client-id',
+						client_secret: 'client-secret',
+						redirect_url: 'https://example.test/callback',
+					}),
 				get_api_key: () => Promise.resolve('certcentral-key'),
 				set_api_key: () => Promise.resolve(),
 				get_digicert_one_api_key: () => Promise.resolve('one-token'),
@@ -305,12 +391,48 @@ describe('DigiCert endpoint requests', () => {
 			...base,
 			meteredOperationId: 'accountManager.locales',
 		};
+		const generatedOneContext: DigicertKeyBuilderContext = {
+			...base,
+			meteredOperationId: 'accountManagerApi.listApiTokens',
+		};
+		const oauthContext: DigicertKeyBuilderContext = {
+			...base,
+			authType: 'oauth_2',
+			meteredOperationId: generatedOpenApiOAuthOperationIds[1],
+		};
 		const keyBuilder = plugin.keyBuilder;
 		if (!keyBuilder) throw new Error('DigiCert key builder missing');
+		expect(plugin.oauthConfig).toMatchObject({
+			authUrl: 'https://one.digicert.com/imauth/oauth2/authorize',
+			tokenUrl: 'https://one.digicert.com/imauth/oauth2/token',
+			scopes: ['service'],
+		});
 		expect(await keyBuilder(certCentralContext, 'endpoint')).toBe(
 			'certcentral-key',
 		);
 		expect(await keyBuilder(oneContext, 'endpoint')).toBe('one-token');
+		expect(await keyBuilder(generatedOneContext, 'endpoint')).toBe('one-token');
+		expect(await keyBuilder(oauthContext, 'endpoint')).toBe('test-oauth-token');
+	});
+
+	it('uses a Bearer access token for CSC routes that document OAuth2', async () => {
+		const testCase = generatedOpenApiTestCases.find(
+			(entry) => entry.id === generatedOpenApiOAuthOperationIds[1],
+		);
+		if (!testCase) throw new Error('CSC OAuth operation test case missing');
+		call.mockResolvedValueOnce(testCase.outputExample);
+		const oauthCtx: DigicertContext = {
+			...ctx,
+			key: 'test-oauth-token',
+			options: { authType: 'oauth_2' },
+		};
+		await testCase.endpoint(oauthCtx, testCase.input);
+		expect(call).toHaveBeenLastCalledWith(
+			'contentTrust',
+			testCase.expected.path,
+			'test-oauth-token',
+			expect.objectContaining({ authScheme: 'oauth_2' }),
+		);
 	});
 
 	it('rejects invalid requests before network or event logging', async () => {

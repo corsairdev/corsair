@@ -26,16 +26,15 @@ describe('DigiCert error handlers', () => {
 		});
 	});
 
-	it.each([401, 403])(
-		'matches auth status %s without retrying',
-		async (status) => {
-			const error = apiError(status, 'Forbidden');
-			expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
-			expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
-				maxRetries: 0,
-			});
-		},
-	);
+	it.each([
+		401, 403,
+	])('matches auth status %s without retrying', async (status) => {
+		const error = apiError(status, 'Forbidden');
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
+			maxRetries: 0,
+		});
+	});
 
 	it('does not retry the default provider error', async () => {
 		expect(await errorHandlers.DEFAULT.handler()).toEqual({ maxRetries: 0 });

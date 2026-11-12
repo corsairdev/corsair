@@ -1,9 +1,53 @@
 import {
+	generatedDocEndpointCount,
+	generatedDocEndpointSchemas,
+	generatedDocEndpoints,
+} from './endpoints/generated-docs';
+import {
+	generatedOpenApiEndpointCount,
+	generatedOpenApiEndpointSchemas,
+	generatedOpenApiEndpoints,
+} from './endpoints/generated-openapi';
+import {
 	DigicertEndpointInputSchemas,
 	DigicertEndpointOutputSchemas,
 } from './endpoints/types';
 
+function collectEndpointPaths(tree: object, prefix = ''): string[] {
+	return Object.entries(tree).flatMap(([name, value]) => {
+		const path = prefix ? prefix + '.' + name : name;
+		return typeof value === 'function'
+			? [path]
+			: typeof value === 'object' && value !== null
+				? collectEndpointPaths(value, path)
+				: [];
+	});
+}
+
 describe('DigiCert endpoint schemas', () => {
+	it('registers input/output schemas for every generated OpenAPI endpoint', () => {
+		const endpointPaths = collectEndpointPaths(
+			generatedOpenApiEndpoints,
+		).sort();
+		const schemaPaths = Object.keys(generatedOpenApiEndpointSchemas).sort();
+		expect(endpointPaths).toEqual(schemaPaths);
+		expect(endpointPaths).toHaveLength(generatedOpenApiEndpointCount);
+		expect(generatedOpenApiEndpointCount + generatedDocEndpointCount).toBe(646);
+		for (const schemas of Object.values(generatedOpenApiEndpointSchemas)) {
+			expect(schemas).toMatchObject({
+				input: expect.any(Object),
+				output: expect.any(Object),
+			});
+		}
+	});
+
+	it('registers input/output schemas for every sitemap-generated route', () => {
+		const endpointPaths = collectEndpointPaths(generatedDocEndpoints).sort();
+		const schemaPaths = Object.keys(generatedDocEndpointSchemas).sort();
+		expect(endpointPaths).toEqual(schemaPaths);
+		expect(endpointPaths).toHaveLength(generatedDocEndpointCount);
+	});
+
 	it('registers matching input and output schemas for every endpoint', () => {
 		expect(Object.keys(DigicertEndpointInputSchemas).sort()).toEqual(
 			Object.keys(DigicertEndpointOutputSchemas).sort(),
@@ -130,15 +174,12 @@ describe('DigiCert endpoint schemas', () => {
 			{ lang: 'en-US', methods: [], authType: [] },
 			{ methods: 'not-an-array' },
 		],
-	] as const)(
-		'parses documented %s responses and rejects invalid responses',
-		(name, valid, invalid) => {
-			expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
-				true,
-			);
-			expect(
-				DigicertEndpointOutputSchemas[name].safeParse(invalid).success,
-			).toBe(false);
-		},
-	);
+	] as const)('parses documented %s responses and rejects invalid responses', (name, valid, invalid) => {
+		expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
+			true,
+		);
+		expect(DigicertEndpointOutputSchemas[name].safeParse(invalid).success).toBe(
+			false,
+		);
+	});
 });
