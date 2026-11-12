@@ -202,7 +202,7 @@ const CampaignSchema = z
 		allowExperiments: z.boolean().nullish(),
 		showRaiselyCheckbox: z.boolean().nullish(),
 		publicKey: z.string().nullish(),
-		privateKey: z.string().nullish(),
+		// `privateKey`, the campaign's secret API key, is removed by the shaper.
 		profile: CampaignProfileSchema.nullish(),
 		urls: z.array(z.string()).nullish(),
 		// The campaign's theme settings, which nest: a key can hold another

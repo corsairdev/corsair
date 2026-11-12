@@ -2,7 +2,12 @@ import type { RaiselyEndpoints } from '..';
 import type { RaiselyQuery } from '../client';
 import { segment } from '../client';
 import { call, queryOf } from './call';
-import { pagedShape, singleShape } from './shape';
+import {
+	campaignPageShape,
+	campaignShape,
+	pagedShape,
+	singleShape,
+} from './shape';
 import {
 	RaiselyEndpointInputSchemas as Inputs,
 	RaiselyEndpointOutputSchemas as Outputs,
@@ -57,7 +62,7 @@ export const campaignsList: RaiselyEndpoints['campaignsList'] = (ctx, input) =>
 			},
 		}),
 		{
-			shape: pagedShape('campaigns'),
+			shape: campaignPageShape,
 			log: (_, result) => ({
 				count: result.campaigns.length,
 				hasNext: result.next_offset !== null,
@@ -81,7 +86,7 @@ export const campaignsGet: RaiselyEndpoints['campaignsGet'] = (ctx, input) =>
 			query: queryOf({ private: parsed.private }),
 		}),
 		{
-			shape: singleShape('campaign'),
+			shape: campaignShape,
 			log: (_, result) => ({ campaignUuid: result.campaign.uuid ?? '' }),
 		},
 	);

@@ -372,3 +372,29 @@ describe('page envelope', () => {
 		expect(result.next_offset).toBeNull();
 	});
 });
+
+describe('campaign secret key', () => {
+	it('drops privateKey from a campaign read', async () => {
+		respond(fetchMock, { data: CAMPAIGN });
+
+		const result = (await invoke(Endpoints.campaignsGet, {
+			campaign: CAMPAIGN_UUID,
+			private: true,
+		})) as Awaited<ReturnType<typeof Endpoints.campaignsGet>>;
+
+		expect(result.campaign).not.toHaveProperty('privateKey');
+		expect(JSON.stringify(result)).not.toContain('priv_456');
+		expect(result.campaign.publicKey).toBe('pub_123');
+	});
+
+	it('drops privateKey from every campaign in a list', async () => {
+		respond(fetchMock, CAMPAIGN_PAGE);
+
+		const result = (await invoke(Endpoints.campaignsList, {
+			private: true,
+		})) as Awaited<ReturnType<typeof Endpoints.campaignsList>>;
+
+		expect(result.campaigns).toHaveLength(1);
+		expect(JSON.stringify(result)).not.toContain('priv_456');
+	});
+});

@@ -54,3 +54,47 @@ export function singleShape(key: string) {
 		_parsed: unknown,
 	) => ({ [key]: asRecord(raw)?.data });
 }
+
+/**
+ * A campaign read with `private` carries `privateKey`, the campaign's secret API
+ * key (`raisely-sk-…`). The schema is loose, so dropping the field from it would
+ * not drop the value: the shaper removes it before the result reaches a caller.
+ */
+function withoutPrivateKey(
+	// unknown: one campaign record from the provider, checked by the output schema.
+	campaign: unknown,
+): unknown {
+	const record = asRecord(campaign);
+	if (!record) return campaign;
+	const { privateKey: _secret, ...rest } = record;
+	return rest;
+}
+
+/** `pagedShape('campaigns')` with each campaign's secret key removed. */
+export function campaignPageShape(
+	// unknown: untrusted provider JSON, as in `pagedShape`.
+	raw: unknown,
+	// unknown: the operation input, unused by this shaper.
+	parsed: unknown,
+) {
+	const page = pagedShape('campaigns')(raw, parsed);
+	const campaigns = page.campaigns;
+	return {
+		...page,
+		campaigns: Array.isArray(campaigns)
+			? campaigns.map(withoutPrivateKey)
+			: campaigns,
+	};
+}
+
+/** `singleShape('campaign')` with the campaign's secret key removed. */
+export function campaignShape(
+	// unknown: untrusted provider JSON, as in `singleShape`.
+	raw: unknown,
+	// unknown: the operation input, unused by this shaper.
+	parsed: unknown,
+) {
+	return {
+		campaign: withoutPrivateKey(singleShape('campaign')(raw, parsed).campaign),
+	};
+}
