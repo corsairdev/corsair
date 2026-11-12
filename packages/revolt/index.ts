@@ -193,7 +193,8 @@ const revoltEndpointMeta = {
 	'channels.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Close a channel permanently; its message history is gone',
+		description:
+			'Delete a server channel and its messages, leave a group, or close a direct message (its messages stay)',
 	},
 	'messages.list': {
 		riskLevel: 'read',

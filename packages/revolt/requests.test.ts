@@ -147,14 +147,19 @@ describe('messages', () => {
 		expect(result.users).toBeUndefined();
 	});
 
-	it('rejects sort without nearby, which the API ignores alone', async () => {
-		await expect(
-			invoke(Endpoints.messagesList, {
-				channel_id: CHANNEL_ID,
-				sort: 'Latest',
-			}),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
+	it('sends sort without nearby, the order Stoat applies to a plain list', async () => {
+		respond(fetchMock, MESSAGE_ARRAY);
+
+		await invoke(Endpoints.messagesList, {
+			channel_id: CHANNEL_ID,
+			sort: 'Oldest',
+			include_users: false,
+		});
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			sort: 'Oldest',
+			include_users: 'false',
+		});
 	});
 
 	it('rejects before and after together', async () => {

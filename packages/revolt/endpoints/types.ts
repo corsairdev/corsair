@@ -311,7 +311,9 @@ const MessagesListInputSchema = z
 		sort: z
 			.enum(['Oldest', 'Latest', 'Relevance'])
 			.optional()
-			.describe('Only meaningful with `nearby`.'),
+			.describe(
+				'Message order, `Latest` by default. Stoat ignores it when `nearby` is set.',
+			),
 		include_users: z
 			.boolean()
 			.optional()
@@ -320,15 +322,7 @@ const MessagesListInputSchema = z
 			),
 	})
 	.superRefine((value, ctx) => {
-		// A `sort` without `nearby` is meaningless, and `before` with `after`
-		// contradicts itself.
-		if (value.sort !== undefined && value.nearby === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				message: '`sort` needs `nearby`.',
-				path: ['sort'],
-			});
-		}
+		// `before` with `after` contradicts itself.
 		if (value.before !== undefined && value.after !== undefined) {
 			ctx.addIssue({
 				code: 'custom',
@@ -432,7 +426,9 @@ const ReactionsAddInputSchema = z.object({
 	emoji: z
 		.string()
 		.min(1)
-		.describe('A unicode emoji or a custom emoji id in `:id:` form.'),
+		.describe(
+			'A unicode emoji, or a custom emoji id as it is, without colons.',
+		),
 });
 
 export type ReactionsAddInput = z.input<typeof ReactionsAddInputSchema>;

@@ -108,6 +108,25 @@ describe('revolt plugin', () => {
 		}
 	});
 
+	it('does not claim that closing a DM erases its messages', () => {
+		const plugin = internalsOf(revolt());
+		const description = required(
+			plugin.endpointMeta,
+			'channels.delete',
+		).description;
+
+		// Stoat only marks a DM inactive and keeps its messages.
+		expect(description).not.toMatch(/history is gone/);
+		expect(description).toMatch(/direct message/i);
+	});
+
+	it('describes a custom reaction emoji as a bare id', () => {
+		const emoji = RevoltEndpointInputSchemas.reactionsAdd.shape.emoji;
+
+		// Stoat looks the id up as-is; a `:id:` value fails with InvalidOperation.
+		expect(emoji.description).not.toContain(':id:');
+	});
+
 	it('marks the two deletes as destructive', () => {
 		const plugin = internalsOf(revolt());
 
