@@ -1,7 +1,12 @@
 import { ZodError } from 'zod';
 import { WaiverFileAPIError, WaiverFileConfigurationError } from './client';
 import { errorHandlers } from './error-handlers';
-import { badRequest, invalidKey, routeNotFound } from './test-fixtures';
+import {
+	badRequest,
+	invalidKey,
+	invalidKeyOnRoute,
+	routeNotFound,
+} from './test-fixtures';
 
 type HandlerName = keyof typeof errorHandlers;
 
@@ -47,6 +52,11 @@ describe('WaiverFile error handlers', () => {
 		const error = apiError(400, invalidKey);
 		expect(classify(error)).toBe('AUTH_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('treats the bare 400 Invalid that every route but Ping sends as an auth failure', async () => {
+		const error = apiError(400, invalidKeyOnRoute);
+		expect(classify(error)).toBe('AUTH_ERROR');
 	});
 
 	it('treats 401 and 403 as auth failures', async () => {

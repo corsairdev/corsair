@@ -8,6 +8,9 @@ import { ApiError, request } from 'corsair/http';
 
 export const WAIVERFILE_API_BASE = 'https://api.waiverfile.com';
 
+/** The same deadline the shared transport gives every JSON request. */
+const DOWNLOAD_TIMEOUT_MS = 20_000;
+
 /**
  * Every call takes both credentials as **query parameters**: the `apiKey` and
  * the `siteID` GUID the key belongs to. There is no bearer token and no header,
@@ -98,14 +101,19 @@ export class WaiverFileAPIError extends Error {
 			path?: string;
 		} = {},
 	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
+		// An ApiError from corsair/http is never kept as the cause: it holds the
+		// request query and body, and WaiverFile's credentials travel there as
+		// `apiKey` (and `APIKey` in the InsertEvent body), which the shared
+		// redaction does not cover. Its status, body and retry delay are copied
+		// instead, already scrubbed.
+		const cause = options.cause instanceof ApiError ? undefined : options.cause;
+		super(message, cause ? { cause } : undefined);
 		this.name = 'WaiverFileAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.path = options.path ?? cause?.request.url.split('?')[0];
+		this.status = options.status;
+		this.body = options.body;
+		this.retryAfter = options.retryAfter;
+		this.method = options.method;
+		this.path = options.path;
 	}
 
 	/**
@@ -116,12 +124,12 @@ export class WaiverFileAPIError extends Error {
 	get isAuthError(): boolean {
 		if (this.status === 401 || this.status === 403) return true;
 		const message = readString(asRecord(this.body), 'Message') ?? '';
+		// Ping answers `InvalidService is online though.`; every other route
+		// answers a bare `Invalid`. Over_daily_limit and IP_blocked are the other
+		// key-level refusals the reference lists.
 		return (
 			this.status === 400 &&
-			(message.startsWith('Invalid apiKey') ||
-				message.startsWith('Invalid siteID') ||
-				message.startsWith('InvalidService') ||
-				message.startsWith('Invalid key') ||
+			(/^(Invalid(Service)?|Over_daily_limit|IP_blocked)\b/.test(message) ||
 				message.includes('apiKey is required') ||
 				message.includes('siteID is required'))
 		);
@@ -193,16 +201,54 @@ export async function makeWaiverFileRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// A 404 body echoes the whole request URL, key included, so the body
+			// is scrubbed before it reaches the message or the error object.
+			const body = scrubWaiverFileSecret(error.body, credentials.apiKey);
 			throw new WaiverFileAPIError(
-				describeWaiverFileError(error.status, error.body, error.message),
-				{ cause: error, path },
+				describeWaiverFileError(error.status, body, `HTTP ${error.status}`),
+				{
+					status: error.status,
+					body,
+					retryAfter: error.retryAfter,
+					method,
+					path,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new WaiverFileAPIError(error.message, { cause: error, method });
+			throw new WaiverFileAPIError(
+				scrubWaiverFileSecret(error.message, credentials.apiKey) as string,
+				{ method, path },
+			);
 		}
-		throw new WaiverFileAPIError('Unknown WaiverFile error', { method });
+		throw new WaiverFileAPIError('Unknown WaiverFile error', { method, path });
+	}
+}
+
+/**
+ * Removes the API key from an error body or message. WaiverFile's "No HTTP
+ * resource was found that matches the request URI '…?apiKey=…'" puts the key
+ * in plain text, and the shared transport's redaction only covers its own
+ * request fields.
+ */
+// unknown: the error body is whatever WaiverFile or a proxy sent.
+export function scrubWaiverFileSecret(value: unknown, apiKey: string): unknown {
+	const scrub = (text: string) => {
+		let out = text.replace(/([?&]apiKey=)[^&'"\s]*/gi, '$1[REDACTED]');
+		if (apiKey) {
+			out = out.split(apiKey).join('[REDACTED]');
+			const encoded = encodeURIComponent(apiKey);
+			if (encoded !== apiKey) out = out.split(encoded).join('[REDACTED]');
+		}
+		return out;
+	};
+	if (typeof value === 'string') return scrub(value);
+	if (value === undefined || value === null) return value;
+	try {
+		return JSON.parse(scrub(JSON.stringify(value)));
+	} catch {
+		return undefined;
 	}
 }
 
@@ -230,27 +276,62 @@ export async function makeWaiverFileDownload(
 		response = await fetch(url, {
 			method: 'GET',
 			headers: { Accept: 'application/pdf' },
+			// The shared transport's 20-second deadline does not apply here, so
+			// the same limit covers the request and the body read below.
+			signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
 		});
 	} catch (error) {
 		// A transport failure never reached WaiverFile, so a read is safe to replay.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new WaiverFileAPIError(error.message, {
-				cause: error,
-				method: 'GET',
-			});
+			throw new WaiverFileAPIError(
+				scrubWaiverFileSecret(error.message, credentials.apiKey) as string,
+				{ method: 'GET', path },
+			);
 		}
-		throw new WaiverFileAPIError('Unknown WaiverFile error', { method: 'GET' });
+		throw new WaiverFileAPIError('Unknown WaiverFile error', {
+			method: 'GET',
+			path,
+		});
 	}
 
 	if (!response.ok) {
+		// The reference says PDF errors have an empty body; anything else is
+		// kept, parsed when it is JSON, so isAuthError and Retry-After still work.
 		const text = await response.text().catch(() => '');
+		let parsed: unknown = text || undefined;
+		try {
+			parsed = text ? JSON.parse(text) : undefined;
+		} catch {
+			// Plain text stays as it is.
+		}
+		const body = scrubWaiverFileSecret(parsed, credentials.apiKey);
+		const retryAfterHeader = response.headers.get('retry-after');
+		const retryAfterSeconds = retryAfterHeader
+			? Number(retryAfterHeader)
+			: Number.NaN;
 		throw new WaiverFileAPIError(
-			describeWaiverFileError(response.status, text, `HTTP ${response.status}`),
-			{ status: response.status, method: 'GET' },
+			describeWaiverFileError(response.status, body, `HTTP ${response.status}`),
+			{
+				status: response.status,
+				body,
+				retryAfter: Number.isFinite(retryAfterSeconds)
+					? retryAfterSeconds * 1000
+					: undefined,
+				method: 'GET',
+				path,
+			},
 		);
 	}
 
-	const bytes = Buffer.from(await response.arrayBuffer());
+	let bytes: Buffer;
+	try {
+		bytes = Buffer.from(await response.arrayBuffer());
+	} catch (error) {
+		throw new WaiverFileAPIError(
+			error instanceof Error ? error.message : 'Reading the PDF failed',
+			{ method: 'GET', path },
+		);
+	}
 	return {
 		bytes,
 		contentType: response.headers.get('content-type') ?? 'application/pdf',
@@ -259,6 +340,7 @@ export async function makeWaiverFileDownload(
 
 /** Narrows a caught value to this plugin's error. */
 export function isWaiverFileFailure(
+	// unknown: a caught value can be anything; this guard is what narrows it.
 	error: unknown,
 ): error is WaiverFileAPIError {
 	return error instanceof WaiverFileAPIError;

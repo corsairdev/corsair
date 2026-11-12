@@ -12,6 +12,7 @@ import {
 import {
 	badRequest,
 	invalidKey,
+	invalidKeyOnRoute,
 	missingCredential,
 	routeNotFound,
 } from './test-fixtures';
@@ -99,6 +100,11 @@ describe('makeWaiverFileRequest', () => {
 		expect(error.status).toBe(404);
 		expect(error.isNotFound).toBe(true);
 		expect(error.message).toContain('WaiverFile 404:');
+		// WaiverFile echoes the request URL, key included; neither copy survives.
+		expect(error.message).not.toContain(API_KEY);
+		expect(JSON.stringify(error.body)).not.toContain(API_KEY);
+		expect(error.path).toBe('/api/v1/Nope');
+		expect(error.method).toBe('GET');
 	});
 
 	it('wraps a transport failure', async () => {
@@ -197,9 +203,9 @@ describe('WaiverFileAPIError', () => {
 		expect(new WaiverFileAPIError('x', { status: 404 }).isNotFound).toBe(true);
 	});
 
-	it('reads the status from a wrapped ApiError', () => {
+	it('does not keep a wrapped ApiError, whose request holds the key, as the cause', () => {
 		const cause = new ApiError(
-			{ method: 'GET', url: '/api/v1/Nope' },
+			{ method: 'GET', url: '/api/v1/Nope', query: { apiKey: API_KEY } },
 			{
 				url: 'https://api.waiverfile.com/api/v1/Nope',
 				ok: false,
@@ -209,8 +215,17 @@ describe('WaiverFileAPIError', () => {
 			},
 			'Not Found',
 		);
-		const error = new WaiverFileAPIError('wrapped', { cause });
+		const error = new WaiverFileAPIError('wrapped', { cause, status: 404 });
+		expect(error.cause).toBeUndefined();
 		expect(error.status).toBe(404);
+	});
+
+	it('treats the bare Invalid every route but Ping sends as an auth error', () => {
+		const error = new WaiverFileAPIError('x', {
+			status: 400,
+			body: invalidKeyOnRoute,
+		});
+		expect(error.isAuthError).toBe(true);
 	});
 });
 
