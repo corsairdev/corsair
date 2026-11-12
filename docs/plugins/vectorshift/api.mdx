@@ -1,17 +1,12 @@
 ---
-title: API
-description: "API reference for VectorShift: every `vectorshift.api.*` operation with input and output types."
+title: "VectorShift API reference"
+sidebarTitle: "API"
+description: "API reference for the VectorShift plugin in Corsair: every `vectorshift.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `vectorshift.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
-
-<Warning>
-A run that fails is **thrown** as `VectorshiftRunFailedError`, not returned with `status: 'failed'`. Wrap a run in `try`/`catch`; checking `result.status` alone will miss it.
-</Warning>
 
 ## Chatbots
 
@@ -24,7 +19,7 @@ Create a chatbot over a pipeline, naming the input and output nodes its messages
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.chatbots.create({ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' });
+await corsair.vectorshift.api.chatbots.create({ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' });
 ```
 
 **Input**
@@ -64,7 +59,7 @@ await corsair.withTenant('acme').vectorshift.api.chatbots.create({ pipeline: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `id` | `string \| null` | No | — |
 
 
@@ -80,7 +75,7 @@ Send a text or audio message to a chatbot and read its reply, continuing a conve
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.chatbots.run({ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' });
+await corsair.vectorshift.api.chatbots.run({ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' });
 ```
 
 **Input**
@@ -98,7 +93,7 @@ await corsair.withTenant('acme').vectorshift.api.chatbots.run({ id: 'cb_1a2b3c',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `conversation_id` | `string \| null` | No | Pass this back to continue the conversation. |
 | `output_message` | `string \| null` | No | — |
 | `follow_up_questions` | `string[] \| null` | No | — |
@@ -118,7 +113,7 @@ Create a knowledge base, choosing the file parser, chunk size and overlap
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.knowledgeBases.create({ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 });
+await corsair.vectorshift.api.knowledgeBases.create({ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 });
 ```
 
 **Input**
@@ -139,7 +134,7 @@ await corsair.withTenant('acme').vectorshift.api.knowledgeBases.create({ name: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `id` | `string \| null` | No | The new knowledge base id. |
 
 
@@ -155,7 +150,7 @@ Read one knowledge base by id, or by name with an optional owner
 **Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.knowledgeBases.get({ id: 'kb_4d2f9a' });
+await corsair.vectorshift.api.knowledgeBases.get({ id: 'kb_4d2f9a' });
 ```
 
 **Input**
@@ -173,7 +168,7 @@ await corsair.withTenant('acme').vectorshift.api.knowledgeBases.get({ id: 'kb_4d
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `object` | `Record<string, any> \| null` | No | — |
 
 
@@ -186,10 +181,10 @@ await corsair.withTenant('acme').vectorshift.api.knowledgeBases.get({ id: 'kb_4d
 
 Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.knowledgeBases.query({ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } });
+await corsair.vectorshift.api.knowledgeBases.query({ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } });
 ```
 
 **Input**
@@ -257,7 +252,7 @@ await corsair.withTenant('acme').vectorshift.api.knowledgeBases.query({ id: 'kb_
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `result` | `Record<string, any> \| null` | No | — |
 
 
@@ -275,7 +270,7 @@ Run one pipeline once per entry in parallel, with separate inputs and a run id e
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] });
+await corsair.vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] });
 ```
 
 **Input**
@@ -302,7 +297,7 @@ await corsair.withTenant('acme').vectorshift.api.pipelines.bulkRun({ id: 'pl_7f3
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `run_outputs` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -330,7 +325,7 @@ Create a pipeline from a builder graph, passed through unchanged
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.pipelines.create({ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } });
+await corsair.vectorshift.api.pipelines.create({ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } });
 ```
 
 **Input**
@@ -347,7 +342,7 @@ await corsair.withTenant('acme').vectorshift.api.pipelines.create({ name: 'Suppo
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `id` | `string \| null` | No | — |
 
 
@@ -363,7 +358,7 @@ List pipeline ids, optionally including shared pipelines and the full objects
 **Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.pipelines.list({ include_shared: true, verbose: true });
+await corsair.vectorshift.api.pipelines.list({ include_shared: true, verbose: true });
 ```
 
 **Input**
@@ -379,7 +374,7 @@ await corsair.withTenant('acme').vectorshift.api.pipelines.list({ include_shared
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `object_ids` | `string[] \| null` | No | — |
 | `objects` | `Record<string, any>[] \| null` | No | — |
 
@@ -396,7 +391,7 @@ Run a pipeline with the given inputs and read back every output node value
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.pipelines.run({ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } });
+await corsair.vectorshift.api.pipelines.run({ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } });
 ```
 
 **Input**
@@ -412,7 +407,7 @@ await corsair.withTenant('acme').vectorshift.api.pipelines.run({ id: 'pl_7f3a2b'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `run_id` | `string \| null` | No | — |
 | `outputs` | `Record<string, any> \| null` | No | — |
 
@@ -431,7 +426,7 @@ Create a transformation from a Python function and its input and output schemas
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.transformations.create({ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } });
+await corsair.vectorshift.api.transformations.create({ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } });
 ```
 
 **Input**
@@ -451,7 +446,7 @@ await corsair.withTenant('acme').vectorshift.api.transformations.create({ name: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `id` | `string \| null` | No | — |
 
 
@@ -467,7 +462,7 @@ Run a transformation in VectorShift's sandbox with the given arguments
 **Risk:** `write`
 
 ```ts
-await corsair.withTenant('acme').vectorshift.api.transformations.run({ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } });
+await corsair.vectorshift.api.transformations.run({ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } });
 ```
 
 **Input**
@@ -483,7 +478,7 @@ await corsair.withTenant('acme').vectorshift.api.transformations.run({ id: 'tr_5
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `success \| failed` | Yes | — |
+| `status` | `success \| failed \| string` | Yes | Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError. |
 | `result` | `Record<string, any> \| null` | No | — |
 
 
