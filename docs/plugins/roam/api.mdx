@@ -46,6 +46,7 @@ Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messages` | `object[]` | Yes | — |
+| `addresses` | `object` | No | Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id. |
 | `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
 | `has_more` | `boolean` | Yes | — |
 
@@ -106,6 +107,22 @@ Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back
 }[]
 ```
 </Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  type?: string | null,
+  displayName?: string | null,
+  displayImageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null
+}>
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -139,6 +156,7 @@ await corsair.roam.api.chat.list({ limit: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `chats` | `object[]` | Yes | — |
+| `addresses` | `object` | No | Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id. |
 | `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
 | `has_more` | `boolean` | Yes | — |
 
@@ -164,6 +182,22 @@ await corsair.roam.api.chat.list({ limit: 20 });
   isMuted?: boolean | null,
   isPinned?: boolean | null
 }[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  type?: string | null,
+  displayName?: string | null,
+  displayImageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -781,7 +815,7 @@ await corsair.roam.api.users.list({ limit: 50, q: 'sam' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ids` | `string[]` | No | Only these user uuids. |
+| `ids` | `string[]` | No | Only these user uuids, up to 100. Not combinable with `q`, `limit` or `cursor`. |
 | `q` | `string` | No | A search phrase. |
 | `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
