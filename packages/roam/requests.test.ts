@@ -250,6 +250,81 @@ describe('chat.post', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('sends text with attached assets, which Roam combines', async () => {
+		respond(fetchMock, CHAT_POST);
+
+		await invoke(Endpoints.chatPost, {
+			chat_id: CHAT_ID,
+			text: 'The report',
+			asset_ids: ['asset-1'],
+			sync: true,
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			chatId: CHAT_ID,
+			text: 'The report',
+			assetIds: ['asset-1'],
+			sync: true,
+		});
+	});
+
+	it('rejects a poll mixed with text', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				text: 'hi',
+				poll: { question: 'Lunch?', options: ['a', 'b'] },
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a post with two destinations', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				group_id: GROUP_ID,
+				text: 'hi',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a send_at off a 15-minute boundary, which Roam refuses', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				text: 'Reminder',
+				send_at: '2026-11-11T09:07:00.000Z',
+			}),
+		).rejects.toThrow('15-minute');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects send_at together with sync', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				text: 'Reminder',
+				send_at: '2026-11-11T09:15:00.000Z',
+				sync: true,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects thread_timestamp together with thread_key', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				text: 'hi',
+				thread_timestamp: TIMESTAMP,
+				thread_key: 'incident-1',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('chat.update', () => {
@@ -268,6 +343,34 @@ describe('chat.update', () => {
 			text: 'Standup in ten',
 		});
 		expect(result.update.chatId).toBe(CHAT_ID);
+	});
+
+	it('edits text and its attachments together', async () => {
+		respond(fetchMock, CHAT_UPDATE);
+
+		await invoke(Endpoints.chatUpdate, {
+			chat_id: CHAT_ID,
+			timestamp: TIMESTAMP,
+			text: 'With a file',
+			items: ['item-1'],
+		});
+
+		expect(lastRequest(fetchMock).json()).toMatchObject({
+			text: 'With a file',
+			items: ['item-1'],
+		});
+	});
+
+	it('rejects blocks with attachments in an update', async () => {
+		await expect(
+			invoke(Endpoints.chatUpdate, {
+				chat_id: CHAT_ID,
+				timestamp: TIMESTAMP,
+				blocks: [{ type: 'divider' }],
+				items: ['item-1'],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an update with no content type', async () => {

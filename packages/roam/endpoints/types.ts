@@ -386,9 +386,20 @@ const SenderSchema = z.object({
 	imageUrl: z.string().optional(),
 });
 
+/** True when an ISO 8601 time sits on a 15-minute UTC boundary. */
+function onQuarterHour(value: string): boolean {
+	const time = new Date(value);
+	if (Number.isNaN(time.getTime())) return false;
+	return (
+		time.getUTCMinutes() % 15 === 0 &&
+		time.getUTCSeconds() === 0 &&
+		time.getUTCMilliseconds() === 0
+	);
+}
+
 /**
- * `chat.post` accepts exactly one content type, so the schema rejects a body
- * that carries none or more than one rather than letting Roam answer 400.
+ * `chat.post` combines `text`, `items` and `asset_ids` freely, but `blocks` and
+ * `poll` each stand alone. The schema rejects the bodies Roam answers 400 to.
  */
 const ChatPostInputSchema = z
 	.object({
@@ -399,7 +410,13 @@ const ChatPostInputSchema = z
 			.optional()
 			.describe('Open a direct chat with these users.'),
 		thread_timestamp: z.number().int().optional(),
-		thread_key: z.string().optional(),
+		thread_key: z
+			.string()
+			.max(64)
+			.optional()
+			.describe(
+				'An external id that threads every post sharing it under the first one.',
+			),
 		reply_timestamp: z.number().int().optional(),
 		text: z.string().optional(),
 		markdown: z.boolean().optional(),
@@ -415,48 +432,89 @@ const ChatPostInputSchema = z
 		color: z.string().optional(),
 		poll: PollSchema.optional(),
 		sender: SenderSchema.optional(),
-		sync: z.boolean().optional(),
+		sync: z
+			.boolean()
+			.optional()
+			.describe(
+				'Wait for the post and return its `timestamp`, which `chat.update`, `reactions.add` and thread replies need. Without it the answer has no timestamp.',
+			),
 		send_at: z
 			.string()
 			.optional()
 			.describe(
-				'Schedule the post for this ISO 8601 time instead of sending now.',
+				'Schedule the post for this ISO 8601 time instead of sending now: in the future, within 30 days, on a 15-minute UTC boundary.',
 			),
 	})
 	.superRefine((value, ctx) => {
-		if (
-			value.chat_id === undefined &&
-			value.group_id === undefined &&
-			!value.user_ids?.length
-		) {
+		const destinations = [
+			value.chat_id !== undefined,
+			value.group_id !== undefined,
+			value.user_ids !== undefined,
+		].filter(Boolean).length;
+		if (destinations !== 1) {
 			ctx.addIssue({
 				code: 'custom',
-				message: 'Provide `chat_id`, `group_id` or `user_ids`.',
+				message: 'Provide exactly one of `chat_id`, `group_id` or `user_ids`.',
 				path: ['chat_id'],
 			});
 		}
-		const contentTypes = [
-			value.text !== undefined,
-			value.items !== undefined,
-			value.asset_ids !== undefined,
+		const hasText =
+			value.text !== undefined ||
+			value.items !== undefined ||
+			value.asset_ids !== undefined;
+		const kinds = [
+			hasText,
 			value.blocks !== undefined,
 			value.poll !== undefined,
-		].filter(Boolean);
-		if (contentTypes.length === 0) {
+		].filter(Boolean).length;
+		if (kinds === 0) {
 			ctx.addIssue({
 				code: 'custom',
 				message:
-					'Provide one of `text`, `items`, `asset_ids`, `blocks` or `poll`.',
+					'Provide `text` (with optional `items` or `asset_ids`), `blocks` or `poll`.',
 				path: ['text'],
 			});
 		}
-		if (contentTypes.length > 1) {
+		if (kinds > 1) {
 			ctx.addIssue({
 				code: 'custom',
 				message:
-					'Roam accepts exactly one content type per post: `text`, `items`, `asset_ids`, `blocks` or `poll`.',
+					'`blocks` and `poll` each stand alone: neither combines with `text`, `items`, `asset_ids` or the other.',
 				path: ['text'],
 			});
+		}
+		if (
+			value.thread_timestamp !== undefined &&
+			value.thread_key !== undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Use `thread_timestamp` or `thread_key`, not both.',
+				path: ['thread_key'],
+			});
+		}
+		if (value.send_at !== undefined) {
+			if (!onQuarterHour(value.send_at)) {
+				ctx.addIssue({
+					code: 'custom',
+					message:
+						'`send_at` must fall on a 15-minute UTC boundary (:00, :15, :30 or :45, zero seconds).',
+					path: ['send_at'],
+				});
+			}
+			if (
+				value.sync !== undefined ||
+				value.poll !== undefined ||
+				value.thread_key !== undefined ||
+				value.reply_timestamp !== undefined
+			) {
+				ctx.addIssue({
+					code: 'custom',
+					message:
+						'`send_at` cannot be combined with `sync`, `poll`, `thread_key` or `reply_timestamp`.',
+					path: ['send_at'],
+				});
+			}
 		}
 	});
 
@@ -475,6 +533,10 @@ const ChatPostResponseSchema = z.object({
 
 export type ChatPostResponse = z.infer<typeof ChatPostResponseSchema>;
 
+/**
+ * An edit carries `text` (with optional `items` or `asset_ids`) or `blocks`,
+ * never both.
+ */
 const ChatUpdateInputSchema = z
 	.object({
 		chat_id: z.string().min(1),
@@ -488,18 +550,21 @@ const ChatUpdateInputSchema = z
 		color: z.string().optional(),
 	})
 	.superRefine((value, ctx) => {
-		const contentTypes = [
-			value.text !== undefined,
-			value.items !== undefined,
-			value.asset_ids !== undefined,
-			value.blocks !== undefined,
-		].filter(Boolean);
-		if (contentTypes.length !== 1) {
+		if ((value.text === undefined) === (value.blocks === undefined)) {
 			ctx.addIssue({
 				code: 'custom',
-				message:
-					'Roam accepts exactly one content type per update: `text`, `items`, `asset_ids` or `blocks`.',
+				message: 'Provide exactly one of `text` or `blocks`.',
 				path: ['text'],
+			});
+		}
+		if (
+			value.blocks !== undefined &&
+			(value.items !== undefined || value.asset_ids !== undefined)
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message: '`items` and `asset_ids` go with `text`, not with `blocks`.',
+				path: ['blocks'],
 			});
 		}
 	});
