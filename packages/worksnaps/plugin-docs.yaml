@@ -6,13 +6,16 @@ overviewNote: |
   Find the API token in Worksnaps under **Profile & Settings → Web Service API**. Regenerating it there invalidates the old one immediately, so every stored copy must be replaced.
 
   - **The token is a Basic-auth username.** Every request sends `Authorization: Basic <base64(token:)>` — the token as the username with an empty password, which the API ignores. There is no bearer header and no query parameter, and a wrong token answers a bare `401` with **no body at all**.
-  - **An empty error body is the norm.** This API does not explain a failure: a 401, 403, 404 or 400 is just the status. The plugin therefore works from the status alone, and the error message is a readable fallback rather than something parsed from the response.
-  - **A 403 usually means the wrong kind of token.** Creating a user is documented as a *privileged* operation that needs a **partner API token** issued out of band, not an ordinary user's. So `users.create` answering 403 for a normal key is expected behaviour, and the plugin names that case rather than reporting a generic permission error.
+  - **Errors come back as XML.** A 401 has no body, but a 400, 403 or 404 answers `<reply><status>0</status><error_code>…</error_code><error_string>…</error_string><extra_info>…</extra_info></reply>`. The plugin puts the error string and the reasons from `extra_info` in the error message, for example `Worksnaps 400: Bad parameters in request (user_ids parameter has to be specified)`.
+  - **A 403 on `users.create` means the wrong kind of token.** Creating a user is documented as a *privileged* operation that needs a **partner API token** issued out of band, not an ordinary user's, so a 403 there is expected for a normal key. Other 403s are plain permission or "operation not supported" answers; the error message says which.
   - **XML, not JSON.** Every response is `application/xml`, and every create or update body must be too. The plugin has its own small reader and writer, so it parses what the API sends without adding a dependency: elements, attributes, text, CDATA, comments, the five entities and numeric references.
-  - **Responses are Rails-shaped.** A collection is `<projects type="array"><project>…</project></projects>`, which becomes `{ projects: [...] }` — the root element's name is kept as the key, so you read the resource by name. Ids arrive as `type="integer"` and are coerced to numbers.
+  - **Responses are Rails-shaped.** A collection is `<projects><project>…</project></projects>`, which becomes `{ projects: [...] }`: the root element's name is kept as the key, so you read the resource by name. An empty collection is a bare `<projects/>` and becomes `[]`. Ids and durations arrive as text and are coerced to numbers.
+  - **Creates and updates answer inside `<reply>`.** The plugin drops the envelope, so `projects.create` returns `{ project: {…} }` like `projects.get` does.
   - **The routes carry `.xml` in the path.** `/projects.xml`, `/projects/3456/tasks.xml`, `/me.xml`. The plugin builds them as documented rather than hiding the extension, so a URL you see in the docs matches what the plugin calls.
   - **`GET /me.xml` is the cheapest check.** It returns the account behind the token, which verifies the credential without touching project data.
-  - **Duration is what a report totals.** A time entry carries `from_timestamp` and `duration_in_minutes`; the end is not derived, so both are required. `timeEntries.list` logs the sum, which is what a report cares about, rather than each worker's own comment.
+  - **Time is Unix seconds on a 10-minute grid.** `from_timestamp` and `to_timestamp` are Unix seconds that must be multiples of 600. `timeEntries.list` also needs `user_ids`. `timeEntries.create` logs offline time for yourself on a task you are assigned to; Worksnaps splits it into 10-minute entries and the call returns all of them. `timeEntries.update` can only move an entry to another task or change its comment.
+  - **Reports.** `reports.project` is a time summary (or, with `name: 'time_entries'`, the entries) for some users over at most 30 days. `reports.summary` is the manager report: time per user, project, task and day across the projects you manage, by date.
+  - **`projects.delete` archives.** The API marks the project archived; it is not erased.
 examples:
   read:
     path: projects.list
@@ -24,7 +27,7 @@ examples:
     args:
       project_id: 3456
       task_id: 78
-      from_timestamp: "2024-06-01T09:00:00Z"
+      from_timestamp: 1717232400
       duration_in_minutes: 90
 apiExamples:
   projects.list:
@@ -48,15 +51,15 @@ apiExamples:
   tasks.delete:
     call: "{ project_id: 3456, task_id: 78 }"
   timeEntries.list:
-    call: "{ project_id: 3456, from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' }"
+    call: "{ project_id: 3456, user_ids: [12], from_timestamp: 1717232400, to_timestamp: 1717318800 }"
   timeEntries.byUser:
-    call: "{ project_id: 3456, user_id: 12 }"
+    call: "{ project_id: 3456, user_id: 12, from_timestamp: 1717232400, to_timestamp: 1717318800 }"
   timeEntries.get:
     call: "{ project_id: 3456, time_entry_id: 901, full_resolution_url: true }"
   timeEntries.create:
-    call: "{ project_id: 3456, task_id: 78, from_timestamp: '2024-06-01T09:00:00Z', duration_in_minutes: 90, user_comment: 'Worked on the cart' }"
+    call: "{ project_id: 3456, task_id: 78, from_timestamp: 1717232400, duration_in_minutes: 90, user_comment: 'Worked on the cart' }"
   timeEntries.update:
-    call: "{ project_id: 3456, time_entry_id: 901, duration_in_minutes: 120 }"
+    call: "{ project_id: 3456, time_entry_id: 901, user_comment: 'Cart checkout' }"
   timeEntries.delete:
     call: "{ project_id: 3456, time_entry_id: 901 }"
   taskAssignments.list:
@@ -82,6 +85,6 @@ apiExamples:
     call: "{ user_id: 12, first_name: 'Jordan' }"
   users.me: {}
   reports.project:
-    call: "{ project_id: 3456, from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' }"
+    call: "{ project_id: 3456, user_ids: [12], from_timestamp: 1717232400, to_timestamp: 1717318800 }"
   reports.summary:
-    call: "{ from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' }"
+    call: "{ from_date: '2024-06-01', to_date: '2024-06-07' }"

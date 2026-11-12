@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Worksnaps: every `worksnaps.api.*` operation with input and output types."
+title: "Worksnaps API reference"
+sidebarTitle: "API"
+description: "API reference for the Worksnaps plugin in Corsair: every `worksnaps.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `worksnaps.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -36,7 +35,7 @@ await corsair.worksnaps.api.projects.create({ name: 'Acme storefront', descripti
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project` | `object \| null` | No | — |
+| `project` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="project full type">
@@ -45,8 +44,9 @@ await corsair.worksnaps.api.projects.create({ name: 'Acme storefront', descripti
 {
   id?: number | string | null,
   name?: string | null,
-  description?: string | null
-} | null
+  description?: string | null,
+  status?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -59,7 +59,7 @@ await corsair.worksnaps.api.projects.create({ name: 'Acme storefront', descripti
 
 `projects.delete`
 
-Delete a project with its tasks and logged time; this cannot be undone
+Archive a project; Worksnaps marks it archived rather than erasing it
 
 **Risk:** `destructive`
 
@@ -110,7 +110,7 @@ await corsair.worksnaps.api.projects.get({ project_id: 3456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project` | `object \| null` | No | — |
+| `project` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="project full type">
@@ -119,8 +119,9 @@ await corsair.worksnaps.api.projects.get({ project_id: 3456 });
 {
   id?: number | string | null,
   name?: string | null,
-  description?: string | null
-} | null
+  description?: string | null,
+  status?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -153,7 +154,7 @@ await corsair.worksnaps.api.projects.list({ include_user_assignment: true });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `projects` | `object[] \| object \| null` | No | — |
+| `projects` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -162,9 +163,10 @@ await corsair.worksnaps.api.projects.list({ include_user_assignment: true });
 {
   id?: number | string | null,
   name?: string | null,
-  description?: string | null
+  description?: string | null,
+  status?: string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -199,7 +201,7 @@ await corsair.worksnaps.api.projects.update({ project_id: 3456, name: 'Renamed' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project` | `object \| null` | No | — |
+| `project` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="project full type">
@@ -208,8 +210,9 @@ await corsair.worksnaps.api.projects.update({ project_id: 3456, name: 'Renamed' 
 {
   id?: number | string | null,
   name?: string | null,
-  description?: string | null
-} | null
+  description?: string | null,
+  status?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -224,12 +227,12 @@ await corsair.worksnaps.api.projects.update({ project_id: 3456, name: 'Renamed' 
 
 `reports.project`
 
-Read totals for one project over a period
+Read time per user and task in one project over at most 30 days
 
 **Risk:** `read`
 
 ```ts
-await corsair.worksnaps.api.reports.project({ project_id: 3456, from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' });
+await corsair.worksnaps.api.reports.project({ project_id: 3456, user_ids: [12], from_timestamp: 1717232400, to_timestamp: 1717318800 });
 ```
 
 **Input**
@@ -237,8 +240,10 @@ await corsair.worksnaps.api.reports.project({ project_id: 3456, from_timestamp: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project_id` | `number` | Yes | — |
-| `from_timestamp` | `string` | No | — |
-| `to_timestamp` | `string` | No | — |
+| `name` | `time_summary \| time_entries` | No | time_summary (the default) totals time per user and task; time_entries lists each entry. |
+| `user_ids` | `number[]` | Yes | The users to report on. |
+| `from_timestamp` | `number` | Yes | Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600). |
+| `to_timestamp` | `number` | Yes | End of the range in Unix seconds, on a 10-minute boundary. |
 
 
 
@@ -246,7 +251,45 @@ await corsair.worksnaps.api.reports.project({ project_id: 3456, from_timestamp: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `report` | `Record<string, any> \| null` | No | — |
+| `time_summary` | `object[] \| object \| ""` | No | — |
+| `time_entries` | `object[] \| object \| ""` | No | — |
+
+<AccordionGroup>
+<Accordion title="time_summary full type">
+
+```ts
+{
+  project_id?: number | string | null,
+  user_id?: number | string | null,
+  task_id?: number | string | null,
+  task_name?: string | null,
+  user_comment?: string | null,
+  time_entry_type?: string | null,
+  duration_in_minutes?: number | string | null
+}[] | {
+} | ""
+```
+</Accordion>
+
+<Accordion title="time_entries full type">
+
+```ts
+{
+  id?: number | string | null,
+  task_id?: number | string | null,
+  user_id?: number | string | null,
+  project_id?: number | string | null,
+  user_comment?: string | null,
+  from_timestamp?: string | null,
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
+}[] | {
+} | ""
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -256,20 +299,23 @@ await corsair.worksnaps.api.reports.project({ project_id: 3456, from_timestamp: 
 
 `reports.summary`
 
-Read totals across every project over a period
+Read time by user, project, task and day across the projects you manage, over at most 30 days
 
 **Risk:** `read`
 
 ```ts
-await corsair.worksnaps.api.reports.summary({ from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' });
+await corsair.worksnaps.api.reports.summary({ from_date: '2024-06-01', to_date: '2024-06-07' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from_timestamp` | `string` | No | — |
-| `to_timestamp` | `string` | No | — |
+| `from_date` | `string` | Yes | First day, YYYY-MM-DD. |
+| `to_date` | `string` | Yes | Last day, YYYY-MM-DD; at most 30 days after from_date. |
+| `timezone_offset` | `number` | No | Hours from UTC for the day boundaries, e.g. -8 or 5.5; defaults to the user timezone. |
+| `project_ids` | `number[]` | No | Defaults to every project you manage. |
+| `user_ids` | `number[]` | No | Defaults to every user in those projects. |
 
 
 
@@ -277,7 +323,27 @@ await corsair.worksnaps.api.reports.summary({ from_timestamp: '2024-06-01', to_t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `summary_report` | `Record<string, any> \| null` | No | — |
+| `manager_report` | `object[] \| object \| ""` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="manager_report full type">
+
+```ts
+{
+  user_id?: number | string | null,
+  user_name?: string | null,
+  project_id?: number | string | null,
+  project_name?: string | null,
+  date?: string | null,
+  task_id?: number | string | null,
+  task_name?: string | null,
+  type?: string | null,
+  duration_in_minutes?: number | string | null
+}[] | {
+} | ""
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -311,7 +377,7 @@ await corsair.worksnaps.api.taskAssignments.create({ project_id: 3456, task_id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_assignment` | `object \| null` | No | — |
+| `task_assignment` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="task_assignment full type">
@@ -321,7 +387,7 @@ await corsair.worksnaps.api.taskAssignments.create({ project_id: 3456, task_id: 
   id?: number | string | null,
   user_id?: number | string | null,
   task_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -386,7 +452,7 @@ await corsair.worksnaps.api.taskAssignments.list({ project_id: 3456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_assignments` | `object[] \| object \| null` | No | — |
+| `task_assignments` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="task_assignments full type">
@@ -397,7 +463,7 @@ await corsair.worksnaps.api.taskAssignments.list({ project_id: 3456 });
   user_id?: number | string | null,
   task_id?: number | string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -434,7 +500,7 @@ await corsair.worksnaps.api.tasks.create({ project_id: 3456, name: 'Build the ca
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task` | `object \| null` | No | — |
+| `task` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="task full type">
@@ -445,7 +511,7 @@ await corsair.worksnaps.api.tasks.create({ project_id: 3456, name: 'Build the ca
   name?: string | null,
   description?: string | null,
   project_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -511,7 +577,7 @@ await corsair.worksnaps.api.tasks.get({ project_id: 3456, task_id: 78 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task` | `object \| null` | No | — |
+| `task` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="task full type">
@@ -522,7 +588,7 @@ await corsair.worksnaps.api.tasks.get({ project_id: 3456, task_id: 78 });
   name?: string | null,
   description?: string | null,
   project_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -555,7 +621,7 @@ await corsair.worksnaps.api.tasks.list({ project_id: 3456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tasks` | `object[] \| object \| null` | No | — |
+| `tasks` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -567,7 +633,7 @@ await corsair.worksnaps.api.tasks.list({ project_id: 3456 });
   description?: string | null,
   project_id?: number | string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -603,7 +669,7 @@ await corsair.worksnaps.api.tasks.update({ project_id: 3456, task_id: 78, name: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task` | `object \| null` | No | — |
+| `task` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="task full type">
@@ -614,7 +680,7 @@ await corsair.worksnaps.api.tasks.update({ project_id: 3456, task_id: 78, name: 
   name?: string | null,
   description?: string | null,
   project_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -629,12 +695,12 @@ await corsair.worksnaps.api.tasks.update({ project_id: 3456, task_id: 78, name: 
 
 `timeEntries.byUser`
 
-List the time one user logged on a project
+List the time one user logged on a project between two Unix timestamps
 
 **Risk:** `read`
 
 ```ts
-await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12 });
+await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12, from_timestamp: 1717232400, to_timestamp: 1717318800 });
 ```
 
 **Input**
@@ -642,9 +708,9 @@ await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12 }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project_id` | `number` | Yes | — |
-| `from_timestamp` | `string` | No | ISO 8601 or the API’s own format: only entries at or after this. |
-| `to_timestamp` | `string` | No | Only entries at or before this. |
 | `user_id` | `number` | Yes | — |
+| `from_timestamp` | `number` | Yes | Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600). |
+| `to_timestamp` | `number` | Yes | End of the range in Unix seconds, on a 10-minute boundary. |
 
 
 
@@ -652,7 +718,7 @@ await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12 }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `time_entries` | `object[] \| object \| null` | No | — |
+| `time_entries` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="time_entries full type">
@@ -665,9 +731,12 @@ await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12 }
   project_id?: number | string | null,
   user_comment?: string | null,
   from_timestamp?: string | null,
-  duration_in_minutes?: number | string | null
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -680,12 +749,12 @@ await corsair.worksnaps.api.timeEntries.byUser({ project_id: 3456, user_id: 12 }
 
 `timeEntries.create`
 
-Log work against a task with its start time and duration in minutes
+Log offline time for yourself on an assigned task, from a Unix start time and a duration in minutes
 
 **Risk:** `write`
 
 ```ts
-await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, from_timestamp: '2024-06-01T09:00:00Z', duration_in_minutes: 90, user_comment: 'Worked on the cart' });
+await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, from_timestamp: 1717232400, duration_in_minutes: 90, user_comment: 'Worked on the cart' });
 ```
 
 **Input**
@@ -694,8 +763,8 @@ await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, 
 |------|------|----------|-------------|
 | `project_id` | `number` | Yes | — |
 | `task_id` | `number` | Yes | — |
-| `from_timestamp` | `string` | Yes | When the work started. |
-| `duration_in_minutes` | `number` | Yes | — |
+| `from_timestamp` | `number` | Yes | When the work started, in Unix seconds on a 10-minute boundary. |
+| `duration_in_minutes` | `number` | Yes | Worksnaps splits the time into 10-minute entries. |
 | `user_comment` | `string` | No | — |
 
 
@@ -704,10 +773,10 @@ await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `time_entry` | `object \| null` | No | — |
+| `time_entries` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="time_entry full type">
+<Accordion title="time_entries full type">
 
 ```ts
 {
@@ -717,8 +786,12 @@ await corsair.worksnaps.api.timeEntries.create({ project_id: 3456, task_id: 78, 
   project_id?: number | string | null,
   user_comment?: string | null,
   from_timestamp?: string | null,
-  duration_in_minutes?: number | string | null
-} | null
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
+}[] | {
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -785,7 +858,7 @@ await corsair.worksnaps.api.timeEntries.get({ project_id: 3456, time_entry_id: 9
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `time_entry` | `object \| null` | No | — |
+| `time_entry` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="time_entry full type">
@@ -798,8 +871,11 @@ await corsair.worksnaps.api.timeEntries.get({ project_id: 3456, time_entry_id: 9
   project_id?: number | string | null,
   user_comment?: string | null,
   from_timestamp?: string | null,
-  duration_in_minutes?: number | string | null
-} | null
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -812,12 +888,12 @@ await corsair.worksnaps.api.timeEntries.get({ project_id: 3456, time_entry_id: 9
 
 `timeEntries.list`
 
-List the time logged on a project, optionally within a date range
+List the time some users logged on a project between two Unix timestamps
 
 **Risk:** `read`
 
 ```ts
-await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, from_timestamp: '2024-06-01', to_timestamp: '2024-06-30' });
+await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, user_ids: [12], from_timestamp: 1717232400, to_timestamp: 1717318800 });
 ```
 
 **Input**
@@ -825,8 +901,9 @@ await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, from_timestamp:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project_id` | `number` | Yes | — |
-| `from_timestamp` | `string` | No | ISO 8601 or the API’s own format: only entries at or after this. |
-| `to_timestamp` | `string` | No | Only entries at or before this. |
+| `user_ids` | `number[]` | Yes | The users whose time to list; the API requires at least one. |
+| `from_timestamp` | `number` | Yes | Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600). |
+| `to_timestamp` | `number` | Yes | End of the range in Unix seconds, on a 10-minute boundary. |
 
 
 
@@ -834,7 +911,7 @@ await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, from_timestamp:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `time_entries` | `object[] \| object \| null` | No | — |
+| `time_entries` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="time_entries full type">
@@ -847,9 +924,12 @@ await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, from_timestamp:
   project_id?: number | string | null,
   user_comment?: string | null,
   from_timestamp?: string | null,
-  duration_in_minutes?: number | string | null
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -862,12 +942,12 @@ await corsair.worksnaps.api.timeEntries.list({ project_id: 3456, from_timestamp:
 
 `timeEntries.update`
 
-Change a time entry task, start, duration or comment
+Move a time entry to another task or change its comment
 
 **Risk:** `write`
 
 ```ts
-await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id: 901, duration_in_minutes: 120 });
+await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id: 901, user_comment: 'Cart checkout' });
 ```
 
 **Input**
@@ -877,8 +957,6 @@ await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id
 | `project_id` | `number` | Yes | — |
 | `time_entry_id` | `number` | Yes | — |
 | `task_id` | `number` | No | — |
-| `from_timestamp` | `string` | No | — |
-| `duration_in_minutes` | `number` | No | — |
 | `user_comment` | `string` | No | — |
 
 
@@ -887,10 +965,10 @@ await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `time_entry` | `object \| null` | No | — |
+| `time_entries` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="time_entry full type">
+<Accordion title="time_entries full type">
 
 ```ts
 {
@@ -900,8 +978,12 @@ await corsair.worksnaps.api.timeEntries.update({ project_id: 3456, time_entry_id
   project_id?: number | string | null,
   user_comment?: string | null,
   from_timestamp?: string | null,
-  duration_in_minutes?: number | string | null
-} | null
+  logged_timestamp?: string | null,
+  duration_in_minutes?: number | string | null,
+  type?: string | null,
+  task_name?: string | null
+}[] | {
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -942,7 +1024,7 @@ await corsair.worksnaps.api.userAssignments.create({ project_id: 3456, user_id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_assignment` | `object \| null` | No | — |
+| `user_assignment` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user_assignment full type">
@@ -957,7 +1039,7 @@ await corsair.worksnaps.api.userAssignments.create({ project_id: 3456, user_id: 
   flag_allow_logging_time?: boolean | string | number | null,
   window_for_deleting_time?: number | string | null,
   window_for_adding_offline_time?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -991,7 +1073,7 @@ await corsair.worksnaps.api.userAssignments.get({ project_id: 3456, user_assignm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_assignment` | `object \| null` | No | — |
+| `user_assignment` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user_assignment full type">
@@ -1006,7 +1088,7 @@ await corsair.worksnaps.api.userAssignments.get({ project_id: 3456, user_assignm
   flag_allow_logging_time?: boolean | string | number | null,
   window_for_deleting_time?: number | string | null,
   window_for_adding_offline_time?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1039,7 +1121,7 @@ await corsair.worksnaps.api.userAssignments.list({ project_id: 3456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_assignments` | `object[] \| object \| null` | No | — |
+| `user_assignments` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user_assignments full type">
@@ -1055,7 +1137,7 @@ await corsair.worksnaps.api.userAssignments.list({ project_id: 3456 });
   window_for_deleting_time?: number | string | null,
   window_for_adding_offline_time?: number | string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -1094,7 +1176,7 @@ await corsair.worksnaps.api.userAssignments.update({ project_id: 3456, user_assi
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_assignment` | `object \| null` | No | — |
+| `user_assignment` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user_assignment full type">
@@ -1109,7 +1191,7 @@ await corsair.worksnaps.api.userAssignments.update({ project_id: 3456, user_assi
   flag_allow_logging_time?: boolean | string | number | null,
   window_for_deleting_time?: number | string | null,
   window_for_adding_offline_time?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1149,7 +1231,7 @@ await corsair.worksnaps.api.users.create({ login: 'jordan', email: 'jordan@acme.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object \| null` | No | — |
+| `user` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1162,7 +1244,7 @@ await corsair.worksnaps.api.users.create({ login: 'jordan', email: 'jordan@acme.
   last_name?: string | null,
   email?: string | null,
   timezone_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1195,7 +1277,7 @@ await corsair.worksnaps.api.users.get({ user_id: 12 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object \| null` | No | — |
+| `user` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1208,7 +1290,7 @@ await corsair.worksnaps.api.users.get({ user_id: 12 });
   last_name?: string | null,
   email?: string | null,
   timezone_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1236,7 +1318,7 @@ await corsair.worksnaps.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[] \| object \| null` | No | — |
+| `users` | `object[] \| object \| ""` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -1250,7 +1332,7 @@ await corsair.worksnaps.api.users.list({});
   email?: string | null,
   timezone_id?: number | string | null
 }[] | {
-} | null
+} | ""
 ```
 </Accordion>
 </AccordionGroup>
@@ -1263,7 +1345,7 @@ await corsair.worksnaps.api.users.list({});
 
 `users.me`
 
-Read the account behind the token, which is the cheapest way to check it
+Read the account behind the token (without the token itself), which is the cheapest way to check it
 
 **Risk:** `read`
 
@@ -1278,7 +1360,7 @@ await corsair.worksnaps.api.users.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object \| null` | No | — |
+| `user` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1291,7 +1373,7 @@ await corsair.worksnaps.api.users.me({});
   last_name?: string | null,
   email?: string | null,
   timezone_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1328,7 +1410,7 @@ await corsair.worksnaps.api.users.update({ user_id: 12, first_name: 'Jordan' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object \| null` | No | — |
+| `user` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1341,7 +1423,7 @@ await corsair.worksnaps.api.users.update({ user_id: 12, first_name: 'Jordan' });
   last_name?: string | null,
   email?: string | null,
   timezone_id?: number | string | null
-} | null
+}
 ```
 </Accordion>
 </AccordionGroup>
