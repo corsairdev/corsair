@@ -1,3 +1,4 @@
+import { ReferralrockAPIError } from './client';
 import * as Endpoints from './endpoints/endpoints';
 import {
 	MEMBER,
@@ -15,7 +16,13 @@ import {
 	REWARD_REFUSED,
 	REWARD_SET,
 } from './test-fixtures';
-import { invoke, lastRequest, respond, spyOnFetch } from './test-support';
+import {
+	captureError,
+	invoke,
+	lastRequest,
+	respond,
+	spyOnFetch,
+} from './test-support';
 
 let fetchMock: jest.SpyInstance;
 
@@ -340,6 +347,24 @@ describe('rewards', () => {
 				payout_id: 'paypal',
 			}),
 		).rejects.toThrow('No match found');
+	});
+
+	it('marks a Failed result with no message as rejected', async () => {
+		respond(fetchMock, [
+			{ ...REWARD_REFUSED[0], resultInfo: { Status: 'Failed' } },
+		]);
+
+		const error = await captureError(
+			invoke(Endpoints.rewardsCreate, {
+				member_id: MEMBER_ID,
+				amount: 5,
+				payout_id: 'paypal',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ReferralrockAPIError);
+		expect((error as ReferralrockAPIError).isRejected).toBe(true);
+		expect(error.message).toContain('no reason given');
 	});
 
 	it('lifts the reward and result out of the array the API answers', async () => {

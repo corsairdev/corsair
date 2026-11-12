@@ -92,12 +92,11 @@ export class ReferralrockAPIError extends Error {
 
 	/**
 	 * A reward create Referral Rock refused. That route answers 200 with
-	 * `resultInfo.Status: "Failed"`, so the status alone does not show it.
+	 * `resultInfo.Status: "Failed"`, and only that refusal raises an error with
+	 * status 200, whether or not it carries a message.
 	 */
 	get isRejected(): boolean {
-		return (
-			this.status === 200 && this.detail !== undefined && this.detail.length > 0
-		);
+		return this.status === 200;
 	}
 }
 
