@@ -74,7 +74,10 @@ describe('lists', () => {
 	it('deletes a list by id', async () => {
 		respond(fetchMock, LIST_DELETED);
 
-		await invoke(Api.remove, { list_id: 55688 });
+		// The live answer is {"result":{}}; it must parse, the list is already gone.
+		await expect(invoke(Api.remove, { list_id: 55688 })).resolves.toEqual({
+			result: {},
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/en/api/deleteList');
@@ -315,7 +318,9 @@ describe('fields and tags', () => {
 	it('deletes a field by id', async () => {
 		respond(fetchMock, FIELD_DELETED);
 
-		await invoke(Api.deleteField, { id: 33110 });
+		await expect(invoke(Api.deleteField, { id: 33110 })).resolves.toEqual({
+			result: {},
+		});
 
 		expect(lastRequest(fetchMock).form.id).toBe('33110');
 	});

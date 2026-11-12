@@ -14,7 +14,8 @@ export const LISTS = {
 export const LIST_CREATED = { result: { id: 910011 } };
 
 // The documented success is an empty acknowledgement, not a record.
-export const LIST_DELETED = { result: '' };
+/** Captured live 11-12: a delete answers an empty object, not an empty string. */
+export const LIST_DELETED = { result: {} };
 
 /** `email` is an object here, not a string, and carries the status. */
 export const CONTACT = {
@@ -85,7 +86,8 @@ export const FIELDS = {
 
 export const FIELD_CREATED = { result: { id: 33110 } };
 
-export const FIELD_DELETED = { result: '' };
+/** Captured live 11-12, same as deleteList. */
+export const FIELD_DELETED = { result: {} };
 
 export const TAGS = {
 	result: [

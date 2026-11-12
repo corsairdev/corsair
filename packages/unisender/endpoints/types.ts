@@ -77,9 +77,15 @@ const ListsDeleteInputSchema = z.object({
 
 export type ListsDeleteInput = z.infer<typeof ListsDeleteInputSchema>;
 
-// The documented success is `{"result": ""}`, an empty acknowledgement rather than
-// a record; a strict object schema would reject it, so the empty string is modelled.
-const ListsDeleteResponseSchema = resultOf(z.literal(''));
+/**
+ * A delete answers an empty acknowledgement. The live API sends `{"result":{}}`
+ * (captured 11-12, also what the deleteField page shows); an empty string is also
+ * accepted because older pages describe it. The `""` inside an error envelope never
+ * reaches this schema: the client throws on the `code` first.
+ */
+const EmptyAckSchema = z.union([z.object({}).loose(), z.literal('')]);
+
+const ListsDeleteResponseSchema = resultOf(EmptyAckSchema);
 
 export type ListsDeleteResponse = z.infer<typeof ListsDeleteResponseSchema>;
 
@@ -406,8 +412,8 @@ const FieldsDeleteInputSchema = z.object({
 
 export type FieldsDeleteInput = z.infer<typeof FieldsDeleteInputSchema>;
 
-// Same empty acknowledgement as lists.delete: `{"result": ""}` on success.
-const FieldsDeleteResponseSchema = resultOf(z.literal(''));
+// Same empty acknowledgement as lists.delete: `{"result":{}}` on success.
+const FieldsDeleteResponseSchema = resultOf(EmptyAckSchema);
 
 export type FieldsDeleteResponse = z.infer<typeof FieldsDeleteResponseSchema>;
 
