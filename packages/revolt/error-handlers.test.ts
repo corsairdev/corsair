@@ -125,6 +125,21 @@ describe('server handling', () => {
 		expect(result?.maxRetries).toBe(2);
 	});
 
+	it('replays a read that failed before any response arrived', async () => {
+		const error = rvError({ method: 'GET', replayable: true });
+
+		expect(firstMatch(handlers, error)).toBe('SERVER_ERROR');
+		const result = await decide(handlers, 'SERVER_ERROR', error);
+		expect(result?.maxRetries).toBe(2);
+	});
+
+	it('never replays a write that failed before any response arrived', () => {
+		const error = rvError({ method: 'POST', replayable: false });
+
+		expect(claims(handlers, 'SERVER_ERROR', error)).toBe(false);
+		expect(firstMatch(handlers, error)).toBe('DEFAULT');
+	});
+
 	it('never replays a 5xx write', () => {
 		const error = rvError({
 			status: 500,

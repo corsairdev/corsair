@@ -54,7 +54,8 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof RevoltAPIError &&
 			error.replayable &&
-			(error.status ?? 0) >= 500,
+			// No status: the request failed before any response (network, timeout).
+			(error.status === undefined || error.status >= 500),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
