@@ -4438,6 +4438,14 @@
                 ]
               },
               {
+                "group": "YNAB",
+                "pages": [
+                  "plugins/ynab/overview",
+                  "plugins/ynab/api",
+                  "plugins/ynab/database"
+                ]
+              },
+              {
                 "group": "You.com",
                 "pages": [
                   "plugins/youcom/overview",
