@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Tripadvisor plugin"
+sidebarTitle: "Overview"
 description: "Search the Tripadvisor Terra catalog, read full location details, photos, reviews, nearby locations, and geo details."
 ---
 
@@ -16,16 +17,20 @@ Use **Tripadvisor** through Corsair: one client, typed API calls.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/tripadvisor
+npm install corsair @corsair-dev/tripadvisor better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/tripadvisor
+yarn add corsair @corsair-dev/tripadvisor better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/tripadvisor
+pnpm install corsair @corsair-dev/tripadvisor better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/tripadvisor
+bun add corsair @corsair-dev/tripadvisor better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

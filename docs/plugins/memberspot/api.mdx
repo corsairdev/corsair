@@ -1,0 +1,1405 @@
+---
+title: "MemberSpot API reference"
+sidebarTitle: "API"
+description: "API reference for the MemberSpot plugin in Corsair: every `memberspot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### check
+
+`auth.check`
+
+Returns the school the API key belongs to, which is the cheapest way to confirm a key works
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.auth.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schoolId` | `string` | Yes | The school the key belongs to. |
+| `name` | `string \| null` | No | The school name. |
+
+
+
+---
+
+## Chapters
+
+### enableAccess
+
+`chapters.enableAccess`
+
+Grants a user access to one chapter by email
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.chapters.enableAccess({ email: 'jordan@acme.example', courseId: 'course-1', chapterId: 'chapter-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `courseId` | `string` | Yes | The course the chapter belongs to. |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### enableAccessByUid
+
+`chapters.enableAccessByUid`
+
+Grants a user access to one chapter by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.chapters.enableAccessByUid({ uid: 'uid-1', courseId: 'course-1', chapterId: 'chapter-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `courseId` | `string` | Yes | The course the chapter belongs to. |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Courses
+
+### list
+
+`courses.list`
+
+Lists all courses of the school with their ids and types
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.courses.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Properties
+
+### list
+
+`customProperties.list`
+
+Lists the custom user properties defined for the school
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.customProperties.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  schoolId?: string | null,
+  type?: string | null,
+  name?: string | null,
+  options?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Exams
+
+### list
+
+`exams.list`
+
+Lists all exams of the school, including the examId used for results
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.exams.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  examId: string,
+  name?: string | null,
+  description?: string | null,
+  requiredPercentage?: number | null,
+  questionCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### results
+
+`exams.results`
+
+Lists the exam results of every user who took an exam, with each run and whether it passed
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.exams.results({ id: 'exam-1', pageLength: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastLoadedId` | `string` | No | Cursor to continue from. Pass the `nextPage` value from the previous response. |
+| `pageLength` | `number` | No | Page size, 1 to 100. MemberSpot defaults to 10. |
+| `id` | `string` | Yes | The `examId` from `exams.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextPage` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  uid?: string | null,
+  email?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  created?: string | null,
+  active?: boolean | null,
+  hasPassed?: boolean | null,
+  lastRun?: {
+    id?: string | null,
+    courseId?: string | null,
+    chapterId?: string | null,
+    postId?: string | null,
+    started?: string | null,
+    ended?: string | null,
+    possibleScore?: number | null,
+    pointsScored?: number | null,
+    percentRequired?: number | null,
+    hasPassed?: boolean | null
+  } | null,
+  lastSuccessfullRun?: {
+    id?: string | null,
+    courseId?: string | null,
+    chapterId?: string | null,
+    postId?: string | null,
+    started?: string | null,
+    ended?: string | null,
+    possibleScore?: number | null,
+    pointsScored?: number | null,
+    percentRequired?: number | null,
+    hasPassed?: boolean | null
+  } | null,
+  runs?: {
+    id?: string | null,
+    courseId?: string | null,
+    chapterId?: string | null,
+    postId?: string | null,
+    started?: string | null,
+    ended?: string | null,
+    possibleScore?: number | null,
+    pointsScored?: number | null,
+    percentRequired?: number | null,
+    hasPassed?: boolean | null
+  }[] | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offers
+
+### list
+
+`offers.list`
+
+Lists the offers available in the school
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.offers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  priority?: number | null,
+  allCourses?: boolean | null,
+  hasCourseIds?: string[] | null,
+  hasSpaceIds?: string[] | null,
+  pageIds?: string[] | null,
+  portalIds?: string[] | null,
+  internal?: boolean | null,
+  schoolId?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### courseProgress
+
+`users.courseProgress`
+
+Lists every course progress record for a user by email, paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.courseProgress({ email: 'jordan@acme.example', pageLength: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastLoadedId` | `string` | No | Cursor to continue from. Pass the `nextPage` value from the previous response. |
+| `pageLength` | `number` | No | Page size, 1 to 100. MemberSpot defaults to 10. |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextPage` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  email?: string | null,
+  firstname?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### courseProgressByUid
+
+`users.courseProgressByUid`
+
+Lists every course progress record for a user by uid, paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.courseProgressByUid({ uid: 'uid-1', pageLength: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastLoadedId` | `string` | No | Cursor to continue from. Pass the `nextPage` value from the previous response. |
+| `pageLength` | `number` | No | Page size, 1 to 100. MemberSpot defaults to 10. |
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextPage` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  email?: string | null,
+  firstname?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### courseProgressDetail
+
+`users.courseProgressDetail`
+
+Returns one user’s progress in one course, by email
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.courseProgressDetail({ courseId: 'course-1', email: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courseId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | Last name. |
+| `active` | `boolean \| null` | No | — |
+| `courseId` | `string` | Yes | — |
+| `activePosts` | `number \| null` | No | — |
+| `completedPosts` | `number \| null` | No | — |
+| `grantedAt` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### courseProgressDetailByUid
+
+`users.courseProgressDetailByUid`
+
+Returns one user’s progress in one course, by uid
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.courseProgressDetailByUid({ courseId: 'course-1', uid: 'uid-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courseId` | `string` | Yes | — |
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | Last name. |
+| `active` | `boolean \| null` | No | — |
+| `courseId` | `string` | Yes | — |
+| `activePosts` | `number \| null` | No | — |
+| `completedPosts` | `number \| null` | No | — |
+| `grantedAt` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Permanently deletes up to 10 users by email; deleted accounts and their progress cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.memberspot.api.users.delete({ emails: ['jordan@acme.example'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### deleteByUid
+
+`users.deleteByUid`
+
+Permanently deletes up to 10 users by uid; deleted accounts and their progress cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.memberspot.api.users.deleteByUid({ uids: ['uid-1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### findByEmail
+
+`users.findByEmail`
+
+Returns one user by email; a member that does not exist answers 400 USER_NOT_FOUND rather than an empty result
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.findByEmail({ email: 'jordan@acme.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findByUid
+
+`users.findByUid`
+
+Returns one user by uid; a uid that does not exist answers an empty body, which fails the output schema rather than returning null
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.findByUid({ uid: 'uid-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### grantOffer
+
+`users.grantOffer`
+
+Creates or updates a user by email and optionally grants an offer in the same call; reports whether the user is new
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.grantOffer({ email: 'jordan@acme.example', firstname: 'Jordan', name: 'Miller', grantOffer: 'offer-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | Last name. |
+| `grantOffer` | `string` | No | Offer to grant in the same call, by id. |
+| `orderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `externalId` | `string \| null` | No | — |
+| `isNew` | `boolean` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `active` | `boolean \| null` | No | — |
+| `grantedOffers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="grantedOffers full type">
+
+```ts
+{
+  offerId: string,
+  name: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### grantOfferByUid
+
+`users.grantOfferByUid`
+
+Grants an offer to an existing user by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.grantOfferByUid({ uid: 'uid-1', offerId: 'offer-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `offerId` | `string` | Yes | Offer to grant, by id. Sent as `grantOffer`. |
+| `orderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `externalId` | `string \| null` | No | — |
+| `isNew` | `boolean` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `active` | `boolean \| null` | No | — |
+| `grantedOffers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="grantedOffers full type">
+
+```ts
+{
+  offerId: string,
+  name: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+Returns a page of users, optionally filtered by offer or course, with a cursor for the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.list({ pageLength: 25, courseId: 'course-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastLoadedId` | `string` | No | Cursor to continue from. Pass the `nextPage` value from the previous response. |
+| `pageLength` | `number` | No | Page size, 1 to 100. MemberSpot defaults to 10. |
+| `active` | `boolean` | No | True returns only active members, false only inactive ones. Leave it out for all members. |
+| `offerId` | `string` | No | Only users holding this offer. |
+| `courseId` | `string` | No | Only users with this course. Also populates each user’s `progress` with that course alone. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextPage` | `string \| null` | No | Present while more users remain; pass it as `lastLoadedId`. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid: string,
+  email: string,
+  created: string,
+  firstname: string,
+  name: string,
+  active?: boolean | null,
+  progress?: {
+    courseId?: string | null,
+    activePosts?: number | null,
+    completedPosts?: number | null,
+    grantedAt?: string | null,
+    startDate?: string | null,
+    updatedAt?: string | null
+  }[] | null,
+  customUserProperties?: Record<string, string> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### loginToken
+
+`users.loginToken`
+
+Mints a token and login URL that signs a user in automatically, which is a credential; the token expires after one hour
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.loginToken({ uid: 'uid-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `loginUrl` | `string` | Yes | — |
+
+
+
+---
+
+### offers
+
+`users.offers`
+
+Returns the offers granted to a user with their active state and expiry
+
+**Risk:** `read`
+
+```ts
+await corsair.memberspot.api.users.offers({ uid: 'uid-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `offers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offers full type">
+
+```ts
+{
+  offerId: string,
+  active?: boolean | null,
+  grantedAt?: string | null,
+  expiresAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCourseStartDate
+
+`users.setCourseStartDate`
+
+Sets when a user’s access to a course starts
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setCourseStartDate({ uid: 'uid-1', courseId: 'course-1', startDate: '2026-12-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `courseId` | `string` | Yes | — |
+| `startDate` | `string` | Yes | ISO date-time the course access should start. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setCustomProperties
+
+`users.setCustomProperties`
+
+Sets several custom user properties at once by email; properties omitted from the map are left unchanged
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setCustomProperties({ email: 'jordan@acme.example', properties: { 'prop-1': 'Sales' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `properties` | `Record<string, string>` | Yes | Custom property id to value. A property omitted here is left unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCustomPropertiesByUid
+
+`users.setCustomPropertiesByUid`
+
+Sets several custom user properties at once by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setCustomPropertiesByUid({ uid: 'uid-1', properties: { 'prop-1': 'Sales' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `properties` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCustomProperty
+
+`users.setCustomProperty`
+
+Sets one custom user property by email; a null value blanks it
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setCustomProperty({ email: 'jordan@acme.example', key: 'prop-1', value: 'Sales' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `key` | `string` | Yes | The custom property id. |
+| `value` | `string \| null` | No | Null or omitted blanks the property. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCustomPropertyByUid
+
+`users.setCustomPropertyByUid`
+
+Sets one custom user property by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setCustomPropertyByUid({ uid: 'uid-1', key: 'prop-1', value: 'Sales' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `progress` | `object[] \| null` | No | — |
+| `customUserProperties` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  courseId?: string | null,
+  activePosts?: number | null,
+  completedPosts?: number | null,
+  grantedAt?: string | null,
+  startDate?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setOfferExpires
+
+`users.setOfferExpires`
+
+Sets or clears the expiry date of an offer for a user by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOfferExpires({ uid: 'uid-1', offerId: 'offer-1', expiresAt: '2027-01-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `offerId` | `string` | Yes | — |
+| `expiresAt` | `string \| null` | No | ISO date-time, or null to clear the expiry. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setOfferState
+
+`users.setOfferState`
+
+Activates or deactivates an offer for a user by email, which is how access is revoked
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOfferState({ email: 'jordan@acme.example', offerId: 'offer-1', active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `offerId` | `string` | Yes | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setOfferStateByUid
+
+`users.setOfferStateByUid`
+
+Activates or deactivates an offer for a user by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOfferStateByUid({ uid: 'uid-1', offerId: 'offer-1', active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `offerId` | `string` | Yes | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setOrderState
+
+`users.setOrderState`
+
+Sets the state of an offer tied to an order for a user by email
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOrderState({ email: 'jordan@acme.example', orderId: 'order-9', active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `orderId` | `string` | Yes | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setOrderStateByOrderId
+
+`users.setOrderStateByOrderId`
+
+Sets the state of every offer carrying a given orderId, across all users
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOrderStateByOrderId({ orderId: 'order-9', active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | Every member holding a grant with this order id is affected. |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### setOrderStateByUid
+
+`users.setOrderStateByUid`
+
+Sets the state of an offer tied to an order for a user by uid
+
+**Risk:** `write`
+
+```ts
+await corsair.memberspot.api.users.setOrderStateByUid({ uid: 'uid-1', orderId: 'order-9', active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `orderId` | `string` | Yes | — |
+| `active` | `boolean \| null` | Yes | True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
