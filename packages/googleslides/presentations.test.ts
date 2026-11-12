@@ -587,6 +587,35 @@ describe('review fixes', () => {
 
 		expect(result.presentationId).toBe('deck-copy');
 		expect(result.title).toBe('Copy');
+		// The read failed, so the counts are unknown rather than zero.
+		expect(result.slideCount).toBeUndefined();
+		expect(result.layoutCount).toBeUndefined();
+		expect(result.masterCount).toBeUndefined();
 		expect(warn).toHaveBeenCalled();
+	});
+
+	it('copies decks in shared drives and gives the read-back the long timeout', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ id: 'deck-copy' })
+			.mockResolvedValueOnce({
+				...presentationReply,
+				presentationId: 'deck-copy',
+			});
+
+		await PresentationsEndpoints.copy(ctx, { presentationId: 'deck-1' });
+
+		expect(calledQuery(0)).toEqual({ fields: 'id', supportsAllDrives: true });
+		expect(mockRequest.mock.calls[1][0].TIMEOUT).toBe(60_000);
+	});
+
+	it('lists decks that live in shared drives', async () => {
+		mockRequest.mockResolvedValueOnce({ files: [] });
+
+		await PresentationsEndpoints.list(ctx, {});
+
+		expect(calledQuery(0)).toMatchObject({
+			includeItemsFromAllDrives: true,
+			supportsAllDrives: true,
+		});
 	});
 });

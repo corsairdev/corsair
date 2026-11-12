@@ -695,6 +695,19 @@ const PresentationSummarySchema = z
 
 const PresentResponseSchema = PresentationSummarySchema;
 
+// A copy reports its counts from a read of the new deck. When that read fails
+// after the copy succeeded, the counts are unknown and left out.
+const PresentationsCopyResponseSchema = PresentationSummarySchema.extend({
+	slideCount: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Absent when the copy could not be read back'),
+	layoutCount: z.number().int().min(0).optional(),
+	masterCount: z.number().int().min(0).optional(),
+});
+
 const PresentationsListResponseSchema = z
 	.object({
 		files: z.array(
@@ -869,7 +882,7 @@ export const GoogleSlidesEndpointOutputSchemas = {
 	presentationsCreate: PresentResponseSchema,
 	presentationsGet: PresentResponseSchema,
 	presentationsList: PresentationsListResponseSchema,
-	presentationsCopy: PresentResponseSchema,
+	presentationsCopy: PresentationsCopyResponseSchema,
 	presentationsExport: ExportResponseSchema,
 	presentationsDelete: DeleteResponseSchema,
 	slidesList: SlideSummaryListSchema,
@@ -903,7 +916,7 @@ export type GoogleSlidesEndpointOutputs = {
 	presentationsCreate: z.output<typeof PresentResponseSchema>;
 	presentationsGet: z.output<typeof PresentResponseSchema>;
 	presentationsList: z.output<typeof PresentationsListResponseSchema>;
-	presentationsCopy: z.output<typeof PresentResponseSchema>;
+	presentationsCopy: z.output<typeof PresentationsCopyResponseSchema>;
 	presentationsExport: z.output<typeof ExportResponseSchema>;
 	presentationsDelete: z.output<typeof DeleteResponseSchema>;
 	slidesList: z.output<typeof SlideSummaryListSchema>;

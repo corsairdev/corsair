@@ -172,6 +172,8 @@ async function getPresentation(
 	return makeSlidesRequest<Presentation>(
 		`/presentations/${encodeURIComponent(presentationId)}`,
 		ctx,
+		// The same full-deck read as presentations.get, so the same allowance.
+		{ timeout: 60_000 },
 	);
 }
 
@@ -272,6 +274,9 @@ export const presentationsList: GoogleSlidesEndpoints['presentationsList'] =
 							pageToken: parsed.pageToken,
 							orderBy: parsed.orderBy,
 							fields: LIST_FIELDS,
+							// Without both, Drive leaves out decks that live in a shared drive.
+							includeItemsFromAllDrives: true,
+							supportsAllDrives: true,
 						}),
 					}),
 				);
@@ -338,7 +343,9 @@ export const presentationsCopy: GoogleSlidesEndpoints['presentationsCopy'] =
 					{
 						method: 'POST',
 						body: compact({ name: parsed.name, parents: parsed.parents }),
-						query: { fields: 'id' },
+						// supportsAllDrives lets Drive copy a deck that lives in a
+						// shared drive; without it the source answers 404.
+						query: { fields: 'id', supportsAllDrives: true },
 					},
 				);
 				if (!file.id) {
@@ -363,14 +370,13 @@ export const presentationsCopy: GoogleSlidesEndpoints['presentationsCopy'] =
 					);
 				if (!summary) {
 					// The id is known and the copy succeeded, so report what is known
-					// rather than throwing over a read that can be redone.
+					// rather than throwing over a read that can be redone. The counts
+					// are unknown, not zero, so they are left out: a zero would tell the
+					// caller the copy is an empty deck.
 					return {
 						presentationId: file.id,
 						title: parsed.name,
 						url: `https://docs.google.com/presentation/d/${file.id}/edit`,
-						slideCount: 0,
-						layoutCount: 0,
-						masterCount: 0,
 					};
 				}
 				await persistPresentation(ctx, summary);
