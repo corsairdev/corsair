@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Ramp plugin"
+sidebarTitle: "Overview"
 description: "Corporate cards and spend management with Ramp - read card transactions, bills, reimbursements, virtual cards, merchants, users and departments, split a transaction into line items, edit a bill and attach memos."
 ---
 
@@ -84,7 +85,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting Ramp.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 ramp()

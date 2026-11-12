@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Ramp: every `ramp.api.*` operation with input and output types."
+title: "Ramp API reference"
+sidebarTitle: "API"
+description: "API reference for the Ramp plugin in Corsair: every `ramp.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `ramp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -150,7 +149,7 @@ await corsair.ramp.api.bills.list({ status_summaries: ['AWAITING_PAYMENT'], from
 | `vendor_id` | `string` | No | — |
 | `entity_id` | `string` | No | — |
 | `invoice_number` | `string` | No | — |
-| `status_summaries` | `(APPROVAL_PENDING \| APPROVAL_REJECTED \| ARCHIVED \| AWAITING_PAYMENT \| AWAITING_RELEASE \| BLOCKED \| PAID \| PARTIAL_PAYMENT \| PAYMENT_FAILED \| PAYMENT_PROCESSING)[]` | No | Sent as a comma-separated list. |
+| `status_summaries` | `(APPROVAL_PENDING \| APPROVAL_REJECTED \| ARCHIVED \| AWAITING_PAYMENT \| AWAITING_RELEASE \| BLOCKED \| HELD_BY_PROVIDER \| ON_HOLD \| PAYMENT_COMPLETED \| PAYMENT_DETAILS_MISSING \| PAYMENT_ERROR \| PAYMENT_NOT_INSTRUCTED \| PAYMENT_PROCESSING \| PAYMENT_READY \| PAYMENT_SCHEDULED \| PENDING_VENDOR_APPROVAL \| WAITING_FOR_TRANSACTION_MATCH \| WAITING_FOR_TRANSFER_MATCH \| WAITING_FOR_VENDOR)[]` | No | Sent as a comma-separated list. |
 | `approval_status` | `APPROVED \| INITIALIZED \| PENDING \| REJECTED \| TERMINATED` | No | — |
 | `payment_status` | `OPEN \| PAID` | No | — |
 | `sync_status` | `BILL_AND_PAYMENT_SYNCED \| BILL_SYNCED \| NOT_SYNCED` | No | — |
@@ -309,7 +308,7 @@ await corsair.ramp.api.bills.update({ bill_id: '1e3b0a4e-6f4c-4b3a-9f6d-0a1b2c3d
 | `memo` | `string` | No | Replaces the internal bill memo. |
 | `vendor_memo` | `string` | No | Replaces the memo shown to the vendor. |
 | `invoice_number` | `string` | No | — |
-| `due_at` | `string` | No | A new due date, in ISO 8601 format. |
+| `due_at` | `string` | No | A new due date, as a `YYYY-MM-DD` date. |
 
 
 
@@ -817,7 +816,7 @@ await corsair.ramp.api.reimbursements.list({ state: 'APPROVED', page_size: 25 })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `direction` | `BUSINESS_TO_USER \| USER_TO_BUSINESS` | No | Ramp defaults to `BUSINESS_TO_USER`; `USER_TO_BUSINESS` reads repayments. |
-| `state` | `APPROVED \| AWAITING_EXPORT \| AWAITING_PAYMENT \| AWAITING_PUSH_PAYMENT \| CANCELED \| DELETED \| DRAFT \| EXPORTED \| EXPORT_FAILED \| REJECTED \| SUBMITTED` | No | — |
+| `state` | `APPROVED \| AWAITING_EXPORT \| AWAITING_PAYMENT \| AWAITING_PUSH_PAYMENT \| CANCELED \| DELETED \| DRAFT \| EXPORTED \| EXPORT_FAILED \| EXPORT_INITIATED \| EXPORT_MARKED_AS_FAILED \| EXPORT_SUCCESSFUL \| FAILED_REIMBURSEMENT \| INIT \| MANUALLY_REIMBURSED \| MISSING_ACH \| PAYROLL_FAILED \| PAYROLL_SUBMITTED \| PENDING \| PROCESSING \| PUSH_PAYMENT_FAILED \| PUSH_PAYMENT_INITIATED \| REIMBURSED \| REIMBURSED_VIA_PAYROLL \| REIMBURSED_VIA_PUSH \| REJECTED` | No | — |
 | `sync_status` | `NOT_SYNC_READY \| SYNCED \| SYNC_READY` | No | — |
 | `user_id` | `string` | No | — |
 | `entity_id` | `string` | No | — |
@@ -885,12 +884,14 @@ await corsair.ramp.api.reimbursements.list({ state: 'APPROVED', page_size: 25 })
     minor_unit_conversion_rate?: number | null
   } | null,
   entity_amount?: {
-    amount?: number | null,
-    currency_code?: string | null
+    currency?: string | null,
+    value?: number | null,
+    minor_unit_conversion_rate?: number | null
   } | null,
   merchant_amount?: {
-    amount?: number | null,
-    currency_code?: string | null
+    currency?: string | null,
+    value?: number | null,
+    minor_unit_conversion_rate?: number | null
   } | null,
   receipts?: string[] | null,
   line_items?: {
@@ -920,11 +921,7 @@ await corsair.ramp.api.reimbursements.list({ state: 'APPROVED', page_size: 25 })
     name?: string | null,
     user_id?: string | null
   }[] | null,
-  waypoints?: {
-    address?: string | null,
-    latitude?: number | null,
-    longitude?: number | null
-  }[] | null
+  waypoints?: string[] | null
 }[]
 ```
 </Accordion>
@@ -1530,8 +1527,8 @@ await corsair.ramp.api.users.list({ status: 'USER_ACTIVE', page_size: 25 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | No | — |
-| `role` | `BUSINESS_ADMIN \| BUSINESS_BOOKKEEPER \| BUSINESS_OWNER \| BUSINESS_USER \| DEVELOPER \| EXTERNAL_ACCOUNTANT \| GLOBAL_ADMIN \| GLOBAL_VIEWER \| MANAGER \| MERCHANT \| VENDOR_ADMIN` | No | — |
-| `status` | `INVITE_EXPIRED \| INVITE_PENDING \| USER_ACTIVE \| USER_DISABLED \| USER_SUSPENDED` | No | — |
+| `role` | `AUDITOR \| BUSINESS_ADMIN \| BUSINESS_BOOKKEEPER \| BUSINESS_OWNER \| BUSINESS_USER \| GUEST_USER \| IT_ADMIN` | No | — |
+| `status` | `USER_ACTIVE \| USER_DRAFT \| USER_INACTIVE \| USER_SUSPENDED` | No | — |
 | `employee_id` | `string` | No | — |
 | `entity_id` | `string` | No | — |
 | `department_id` | `string` | No | — |
