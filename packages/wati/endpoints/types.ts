@@ -123,8 +123,7 @@ export type ContactsCountInput = z.infer<typeof ContactsCountInputSchema>;
 
 const ContactsCountResponseSchema = z
 	.object({
-		count: z.number().nullish(),
-		total: z.number().nullish(),
+		contact_count: z.number().nullish().describe('The number of contacts.'),
 	})
 	.loose();
 
@@ -140,7 +139,12 @@ export type ContactsDeleteInput = z.infer<typeof ContactsDeleteInputSchema>;
 const DeleteResponseSchema = z
 	.object({
 		success: z.boolean().nullish(),
-		message: z.string().nullish(),
+		/** The deleted webhook's id. */
+		id: z.string().nullish(),
+		/** The deleted contact's id. */
+		contactId: z.string().nullish(),
+		deleted: z.boolean().nullish(),
+		cleanupCompleted: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -152,8 +156,11 @@ const ConversationSchema = z
 	.object({
 		id: z.string().nullish(),
 		conversation_id: z.string().nullish(),
+		contact_id: z.string().nullish(),
 		wa_id: z.string().nullish(),
 		contact_name: z.string().nullish(),
+		started_date: z.string().nullish(),
+		last_updated: z.string().nullish(),
 		phone: z.string().nullish(),
 		channel_id: z.string().nullish(),
 		channel_type: z.string().nullish(),
@@ -204,6 +211,16 @@ const MessageSchema = z
 		conversation_id: z.string().nullish(),
 		wa_id: z.string().nullish(),
 		message_type: z.string().nullish(),
+		/** The message kind, e.g. text, image or template. */
+		type: z.string().nullish(),
+		/** message, or a system event such as an assignment. */
+		event_type: z.string().nullish(),
+		ticket_id: z.string().nullish(),
+		/** True when the workspace sent it. */
+		owner: z.boolean().nullish(),
+		operator_name: z.string().nullish(),
+		local_message_id: z.string().nullish(),
+		failed_detail: z.string().nullish(),
 		text: z.string().nullish(),
 		content: z.unknown().nullish(),
 		status: z.string().nullish(),
@@ -297,25 +314,53 @@ export type MessagesSendTemplateInput = z.infer<
 	typeof MessagesSendTemplateInputSchema
 >;
 
+/**
+ * A text or file send answers `{ message: {...} }`: the message WATI queued,
+ * with its id and status. `message` is an object, not a status string.
+ */
 const SendResponseSchema = z
 	.object({
-		result: z.unknown().nullish(),
-		message: z.string().nullish(),
-		success: z.boolean().nullish(),
-		/** WATI's own id for the queued message. */
-		id: z.string().nullish(),
-		local_message_id: z.string().nullish(),
+		message: MessageSchema.nullish(),
 	})
 	.loose();
 
 export type SendResponse = z.infer<typeof SendResponseSchema>;
 
-/** A file message, by an already-uploaded media URL or id. */
+/**
+ * A template send answers with the campaign it created and one row per
+ * recipient. HTTP 200 can still carry `success: false` with `error`, and a
+ * recipient row can carry its own `errors`, so both need checking.
+ */
+const TemplateSendResponseSchema = z
+	.object({
+		success: z.boolean().nullish(),
+		broadcast_id: z.string().nullish(),
+		error: z.string().nullish(),
+		recipients: z
+			.array(
+				z
+					.object({
+						local_message_id: z.string().nullish(),
+						phone_number: z.string().nullish(),
+						target: z.string().nullish(),
+						errors: z.array(z.string()).nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+	})
+	.loose();
+
+export type TemplateSendResponse = z.infer<typeof TemplateSendResponseSchema>;
+
+/**
+ * A file message from a public URL. The V3 route takes no file name: WATI
+ * reads it from the URL.
+ */
 const MessagesSendFileInputSchema = z.object({
 	target: z.string().min(1),
 	url: z.string().min(1).describe('A publicly reachable media URL.'),
 	caption: z.string().optional(),
-	filename: z.string().optional(),
 });
 
 export type MessagesSendFileInput = z.infer<typeof MessagesSendFileInputSchema>;
@@ -332,6 +377,20 @@ const TemplateSchema = z
 			.nullish()
 			.describe('APPROVED, PENDING, REJECTED and so on.'),
 		category: z.string().nullish(),
+		/** The template body with its `{{1}}`-style placeholders. */
+		body: z.string().nullish(),
+		/** The placeholders the template takes, as name/value pairs. */
+		custom_params: z.array(CustomParamSchema).nullish(),
+		language_option: z
+			.object({
+				key: z.string().nullish(),
+				value: z.string().nullish(),
+				text: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		last_modified: z.string().nullish(),
+		// unknown: older template shapes; the V3 list does not document this.
 		components: z.array(z.unknown()).nullish(),
 		created: z.string().nullish(),
 		updated: z.string().nullish(),
@@ -353,6 +412,8 @@ export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
 
 const TemplatesListResponseSchema = z
 	.object({
+		/** Where V3 puts the list. */
+		templates: z.array(TemplateSchema).nullish(),
 		messageTemplates: z.array(TemplateSchema).nullish(),
 		message_templates: z.array(TemplateSchema).nullish(),
 		...PageFieldsSchema,
@@ -377,6 +438,8 @@ const ChannelSchema = z
 		channel_id: z.string().nullish(),
 		name: z.string().nullish(),
 		type: z.string().nullish(),
+		/** The channel kind as WATI names it, e.g. WhatsApp or Instagram. */
+		channel: z.string().nullish(),
 		status: z.string().nullish(),
 		phone_number: z.string().nullish(),
 	})
@@ -384,7 +447,7 @@ const ChannelSchema = z
 
 export type WatiChannel = z.infer<typeof ChannelSchema>;
 
-const ChannelsListInputSchema = z.object({});
+const ChannelsListInputSchema = z.object({ ...PageSchema });
 
 export type ChannelsListInput = z.infer<typeof ChannelsListInputSchema>;
 
@@ -402,8 +465,11 @@ export type CreditsInput = z.infer<typeof CreditsInputSchema>;
 
 const CreditsResponseSchema = z
 	.object({
-		credits: z.number().nullish(),
-		balance: z.number().nullish(),
+		credit: z.number().nullish().describe('The credit balance.'),
+		welcomeCredit: z.number().nullish(),
+		remainingFreeConversationsCount: z.number().nullish(),
+		currency: z.string().nullish(),
+		autoChargeEnabled: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -418,8 +484,14 @@ const BroadcastSchema = z
 		name: z.string().nullish(),
 		status: z.string().nullish(),
 		template_name: z.string().nullish(),
+		template_id: z.string().nullish(),
+		channel_id: z.string().nullish(),
 		created: z.string().nullish(),
+		last_updated: z.string().nullish(),
 		scheduled: z.string().nullish(),
+		scheduled_at: z.string().nullish(),
+		/** Delivery counts, on the single-campaign read. */
+		statistics: z.record(z.string(), z.number().nullish()).nullish(),
 		sent: z.number().nullish(),
 		delivered: z.number().nullish(),
 		read: z.number().nullish(),
@@ -429,7 +501,14 @@ const BroadcastSchema = z
 
 export type WatiBroadcast = z.infer<typeof BroadcastSchema>;
 
-const BroadcastsListInputSchema = z.object({ ...PageSchema });
+const BroadcastsListInputSchema = z.object({
+	...PageSchema,
+	channel: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only campaigns sent from this channel.'),
+});
 
 export type BroadcastsListInput = z.infer<typeof BroadcastsListInputSchema>;
 
@@ -464,6 +543,14 @@ export type BroadcastsRecipientsInput = z.infer<
 
 const BroadcastRecipientSchema = z
 	.object({
+		id: z.string().nullish(),
+		contact_id: z.string().nullish(),
+		contact_name: z.string().nullish(),
+		contact_phone: z.string().nullish(),
+		failed_code: z.string().nullish(),
+		message_id: z.string().nullish(),
+		local_message_id: z.string().nullish(),
+		created: z.string().nullish(),
 		wa_id: z.string().nullish(),
 		phone: z.string().nullish(),
 		name: z.string().nullish(),
@@ -481,6 +568,8 @@ const BroadcastsRecipientsResponseSchema = z
 	.object({
 		recipients: z.array(BroadcastRecipientSchema).nullish(),
 		recipient_list: z.array(BroadcastRecipientSchema).nullish(),
+		/** This route names its total `total_count`. */
+		total_count: z.number().nullish(),
 		...PageFieldsSchema,
 	})
 	.loose();
@@ -496,8 +585,14 @@ const SegmentSchema = z
 		id: z.string().nullish(),
 		segmentId: z.string().nullish(),
 		name: z.string().nullish(),
+		tag: z.string().nullish(),
+		description: z.string().nullish(),
+		/** How many contacts matched at the last refresh. */
+		hitCount: z.number().nullish(),
+		totalContactCount: z.number().nullish(),
 		contact_count: z.number().nullish(),
 		created: z.string().nullish(),
+		lastUpdated: z.string().nullish(),
 	})
 	.loose();
 
@@ -510,6 +605,9 @@ export type SegmentsListInput = z.infer<typeof SegmentsListInputSchema>;
 const SegmentsListResponseSchema = z
 	.object({
 		segments: z.array(SegmentSchema).nullish(),
+		// The segment routes page in camelCase.
+		pageNumber: z.number().nullish(),
+		pageSize: z.number().nullish(),
 		...PageFieldsSchema,
 	})
 	.loose();
@@ -565,8 +663,13 @@ export type SegmentsEvaluateInput = z.infer<typeof SegmentsEvaluateInputSchema>;
 
 const SegmentEvaluateResponseSchema = z
 	.object({
-		count: z.number().nullish(),
 		contacts: z.array(ContactSchema).nullish(),
+		/** How many contacts match across all pages. */
+		total: z.number().nullish(),
+		pageNumber: z.number().nullish(),
+		pageSize: z.number().nullish(),
+		hasNextPage: z.boolean().nullish(),
+		count: z.number().nullish(),
 	})
 	.loose();
 
@@ -581,24 +684,25 @@ const WebhookSchema = z
 		id: z.string().nullish(),
 		url: z.string().nullish(),
 		name: z.string().nullish(),
-		// V3 renamed this from `events`; keeping the old name logged zero events for
-		// a subscription that has them.
-		event_types: z.array(z.string()).nullish(),
-		status: z.string().nullish(),
+		/** The WhatsApp number the subscription belongs to. */
+		phoneNumber: z.string().nullish(),
+		// The V3 reference names this `eventTypes` (camelCase).
+		eventTypes: z.array(z.string()).nullish(),
+		status: z.string().nullish().describe('Enabled, Disabled or Defective.'),
 		created: z.string().nullish(),
 	})
 	.loose();
 
 export type WatiWebhook = z.infer<typeof WebhookSchema>;
 
-const WebhooksListInputSchema = z.object({ ...PageSchema });
+// The V3 list takes no paging and answers a bare array.
+const WebhooksListInputSchema = z.object({});
 
 export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
 
 const WebhooksListResponseSchema = z
 	.object({
 		webhooks: z.array(WebhookSchema).nullish(),
-		...PageFieldsSchema,
 	})
 	.loose();
 
@@ -653,7 +757,7 @@ export type WatiEndpointOutputs = {
 	conversationsList: ConversationsListResponse;
 	conversationsMessages: ConversationsMessagesResponse;
 	messagesSendText: SendResponse;
-	messagesSendTemplate: SendResponse;
+	messagesSendTemplate: TemplateSendResponse;
 	messagesSendFile: SendResponse;
 	templatesList: TemplatesListResponse;
 	templatesGet: TemplateResponse;
@@ -705,7 +809,7 @@ export const WatiEndpointOutputSchemas = {
 	conversationsList: ConversationsListResponseSchema,
 	conversationsMessages: ConversationsMessagesResponseSchema,
 	messagesSendText: SendResponseSchema,
-	messagesSendTemplate: SendResponseSchema,
+	messagesSendTemplate: TemplateSendResponseSchema,
 	messagesSendFile: SendResponseSchema,
 	templatesList: TemplatesListResponseSchema,
 	templatesGet: TemplateResponseSchema,

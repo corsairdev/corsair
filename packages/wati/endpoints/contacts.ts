@@ -85,12 +85,15 @@ export const count: WatiEndpoints['contactsCount'] = (ctx, input) =>
 		() => ({ method: 'GET', path: '/contacts/count' }),
 		{
 			log: (_, result) => ({
-				count: result.count ?? result.total ?? undefined,
+				count: result.contact_count ?? undefined,
 			}),
 		},
 	);
 
-/** Deleting removes the contact and their conversation history. */
+/**
+ * WATI documents this as a soft delete: the contact leaves the workspace, but
+ * it is not a physical (GDPR) erasure.
+ */
 export const remove: WatiEndpoints['contactsDelete'] = (ctx, input) =>
 	call(
 		ctx,

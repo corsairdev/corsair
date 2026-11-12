@@ -20,16 +20,11 @@ export const list: WatiEndpoints['webhooksList'] = (ctx, input) =>
 			output: Outputs.webhooksList,
 		},
 		input,
-		({ page_number, page_size }) => ({
-			method: 'GET',
-			path: '/webhooks',
-			query: { page_number, page_size },
-		}),
+		() => ({ method: 'GET', path: '/webhooks' }),
 		{
-			log: (_, result) => ({
-				count: result.webhooks?.length ?? 0,
-				total: result.total ?? undefined,
-			}),
+			// V3 answers a bare array; it is wrapped so the output stays an object.
+			shape: (raw) => (Array.isArray(raw) ? { webhooks: raw } : raw),
+			log: (_, result) => ({ count: result.webhooks?.length ?? 0 }),
 		},
 	);
 
@@ -46,7 +41,7 @@ export const get: WatiEndpoints['webhooksGet'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				id: result.id ?? undefined,
-				events: result.event_types?.length ?? 0,
+				events: result.eventTypes?.length ?? 0,
 			}),
 		},
 	);

@@ -47,8 +47,8 @@ describeIfKey('live WATI API', () => {
 			} as never,
 		);
 
-		// The list answers a contacts array; a wrong envelope fails the parse.
-		expect(Array.isArray(result.contacts)).toBe(true);
+		// The list answers `contact_list`; a wrong envelope fails the parse.
+		expect(Array.isArray(result.contact_list)).toBe(true);
 	});
 
 	it('lists conversation channels through the output schema', async () => {

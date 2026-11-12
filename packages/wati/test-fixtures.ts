@@ -32,104 +32,138 @@ export const contactList = {
 
 export const conversation = {
 	id: 'conv-1',
-	conversation_id: 'conv-1',
-	wa_id: '1234567890',
+	contact_id: '65b73810e2bd04aa867b5f7d',
 	contact_name: 'John Doe',
-	phone: '+1234567890',
-	channel_id: 'channel_123',
 	channel_type: 'whatsapp',
-	last_message: 'Thanks!',
-	last_message_timestamp: '2024-06-01T13:02:00Z',
-	unread_count: 0,
-	status: 'open',
-	assigned_operator: null,
-	assigned_team: null,
-	tags: [],
+	started_date: '2025-01-15T10:30:00Z',
+	last_updated: '2025-01-16T08:00:00Z',
 };
 
 export const conversationList = {
 	conversation_list: [conversation],
 	page_number: 1,
 	page_size: 20,
-	total: 1,
-	total_pages: 1,
 };
 
 export const message = {
-	id: 'msg-1',
-	message_id: 'msg-1',
-	conversation_id: 'conv-1',
-	wa_id: '1234567890',
-	message_type: 'text',
 	text: 'Thanks!',
+	type: 'text',
+	timestamp: '2026-07-14T16:15:38.3978844Z',
+	owner: false,
 	status: 'delivered',
-	timestamp: '2024-06-01T13:02:00Z',
-	from_me: false,
-	operator: null,
-	template_name: null,
-	media_url: null,
+	avatar_url: null,
+	assigned_id: '6858f59a3374901cc1c8223f',
+	operator_name: null,
+	bot_type: 'regular',
+	local_message_id: '88aed3c93a050b3c53978463',
+	id: 'msg-1',
+	created: '2026-07-14T16:15:38.3978836Z',
+	conversation_id: 'conv-1',
+	ticket_id: '68aed3c93a050b3c53978463',
+	event_type: 'message',
 };
 
 export const messageList = {
 	message_list: [message],
 	page_number: 1,
 	page_size: 20,
-	total: 1,
-	total_pages: 1,
+	channel_id: 'channel_123',
 };
 
+/** What a text or file send answers: the queued message, as an object. */
 export const sent = {
-	result: 'success',
-	message: 'Message sent',
+	message: {
+		...message,
+		id: 'msg-2',
+		text: 'Your order shipped.',
+		owner: true,
+		status: 'sending',
+	},
+};
+
+/** What a template send answers. */
+export const templateSent = {
 	success: true,
-	id: 'msg-2',
-	local_message_id: 'local-1',
+	broadcast_id: 'broadcast_123456',
+	recipients: [
+		{ local_message_id: 'local-1', phone_number: '1234567890', errors: [] },
+	],
+};
+
+/** A template send WATI refused for one recipient, still inside an HTTP 200. */
+export const templateSentWithErrors = {
+	success: false,
+	broadcast_id: null,
+	error: 'Template not approved',
+	recipients: [
+		{
+			local_message_id: null,
+			phone_number: '1234567890',
+			errors: ['Template not approved'],
+		},
+	],
 };
 
 export const template = {
 	id: 'tpl-1',
 	name: 'order_update',
-	language: 'en',
-	status: 'APPROVED',
 	category: 'UTILITY',
-	components: [],
-	created: '2024-01-01T00:00:00Z',
-	updated: '2024-02-01T00:00:00Z',
+	sub_category: 'STANDARD',
+	hsm: 'Hello {{1}}, your order shipped.',
+	custom_params: [{ name: 'name', value: 'customer_name' }],
+	status: 'APPROVED',
+	language_option: {
+		key: 'English (US)',
+		value: 'en_US',
+		text: 'English (US)',
+	},
+	last_modified: '2024-01-15T10:30:00Z',
+	type: 'TEXT',
+	body: 'Hello {{1}}, your order shipped.',
+	buttons: [],
+	carousel_cards: [],
 };
 
 export const templateList = {
-	messageTemplates: [template],
+	templates: [template],
 	page_number: 1,
 	page_size: 20,
 	total: 1,
-	total_pages: 1,
 };
 
 export const channel = {
-	id: 'channel_123',
-	channel_id: 'channel_123',
-	name: 'Support line',
-	type: 'whatsapp',
-	status: 'connected',
-	phone_number: '+1234567890',
+	id: '65b761a8e46b7808776e19b6',
+	name: 'Support',
+	channel: 'WhatsApp',
 };
 
 export const channelList = { channels: [channel] };
 
-export const credits = { credits: 1200, balance: 1200 };
+export const credits = {
+	credit: 12.5,
+	welcomeCredit: 0,
+	remainingFreeConversationsCount: 1000,
+	currency: 'USD',
+	autoChargeEnabled: false,
+};
 
 export const broadcast = {
 	id: 'bc-1',
-	broadcast_id: 'bc-1',
+	channel_id: 'channel-456',
 	name: 'June promo',
 	status: 'COMPLETED',
-	template_name: 'june_promo',
+	template_id: 'template-789',
+	fallback_templates: [],
 	created: '2024-06-01T00:00:00Z',
-	scheduled: '2024-06-01T09:00:00Z',
-	sent: 100,
-	delivered: 95,
-	read: 60,
-	failed: 5,
+	last_updated: '2024-06-02T00:00:00Z',
+	scheduled_at: '2024-06-01T09:00:00Z',
+	statistics: {
+		total_recipients: 100,
+		total_sent: 100,
+		total_delivered: 95,
+		total_read: 60,
+		total_failed: 5,
+	},
 };
 
 export const broadcastList = {
@@ -137,65 +171,78 @@ export const broadcastList = {
 	page_number: 1,
 	page_size: 20,
 	total: 1,
-	total_pages: 1,
 };
 
 export const recipient = {
-	wa_id: '1234567890',
-	phone: '+1234567890',
-	name: 'John Doe',
+	id: 'recipient-123',
+	contact_id: 'contact-456',
+	contact_name: 'John Doe',
+	contact_phone: '+1234567890',
 	status: 'read',
-	sent: '2024-06-01T09:00:00Z',
-	delivered: '2024-06-01T09:00:02Z',
-	read: '2024-06-01T09:05:00Z',
-	error: null,
+	local_message_id: 'local-msg-789',
+	message_id: 'msg-101112',
+	custom_params: [{ name: 'firstName', value: 'John' }],
+	created: '2024-06-01T09:00:00Z',
 };
 
 export const recipientList = {
 	recipients: [recipient],
 	page_number: 1,
 	page_size: 20,
-	total: 1,
-	total_pages: 1,
+	total_count: 1,
 };
 
 export const segment = {
 	id: 'seg-1',
-	segmentId: 'seg-1',
 	name: 'Active customers',
-	contact_count: 420,
+	tag: 'customers',
+	hitCount: 420,
+	status: 1,
 	created: '2024-01-01T00:00:00Z',
+	lastUpdated: '2024-02-01T00:00:00Z',
+	source: 0,
+	refreshType: 0,
+	useUploadedContact: false,
 };
 
 export const segmentList = {
 	segments: [segment],
-	page_number: 1,
-	page_size: 20,
+	pageNumber: 1,
+	pageSize: 20,
 	total: 1,
-	total_pages: 1,
 };
 
-export const segmentEvaluation = { count: 420, contacts: [contact] };
+export const segmentEvaluation = {
+	contacts: [contact],
+	pageNumber: 1,
+	pageSize: 20,
+	total: 420,
+	hasNextPage: true,
+	hasPreviousPage: false,
+};
 
 export const webhook = {
 	id: 'wh-1',
+	phoneNumber: '1234567890',
 	url: 'https://acme.example/hooks/wati',
-	name: 'Acme hook',
-	// V3 renamed `events` to `event_types`.
-	event_types: ['message', 'contact'],
-	status: 'active',
+	status: 'Enabled',
+	// The V3 reference names this field `eventTypes`.
+	eventTypes: ['message', 'contact'],
 	created: '2024-01-01T00:00:00Z',
 };
 
-export const webhookList = {
-	webhooks: [webhook],
-	page_number: 1,
-	page_size: 20,
-	total: 1,
-	total_pages: 1,
+/** The V3 list answers a bare array, with no envelope or paging. */
+export const webhookList = [webhook];
+
+export const deleted = {
+	contactId: '507f1f77bcf86cd799439011',
+	deleted: true,
+	cleanupCompleted: true,
 };
 
-export const deleted = { success: true, message: 'Deleted' };
+export const webhookDeleted = { id: 'wh-1' };
+
+export const contactCount = { contact_count: 100 };
 
 /** The error bodies the API sends. */
 export const missingToken = {

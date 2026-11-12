@@ -16,7 +16,12 @@ export const channels: WatiEndpoints['channelsList'] = (ctx, input) =>
 			output: Outputs.channelsList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/channels' }),
+		({ page_number, page_size }) => ({
+			method: 'GET',
+			path: '/channels',
+			// Both are required on this route.
+			query: { page_number, page_size },
+		}),
 		{ log: (_, result) => ({ count: result.channels?.length ?? 0 }) },
 	);
 
@@ -33,7 +38,7 @@ export const credits: WatiEndpoints['accountCredits'] = (ctx, input) =>
 		() => ({ method: 'GET', path: '/account/credits' }),
 		{
 			log: (_, result) => ({
-				credits: result.credits ?? result.balance ?? undefined,
+				credit: result.credit ?? undefined,
 			}),
 		},
 	);
@@ -47,10 +52,10 @@ export const broadcasts: WatiEndpoints['broadcastsList'] = (ctx, input) =>
 			output: Outputs.broadcastsList,
 		},
 		input,
-		({ page_number, page_size }) => ({
+		({ page_number, page_size, channel }) => ({
 			method: 'GET',
 			path: '/broadcasts',
-			query: { page_number, page_size },
+			query: { page_number, page_size, channel },
 		}),
 		{
 			log: (_, result) => ({
@@ -99,7 +104,7 @@ export const recipients: WatiEndpoints['broadcastsRecipients'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				count: (result.recipients ?? result.recipient_list)?.length ?? 0,
-				total: result.total ?? undefined,
+				total: result.total_count ?? result.total ?? undefined,
 			}),
 		},
 	);
@@ -164,13 +169,13 @@ export const evaluate: WatiEndpoints['segmentsEvaluate'] = (ctx, input) =>
 		({ groups, page_number, page_size }) => ({
 			method: 'POST',
 			path: '/segments/evaluate',
-			body: { groups },
-			query: { page_number, page_size },
+			// This route pages in the body, in camelCase; query paging is ignored.
+			body: { groups, pageNumber: page_number, pageSize: page_size },
 		}),
 		{
 			log: (parsed, result) => ({
 				groups: parsed.groups.length,
-				count: result.count ?? result.contacts?.length ?? 0,
+				count: result.total ?? result.contacts?.length ?? 0,
 			}),
 		},
 	);

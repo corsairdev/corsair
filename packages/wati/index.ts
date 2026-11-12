@@ -432,6 +432,7 @@ export type {
 	SegmentsListResponse,
 	SendResponse,
 	TemplateResponse,
+	TemplateSendResponse,
 	TemplatesGetInput,
 	TemplatesListInput,
 	TemplatesListResponse,

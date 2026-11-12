@@ -24,7 +24,11 @@ export const list: WatiEndpoints['templatesList'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				count:
-					(result.messageTemplates ?? result.message_templates)?.length ?? 0,
+					(
+						result.templates ??
+						result.messageTemplates ??
+						result.message_templates
+					)?.length ?? 0,
 				total: result.total ?? undefined,
 			}),
 		},

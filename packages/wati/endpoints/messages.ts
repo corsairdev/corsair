@@ -1,5 +1,4 @@
 import type { WatiEndpoints } from '..';
-import { target } from '../client';
 import { call } from './call';
 import {
 	WatiEndpointInputSchemas as Inputs,
@@ -25,16 +24,16 @@ export const sendText: WatiEndpoints['messagesSendText'] = (ctx, input) =>
 		({ target: who, text }) => ({
 			method: 'POST',
 			// V3 sends from one route with the recipient in the body; the
-			// `/conversations/{target}/messages` form does not exist in v3.
+			// `/conversations/{target}/messages` form does not exist in v3. The
+			// target is a JSON value here, so it is sent as given, not URL-encoded.
 			path: '/conversations/messages/text',
-			body: { target: target(who), text },
+			body: { target: who, text },
 		}),
 		{
-			// The message text is the user's content, so only that one was sent.
+			// The message text is the user's content, so only the id is logged.
 			log: (_, result) => ({
-				id: result.id ?? undefined,
-				local: result.local_message_id ?? undefined,
-				success: result.success ?? false,
+				id: result.message?.id ?? undefined,
+				status: result.message?.status ?? undefined,
 			}),
 		},
 	);
@@ -43,9 +42,9 @@ export const sendText: WatiEndpoints['messagesSendText'] = (ctx, input) =>
  * Sends an approved template, which is the only option outside the service
  * window.
  *
- * `broadcast_name` turns the send into a campaign, and the schema requires
- * `parameters` alongside it — a campaign with no bound parameters only makes
- * sense for a template with no placeholders, so the pairing is worth a check.
+ * WATI records every template send as a campaign named by `broadcast_name`,
+ * even for one recipient. `parameters` is left out for a template with no
+ * placeholders.
  */
 export const sendTemplate: WatiEndpoints['messagesSendTemplate'] = (
 	ctx,
@@ -73,7 +72,7 @@ export const sendTemplate: WatiEndpoints['messagesSendTemplate'] = (
 				broadcast_name,
 				recipients: [
 					{
-						target: target(whatsapp_number),
+						target: whatsapp_number,
 						// The caller's own id comes back on the result, so a send can
 						// be matched to it.
 						local_message_id,
@@ -96,7 +95,12 @@ export const sendTemplate: WatiEndpoints['messagesSendTemplate'] = (
 				// The number of bound placeholders, never their values, which may
 				// be personal.
 				parameters: parsed.parameters?.length ?? 0,
-				id: result.id ?? undefined,
+				broadcastId: result.broadcast_id ?? undefined,
+				success: result.success ?? undefined,
+				// Per-recipient failures arrive inside an HTTP 200.
+				recipientErrors:
+					result.recipients?.filter((row) => (row.errors?.length ?? 0) > 0)
+						.length ?? 0,
 			}),
 		},
 	);
@@ -111,21 +115,15 @@ export const sendFile: WatiEndpoints['messagesSendFile'] = (ctx, input) =>
 			output: Outputs.messagesSendFile,
 		},
 		input,
-		({ target: who, url, caption, filename }) => ({
+		({ target: who, url, caption }) => ({
 			method: 'POST',
 			path: '/conversations/messages/fileViaUrl',
-			body: {
-				target: target(who),
-				file_url: url,
-				caption,
-				filename,
-			},
+			body: { target: who, file_url: url, caption },
 		}),
 		{
 			log: (parsed, result) => ({
-				filename: parsed.filename,
 				caption: parsed.caption !== undefined,
-				id: result.id ?? undefined,
+				id: result.message?.id ?? undefined,
 			}),
 		},
 	);
