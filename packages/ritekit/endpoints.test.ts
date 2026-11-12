@@ -444,6 +444,20 @@ describe('links.shorten', () => {
 		expect(result.list?.map((cta) => cta.id)).toEqual([123456, 'bit.ly']);
 	});
 
+	it('takes a numeric Link Ad id straight from links.listCtas', async () => {
+		respond(fetchMock, CTA_LIST);
+		const listed = (await invoke(Links.listCtas, {})) as {
+			list?: Array<{ id?: string | number | null }>;
+		};
+		const id = listed.list?.[1]?.id;
+		expect(id).toBe(123456);
+
+		respond(fetchMock, SHORT_LINK);
+		await invoke(Links.shorten, { url: 'https://ritekit.com', cta: id });
+
+		expect(lastRequest(fetchMock).query.cta).toBe('123456');
+	});
+
 	it('marks a failed shorten as not replayable, so a 5xx is not retried', async () => {
 		respond(fetchMock, { result: false, message: 'Server error' }, 503);
 

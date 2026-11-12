@@ -734,7 +734,7 @@ await corsair.ritekit.api.links.shorten({ url: 'https://ritekit.com', cta: '6530
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL to shorten. |
-| `cta` | `string` | Yes | The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one. |
+| `cta` | `string \| number` | Yes | The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one. |
 
 
 

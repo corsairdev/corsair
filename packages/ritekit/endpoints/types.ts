@@ -406,9 +406,9 @@ export type LinksListCtasResponse = z.infer<typeof LinksListCtasResponseSchema>;
 
 const LinksShortenInputSchema = z.object({
 	url: UrlSchema.describe('The URL to shorten.'),
+	// links.listCtas returns numeric ids as well as strings such as bit.ly.
 	cta: z
-		.string()
-		.min(1)
+		.union([z.string().min(1), z.number().int()])
 		.describe(
 			'The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one.',
 		),
