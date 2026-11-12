@@ -238,3 +238,11 @@ describe('message building', () => {
 		expect(message).toContain('needs one of: chat:send_message, chat:write');
 	});
 });
+
+describe('captureError', () => {
+	it('fails when the operation resolves instead of rejecting', async () => {
+		await expect(captureError(Promise.resolve('ok'))).rejects.toThrow(
+			'the operation resolved',
+		);
+	});
+});

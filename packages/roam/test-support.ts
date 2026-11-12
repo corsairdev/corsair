@@ -53,7 +53,6 @@ export function respondAsText(
 export async function captureError<T>(promise: Promise<T>): Promise<Error> {
 	try {
 		await promise;
-		throw new Error('the operation resolved; this test expects a rejection');
 	} catch (caught) {
 		// A non-Error rejection is itself worth failing on: this plugin throws
 		// RoamAPIError or ZodError and nothing else.
@@ -62,6 +61,9 @@ export async function captureError<T>(promise: Promise<T>): Promise<Error> {
 			`the operation rejected with a non-Error value: ${String(caught)}`,
 		);
 	}
+	// Outside the try, so a resolved promise fails the test instead of being
+	// caught and returned as if it had rejected.
+	throw new Error('the operation resolved; this test expects a rejection');
 }
 
 /**
