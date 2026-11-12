@@ -1,15 +1,20 @@
 import { z } from 'zod';
 
 /**
- * Roam pages with an opaque cursor. `limit` is documented on every list route
- * without a stated maximum, so the schema only requires a positive value.
+ * Roam pages with an opaque cursor. Each list route documents its own `limit`
+ * maximum, and Roam answers 400 above it, so the schema takes the route's cap.
  */
-const LimitSchema = z
-	.number()
-	.int()
-	.min(1)
-	.optional()
-	.describe('Records per page. Roam applies its own default when omitted.');
+function limitSchema(max: number) {
+	return z
+		.number()
+		.int()
+		.min(1)
+		.max(max)
+		.optional()
+		.describe(
+			`Records per page, at most ${max}. Roam applies its own default when omitted.`,
+		);
+}
 
 const CursorSchema = z
 	.string()
@@ -216,7 +221,7 @@ export type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
 const UserListInputSchema = z.object({
 	ids: z.array(z.string()).optional().describe('Only these user uuids.'),
 	q: z.string().optional().describe('A search phrase.'),
-	limit: LimitSchema,
+	limit: limitSchema(100),
 	cursor: CursorSchema,
 	expand: ExpandSchema,
 });
@@ -233,7 +238,7 @@ export type UserListResponse = z.infer<typeof UserListResponseSchema>;
 // ── chat.list / chat.history ──────────────────────────────────────────────
 
 const ChatListInputSchema = z.object({
-	limit: LimitSchema,
+	limit: limitSchema(50),
 	cursor: CursorSchema,
 	expand: ExpandSchema,
 });
@@ -302,7 +307,7 @@ const ChatHistoryInputSchema = z
 			.describe('Only messages before this timestamp.'),
 		ascending: z.boolean().optional(),
 		cursor: CursorSchema,
-		limit: LimitSchema,
+		limit: limitSchema(200),
 		expand: ExpandSchema,
 	})
 	.superRefine((value, ctx) => {
@@ -574,7 +579,7 @@ export type ReactionListResponse = z.infer<typeof ReactionListResponseSchema>;
 const GroupListInputSchema = z.object({
 	query: z.string().optional().describe('A search phrase.'),
 	type: z.string().optional().describe('The group type.'),
-	limit: LimitSchema,
+	limit: limitSchema(100),
 	cursor: CursorSchema,
 });
 
@@ -611,7 +616,7 @@ const MeetingListInputSchema = z.object({
 		.optional()
 		.describe('Only meetings before this timestamp.'),
 	after: z.string().optional().describe('Only meetings after this timestamp.'),
-	limit: LimitSchema,
+	limit: limitSchema(100),
 	cursor: CursorSchema,
 	expand: z
 		.array(z.enum(['summary', 'actionItems', 'chapters']))

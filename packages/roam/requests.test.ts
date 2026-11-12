@@ -153,6 +153,16 @@ describe('chat.list and chat.history', () => {
 		expect(lastRequest(fetchMock).query).toEqual({ userIds: USER_ID });
 	});
 
+	it('rejects a page size above the route maximum', async () => {
+		await expect(
+			invoke(Endpoints.chatList, { limit: 51 }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Endpoints.chatHistory, { chat_id: CHAT_ID, limit: 201 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a history request with two destinations', async () => {
 		await expect(
 			invoke(Endpoints.chatHistory, { chat_id: CHAT_ID, group_id: GROUP_ID }),
