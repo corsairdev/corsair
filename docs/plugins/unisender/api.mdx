@@ -349,7 +349,7 @@ await corsair.unisender.api.contacts.import({ field_names: ['email', 'Name', 'em
 
 `contacts.subscribe`
 
-Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email
+Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email. Returns only person_id; read the confirmation status with contacts.get
 
 **Risk:** `write`
 
