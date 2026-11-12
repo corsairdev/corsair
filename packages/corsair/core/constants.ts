@@ -477,6 +477,7 @@ export const BaseProviders = [
 	'u301',
 	'vapi',
 	'vaquill',
+	'vectorshift',
 	'vercel',
 	'veriphone',
 	'vestaboard',
@@ -978,6 +979,7 @@ export const ProviderDisplayNames = {
 	u301: 'U301',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
+	vectorshift: 'VectorShift',
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
@@ -1486,6 +1488,7 @@ export type AllProviders =
 	| 'u301'
 	| 'vapi'
 	| 'vaquill'
+	| 'vectorshift'
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
