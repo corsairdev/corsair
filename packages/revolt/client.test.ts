@@ -206,4 +206,12 @@ describe('key hygiene', () => {
 		expect(error.cause).toBeInstanceOf(TypeError);
 		expect(error.replayable).toBe(true);
 	});
+
+	it('fails captureError when the operation resolves', async () => {
+		// The helper must not hand its own "resolved" error back as a rejection,
+		// or a test that expects a 401 passes when the request succeeds.
+		await expect(captureError(Promise.resolve('ok'))).rejects.toThrow(
+			'the operation resolved',
+		);
+	});
 });
