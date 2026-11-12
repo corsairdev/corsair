@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Records from './endpoints';
+import { RagicAPIError } from './client';
 import type {
 	RagicRecordSet,
 	RecordsCommentResponse,
@@ -480,6 +481,24 @@ describe('records.update', () => {
 		});
 
 		expect(lastRequest(fetchMock).bodyRecord?._DELSUB_2000154).toEqual([3]);
+	});
+
+	it('does not mark an update replayable, so a 5xx after a save is not sent again', async () => {
+		respond(fetchMock, {
+			status: 'ERROR',
+			code: 500,
+			msg: 'Something Unexpected Happened',
+		});
+
+		const error = await invoke(Records.update, {
+			...SHEET,
+			recordId: 3,
+			fields: { _subtable_2000154: { '-1': { '2000147': 'Bill' } } },
+		}).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(RagicAPIError);
+		expect((error as RagicAPIError).isServerError).toBe(true);
+		expect((error as RagicAPIError).replayable).toBe(false);
 	});
 
 	it('rejects an update with no record id', async () => {

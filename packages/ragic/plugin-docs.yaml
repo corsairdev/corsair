@@ -24,7 +24,7 @@ overviewNote: |
   - **`records.delete` moves the record to the sheet's recycle bin**, where it can be restored from the Ragic UI. Reading a deleted or unknown id answers an empty object rather than an error.
   - **A write answers `{ status, msg, ragicId, data }`**: `ragicId` is the record id and `data` is the saved record keyed by field ID. A save that breaks a field rule (a required field left empty, a duplicate key) comes back as `status: "INVALID"` with code `202`, and the plugin throws it.
   - **`records.comment`** is sent as multipart form data with Ragic's `comment` flag, which is the only form the comment route accepts, and answers the new comment keyed by its row id.
-  - **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. A `429` or body code `204` ("Request Frequency Too High") is retried up to three times, and a 5xx twice, for reads and updates only; a create, comment or delete is never sent twice.
+  - **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. A `429` or body code `204` ("Request Frequency Too High") is retried up to three times, and a 5xx twice, for reads, lock and unlock only; a create, update, comment or delete is never sent twice, since a 5xx can follow a save that already ran its workflows.
 examples:
   read:
     path: records.list

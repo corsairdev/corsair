@@ -124,10 +124,10 @@ export const update: RagicEndpoints['recordsUpdate'] = (ctx, input) =>
 			),
 			query: writeQuery(parsed),
 			body: parsed.fields,
-			// Only the fields sent are changed, so a replay writes the same values
-			// again; a workflow or AI Agent triggered by the save is the only side
-			// effect, and the caller can turn those off.
-			replayable: true,
+			// Not replayed: a 5xx can arrive after Ragic saved the record, and a
+			// second POST would run the workflows, AI Agents and notifications again
+			// and add any new subtable rows (negative row ids) a second time.
+			replayable: false,
 		}),
 		{
 			log: (parsed) => ({
