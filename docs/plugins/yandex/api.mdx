@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Yandex Translate: every `yandex.api.*` operation with input and output types."
+title: "Yandex Translate API reference"
+sidebarTitle: "API"
+description: "API reference for the Yandex Translate plugin in Corsair: every `yandex.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `yandex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -20,7 +19,7 @@ Detect the language of each passage, one result per entry and in order
 **Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').yandex.api.detectLanguages.run({ texts: ['Hello', 'Guten Tag'] });
+await corsair.yandex.api.detectLanguages.run({ texts: ['Hello', 'Guten Tag'] });
 ```
 
 **Input**
@@ -64,7 +63,7 @@ List the supported languages, with their codes and display names
 **Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').yandex.api.listLanguages.run({ ui: 'en' });
+await corsair.yandex.api.listLanguages.run({});
 ```
 
 **Input**
@@ -108,7 +107,7 @@ Translate up to 1,000 passages into a target language, detecting the source per 
 **Risk:** `read`
 
 ```ts
-await corsair.withTenant('acme').yandex.api.translate.text({ targetLanguageCode: 'ru', texts: ['Hello'] });
+await corsair.yandex.api.translate.text({ targetLanguageCode: 'ru', texts: ['Hello'] });
 ```
 
 **Input**

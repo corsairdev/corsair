@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Yandex Translate plugin"
+sidebarTitle: "Overview"
 description: "Translation with Yandex Cloud - translate passages between languages, detect the language of text, and list the supported languages."
 ---
 
@@ -9,14 +10,14 @@ This plugin wraps **Yandex Translate**, part of Yandex Cloud. Create a service a
 
 - **"Yandex" is a family, and this is the Translate API.** Yandex publishes many unrelated APIs (Metrica, Search, Cloud); this plugin covers the translator, at `https://translate.api.cloud.yandex.net`. The other services have their own credentials and contracts and are not part of this package.
 - **Two credential kinds are accepted.** A service-account **API key** is sent as `Authorization: Api-Key <key>` and is long-lived, which is what a server integration wants. An **IAM token** is sent as `Bearer` and expires, so the plugin passes through a key that already names its scheme — write `Bearer …` explicitly to use one.
-- **A folder scopes a cloud resource.** An API key already implies its folder, so the folder header is only needed when an IAM token spans several. Pass `folderId` per call and the plugin sends it as `x-folder-id`, not as a body field.
+- **A folder scopes a cloud resource.** A service-account API key already implies its folder, so leave `folderId` out with one. With a user account's IAM token, pass `folderId` per call; the plugin sends it as the `folderId` body field, as the API reference documents.
 - **Every call is a POST, including the reads.** `translate`, `detect` and `languages` all take a JSON body, which is unusual but what the gRPC-to-JSON mapping produces.
 - **Errors are gRPC statuses, not HTTP ones.** The body is `{ code, message, details }` where `code` is a gRPC status — 3 is an invalid argument, 5 not found, 7 permission denied, 8 resource exhausted, 16 unauthenticated. The **HTTP status is usually 400 whatever the gRPC code says**, so the plugin reads `code` to separate a bad key from a bad field rather than trusting the status. A bad key answers `16` with `Unknown api key '****'`.
 - **The `requestId` is kept.** It sits inside the `details` array, and it is what Yandex support asks for.
 - **10,000 characters per call, across 1,000 passages.** The plugin checks the total before sending, because the API's own refusal is a `3` that does not say which limit was hit.
 - **Omitting `sourceLanguageCode` asks for detection.** Sending it empty would be an unknown language code, so the plugin leaves it out entirely when it is not set.
 - **`format: HTML` preserves markup.** The default is `PLAIN_TEXT`, which treats tags as text to translate.
-- **Text is never logged.** Only the character count and the language codes reach the event log, since the passage is the caller's own content.
+- **Text never reaches the event log.** Only the character count and the language codes are logged, since the passage is the caller's own content. A failed call's `YandexAPIError` keeps the underlying HTTP error as its `cause`, which includes the request body, so do not log error causes in full if the text is sensitive.
 
 **What you get:**
 
@@ -76,7 +77,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-A call with no saved key throws `AuthMissingError`. Save a Yandex service-account `Api-Key` on the account before calling, or pass `key` in the plugin options.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 yandex()
