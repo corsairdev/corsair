@@ -3169,6 +3169,14 @@
                 ]
               },
               {
+                "group": "RedCircle API",
+                "pages": [
+                  "plugins/redcircle/overview",
+                  "plugins/redcircle/api",
+                  "plugins/redcircle/database"
+                ]
+              },
+              {
                 "group": "Reddit",
                 "pages": [
                   "plugins/reddit/overview",
