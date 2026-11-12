@@ -394,6 +394,7 @@ export const BaseProviders = [
 	'remoteretrieval',
 	'removebg',
 	'render',
+	'renderform',
 	'rentman',
 	'repairshopr',
 	'replicate',
@@ -917,6 +918,7 @@ export const ProviderDisplayNames = {
 	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
 	render: 'Render',
+	renderform: 'Renderform',
 	rentman: 'Rentman',
 	repairshopr: 'RepairShopr',
 	replicate: 'Replicate',
@@ -1447,6 +1449,7 @@ export type AllProviders =
 	| 'remoteretrieval'
 	| 'removebg'
 	| 'render'
+	| 'renderform'
 	| 'rentman'
 	| 'repairshopr'
 	| 'replicate'

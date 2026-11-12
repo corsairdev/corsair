@@ -3298,6 +3298,14 @@
                 ]
               },
               {
+                "group": "Renderform",
+                "pages": [
+                  "plugins/renderform/overview",
+                  "plugins/renderform/api",
+                  "plugins/renderform/database"
+                ]
+              },
+              {
                 "group": "Rentman",
                 "pages": [
                   "plugins/rentman/overview",
