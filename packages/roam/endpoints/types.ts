@@ -30,6 +30,36 @@ const ExpandSchema = z
 	.describe('Relations to inline, as a comma-separated list on the wire.');
 
 /** The `cursor`/`hasMore` pair every list answer carries. */
+/**
+ * The `addresses` map that `expand: ['addresses']` adds to `chat.list` and
+ * `chat.history`: the senders, participants and mentioned ids, keyed by id.
+ */
+const AddressesSchema = z
+	.record(
+		z.string(),
+		z
+			.object({
+				id: z.string().nullish(),
+				type: z
+					.string()
+					.nullish()
+					.describe(
+						'`user`, `bot`, `standardGroup`, `meetingGroup`, `userGroup` or `teamRoam`.',
+					),
+				displayName: z.string().nullish(),
+				displayImageUrl: z.string().nullish(),
+				email: z.string().nullish(),
+				isGuest: z.boolean().nullish(),
+				botCode: z.string().nullish(),
+				integrationId: z.string().nullish(),
+			})
+			.loose(),
+	)
+	.optional()
+	.describe(
+		"Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id.",
+	);
+
 const pagingFields = {
 	next_cursor: z
 		.string()
@@ -218,13 +248,34 @@ export type UserInfoInput = z.input<typeof UserInfoInputSchema>;
 const UserInfoResponseSchema = z.object({ user: UserSchema });
 export type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
 
-const UserListInputSchema = z.object({
-	ids: z.array(z.string()).optional().describe('Only these user uuids.'),
-	q: z.string().optional().describe('A search phrase.'),
-	limit: limitSchema(100),
-	cursor: CursorSchema,
-	expand: ExpandSchema,
-});
+const UserListInputSchema = z
+	.object({
+		ids: z
+			.array(z.string())
+			.optional()
+			.describe(
+				'Only these user uuids, up to 100. Not combinable with `q`, `limit` or `cursor`.',
+			),
+		q: z.string().optional().describe('A search phrase.'),
+		limit: limitSchema(100),
+		cursor: CursorSchema,
+		expand: ExpandSchema,
+	})
+	.superRefine((value, ctx) => {
+		// Roam answers 400 invalid_parameter to `ids` with any directory option.
+		if (
+			value.ids !== undefined &&
+			(value.q !== undefined ||
+				value.limit !== undefined ||
+				value.cursor !== undefined)
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message: '`ids` does not combine with `q`, `limit` or `cursor`.',
+				path: ['ids'],
+			});
+		}
+	});
 
 export type UserListInput = z.input<typeof UserListInputSchema>;
 
@@ -277,6 +328,7 @@ export type RoamChat = z.infer<typeof ChatSchema>;
 
 const ChatListResponseSchema = z.object({
 	chats: z.array(ChatSchema),
+	addresses: AddressesSchema,
 	...pagingFields,
 });
 
@@ -373,6 +425,7 @@ export type RoamChatMessage = z.infer<typeof ChatMessageSchema>;
 
 const ChatHistoryResponseSchema = z.object({
 	messages: z.array(ChatMessageSchema),
+	addresses: AddressesSchema,
 	...pagingFields,
 });
 
@@ -481,6 +534,17 @@ const ChatPostInputSchema = z
 				message:
 					'`blocks` and `poll` each stand alone: neither combines with `text`, `items`, `asset_ids` or the other.',
 				path: ['text'],
+			});
+		}
+		if (
+			value.reply_timestamp !== undefined &&
+			(value.blocks !== undefined || value.poll !== undefined)
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'`reply_timestamp` works on text posts only, not `blocks` or `poll`.',
+				path: ['reply_timestamp'],
 			});
 		}
 		if (

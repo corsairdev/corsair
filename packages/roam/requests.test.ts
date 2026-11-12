@@ -72,17 +72,34 @@ describe('users', () => {
 		respond(fetchMock, USER_PAGE);
 
 		const result = (await invoke(Endpoints.userList, {
-			ids: ['a', 'b'],
+			q: 'alex',
 			limit: 50,
 		})) as Awaited<ReturnType<typeof Endpoints.userList>>;
 
 		expect(lastRequest(fetchMock).query).toEqual({
-			ids: 'a,b',
+			q: 'alex',
 			limit: '50',
 		});
 		expect(result.users).toHaveLength(1);
 		expect(result.next_cursor).toBe('next-cursor-1');
 		expect(result.has_more).toBe(true);
+	});
+
+	it('hydrates users by id alone', async () => {
+		respond(fetchMock, USER_PAGE);
+
+		await invoke(Endpoints.userList, { ids: ['a', 'b'] });
+
+		expect(lastRequest(fetchMock).query).toEqual({ ids: 'a,b' });
+	});
+
+	it('rejects ids with q, limit or cursor, which Roam answers with 400', async () => {
+		for (const extra of [{ q: 'alex' }, { limit: 10 }, { cursor: 'c1' }]) {
+			await expect(
+				invoke(Endpoints.userList, { ids: ['a'], ...extra }),
+			).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -119,6 +136,25 @@ describe('chat.list and chat.history', () => {
 		});
 		expect(result.messages[0]?.text).toBe('Standup in five');
 		expect(result.next_cursor).toBe('cursor-2');
+	});
+
+	it('keeps the addresses map that expand=addresses returns', async () => {
+		const addresses = {
+			[USER_ID]: { id: USER_ID, type: 'user', displayName: 'Alex Chen' },
+		};
+		respond(fetchMock, { ...MESSAGE_PAGE, addresses });
+		const history = (await invoke(Endpoints.chatHistory, {
+			chat_id: CHAT_ID,
+			expand: ['addresses'],
+		})) as Awaited<ReturnType<typeof Endpoints.chatHistory>>;
+		expect(lastRequest(fetchMock).query.expand).toBe('addresses');
+		expect(history.addresses?.[USER_ID]?.displayName).toBe('Alex Chen');
+
+		respond(fetchMock, { ...CHAT_PAGE, addresses });
+		const chats = (await invoke(Endpoints.chatList, {
+			expand: ['addresses'],
+		})) as Awaited<ReturnType<typeof Endpoints.chatList>>;
+		expect(chats.addresses?.[USER_ID]?.type).toBe('user');
 	});
 
 	it('accepts a group instead of a chat', async () => {
@@ -246,6 +282,24 @@ describe('chat.post', () => {
 				chat_id: CHAT_ID,
 				text: 'hi',
 				blocks: [{ type: 'section' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects reply_timestamp on a block or poll post, which Roam refuses', async () => {
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				reply_timestamp: TIMESTAMP,
+				blocks: [{ type: 'section' }],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Endpoints.chatPost, {
+				chat_id: CHAT_ID,
+				reply_timestamp: TIMESTAMP,
+				poll: { question: 'Lunch?', options: ['Yes', 'No'] },
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();

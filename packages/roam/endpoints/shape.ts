@@ -22,6 +22,11 @@ export function listShape(key: string) {
 				: null;
 		return {
 			[key]: record?.[key],
+			// `expand: ['addresses']` adds this map beside the list; the output
+			// schemas that declare it keep it and the others drop it.
+			...(record?.addresses !== undefined
+				? { addresses: record.addresses }
+				: {}),
 			next_cursor: nextCursor,
 			has_more: nextCursor !== null,
 		};
