@@ -1,0 +1,142 @@
+---
+title: "D2L Brightspace plugin"
+sidebarTitle: "Overview"
+description: "Access the documented D2L Brightspace REST API using OAuth 2 or legacy ID-Key authentication."
+---
+
+Use **D2L Brightspace** through Corsair: one client, typed API calls.
+
+OAuth 2 Authorization Code Grant is the recommended setup. Corsair api_key is supported only for D2L's deprecated legacy ID-Key scheme; its browser token acquisition callback is not implemented, so configure an already-issued User ID/key pair securely. See ROUTE_COVERAGE.md for routes still awaiting per-operation request and response schemas.
+
+**What you get:**
+
+- 874 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/d2lbrightspace better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/d2lbrightspace better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/d2lbrightspace better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/d2lbrightspace better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { d2lbrightspace } from '@corsair-dev/d2lbrightspace';
+
+export const corsair = createCorsair({
+	plugins: [
+		d2lbrightspace(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your D2L Brightspace OAuth app.
+
+```ts
+d2lbrightspace()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+d2lbrightspace({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'd2lbrightspace',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`apiProperties.getProductCodeVersions`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.d2lbrightspace.api.apiProperties.getProductCodeVersions({});
+```
+
+
+**`apiProperties.postVersionsCheck`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.d2lbrightspace.api.apiProperties.postVersionsCheck({});
+```
+
+
+See the full list on the [API](/plugins/d2lbrightspace/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/d2lbrightspace/api">
+    Every `d2lbrightspace.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

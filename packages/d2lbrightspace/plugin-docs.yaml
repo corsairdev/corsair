@@ -1,0 +1,9 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "D2L Brightspace"
+description: "Access the documented D2L Brightspace REST API using OAuth 2 or legacy ID-Key authentication."
+overviewNote: >
+  OAuth 2 Authorization Code Grant is the recommended setup. Corsair api_key is
+  supported only for D2L's deprecated legacy ID-Key scheme; its browser token
+  acquisition callback is not implemented, so configure an already-issued
+  User ID/key pair securely. See ROUTE_COVERAGE.md for routes still awaiting
+  per-operation request and response schemas.

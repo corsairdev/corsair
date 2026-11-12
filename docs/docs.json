@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -1616,6 +1623,14 @@
                   "plugins/cuttly/overview",
                   "plugins/cuttly/api",
                   "plugins/cuttly/database"
+                ]
+              },
+              {
+                "group": "D2L Brightspace",
+                "pages": [
+                  "plugins/d2lbrightspace/overview",
+                  "plugins/d2lbrightspace/api",
+                  "plugins/d2lbrightspace/database"
                 ]
               },
               {
@@ -4177,7 +4192,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

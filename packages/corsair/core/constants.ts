@@ -204,6 +204,7 @@ export const BaseProviders = [
 	'diffbot',
 	'digitalocean',
 	'discord',
+	'd2lbrightspace',
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
@@ -690,6 +691,7 @@ export const ProviderDisplayNames = {
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	d2lbrightspace: 'D2L Brightspace',
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
@@ -1183,6 +1185,7 @@ export type AllProviders =
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
+	| 'd2lbrightspace'
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
