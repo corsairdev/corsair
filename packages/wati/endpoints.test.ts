@@ -88,6 +88,20 @@ describe('contacts', () => {
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('whatsapp_number');
 		expect(logged).not.toHaveProperty('phone');
+		expect(JSON.stringify(logged)).not.toContain('John Doe');
+	});
+
+	it('logs the contact id on a read, never the name', async () => {
+		respond(fetchMock, contact);
+
+		await invoke(Contacts.get, { target: '1234567890' });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'wati.contacts.get',
+			{ id: contact.id },
+			'completed',
+		);
 	});
 
 	it('reads a contact by target', async () => {

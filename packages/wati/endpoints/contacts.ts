@@ -21,10 +21,10 @@ export const create: WatiEndpoints['contactsCreate'] = (ctx, input) =>
 			body: { whatsapp_number, name, custom_params },
 		}),
 		{
-			// The number is a person's phone number, so only whether custom
-			// attributes were sent is logged.
-			log: (parsed) => ({
-				name: parsed.name,
+			// The number and the name identify a person, so only the new id and
+			// how many custom attributes were sent are logged.
+			log: (parsed, result) => ({
+				id: result.id ?? undefined,
 				customParams: parsed.custom_params?.length ?? 0,
 			}),
 		},
@@ -44,9 +44,8 @@ export const get: WatiEndpoints['contactsGet'] = (ctx, input) =>
 			path: `/contacts/${target(who)}`,
 		}),
 		{
-			log: (_, result) => ({
-				name: typeof result.name === 'string' ? result.name : undefined,
-			}),
+			// The contact id only; the name is personal data.
+			log: (_, result) => ({ id: result.id ?? undefined }),
 		},
 	);
 
