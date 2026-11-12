@@ -12,6 +12,7 @@ const mockRequest = request as jest.MockedFunction<typeof request>;
 function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 	const call = mockRequest.mock.calls.at(-1);
 	if (!call) throw new Error('request() was never called');
+	// Jest erases the generic request function's concrete call tuple.
 	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
 }
 

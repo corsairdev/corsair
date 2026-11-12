@@ -97,7 +97,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rocketlane.api.budgets.getBudget({});
+await tenant.rocketlane.api.budgets.getBudget({ budgetId: 123 });
 ```
 
 
@@ -105,7 +105,15 @@ await tenant.rocketlane.api.budgets.getBudget({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rocketlane.api.budgets.createBudget({});
+await tenant.rocketlane.api.budgets.createBudget({
+	body: {
+		projectId: 123,
+		budgetName: 'Implementation',
+		startDate: '2026-01-01',
+		endDate: '2026-12-31',
+		billingType: 'FIXED_FEE',
+	},
+});
 ```
 
 

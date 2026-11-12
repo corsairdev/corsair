@@ -1,5 +1,25 @@
 import { z } from 'zod';
 
+// Rocketlane documents strings, numbers, booleans and number arrays for custom
+// fields. Some response contracts specify an object without defining its keys.
+const customFieldValue = z
+	.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.array(z.number()),
+		z.record(z.string(), z.unknown()),
+	])
+	.nullable();
+
+// Write values follow the provider's documented primitive and choice examples.
+const customFieldInputValue = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+	z.array(z.number()),
+]);
+
 export const Example404 = z.lazy(() =>
 	z.object({
 		errorCode: z.string().optional(),
@@ -262,7 +282,7 @@ export const InvoiceFieldPublicResponseEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.object({}).optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -470,7 +490,7 @@ export const CompanyFieldPublicResponseAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.string().optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -530,7 +550,7 @@ export const CompanyAccountOwnerPublicAPIRequestEntity = z.lazy(() =>
 export const CompanyFieldPublicRequestAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
-		fieldValue: z.union([z.string(), z.number()]).optional(),
+		fieldValue: customFieldInputValue.optional(),
 	}),
 );
 export const CompanyNoteUpdateRequestAPIEntity = z.lazy(() =>
@@ -656,7 +676,7 @@ export const ResourceAllocationFieldPublicResponseAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.object({}).optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -1036,7 +1056,7 @@ export const TimeEntryFieldPublicResponseAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.object({}).optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -1147,7 +1167,7 @@ export const FieldPublicRequestAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.union([z.string(), z.number()]).optional(),
+		fieldValue: customFieldInputValue.optional(),
 	}),
 );
 export const TimeEntryPublicAPIUpdateRequest = z.lazy(() =>
@@ -1417,7 +1437,7 @@ export const BudgetFieldPublicResponseEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.object({}).optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -1702,7 +1722,7 @@ export const BudgetManualRevenueRecognitionPlanPublicAPIRequestEntity = z.lazy(
 export const BudgetFieldPublicRequestEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
-		fieldValue: z.union([z.string(), z.number()]).optional(),
+		fieldValue: customFieldInputValue.optional(),
 	}),
 );
 export const BudgetPublicAPIRequestEntity = z.lazy(() =>
@@ -1824,7 +1844,7 @@ export const TaskFieldPublicResponseAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.object({}).optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -2269,7 +2289,7 @@ export const ProjectFieldPublicResponseAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.string().optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );
@@ -2329,7 +2349,7 @@ export const ProjectPublicAPIResponseEntity = z.lazy(() =>
 		sources: z.array(z.lazy(() => ImportPublicAPIResponseEntity)).optional(),
 		dueDate: z.string().optional(),
 		autoAllocation: z.boolean().optional(),
-		dueDateActual: z.string().optional(),
+		dueDateActual: z.string().nullable().optional(),
 		teamMembers: z.lazy(() => ProjectResponseMembersResponse).optional(),
 		createdAt: z.number().optional(),
 		archived: z.boolean().optional(),
@@ -2475,7 +2495,7 @@ export const ProjectPublicAPIResponseEntity = z.lazy(() =>
 		annualizedRecurringRevenue: z.number().optional(),
 		allocatedHours: z.number().optional(),
 		trackedHours: z.number().optional(),
-		projectAgeInDays: z.number().optional(),
+		projectAgeInDays: z.number().nullable().optional(),
 		createdBy: z.lazy(() => ProjectPublicCreatedByResponse).optional(),
 		projectFee: z.number().optional(),
 		customersJoined: z.number().optional(),
@@ -2488,7 +2508,7 @@ export const ProjectPublicAPIResponseEntity = z.lazy(() =>
 		startDate: z.string().optional(),
 		customer: z.lazy(() => CustomerCompanyProjectPublicResponse).optional(),
 		status: z.lazy(() => ProjectStatusPublicResponse).optional(),
-		startDateActual: z.string().optional(),
+		startDateActual: z.string().nullable().optional(),
 		percentageBudgetedHoursConsumed: z.number().optional(),
 		percentageBudgetConsumed: z.number().optional(),
 		trackedMinutes: z.number().optional(),
@@ -2543,7 +2563,7 @@ export const TimeAndMaterialFinancialsPublicResponse = z.lazy(() =>
 export const ProjectFieldPublicRequestAPIEntity = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
-		fieldValue: z.union([z.string(), z.number()]).optional(),
+		fieldValue: customFieldInputValue.optional(),
 	}),
 );
 export const ProjectOwnerCreatePublicRequest = z.lazy(() =>
@@ -3353,7 +3373,7 @@ export const ProjectPublicAPIResponseExampleEntity = z.lazy(() =>
 		sources: z.array(z.lazy(() => ImportPublicAPIResponseEntity)).optional(),
 		dueDate: z.string().optional(),
 		autoAllocation: z.boolean().optional(),
-		dueDateActual: z.string().optional(),
+		dueDateActual: z.string().nullable().optional(),
 		teamMembers: z.lazy(() => ProjectResponseMembersResponse).optional(),
 		createdAt: z.number().optional(),
 		archived: z.boolean().optional(),
@@ -3499,7 +3519,7 @@ export const ProjectPublicAPIResponseExampleEntity = z.lazy(() =>
 		annualizedRecurringRevenue: z.number().optional(),
 		allocatedHours: z.number().optional(),
 		trackedHours: z.number().optional(),
-		projectAgeInDays: z.number().optional(),
+		projectAgeInDays: z.number().nullable().optional(),
 		createdBy: z.lazy(() => ProjectPublicCreatedByResponse).optional(),
 		projectFee: z.number().optional(),
 		customersJoined: z.number().optional(),
@@ -3512,7 +3532,7 @@ export const ProjectPublicAPIResponseExampleEntity = z.lazy(() =>
 		startDate: z.string().optional(),
 		customer: z.lazy(() => CustomerCompanyProjectPublicResponse).optional(),
 		status: z.lazy(() => ProjectStatusPublicResponse).optional(),
-		startDateActual: z.string().optional(),
+		startDateActual: z.string().nullable().optional(),
 		percentageBudgetedHoursConsumed: z.number().optional(),
 		percentageBudgetConsumed: z.number().optional(),
 		trackedMinutes: z.number().optional(),
@@ -3893,7 +3913,7 @@ export const FieldUsersPublicAPIResponse = z.lazy(() =>
 	z.object({
 		fieldId: z.number().min(1).optional(),
 		fieldLabel: z.string().optional(),
-		fieldValue: z.string().optional(),
+		fieldValue: customFieldValue.optional(),
 		fieldValueLabel: z.string().optional(),
 	}),
 );

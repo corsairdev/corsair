@@ -19,6 +19,7 @@ export async function makeRocketlaneRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// The shared transport accepts each endpoint's independently validated body shape.
 		body?: unknown;
 		query?: Record<
 			string,
@@ -53,7 +54,21 @@ export async function makeRocketlaneRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			// Rocketlane does not document idempotency keys; never replay writes.
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 0,
+				initialRetryDelay: 1000,
+				backoffMultiplier: 2,
+				headerNames: {
+					retryAfter: 'retry-after',
+					resetTime: 'x-ratelimit-reset',
+					remaining: 'x-ratelimit-remaining',
+					limit: 'x-ratelimit-limit',
+				},
+			},
+		});
 	} catch (error) {
 		// Preserve ApiError so Corsair's provider error handlers can inspect its
 		// status and Retry-After metadata.

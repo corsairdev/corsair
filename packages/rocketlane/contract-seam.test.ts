@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 import * as Handlers from './endpoints/handlers';
@@ -16,6 +18,16 @@ jest.mock('corsair/core', () => {
 });
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
+// Fixtures use Rocketlane's declared schemas, preferring valid examples and
+// constructing values where its examples contradict their declared types.
+// Each operation has a different provider-defined request and response shape.
+const populatedFixtures: Array<{
+	name: string;
+	input: unknown;
+	response: unknown;
+}> = JSON.parse(
+	readFileSync(join(__dirname, 'populated-fixtures.json'), 'utf8'),
+);
 const operations = [
 	{
 		name: 'getInvoicePayments',
@@ -1431,6 +1443,7 @@ const operations = [
 
 function pathFor(
 	operation: (typeof operations)[number],
+	// Operations have different input shapes; only their path keys are read here.
 	input: Record<string, unknown>,
 ) {
 	return operation.path.replace(/\{([^}]+)\}/g, (_, name: string) =>
@@ -1456,6 +1469,7 @@ describe('Rocketlane public request seams', () => {
 
 			const call = mockRequest.mock.calls.at(-1);
 			expect(call).toBeDefined();
+			// Jest cannot preserve the generic request function's concrete call tuple.
 			const [config, options] = call as unknown as [
 				OpenAPIConfig,
 				ApiRequestOptions,
@@ -1463,6 +1477,7 @@ describe('Rocketlane public request seams', () => {
 			expect(config.HEADERS).toMatchObject({ 'api-key': 'test-api-key' });
 			expect(options.method).toBe(operation.method);
 			expect(options.url).toBe(pathFor(operation, input));
+			// The operation table combines heterogeneous schemas and query names.
 			const rawInput = input as Record<string, unknown>;
 			expect(options.query).toEqual(
 				Object.fromEntries(
@@ -1480,6 +1495,155 @@ describe('Rocketlane public request seams', () => {
 				).toBe(true);
 		},
 	);
+
+	it.each(operations)(
+		'$name preserves populated contract fixtures',
+		async (operation) => {
+			const fixture = populatedFixtures.find(
+				(item) => item.name === operation.name,
+			);
+			if (!fixture) throw new Error(`Missing fixture for ${operation.name}`);
+			const input = RocketlaneEndpointInputSchemas[operation.name].parse(
+				fixture.input,
+			);
+			expect(input).toEqual(fixture.input);
+			mockRequest.mockResolvedValue(
+				operation.void ? undefined : fixture.response,
+			);
+			const result = await Handlers[operation.name](
+				{ key: 'test-api-key' } as never,
+				input as never,
+			);
+			expect(result).toEqual(operation.void ? undefined : fixture.response);
+			// The schemas differ by operation, so keys are checked through the shared table.
+			const values = input as Record<string, unknown>;
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+				method: operation.method,
+				url: pathFor(operation, values),
+				query: Object.fromEntries(
+					operation.query.map((key) => [key, values[key]]),
+				),
+				body: operation.hasBody ? values.body : undefined,
+			});
+		},
+	);
+
+	it.each(operations)(
+		'$name rejects invalid input before transport',
+		async (operation) => {
+			await expect(
+				Handlers[operation.name](
+					{ key: 'test-api-key' } as never,
+					null as never,
+				),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
+
+	it('rejects missing required identifiers and bodies without sending a request', async () => {
+		await expect(
+			Handlers.getBudget({ key: 'test-api-key' } as never, {} as never),
+		).rejects.toThrow();
+		await expect(
+			Handlers.createBudget({ key: 'test-api-key' } as never, {} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it.each(['', '..', '1/other', '1\\other', '"1"'])(
+		'rejects unsafe path identifier %s before transport',
+		async (budgetId) => {
+			await expect(
+				Handlers.getBudget(
+					{ key: 'test-api-key' } as never,
+					{ budgetId } as never,
+				),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
+
+	it('preserves documented custom field values in a populated project response', async () => {
+		const response = {
+			projectId: 201,
+			projectName: 'Acme onboarding',
+			startDateActual: null,
+			dueDateActual: null,
+			projectAgeInDays: null,
+			fields: [
+				{ fieldId: 215, fieldValue: 'Rocketlane APIs' },
+				{ fieldId: 217, fieldValue: 10000 },
+				{ fieldId: 218, fieldValue: true },
+				{ fieldId: 221, fieldValue: [1, 2] },
+			],
+		};
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.getProject({ key: 'test-api-key' } as never, { projectId: 201 }),
+		).resolves.toEqual(response);
+		mockRequest.mockResolvedValue({ data: [response] });
+		await expect(
+			Handlers.getAllProjects({ key: 'test-api-key' } as never, {}),
+		).resolves.toEqual({ data: [response] });
+	});
+
+	it('forwards a populated budget request and returns its populated response', async () => {
+		const body = {
+			projectId: 201,
+			budgetName: 'Implementation',
+			startDate: '2026-01-01',
+			endDate: '2026-12-31',
+			billingType: 'FIXED_FEE' as const,
+		};
+		const response = { budgetId: 123, budgetName: 'Implementation' };
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.createBudget({ key: 'test-api-key' } as never, {
+				body,
+				includeAllFields: true,
+			}),
+		).resolves.toEqual(response);
+		expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+			method: 'POST',
+			url: '1.0/budgets',
+			body,
+			query: { includeAllFields: true },
+		});
+	});
+
+	it('forwards documented boolean and multi-choice custom field values', async () => {
+		const fields = [
+			{ fieldId: 218, fieldValue: true },
+			{ fieldId: 221, fieldValue: [1, 2] },
+		];
+		mockRequest.mockResolvedValue({ projectId: 201 });
+		await Handlers.updateProject({ key: 'test-api-key' } as never, {
+			projectId: 201,
+			body: { fields },
+		});
+		expect(mockRequest.mock.calls.at(-1)?.[1].body).toEqual({ fields });
+	});
+
+	it('forwards a populated dotted filter and retains paginated results', async () => {
+		const response = {
+			data: [{ invoiceId: 201, invoiceNumber: 'INV-201' }],
+			pagination: { pageSize: 25, hasMore: true, nextPageToken: 'page-two' },
+		};
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.searchInvoices({ key: 'test-api-key' } as never, {
+				'companyId.eq': '42',
+				pageSize: 25,
+				pageToken: 'page-one',
+			}),
+		).resolves.toEqual(response);
+		expect(mockRequest.mock.calls.at(-1)?.[1].query).toMatchObject({
+			'companyId.eq': '42',
+			pageSize: 25,
+			pageToken: 'page-one',
+		});
+	});
 
 	it('forwards a documented second-page token at the public endpoint seam', async () => {
 		mockRequest.mockResolvedValue({});

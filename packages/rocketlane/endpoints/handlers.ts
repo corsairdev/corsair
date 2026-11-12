@@ -1,10 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RocketlaneEndpoints } from '..';
 import { makeRocketlaneRequest } from '../client';
-import { RocketlaneEndpointOutputSchemas as Out } from './types';
+import type { RocketlaneEndpoints } from '../index';
+import {
+	RocketlaneEndpointInputSchemas as In,
+	RocketlaneEndpointOutputSchemas as Out,
+} from './types';
 
 export const getInvoicePayments: RocketlaneEndpoints['getInvoicePayments'] =
 	async (ctx, input) => {
+		input = In.getInvoicePayments.parse(input);
 		const response = Out.getInvoicePayments.parse(
 			await makeRocketlaneRequest(
 				`1.0/invoices/${encodeURIComponent(String(input.invoiceId))}/payments`,
@@ -26,6 +30,7 @@ export const getInvoicePayments: RocketlaneEndpoints['getInvoicePayments'] =
 
 export const getInvoiceLineItems: RocketlaneEndpoints['getInvoiceLineItems'] =
 	async (ctx, input) => {
+		input = In.getInvoiceLineItems.parse(input);
 		const response = Out.getInvoiceLineItems.parse(
 			await makeRocketlaneRequest(
 				`1.0/invoices/${encodeURIComponent(String(input.invoiceId))}/lines`,
@@ -49,6 +54,7 @@ export const getInvoice: RocketlaneEndpoints['getInvoice'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getInvoice.parse(input);
 	const response = Out.getInvoice.parse(
 		await makeRocketlaneRequest(
 			`1.0/invoices/${encodeURIComponent(String(input.invoiceId))}`,
@@ -75,6 +81,7 @@ export const searchInvoices: RocketlaneEndpoints['searchInvoices'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.searchInvoices.parse(input);
 	const response = Out.searchInvoices.parse(
 		await makeRocketlaneRequest(`1.0/invoices`, ctx.key, {
 			method: 'GET',
@@ -146,6 +153,7 @@ export const getCompany: RocketlaneEndpoints['getCompany'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getCompany.parse(input);
 	const response = Out.getCompany.parse(
 		await makeRocketlaneRequest(
 			`1.0/companies/${encodeURIComponent(String(input.companyId))}`,
@@ -172,6 +180,7 @@ export const updateCompany: RocketlaneEndpoints['updateCompany'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateCompany.parse(input);
 	const response = Out.updateCompany.parse(
 		await makeRocketlaneRequest(
 			`1.0/companies/${encodeURIComponent(String(input.companyId))}`,
@@ -199,6 +208,7 @@ export const deleteCompany: RocketlaneEndpoints['deleteCompany'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteCompany.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/companies/${encodeURIComponent(String(input.companyId))}`,
@@ -216,6 +226,7 @@ export const deleteCompany: RocketlaneEndpoints['deleteCompany'] = async (
 
 export const createCompanyNote: RocketlaneEndpoints['createCompanyNote'] =
 	async (ctx, input) => {
+		input = In.createCompanyNote.parse(input);
 		const response = Out.createCompanyNote.parse(
 			await makeRocketlaneRequest(
 				`1.0/companies/${encodeURIComponent(String(input.companyId))}/add-notes`,
@@ -236,6 +247,7 @@ export const getAllCompanies: RocketlaneEndpoints['getAllCompanies'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllCompanies.parse(input);
 	const response = Out.getAllCompanies.parse(
 		await makeRocketlaneRequest(`1.0/companies`, ctx.key, {
 			method: 'GET',
@@ -272,6 +284,7 @@ export const createCompany: RocketlaneEndpoints['createCompany'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createCompany.parse(input);
 	const response = Out.createCompany.parse(
 		await makeRocketlaneRequest(`1.0/companies`, ctx.key, {
 			method: 'POST',
@@ -293,6 +306,7 @@ export const createCompany: RocketlaneEndpoints['createCompany'] = async (
 
 export const getAllResourceAllocations: RocketlaneEndpoints['getAllResourceAllocations'] =
 	async (ctx, input) => {
+		input = In.getAllResourceAllocations.parse(input);
 		const response = Out.getAllResourceAllocations.parse(
 			await makeRocketlaneRequest(`1.0/resource-allocations`, ctx.key, {
 				method: 'GET',
@@ -331,6 +345,7 @@ export const getAllTimeoffs: RocketlaneEndpoints['getAllTimeoffs'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllTimeoffs.parse(input);
 	const response = Out.getAllTimeoffs.parse(
 		await makeRocketlaneRequest(`1.0/time-offs`, ctx.key, {
 			method: 'GET',
@@ -377,6 +392,7 @@ export const createTimeoff: RocketlaneEndpoints['createTimeoff'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createTimeoff.parse(input);
 	const response = Out.createTimeoff.parse(
 		await makeRocketlaneRequest(`1.0/time-offs`, ctx.key, {
 			method: 'POST',
@@ -400,6 +416,7 @@ export const getTimeoff: RocketlaneEndpoints['getTimeoff'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getTimeoff.parse(input);
 	const response = Out.getTimeoff.parse(
 		await makeRocketlaneRequest(
 			`1.0/time-offs/${encodeURIComponent(String(input.timeOffId))}`,
@@ -426,6 +443,7 @@ export const deleteTimeoff: RocketlaneEndpoints['deleteTimeoff'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteTimeoff.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/time-offs/${encodeURIComponent(String(input.timeOffId))}`,
@@ -442,6 +460,7 @@ export const deleteTimeoff: RocketlaneEndpoints['deleteTimeoff'] = async (
 };
 
 export const getField: RocketlaneEndpoints['getField'] = async (ctx, input) => {
+	input = In.getField.parse(input);
 	const response = Out.getField.parse(
 		await makeRocketlaneRequest(
 			`1.0/fields/${encodeURIComponent(String(input.fieldId))}`,
@@ -468,6 +487,7 @@ export const updateField: RocketlaneEndpoints['updateField'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateField.parse(input);
 	const response = Out.updateField.parse(
 		await makeRocketlaneRequest(
 			`1.0/fields/${encodeURIComponent(String(input.fieldId))}`,
@@ -495,6 +515,7 @@ export const deleteField: RocketlaneEndpoints['deleteField'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteField.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/fields/${encodeURIComponent(String(input.fieldId))}`,
@@ -512,6 +533,7 @@ export const deleteField: RocketlaneEndpoints['deleteField'] = async (
 
 export const updateFieldOption: RocketlaneEndpoints['updateFieldOption'] =
 	async (ctx, input) => {
+		input = In.updateFieldOption.parse(input);
 		const response = Out.updateFieldOption.parse(
 			await makeRocketlaneRequest(
 				`1.0/fields/${encodeURIComponent(String(input.fieldId))}/update-option`,
@@ -532,6 +554,7 @@ export const addFieldOption: RocketlaneEndpoints['addFieldOption'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.addFieldOption.parse(input);
 	const response = Out.addFieldOption.parse(
 		await makeRocketlaneRequest(
 			`1.0/fields/${encodeURIComponent(String(input.fieldId))}/add-option`,
@@ -552,6 +575,7 @@ export const getAllFields: RocketlaneEndpoints['getAllFields'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllFields.parse(input);
 	const response = Out.getAllFields.parse(
 		await makeRocketlaneRequest(`1.0/fields`, ctx.key, {
 			method: 'GET',
@@ -593,6 +617,7 @@ export const createField: RocketlaneEndpoints['createField'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createField.parse(input);
 	const response = Out.createField.parse(
 		await makeRocketlaneRequest(`1.0/fields`, ctx.key, {
 			method: 'POST',
@@ -616,6 +641,7 @@ export const getTimeEntry: RocketlaneEndpoints['getTimeEntry'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getTimeEntry.parse(input);
 	const response = Out.getTimeEntry.parse(
 		await makeRocketlaneRequest(
 			`1.0/time-entries/${encodeURIComponent(String(input.timeEntryId))}`,
@@ -642,6 +668,7 @@ export const updateTimeEntry: RocketlaneEndpoints['updateTimeEntry'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateTimeEntry.parse(input);
 	const response = Out.updateTimeEntry.parse(
 		await makeRocketlaneRequest(
 			`1.0/time-entries/${encodeURIComponent(String(input.timeEntryId))}`,
@@ -669,6 +696,7 @@ export const deleteTimeEntry: RocketlaneEndpoints['deleteTimeEntry'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteTimeEntry.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/time-entries/${encodeURIComponent(String(input.timeEntryId))}`,
@@ -686,6 +714,7 @@ export const deleteTimeEntry: RocketlaneEndpoints['deleteTimeEntry'] = async (
 
 export const getAllTimeEntries: RocketlaneEndpoints['getAllTimeEntries'] =
 	async (ctx, input) => {
+		input = In.getAllTimeEntries.parse(input);
 		const response = Out.getAllTimeEntries.parse(
 			await makeRocketlaneRequest(`1.0/time-entries`, ctx.key, {
 				method: 'GET',
@@ -764,6 +793,7 @@ export const createTimeEntry: RocketlaneEndpoints['createTimeEntry'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createTimeEntry.parse(input);
 	const response = Out.createTimeEntry.parse(
 		await makeRocketlaneRequest(`1.0/time-entries`, ctx.key, {
 			method: 'POST',
@@ -785,6 +815,7 @@ export const createTimeEntry: RocketlaneEndpoints['createTimeEntry'] = async (
 
 export const searchTimeEntries: RocketlaneEndpoints['searchTimeEntries'] =
 	async (ctx, input) => {
+		input = In.searchTimeEntries.parse(input);
 		const response = Out.searchTimeEntries.parse(
 			await makeRocketlaneRequest(`1.0/time-entries/search`, ctx.key, {
 				method: 'GET',
@@ -825,6 +856,7 @@ export const searchTimeEntries: RocketlaneEndpoints['searchTimeEntries'] =
 
 export const getTimeEntryCategories: RocketlaneEndpoints['getTimeEntryCategories'] =
 	async (ctx, input) => {
+		input = In.getTimeEntryCategories.parse(input);
 		const response = Out.getTimeEntryCategories.parse(
 			await makeRocketlaneRequest(`1.0/time-entries/categories`, ctx.key, {
 				method: 'GET',
@@ -844,6 +876,7 @@ export const getSpaceDocument: RocketlaneEndpoints['getSpaceDocument'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getSpaceDocument.parse(input);
 	const response = Out.getSpaceDocument.parse(
 		await makeRocketlaneRequest(
 			`1.0/space-documents/${encodeURIComponent(String(input.spaceDocumentId))}`,
@@ -862,6 +895,7 @@ export const getSpaceDocument: RocketlaneEndpoints['getSpaceDocument'] = async (
 
 export const updateSpaceDocument: RocketlaneEndpoints['updateSpaceDocument'] =
 	async (ctx, input) => {
+		input = In.updateSpaceDocument.parse(input);
 		const response = Out.updateSpaceDocument.parse(
 			await makeRocketlaneRequest(
 				`1.0/space-documents/${encodeURIComponent(String(input.spaceDocumentId))}`,
@@ -880,6 +914,7 @@ export const updateSpaceDocument: RocketlaneEndpoints['updateSpaceDocument'] =
 
 export const deleteSpaceDocument: RocketlaneEndpoints['deleteSpaceDocument'] =
 	async (ctx, input) => {
+		input = In.deleteSpaceDocument.parse(input);
 		const response = undefined;
 		await makeRocketlaneRequest(
 			`1.0/space-documents/${encodeURIComponent(String(input.spaceDocumentId))}`,
@@ -897,6 +932,7 @@ export const deleteSpaceDocument: RocketlaneEndpoints['deleteSpaceDocument'] =
 
 export const getAllSpaceDocuments: RocketlaneEndpoints['getAllSpaceDocuments'] =
 	async (ctx, input) => {
+		input = In.getAllSpaceDocuments.parse(input);
 		const response = Out.getAllSpaceDocuments.parse(
 			await makeRocketlaneRequest(`1.0/space-documents`, ctx.key, {
 				method: 'GET',
@@ -935,6 +971,7 @@ export const getAllSpaceDocuments: RocketlaneEndpoints['getAllSpaceDocuments'] =
 
 export const createSpaceDocument: RocketlaneEndpoints['createSpaceDocument'] =
 	async (ctx, input) => {
+		input = In.createSpaceDocument.parse(input);
 		const response = Out.createSpaceDocument.parse(
 			await makeRocketlaneRequest(`1.0/space-documents`, ctx.key, {
 				method: 'POST',
@@ -953,6 +990,7 @@ export const createSpaceDocument: RocketlaneEndpoints['createSpaceDocument'] =
 
 export const updateBudgetMilestoneRevenueRecognitionConfigs: RocketlaneEndpoints['updateBudgetMilestoneRevenueRecognitionConfigs'] =
 	async (ctx, input) => {
+		input = In.updateBudgetMilestoneRevenueRecognitionConfigs.parse(input);
 		const response = Out.updateBudgetMilestoneRevenueRecognitionConfigs.parse(
 			await makeRocketlaneRequest(
 				`1.0/budgets/${encodeURIComponent(String(input.budgetId))}/milestone-revenue-recognition-configs`,
@@ -978,6 +1016,7 @@ export const updateBudgetMilestoneRevenueRecognitionConfigs: RocketlaneEndpoints
 
 export const updateBudgetManualRevenueRecognitionConfigs: RocketlaneEndpoints['updateBudgetManualRevenueRecognitionConfigs'] =
 	async (ctx, input) => {
+		input = In.updateBudgetManualRevenueRecognitionConfigs.parse(input);
 		const response = Out.updateBudgetManualRevenueRecognitionConfigs.parse(
 			await makeRocketlaneRequest(
 				`1.0/budgets/${encodeURIComponent(String(input.budgetId))}/manual-revenue-recognition-configs`,
@@ -1005,6 +1044,7 @@ export const getBudget: RocketlaneEndpoints['getBudget'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getBudget.parse(input);
 	const response = Out.getBudget.parse(
 		await makeRocketlaneRequest(
 			`1.0/budgets/${encodeURIComponent(String(input.budgetId))}`,
@@ -1031,6 +1071,7 @@ export const updateBudget: RocketlaneEndpoints['updateBudget'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateBudget.parse(input);
 	const response = Out.updateBudget.parse(
 		await makeRocketlaneRequest(
 			`1.0/budgets/${encodeURIComponent(String(input.budgetId))}`,
@@ -1058,6 +1099,7 @@ export const deleteBudget: RocketlaneEndpoints['deleteBudget'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteBudget.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/budgets/${encodeURIComponent(String(input.budgetId))}`,
@@ -1077,6 +1119,7 @@ export const searchBudgets: RocketlaneEndpoints['searchBudgets'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.searchBudgets.parse(input);
 	const response = Out.searchBudgets.parse(
 		await makeRocketlaneRequest(`1.0/budgets`, ctx.key, {
 			method: 'GET',
@@ -1151,6 +1194,7 @@ export const createBudget: RocketlaneEndpoints['createBudget'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createBudget.parse(input);
 	const response = Out.createBudget.parse(
 		await makeRocketlaneRequest(`1.0/budgets`, ctx.key, {
 			method: 'POST',
@@ -1171,6 +1215,7 @@ export const createBudget: RocketlaneEndpoints['createBudget'] = async (
 };
 
 export const getTask: RocketlaneEndpoints['getTask'] = async (ctx, input) => {
+	input = In.getTask.parse(input);
 	const response = Out.getTask.parse(
 		await makeRocketlaneRequest(
 			`1.0/tasks/${encodeURIComponent(String(input.taskId))}`,
@@ -1197,6 +1242,7 @@ export const updateTask: RocketlaneEndpoints['updateTask'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateTask.parse(input);
 	const response = Out.updateTask.parse(
 		await makeRocketlaneRequest(
 			`1.0/tasks/${encodeURIComponent(String(input.taskId))}`,
@@ -1224,6 +1270,7 @@ export const deleteTask: RocketlaneEndpoints['deleteTask'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteTask.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/tasks/${encodeURIComponent(String(input.taskId))}`,
@@ -1241,6 +1288,7 @@ export const deleteTask: RocketlaneEndpoints['deleteTask'] = async (
 
 export const removeFollowersFromTask: RocketlaneEndpoints['removeFollowersFromTask'] =
 	async (ctx, input) => {
+		input = In.removeFollowersFromTask.parse(input);
 		const response = Out.removeFollowersFromTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/remove-followers`,
@@ -1259,6 +1307,7 @@ export const removeFollowersFromTask: RocketlaneEndpoints['removeFollowersFromTa
 
 export const removeDependenciesFromTask: RocketlaneEndpoints['removeDependenciesFromTask'] =
 	async (ctx, input) => {
+		input = In.removeDependenciesFromTask.parse(input);
 		const response = Out.removeDependenciesFromTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/remove-dependencies`,
@@ -1277,6 +1326,7 @@ export const removeDependenciesFromTask: RocketlaneEndpoints['removeDependencies
 
 export const removeAssigneesFromTask: RocketlaneEndpoints['removeAssigneesFromTask'] =
 	async (ctx, input) => {
+		input = In.removeAssigneesFromTask.parse(input);
 		const response = Out.removeAssigneesFromTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/remove-assignees`,
@@ -1295,6 +1345,7 @@ export const removeAssigneesFromTask: RocketlaneEndpoints['removeAssigneesFromTa
 
 export const moveTaskToGivenPhase: RocketlaneEndpoints['moveTaskToGivenPhase'] =
 	async (ctx, input) => {
+		input = In.moveTaskToGivenPhase.parse(input);
 		const response = Out.moveTaskToGivenPhase.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/move-phase`,
@@ -1313,6 +1364,7 @@ export const moveTaskToGivenPhase: RocketlaneEndpoints['moveTaskToGivenPhase'] =
 
 export const addFollowersToTask: RocketlaneEndpoints['addFollowersToTask'] =
 	async (ctx, input) => {
+		input = In.addFollowersToTask.parse(input);
 		const response = Out.addFollowersToTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/add-followers`,
@@ -1331,6 +1383,7 @@ export const addFollowersToTask: RocketlaneEndpoints['addFollowersToTask'] =
 
 export const addDependenciesToTask: RocketlaneEndpoints['addDependenciesToTask'] =
 	async (ctx, input) => {
+		input = In.addDependenciesToTask.parse(input);
 		const response = Out.addDependenciesToTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/add-dependencies`,
@@ -1349,6 +1402,7 @@ export const addDependenciesToTask: RocketlaneEndpoints['addDependenciesToTask']
 
 export const addAssigneeToTask: RocketlaneEndpoints['addAssigneeToTask'] =
 	async (ctx, input) => {
+		input = In.addAssigneeToTask.parse(input);
 		const response = Out.addAssigneeToTask.parse(
 			await makeRocketlaneRequest(
 				`1.0/tasks/${encodeURIComponent(String(input.taskId))}/add-assignees`,
@@ -1369,6 +1423,7 @@ export const getAllTasks: RocketlaneEndpoints['getAllTasks'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllTasks.parse(input);
 	const response = Out.getAllTasks.parse(
 		await makeRocketlaneRequest(`1.0/tasks`, ctx.key, {
 			method: 'GET',
@@ -1448,6 +1503,7 @@ export const createTask: RocketlaneEndpoints['createTask'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createTask.parse(input);
 	const response = Out.createTask.parse(
 		await makeRocketlaneRequest(`1.0/tasks`, ctx.key, {
 			method: 'POST',
@@ -1469,6 +1525,7 @@ export const createTask: RocketlaneEndpoints['createTask'] = async (
 
 export const getCustomRevenueRecognitionConfig: RocketlaneEndpoints['getCustomRevenueRecognitionConfig'] =
 	async (ctx, input) => {
+		input = In.getCustomRevenueRecognitionConfig.parse(input);
 		const response = Out.getCustomRevenueRecognitionConfig.parse(
 			await makeRocketlaneRequest(
 				`1.0/custom-revenue-recognition-configs/${encodeURIComponent(String(input.customRevenueRecognitionConfigId))}`,
@@ -1487,6 +1544,7 @@ export const getCustomRevenueRecognitionConfig: RocketlaneEndpoints['getCustomRe
 
 export const getAllCustomRevenueRecognitionConfigs: RocketlaneEndpoints['getAllCustomRevenueRecognitionConfigs'] =
 	async (ctx, input) => {
+		input = In.getAllCustomRevenueRecognitionConfigs.parse(input);
 		const response = Out.getAllCustomRevenueRecognitionConfigs.parse(
 			await makeRocketlaneRequest(
 				`1.0/custom-revenue-recognition-configs`,
@@ -1525,6 +1583,7 @@ export const getProject: RocketlaneEndpoints['getProject'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getProject.parse(input);
 	const response = Out.getProject.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}`,
@@ -1551,6 +1610,7 @@ export const updateProject: RocketlaneEndpoints['updateProject'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateProject.parse(input);
 	const response = Out.updateProject.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}`,
@@ -1578,6 +1638,7 @@ export const deleteProject: RocketlaneEndpoints['deleteProject'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteProject.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/projects/${encodeURIComponent(String(input.projectId))}`,
@@ -1595,6 +1656,7 @@ export const deleteProject: RocketlaneEndpoints['deleteProject'] = async (
 
 export const unassignPlaceholders: RocketlaneEndpoints['unassignPlaceholders'] =
 	async (ctx, input) => {
+		input = In.unassignPlaceholders.parse(input);
 		const response = Out.unassignPlaceholders.parse(
 			await makeRocketlaneRequest(
 				`1.0/projects/${encodeURIComponent(String(input.projectId))}/unassign-placeholders`,
@@ -1615,6 +1677,7 @@ export const removeMembers: RocketlaneEndpoints['removeMembers'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.removeMembers.parse(input);
 	const response = Out.removeMembers.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}/remove-members`,
@@ -1635,6 +1698,7 @@ export const importTemplate: RocketlaneEndpoints['importTemplate'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.importTemplate.parse(input);
 	const response = Out.importTemplate.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}/import-template`,
@@ -1653,6 +1717,7 @@ export const importTemplate: RocketlaneEndpoints['importTemplate'] = async (
 
 export const assignPlaceholders: RocketlaneEndpoints['assignPlaceholders'] =
 	async (ctx, input) => {
+		input = In.assignPlaceholders.parse(input);
 		const response = Out.assignPlaceholders.parse(
 			await makeRocketlaneRequest(
 				`1.0/projects/${encodeURIComponent(String(input.projectId))}/assign-placeholders`,
@@ -1673,6 +1738,7 @@ export const archiveProject: RocketlaneEndpoints['archiveProject'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.archiveProject.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/projects/${encodeURIComponent(String(input.projectId))}/archive`,
@@ -1692,6 +1758,7 @@ export const addMembers: RocketlaneEndpoints['addMembers'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.addMembers.parse(input);
 	const response = Out.addMembers.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}/add-members`,
@@ -1712,6 +1779,7 @@ export const getAllProjects: RocketlaneEndpoints['getAllProjects'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllProjects.parse(input);
 	const response = Out.getAllProjects.parse(
 		await makeRocketlaneRequest(`1.0/projects`, ctx.key, {
 			method: 'GET',
@@ -1815,6 +1883,7 @@ export const createProject: RocketlaneEndpoints['createProject'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createProject.parse(input);
 	const response = Out.createProject.parse(
 		await makeRocketlaneRequest(`1.0/projects`, ctx.key, {
 			method: 'POST',
@@ -1838,6 +1907,7 @@ export const getPlaceholders: RocketlaneEndpoints['getPlaceholders'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getPlaceholders.parse(input);
 	const response = Out.getPlaceholders.parse(
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}/get-placeholders`,
@@ -1855,6 +1925,7 @@ export const getPlaceholders: RocketlaneEndpoints['getPlaceholders'] = async (
 };
 
 export const getPhase: RocketlaneEndpoints['getPhase'] = async (ctx, input) => {
+	input = In.getPhase.parse(input);
 	const response = Out.getPhase.parse(
 		await makeRocketlaneRequest(
 			`1.0/phases/${encodeURIComponent(String(input.phaseId))}`,
@@ -1881,6 +1952,7 @@ export const updatePhase: RocketlaneEndpoints['updatePhase'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updatePhase.parse(input);
 	const response = Out.updatePhase.parse(
 		await makeRocketlaneRequest(
 			`1.0/phases/${encodeURIComponent(String(input.phaseId))}`,
@@ -1908,6 +1980,7 @@ export const deletePhase: RocketlaneEndpoints['deletePhase'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deletePhase.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/phases/${encodeURIComponent(String(input.phaseId))}`,
@@ -1927,6 +2000,7 @@ export const getAllPhases: RocketlaneEndpoints['getAllPhases'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllPhases.parse(input);
 	const response = Out.getAllPhases.parse(
 		await makeRocketlaneRequest(`1.0/phases`, ctx.key, {
 			method: 'GET',
@@ -1988,6 +2062,7 @@ export const createPhase: RocketlaneEndpoints['createPhase'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createPhase.parse(input);
 	const response = Out.createPhase.parse(
 		await makeRocketlaneRequest(`1.0/phases`, ctx.key, {
 			method: 'POST',
@@ -2008,6 +2083,7 @@ export const createPhase: RocketlaneEndpoints['createPhase'] = async (
 };
 
 export const getUser: RocketlaneEndpoints['getUser'] = async (ctx, input) => {
+	input = In.getUser.parse(input);
 	const response = Out.getUser.parse(
 		await makeRocketlaneRequest(
 			`1.0/users/${encodeURIComponent(String(input.userId))}`,
@@ -2034,6 +2110,7 @@ export const getAllUsers: RocketlaneEndpoints['getAllUsers'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllUsers.parse(input);
 	const response = Out.getAllUsers.parse(
 		await makeRocketlaneRequest(`1.0/users`, ctx.key, {
 			method: 'GET',
@@ -2093,6 +2170,7 @@ export const getAllUsers: RocketlaneEndpoints['getAllUsers'] = async (
 };
 
 export const getSpace: RocketlaneEndpoints['getSpace'] = async (ctx, input) => {
+	input = In.getSpace.parse(input);
 	const response = Out.getSpace.parse(
 		await makeRocketlaneRequest(
 			`1.0/spaces/${encodeURIComponent(String(input.spaceId))}`,
@@ -2113,6 +2191,7 @@ export const updateSpace: RocketlaneEndpoints['updateSpace'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.updateSpace.parse(input);
 	const response = Out.updateSpace.parse(
 		await makeRocketlaneRequest(
 			`1.0/spaces/${encodeURIComponent(String(input.spaceId))}`,
@@ -2133,6 +2212,7 @@ export const deleteSpace: RocketlaneEndpoints['deleteSpace'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteSpace.parse(input);
 	const response = undefined;
 	await makeRocketlaneRequest(
 		`1.0/spaces/${encodeURIComponent(String(input.spaceId))}`,
@@ -2152,6 +2232,7 @@ export const getAllSpaces: RocketlaneEndpoints['getAllSpaces'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.getAllSpaces.parse(input);
 	const response = Out.getAllSpaces.parse(
 		await makeRocketlaneRequest(`1.0/spaces`, ctx.key, {
 			method: 'GET',
@@ -2191,6 +2272,7 @@ export const createSpace: RocketlaneEndpoints['createSpace'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createSpace.parse(input);
 	const response = Out.createSpace.parse(
 		await makeRocketlaneRequest(`1.0/spaces`, ctx.key, {
 			method: 'POST',
