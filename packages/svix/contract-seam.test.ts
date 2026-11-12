@@ -1,3 +1,10 @@
+import {
+	createCorsair,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	runReadonly,
+	runWithMode,
+} from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { SvixAPIError } from './client';
 import fixtures from './contract-fixtures.json';
@@ -33,6 +40,21 @@ function call(
 beforeEach(() => mockRequest.mockReset());
 
 describe('Svix OpenAPI request seam', () => {
+	it('blocks consumer polling in readonly and requires approval in strict mode', async () => {
+		const client = createCorsair({
+			plugins: [svix({ key: 'fixture-token', region: 'us' })],
+		});
+		const input = { app_id: 'app_1', sink_id: 'sink_1', consumer_id: 'worker' };
+		await expect(
+			runReadonly(() => client.svix.api.messages.pollerConsumerPoll(input)),
+		).rejects.toBeInstanceOf(ReadonlyForbiddenError);
+		await expect(
+			runWithMode('strict', () =>
+				client.svix.api.messages.pollerConsumerPoll(input),
+			),
+		).rejects.toBeInstanceOf(PermissionRequiredError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 	it('registers exactly the 61 documented operation fixtures', () => {
 		const registered = Object.entries(groups)
 			.flatMap(([group, endpoints]) =>
@@ -243,6 +265,67 @@ describe('Svix OpenAPI request seam', () => {
 			limit: 2,
 			iterator: 'msg_1srOrx2ZWZBpBUvZwXKQmoEYga2',
 		});
+	});
+
+	it.each([
+		['applications', 'list', 'app'],
+		['endpoints', 'list', 'ep'],
+		['messages', 'list', 'msg'],
+		['attempts', 'listByEndpoint', 'atmpt'],
+		['attempts', 'listByMsg', 'atmpt'],
+		['attempts', 'listAttemptedMessages', 'msg'],
+		['attempts', 'listAttemptedDestinations', 'ep'],
+		['operationalWebhooks', 'list', 'ep'],
+	])('round-trips a previous cursor for %s.%s', async (group, name, prefix) => {
+		const fixture = fixtures.find((f) => f.group === group && f.name === name);
+		if (!fixture) throw new Error(`Missing fixture ${group}.${name}`);
+		const previous = `-${prefix}_1srOrx2ZWZBpBUvZwXKQmoEYga2`;
+		const response = { ...fixture.response, prevIterator: previous };
+		mockRequest.mockResolvedValue(response);
+		const first = (await call(group, name, ctx, fixture.input)) as {
+			prevIterator: string;
+		};
+		await call(group, name, ctx, {
+			...fixture.input,
+			iterator: first.prevIterator,
+		});
+		expect(mockRequest.mock.calls[1][1].query).toEqual(
+			expect.objectContaining({ iterator: previous }),
+		);
+		await expect(
+			call(group, name, ctx, {
+				...fixture.input,
+				iterator: `--${previous.slice(1)}`,
+			}),
+		).rejects.toThrow();
+	});
+
+	it('accepts a maximum-length reverse event-type cursor', async () => {
+		const fixture = fixtures.find(
+			(f) => f.group === 'eventTypes' && f.name === 'list',
+		);
+		if (!fixture) throw new Error('Missing event type list fixture');
+		const previous = `-${'a'.repeat(256)}`;
+		mockRequest.mockResolvedValue({
+			...fixture.response,
+			prevIterator: previous,
+		});
+		const first = (await call('eventTypes', 'list', ctx, fixture.input)) as {
+			prevIterator: string;
+		};
+		await call('eventTypes', 'list', ctx, {
+			...fixture.input,
+			iterator: first.prevIterator,
+		});
+		expect(mockRequest.mock.calls[1][1].query).toEqual(
+			expect.objectContaining({ iterator: previous }),
+		);
+		await expect(
+			call('eventTypes', 'list', ctx, {
+				...fixture.input,
+				iterator: 'a'.repeat(257),
+			}),
+		).rejects.toThrow();
 	});
 
 	it('encodes an unrestricted poller consumer ID as one path segment', async () => {

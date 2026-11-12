@@ -495,7 +495,7 @@ export const svixEndpointMeta = {
 		description: 'Poller Consumer Seek',
 	},
 	'messages.pollerConsumerPoll': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Poller Consumer Poll',
 	},
 	'operationalWebhooks.list': {

@@ -1014,6 +1014,8 @@ const pathSegment = z
 		'Invalid path segment',
 	);
 
+// List responses document a minus-prefixed prevIterator, even though the
+// OpenAPI request patterns omit that prefix. Preserve the underlying ID format.
 export const SvixEndpointInputSchemas = {
 	applicationsList: z.object({
 		exclude_apps_with_no_endpoints: z.boolean().optional(),
@@ -1023,8 +1025,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(31)
-			.max(31)
-			.regex(new RegExp('^app_[A-Za-z0-9]{27}$'))
+			.max(32)
+			.regex(new RegExp('^-?app_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		order: OrderingSchema.nullable().optional(),
@@ -1068,8 +1070,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(30)
-			.max(30)
-			.regex(new RegExp('^ep_[A-Za-z0-9]{27}$'))
+			.max(31)
+			.regex(new RegExp('^-?ep_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		order: OrderingSchema.nullable().optional(),
@@ -1286,8 +1288,9 @@ export const SvixEndpointInputSchemas = {
 		limit: z.number().int().min(1).max(250).optional(),
 		iterator: z
 			.string()
-			.max(256)
+			.max(257)
 			.regex(new RegExp('^[a-zA-Z0-9\\-_.]+$'))
+			.refine((value) => value.length - (value.startsWith('-') ? 1 : 0) <= 256)
 			.nullable()
 			.optional(),
 		order: OrderingSchema.nullable().optional(),
@@ -1342,8 +1345,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(31)
-			.max(31)
-			.regex(new RegExp('^msg_[A-Za-z0-9]{27}$'))
+			.max(32)
+			.regex(new RegExp('^-?msg_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		channel: z
@@ -1443,8 +1446,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(33)
-			.max(33)
-			.regex(new RegExp('^atmpt_[A-Za-z0-9]{27}$'))
+			.max(34)
+			.regex(new RegExp('^-?atmpt_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		status: MessageStatusSchema.nullable().optional(),
@@ -1482,8 +1485,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(33)
-			.max(33)
-			.regex(new RegExp('^atmpt_[A-Za-z0-9]{27}$'))
+			.max(34)
+			.regex(new RegExp('^-?atmpt_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		status: MessageStatusSchema.nullable().optional(),
@@ -1527,8 +1530,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(31)
-			.max(31)
-			.regex(new RegExp('^msg_[A-Za-z0-9]{27}$'))
+			.max(32)
+			.regex(new RegExp('^-?msg_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		channel: z
@@ -1564,8 +1567,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(30)
-			.max(30)
-			.regex(new RegExp('^ep_[A-Za-z0-9]{27}$'))
+			.max(31)
+			.regex(new RegExp('^-?ep_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		app_id: pathSegment.and(
@@ -1668,8 +1671,8 @@ export const SvixEndpointInputSchemas = {
 		iterator: z
 			.string()
 			.min(30)
-			.max(30)
-			.regex(new RegExp('^ep_[A-Za-z0-9]{27}$'))
+			.max(31)
+			.regex(new RegExp('^-?ep_[A-Za-z0-9]{27}$'))
 			.nullable()
 			.optional(),
 		order: OrderingSchema.nullable().optional(),

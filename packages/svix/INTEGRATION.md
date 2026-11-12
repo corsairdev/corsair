@@ -15,7 +15,9 @@ The integration exposes **61 operations**: applications (6), endpoints (21), eve
 types (7), messages and pollers (11), delivery attempts (7), and operational
 webhook endpoints (9). Request parameters retain Svix wire names; JSON request
 bodies are provided in `body`. Pagination cursors and idempotency keys are
-passed through where supported. Writes are not automatically retried. See
+passed through where supported, including minus-prefixed previous-page cursors.
+Consumer polling is classified as a write because Svix tracks its iterator on
+the server. Writes are not automatically retried. See
 [`README.md`](./README.md) for the endpoint list.
 
 Streaming, ingest, other administration APIs, and inbound Corsair webhook

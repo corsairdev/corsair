@@ -60,7 +60,7 @@ pnpm add @corsair-dev/svix
 | `messages.expungeContent` | `svix.api.messages.expungeContent` | `destructive` | Expunge one message payload |
 | `messages.get` | `svix.api.messages.get` | `read` | Get Message |
 | `messages.list` | `svix.api.messages.list` | `read` | List Messages |
-| `messages.pollerConsumerPoll` | `svix.api.messages.pollerConsumerPoll` | `read` | Poller Consumer Poll |
+| `messages.pollerConsumerPoll` | `svix.api.messages.pollerConsumerPoll` | `write` | Poller Consumer Poll |
 | `messages.pollerConsumerSeek` | `svix.api.messages.pollerConsumerSeek` | `write` | Poller Consumer Seek |
 | `messages.pollerPoll` | `svix.api.messages.pollerPoll` | `read` | Poller Poll |
 | `messages.precheck` | `svix.api.messages.precheck` | `write` | Create Message Precheck |
