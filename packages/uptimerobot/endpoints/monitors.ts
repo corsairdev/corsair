@@ -154,6 +154,9 @@ export const reset: UptimeRobotEndpoints['monitorsReset'] = (ctx, input) =>
 		({ id }) => ({
 			method: 'POST',
 			path: `/monitors/${segment(id)}/reset`,
+			// Same as pause and start: without a JSON content type UptimeRobot
+			// answers 415, so an empty object is sent.
+			body: {},
 		}),
 		{
 			// UptimeRobot answers 201 with no body. Resetting discards the

@@ -865,4 +865,14 @@ describe('fixes from the 11-12 review and live run', () => {
 			}),
 		).rejects.toThrow('A DNS monitor needs config.');
 	});
+
+	it('sends a JSON body on reset, which UptimeRobot answers 415 without', async () => {
+		respondEmpty(fetchMock, 201);
+
+		await invoke(Monitors.reset, { id: 778_001 });
+
+		const request = lastRequest(fetchMock);
+		expect(request.body).toEqual({});
+		expect(request.headers['content-type']).toContain('application/json');
+	});
 });
