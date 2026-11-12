@@ -48,7 +48,7 @@ describeIfKey('live Unisender API', () => {
 		expect(Array.isArray(result.result)).toBe(true);
 	});
 
-	it('counts contacts in a list, whose count arrives as a string', async () => {
+	it('counts contacts in a list, whose count may arrive as a string', async () => {
 		const lists = await Api.list(liveContext() as never, {} as never);
 		const first = lists.result[0];
 		if (!first?.id) return;
@@ -57,10 +57,12 @@ describeIfKey('live Unisender API', () => {
 			liveContext() as never,
 			{
 				list_id: first.id,
+				// Unisender refuses a count with no filter (invalid_arg, live 11-12).
+				type: 'address',
 			} as never,
 		);
 
-		// Documented as "500", not 500; a z.number() would reject this.
+		// Documented as "500"; the live API sent a number on 11-12. Both parse.
 		expect(result.result.count).toBeDefined();
 		expect(['number', 'string']).toContain(typeof result.result.count);
 	});
