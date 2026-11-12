@@ -1,0 +1,458 @@
+---
+title: "RealPhoneValidation API reference"
+sidebarTitle: "API"
+description: "API reference for RealPhoneValidation: every `realphonevalidation.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Active
+
+### active
+
+`active`
+
+Report whether a US phone number sits on a provider still in business, which is a different question from whether it is connected
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.active({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `RESPONSECODE` | `string \| null` | No | L active landline, C active cell, V active VoIP, N inactive. |
+| `RESPONSEMSG` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+
+
+
+---
+
+## Dnc Lookup
+
+### dncLookup
+
+`dncLookup`
+
+Check a US phone number against the national, state and DMA Do-Not-Call lists and the known-litigator list, and report its line type. Needs a SAN number from the national registry
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.dncLookup({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `RESPONSECODE` | `string \| null` | No | OK, or -1, 102 or invalid-phone for a refusal. |
+| `RESPONSEMSG` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `national_dnc` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `state_dnc` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `dma` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `litigator` | `string \| null` | No | Y, N or ? for a known TCPA litigator or serial plaintiff. |
+| `iscell` | `string \| null` | No | Y cell, N landline, V VoIP. |
+| `id` | `string \| null` | No | An internal identifier. |
+
+
+
+---
+
+## Dnc Plus
+
+### dncPlus
+
+`dncPlus`
+
+Check a US phone number against the three Do-Not-Call lists and the known-litigator list together with its connection status
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.dncPlus({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `iscell` | `string \| null` | No | — |
+| `national_dnc` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `state_dnc` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `dma` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+| `litigator` | `string \| null` | No | Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared. |
+
+
+
+---
+
+## Email Verify
+
+### emailVerify
+
+`emailVerify`
+
+Verify an email address for validity, whether it is connected to an active online network, and whether it is disposable
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.emailVerify({ email: 'johnsmith@test.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The address to verify. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `retval` | `string \| null` | No | "0" for a good answer, "-1" when the request failed. |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `error_code` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `error` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | valid, invalid, unknown or accept_all. |
+| `connected` | `string \| null` | No | Y or N: the address is connected to an active online network. |
+| `disposable` | `string \| null` | No | Y or N: a disposable email provider. |
+
+
+
+---
+
+## Fraud Check
+
+### fraudCheck
+
+`fraudCheck`
+
+Score a US phone number for fraudulent use from 0 to 1000, with a risk level, a recommended action, the carrier and the number location
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.fraudCheck({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | "0" on success. |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `id` | `string \| null` | No | — |
+| `req_phone` | `string \| null` | No | The number as submitted. |
+| `tstatus` | `string \| null` | No | The lookup outcome: 300 completed, 301 partly completed (some fields empty), 500 not attempted (no score or risk fields), 501 the number does not exist, 599 contact support. |
+| `tdesc` | `string \| null` | No | The tstatus in words. |
+| `phn_type` | `string \| null` | No | A numeric code; see phn_desc. |
+| `phn_desc` | `string \| null` | No | LANDLINE, VOIP, WIRELESS and so on. |
+| `risk_level` | `string \| null` | No | low, medium or high. |
+| `recommendation` | `string \| null` | No | What the score suggests, such as allow, flag or block. |
+| `score` | `string \| null` | No | A numeric string from 0 to 1000; higher is riskier. |
+| `carrier` | `string \| null` | No | — |
+| `location_city` | `string \| null` | No | — |
+| `location_state` | `string \| null` | No | — |
+| `location_zip` | `string \| null` | No | — |
+| `location_country_name` | `string \| null` | No | — |
+| `location_country_iso2` | `string \| null` | No | — |
+| `location_country_iso3` | `string \| null` | No | — |
+| `location_latitude` | `string \| null` | No | — |
+| `location_longitude` | `string \| null` | No | — |
+| `location_time_zone` | `string \| null` | No | — |
+| `numbering_original_complete_phone_number` | `string \| null` | No | — |
+| `numbering_original_country_code` | `string \| null` | No | — |
+| `numbering_original_phone_number` | `string \| null` | No | — |
+
+
+
+---
+
+## Reassigned
+
+### reassigned
+
+`reassigned`
+
+Report whether a US phone number changed owner since the date consent to contact was given
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.reassigned({ phone: '7275555555', contact_date: '2010-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+| `contact_date` | `string` | Yes | YYYY-MM-DD, the date consent to contact was given. A number reassigned after it must not be contacted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `RESPONSECODE` | `string \| null` | No | OK, or -1 for a problem. |
+| `RESPONSEMSG` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `reassigned` | `string \| null` | No | yes, no, no_data or undetermined. no_data means the carriers recorded no change since 27 January 2021, not that the number is safe to call. |
+| `id` | `string \| null` | No | -1 on an error. |
+
+
+
+---
+
+## Scrub
+
+### scrub
+
+`scrub`
+
+Validate a US phone number for connection status at list-processing prices; Iscell and carrier are extra-cost options. May return unknown for up to 5% of numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.scrub({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `iscell` | `string \| null` | No | — |
+| `carrier` | `string \| null` | No | — |
+
+
+
+---
+
+## Scrub Plus
+
+### scrubPlus
+
+`scrubPlus`
+
+Validate a US phone number for connection status and phone type at list-processing prices
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.scrubPlus({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `phone_type` | `string \| null` | No | Mobile, Landline or VoIP. |
+
+
+
+---
+
+## Turbo
+
+### turbo
+
+`turbo`
+
+Validate a US phone number with the older Turbo script: connection status, Iscell and carrier
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.turbo({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `iscell` | `string \| null` | No | Y for a cell phone, N for a landline, V for VoIP when enabled. |
+| `carrier` | `string \| null` | No | — |
+
+
+
+---
+
+## Turbo Standard
+
+### turboStandard
+
+`turboStandard`
+
+Validate a US phone number for connection status and phone type only
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.turboStandard({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `phone_type` | `string \| null` | No | Mobile, Landline or VoIP. |
+
+
+
+---
+
+## Turbo V3
+
+### turboV3
+
+`turboV3`
+
+Validate a US phone number with the richest answer: connection status, phone type, caller name, carrier and caller type
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.turboV3({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | connected, disconnected, busy, unreachable, invalid phone, restricted, pending, connected-75, disconnected-70. |
+| `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+| `phone_type` | `string \| null` | No | Mobile, Landline or VoIP. |
+| `caller_name` | `string \| null` | No | The subscriber name, when the carrier exposes it. |
+| `carrier` | `string \| null` | No | — |
+| `caller_type` | `string \| null` | No | Consumer, Business or Unavailable. |
+
+
+
+---
+
+## Wireless Id
+
+### wirelessId
+
+`wirelessId`
+
+Report whether a US phone number is landline or cell, for TCPA compliance
+
+**Risk:** `read`
+
+```ts
+await corsair.realphonevalidation.api.wirelessId({ phone: '7275555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `RESPONSECODE` | `string \| null` | No | landline or cell. Anything else is a refusal. |
+| `RESPONSEMSG` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
+
+
+
+---
+
