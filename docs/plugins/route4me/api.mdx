@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Route4Me: every `route4me.api.*` operation with input and output types."
+title: "Route4Me API reference"
+sidebarTitle: "API"
+description: "API reference for the Route4Me plugin in Corsair: every `route4me.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `route4me.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -170,7 +169,7 @@ Pages by limit/offset; next_offset is null on a short page.
   parent_location_id?: number | null,
   required_skills?: string[] | null,
   facility_ids?: string[] | null,
-  address_custom_data?: Record<string, string> | null
+  address_custom_data?: Record<string, any> | any[] | null
 }[]
 ```
 </Accordion>
@@ -336,7 +335,7 @@ await corsair.route4me.api.optimizations.get({ optimization_problem_id: 'B0C1D2E
       note_id?: number | null,
       note?: string | null
     }[] | null,
-    custom_fields?: Record<string, string> | null
+    custom_fields?: Record<string, any> | any[] | null
   }[] | null,
   routes?: {
     route_id?: string | null,
@@ -435,7 +434,7 @@ Passing optimization_problem_id makes v4 answer one object; both forms are norma
       note_id?: number | null,
       note?: string | null
     }[] | null,
-    custom_fields?: Record<string, string> | null
+    custom_fields?: Record<string, any> | any[] | null
   }[] | null,
   routes?: {
     route_id?: string | null,
@@ -704,7 +703,7 @@ The route id is exactly 32 characters and validated before the request.
 | `addresses` | `object[] \| null` | No | The route stops, in the order Route4Me sequenced them. |
 | `directions` | `object[] \| null` | No | — |
 | `notes` | `object[] \| null` | No | — |
-| `route_custom_data` | `Record<string, string> \| null` | No | — |
+| `route_custom_data` | `Record<string, any> \| any[] \| null` | No | — |
 | `next_page` | `number \| null` | Yes | When the stop list is paged, the page to request next; null otherwise. |
 
 <AccordionGroup>
@@ -740,7 +739,7 @@ The route id is exactly 32 characters and validated before the request.
     note_id?: number | null,
     note?: string | null
   }[] | null,
-  custom_fields?: Record<string, string> | null
+  custom_fields?: Record<string, any> | any[] | null
 }[] | null
 ```
 </Accordion>
@@ -921,7 +920,7 @@ A POST with no side effect; the plugin marks it replayable so a 5xx is retried.
       note_id?: number | null,
       note?: string | null
     }[] | null,
-    custom_fields?: Record<string, string> | null
+    custom_fields?: Record<string, any> | any[] | null
   }[] | null,
   facilities?: {
     facility_id?: string | null,
@@ -1004,7 +1003,7 @@ await corsair.route4me.api.team.list({ drivers_only: true });
     id?: string | null,
     permission?: boolean | null
   }[] | null,
-  custom_data?: Record<string, string> | null
+  custom_data?: Record<string, any> | any[] | null
 }[]
 ```
 </Accordion>
@@ -1071,7 +1070,7 @@ await corsair.route4me.api.team.me({});
     id?: string | null,
     permission?: boolean | null
   }[] | null,
-  custom_data?: Record<string, string> | null
+  custom_data?: Record<string, any> | any[] | null
 }
 ```
 </Accordion>
@@ -1120,7 +1119,7 @@ await corsair.route4me.api.vehicles.create({ vehicle_alias: 'Van 1', vehicle_lic
 | `max_length` | `number` | No | — |
 | `total_weight` | `number` | No | — |
 | `max_weight_per_axle` | `number` | No | — |
-| `required_skills` | `string[]` | No | — |
+| `skills` | `string[]` | No | Skills this vehicle offers, matched against required skills. |
 
 
 
