@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+import { fromDotNet } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -12,7 +13,11 @@ export const ping: WaiverFileEndpoints['ping'] = (ctx, input) =>
 		{ event: 'ping', input: Inputs.ping, output: Outputs.ping },
 		input,
 		() => ({ method: 'GET', path: '/api/v1/Ping' }),
-		{ log: (_, result) => ({ message: result.Message ?? undefined }) },
+		{
+			// The body is the bare string "Service online".
+			shape: (raw) => ({ Message: typeof raw === 'string' ? raw : undefined }),
+			log: (_, result) => ({ message: result.Message ?? undefined }),
+		},
 	);
 
 /** The site behind the credentials: its name, timezone and contact details. */
@@ -23,9 +28,19 @@ export const get: WaiverFileEndpoints['siteGet'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/api/v1/GetSiteDetails' }),
 		{
+			// The labels and their raw data are over a megabyte of UI text that
+			// says nothing about the site, so they are dropped.
+			shape: (raw) => {
+				const {
+					Labels: _labels,
+					LabelData: _labelData,
+					...site
+				} = (fromDotNet(raw) ?? {}) as Record<string, unknown>;
+				return site;
+			},
 			log: (_, result) => ({
-				id: result.SiteID ?? undefined,
-				name: result.Name ?? result.SiteName ?? undefined,
+				id: result.ID ?? undefined,
+				name: result.Name ?? undefined,
 			}),
 		},
 	);

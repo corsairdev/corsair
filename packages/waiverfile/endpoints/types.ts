@@ -3,9 +3,12 @@ import { z } from 'zod';
 // Inputs use WaiverFile's own parameter names. Outputs are `.loose()` and their
 // documented fields nullish, so a field the API adds cannot fail a call.
 //
-// WaiverFile returns PascalCase field names — `WaiverID`, `DateSigned`,
-// `SignedName` — so the schemas mirror that rather than normalising, because a
-// caller reasoning from the docs will expect those names.
+// WaiverFile serialises its answers three ways (see `shape.ts`): .NET objects
+// with a `me` column block, XML converted to JSON where every value is a
+// string, and bare scalars. The endpoints flatten all three into the PascalCase
+// names the reference documents (`WaiverID`, `WaiverEventID`, `Name`), and the
+// schemas below describe that flattened shape. Field types were checked against
+// a live trial account on 2026-11-12.
 // Reference: https://api.waiverfile.com/swagger/v1/swagger.json
 
 /** A waiver ID or another GUID, as a plain string. */
@@ -33,99 +36,151 @@ const PagingSchema = {
 
 // ── the models ────────────────────────────────────────────────────────────
 
-/** A participant on a waiver. A waiver can cover several people. */
+/**
+ * A value from an XML-converted waiver: WaiverFile turns every column into a
+ * string (`"true"`, `"0"`, `"1/1/1990"`), and an empty element into null.
+ */
+const XmlText = z.string().nullish();
+
+// unknown: nested XML-converted nodes (the agreement text, the event, the
+// form instance) have no fixed shape across waiver forms.
+const XmlNode = z.record(z.string(), z.unknown()).nullish();
+
+/** A participant on an XML-converted waiver. A waiver can cover several people. */
 const ParticipantSchema = z
 	.object({
-		WaiverParticipantID: z.string().nullish(),
-		WaiverID: z.string().nullish(),
-		ParticipantName: z.string().nullish(),
-		ParticipantNameFirst: z.string().nullish(),
-		DOB: z.string().nullish(),
-		IsCheckedIn: z.boolean().nullish(),
-		ValuesXml: z.string().nullish(),
-		IsSignee: z.boolean().nullish(),
+		WaiverParticipantID: XmlText,
+		WaiverID: XmlText,
+		ParticipantName: XmlText,
+		ParticipantNameFirst: XmlText,
+		DOB: XmlText,
+		Age: XmlText,
+		IsCheckedIn: XmlText.describe('"true" or "false".'),
+		IsSignee: XmlText.describe('"true" or "false".'),
+		// unknown: XML-converted custom field values, `{ data: … }` or null.
+		ValuesXml: z.unknown().optional(),
+		CustomFields: XmlNode,
 	})
 	.loose();
 
 export type WaiverFileParticipant = z.infer<typeof ParticipantSchema>;
 
 /**
- * A signed waiver. `WaiverText` is the agreement the person accepted and
- * `FieldsXml` / `ValuesXml` hold the form answers as XML, which is how
- * WaiverFile models custom questions.
+ * A signed waiver as the waiver reads return it: XML converted to JSON, so every
+ * value is a string. `Particpants` (WaiverFile's spelling, missing an i) is
+ * always an array here, although the API sends a single participant as an
+ * object; the plugin evens that out. `GetWaiver` adds the agreement text, the
+ * event and the form; the lite routes and the lists leave those out.
  */
 const WaiverSchema = z
+	.object({
+		WaiverID: XmlText,
+		SiteID: XmlText,
+		WaiverEventID: XmlText,
+		WaiverFormID: XmlText,
+		WaiverFormInstanceID: XmlText,
+		DateSigned: XmlText.describe('UTC, without an offset.'),
+		DateAttending: XmlText,
+		SignedName: XmlText.describe("The signer's last name."),
+		SignedNameFirst: XmlText,
+		Email: XmlText,
+		Phone: XmlText,
+		DOB: XmlText,
+		Age: XmlText,
+		Address: XmlText,
+		Address2: XmlText,
+		City: XmlText,
+		State: XmlText,
+		Zip: XmlText,
+		OptIn: XmlText.describe('"true" or "false".'),
+		HasSignature: XmlText.describe('"true" or "false".'),
+		Expired: XmlText,
+		WaiverIsDeleted: XmlText,
+		ClientIP: XmlText,
+		ClientType: XmlText,
+		ReferenceID1: XmlText,
+		ReferenceID2: XmlText,
+		ReferenceID3: XmlText,
+		FieldsXml: XmlText,
+		// unknown: XML-converted custom field values, `{ data: … }` or null.
+		ValuesXml: z.unknown().optional(),
+		Particpants: z
+			.array(ParticipantSchema)
+			.nullish()
+			.describe("WaiverFile's own spelling, with the missing i."),
+		WaiverEvent: XmlNode,
+		WaiverForm: XmlNode,
+		WaiverText: XmlNode,
+		CustomFields: XmlNode.describe(
+			'GetWaiver only: each custom form field label mapped to its value.',
+		),
+	})
+	.loose();
+
+export type WaiverFileWaiver = z.infer<typeof WaiverSchema>;
+
+/** The lite routes return the same XML-converted waiver without the large parts. */
+const WaiverLiteSchema = WaiverSchema;
+
+export type WaiverFileWaiverLite = z.infer<typeof WaiverLiteSchema>;
+
+/**
+ * A waiver from `GetWaiversForEvent`, which, unlike the waiver routes, uses
+ * standard JSON: booleans and numbers keep their types and the participants are
+ * `Participants`, spelled correctly.
+ */
+const EventWaiverSchema = z
 	.object({
 		WaiverID: z.string().nullish(),
 		SiteID: z.string().nullish(),
 		WaiverEventID: z.string().nullish(),
 		WaiverFormID: z.string().nullish(),
 		DateSigned: z.string().nullish(),
-		DateAttending: z.string().nullish(),
 		SignedName: z.string().nullish(),
 		SignedNameFirst: z.string().nullish(),
 		Email: z.string().nullish(),
 		Phone: z.string().nullish(),
 		DOB: z.string().nullish(),
 		Age: z.number().nullish(),
-		Address: z.string().nullish(),
-		Address2: z.string().nullish(),
-		City: z.string().nullish(),
-		State: z.string().nullish(),
-		Zip: z.string().nullish(),
-		OptIn: z.boolean().nullish(),
 		HasSignature: z.boolean().nullish(),
-		Expired: z.boolean().nullish(),
+		OptIn: z.boolean().nullish(),
 		WaiverIsDeleted: z.boolean().nullish(),
-		ClientIP: z.string().nullish(),
-		ClientType: z.string().nullish(),
-		deviceID: z.number().nullish(),
-		FieldsXml: z.string().nullish(),
-		ValuesXml: z.string().nullish(),
-		OriginalData: z.string().nullish(),
-		OriginalDataVerified: z.boolean().nullish(),
-		Particpants: z
-			.array(ParticipantSchema)
-			.nullish()
-			.describe("WaiverFile's own spelling, with the missing i."),
-		WaiverEvent: z.record(z.string(), z.unknown()).nullish(),
-		WaiverForm: z.record(z.string(), z.unknown()).nullish(),
-		Signatures: z.record(z.string(), z.unknown()).nullish(),
-		Images: z.record(z.string(), z.unknown()).nullish(),
+		ReferenceID1: z.string().nullish(),
+		ReferenceID2: z.string().nullish(),
+		ReferenceID3: z.string().nullish(),
+		Participants: z
+			.array(
+				z
+					.object({
+						WaiverParticipantID: z.string().nullish(),
+						ParticipantName: z.string().nullish(),
+						ParticipantNameFirst: z.string().nullish(),
+						DOB: z.string().nullish(),
+						IsCheckedIn: z.boolean().nullish(),
+						IsSignee: z.boolean().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
-export type WaiverFileWaiver = z.infer<typeof WaiverSchema>;
+export type WaiverFileEventWaiver = z.infer<typeof EventWaiverSchema>;
 
 /**
- * The lite form: the collected answers without the agreement text, event detail
- * or signatures. Smaller, and enough for a roster or an export.
+ * One report-style row per participant. The columns depend on the site's forms
+ * (custom columns are named after them), so a row is an open record.
  */
-const WaiverLiteSchema = z
-	.object({
-		WaiverID: z.string().nullish(),
-		SiteID: z.string().nullish(),
-		WaiverEventID: z.string().nullish(),
-		WaiverFormID: z.string().nullish(),
-		DateSigned: z.string().nullish(),
-		SignedName: z.string().nullish(),
-		SignedNameFirst: z.string().nullish(),
-		Email: z.string().nullish(),
-		Phone: z.string().nullish(),
-		OptIn: z.boolean().nullish(),
-		FieldsXml: z.string().nullish(),
-		ValuesXml: z.string().nullish(),
-		Particpants: z.array(ParticipantSchema).nullish(),
-	})
-	.loose();
-
-export type WaiverFileWaiverLite = z.infer<typeof WaiverLiteSchema>;
-
-/** One report-style row per participant, with optional custom columns. */
+// unknown: column names and types vary by site and form.
 const WaiverDataRowSchema = z.record(z.string(), z.unknown());
 
 export type WaiverFileDataRow = z.infer<typeof WaiverDataRowSchema>;
 
+/**
+ * An event. `DateStart` and `DateEnd` are UTC everywhere except in the answers to
+ * `InsertEvent`, `InviteEventManagers` and `RemoveEventManagers`, which give
+ * them in the site's time zone.
+ */
 const WaiverEventSchema = z
 	.object({
 		WaiverEventID: z.string().nullish(),
@@ -146,10 +201,35 @@ const WaiverEventSchema = z
 		ManagerIDs: z.array(z.string()).nullish(),
 		Created: z.string().nullish(),
 		LastModified: z.string().nullish(),
-		WaiverEventFormIDs: z.array(z.string()).nullish(),
+		WaiverEventFormIDs: z
+			.array(
+				z.union([
+					z.string(),
+					z
+						.object({
+							WaiverEventID: z.string().nullish(),
+							WaiverFormID: z.string().nullish(),
+						})
+						.loose(),
+				]),
+			)
+			.nullish()
+			.describe('The forms attached to the event.'),
+		// unknown: nested .NET objects whose columns depend on the form.
 		WaiverForms: z.array(z.record(z.string(), z.unknown())).nullish(),
-		Waivers: z.array(WaiverLiteSchema).nullish(),
+		// unknown: the event's waivers, when the route includes them.
+		Waivers: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// unknown: the category object, or null.
 		Category: z.record(z.string(), z.unknown()).nullish(),
+		Settings: z
+			.object({
+				MaxParticipants: z.number().nullish(),
+				Location: z.string().nullish(),
+				SigningCutoff: z.string().nullish(),
+				Description: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
 	})
 	.loose();
 
@@ -157,11 +237,14 @@ export type WaiverFileEvent = z.infer<typeof WaiverEventSchema>;
 
 const EventCategorySchema = z
 	.object({
-		WaiverEventCategoryID: z.string().nullish(),
+		ID: z.string().nullish(),
 		SiteID: z.string().nullish(),
 		Name: z.string().nullish(),
-		Status: z.unknown().nullish(),
-		WPObjectStatus: z.unknown().nullish(),
+		Status: z
+			.number()
+			.nullish()
+			.describe('0 = active, 1 = disabled, 2 = deleted.'),
+		OrderNum: z.number().nullish(),
 	})
 	.loose();
 
@@ -192,7 +275,12 @@ const WaiverFormSchema = z
 		FieldRequire_Address: z.boolean().nullish(),
 		IncludeSignature: z.boolean().nullish(),
 		AllowSigningForSomeoneElse: z.boolean().nullish(),
-		Status: z.string().nullish(),
+		Status: z
+			.number()
+			.nullish()
+			.describe(
+				'0 = active, 1 = disabled, 2 = deleted, 3 = unpublished draft.',
+			),
 		Language: z.string().nullish(),
 		Created: z.string().nullish(),
 		LastModified: z.string().nullish(),
@@ -201,20 +289,19 @@ const WaiverFormSchema = z
 
 export type WaiverFileForm = z.infer<typeof WaiverFormSchema>;
 
+/**
+ * The site. WaiverFile also sends every label and setting the site has (over a
+ * megabyte); the plugin drops `Labels` and `LabelData` and keeps the rest.
+ */
 const SiteDetailsSchema = z
 	.object({
-		SiteID: z.string().nullish(),
+		ID: z.string().nullish(),
 		Name: z.string().nullish(),
-		SiteName: z.string().nullish(),
-		TimeZone: z.string().nullish(),
-		TimeZoneID: z.string().nullish(),
-		Address: z.string().nullish(),
-		City: z.string().nullish(),
-		State: z.string().nullish(),
-		Zip: z.string().nullish(),
-		Phone: z.string().nullish(),
-		Email: z.string().nullish(),
-		Website: z.string().nullish(),
+		Url: z.string().nullish().describe('The site path on app.waiverfile.com.'),
+		DefaultTimezone: z.string().nullish(),
+		Status: z.number().nullish(),
+		DateAdded: z.string().nullish(),
+		ReplyToEmail: z.string().nullish(),
 	})
 	.loose();
 
@@ -227,13 +314,12 @@ const PingInputSchema = z.object({});
 export type PingInput = z.infer<typeof PingInputSchema>;
 
 /**
- * `Ping` answers odd shapes: with valid credentials it reports the service is
- * online, and a bad key gets a 400 whose message starts `InvalidService`. Both
- * cases are handled, so the output is a plain flag.
+ * `Ping` answers the bare string `"Service online"`; the plugin returns it as
+ * `Message`. A bad key is a 400 whose message starts `InvalidService`, which
+ * surfaces as an error rather than a result.
  */
 const PingResponseSchema = z
 	.object({
-		status: z.string().nullish(),
 		Message: z.string().nullish(),
 	})
 	.loose();
@@ -359,12 +445,13 @@ const WaiversPageCountInputSchema = z.object({
 
 export type WaiversPageCountInput = z.infer<typeof WaiversPageCountInputSchema>;
 
-/** The total, which is what a caller needs to plan the paging. */
+/**
+ * The total. WaiverFile answers a bare number; despite its route name,
+ * `GetAllWaiversByDateRangePageCount` counts waivers, not pages.
+ */
 const CountResponseSchema = z
 	.object({
 		Count: z.number().nullish(),
-		TotalCount: z.number().nullish(),
-		PageCount: z.number().nullish(),
 	})
 	.loose();
 
@@ -404,9 +491,7 @@ export type WaiversDataInput = z.infer<typeof WaiversDataInputSchema>;
 
 const WaiversDataResponseSchema = z
 	.object({
-		Data: z.array(WaiverDataRowSchema).nullish(),
-		Rows: z.array(WaiverDataRowSchema).nullish(),
-		TotalCount: z.number().nullish(),
+		Table: z.array(WaiverDataRowSchema).nullish(),
 	})
 	.loose();
 
@@ -426,9 +511,7 @@ const WaiversPdfInputSchema = z.object({
 export type WaiversPdfInput = z.infer<typeof WaiversPdfInputSchema>;
 
 /**
- * A PDF cannot be a zod object, so the plugin reports what came back rather
- * than pretending to parse it: the response is the file, and the caller's HTTP
- * layer is what would save it.
+ * The PDF, base64-encoded so it survives a JSON payload, with its real length.
  */
 const WaiversPdfResponseSchema = z.object({
 	waiverID: z.string(),
@@ -450,7 +533,6 @@ export type FormsActiveInput = z.infer<typeof FormsActiveInputSchema>;
 const FormsResponseSchema = z
 	.object({
 		WaiverForms: z.array(WaiverFormSchema).nullish(),
-		Forms: z.array(WaiverFormSchema).nullish(),
 	})
 	.loose();
 
@@ -474,7 +556,6 @@ export type EventsByDateRangeInput = z.infer<
 const EventsResponseSchema = z
 	.object({
 		Events: z.array(WaiverEventSchema).nullish(),
-		WaiverEvents: z.array(WaiverEventSchema).nullish(),
 	})
 	.loose();
 
@@ -503,15 +584,11 @@ export type EventsWaiversInput = z.infer<typeof EventsWaiversInputSchema>;
 
 const EventsWaiversResponseSchema = z
 	.object({
-		Waivers: z.array(WaiverLiteSchema).nullish(),
+		Waivers: z.array(EventWaiverSchema).nullish(),
 	})
 	.loose();
 
 export type EventsWaiversResponse = z.infer<typeof EventsWaiversResponseSchema>;
-
-const EventsGetInputSchema = z.object({ eventID: GuidSchema });
-
-export type EventsGetInput = z.infer<typeof EventsGetInputSchema>;
 
 const EventResponseSchema = WaiverEventSchema;
 
@@ -559,11 +636,15 @@ const EventsUpdateInputSchema = z.object({
 	isAllDay: z.boolean(),
 	eventCategoryID: z
 		.string()
-		.describe('To set no category, send the empty string.'),
+		.describe(
+			'To set no category, send the empty GUID 00000000-0000-0000-0000-000000000000.',
+		),
 	waiverFormIDs: z
 		.array(z.string())
 		.optional()
-		.describe('Replaces the attached forms. Omit to leave them alone.'),
+		.describe(
+			'Replaces the attached forms. Omitted or empty attaches every active form: WaiverFile cannot leave them unchanged, so pass the current IDs to keep them.',
+		),
 });
 
 export type EventsUpdateInput = z.infer<typeof EventsUpdateInputSchema>;
@@ -572,13 +653,8 @@ const EventsDeleteInputSchema = z.object({ eventID: GuidSchema });
 
 export type EventsDeleteInput = z.infer<typeof EventsDeleteInputSchema>;
 
-/** A delete answers a flag rather than an object. */
-const EventDeleteResponseSchema = z
-	.object({
-		Success: z.boolean().nullish(),
-		Message: z.string().nullish(),
-	})
-	.loose();
+/** A delete answers the deleted event, with `IsDeleted` true. */
+const EventDeleteResponseSchema = WaiverEventSchema;
 
 export type EventDeleteResponse = z.infer<typeof EventDeleteResponseSchema>;
 
@@ -602,12 +678,8 @@ const EventsManagersInputSchema = z.object({
 
 export type EventsManagersInput = z.infer<typeof EventsManagersInputSchema>;
 
-const EventManagersResponseSchema = z
-	.object({
-		Success: z.boolean().nullish(),
-		Message: z.string().nullish(),
-	})
-	.loose();
+/** Both manager routes answer the event, with `ManagerIDs` as it now stands. */
+const EventManagersResponseSchema = WaiverEventSchema;
 
 export type EventManagersResponse = z.infer<typeof EventManagersResponseSchema>;
 
@@ -624,7 +696,6 @@ export type CategoriesListInput = z.infer<typeof CategoriesListInputSchema>;
 const CategoriesResponseSchema = z
 	.object({
 		EventCategories: z.array(EventCategorySchema).nullish(),
-		Categories: z.array(EventCategorySchema).nullish(),
 	})
 	.loose();
 
@@ -651,13 +722,8 @@ const CategoriesDeleteInputSchema = z.object({
 
 export type CategoriesDeleteInput = z.infer<typeof CategoriesDeleteInputSchema>;
 
-const CategoryMutationResponseSchema = z
-	.object({
-		Success: z.boolean().nullish(),
-		Message: z.string().nullish(),
-		WaiverEventCategoryID: z.string().nullish(),
-	})
-	.loose();
+/** Create, update and delete all answer the category as it now stands. */
+const CategoryMutationResponseSchema = EventCategorySchema;
 
 export type CategoryMutationResponse = z.infer<
 	typeof CategoryMutationResponseSchema
@@ -734,9 +800,14 @@ const SubscribeInputSchema = z.object({
 
 export type SubscribeInput = z.infer<typeof SubscribeInputSchema>;
 
+/**
+ * Both routes answer the string `"OK"`; the plugin returns `Success: true` with
+ * it. An unknown subscription is a 400 ("Subscription not found or already
+ * deleted."), raised as an error.
+ */
 const SubscribeResponseSchema = z
 	.object({
-		Success: z.boolean().nullish(),
+		Success: z.boolean(),
 		Message: z.string().nullish(),
 	})
 	.loose();
@@ -764,7 +835,6 @@ export type WaiverFileEndpointInputs = {
 	eventsByCategory: EventsByCategoryInput;
 	eventsUpcoming: EventsUpcomingInput;
 	eventsWaivers: EventsWaiversInput;
-	eventsGet: EventsGetInput;
 	eventsCreate: EventsCreateInput;
 	eventsUpdate: EventsUpdateInput;
 	eventsDelete: EventsDeleteInput;
@@ -799,7 +869,6 @@ export type WaiverFileEndpointOutputs = {
 	eventsByCategory: EventsResponse;
 	eventsUpcoming: EventsResponse;
 	eventsWaivers: EventsWaiversResponse;
-	eventsGet: EventResponse;
 	eventsCreate: EventResponse;
 	eventsUpdate: EventResponse;
 	eventsDelete: EventDeleteResponse;
@@ -834,7 +903,6 @@ export const WaiverFileEndpointInputSchemas = {
 	eventsByCategory: EventsByCategoryInputSchema,
 	eventsUpcoming: EventsUpcomingInputSchema,
 	eventsWaivers: EventsWaiversInputSchema,
-	eventsGet: EventsGetInputSchema,
 	eventsCreate: EventsCreateInputSchema,
 	eventsUpdate: EventsUpdateInputSchema,
 	eventsDelete: EventsDeleteInputSchema,
@@ -869,7 +937,6 @@ export const WaiverFileEndpointOutputSchemas = {
 	eventsByCategory: EventsResponseSchema,
 	eventsUpcoming: EventsResponseSchema,
 	eventsWaivers: EventsWaiversResponseSchema,
-	eventsGet: EventResponseSchema,
 	eventsCreate: EventResponseSchema,
 	eventsUpdate: EventResponseSchema,
 	eventsDelete: EventDeleteResponseSchema,

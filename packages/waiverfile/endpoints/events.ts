@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+import { dotNetList, fromDotNet, parseTwice } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -23,8 +24,9 @@ export const byDateRange: WaiverFileEndpoints['eventsByDateRange'] = (
 			query: { startDateUTC, endDateUTC },
 		}),
 		{
+			shape: (raw) => dotNetList(raw, 'Events', '/api/v1/GetEventsByDateRange'),
 			log: (_, result) => ({
-				count: (result.Events ?? result.WaiverEvents)?.length ?? 0,
+				count: result.Events?.length ?? 0,
 			}),
 		},
 	);
@@ -47,9 +49,10 @@ export const byCategory: WaiverFileEndpoints['eventsByCategory'] = (
 			query: { eventCategoryID, startDateUTC, endDateUTC },
 		}),
 		{
+			shape: (raw) => dotNetList(raw, 'Events', '/api/v1/GetEventsByCategory'),
 			log: (parsed, result) => ({
 				category: parsed.eventCategoryID,
-				count: (result.Events ?? result.WaiverEvents)?.length ?? 0,
+				count: result.Events?.length ?? 0,
 			}),
 		},
 	);
@@ -70,10 +73,13 @@ export const upcoming: WaiverFileEndpoints['eventsUpcoming'] = (ctx, input) =>
 			query: { startDateUTC, endDateUTC },
 		}),
 		{
+			// The array is serialised twice: the body is a JSON string of JSON.
+			shape: (raw) =>
+				dotNetList(parseTwice(raw), 'Events', '/api/v1/GetUpcomingEvents'),
 			// The 3,000 cap is the API's, not the plugin's, so the count is the
 			// only way a caller can notice it was reached.
 			log: (_, result) => ({
-				count: (result.Events ?? result.WaiverEvents)?.length ?? 0,
+				count: result.Events?.length ?? 0,
 			}),
 		},
 	);
@@ -94,25 +100,8 @@ export const waivers: WaiverFileEndpoints['eventsWaivers'] = (ctx, input) =>
 			query: { waiverEventID },
 		}),
 		{
+			shape: (raw) => dotNetList(raw, 'Waivers', '/api/v1/GetWaiversForEvent'),
 			log: (_, result) => ({ count: result.Waivers?.length ?? 0 }),
-		},
-	);
-
-export const get: WaiverFileEndpoints['eventsGet'] = (ctx, input) =>
-	call(
-		ctx,
-		{ event: 'events.get', input: Inputs.eventsGet, output: Outputs.eventsGet },
-		input,
-		({ eventID }) => ({
-			method: 'GET',
-			path: '/api/v1/GetEvent',
-			query: { eventID },
-		}),
-		{
-			log: (_, result) => ({
-				id: result.WaiverEventID ?? undefined,
-				signed: result.NumSignedWaivers ?? undefined,
-			}),
 		},
 	);
 
@@ -157,6 +146,7 @@ export const create: WaiverFileEndpoints['eventsCreate'] = (ctx, input) =>
 			},
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
 				id: result.WaiverEventID ?? undefined,
 				name: parsed.eventName,
@@ -199,6 +189,7 @@ export const update: WaiverFileEndpoints['eventsUpdate'] = (ctx, input) =>
 			mediaType: waiverFormIDs === undefined ? undefined : 'application/json',
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
 				id: result.WaiverEventID ?? parsed.eventID,
 				forms: parsed.waiverFormIDs?.length ?? 0,
@@ -206,7 +197,10 @@ export const update: WaiverFileEndpoints['eventsUpdate'] = (ctx, input) =>
 		},
 	);
 
-/** Delete is a `GET` here, which is worth knowing before a retry. */
+/**
+ * Delete is a `GET` here, which is worth knowing before a retry. WaiverFile marks
+ * the event deleted and answers it with `IsDeleted` true; signed waivers stay.
+ */
 export const remove: WaiverFileEndpoints['eventsDelete'] = (ctx, input) =>
 	call(
 		ctx,
@@ -222,16 +216,18 @@ export const remove: WaiverFileEndpoints['eventsDelete'] = (ctx, input) =>
 			query: { eventID },
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
 				id: parsed.eventID,
-				success: result.Success ?? false,
+				deleted: result.IsDeleted ?? false,
 			}),
 		},
 	);
 
 /**
- * Invites managers by email. Whether an invitation actually goes out depends on
- * `skipSendingEmailIfAccountExists`, so the response's message is reported.
+ * Invites managers by email. Each address gets an invitation unless
+ * `skipSendingEmailIfAccountExists` is set and it already has an account. The
+ * answer is the event, with `ManagerIDs` as it now stands.
  */
 export const inviteManagers: WaiverFileEndpoints['eventsInviteManagers'] = (
 	ctx,
@@ -261,11 +257,12 @@ export const inviteManagers: WaiverFileEndpoints['eventsInviteManagers'] = (
 			},
 		}),
 		{
+			shape: fromDotNet,
 			// The addresses are people, so only how many were invited is logged.
 			log: (parsed, result) => ({
 				event: parsed.eventID,
 				addresses: parsed.emailAddresses.split(/[,\s]+/).filter(Boolean).length,
-				success: result.Success ?? false,
+				managers: result.ManagerIDs?.length ?? 0,
 			}),
 		},
 	);
@@ -288,9 +285,10 @@ export const removeManagers: WaiverFileEndpoints['eventsRemoveManagers'] = (
 			query: { eventID, emailAddresses },
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
 				event: parsed.eventID,
-				success: result.Success ?? false,
+				managers: result.ManagerIDs?.length ?? 0,
 			}),
 		},
 	);

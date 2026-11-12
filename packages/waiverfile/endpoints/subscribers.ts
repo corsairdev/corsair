@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+import { dotNetList } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -21,6 +22,8 @@ export const list: WaiverFileEndpoints['subscribersList'] = (ctx, input) =>
 			query: { startDateUTC, endDateUTC },
 		}),
 		{
+			shape: (raw) =>
+				dotNetList(raw, 'Subscribers', '/api/v1/GetSubscribersByDate'),
 			log: (_, result) => ({ count: result.Subscribers?.length ?? 0 }),
 		},
 	);
@@ -44,6 +47,12 @@ export const optedOut: WaiverFileEndpoints['subscribersOptedOut'] = (
 			query: { startDateUTC, endDateUTC },
 		}),
 		{
+			shape: (raw) =>
+				dotNetList(
+					raw,
+					'Subscribers',
+					'/api/v1/GetOptedOutSubscribersByOptOutDate',
+				),
 			log: (_, result) => ({ count: result.Subscribers?.length ?? 0 }),
 		},
 	);

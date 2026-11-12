@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+import { dotNetList } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -20,8 +21,10 @@ export const active: WaiverFileEndpoints['formsActive'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/api/v1/GetActiveWaiverForms' }),
 		{
+			shape: (raw) =>
+				dotNetList(raw, 'WaiverForms', '/api/v1/GetActiveWaiverForms'),
 			log: (_, result) => ({
-				count: (result.WaiverForms ?? result.Forms)?.length ?? 0,
+				count: result.WaiverForms?.length ?? 0,
 			}),
 		},
 	);
@@ -37,8 +40,10 @@ export const all: WaiverFileEndpoints['formsAll'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/api/v1/GetAllWaiverForms' }),
 		{
+			shape: (raw) =>
+				dotNetList(raw, 'WaiverForms', '/api/v1/GetAllWaiverForms'),
 			log: (_, result) => ({
-				count: (result.WaiverForms ?? result.Forms)?.length ?? 0,
+				count: result.WaiverForms?.length ?? 0,
 			}),
 		},
 	);

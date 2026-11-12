@@ -1,6 +1,15 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
 
+/** Both routes answer the bare string "OK". */
+// unknown: the raw body.
+function okResult(raw: unknown) {
+	return {
+		Success: raw === 'OK',
+		Message: typeof raw === 'string' ? raw : undefined,
+	};
+}
+
 /**
  * Drops the query string from a webhook target. WaiverFile signs nothing, so a
  * receiver's URL often carries a token in its query; logging it whole would write a
@@ -46,12 +55,13 @@ export const subscribe: WaiverFileEndpoints['webhooksSubscribe'] = (
 			query: { targetUrl },
 		}),
 		{
+			shape: okResult,
 			// The URL is the subscription's identity, so it is logged; it is a
 			// server endpoint, not a person.
 			log: (parsed, result) => ({
 				trigger: parsed.trigger,
 				url: safeTargetUrl(parsed.targetUrl),
-				success: result.Success ?? false,
+				success: result.Success,
 			}),
 		},
 	);
@@ -74,10 +84,11 @@ export const unsubscribe: WaiverFileEndpoints['webhooksUnsubscribe'] = (
 			query: { targetUrl },
 		}),
 		{
+			shape: okResult,
 			log: (parsed, result) => ({
 				trigger: parsed.trigger,
 				url: safeTargetUrl(parsed.targetUrl),
-				success: result.Success ?? false,
+				success: result.Success,
 			}),
 		},
 	);

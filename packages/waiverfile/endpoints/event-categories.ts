@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
+import { dotNetList, fromDotNet } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -20,8 +21,10 @@ export const list: WaiverFileEndpoints['eventCategoriesList'] = (ctx, input) =>
 			query: { includeDisabledCategories },
 		}),
 		{
+			shape: (raw) =>
+				dotNetList(raw, 'EventCategories', '/api/v1/GetEventCategories'),
 			log: (parsed, result) => ({
-				count: (result.EventCategories ?? result.Categories)?.length ?? 0,
+				count: result.EventCategories?.length ?? 0,
 				disabled: parsed.includeDisabledCategories,
 			}),
 		},
@@ -45,8 +48,9 @@ export const create: WaiverFileEndpoints['eventCategoriesCreate'] = (
 			query: { name, active },
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
-				id: result.WaiverEventCategoryID ?? undefined,
+				id: result.ID ?? undefined,
 				name: parsed.name,
 			}),
 		},
@@ -70,16 +74,17 @@ export const update: WaiverFileEndpoints['eventCategoriesUpdate'] = (
 			query: { eventCategoryID, name, active },
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
-				id: result.WaiverEventCategoryID ?? parsed.eventCategoryID,
+				id: result.ID ?? parsed.eventCategoryID,
 				name: parsed.name,
 			}),
 		},
 	);
 
 /**
- * Deleting a category is a `POST`, not a `DELETE`, and events in it are left
- * without a category rather than deleted with it.
+ * Deleting a category is a `POST`, not a `DELETE`. Events in it are not changed,
+ * and the answer is the category with `Status` 2 (deleted).
  */
 export const remove: WaiverFileEndpoints['eventCategoriesDelete'] = (
 	ctx,
@@ -99,9 +104,10 @@ export const remove: WaiverFileEndpoints['eventCategoriesDelete'] = (
 			query: { eventCategoryID },
 		}),
 		{
+			shape: fromDotNet,
 			log: (parsed, result) => ({
 				id: parsed.eventCategoryID,
-				success: result.Success ?? false,
+				status: result.Status ?? undefined,
 			}),
 		},
 	);

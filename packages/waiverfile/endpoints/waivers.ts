@@ -1,5 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call, download } from './call';
+import { countFrom, xmlSingleWaiver, xmlWaivers } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -20,11 +21,13 @@ export const get: WaiverFileEndpoints['waiversGet'] = (ctx, input) =>
 			query: { waiverID },
 		}),
 		{
+			// The waiver arrives under a top-level `Waiver`, converted from XML.
+			shape: (raw) => xmlSingleWaiver(raw, '/api/v1/GetWaiver'),
 			log: (_, result) => ({
 				id: result.WaiverID ?? undefined,
 				// The signer's name is the one identifying field worth logging; the
 				// email, phone and date of birth are not.
-				signed: result.HasSignature ?? false,
+				signed: result.HasSignature === 'true',
 				participants: result.Particpants?.length ?? 0,
 			}),
 		},
@@ -45,6 +48,7 @@ export const getLite: WaiverFileEndpoints['waiversGetLite'] = (ctx, input) =>
 			query: { waiverID },
 		}),
 		{
+			shape: (raw) => xmlSingleWaiver(raw, '/api/v1/GetWaiverLite'),
 			log: (_, result) => ({ id: result.WaiverID ?? undefined }),
 		},
 	);
@@ -64,6 +68,7 @@ export const search: WaiverFileEndpoints['waiversSearch'] = (ctx, input) =>
 			query: { terms },
 		}),
 		{
+			shape: (raw) => xmlWaivers(raw, '/api/v1/SearchWaivers'),
 			// The search term is a person's name, so only the count is logged.
 			log: (_, result) => ({ count: result.Waivers?.length ?? 0 }),
 		},
@@ -86,7 +91,10 @@ export const byReference: WaiverFileEndpoints['waiversByReference'] = (
 			path: '/api/v1/GetWaiversByReferenceID',
 			query: { refID1, refID2, refID3, refIDAny },
 		}),
-		{ log: (_, result) => ({ count: result.Waivers?.length ?? 0 }) },
+		{
+			shape: (raw) => xmlWaivers(raw, '/api/v1/GetWaiversByReferenceID'),
+			log: (_, result) => ({ count: result.Waivers?.length ?? 0 }),
+		},
 	);
 
 /**
@@ -108,6 +116,7 @@ export const list: WaiverFileEndpoints['waiversList'] = (ctx, input) =>
 			query: { startDate, endDate, pageIndex, pageSize },
 		}),
 		{
+			shape: (raw) => xmlWaivers(raw, '/api/v1/GetAllWaiversByDateRange'),
 			log: (parsed, result) => ({
 				count: result.Waivers?.length ?? 0,
 				page: parsed.pageIndex,
@@ -131,6 +140,7 @@ export const listLite: WaiverFileEndpoints['waiversListLite'] = (ctx, input) =>
 			query: { startDate, endDate, pageIndex, pageSize },
 		}),
 		{
+			shape: (raw) => xmlWaivers(raw, '/api/v1/GetAllWaiversByDateRangeLite'),
 			log: (parsed, result) => ({
 				count: result.Waivers?.length ?? 0,
 				page: parsed.pageIndex,
@@ -138,7 +148,10 @@ export const listLite: WaiverFileEndpoints['waiversListLite'] = (ctx, input) =>
 		},
 	);
 
-/** How many waivers the range holds, which is what plans the paging. */
+/**
+ * How many waivers the range holds, which is what plans the paging. Despite the
+ * route name, WaiverFile answers the number of waivers, not of pages.
+ */
 export const pageCount: WaiverFileEndpoints['waiversPageCount'] = (
 	ctx,
 	input,
@@ -157,10 +170,9 @@ export const pageCount: WaiverFileEndpoints['waiversPageCount'] = (
 			query: { startDate, endDate },
 		}),
 		{
-			log: (_, result) => ({
-				count: result.Count ?? result.TotalCount ?? undefined,
-				pages: result.PageCount ?? undefined,
-			}),
+			shape: (raw) =>
+				countFrom(raw, '/api/v1/GetAllWaiversByDateRangePageCount'),
+			log: (_, result) => ({ count: result.Count ?? undefined }),
 		},
 	);
 
@@ -198,7 +210,7 @@ export const data: WaiverFileEndpoints['waiversData'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				rows: (result.Data ?? result.Rows)?.length ?? 0,
+				rows: result.Table?.length ?? 0,
 				page: parsed.pageIndex,
 				customColumns: parsed.includeCustomColumns,
 			}),
@@ -223,9 +235,8 @@ export const dataCount: WaiverFileEndpoints['waiversDataCount'] = (
 			query: { startDate, endDate },
 		}),
 		{
-			log: (_, result) => ({
-				count: result.Count ?? result.TotalCount ?? undefined,
-			}),
+			shape: (raw) => countFrom(raw, '/api/v1/GetWaiverDataCount'),
+			log: (_, result) => ({ count: result.Count ?? undefined }),
 		},
 	);
 

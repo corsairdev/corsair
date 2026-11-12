@@ -82,7 +82,6 @@ export type WaiverFileEndpoints = {
 	eventsByCategory: WaiverFileEndpoint<'eventsByCategory'>;
 	eventsUpcoming: WaiverFileEndpoint<'eventsUpcoming'>;
 	eventsWaivers: WaiverFileEndpoint<'eventsWaivers'>;
-	eventsGet: WaiverFileEndpoint<'eventsGet'>;
 	eventsCreate: WaiverFileEndpoint<'eventsCreate'>;
 	eventsUpdate: WaiverFileEndpoint<'eventsUpdate'>;
 	eventsDelete: WaiverFileEndpoint<'eventsDelete'>;
@@ -126,7 +125,6 @@ const waiverFileEndpointsNested = {
 		byCategory: Events.byCategory,
 		upcoming: Events.upcoming,
 		waivers: Events.waivers,
-		get: Events.get,
 		create: Events.create,
 		update: Events.update,
 		delete: Events.remove,
@@ -221,10 +219,6 @@ export const waiverFileEndpointSchemas = {
 	'events.waivers': {
 		input: WaiverFileEndpointInputSchemas.eventsWaivers,
 		output: WaiverFileEndpointOutputSchemas.eventsWaivers,
-	},
-	'events.get': {
-		input: WaiverFileEndpointInputSchemas.eventsGet,
-		output: WaiverFileEndpointOutputSchemas.eventsGet,
 	},
 	'events.create': {
 		input: WaiverFileEndpointInputSchemas.eventsCreate,
@@ -341,7 +335,7 @@ const waiverFileEndpointMeta = {
 	'waivers.pdf': {
 		riskLevel: 'read',
 		description:
-			'Download a signed waiver as a PDF; the plugin reports the byte length rather than parsing the file',
+			'Download a signed waiver as a PDF, returned base64-encoded in `content` with its byte length',
 	},
 	'forms.active': {
 		riskLevel: 'read',
@@ -368,10 +362,6 @@ const waiverFileEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List the waivers signed for one event',
 	},
-	'events.get': {
-		riskLevel: 'read',
-		description: 'Read one event with its forms, waivers and manager list',
-	},
 	'events.create': {
 		riskLevel: 'write',
 		description:
@@ -380,12 +370,12 @@ const waiverFileEndpointMeta = {
 	'events.update': {
 		riskLevel: 'write',
 		description:
-			'Change an event name, dates, category and attached forms, replacing the form list',
+			'Change an event name, dates, category and attached forms; omitting the form list attaches every active form',
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Delete an event permanently; the call is a GET, so it must not be replayed on a failure',
+			'Delete an event (marked deleted; signed waivers stay); the call is a GET, so it is not replayed on a failure',
 	},
 	'events.inviteManagers': {
 		riskLevel: 'write',
@@ -509,7 +499,6 @@ export type {
 	EventsByDateRangeInput,
 	EventsCreateInput,
 	EventsDeleteInput,
-	EventsGetInput,
 	EventsManagersInput,
 	EventsResponse,
 	EventsUpcomingInput,

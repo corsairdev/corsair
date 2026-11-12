@@ -28,7 +28,6 @@ const operations = [
 	'events.byDateRange',
 	'events.create',
 	'events.delete',
-	'events.get',
 	'events.inviteManagers',
 	'events.removeManagers',
 	'events.upcoming',
