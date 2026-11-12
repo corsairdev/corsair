@@ -220,6 +220,7 @@ export const BaseProviders = [
 	'dropboxsign',
 	'dropcontact',
 	'dynapictures',
+	'e2b',
 	'elevenlabs',
 	'emailoctopus',
 	'emelia',
@@ -382,7 +383,6 @@ export const BaseProviders = [
 	'razorpay',
 	'realphonevalidation',
 	'reamaze',
-	'route4me',
 	'recallai',
 	'recruitee',
 	'redcircle',
@@ -415,6 +415,7 @@ export const BaseProviders = [
 	'rollbar',
 	'rootly',
 	'rosette',
+	'route4me',
 	'rudderstacktransform',
 	'runpod',
 	'salesflare',
@@ -487,13 +488,13 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'typesafe',
+	'u301',
 	'unione',
 	'unipile',
 	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
-	'u301',
 	'uptimerobot',
 	'userflow',
 	'userlist',
@@ -1295,6 +1296,7 @@ export type AllProviders =
 	| 'dropboxsign'
 	| 'dropcontact'
 	| 'dynapictures'
+	| 'e2b'
 	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
@@ -1457,7 +1459,6 @@ export type AllProviders =
 	| 'razorpay'
 	| 'realphonevalidation'
 	| 'reamaze'
-	| 'route4me'
 	| 'recallai'
 	| 'recruitee'
 	| 'redcircle'
@@ -1490,6 +1491,7 @@ export type AllProviders =
 	| 'rollbar'
 	| 'rootly'
 	| 'rosette'
+	| 'route4me'
 	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
@@ -1562,13 +1564,13 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'
+	| 'u301'
 	| 'unione'
 	| 'unipile'
 	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
-	| 'u301'
 	| 'uptimerobot'
 	| 'userflow'
 	| 'userlist'
