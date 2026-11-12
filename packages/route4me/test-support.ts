@@ -51,17 +51,23 @@ export function respondRaw(
  * assertion knows what the operation was expected to throw.
  */
 export async function captureError<T>(promise: Promise<T>): Promise<Error> {
+	let caught: unknown;
 	try {
 		await promise;
-		throw new Error('the operation resolved; this test expects a rejection');
-	} catch (caught) {
-		// A non-Error rejection is itself worth failing on: this plugin throws
-		// Route4MeAPIError or ZodError and nothing else.
-		if (caught instanceof Error) return caught;
-		throw new Error(
-			`the operation rejected with a non-Error value: ${String(caught)}`,
-		);
+	} catch (error) {
+		caught = error;
 	}
+	// The resolved case is thrown outside the try, so the catch above cannot
+	// mistake this helper's own failure for the operation's rejection.
+	if (caught === undefined) {
+		throw new Error('the operation resolved; this test expects a rejection');
+	}
+	// A non-Error rejection is itself worth failing on: this plugin throws
+	// Route4MeAPIError or ZodError and nothing else.
+	if (caught instanceof Error) return caught;
+	throw new Error(
+		`the operation rejected with a non-Error value: ${String(caught)}`,
+	);
 }
 
 /**

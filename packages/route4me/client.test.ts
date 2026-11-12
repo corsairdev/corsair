@@ -1,3 +1,4 @@
+import { ZodError } from 'zod';
 import {
 	describeRoute4MeError,
 	makeRoute4MeRequest,
@@ -6,6 +7,7 @@ import {
 	ROUTE4ME_V5_BASE,
 	Route4MeAPIError,
 } from './client';
+import * as Dispatch from './endpoints/dispatch';
 import {
 	ORDER_ID,
 	ROUTE_ID,
@@ -16,6 +18,7 @@ import {
 } from './test-fixtures';
 import {
 	captureError,
+	invoke,
 	lastRequest,
 	respond,
 	respondRaw,
@@ -249,15 +252,18 @@ describe('key hygiene', () => {
 		// A 200 login page is not an ApiError, so it reaches the shape and then
 		// fails the output parse rather than looking like data.
 		const error = await captureError(
-			makeRoute4MeRequest('key', {
-				host: 'v5',
-				method: 'GET',
-				path: '/api/v5.0/vehicles',
-				replayable: true,
-			}),
+			invoke(Dispatch.vehiclesList, {}) as Promise<unknown>,
 		);
 
+		expect(error).toBeInstanceOf(ZodError);
+		expect(error).not.toBeInstanceOf(Route4MeAPIError);
 		expect(error.message).not.toContain('Redirecting');
+	});
+
+	it('fails the helper when an expected rejection resolves instead', async () => {
+		await expect(captureError(Promise.resolve('data'))).rejects.toThrow(
+			'the operation resolved',
+		);
 	});
 
 	it('describes a bodyless error from the fallback message', () => {
