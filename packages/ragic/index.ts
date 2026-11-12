@@ -131,7 +131,7 @@ const ragicEndpointMeta = {
 	'records.get': {
 		riskLevel: 'read',
 		description:
-			'Read one record by id, optionally with its subtable, comments, history or unmasked fields',
+			'Read one record by id, optionally with its subtable, comments, history or unmasked fields. An unknown or deleted id answers an empty object',
 	},
 	'records.create': {
 		riskLevel: 'write',
@@ -145,7 +145,8 @@ const ragicEndpointMeta = {
 	},
 	'records.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete one record by id',
+		description:
+			"Delete one record by id. Ragic moves it to the sheet's recycle bin, where it can be restored from the Ragic UI",
 	},
 	'records.comment': {
 		riskLevel: 'write',

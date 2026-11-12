@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Records from './endpoints';
-import type { RagicRecordSet, RecordsCommentResponse } from './endpoints/types';
+import type {
+	RagicRecordSet,
+	RecordsCommentResponse,
+	RecordsDeleteResponse,
+	WriteResponse,
+} from './endpoints/types';
 import {
 	BAD_PARAMS,
 	COMMENT_ADDED,
@@ -310,7 +315,7 @@ describe('records.get', () => {
 
 describe('records.create', () => {
 	it('posts the field values keyed by field id', async () => {
-		respond(fetchMock, { recordId: 12347, _ragicId: 12347 });
+		respond(fetchMock, CREATED);
 
 		const result = (await invoke(Records.create, {
 			...SHEET,
@@ -319,7 +324,7 @@ describe('records.create', () => {
 				'2000125': '1-267-922-5599',
 				'2000127': 'Jeff Kuo',
 			},
-		})) as { recordId?: number };
+		})) as WriteResponse;
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
@@ -328,7 +333,9 @@ describe('records.create', () => {
 			'2000123': 'Dunder Mifflin',
 			'2000127': 'Jeff Kuo',
 		});
-		expect(result.recordId).toBe(12347);
+		// The live answer: the id is ragicId, and the saved record is under data.
+		expect(result.ragicId).toBe(12347);
+		expect(result.data?.['1000001']).toBe('Dunder Mifflin');
 	});
 
 	it('keeps a multi-select as an array', async () => {
@@ -486,11 +493,16 @@ describe('records.delete', () => {
 	it('deletes a record by id', async () => {
 		respond(fetchMock, DELETED);
 
-		await invoke(Records.remove, { ...SHEET, recordId: 3 });
+		const result = (await invoke(Records.remove, {
+			...SHEET,
+			recordId: 3,
+		})) as RecordsDeleteResponse;
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('DELETE');
 		expect(request.path).toBe('/demo/sales/1/3');
+		expect(result.ragicId).toBe(3);
+		expect(result.msg).toContain('recycle bin');
 	});
 });
 

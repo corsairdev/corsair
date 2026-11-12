@@ -94,7 +94,7 @@ export const create: RagicEndpoints['recordsCreate'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				sheet: parsed.sheetIndex,
-				recordId: result.recordId ?? result._ragicId ?? undefined,
+				recordId: result.ragicId ?? undefined,
 			}),
 		},
 	);
@@ -154,7 +154,8 @@ export const remove: RagicEndpoints['recordsDelete'] = (ctx, input) =>
 				parsed.sheetIndex,
 				parsed.recordId,
 			),
-			// A second delete finds nothing; the record is already gone either way.
+			// Ragic moves the record to the sheet's recycle bin. A second delete finds
+			// nothing; the record is already gone either way.
 			replayable: false,
 		}),
 		{

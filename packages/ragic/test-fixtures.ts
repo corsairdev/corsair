@@ -70,19 +70,32 @@ export const RECORD = {
 	},
 };
 
-// The docs do not publish a create response; Ragic echoes the record it wrote.
+// Live (trimmed): a create or an update answers the saved record under `data`.
 export const CREATED = {
-	recordId: 12347,
-	_ragicId: 12347,
-	'1000001': 'Dunder Mifflin',
+	status: 'SUCCESS',
+	msg: '&nbsp;',
+	ragicId: 12347,
+	rv: '\u3000',
+	data: {
+		'1000001': 'Dunder Mifflin',
+		_ragicId: 12347,
+		_star: false,
+	},
 };
 
 export const UPDATED = {
-	_ragicId: 3,
-	'1000001': 'Dwight Schrute',
+	status: 'SUCCESS',
+	msg: '&nbsp;',
+	ragicId: 3,
+	rv: '\u3000',
+	data: { '1000001': 'Dwight Schrute', _ragicId: 3, _star: false },
 };
 
-export const DELETED = { status: 'SUCCESS', code: 200 };
+// Live: a delete moves the record to the sheet's recycle bin.
+export const DELETED = {
+	msg: 'The record has been moved to recycle bin.',
+	ragicId: 3,
+};
 
 // Live: a create that left a required field empty, at HTTP 200.
 export const INVALID_FIELD = {

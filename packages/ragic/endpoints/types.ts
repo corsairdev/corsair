@@ -314,19 +314,23 @@ const RecordsCreateInputSchema = SheetSchema.extend({
 export type RecordsCreateInput = z.infer<typeof RecordsCreateInputSchema>;
 
 /**
- * The docs do not publish a create response. Ragic answers a write with the
- * affected record in the same field map it accepts, so `recordId` and `_ragicId`
- * are read when present and everything else is kept loose.
+ * The docs do not publish a write response. Live, a create and an update both
+ * answer `{"status":"SUCCESS","msg":"&nbsp;","ragicId":2,"rv":"…","data":{…}}`,
+ * where `data` is the saved record keyed by field ID.
  */
 const WriteResponseSchema = z
 	.object({
-		recordId: z.number().nullish().describe('The new record id.'),
-		_ragicId: z.number().nullish(),
-		status: z.string().nullish(),
+		status: z.string().nullish().describe('SUCCESS when the record was saved.'),
 		msg: z.string().nullish(),
+		ragicId: z.number().nullish().describe('The record id (_ragicId).'),
+		// unknown: an internal revision marker Ragic returns without documenting it.
+		rv: z.unknown().optional(),
+		data: RecordSchema.nullish().describe(
+			'The saved record, keyed by field ID, with its reserved keys.',
+		),
 	})
 	.loose()
-	.describe('The affected record, as Ragic echoes it back.');
+	.describe('The saved record, as Ragic returns it.');
 
 export type WriteResponse = z.infer<typeof WriteResponseSchema>;
 
@@ -350,10 +354,12 @@ const RecordsDeleteInputSchema = SheetSchema.extend({
 
 export type RecordsDeleteInput = z.infer<typeof RecordsDeleteInputSchema>;
 
+/** Live: `{"msg":"The record has been moved to recycle bin.","ragicId":2}`. */
 const RecordsDeleteResponseSchema = z
 	.object({
-		status: z.string().nullish().describe('SUCCESS on a deleted record.'),
-		msg: z.string().nullish(),
+		msg: z.string().nullish().describe('Says the record went to the recycle bin.'),
+		ragicId: z.number().nullish().describe('The deleted record id.'),
+		status: z.string().nullish(),
 	})
 	.loose();
 
