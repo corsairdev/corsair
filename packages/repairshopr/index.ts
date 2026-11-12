@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { isValidSubdomain } from './client';
 import { Catalog, Customers, Tickets } from './endpoints';
 import type {
 	RepairshoprEndpointInputs,
@@ -341,7 +342,24 @@ export function repairshopr<const T extends RepairshoprPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				if (res) {
+					// The subdomain is half of the credential. Core adds a connect link
+					// only to an AuthMissingError raised here, so a stored key without a
+					// usable subdomain is reported here, not later in the endpoint.
+					const subdomain = (
+						options.subdomain ??
+						(await ctx.keys.get_subdomain()) ??
+						''
+					).trim();
+					if (!isValidSubdomain(subdomain)) {
+						throw new AuthMissingError(
+							'repairshopr',
+							ctx.authType,
+							'[auth-missing:repairshopr:subdomain]: RepairShopr needs the account subdomain (the part before .repairshopr.com)',
+						);
+					}
+					return res;
+				}
 			}
 
 			throw new AuthMissingError('repairshopr', ctx.authType ?? 'api_key');

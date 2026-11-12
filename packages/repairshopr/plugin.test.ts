@@ -6,12 +6,15 @@ import { repairshopr } from './index';
 function keyContext(
 	apiKey: string | undefined,
 	authType: 'api_key' = 'api_key',
+	// null: no stored subdomain (undefined would select the default).
+	subdomain: string | null = 'acme',
 ): RepairshoprKeyBuilderContext {
 	return {
 		authType,
 		options: {},
 		keys: {
 			get_api_key: async () => apiKey,
+			get_subdomain: async () => subdomain ?? undefined,
 		},
 		// unknown: the fixture implements the one method the builder calls, not
 		// the full AccountKeyManager, so the cast sits here rather than at every
@@ -182,6 +185,41 @@ describe('keyBuilder', () => {
 
 		const key = await keyBuilderOf(plugin)(
 			keyContext('stored-key'),
+			'endpoint',
+		);
+
+		expect(key).toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when the stored account has a key but no subdomain', async () => {
+		const plugin = repairshopr();
+
+		// Only an AuthMissingError from the keyBuilder gets a connect link from core.
+		const error = await keyBuilderOf(plugin)(
+			keyContext('stored-key', 'api_key', null),
+			'endpoint',
+		).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(AuthMissingError);
+		expect((error as Error).message).toContain('subdomain');
+	});
+
+	it('throws AuthMissingError for a malformed stored subdomain', async () => {
+		const plugin = repairshopr();
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyContext('stored-key', 'api_key', 'acme.repairshopr.com'),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('takes the subdomain from the plugin options before the account', async () => {
+		const plugin = repairshopr({ subdomain: 'acme' });
+
+		const key = await keyBuilderOf(plugin)(
+			keyContext('stored-key', 'api_key', null),
 			'endpoint',
 		);
 
