@@ -942,6 +942,12 @@ const OptimizationAddressInputSchema = z
 		pieces: z.number().int().optional(),
 		revenue: z.number().optional(),
 		required_skills: z.array(z.string()).optional(),
+		is_depot: z
+			.boolean()
+			.optional()
+			.describe(
+				'Marks this stop as a depot. MDVRP needs one per depot; otherwise the first stop is the depot.',
+			),
 	})
 	.superRefine((value, ctx) => {
 		const hasCoordinates = value.lat !== undefined && value.lng !== undefined;

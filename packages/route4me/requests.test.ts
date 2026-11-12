@@ -644,6 +644,28 @@ describe('optimizations.create', () => {
 		).toEqual({ algorithm_type: code });
 	});
 
+	it('keeps the depot markers for a multi-depot run', async () => {
+		respond(fetchMock, CREATED_OPTIMIZATION);
+
+		await invoke(Optimizations.create, {
+			addresses: [
+				{ lat: 1, lng: 1, is_depot: true },
+				{ lat: 2, lng: 2, is_depot: true },
+				{ lat: 3, lng: 3 },
+			],
+			algorithm_type: 'MDVRP',
+		});
+
+		const sent = lastRequest(fetchMock).json() as {
+			addresses: { is_depot?: boolean }[];
+		};
+		expect(sent.addresses.map((stop) => stop.is_depot)).toEqual([
+			true,
+			true,
+			undefined,
+		]);
+	});
+
 	it('rejects an algorithm the API does not define', async () => {
 		await expect(
 			invoke(Optimizations.create, {
