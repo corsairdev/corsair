@@ -1,4 +1,482 @@
 {
+  "batchAnalysis.analyze": {
+    "input": {
+      "targets": [
+        {
+          "url": "ahrefs.com",
+          "mode": "domain",
+          "protocol": "both"
+        },
+        {
+          "url": "wordcount.com",
+          "mode": "domain",
+          "protocol": "both"
+        }
+      ],
+      "select": ["url", "domain_rating", "org_traffic"]
+    },
+    "response": {
+      "targets": [
+        {
+          "url": "ahrefs.com/",
+          "domain_rating": 91,
+          "org_traffic": 4013644
+        },
+        {
+          "url": "wordcount.com/",
+          "domain_rating": 42,
+          "org_traffic": 372224
+        }
+      ]
+    }
+  },
+  "brandRadar.aiResponses": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "select": "question,response,volume",
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "ai_responses": []
+    }
+  },
+  "brandRadar.aiResponsesEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "select": ["question", "response"],
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "ai_responses": []
+    }
+  },
+  "brandRadar.citationsHistoryEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"],
+          "url_groups": [
+            {
+              "target": "example.com",
+              "scope": "domain"
+            }
+          ]
+        }
+      ],
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.citationsOverviewEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"],
+          "url_groups": [
+            {
+              "target": "example.com",
+              "scope": "domain"
+            }
+          ]
+        }
+      ],
+      "select": ["brand", "total"],
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "total": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.citedDomains": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "select": "domain,responses",
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "domains": []
+    }
+  },
+  "brandRadar.citedDomainsEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "select": ["domain", "responses"],
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "domains": []
+    }
+  },
+  "brandRadar.citedPages": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "select": "url,responses",
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "pages": []
+    }
+  },
+  "brandRadar.citedPagesEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "select": ["url", "responses"],
+      "limit": 3,
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "pages": []
+    }
+  },
+  "brandRadar.impressionsHistory": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.impressionsHistoryEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.impressionsOverview": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "select": "brand,total",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "total": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.impressionsOverviewEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "select": ["brand", "total"],
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "total": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.mentionsHistory": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.mentionsHistoryEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.mentionsOverview": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "select": "brand,total",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "total": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.mentionsOverviewEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "select": ["brand", "total"],
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "total": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.sovHistory": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.sovHistoryEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "date_from": "2026-10-01",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": []
+    }
+  },
+  "brandRadar.sovOverview": {
+    "input": {
+      "data_source": "chatgpt",
+      "prompts": "custom",
+      "brand": "corsairplugintestbrand",
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "entity_type": "target",
+          "share_of_voice": 0
+        }
+      ]
+    }
+  },
+  "brandRadar.sovOverviewEntities": {
+    "input": {
+      "data_source": ["chatgpt"],
+      "prompts": "custom",
+      "brands": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "metrics": [
+        {
+          "brand": "corsairplugintestbrand",
+          "entity_type": "target",
+          "share_of_voice": 0
+        }
+      ]
+    }
+  },
+  "contentHelper.topics": {
+    "input": {
+      "keyword": "ahrefs",
+      "country": "us",
+      "top_competitors": 3
+    },
+    "response": {
+      "topics": [
+        {
+          "topic": "AI Brand Monitoring",
+          "description": "This topic addresses tracking brand visibility in AI search responses and across custom prompts.",
+          "avg_score": 33.333333333333336,
+          "pages_covering": 1,
+          "pages": [
+            {
+              "url": "ahrefs.com/",
+              "position": 1,
+              "score": 100,
+              "extracts": [
+                "Track brand mentions, citations, and sentiment across AI chatbots.",
+                "\nTrack brand visibility across AI search and custom prompts.",
+                "Track your brand's share of voice in AI search"
+              ]
+            },
+            {
+              "url": "www.youtube.com/c/AhrefsCom",
+              "position": 4,
+              "score": 0,
+              "extracts": []
+            },
+            {
+              "url": "x.com/ahrefs?lang=en",
+              "position": 5,
+              "score": 0,
+              "extracts": []
+            }
+          ],
+          "serp_date": "2026-11-11T01:18:06Z",
+          "target": null
+        },
+        {
+          "topic": "AI Marketing Automation",
+          "description": "This topic explores AI-assisted workflows for automating marketing tasks, answering research questions, and allowing marketers to focus on strategy.",
+          "avg_score": 24.666666666666668,
+          "pages_covering": 1,
+          "pages": [
+            {
+              "url": "ahrefs.com/",
+              "position": 1,
+              "score": 74,
+              "extracts": [
+                "\nYour marketing platform—built for search and AI\nDominate AI search.",
+                "\nAI Content Helper →AI Content Grader →Keywords Explorer →Content Explorer →\nDashboard →Portfolios →Report Builder →\nAI that creates results, not noise\nWe put AI behind your most critical marketing tasks.",
+                "Let AI do the work."
+              ]
+            },
+            {
+              "url": "www.youtube.com/c/AhrefsCom",
+              "position": 4,
+              "score": 0,
+              "extracts": [
+                "You’ll know how to do the four main aspects of SEO: keyword research, on-page SEO, link building, and technical SEO.",
+                "Timestamps: 0:00 Intro 1:25 What is SEO and why it is important 7:54 What are keywords 15:39 How to analyze search intent 19:51 How to find keyword for your site 31:01 What is ranking difficulty 40:28 What is on-page SEO 46:26 How to optimize a page for a target keyword 59:39 What is link building and why it is important 1:04:38 How to get backlinks for your site 1:08:26 What makes a backlink “good” 1:16:23 What are link building tactics for beginners 1:30:50 How to do blogger outreach for backlinks 1:43:28 What is technical SEO and why it’s important 1:51:00 What are technical SEO best practices #seocourse #seo #seotutorial #searchengineoptimization Be sure to subscribe for more actionable marketing and SEO tutorials."
+              ]
+            },
+            {
+              "url": "x.com/ahrefs?lang=en",
+              "position": 5,
+              "score": 0,
+              "extracts": []
+            }
+          ],
+          "serp_date": "2026-11-11T01:18:06Z",
+          "target": null
+        },
+        {
+          "topic": "Content Creation and Localization",
+          "description": "This topic discusses creating content for search and AI discovery, localizing it for global markets, and detecting AI-written text to support editorial integrity.",
+          "avg_score": 25.666666666666668,
+          "pages_covering": 1,
+          "pages": [
+            {
+              "url": "ahrefs.com/",
+              "position": 1,
+              "score": 77,
+              "extracts": [
+                "\nWrite content that gets seen in search and AI.",
+                "\nOptimize for global markets with AI-localization.",
+                "\n173+\nDetect AI-written content and maintain editorial integrity."
+              ]
+            },
+            {
+              "url": "www.youtube.com/c/AhrefsCom",
+              "position": 4,
+              "score": 0,
+              "extracts": [
+                "You’ll know how to do the four main aspects of SEO: keyword research, on-page SEO, link building, and technical SEO.",
+                "Timestamps: 0:00 Intro 1:25 What is SEO and why it is important 7:54 What are keywords 15:39 How to analyze search intent 19:51 How to find keyword for your site 31:01 What is ranking difficulty 40:28 What is on-page SEO 46:26 How to optimize a page for a target keyword 59:39 What is link building and why it is important 1:04:38 How to get backlinks for your site 1:08:26 What makes a backlink “good” 1:16:23 What are link building tactics for beginners 1:30:50 How to do blogger outreach for backlinks 1:43:28 What is technical SEO and why it’s important 1:51:00 What are technical SEO best practices #seocourse #seo #seotutorial #searchengineoptimization Be sure to subscribe for more actionable marketing and SEO tutorials."
+              ]
+            },
+            {
+              "url": "x.com/ahrefs?lang=en",
+              "position": 5,
+              "score": 0,
+              "extracts": []
+            }
+          ],
+          "serp_date": "2026-11-11T01:18:06Z",
+          "target": null
+        }
+      ]
+    }
+  },
   "gsc.anonymousQueries": {
     "input": {
       "project_id": 1234567,
@@ -513,6 +991,366 @@
       ]
     }
   },
+  "management.addBrandRadarPrompts": {
+    "input": {
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+      "prompts": ["which tools help test integration plugins"],
+      "countries": ["us"]
+    },
+    "response": {
+      "prompts": [
+        {
+          "prompt": "which tools help test integration plugins",
+          "country": "us",
+          "created_at": "2026-11-12T13:41:13Z",
+          "tags": ["corsair-temp"]
+        }
+      ]
+    }
+  },
+  "management.addKeywordListKeywords": {
+    "input": {
+      "keyword_list_id": 1548832,
+      "keywords": ["ahrefs api"]
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "ahrefs api"
+        },
+        {
+          "keyword": "ahrefs"
+        }
+      ]
+    }
+  },
+  "management.addProjectCompetitors": {
+    "input": {
+      "project_id": 10696389,
+      "competitors": [
+        {
+          "url": "wordcount.com",
+          "mode": "domain"
+        }
+      ]
+    },
+    "response": {
+      "competitors": [
+        {
+          "url": "wordcount.com/",
+          "mode": "domain"
+        }
+      ]
+    }
+  },
+  "management.addProjectKeywordTags": {
+    "input": {
+      "project_id": 10696389,
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "country": "us",
+          "language": "en"
+        }
+      ],
+      "tags": ["corsair-temp"],
+      "update_mode": "add"
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": ["corsair-temp"]
+        }
+      ]
+    }
+  },
+  "management.addProjectKeywords": {
+    "input": {
+      "project_id": 10696389,
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword"
+        }
+      ],
+      "locations": [
+        {
+          "country": "us",
+          "language": "en"
+        }
+      ]
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": []
+        }
+      ]
+    }
+  },
+  "management.brandRadarPrompts": {
+    "input": {
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661"
+    },
+    "response": {
+      "prompts": [
+        {
+          "prompt": "which tools help test integration plugins",
+          "country": "us",
+          "created_at": "2026-11-12T13:41:13Z",
+          "tags": ["corsair-temp"]
+        }
+      ]
+    }
+  },
+  "management.brandRadarReports": {
+    "input": {},
+    "response": {
+      "reports": [
+        {
+          "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+          "report_name": "corsair-plugin-test (temporary)",
+          "created_at": "2026-11-12T13:40:00Z",
+          "updated_at": "2026-11-12T13:40:59Z",
+          "project_id": null,
+          "prompts_frequency": [
+            {
+              "data_source": "chatgpt",
+              "frequency": "off"
+            },
+            {
+              "data_source": "copilot",
+              "frequency": "off"
+            },
+            {
+              "data_source": "gemini",
+              "frequency": "off"
+            }
+          ],
+          "settings": {
+            "brands": [
+              {
+                "names": ["corsairplugintestbrand"],
+                "url_groups": []
+              }
+            ],
+            "competitors": [],
+            "country": [],
+            "content_filter": null,
+            "where": null
+          }
+        }
+      ]
+    }
+  },
+  "management.createBrandRadarReport": {
+    "input": {
+      "name": "corsair-plugin-test (temporary)",
+      "brand": [
+        {
+          "names": ["corsairplugintestbrand"]
+        }
+      ],
+      "country": ["us"]
+    },
+    "response": {
+      "reports": [
+        {
+          "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+          "report_name": "corsair-plugin-test (temporary)",
+          "created_at": "2026-11-12T13:40:00Z",
+          "updated_at": "2026-11-12T13:40:00Z",
+          "project_id": null,
+          "prompts_frequency": [
+            {
+              "data_source": "chatgpt",
+              "frequency": "off"
+            },
+            {
+              "data_source": "copilot",
+              "frequency": "off"
+            },
+            {
+              "data_source": "gemini",
+              "frequency": "off"
+            }
+          ],
+          "settings": {
+            "brands": [
+              {
+                "names": ["corsairplugintestbrand"],
+                "url_groups": []
+              }
+            ],
+            "competitors": [],
+            "country": [],
+            "content_filter": null,
+            "where": null
+          }
+        }
+      ]
+    }
+  },
+  "management.createKeywordList": {
+    "input": {
+      "name": "corsair-plugin-test (temporary)",
+      "location": "us",
+      "keywords": ["ahrefs"]
+    },
+    "response": {
+      "keyword_list": {
+        "keyword_list_id": "1548832",
+        "name": "corsair-plugin-test (temporary)",
+        "location": "us",
+        "countries": [],
+        "access": "shared",
+        "owned_by": "owner@example.com",
+        "folder_id": null,
+        "keyword_count": 1
+      }
+    }
+  },
+  "management.createProject": {
+    "input": {
+      "project_name": "corsair-plugin-test (temporary)",
+      "url": "example.com",
+      "mode": "domain",
+      "protocol": "both",
+      "access": "private"
+    },
+    "response": {
+      "projects": [
+        {
+          "project_id": "10696389",
+          "project_name": "corsair-plugin-test (temporary)",
+          "url": "example.com/",
+          "mode": "domain",
+          "protocol": "both",
+          "access": "private",
+          "verified": false,
+          "folder": null,
+          "owned_by": "owner@example.com",
+          "keyword_count": 0,
+          "web_analytics_data_key": "redacted"
+        }
+      ]
+    }
+  },
+  "management.deleteBrandRadarPrompts": {
+    "input": {
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+      "prompts": ["which tools help test integration plugins"]
+    },
+    "response": {
+      "prompts": []
+    }
+  },
+  "management.deleteKeywordListKeywords": {
+    "input": {
+      "keyword_list_id": 1548832,
+      "keywords": ["ahrefs api"]
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "ahrefs"
+        }
+      ]
+    }
+  },
+  "management.deleteKeywordLists": {
+    "input": {
+      "keyword_list_ids": "1548832"
+    },
+    "response": {
+      "keyword_lists": []
+    }
+  },
+  "management.deleteProjectCompetitors": {
+    "input": {
+      "project_id": 10696389,
+      "competitors": [
+        {
+          "url": "wordcount.com",
+          "mode": "domain"
+        }
+      ]
+    },
+    "response": {
+      "competitors": []
+    }
+  },
+  "management.deleteProjectKeywordTags": {
+    "input": {
+      "project_id": 10696389,
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "country": "us",
+          "language": "en"
+        }
+      ],
+      "tags": ["corsair-temp"]
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": []
+        }
+      ]
+    }
+  },
+  "management.deleteProjectKeywords": {
+    "input": {
+      "project_id": 10696389,
+      "keywords": [
+        {
+          "keyword": "corsair plugin test keyword",
+          "country": "us",
+          "language": "en"
+        }
+      ]
+    },
+    "response": {
+      "keywords": []
+    }
+  },
+  "management.deleteProjects": {
+    "input": {
+      "project_ids": "10696389"
+    },
+    "response": {
+      "projects": [
+        {
+          "project_id": "1234567",
+          "project_name": "Example",
+          "url": "example.com/",
+          "mode": "subdomains",
+          "protocol": "both",
+          "access": "shared",
+          "verified": true,
+          "folder": null,
+          "owned_by": "owner@example.com",
+          "keyword_count": 50,
+          "web_analytics_data_key": "redacted"
+        }
+      ]
+    }
+  },
   "management.keywordListKeywords": {
     "input": {
       "keyword_list_id": 1548813
@@ -559,6 +1397,27 @@
           [20341, "Northern Ireland,United Kingdom"]
         ]
       }
+    }
+  },
+  "management.projectCompetitors": {
+    "input": {
+      "project_id": 1234567
+    },
+    "response": {
+      "competitors": [
+        {
+          "url": "competitor-1.example",
+          "mode": "subdomains"
+        },
+        {
+          "url": "competitor-2.example",
+          "mode": "prefix"
+        },
+        {
+          "url": "competitor-3.example",
+          "mode": "subdomains"
+        }
+      ]
     }
   },
   "management.projectKeywords": {
@@ -610,6 +1469,236 @@
           "owned_by": "owner@example.com",
           "keyword_count": 50,
           "web_analytics_data_key": "redacted"
+        }
+      ]
+    }
+  },
+  "management.updateBrandRadarPrompts": {
+    "input": {
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+      "prompts": ["which tools help test integration plugins"],
+      "tags": {
+        "operation": "add",
+        "tags": ["corsair-temp"]
+      }
+    },
+    "response": {
+      "prompts": [
+        {
+          "prompt": "which tools help test integration plugins",
+          "country": "us",
+          "created_at": "2026-11-12T13:41:13Z",
+          "tags": ["corsair-temp"]
+        }
+      ]
+    }
+  },
+  "management.updateBrandRadarReport": {
+    "input": {
+      "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+      "country": ["us", "gb"],
+      "prompts_frequency": [
+        {
+          "data_source": "chatgpt",
+          "frequency": "off"
+        },
+        {
+          "data_source": "google_ai_overviews",
+          "frequency": "off"
+        },
+        {
+          "data_source": "google_ai_mode",
+          "frequency": "off"
+        },
+        {
+          "data_source": "gemini",
+          "frequency": "off"
+        },
+        {
+          "data_source": "perplexity",
+          "frequency": "off"
+        },
+        {
+          "data_source": "copilot",
+          "frequency": "off"
+        },
+        {
+          "data_source": "claude",
+          "frequency": "off"
+        },
+        {
+          "data_source": "grok",
+          "frequency": "off"
+        }
+      ]
+    },
+    "response": {
+      "reports": [
+        {
+          "report_id": "01a1cffc-98c9-722c-9798-9594aafed661",
+          "report_name": "corsair-plugin-test (temporary)",
+          "created_at": "2026-11-12T13:40:00Z",
+          "updated_at": "2026-11-12T13:41:11Z",
+          "project_id": null,
+          "prompts_frequency": [
+            {
+              "data_source": "chatgpt",
+              "frequency": "off"
+            },
+            {
+              "data_source": "copilot",
+              "frequency": "off"
+            },
+            {
+              "data_source": "gemini",
+              "frequency": "off"
+            }
+          ],
+          "settings": {
+            "brands": [
+              {
+                "names": ["corsairplugintestbrand"],
+                "url_groups": []
+              }
+            ],
+            "competitors": [],
+            "country": [],
+            "content_filter": null,
+            "where": null
+          }
+        }
+      ]
+    }
+  },
+  "management.updateProject": {
+    "input": {
+      "project_id": 10696389,
+      "access": "shared"
+    },
+    "response": {
+      "project": {
+        "project_id": "10696389",
+        "project_name": "corsair-plugin-test (temporary)",
+        "url": "example.com/",
+        "mode": "domain",
+        "protocol": "both",
+        "access": "shared",
+        "folder": null
+      }
+    }
+  },
+  "public.crawlerIpRanges": {
+    "input": {},
+    "response": {
+      "prefixes": [
+        {
+          "ipv4Prefix": "5.39.1.224/27"
+        },
+        {
+          "ipv4Prefix": "5.39.109.160/27"
+        },
+        {
+          "ipv4Prefix": "15.235.27.0/24"
+        }
+      ]
+    }
+  },
+  "public.crawlerIps": {
+    "input": {},
+    "response": {
+      "ips": [
+        {
+          "ip_address": "5.39.1.224"
+        },
+        {
+          "ip_address": "5.39.1.225"
+        },
+        {
+          "ip_address": "5.39.1.226"
+        }
+      ]
+    }
+  },
+  "public.domainRatingFree": {
+    "input": {
+      "target": "ahrefs.com"
+    },
+    "response": {
+      "domain_rating": {
+        "domain_rating": 91,
+        "license": "http://ahrefs.com/legal/domain-rating-license"
+      }
+    }
+  },
+  "public.domainRatingFreeBatch": {
+    "input": {
+      "targets": ["ahrefs.com", "wordcount.com"]
+    },
+    "response": {
+      "domain_rating": {
+        "targets": [
+          {
+            "target": "ahrefs.com/",
+            "domain_rating": 91
+          },
+          {
+            "target": "wordcount.com/",
+            "domain_rating": 42
+          }
+        ],
+        "license": "http://ahrefs.com/legal/domain-rating-license"
+      }
+    }
+  },
+  "public.domainRatingTopDomains": {
+    "input": {
+      "from": 1,
+      "to": 3
+    },
+    "response": {
+      "domains": [
+        {
+          "domain": "facebook.com",
+          "domain_rating": 100,
+          "rank": 1
+        },
+        {
+          "domain": "instagram.com",
+          "domain_rating": 100,
+          "rank": 2
+        },
+        {
+          "domain": "google.com",
+          "domain_rating": 100,
+          "rank": 3
+        }
+      ]
+    }
+  },
+  "rankTracker.competitorsDomains": {
+    "input": {
+      "project_id": 1234567,
+      "device": "desktop",
+      "date": "2026-11-11",
+      "select": "domain,keywords,share_of_voice",
+      "limit": 3
+    },
+    "response": {
+      "competitors-domains": [
+        {
+          "domain": "figma.com",
+          "keywords": 1,
+          "share_of_voice": 8.61
+        },
+        {
+          "domain": "github.com",
+          "keywords": 45,
+          "share_of_voice": 9.07
+        },
+        {
+          "domain": "reddit.com",
+          "keywords": 41,
+          "share_of_voice": 7.15
         }
       ]
     }
@@ -704,6 +1793,64 @@
               "value": null
             }
           ]
+        }
+      ]
+    }
+  },
+  "rankTracker.competitorsPages": {
+    "input": {
+      "project_id": 1234567,
+      "device": "desktop",
+      "date": "2026-11-11",
+      "select": "url,keywords,traffic",
+      "limit": 3
+    },
+    "response": {
+      "competitors-pages": [
+        {
+          "url": "https://www.figma.com/mcp-catalog/",
+          "keywords": 1,
+          "traffic": 1446
+        },
+        {
+          "url": "https://www.atlassian.com/platform/rovo-mcp",
+          "keywords": 2,
+          "traffic": 905
+        },
+        {
+          "url": "https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server",
+          "keywords": 1,
+          "traffic": 584
+        }
+      ]
+    }
+  },
+  "rankTracker.competitorsStats": {
+    "input": {
+      "project_id": 1234567,
+      "device": "desktop",
+      "date": "2026-11-11",
+      "select": "competitor,average_position,pos_1_3,share_of_voice"
+    },
+    "response": {
+      "competitors-metrics": [
+        {
+          "competitor": "example.com/",
+          "average_position": 21.5,
+          "pos_1_3": 0,
+          "share_of_voice": 0
+        },
+        {
+          "competitor": "composio.dev/",
+          "average_position": 13.8,
+          "pos_1_3": 5,
+          "share_of_voice": 1.78
+        },
+        {
+          "competitor": "zapier.com/mcp/",
+          "average_position": 10.1,
+          "pos_1_3": 5,
+          "share_of_voice": 0.25
         }
       ]
     }
@@ -891,6 +2038,28 @@
       ]
     }
   },
+  "siteExplorer.aiResponsesCount": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "all_platforms,chatgpt,perplexity"
+    },
+    "response": {
+      "ai_responses_count": {
+        "all_platforms": {
+          "citations": 65322,
+          "pages": 3499
+        },
+        "chatgpt": {
+          "citations": 3463,
+          "pages": 1008
+        },
+        "perplexity": {
+          "citations": 3077,
+          "pages": 1056
+        }
+      }
+    }
+  },
   "siteExplorer.allBacklinks": {
     "input": {
       "target": "ahrefs.com",
@@ -974,6 +2143,32 @@
       ]
     }
   },
+  "siteExplorer.crawledPages": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "url,http_code,title",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "url": "http://ahrefs.com/",
+          "http_code": 301,
+          "title": null
+        },
+        {
+          "url": "https://ahrefs.com/",
+          "http_code": 200,
+          "title": "Ahrefs—AI Marketing Platform Powered by Big Data"
+        },
+        {
+          "url": "https://ahrefs.com/%20",
+          "http_code": 404,
+          "title": null
+        }
+      ]
+    }
+  },
   "siteExplorer.domainRatingHistory": {
     "input": {
       "target": "ahrefs.com",
@@ -1026,6 +2221,60 @@
       ]
     }
   },
+  "siteExplorer.linkedAnchorsExternal": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "anchor,linked_domains,links_from_target",
+      "order_by": "links_from_target:desc",
+      "limit": 3
+    },
+    "response": {
+      "linkedanchors": [
+        {
+          "anchor": "",
+          "linked_domains": 134,
+          "links_from_target": 113881
+        },
+        {
+          "anchor": "Letaido ↗",
+          "linked_domains": 3,
+          "links_from_target": 24084
+        },
+        {
+          "anchor": "Firehose ↗",
+          "linked_domains": 1,
+          "links_from_target": 8096
+        }
+      ]
+    }
+  },
+  "siteExplorer.linkedAnchorsInternal": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "anchor,linked_pages,links_from_target",
+      "order_by": "links_from_target:desc",
+      "limit": 3
+    },
+    "response": {
+      "linkedanchors": [
+        {
+          "anchor": "",
+          "linked_pages": 12899,
+          "links_from_target": 43702
+        },
+        {
+          "anchor": "API",
+          "linked_pages": 23,
+          "links_from_target": 16178
+        },
+        {
+          "anchor": "AhrefsBot",
+          "linked_pages": 13,
+          "links_from_target": 9156
+        }
+      ]
+    }
+  },
   "siteExplorer.linkedDomains": {
     "input": {
       "target": "ahrefs.com",
@@ -1068,6 +2317,33 @@
         "paid_cost": 723476,
         "paid_pages": 24
       }
+    }
+  },
+  "siteExplorer.metricsByCountry": {
+    "input": {
+      "target": "ahrefs.com",
+      "date": "2026-11-01",
+      "select": "country,org_traffic,org_keywords",
+      "limit": 3
+    },
+    "response": {
+      "metrics": [
+        {
+          "country": "US",
+          "org_traffic": 1897512,
+          "org_keywords": 19003
+        },
+        {
+          "country": "IN",
+          "org_traffic": 306980,
+          "org_keywords": 7573
+        },
+        {
+          "country": "PK",
+          "org_traffic": 167065,
+          "org_keywords": 1848
+        }
+      ]
     }
   },
   "siteExplorer.metricsHistory": {
@@ -1130,6 +2406,19 @@
       ]
     }
   },
+  "siteExplorer.outlinksStats": {
+    "input": {
+      "target": "ahrefs.com"
+    },
+    "response": {
+      "metrics": {
+        "outgoing_links": 386527,
+        "outgoing_links_dofollow": 103963,
+        "linked_domains": 4683,
+        "linked_domains_dofollow": 3467
+      }
+    }
+  },
   "siteExplorer.pagesByBacklinks": {
     "input": {
       "target": "wordcount.com",
@@ -1156,6 +2445,29 @@
       ]
     }
   },
+  "siteExplorer.pagesByInternalLinks": {
+    "input": {
+      "target": "wordcount.com",
+      "select": "url_to,links_to_target",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "url_to": "https://wordcount.com/",
+          "links_to_target": 54914
+        },
+        {
+          "url_to": "https://wordcount.com/translator/en/ta",
+          "links_to_target": 54894
+        },
+        {
+          "url_to": "https://wordcount.com/translator/no/en",
+          "links_to_target": 54625
+        }
+      ]
+    }
+  },
   "siteExplorer.pagesByTraffic": {
     "input": {
       "target": "ahrefs.com"
@@ -1174,6 +2486,56 @@
         "range10k_plus_traffic": 3492391,
         "range10k_plus_pages": 25
       }
+    }
+  },
+  "siteExplorer.pagesHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "pages": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "pages": 6701
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "pages": 8006
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "pages": 8261
+        }
+      ]
+    }
+  },
+  "siteExplorer.paidPages": {
+    "input": {
+      "target": "ahrefs.com",
+      "date": "2026-11-01",
+      "select": "raw_url,sum_traffic,top_keyword",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "raw_url": "https://ahrefs.com/brand-radar",
+          "sum_traffic": 1593,
+          "top_keyword": "se ranking"
+        },
+        {
+          "raw_url": "https://ahrefs.com/de",
+          "sum_traffic": 1138,
+          "top_keyword": "sistrix"
+        },
+        {
+          "raw_url": "https://ahrefs.com/traffic-analytics",
+          "sum_traffic": 558,
+          "top_keyword": "website traffic checker"
+        }
+      ]
     }
   },
   "siteExplorer.refdomainsHistory": {
@@ -1199,6 +2561,73 @@
       ]
     }
   },
+  "siteExplorer.totalSearchVolumeHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "total_search_volume": 23190054
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "total_search_volume": 26645416
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "total_search_volume": 25559922
+        }
+      ]
+    }
+  },
+  "siteExplorer.urlRatingHistory": {
+    "input": {
+      "target": "https://ahrefs.com/",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "url_ratings": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "url_rating": 41
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "url_rating": 42
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "url_rating": 42
+        }
+      ]
+    }
+  },
+  "socialMedia.authors": {
+    "input": {},
+    "response": {
+      "authors": []
+    }
+  },
+  "socialMedia.channels": {
+    "input": {},
+    "response": {
+      "channels": []
+    }
+  },
+  "socialMedia.posts": {
+    "input": {
+      "status": "published",
+      "limit": 3
+    },
+    "response": {
+      "posts": []
+    }
+  },
   "subscriptionInfo.limitsAndUsage": {
     "input": {},
     "response": {
@@ -1211,6 +2640,1021 @@
         "units_usage_api_key": 200,
         "api_key_expiration_date": "2036-11-12T23:59:58Z"
       }
+    }
+  },
+  "webAnalytics.browserVersions": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "browser_version": "Chrome 156",
+          "visitors": "55",
+          "session_bounce_rate": 69.84126984126983,
+          "avg_session_duration_sec": 332
+        },
+        {
+          "browser_version": "Chrome 150",
+          "visitors": "45",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        },
+        {
+          "browser_version": "Chrome 157",
+          "visitors": "38",
+          "session_bounce_rate": 76.31578947368422,
+          "avg_session_duration_sec": 109
+        }
+      ]
+    }
+  },
+  "webAnalytics.browserVersionsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_version": "Chrome 151",
+          "visitors": "20",
+          "session_bounce_rate": 90,
+          "avg_session_duration_sec": 60
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_version": "Chrome 156",
+          "visitors": "36",
+          "session_bounce_rate": 62.7906976744186,
+          "avg_session_duration_sec": 388
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_version": "Chrome 157",
+          "visitors": "20",
+          "session_bounce_rate": 80,
+          "avg_session_duration_sec": 115
+        }
+      ]
+    }
+  },
+  "webAnalytics.browsers": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "browser": "Chrome",
+          "visitors": "467",
+          "session_bounce_rate": 90.77568134171908,
+          "avg_session_duration_sec": 240
+        },
+        {
+          "browser": "Safari",
+          "visitors": "27",
+          "session_bounce_rate": 88.88888888888889,
+          "avg_session_duration_sec": 525
+        },
+        {
+          "browser": "Edge",
+          "visitors": "20",
+          "session_bounce_rate": 92.3076923076923,
+          "avg_session_duration_sec": 46
+        }
+      ]
+    }
+  },
+  "webAnalytics.browsersChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser": "Chrome",
+          "visitors": "265",
+          "session_bounce_rate": 88.64468864468864,
+          "avg_session_duration_sec": 319
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser": "Edge",
+          "visitors": "16",
+          "session_bounce_rate": 90.47619047619048,
+          "avg_session_duration_sec": 46
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser": "Firefox",
+          "visitors": "10",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.chart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "pageviews": "437",
+          "visitors": "314",
+          "visits": "327",
+          "session_bounce_rate": 88.68501529051987,
+          "avg_session_length": 1.3363914373088686,
+          "avg_session_duration_sec": 338
+        },
+        {
+          "timestamp": "2026-11-09T00:00:00Z",
+          "pageviews": "252",
+          "visitors": "222",
+          "visits": "225",
+          "session_bounce_rate": 93.77777777777779,
+          "avg_session_length": 1.12,
+          "avg_session_duration_sec": 64
+        }
+      ]
+    }
+  },
+  "webAnalytics.cities": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "city": "Example City 1",
+          "visitors": "161"
+        },
+        {
+          "city": "Example City 2",
+          "visitors": "15"
+        },
+        {
+          "city": "Example City 3",
+          "visitors": "13"
+        }
+      ]
+    }
+  },
+  "webAnalytics.citiesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "city": "Example City 2",
+          "visitors": "11"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "city": "Example City 4",
+          "visitors": "9"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "city": "Example City 1",
+          "visitors": "104"
+        }
+      ]
+    }
+  },
+  "webAnalytics.continents": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "continent": "AS",
+          "visitors": "258"
+        },
+        {
+          "continent": "NA",
+          "visitors": "165"
+        },
+        {
+          "continent": "EU",
+          "visitors": "85"
+        }
+      ]
+    }
+  },
+  "webAnalytics.continentsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "continent": "AF",
+          "visitors": "2"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "continent": "AS",
+          "visitors": "169"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "continent": "EU",
+          "visitors": "51"
+        }
+      ]
+    }
+  },
+  "webAnalytics.countries": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "country": "SG",
+          "visitors": "161"
+        },
+        {
+          "country": "US",
+          "visitors": "155"
+        },
+        {
+          "country": "IN",
+          "visitors": "55"
+        }
+      ]
+    }
+  },
+  "webAnalytics.countriesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "country": "BE",
+          "visitors": "11"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "country": "GB",
+          "visitors": "4"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "country": "IN",
+          "visitors": "33"
+        }
+      ]
+    }
+  },
+  "webAnalytics.devices": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "device": "Desktop",
+          "visitors": "489",
+          "session_bounce_rate": 91.48514851485149,
+          "avg_session_duration_sec": 219
+        },
+        {
+          "device": "Smartphone",
+          "visitors": "47",
+          "session_bounce_rate": 82.97872340425532,
+          "avg_session_duration_sec": 390
+        },
+        {
+          "device": "Unknown",
+          "visitors": "0",
+          "session_bounce_rate": 0,
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.devicesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "device": "Desktop",
+          "visitors": "285",
+          "session_bounce_rate": 89.59731543624162,
+          "avg_session_duration_sec": 286
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "device": "Smartphone",
+          "visitors": "29",
+          "session_bounce_rate": 79.3103448275862,
+          "avg_session_duration_sec": 531
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "device": "Unknown",
+          "visitors": "0",
+          "session_bounce_rate": 0,
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.entryPages": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "entry_page": "https://example.com/page-1",
+          "visitors": "246",
+          "entries": "254",
+          "avg_session_duration_sec": 289
+        },
+        {
+          "entry_page": "https://example.com/page-3",
+          "visitors": "10",
+          "entries": "10",
+          "avg_session_duration_sec": 92
+        },
+        {
+          "entry_page": "https://example.com/page-4",
+          "visitors": "10",
+          "entries": "10",
+          "avg_session_duration_sec": 34
+        }
+      ]
+    }
+  },
+  "webAnalytics.entryPagesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "entry_page": "https://example.com/page-1",
+          "visitors": "114",
+          "entries": "120",
+          "avg_session_duration_sec": 368
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "entry_page": "https://example.com/page-4",
+          "visitors": "10",
+          "entries": "10",
+          "avg_session_duration_sec": 34
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "entry_page": "https://example.com/page-6",
+          "visitors": "4",
+          "entries": "4",
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.exitPages": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "exit_page": "https://example.com/page-1",
+          "visitors": "239",
+          "exits": "238",
+          "exit_rate": 78.0327868852459
+        },
+        {
+          "exit_page": "https://example.com/page-4",
+          "visitors": "9",
+          "exits": "9",
+          "exit_rate": 90
+        },
+        {
+          "exit_page": "https://example.com/page-6",
+          "visitors": "7",
+          "exits": "7",
+          "exit_rate": 100
+        }
+      ]
+    }
+  },
+  "webAnalytics.exitPagesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "exit_page": "https://example.com/page-1",
+          "visitors": "108",
+          "exits": "107",
+          "exit_rate": 68.58974358974359
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "exit_page": "https://example.com/page-4",
+          "visitors": "9",
+          "exits": "9",
+          "exit_rate": 90
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "exit_page": "https://example.com/page-6",
+          "visitors": "4",
+          "exits": "4",
+          "exit_rate": 100
+        }
+      ]
+    }
+  },
+  "webAnalytics.languages": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "browser_language": "en",
+          "visitors": "505"
+        },
+        {
+          "browser_language": "zh",
+          "visitors": "8"
+        },
+        {
+          "browser_language": "de",
+          "visitors": "4"
+        }
+      ]
+    }
+  },
+  "webAnalytics.languagesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_language": "de",
+          "visitors": "3"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_language": "en",
+          "visitors": "290"
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "browser_language": "es",
+          "visitors": "1"
+        }
+      ]
+    }
+  },
+  "webAnalytics.operatingSystems": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "os": "Windows",
+          "visitors": "373",
+          "session_bounce_rate": 96.59685863874346,
+          "avg_session_duration_sec": 294
+        },
+        {
+          "os": "macOS",
+          "visitors": "70",
+          "session_bounce_rate": 69.73684210526315,
+          "avg_session_duration_sec": 227
+        },
+        {
+          "os": "GNU/Linux",
+          "visitors": "45",
+          "session_bounce_rate": 84.78260869565217,
+          "avg_session_duration_sec": 40
+        }
+      ]
+    }
+  },
+  "webAnalytics.operatingSystemsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os": "Android",
+          "visitors": "11",
+          "session_bounce_rate": 63.63636363636363,
+          "avg_session_duration_sec": 366
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os": "GNU/Linux",
+          "visitors": "32",
+          "session_bounce_rate": 87.87878787878788,
+          "avg_session_duration_sec": 59
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os": "Windows",
+          "visitors": "214",
+          "session_bounce_rate": 94.54545454545455,
+          "avg_session_duration_sec": 337
+        }
+      ]
+    }
+  },
+  "webAnalytics.operatingSystemsVersions": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "os_version": "Windows 10",
+          "visitors": "368",
+          "session_bounce_rate": 96.55172413793103,
+          "avg_session_duration_sec": 294
+        },
+        {
+          "os_version": "macOS 10.15",
+          "visitors": "65",
+          "session_bounce_rate": 69.01408450704226,
+          "avg_session_duration_sec": 236
+        },
+        {
+          "os_version": "Other",
+          "visitors": "45",
+          "session_bounce_rate": 84.78260869565217,
+          "avg_session_duration_sec": 40
+        }
+      ]
+    }
+  },
+  "webAnalytics.operatingSystemsVersionsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os_version": "Android 10",
+          "visitors": "10",
+          "session_bounce_rate": 60,
+          "avg_session_duration_sec": 366
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os_version": "Other",
+          "visitors": "32",
+          "session_bounce_rate": 87.87878787878788,
+          "avg_session_duration_sec": 59
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "os_version": "Windows 10",
+          "visitors": "209",
+          "session_bounce_rate": 94.41860465116278,
+          "avg_session_duration_sec": 337
+        }
+      ]
+    }
+  },
+  "webAnalytics.referrers": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "source_referer": "",
+          "visitors": "434",
+          "session_bounce_rate": 92.17002237136465,
+          "avg_session_duration_sec": 293
+        },
+        {
+          "source_referer": "referrer-1.example",
+          "visitors": "40",
+          "session_bounce_rate": 87.5,
+          "avg_session_duration_sec": 51
+        },
+        {
+          "source_referer": "referrer-2.example",
+          "visitors": "16",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.referrersChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_referer": "",
+          "visitors": "244",
+          "session_bounce_rate": 90.15748031496062,
+          "avg_session_duration_sec": 387
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_referer": "referrer-3.example",
+          "visitors": "6",
+          "session_bounce_rate": 83.33333333333334,
+          "avg_session_duration_sec": 794
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_referer": "referrer-4.example",
+          "visitors": "6",
+          "session_bounce_rate": 66.66666666666666,
+          "avg_session_duration_sec": 57
+        }
+      ]
+    }
+  },
+  "webAnalytics.sourceChannels": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "source_channel": "direct",
+          "visitors": "429",
+          "session_bounce_rate": 92.3076923076923,
+          "avg_session_duration_sec": 301
+        },
+        {
+          "source_channel": "search",
+          "visitors": "44",
+          "session_bounce_rate": 86.36363636363636,
+          "avg_session_duration_sec": 55
+        },
+        {
+          "source_channel": "referral",
+          "visitors": "30",
+          "session_bounce_rate": 90,
+          "avg_session_duration_sec": 42
+        }
+      ]
+    }
+  },
+  "webAnalytics.sourceChannelsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_channel": "direct",
+          "visitors": "242",
+          "session_bounce_rate": 90.07936507936508,
+          "avg_session_duration_sec": 387
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_channel": "llm",
+          "visitors": "4",
+          "session_bounce_rate": 75,
+          "avg_session_duration_sec": 271
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source_channel": "referral",
+          "visitors": "24",
+          "session_bounce_rate": 91.66666666666666,
+          "avg_session_duration_sec": 62
+        }
+      ]
+    }
+  },
+  "webAnalytics.sources": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "source": "",
+          "visitors": "429",
+          "session_bounce_rate": 92.3076923076923,
+          "avg_session_duration_sec": 301
+        },
+        {
+          "source": "referrer-5.example",
+          "visitors": "40",
+          "session_bounce_rate": 87.5,
+          "avg_session_duration_sec": 51
+        },
+        {
+          "source": "referrer-6.example",
+          "visitors": "23",
+          "session_bounce_rate": 86.95652173913044,
+          "avg_session_duration_sec": 242
+        }
+      ]
+    }
+  },
+  "webAnalytics.sourcesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source": "",
+          "visitors": "242",
+          "session_bounce_rate": 90.07936507936508,
+          "avg_session_duration_sec": 387
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source": "referrer-5.example",
+          "visitors": "23",
+          "session_bounce_rate": 91.30434782608695,
+          "avg_session_duration_sec": 92
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "source": "referrer-7.example",
+          "visitors": "4",
+          "session_bounce_rate": 25,
+          "avg_session_duration_sec": 453
+        }
+      ]
+    }
+  },
+  "webAnalytics.stats": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10"
+    },
+    "response": {
+      "stats": {
+        "pageviews": "689",
+        "visitors": "536",
+        "visits": "552",
+        "session_bounce_rate": 90.76086956521739,
+        "avg_session_length": 1.2481884057971016,
+        "avg_session_duration_sec": 256
+      }
+    }
+  },
+  "webAnalytics.topPages": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "stats": [
+        {
+          "page": "https://example.com/page-1",
+          "pageviews": "305",
+          "visitors": "250",
+          "session_bounce_rate": 88.25910931174089,
+          "avg_page_visit_duration_sec": 124
+        },
+        {
+          "page": "https://example.com/page-2",
+          "pageviews": "15",
+          "visitors": "13",
+          "session_bounce_rate": 40,
+          "avg_page_visit_duration_sec": 18
+        },
+        {
+          "page": "https://example.com/page-3",
+          "pageviews": "11",
+          "visitors": "11",
+          "session_bounce_rate": 85.71428571428571,
+          "avg_page_visit_duration_sec": 32
+        }
+      ]
+    }
+  },
+  "webAnalytics.topPagesChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "page": "https://example.com/page-1",
+          "pageviews": "156",
+          "visitors": "117",
+          "session_bounce_rate": 78.33333333333333,
+          "avg_page_visit_duration_sec": 146
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "page": "https://example.com/page-4",
+          "pageviews": "10",
+          "visitors": "10",
+          "session_bounce_rate": 100,
+          "avg_page_visit_duration_sec": 1
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "page": "https://example.com/page-5",
+          "pageviews": "19",
+          "visitors": "10",
+          "session_bounce_rate": 20,
+          "avg_page_visit_duration_sec": 165
+        }
+      ]
+    }
+  },
+  "webAnalytics.utmParams": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "limit": 3,
+      "utm_param": "utm_source"
+    },
+    "response": {
+      "stats": [
+        {
+          "utm_param": "",
+          "visitors": "531",
+          "session_bounce_rate": 90.85923217550274,
+          "avg_session_duration_sec": 260
+        },
+        {
+          "utm_param": "example-utm-1",
+          "visitors": "2",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        },
+        {
+          "utm_param": "example-utm-2",
+          "visitors": "1",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        }
+      ]
+    }
+  },
+  "webAnalytics.utmParamsChart": {
+    "input": {
+      "project_id": 1234567,
+      "from": "2026-10-12",
+      "to": "2026-11-10",
+      "granularity": "weekly",
+      "utm_param": "utm_source"
+    },
+    "response": {
+      "points": [
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "utm_param": "",
+          "visitors": "312",
+          "session_bounce_rate": 88.61538461538461,
+          "avg_session_duration_sec": 338
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "utm_param": "example-utm-1",
+          "visitors": "1",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        },
+        {
+          "timestamp": "2026-11-02T00:00:00Z",
+          "utm_param": "example-utm-3",
+          "visitors": "1",
+          "session_bounce_rate": 100,
+          "avg_session_duration_sec": 0
+        }
+      ]
     }
   }
 }

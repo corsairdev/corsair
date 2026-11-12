@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
+import { callAhrefs } from './request';
 import type {
 	AllBacklinksResponse,
 	AnchorsResponse,
@@ -17,6 +18,17 @@ import type {
 	PagesByTrafficResponse,
 	RefdomainsHistoryResponse,
 	RefdomainsResponse,
+	SiteExplorerAiResponsesCountResponse,
+	SiteExplorerCrawledPagesResponse,
+	SiteExplorerLinkedAnchorsExternalResponse,
+	SiteExplorerLinkedAnchorsInternalResponse,
+	SiteExplorerMetricsByCountryResponse,
+	SiteExplorerOutlinksStatsResponse,
+	SiteExplorerPagesByInternalLinksResponse,
+	SiteExplorerPagesHistoryResponse,
+	SiteExplorerPaidPagesResponse,
+	SiteExplorerTotalSearchVolumeHistoryResponse,
+	SiteExplorerUrlRatingHistoryResponse,
 	SiteMetricsResponse,
 	TopPagesResponse,
 } from './types';
@@ -554,3 +566,154 @@ export const pagesByBacklinks: AhrefsEndpoints['pagesByBacklinks'] = async (
 
 	return response;
 };
+
+export const aiResponsesCount: AhrefsEndpoints['siteExplorerAiResponsesCount'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerAiResponsesCountResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/ai-responses-count',
+				event: 'ahrefs.siteExplorer.aiResponsesCount',
+				logKeys: ['target', 'country', 'date'],
+			},
+			input,
+		);
+
+export const crawledPages: AhrefsEndpoints['siteExplorerCrawledPages'] = (
+	ctx,
+	input,
+) =>
+	callAhrefs<SiteExplorerCrawledPagesResponse>(
+		ctx,
+		{
+			method: 'GET',
+			path: '/site-explorer/crawled-pages',
+			event: 'ahrefs.siteExplorer.crawledPages',
+			logKeys: ['target'],
+		},
+		input,
+	);
+
+export const linkedAnchorsExternal: AhrefsEndpoints['siteExplorerLinkedAnchorsExternal'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerLinkedAnchorsExternalResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/linked-anchors-external',
+				event: 'ahrefs.siteExplorer.linkedAnchorsExternal',
+				logKeys: ['portfolio_id', 'target'],
+			},
+			input,
+		);
+
+export const linkedAnchorsInternal: AhrefsEndpoints['siteExplorerLinkedAnchorsInternal'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerLinkedAnchorsInternalResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/linked-anchors-internal',
+				event: 'ahrefs.siteExplorer.linkedAnchorsInternal',
+				logKeys: ['portfolio_id', 'target'],
+			},
+			input,
+		);
+
+export const metricsByCountry: AhrefsEndpoints['siteExplorerMetricsByCountry'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerMetricsByCountryResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/metrics-by-country',
+				event: 'ahrefs.siteExplorer.metricsByCountry',
+				logKeys: ['portfolio_id', 'target', 'date'],
+			},
+			input,
+		);
+
+export const outlinksStats: AhrefsEndpoints['siteExplorerOutlinksStats'] = (
+	ctx,
+	input,
+) =>
+	callAhrefs<SiteExplorerOutlinksStatsResponse>(
+		ctx,
+		{
+			method: 'GET',
+			path: '/site-explorer/outlinks-stats',
+			event: 'ahrefs.siteExplorer.outlinksStats',
+			logKeys: ['target'],
+		},
+		input,
+	);
+
+export const pagesByInternalLinks: AhrefsEndpoints['siteExplorerPagesByInternalLinks'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerPagesByInternalLinksResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/pages-by-internal-links',
+				event: 'ahrefs.siteExplorer.pagesByInternalLinks',
+				logKeys: ['portfolio_id', 'target'],
+			},
+			input,
+		);
+
+export const pagesHistory: AhrefsEndpoints['siteExplorerPagesHistory'] = (
+	ctx,
+	input,
+) =>
+	callAhrefs<SiteExplorerPagesHistoryResponse>(
+		ctx,
+		{
+			method: 'GET',
+			path: '/site-explorer/pages-history',
+			event: 'ahrefs.siteExplorer.pagesHistory',
+			logKeys: ['portfolio_id', 'target', 'country', 'date_from', 'date_to'],
+		},
+		input,
+	);
+
+export const paidPages: AhrefsEndpoints['siteExplorerPaidPages'] = (
+	ctx,
+	input,
+) =>
+	callAhrefs<SiteExplorerPaidPagesResponse>(
+		ctx,
+		{
+			method: 'GET',
+			path: '/site-explorer/paid-pages',
+			event: 'ahrefs.siteExplorer.paidPages',
+			logKeys: ['portfolio_id', 'target', 'country', 'date'],
+		},
+		input,
+	);
+
+export const totalSearchVolumeHistory: AhrefsEndpoints['siteExplorerTotalSearchVolumeHistory'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerTotalSearchVolumeHistoryResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/total-search-volume-history',
+				event: 'ahrefs.siteExplorer.totalSearchVolumeHistory',
+				logKeys: ['portfolio_id', 'target', 'country', 'date_from', 'date_to'],
+			},
+			input,
+		);
+
+export const urlRatingHistory: AhrefsEndpoints['siteExplorerUrlRatingHistory'] =
+	(ctx, input) =>
+		callAhrefs<SiteExplorerUrlRatingHistoryResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/site-explorer/url-rating-history',
+				event: 'ahrefs.siteExplorer.urlRatingHistory',
+				logKeys: ['target', 'date_from', 'date_to'],
+			},
+			input,
+		);

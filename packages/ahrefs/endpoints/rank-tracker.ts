@@ -1,8 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
+import { callAhrefs } from './request';
 import type {
+	RankTrackerCompetitorsDomainsResponse,
 	RankTrackerCompetitorsOverviewResponse,
+	RankTrackerCompetitorsPagesResponse,
+	RankTrackerCompetitorsStatsResponse,
 	RankTrackerOverviewResponse,
 	RankTrackerSerpOverviewResponse,
 } from './types';
@@ -111,3 +115,42 @@ export const competitorsOverview: AhrefsEndpoints['rankTrackerCompetitorsOvervie
 
 		return response;
 	};
+
+export const competitorsDomains: AhrefsEndpoints['rankTrackerCompetitorsDomains'] =
+	(ctx, input) =>
+		callAhrefs<RankTrackerCompetitorsDomainsResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/rank-tracker/competitors-domains',
+				event: 'ahrefs.rankTracker.competitorsDomains',
+				logKeys: ['project_id', 'date'],
+			},
+			input,
+		);
+
+export const competitorsPages: AhrefsEndpoints['rankTrackerCompetitorsPages'] =
+	(ctx, input) =>
+		callAhrefs<RankTrackerCompetitorsPagesResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/rank-tracker/competitors-pages',
+				event: 'ahrefs.rankTracker.competitorsPages',
+				logKeys: ['project_id', 'date'],
+			},
+			input,
+		);
+
+export const competitorsStats: AhrefsEndpoints['rankTrackerCompetitorsStats'] =
+	(ctx, input) =>
+		callAhrefs<RankTrackerCompetitorsStatsResponse>(
+			ctx,
+			{
+				method: 'GET',
+				path: '/rank-tracker/competitors-stats',
+				event: 'ahrefs.rankTracker.competitorsStats',
+				logKeys: ['project_id', 'date'],
+			},
+			input,
+		);

@@ -90,4 +90,45 @@ describeIfApiKey('Ahrefs API live checks for the added endpoints', () => {
 			AhrefsEndpointOutputSchemas.managementProjects.parse(response);
 		expect(Array.isArray(parsed.projects)).toBe(true);
 	});
+
+	it('free Domain Rating for ahrefs.com parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/public/domain-rating-free',
+			TEST_API_KEY!,
+			{ query: { target: 'ahrefs.com' } },
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.publicDomainRatingFree.parse(response);
+		expect(parsed.domain_rating).toBeDefined();
+	});
+
+	it('batch analysis POST for two test targets parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/batch-analysis/batch-analysis',
+			TEST_API_KEY!,
+			{
+				method: 'POST',
+				body: {
+					targets: [
+						{ url: 'ahrefs.com', mode: 'domain', protocol: 'both' },
+						{ url: 'wordcount.com', mode: 'domain', protocol: 'both' },
+					],
+					select: ['url', 'domain_rating'],
+				},
+			},
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.batchAnalysisAnalyze.parse(response);
+		expect(parsed.targets).toHaveLength(2);
+	});
+
+	it('Brand Radar reports list parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/management/brand-radar-reports',
+			TEST_API_KEY!,
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.managementBrandRadarReports.parse(response);
+		expect(Array.isArray(parsed.reports)).toBe(true);
+	});
 });

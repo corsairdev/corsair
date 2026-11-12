@@ -58,13 +58,20 @@ describe('Ahrefs schemas', () => {
 });
 
 // Real responses recorded from api.ahrefs.com through the plugin's endpoint
-// functions (Search Console and Site Audit from a verified project; Site
-// Explorer on ahrefs.com/wordcount.com and Keywords Explorer on "ahrefs",
-// Ahrefs' free test targets), trimmed to three rows.
+// functions (Search Console, Site Audit, Web Analytics and Rank Tracker from
+// a verified project; Site Explorer on ahrefs.com/wordcount.com and Keywords
+// Explorer on "ahrefs", Ahrefs' free test targets; management writes on
+// throwaway objects), trimmed to three rows and anonymised.
 type LiveFixture = { input: unknown; response: unknown };
-const liveFixtures = JSON.parse(
-	readFileSync(join(__dirname, '__fixtures__', 'live-responses.json'), 'utf8'),
-) as Record<string, LiveFixture>;
+const readFixtures = (file: string) =>
+	JSON.parse(
+		readFileSync(join(__dirname, '__fixtures__', file), 'utf8'),
+	) as Record<string, LiveFixture>;
+const liveFixtures = readFixtures('live-responses.json');
+// Built from Ahrefs' OpenAPI spec, not recorded: these need a connected
+// social channel or an existing post, and the test account has neither.
+const specSamples = readFixtures('spec-samples.json');
+const allFixtures = { ...liveFixtures, ...specSamples };
 
 type EndpointSchemaEntry = {
 	input: { safeParse(value: unknown): { success: boolean } };
@@ -88,7 +95,7 @@ describe('Ahrefs recorded responses', () => {
 			'serp.overview',
 		]);
 		const missing = Object.keys(schemaEntries).filter(
-			(path) => !original.has(path) && !(path in liveFixtures),
+			(path) => !original.has(path) && !(path in allFixtures),
 		);
 		expect(missing).toEqual([]);
 	});
@@ -105,8 +112,9 @@ describe('Ahrefs recorded responses', () => {
 		}
 	});
 
-	for (const [path, fixture] of Object.entries(liveFixtures)) {
-		it(`${path}: input and recorded response parse`, () => {
+	for (const [path, fixture] of Object.entries(allFixtures)) {
+		const kind = path in specSamples ? 'spec sample' : 'recorded response';
+		it(`${path}: input and ${kind} parse`, () => {
 			const schemas = schemaEntries[path];
 			expect(schemas).toBeDefined();
 			expect(schemas!.input.safeParse(fixture.input).success).toBe(true);
@@ -115,7 +123,80 @@ describe('Ahrefs recorded responses', () => {
 	}
 });
 
+describe('Ahrefs endpoint risk levels', () => {
+	const meta = ahrefs({ key: 'test' }).endpointMeta as Record<
+		string,
+		{ riskLevel: string }
+	>;
+
+	it('marks deletes destructive and creates or updates as writes', () => {
+		for (const [path, entry] of Object.entries(meta)) {
+			const name = path.split('.')[1] ?? '';
+			if (/^delete/.test(name)) {
+				expect([path, entry.riskLevel]).toEqual([path, 'destructive']);
+			} else if (/^(create|update|add)/.test(name)) {
+				expect([path, entry.riskLevel]).toEqual([path, 'write']);
+			} else {
+				expect([path, entry.riskLevel]).toEqual([path, 'read']);
+			}
+		}
+	});
+
+	it('exposes social posting only as explicit write actions', () => {
+		expect(meta['socialMedia.createPost']?.riskLevel).toBe('write');
+		expect(meta['socialMedia.deletePost']?.riskLevel).toBe('destructive');
+	});
+});
+
 describe('Ahrefs input validation', () => {
+	it('accepts Web Analytics counts sent as numeric strings', () => {
+		expect(
+			AhrefsEndpointOutputSchemas.webAnalyticsStats.safeParse({
+				stats: { visitors: '536', pageviews: '689', session_bounce_rate: 90.7 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires a granularity for Web Analytics charts', () => {
+		expect(
+			AhrefsEndpointInputSchemas.webAnalyticsBrowsersChart.safeParse({
+				project_id: 1,
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires a UTM parameter for UTM tables', () => {
+		expect(
+			AhrefsEndpointInputSchemas.webAnalyticsUtmParams.safeParse({
+				project_id: 1,
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects a social post without channels or with an unknown timing', () => {
+		expect(
+			AhrefsEndpointInputSchemas.socialMediaCreatePost.safeParse({
+				text_content: 'hello',
+				timing: 'draft',
+			}).success,
+		).toBe(false);
+		expect(
+			AhrefsEndpointInputSchemas.socialMediaCreatePost.safeParse({
+				channel_ids: ['ch_1'],
+				text_content: 'hello',
+				timing: 'later',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires prompt frequencies on Brand Radar report updates', () => {
+		expect(
+			AhrefsEndpointInputSchemas.managementUpdateBrandRadarReport.safeParse({
+				report_id: 'r1',
+			}).success,
+		).toBe(false);
+	});
+
 	it('requires a project or portfolio for Search Console reads', () => {
 		expect(
 			AhrefsEndpointInputSchemas.gscKeywords.safeParse({
