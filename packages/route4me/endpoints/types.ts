@@ -59,6 +59,18 @@ export const FacilitySchema = z
 	})
 	.loose();
 
+/**
+ * A caller-defined custom data field on a response. The reference types
+ * `route_custom_data` as an array of objects and the others as string maps,
+ * and this PHP API serialises an empty map as `[]`, so a read accepts either
+ * form rather than failing on a route or contact that has no custom data.
+ */
+// unknown: the keys and values are whatever the account's users stored.
+const CustomDataOutputSchema = z.union([
+	z.record(z.string(), z.unknown()),
+	z.array(z.unknown()),
+]);
+
 /** A caller-named custom field row on an order. */
 export const CustomUserFieldSchema = z
 	.object({ key: z.string().nullish(), value: z.string().nullish() })
@@ -172,8 +184,7 @@ const RouteDestinationSchema = z
 		status: z.string().nullish(),
 		timestamp_last_visited: z.number().nullish(),
 		notes: z.array(NoteSchema).nullish(),
-		// Route4Me documents each custom field as a string value.
-		custom_fields: z.record(z.string(), z.string()).nullish(),
+		custom_fields: CustomDataOutputSchema.nullish(),
 	})
 	.loose();
 
@@ -308,8 +319,7 @@ const RoutesGetResponseSchema = z.object({
 		.describe('The route stops, in the order Route4Me sequenced them.'),
 	directions: z.array(RouteDirectionSchema).nullish(),
 	notes: z.array(NoteSchema).nullish(),
-	// A map of caller-named string values.
-	route_custom_data: z.record(z.string(), z.string()).nullish(),
+	route_custom_data: CustomDataOutputSchema.nullish(),
 	next_page: z
 		.number()
 		.nullable()
@@ -656,8 +666,7 @@ const AddressSchema = z
 		parent_location_id: z.number().nullish(),
 		required_skills: z.array(z.string()).nullish(),
 		facility_ids: z.array(z.string()).nullish(),
-		// Route4Me documents each custom field as a string value.
-		address_custom_data: z.record(z.string(), z.string()).nullish(),
+		address_custom_data: CustomDataOutputSchema.nullish(),
 	})
 	.loose();
 
@@ -768,8 +777,7 @@ const MemberSchema = z
 		facility_ids: z.array(z.string()).nullish(),
 		permissions: z.array(PermissionSchema).nullish(),
 		territories: z.array(TerritorySchema).nullish(),
-		// Route4Me documents this as a `{ key: value }` map of strings.
-		custom_data: z.record(z.string(), z.string()).nullish(),
+		custom_data: CustomDataOutputSchema.nullish(),
 	})
 	.loose();
 

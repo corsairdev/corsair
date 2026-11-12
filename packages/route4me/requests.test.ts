@@ -119,6 +119,35 @@ describe('routes.get', () => {
 		expect(result.addresses?.[0]?.is_depot).toBe(true);
 	});
 
+	it('reads custom data in the array form the reference documents', async () => {
+		respond(fetchMock, {
+			...ROUTE_DETAIL,
+			route_custom_data: [{ shift: 'morning' }],
+			addresses: [{ address_id: 1, custom_fields: [] }],
+		});
+
+		const result = (await invoke(Routes.get, {
+			route_id: ROUTE_ID,
+		})) as Awaited<ReturnType<typeof Routes.get>>;
+
+		expect(result.route_custom_data).toEqual([{ shift: 'morning' }]);
+		expect(result.addresses?.[0]?.custom_fields).toEqual([]);
+	});
+
+	it('reads a member whose custom data is empty or numeric', async () => {
+		respond(fetchMock, { ...MEMBER, custom_data: [] });
+		const empty = (await invoke(Contacts.teamMe, {})) as Awaited<
+			ReturnType<typeof Contacts.teamMe>
+		>;
+		expect(empty.member.custom_data).toEqual([]);
+
+		respond(fetchMock, { ...MEMBER, custom_data: { stop_limit: 40 } });
+		const numeric = (await invoke(Contacts.teamMe, {})) as Awaited<
+			ReturnType<typeof Contacts.teamMe>
+		>;
+		expect(numeric.member.custom_data).toEqual({ stop_limit: 40 });
+	});
+
 	it('fails rather than reading a non-object body as an empty route', async () => {
 		respond(fetchMock, 'Redirecting to login');
 
