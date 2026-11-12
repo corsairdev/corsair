@@ -28,8 +28,9 @@ export const create: VectorshiftEndpoints['knowledgeBasesCreate'] = (
 	);
 
 /**
- * Fetch one knowledge base. The route is `GET /knowledge-bases` (plural) and
- * takes the id or the name as a query parameter, not a path segment.
+ * Fetch one knowledge base. The route is `GET /knowledge-base` (singular, as in
+ * VectorShift's fetch reference and its Python SDK) and takes the id or the name
+ * as a query parameter, not a path segment. `GET /knowledge-bases` is the list.
  */
 export const get: VectorshiftEndpoints['knowledgeBasesGet'] = (ctx, input) =>
 	call(
@@ -42,7 +43,7 @@ export const get: VectorshiftEndpoints['knowledgeBasesGet'] = (ctx, input) =>
 		input,
 		({ id, name, username, org_name }) => ({
 			method: 'GET',
-			path: '/knowledge-bases',
+			path: '/knowledge-base',
 			query: { id, name, username, org_name },
 		}),
 		{
@@ -50,7 +51,7 @@ export const get: VectorshiftEndpoints['knowledgeBasesGet'] = (ctx, input) =>
 		},
 	);
 
-/** Query is `POST /knowledge-base/{id}/query` (singular), unlike the GET. */
+/** Query is `POST /knowledge-base/{id}/query`, on the same singular base. */
 export const query: VectorshiftEndpoints['knowledgeBasesQuery'] = (
 	ctx,
 	input,

@@ -227,7 +227,7 @@ describe('knowledge bases', () => {
 		).rejects.toThrow();
 	});
 
-	it('fetches one by id, on the plural route', async () => {
+	it('fetches one by id, on the singular route', async () => {
 		respond(fetchMock, knowledgeBase);
 
 		const result = await invoke(KnowledgeBases.get, { id: 'kb_4d2f9a' });
@@ -235,7 +235,7 @@ describe('knowledge bases', () => {
 		expect(result).toEqual(knowledgeBase);
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('GET');
-		expect(sent.path).toBe('/v1/knowledge-bases');
+		expect(sent.path).toBe('/v1/knowledge-base');
 		expect(sent.query.id).toBe('kb_4d2f9a');
 	});
 
