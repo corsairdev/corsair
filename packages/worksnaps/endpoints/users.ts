@@ -7,13 +7,20 @@ import {
 	WorksnapsEndpointOutputSchemas as Outputs,
 } from './types';
 
+/**
+ * Worksnaps returns each user's `api_token` from /me, /users and /users/{id}, and
+ * from an update. A token is that user's credential, so every key of that name
+ * is dropped from the parsed document before the caller sees it.
+ */
 // unknown: the parsed document, before the output schema sees it.
 function withoutApiToken(raw: unknown): unknown {
-	if (!raw || typeof raw !== 'object' || !('user' in raw)) return raw;
-	const user = raw.user;
-	if (!user || typeof user !== 'object' || Array.isArray(user)) return raw;
-	const { api_token: _token, ...rest } = user as Record<string, unknown>;
-	return { ...raw, user: rest };
+	if (Array.isArray(raw)) return raw.map(withoutApiToken);
+	if (!raw || typeof raw !== 'object') return raw;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(raw)) {
+		if (key !== 'api_token') out[key] = withoutApiToken(value);
+	}
+	return out;
 }
 
 export const me: WorksnapsEndpoints['meGet'] = (ctx, input) =>
@@ -41,6 +48,7 @@ export const list: WorksnapsEndpoints['usersList'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/users.xml' }),
 		{
+			shape: (raw) => withoutApiToken(raw),
 			// Users are people, so only the count is logged.
 			log: (_, result) => ({ count: result.users?.length ?? 0 }),
 		},
@@ -56,6 +64,7 @@ export const get: WorksnapsEndpoints['usersGet'] = (ctx, input) =>
 			path: `/users/${segment(user_id)}.xml`,
 		}),
 		{
+			shape: (raw) => withoutApiToken(raw),
 			log: (_, result) => ({
 				id: result.user?.id ?? undefined,
 				login: result.user?.login ?? undefined,
@@ -113,6 +122,7 @@ export const update: WorksnapsEndpoints['usersUpdate'] = (ctx, input) =>
 			body: toXml('user', { email, first_name, last_name, timezone_id }),
 		}),
 		{
+			shape: (raw) => withoutApiToken(raw),
 			log: (parsed, result) => ({
 				id: result.user?.id ?? parsed.user_id,
 				login: result.user?.login ?? undefined,

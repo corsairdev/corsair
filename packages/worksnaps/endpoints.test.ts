@@ -436,6 +436,7 @@ describe('assignments', () => {
 		expect(sent.method).toBe('PUT');
 		expect(sent.path).toBe('/api/projects/3456/user_assignments/21.xml');
 	});
+
 });
 
 describe('users and reports', () => {
@@ -474,6 +475,32 @@ describe('users and reports', () => {
 		};
 
 		expect(result.user?.login).toBe('jordan');
+	});
+
+	it('drops api_token from users.get, users.list and users.update', async () => {
+		const withToken = userXml.replace(
+			'</user>',
+			'  <api_token>not-a-real-token</api_token>\n</user>',
+		);
+		const listWithToken = usersXml.replace(
+			'  </user>',
+			'    <api_token>not-a-real-token</api_token>\n  </user>',
+		);
+
+		respondText(fetchMock, withToken);
+		const got = await invoke(Users.get, { user_id: 12 });
+		respondText(fetchMock, listWithToken);
+		const listed = await invoke(Users.list, {});
+		respondText(fetchMock, withToken);
+		const updated = await invoke(Users.update, {
+			user_id: 12,
+			first_name: 'Jordan',
+		});
+
+		for (const result of [got, listed, updated]) {
+			expect(JSON.stringify(result)).not.toContain('not-a-real-token');
+		}
+		expect((listed as { users?: unknown[] }).users).toHaveLength(1);
 	});
 
 	it('creates a user without logging the password', async () => {
