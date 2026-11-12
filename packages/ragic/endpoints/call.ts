@@ -75,7 +75,11 @@ export function recordPath(
  * assembled into an array and left for the HTTP layer to repeat.
  */
 export function readQuery(parsed: {
-	where?: { fieldId: number | string; op: string; value?: string | number }[];
+	where?: {
+		fieldId: number | string;
+		op: Parameters<typeof whereFilter>[1];
+		value?: string | number;
+	}[];
 	fts?: string;
 	filterId?: number;
 	limit?: number;
@@ -96,11 +100,7 @@ export function readQuery(parsed: {
 	// Ragic reads several conditions as a repeated `where` parameter, which the
 	// HTTP layer produces from an array.
 	const where = parsed.where?.map((filter) =>
-		whereFilter(
-			filter.fieldId,
-			filter.op as Parameters<typeof whereFilter>[1],
-			filter.value,
-		),
+		whereFilter(filter.fieldId, filter.op, filter.value),
 	);
 
 	return {

@@ -60,6 +60,7 @@ describe('Ragic client', () => {
 			replayable: true,
 		});
 
+		// The spy records fetch's arguments untyped; the client calls fetch(url, init).
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).toContain('https://www.ragic.com/demo/sales/1');
 		// The key is sent raw, not base64-encoded a second time.
@@ -77,6 +78,7 @@ describe('Ragic client', () => {
 			replayable: true,
 		});
 
+		// The spy records fetch's arguments untyped; the first one is the URL string.
 		const parsed = new URL(fetchMock.mock.calls[0][0] as string);
 		// `api` is what switches the route from an HTML page to the API.
 		expect(parsed.searchParams.has('api')).toBe(true);
@@ -106,6 +108,7 @@ describe('Ragic client', () => {
 			replayable: false,
 		});
 
+		// The spy records fetch's arguments untyped; the second one is the init.
 		const init = fetchMock.mock.calls[0][1] as RequestInit;
 		expect(new Headers(init.headers).get('content-type')).toContain(
 			'application/json',

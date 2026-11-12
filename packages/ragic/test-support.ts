@@ -18,16 +18,16 @@ export function testContext(
 }
 
 // never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant. Each endpoint returns its own output type, so
-// the shared return is unknown.
-export type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
-
+// parameters are contravariant. Output is inferred from the endpoint, so each
+// result keeps its real type.
 // unknown: negative cases pass values no schema accepts.
-export function invoke(
-	endpoint: AnyEndpoint,
+export function invoke<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
 	input: unknown,
 	server = 'www.ragic.com',
-) {
+): Promise<Output> {
+	// never: the endpoint reads only key, server and log off the fake context,
+	// and its input schema parses whatever the test passes.
 	return endpoint(testContext(undefined, server) as never, input as never);
 }
 
@@ -47,6 +47,8 @@ export type CapturedRequest = {
 };
 
 export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
+	// The spy records fetch's arguments untyped; makeRagicRequest always calls
+	// fetch(url string, init).
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	if (init.body instanceof FormData) {
@@ -69,6 +71,7 @@ export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
 		queryAll: (name: string) => parsed.searchParams.getAll(name),
 		method: init.method,
 		headers: new Headers(init.headers),
+		// unknown: JSON.parse returns any; widening it to unknown keeps it checked.
 		body: init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,
 		bodyRecord: asRecord(
 			init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,

@@ -1,12 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { RagicAPIError } from './client';
 import * as Records from './endpoints';
-import type {
-	RagicRecordSet,
-	RecordsCommentResponse,
-	RecordsDeleteResponse,
-	WriteResponse,
-} from './endpoints/types';
+import type { RagicRecordSet } from './endpoints/types';
 import {
 	BAD_PARAMS,
 	COMMENT_ADDED,
@@ -76,6 +71,8 @@ describe('records.list', () => {
 	it('lists records from a sheet', async () => {
 		respond(fetchMock, RECORDS);
 
+		// list answers a record set or, for an export task, a status object;
+		// this fixture is a record set.
 		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
 
 		const request = lastRequest(fetchMock);
@@ -88,7 +85,7 @@ describe('records.list', () => {
 	it('keeps the row-id keys as strings', async () => {
 		respond(fetchMock, RECORDS);
 
-		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
+		const result = await invoke(Records.list, SHEET);
 
 		expect(Object.keys(result)).toEqual(['12345', '12346']);
 	});
@@ -96,6 +93,8 @@ describe('records.list', () => {
 	it('reads field names by default', async () => {
 		respond(fetchMock, RECORDS_BY_NAME);
 
+		// list answers a record set or, for an export task, a status object;
+		// this fixture is a record set.
 		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
 
 		expect(result['1']?.['Account Name']).toBe('Alphabet Inc.');
@@ -210,10 +209,10 @@ describe('records.list', () => {
 	it('reads a task-progress answer when a taskId is given', async () => {
 		respond(fetchMock, TASK_PROGRESS);
 
-		const result = (await invoke(Records.list, {
+		const result = await invoke(Records.list, {
 			...SHEET,
 			taskId: '550e8400-e29b-41d4-a716-446655440000',
-		})) as { status?: string; progress?: number };
+		});
 
 		expect(lastRequest(fetchMock).query.taskId).toBe(
 			'550e8400-e29b-41d4-a716-446655440000',
@@ -257,10 +256,10 @@ describe('records.get', () => {
 	it('reads one record by id', async () => {
 		respond(fetchMock, RECORD);
 
-		const result = (await invoke(Records.get, {
+		const result = await invoke(Records.get, {
 			...SHEET,
 			recordId: 12345,
-		})) as RagicRecordSet;
+		});
 
 		expect(lastRequest(fetchMock).path).toBe('/demo/sales/1/12345');
 		expect(result['12345']?._ragicId).toBe(12345);
@@ -269,12 +268,14 @@ describe('records.get', () => {
 	it('keeps a subtable keyed by row id', async () => {
 		respond(fetchMock, RECORD_WITH_SUBTABLE);
 
-		const result = (await invoke(Records.get, {
+		const result = await invoke(Records.get, {
 			...SHEET,
 			recordId: 41,
-		})) as RagicRecordSet;
+		});
 
 		// A subtable is itself a record set nested in the record.
+		// Field values are typed as any JSON; this key is a subtable, which Ragic
+		// returns as a nested record set.
 		const subtable = result['41']?._subtable_2000154 as RagicRecordSet;
 		expect(subtable['0']?.['Contact Name']).toBe('Jeff Kuo');
 		expect(subtable['1']?.['Title']).toBe('Marketing');
@@ -318,14 +319,14 @@ describe('records.create', () => {
 	it('posts the field values keyed by field id', async () => {
 		respond(fetchMock, CREATED);
 
-		const result = (await invoke(Records.create, {
+		const result = await invoke(Records.create, {
 			...SHEET,
 			fields: {
 				'2000123': 'Dunder Mifflin',
 				'2000125': '1-267-922-5599',
 				'2000127': 'Jeff Kuo',
 			},
-		})) as WriteResponse;
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
@@ -497,6 +498,7 @@ describe('records.update', () => {
 		}).catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(RagicAPIError);
+		// The toBeInstanceOf check above has just confirmed this type.
 		expect((error as RagicAPIError).isServerError).toBe(true);
 		expect((error as RagicAPIError).replayable).toBe(false);
 	});
@@ -512,10 +514,10 @@ describe('records.delete', () => {
 	it('deletes a record by id', async () => {
 		respond(fetchMock, DELETED);
 
-		const result = (await invoke(Records.remove, {
+		const result = await invoke(Records.remove, {
 			...SHEET,
 			recordId: 3,
-		})) as RecordsDeleteResponse;
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('DELETE');
@@ -529,11 +531,11 @@ describe('records.comment', () => {
 	it('posts the comment as c', async () => {
 		respond(fetchMock, COMMENT_ADDED);
 
-		const result = (await invoke(Records.comment, {
+		const result = await invoke(Records.comment, {
 			...SHEET,
 			recordId: 2,
 			comment: 'Please review this order.',
-		})) as RecordsCommentResponse;
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
@@ -592,11 +594,7 @@ describe('schema.get', () => {
 	it('reads the field schema', async () => {
 		respond(fetchMock, SCHEMA);
 
-		const result = (await invoke(Records.schema, SHEET)) as {
-			sheet?: { sheetName?: string; keyFieldId?: number };
-			fields?: { fieldId?: number; fieldName?: string; type?: string }[];
-			subtables?: { subtableKey?: number | string }[];
-		};
+		const result = await invoke(Records.schema, SHEET);
 
 		expect(lastRequest(fetchMock).path).toBe('/demo/sales/1/metadata/schema');
 		expect(result.sheet?.sheetName).toBe('Sales');
@@ -607,9 +605,7 @@ describe('schema.get', () => {
 	it('keeps the selection options a caller needs to write a select field', async () => {
 		respond(fetchMock, SCHEMA);
 
-		const result = (await invoke(Records.schema, SHEET)) as {
-			fields?: { selectionOptionsPreview?: string[] }[];
-		};
+		const result = await invoke(Records.schema, SHEET);
 
 		expect(result.fields?.[2]?.selectionOptionsPreview).toEqual([
 			'Active',
@@ -621,12 +617,7 @@ describe('schema.get', () => {
 	it('keeps the subtable fields', async () => {
 		respond(fetchMock, SCHEMA);
 
-		const result = (await invoke(Records.schema, SHEET)) as {
-			subtables?: {
-				subtableKey?: number | string;
-				fields?: { fieldId?: number }[];
-			}[];
-		};
+		const result = await invoke(Records.schema, SHEET);
 
 		expect(result.subtables?.[0]?.subtableKey).toBe(2000154);
 		expect(result.subtables?.[0]?.fields?.[0]?.fieldId).toBe(2000147);

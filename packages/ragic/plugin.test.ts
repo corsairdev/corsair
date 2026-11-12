@@ -18,7 +18,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof ragicEndpointSchemas)[] = [
 	'records.comment',
 	'records.create',
 	'records.delete',
@@ -38,6 +38,8 @@ describe('ragic plugin definition', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.options?.server).toBe('www.ragic.com');
 		expect(plugin.webhooks).toEqual({});
+		// never: the matcher takes a full webhook request; it returns false before
+		// reading any field, since Ragic has no webhooks.
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
@@ -60,7 +62,7 @@ describe('ragic plugin definition', () => {
 		const schemas = plugin.endpointSchemas ?? {};
 		expect(Object.keys(schemas).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = schemas[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
@@ -70,7 +72,7 @@ describe('ragic plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = meta[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
@@ -79,8 +81,7 @@ describe('ragic plugin definition', () => {
 	it('marks record deletion as the only destructive operation', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+			(operation) => meta[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive).toEqual(['records.delete']);
@@ -89,8 +90,7 @@ describe('ragic plugin definition', () => {
 	it('marks the five that change a record as writes', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const writes = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'write',
+			(operation) => meta[operation]?.riskLevel === 'write',
 		);
 
 		expect(writes.sort()).toEqual([

@@ -184,6 +184,8 @@ export type ExternalRagicPlugin<T extends RagicPluginOptions> =
 	BaseRagicPlugin<T>;
 
 export function ragic<const T extends RagicPluginOptions>(
+	// {} fits RagicPluginOptions (every field is optional); T only adds literal
+	// types the caller chose, so an empty default is safe.
 	incomingOptions: RagicPluginOptions & T = {} as RagicPluginOptions & T,
 ): ExternalRagicPlugin<T> {
 	const options = {
