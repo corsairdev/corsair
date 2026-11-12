@@ -664,3 +664,81 @@ describe('nextLink', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
+
+describe('round 5 fixes', () => {
+	it('keeps the error body on a failed list', async () => {
+		respond(fetchMock, badRequest, 400);
+
+		const error = (await invoke(Rooms.list, {}).catch(
+			(thrown: unknown) => thrown,
+		)) as WebexAPIError;
+
+		expect(error).toBeInstanceOf(WebexAPIError);
+		expect(error.errors).toEqual(['roomId is required']);
+		expect(error.trackingId).toBe(badRequest.trackingId);
+		expect(error.body).toEqual(badRequest);
+	});
+
+	it('keeps the status and Retry-After when a list body cannot be read', async () => {
+		fetchMock.mockResolvedValueOnce({
+			ok: false,
+			status: 429,
+			headers: new Headers({ 'retry-after': '3' }),
+			text: () => Promise.reject(new TypeError('terminated')),
+		} as unknown as Response);
+
+		const error = (await invoke(Rooms.list, {}).catch(
+			(thrown: unknown) => thrown,
+		)) as WebexAPIError;
+
+		expect(error).toBeInstanceOf(WebexAPIError);
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(error.method).toBe('GET');
+	});
+
+	it('refuses more than 100 messages per page when filtering by mention', async () => {
+		await expect(
+			invoke(Messages.list, {
+				roomId: 'r1',
+				mentionedPeople: 'me',
+				max: 101,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		respond(fetchMock, messages);
+		await invoke(Messages.list, { roomId: 'r1', max: 500 });
+		expect(lastRequest(fetchMock).query.max).toBe('500');
+	});
+
+	it('creates a firehose webhook on every resource', async () => {
+		respond(fetchMock, webhook);
+
+		await invoke(Webhooks.create, {
+			name: 'Firehose',
+			targetUrl: 'https://acme.example/hook',
+			resource: 'all',
+			event: 'all',
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			resource: 'all',
+			event: 'all',
+		});
+	});
+
+	it('sends ownedBy org for an org-wide webhook', async () => {
+		respond(fetchMock, webhook);
+
+		await invoke(Webhooks.create, {
+			name: 'Org meetings',
+			targetUrl: 'https://acme.example/hook',
+			resource: 'meetings',
+			event: 'started',
+			ownedBy: 'org',
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({ ownedBy: 'org' });
+	});
+});

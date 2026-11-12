@@ -247,10 +247,16 @@ export async function makeWebexListRequest(
 	try {
 		text = await response.text();
 	} catch (error) {
+		// The status is kept so a 5xx is still retried and a 429 still waits.
+		const meta = {
+			status: response.status,
+			retryAfter: readRetryAfter(response),
+			method: 'GET',
+		};
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new WebexAPIError(error.message, { cause: error, method: 'GET' });
+			throw new WebexAPIError(error.message, { cause: error, ...meta });
 		}
-		throw new WebexAPIError('Unknown Webex error', { method: 'GET' });
+		throw new WebexAPIError('Unknown Webex error', meta);
 	}
 
 	if (!response.ok) {
@@ -264,6 +270,7 @@ export async function makeWebexListRequest(
 			describeWebexError(response.status, parsed, `HTTP ${response.status}`),
 			{
 				status: response.status,
+				body: parsed,
 				retryAfter: readRetryAfter(response),
 				method: 'GET',
 			},
