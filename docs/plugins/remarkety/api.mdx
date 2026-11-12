@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Remarkety: every `remarkety.api.*` operation with input and output types."
+title: "Remarkety API reference"
+sidebarTitle: "API"
+description: "API reference for the Remarkety plugin in Corsair: every `remarkety.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `remarkety.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -20,16 +19,16 @@ Create a campaign from a type and its actions, each an email or an api webhook w
 **Risk:** `write`
 
 ```ts
-await corsair.remarkety.api.campaigns.create({ storeId: 1, type: 'abandoned-cart', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'delay', operator: 'eq', value: '1' }] }] });
+await corsair.remarkety.api.campaigns.create({ storeId: 'AbC123xy', type: 'TRIGGER_CART_RECOVERY', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'CART_FOLLOWUP_TIME', operator: 'is', value: '60' }] }] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `type` | `string` | Yes | A campaign type from campaigns.types. |
-| `actions` | `object[]` | Yes | The actions this campaign runs. This endpoint version expects exactly one. |
+| `actions` | `object[]` | Yes | The action this campaign runs. This API version takes exactly one. |
 | `mode` | `run \| test \| stop` | No | run starts it, test sends a sample to testEmail, stop halts it. Defaults to Remarkety's own choice. |
 | `testEmail` | `string` | No | Where a test send goes, when mode is test. |
 
@@ -77,14 +76,14 @@ Delete a campaign
 **Risk:** `destructive`
 
 ```ts
-await corsair.remarkety.api.campaigns.delete({ storeId: 1, campaignId: 7 });
+await corsair.remarkety.api.campaigns.delete({ storeId: 'AbC123xy', campaignId: 7 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `campaignId` | `number` | Yes | — |
 
 
@@ -103,14 +102,14 @@ Read one campaign by id
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.campaigns.get({ storeId: 1, campaignId: 7 });
+await corsair.remarkety.api.campaigns.get({ storeId: 'AbC123xy', campaignId: 7 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `campaignId` | `number` | Yes | — |
 
 
@@ -129,54 +128,6 @@ await corsair.remarkety.api.campaigns.get({ storeId: 1, campaignId: 7 });
 
 ---
 
-### stats
-
-`campaigns.stats`
-
-Read sent counts and generated revenue per campaign, in USD and in the store currency
-
-**Risk:** `read`
-
-```ts
-await corsair.remarkety.api.campaigns.stats({ storeId: 1, campaignId: 7 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
-| `campaignId` | `number` | No | Only this campaign. Omit it for every campaign. |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  campaignId?: number | null,
-  startDate?: string | null,
-  sent?: number | null,
-  numOrders?: number | null,
-  totalOrdersUSD?: {
-    amount?: number | null,
-    currency?: string | null
-  } | null,
-  totalOrders?: {
-    amount?: number | null,
-    currency?: string | null
-  } | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
 ### types
 
 `campaigns.types`
@@ -186,14 +137,14 @@ Read the campaign types the store supports and their options
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.campaigns.types({ storeId: 1 });
+await corsair.remarkety.api.campaigns.types({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `type` | `string` | No | Only the options for this campaign type. |
 
 
@@ -212,17 +163,17 @@ Update a campaign, including its mode, which can start or stop real sending
 **Risk:** `write`
 
 ```ts
-await corsair.remarkety.api.campaigns.update({ storeId: 1, id: 7, mode: 'run' });
+await corsair.remarkety.api.campaigns.update({ storeId: 'AbC123xy', id: 7, mode: 'run' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `id` | `number` | Yes | The campaign to update. |
 | `type` | `string` | No | — |
-| `actions` | `object[]` | No | — |
+| `actions` | `object[]` | No | The action this campaign runs. This API version takes exactly one. |
 | `mode` | `run \| test \| stop` | No | — |
 | `testEmail` | `string` | No | — |
 
@@ -267,25 +218,25 @@ await corsair.remarkety.api.campaigns.update({ storeId: 1, id: 7, mode: 'run' })
 
 `contacts.create`
 
-Create a contact in a store, optionally with double opt-in and marketing permission
+Create or update a contact in a store; Remarkety emails a double opt-in request unless doubleOptin is false
 
 **Risk:** `write`
 
 ```ts
-await corsair.remarkety.api.contacts.create({ storeId: 1, email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true });
+await corsair.remarkety.api.contacts.create({ storeId: 'AbC123xy', email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `email` | `string` | Yes | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `properties` | `Record<string, JsonValue>[]` | No | Custom contact properties, as name/value objects. |
-| `doubleOptin` | `boolean` | No | True sends the contact a confirmation email from Remarkety before they can be marketed to. |
+| `properties` | `Record<string, JsonValue>` | No | Custom contact properties as one object, such as &#123; country: "US", city: "Austin", rewardsPoints: 100 &#125;. Remarkety refuses an array. |
+| `doubleOptin` | `boolean` | No | Remarkety defaults this to true, which emails the contact a confirmation request before they can be marketed to. Pass false to add the contact without that email. |
 | `allowedMarketing` | `boolean` | No | True marks the contact as marketing-allowed. |
 
 
@@ -304,14 +255,14 @@ Unsubscribe one email address from a store
 **Risk:** `write`
 
 ```ts
-await corsair.remarkety.api.contacts.unsubscribe({ storeId: 1, email: 'jane@example.com' });
+await corsair.remarkety.api.contacts.unsubscribe({ storeId: 'AbC123xy', email: 'jane@example.com' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `email` | `string` | Yes | — |
 
 
@@ -332,14 +283,14 @@ Read one campaign rule's email template
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.emailTemplates.get({ storeId: 1, campaignId: 7, ruleId: 1 });
+await corsair.remarkety.api.emailTemplates.get({ storeId: 'AbC123xy', campaignId: 7, ruleId: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `campaignId` | `number` | Yes | — |
 | `ruleId` | `number` | Yes | — |
 
@@ -357,46 +308,6 @@ await corsair.remarkety.api.emailTemplates.get({ storeId: 1, campaignId: 7, rule
 
 ---
 
-### preview
-
-`emailTemplates.preview`
-
-Read the sample data a campaign template merges against, optionally for a real shopper or order
-
-**Risk:** `read`
-
-```ts
-await corsair.remarkety.api.emailTemplates.preview({ storeId: 1, campaignId: 7, ruleId: 1, type: 'abandoned-cart' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
-| `campaignId` | `number` | Yes | — |
-| `ruleId` | `number` | Yes | — |
-| `type` | `string` | Yes | The campaign type. |
-| `shopper` | `number` | No | A shopper ID, as the store knows it, to build the data for. |
-| `order` | `number` | No | An order ID to build the data for. |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string \| null` | No | — |
-| `shopper` | `Record<string, JsonValue> \| null` | No | — |
-| `order` | `Record<string, JsonValue> \| null` | No | — |
-| `cart` | `Record<string, JsonValue> \| null` | No | — |
-| `recommendations` | `Record<string, JsonValue>[] \| null` | No | — |
-| `coupon` | `Record<string, JsonValue> \| null` | No | — |
-
-
-
----
-
 ### update
 
 `emailTemplates.update`
@@ -406,14 +317,14 @@ Replace one campaign rule's email template
 **Risk:** `write`
 
 ```ts
-await corsair.remarkety.api.emailTemplates.update({ storeId: 1, campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' });
+await corsair.remarkety.api.emailTemplates.update({ storeId: 'AbC123xy', campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `campaignId` | `number` | Yes | — |
 | `ruleId` | `number` | Yes | — |
 | `type` | `string` | Yes | editor-v1 or html. |
@@ -445,14 +356,14 @@ List the master email templates available to a store
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.masterTemplates.list({ storeId: 1, q: 'promo' });
+await corsair.remarkety.api.masterTemplates.list({ storeId: 'AbC123xy', q: 'promo' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `q` | `string` | No | A term to search the templates for. |
 
 
@@ -464,51 +375,21 @@ await corsair.remarkety.api.masterTemplates.list({ storeId: 1, q: 'promo' });
 
 ```ts
 {
-  id?: number | null,
-  name?: string | null,
-  author?: string | null,
-  date_uploaded?: string | null,
-  public?: boolean | null,
-  tags?: string[] | null
+  metadata?: {
+    id?: number | null,
+    name?: string | null,
+    author?: string | null,
+    date_uploaded?: string | null,
+    public?: boolean | null,
+    tags?: string[] | null,
+    thumbnail?: string | null,
+    editor?: string | null,
+    campaignTypes?: number[] | null
+  } | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
-
-
----
-
-### switch
-
-`masterTemplates.switch`
-
-Convert a template into a new master template so it can be reused across campaigns
-
-**Risk:** `write`
-
-```ts
-await corsair.remarkety.api.masterTemplates.switch({ storeId: 1, masterTemplateId: 3, type: 'html', html: '<html></html>' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
-| `masterTemplateId` | `number` | Yes | — |
-| `type` | `string` | No | editor-v1 or html. |
-| `html` | `string` | No | The current template HTML to convert. |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string \| null` | No | editor-v1 or html. |
-| `html` | `string \| null` | No | — |
-| `masterTemplate` | `Record<string, JsonValue> \| null` | No | — |
-
 
 
 ---
@@ -524,14 +405,14 @@ Search a store's synced products by name or SKU, with paging and an update-time 
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.products.list({ storeId: 1, q: 'T-Shirt', limit: 50, page: 0 });
+await corsair.remarkety.api.products.list({ storeId: 'AbC123xy', q: 'T-Shirt', limit: 50, page: 0 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `q` | `string` | No | A product name or SKU to search for. |
 | `limit` | `number` | No | Defaults to 100, maximum 1000. |
 | `page` | `number` | No | Zero-indexed page number. |
@@ -574,14 +455,14 @@ Read one rule type's operators and possible values
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.rules.get({ storeId: 1, ruleType: 'delay' });
+await corsair.remarkety.api.rules.get({ storeId: 'AbC123xy', ruleType: 'CART_FOLLOWUP_TIME' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `ruleType` | `string` | Yes | A rule type from rules.list. |
 
 
@@ -594,8 +475,8 @@ await corsair.remarkety.api.rules.get({ storeId: 1, ruleType: 'delay' });
 | `displayName` | `string \| null` | No | — |
 | `operators` | `string[] \| null` | No | — |
 | `details` | `string \| null` | No | — |
-| `possibleValues` | `JsonValue[] \| null` | No | — |
-| `defaultValue` | `JsonValue[] \| null` | No | — |
+| `possibleValues` | `JsonValue \| null` | No | A string, a map of value to label, or a list, depending on the rule. |
+| `defaultValue` | `JsonValue \| null` | No | — |
 
 
 
@@ -610,32 +491,31 @@ Read every rule a campaign action can use, with its operators and possible value
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.rules.list({ storeId: 1 });
+await corsair.remarkety.api.rules.list({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 
 
 
-**Output:** `object[]`
+**Output:** `object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
+Record<string, {
   inputType?: string | null,
   displayName?: string | null,
   operators?: string[] | null,
   details?: string | null,
-  possibleValues?: JsonValue[] | null,
-  defaultValue?: JsonValue[] | null,
-  type?: string | null
-}[]
+  possibleValues?: JsonValue | null,
+  defaultValue?: JsonValue | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -654,14 +534,14 @@ Count the shoppers matching a segment
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.segments.count({ storeId: 1 });
+await corsair.remarkety.api.segments.count({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 
 
 
@@ -684,14 +564,14 @@ List the emails and names matching a segment, with paging
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.segments.list({ storeId: 1, page: 0, limit: 100 });
+await corsair.remarkety.api.segments.list({ storeId: 'AbC123xy', page: 0, limit: 100 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 | `page` | `number` | No | Zero-indexed page number. |
 | `limit` | `number` | No | Results per page. |
 
@@ -763,14 +643,14 @@ Delete a store
 **Risk:** `destructive`
 
 ```ts
-await corsair.remarkety.api.stores.delete({ storeId: 1 });
+await corsair.remarkety.api.stores.delete({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 
 
 
@@ -788,14 +668,14 @@ Read one store by id
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.stores.get({ storeId: 1 });
+await corsair.remarkety.api.stores.get({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 
 
 
@@ -822,14 +702,14 @@ Read the store sync status, including the last error and the last successful syn
 **Risk:** `read`
 
 ```ts
-await corsair.remarkety.api.stores.status({ storeId: 1 });
+await corsair.remarkety.api.stores.status({ storeId: 'AbC123xy' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `storeId` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
 
 
 
@@ -837,8 +717,8 @@ await corsair.remarkety.api.stores.status({ storeId: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `syncStatus` | `string \| null` | No | The current sync status; ERROR means syncLastError is set. |
-| `syncLastError` | `string \| null` | No | — |
+| `syncStatus` | `string \| null` | No | The current sync status, such as OK or ERROR. |
+| `syncLastError` | `string \| null` | No | The last sync or runner message. It is set on a healthy store too; read syncStatus to tell a failure. |
 | `lastSyncSuccess` | `string \| null` | No | — |
 | `lastSyncAttempt` | `string \| null` | No | — |
 
@@ -862,7 +742,7 @@ await corsair.remarkety.api.stores.update({ id: 1, name: 'Renamed Store', apiKey
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | The store ID, which the store routes are scoped to. |
+| `id` | `number` | Yes | The numeric store id that stores.get returns. |
 | `name` | `string` | Yes | The store name. |
 | `apiKey` | `string` | Yes | The API key Remarkety uses to sync with the store. This is the store's key, not the token this plugin authenticates with. |
 | `platform` | `string` | No | PRESTASHOP, VIRTUEMART or MAGENTO. |
