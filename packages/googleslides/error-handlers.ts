@@ -96,8 +96,7 @@ const RATE_LIMIT_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 		// Export streams bytes through fetch, so its failures are an export error
 		// rather than an ApiError. A 429 is a rate limit, and so is a 403 whose
 		// body names rateLimitExceeded or userRateLimitExceeded. Any other 403 is
-		// a permission the account lacks, and retrying cannot grant it, so the
-		// message fallback below is skipped for exports.
+		// a permission the account lacks, and retrying cannot grant it.
 		if (error.name === 'GoogleSlidesExportError') {
 			const exportError = error as { status?: number; rateLimited?: boolean };
 			return (
@@ -105,9 +104,10 @@ const RATE_LIMIT_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 				(exportError.status === 403 && exportError.rateLimited === true)
 			);
 		}
-		if (errorStatus(error) === 'resource_exhausted') return true;
-		const message = error.message.toLowerCase();
-		return message.includes('rate limit') || message.includes('quota exceeded');
+		// Status and body only. Message text is not read: a 500 whose message
+		// mentions a rate limit would otherwise be retried here four times, past
+		// SERVER_ERROR's refusal to replay a write.
+		return errorStatus(error) === 'resource_exhausted';
 	},
 	handler: async (error: Error) => {
 		// Both error shapes carry Retry-After in milliseconds under this name.

@@ -127,6 +127,21 @@ describe('error handler matching', () => {
 		});
 	});
 
+	it('does not read a rate limit from message text alone', () => {
+		// A 500 is SERVER_ERROR's to judge, and SERVER_ERROR refuses to replay a
+		// write. A message match here would retry the write four times instead.
+		const serverError = apiError({ status: 500 });
+		serverError.message = 'Backend error: rate limit service unavailable';
+		const plain = new Error('Quota exceeded for this request');
+
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(serverError, errorContext as never),
+		).toBe(false);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(plain, errorContext as never),
+		).toBe(false);
+	});
+
 	it('places the quota handler before the rate limit handler, so it wins', () => {
 		const keys = Object.keys(errorHandlers);
 		expect(keys.indexOf('QUOTA_EXHAUSTED_ERROR')).toBeLessThan(
