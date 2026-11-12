@@ -1,6 +1,8 @@
 /**
- * Live smoke test. CI skips this file by name (`api.test.ts` is in
- * `--testPathIgnorePatterns`), so it only runs through `pnpm test:live`:
+ * Live smoke test. CI skips this file by name (the workflow passes
+ * `api.test.ts` in `--testPathIgnorePatterns`). The package's own `pnpm test`
+ * is plain `jest` like every other plugin, so it collects this file too; without
+ * the variables below every suite here skips. Run it on purpose with:
  *
  *   SATISMETER_API_KEY=... SATISMETER_PROJECT_ID=... \
  *     pnpm --filter @corsair-dev/satismeter test:live
@@ -12,8 +14,9 @@
  *
  * Every answer is parsed through its output schema before it is asserted on, so
  * a field typed wrongly throws here instead of for a caller on a successful
- * call. All calls are reads: nothing here writes a user, tracks an event or
- * deletes anything.
+ * call. The first suite only reads. The second one writes (upserts a user,
+ * tracks an event, deletes the user again) and runs only when
+ * `SATISMETER_WRITE_API_KEY` is also set.
  */
 import {
 	makeSatisMeterRequest,
@@ -128,6 +131,8 @@ describeIfWritable('live SatisMeter writes', () => {
 	/** A name unlikely to collide with a real user in the project. */
 	const userFor = (label: string) => `corsair-smoke-${label}-${Date.now()}`;
 
+	// unknown: this sends raw request bodies (upserts and track events, some
+	// deliberately invalid) past the plugin's input schemas, so values vary.
 	function upsert(body: Record<string, unknown>) {
 		return makeSatisMeterRequest(key, {
 			base: SATISMETER_API_WRITE,
@@ -154,6 +159,7 @@ describeIfWritable('live SatisMeter writes', () => {
 	 */
 	const created: string[] = [];
 
+	// unknown: traits are a free-form map the provider stores as sent.
 	async function createUser(userId: string, traits?: Record<string, unknown>) {
 		// Register before the call: the write may land and still fail to answer.
 		created.push(userId);
@@ -169,7 +175,8 @@ describeIfWritable('live SatisMeter writes', () => {
 			try {
 				const text = await listUser(userId);
 				const { users } = Outputs.usersList.parse(parseJsonBody(text));
-				const internalId = users[0]?.id;
+				// Delete only the exact user this run created, never another row.
+				const internalId = users.find((user) => user.userId === userId)?.id;
 				if (!internalId) continue;
 				await makeSatisMeterRequest(key, {
 					base: SATISMETER_API_WRITE,
