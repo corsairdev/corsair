@@ -406,6 +406,7 @@ export const BaseProviders = [
 	'ritekit',
 	'roam',
 	'rocketlane',
+	'rocketreach',
 	'rollbar',
 	'rootly',
 	'runpod',
@@ -925,6 +926,7 @@ export const ProviderDisplayNames = {
 	ritekit: 'RiteKit',
 	roam: 'Roam HQ',
 	rocketlane: 'Rocketlane',
+	rocketreach: 'RocketReach',
 	rollbar: 'Rollbar',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
@@ -1451,6 +1453,7 @@ export type AllProviders =
 	| 'ritekit'
 	| 'roam'
 	| 'rocketlane'
+	| 'rocketreach'
 	| 'rollbar'
 	| 'rootly'
 	| 'runpod'

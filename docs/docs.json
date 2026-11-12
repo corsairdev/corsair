@@ -3404,6 +3404,14 @@
                 ]
               },
               {
+                "group": "RocketReach",
+                "pages": [
+                  "plugins/rocketreach/overview",
+                  "plugins/rocketreach/api",
+                  "plugins/rocketreach/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
