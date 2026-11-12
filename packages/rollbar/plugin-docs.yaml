@@ -6,12 +6,14 @@ overviewNote: |
   Create an access token in Rollbar: a **project** token under **Settings → Project Access Tokens**, or an **account** token under **Settings → API access tokens**. Send it as the `X-Rollbar-Access-Token` header; the plugin never uses `Authorization` or the query string. Things to know before you call:
 
   - **Every response carries `err`.** `err: 0` is success and anything else is a failure — and the HTTP status is not a reliable proxy for it. The live "access token required" response is a `401` with `{ "err": 1, "message": "access token required" }`, while a rejected item update can be a **`200` with `err: 1`**. The plugin reads `err` and turns a non-zero value into an error even on a 200.
-  - **Tokens are scoped.** A project token reaches only its own project; an account token takes `project_id` to pick one. A `401` means the token is missing or bad and a `403` means it is valid but lacks the scope or project.
+  - **Tokens are scoped, and no single token covers every operation.** A project token with `read` and `write` covers items, occurrences, events, comments (reading) and deploy listing for its own project; Rollbar will not give one token both `write` and `post_server_item`. `deploys.create` needs a project token with `post_server_item`. `projects.list` needs an account or personal access token. `itemComments.create` needs a personal access token with `write`, and posts as that user. With an account or personal token, pass `project_id` on the item and occurrence operations, or Rollbar answers `403` "Requires project access". A `401` means the token is missing or malformed; a `403` means it is valid but lacks the scope or project.
   - **`instances` is the API's word for occurrences.** Rollbar lists occurrences at `/api/1/instances` and returns them under an `instances` key; the plugin exposes them as `occurrences` so the name matches the concept.
-  - **Repeated filters.** `level`, `ids` and `project_ids` are repeated query parameters, so `items.list` takes arrays and sends each value under the same key.
-  - **Paging is a page number.** Rollbar returns 20 per page by default and reports `total_count` beside it, which is `null` when a project has more than 100,000 unique items. A snooze needs a duration, so `items.update` rejects `snooze_enabled` without `snooze_expiration_in_seconds`.
+  - **Repeated filters.** `level` and `project_ids` are repeated query parameters, so `items.list` takes arrays and sends each value under the same key. Rollbar's documented `ids` filter is not offered: in a live check it ignored one id and answered `502` to several.
+  - **Item ids.** `items.list` returns each `id` as a numeric string while `items.get` returns a number; the plugin returns a number from both.
+  - **Paging is a page number.** Lists return 20 per page by default (`items.list` 100) and the item, comment and event lists report `total_count` beside it, which is `null` when a project has more than 100,000 unique items. A snooze needs a duration, so `items.update` rejects `snooze_enabled` without `snooze_expiration_in_seconds`.
   - **Timestamps are unix seconds**, on requests and responses alike.
-  - **Retries.** A `429` is the plan's rate limit and the wait is named in the message rather than a header, so the handler backs off on its own. A `5xx` is retried only for a read; a body-level failure has no status and is never retried.
+  - **Retries.** A `429` is the token's rate limit. Rollbar sends no `Retry-After`; the plugin waits for the time in `X-Rate-Limit-Remaining-Seconds` / `X-Rate-Limit-Reset` and backs off exponentially when neither is present. A `5xx` is retried only for a read; a body-level failure has no status and is never retried.
+  - **Deploys.** `deploys.create` answers `{ "data": { "deploy_id": … } }`, the one route without `err`/`result`; the plugin returns `deploy_id`. `deploys.list` has no environment filter (Rollbar ignores one).
 examples:
   read:
     path: items.list
@@ -34,7 +36,7 @@ apiExamples:
   itemComments.list:
     call: "{ item_id: 12345 }"
   itemComments.create:
-    call: "{ item_id: 12345, body: 'Fixed in the next deploy.' }"
+    call: "{ item_id: 12345, project_id: 678, body: 'Fixed in the next deploy.' }"
   itemEvents.list:
     call: "{ item_id: 12345 }"
   occurrences.list:
@@ -43,11 +45,13 @@ apiExamples:
     call: "{ occurrence_id: 98765 }"
   projects.list: {}
   deploys.list:
-    call: "{ environment: 'production' }"
+    call: "{ page: 1 }"
   deploys.create:
     call: "{ environment: 'production', revision: 'abc1234', comment: 'Ship it' }"
 apiNotes:
-  'items.list': '`level`, `ids` and `project_ids` repeat the query parameter, so arrays send every value.'
+  'items.list': '`level` and `project_ids` repeat the query parameter, so arrays send every value. Item `id` comes back as a numeric string and is returned as a number.'
+  'itemComments.create': 'Needs a personal access token with write scope and `project_id`; project and service tokens are refused. The text is sent as `comment`.'
+  'deploys.create': 'Needs a project token with `post_server_item`. Rollbar answers `{ data: { deploy_id } }`.'
   'items.update': 'A snooze needs a duration; `snooze_enabled` without `snooze_expiration_in_seconds` is rejected before the request.'
   'occurrences.list': 'This route names occurrences `instances`; the plugin returns them as `occurrences`.'
-  'items.get': '`total_count` is null when a project has more than 100,000 unique items.'
+  'items.get': 'With an account or personal access token, pass `project_id`; Rollbar answers 403 "Requires project access" without it.'
