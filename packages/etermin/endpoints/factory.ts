@@ -42,12 +42,18 @@ export function createETerminEndpoint<K extends keyof ETerminEndpointInputs>(
 > {
 	return async (ctx, input) => {
 		const credentials = await credentialsForContext(ctx);
+		// Input schemas accept documented language-suffixed fields dynamically; all
+		// schema values are scalar query values before they reach this transport.
+		const query = input as Record<
+			string,
+			string | number | boolean | undefined
+		>;
 		return await makeETerminRequest<ETerminEndpointOutputs[K]>(
 			operation.path,
 			credentials,
 			{
 				method: operation.method,
-				query: input,
+				query,
 			},
 		);
 	};

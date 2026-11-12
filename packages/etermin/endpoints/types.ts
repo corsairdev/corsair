@@ -9,6 +9,34 @@ const ETerminOpaqueResponseSchema = z.union([
 	z.array(ETerminRecordSchema),
 ]);
 
+/**
+ * eTermin documents language-suffixed field names (for example `servicefr`)
+ * instead of enumerating every account language. Keep schemas strict for all
+ * other keys while accepting those documented string-valued parameters.
+ */
+function withLanguageFields<T extends z.ZodObject<z.ZodRawShape>>(
+	schema: T,
+	fieldName: RegExp,
+) {
+	return schema.catchall(z.string()).superRefine((value, context) => {
+		for (const key of Object.keys(value)) {
+			if (!(key in schema.shape) && !fieldName.test(key)) {
+				context.addIssue({
+					code: 'custom',
+					message: `Unrecognized input field: ${key}`,
+					path: [key],
+				});
+			}
+		}
+	});
+}
+
+const serviceLanguageField =
+	/^(service|info|emailtxt|pricesuffix|capseltext)[a-z]{2,}$/;
+const serviceGroupLanguageField = /^(servicegroup|additionaltext)[a-z]{2,}$/;
+const serviceGroupUpdateLanguageField =
+	/^(servicegroup|additionaltext|errormsg)[a-z]{2,}$/;
+
 export const ETerminEndpointInputSchemas = {
 	anchorTimesList: z
 		.object({
@@ -1628,8 +1656,8 @@ export const ETerminEndpointInputSchemas = {
 				),
 		})
 		.strict(),
-	servicesCreate: z
-		.object({
+	servicesCreate: withLanguageFields(
+		z.object({
 			servicegroupid: z.number().int().describe('ID of the service group'),
 			servicede: z
 				.string()
@@ -2273,10 +2301,11 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Used for JavaScript code that will be executed after the booking of the appointment (for example to redirect to another website)',
 				),
-		})
-		.strict(),
-	servicesUpdate: z
-		.object({
+		}),
+		serviceLanguageField,
+	),
+	servicesUpdate: withLanguageFields(
+		z.object({
 			id: z.number().int().describe('ID of the service'),
 			servicegroupid: z
 				.number()
@@ -2935,8 +2964,9 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'Used for JavaScript code that will be executed after the booking of the appointment (for example to redirect to another website)',
 				),
-		})
-		.strict(),
+		}),
+		serviceLanguageField,
+	),
 	servicesDelete: z
 		.object({
 			id: z.string().describe('ID of the service'),
@@ -2966,8 +2996,8 @@ export const ETerminEndpointInputSchemas = {
 				),
 		})
 		.strict(),
-	serviceGroupsCreate: z
-		.object({
+	serviceGroupsCreate: withLanguageFields(
+		z.object({
 			servicegroupde: z
 				.string()
 				.optional()
@@ -3056,10 +3086,11 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'List of services that have to be selected to show this service group. Set to -1 if the service group should be shown initially',
 				),
-		})
-		.strict(),
-	serviceGroupsUpdate: z
-		.object({
+		}),
+		serviceGroupLanguageField,
+	),
+	serviceGroupsUpdate: withLanguageFields(
+		z.object({
 			servicegroupid: z
 				.number()
 				.int()
@@ -3214,8 +3245,9 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'The price of every minute selection interval (servicegrouptype has to be 10)',
 				),
-		})
-		.strict(),
+		}),
+		serviceGroupUpdateLanguageField,
+	),
 	serviceGroupsDelete: z
 		.object({
 			servicegroupid: z

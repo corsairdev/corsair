@@ -126,23 +126,73 @@ describe('eTermin public endpoint seams', () => {
 		);
 	});
 
-	it('accepts documented English service and service-group fields', async () => {
+	it('forwards independently specified multilingual service and service-group inputs', async () => {
 		mockRequest.mockResolvedValue({});
 		await expect(
 			publicEndpoint('services', 'update')(context as ETerminContext, {
 				id: 1,
-				serviceen: 'Consultation',
-				infoen: 'A consultation in English',
+				servicefr: 'Consultation',
+				emailtxtfr: 'Votre rendez-vous : %SERVICETEXT%',
+				pricesuffixfr: 'par séance',
+				capseltextfr: 'Nombre de participants',
 			}),
 		).resolves.toEqual({});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PUT',
+				url: '/api/service',
+				query: {
+					id: 1,
+					servicefr: 'Consultation',
+					emailtxtfr: 'Votre rendez-vous : %SERVICETEXT%',
+					pricesuffixfr: 'par séance',
+					capseltextfr: 'Nombre de participants',
+				},
+			}),
+			expect.anything(),
+		);
 		await expect(
 			publicEndpoint('serviceGroups', 'update')(context as ETerminContext, {
 				servicegroupid: 1,
 				displayindex: 1,
-				servicegroupen: 'Consultations',
-				additionaltexten: 'Choose a consultation',
+				servicegroupfr: 'Consultations',
+				additionaltextfr: 'Choisissez une consultation',
+				errormsgfr: 'Valeur invalide',
 			}),
 		).resolves.toEqual({});
+	});
+
+	it('uses a fixed official timeslot request and preserves its representative response', async () => {
+		const response = [
+			{
+				startdatetime: '2026-12-01 09:00:00',
+				enddatetime: '2026-12-01 09:30:00',
+				calendarid: 123,
+			},
+		];
+		mockRequest.mockResolvedValue(response);
+
+		await expect(
+			publicEndpoint('timeSlots', 'list')(context as ETerminContext, {
+				date: '2026-12-01',
+				serviceid: '456',
+				calendarid: '123',
+			}),
+		).resolves.toEqual(response);
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/timeslots',
+				query: {
+					date: '2026-12-01',
+					serviceid: '456',
+					calendarid: '123',
+				},
+			}),
+			expect.anything(),
+		);
 	});
 
 	it('allows all-calendar working-time requests without a calendar ID', async () => {

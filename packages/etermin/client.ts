@@ -18,7 +18,21 @@ export class ETerminAPIError extends Error {
 	public readonly rateLimitRemaining?: number;
 	public readonly rateLimitLimit?: number;
 
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: {
+			cause?: Error;
+			response?: {
+				status: number;
+				statusText: string;
+				body: unknown;
+				retryAfter?: number;
+				rateLimitReset?: number;
+				rateLimitRemaining?: number;
+				rateLimitLimit?: number;
+			};
+		},
+	) {
 		super(message, options);
 		this.name = 'ETerminAPIError';
 		if (options?.cause instanceof ApiError) {
@@ -29,6 +43,15 @@ export class ETerminAPIError extends Error {
 			this.rateLimitReset = options.cause.rateLimitReset;
 			this.rateLimitRemaining = options.cause.rateLimitRemaining;
 			this.rateLimitLimit = options.cause.rateLimitLimit;
+		}
+		if (options?.response) {
+			this.status = options.response.status;
+			this.statusText = options.response.statusText;
+			this.body = options.response.body;
+			this.retryAfter = options.response.retryAfter;
+			this.rateLimitReset = options.response.rateLimitReset;
+			this.rateLimitRemaining = options.response.rateLimitRemaining;
+			this.rateLimitLimit = options.response.rateLimitLimit;
 		}
 	}
 }
@@ -69,6 +92,48 @@ const noTransportRetries: RateLimitConfig = {
 	backoffMultiplier: 1,
 	headerNames: { retryAfter: 'retry-after' },
 };
+
+function integerHeader(response: Response, name: string): number | undefined {
+	const value = response.headers.get(name);
+	if (!value) return undefined;
+	const parsed = Number.parseInt(value, 10);
+	return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+async function responseBody(response: Response): Promise<unknown> {
+	const text = await response.text();
+	if (!text) return undefined;
+	try {
+		return JSON.parse(text);
+	} catch {
+		// eTermin can return non-JSON error pages; preserving their text makes the
+		// provider failure inspectable without losing its HTTP classification.
+		return text;
+	}
+}
+
+function syncResponseError(response: Response, body: unknown): ETerminAPIError {
+	const reset = integerHeader(response, 'x-ratelimit-reset');
+	const retryAfter = integerHeader(response, 'retry-after');
+	return new ETerminAPIError(
+		`eTermin sync request failed: ${response.status} ${response.statusText}`,
+		{
+			response: {
+				status: response.status,
+				statusText: response.statusText,
+				body,
+				retryAfter: retryAfter === undefined ? undefined : retryAfter * 1000,
+				rateLimitReset: reset
+					? reset > 1000000000000
+						? reset
+						: reset * 1000
+					: undefined,
+				rateLimitRemaining: integerHeader(response, 'x-ratelimit-remaining'),
+				rateLimitLimit: integerHeader(response, 'x-ratelimit-limit'),
+			},
+		},
+	);
+}
 
 export async function makeETerminRequest<T>(
 	path: string,
@@ -117,15 +182,14 @@ export async function makeETerminSyncRequest<T>(
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: signedHeaders(credentials),
+		signal: AbortSignal.timeout(20_000),
 	});
+	const body = await responseBody(response);
+	if (!response.ok) {
+		throw syncResponseError(response, body);
+	}
 	// The documented appointment record fields vary by account, so parsing stays
 	// unknown here until the endpoint's output schema validates the collection.
-	const body: unknown = await response.json();
-	if (!response.ok) {
-		throw new ETerminAPIError(
-			`eTermin sync request failed: ${response.status} ${response.statusText}`,
-		);
-	}
 	const nextToken = response.headers.get('synctoken');
 	if (!nextToken || !Number.isInteger(Number(nextToken))) {
 		throw new ETerminAPIError(

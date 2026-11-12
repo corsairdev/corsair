@@ -1,4 +1,5 @@
 ﻿import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type { ETerminAPIError } from './client';
 import {
 	createETerminSignature,
 	ETERMIN_API_BASE,
@@ -151,5 +152,84 @@ describe('eTermin appointment sync transport', () => {
 		);
 		expect(options).toMatchObject({ method: 'GET' });
 		expect(options?.headers).toMatchObject({ publickey: 'public' });
+	});
+
+	it('preserves rate-limit classification and a JSON error body', async () => {
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ error: 'Too many requests' }), {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: {
+					'retry-after': '3',
+					'x-ratelimit-remaining': '0',
+					'x-ratelimit-limit': '100',
+				},
+			}),
+		);
+
+		await expect(
+			makeETerminSyncRequest(
+				'/api/appointmentsync',
+				{
+					publicKey: 'public',
+					privateKey: 'private',
+				},
+				1,
+			),
+		).rejects.toMatchObject<Partial<ETerminAPIError>>({
+			status: 429,
+			statusText: 'Too Many Requests',
+			body: { error: 'Too many requests' },
+			retryAfter: 3_000,
+			rateLimitRemaining: 0,
+			rateLimitLimit: 100,
+		});
+	});
+
+	it('preserves status and text from a non-JSON error response', async () => {
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response('Service unavailable', {
+				status: 503,
+				statusText: 'Service Unavailable',
+			}),
+		);
+
+		await expect(
+			makeETerminSyncRequest(
+				'/api/appointmentsync',
+				{
+					publicKey: 'public',
+					privateKey: 'private',
+				},
+				1,
+			),
+		).rejects.toMatchObject<Partial<ETerminAPIError>>({
+			status: 503,
+			statusText: 'Service Unavailable',
+			body: 'Service unavailable',
+		});
+	});
+
+	it('applies the shared transport 20-second timeout', async () => {
+		const timeout = jest
+			.spyOn(AbortSignal, 'timeout')
+			.mockReturnValue(new AbortController().signal);
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify([]), {
+				status: 200,
+				headers: { synctoken: '2' },
+			}),
+		);
+
+		await makeETerminSyncRequest(
+			'/api/appointmentsync',
+			{
+				publicKey: 'public',
+				privateKey: 'private',
+			},
+			1,
+		);
+
+		expect(timeout).toHaveBeenCalledWith(20_000);
 	});
 });
