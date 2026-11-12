@@ -3210,6 +3210,14 @@
                 ]
               },
               {
+                "group": "Rentman",
+                "pages": [
+                  "plugins/rentman/overview",
+                  "plugins/rentman/api",
+                  "plugins/rentman/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",
