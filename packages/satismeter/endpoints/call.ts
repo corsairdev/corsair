@@ -68,8 +68,9 @@ export type Envelope = { data?: unknown; page?: unknown };
 export function readEnvelope(text: string): Envelope {
 	const parsed = parseJsonBody(text);
 	if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+		// No body preview, for the same reason as parseJsonBody.
 		throw new Error(
-			`SatisMeter answered with a body that is not an object: ${text.slice(0, 120)}`,
+			`SatisMeter answered with a body that is not an object (${parsed === null ? 'null' : Array.isArray(parsed) ? 'an array' : typeof parsed})`,
 		);
 	}
 	return parsed as Envelope;

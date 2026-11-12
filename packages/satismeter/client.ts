@@ -175,8 +175,10 @@ export function parseJsonBody(text: string): unknown {
 	try {
 		return JSON.parse(text);
 	} catch {
+		// The body stays out of the message: a cut-off users.list answer starts
+		// with a user's email, and callers log error messages.
 		throw new SatisMeterAPIError(
-			`SatisMeter answered with a non-JSON body: ${text.slice(0, 120)}`,
+			`SatisMeter answered with a non-JSON body (${text.length} characters)`,
 		);
 	}
 }

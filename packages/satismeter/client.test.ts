@@ -1,3 +1,4 @@
+import { readEnvelope } from './endpoints/call';
 import {
 	makeSatisMeterRequest,
 	parseJsonBody,
@@ -350,6 +351,25 @@ describe('parseJsonBody', () => {
 	it('throws on a non-JSON body rather than returning it', () => {
 		expect(() => parseJsonBody('<html>oops</html>')).toThrow(
 			SatisMeterAPIError,
+		);
+	});
+	// A cut-off users.list answer starts with a user's email, and an error
+	// message is what callers log, so none of the body goes into it.
+	it('keeps the body out of the error message', () => {
+		expect(() =>
+			parseJsonBody('{"users":[{"email":"ada@example.com","traits":'),
+		).toThrow(expect.objectContaining({
+			message: expect.not.stringContaining('ada@example.com'),
+		}));
+	});
+});
+
+describe('readEnvelope', () => {
+	it('keeps the body out of the error for a non-object answer', () => {
+		expect(() => readEnvelope('["ada@example.com"]')).toThrow(
+			expect.objectContaining({
+				message: expect.not.stringContaining('ada@example.com'),
+			}),
 		);
 	});
 });
