@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Wachete: every `wachete.api.*` operation with input and output types."
+title: "Wachete API reference"
+sidebarTitle: "API"
+description: "API reference for the Wachete plugin in Corsair: every `wachete.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `wachete.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -52,7 +51,12 @@ await corsair.wachete.api.data.list({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
   valueChangedTimestamp?: string | null,
   raw?: string | null,
   error?: string | null,
-  diff?: any[] | null
+  diff?: {
+    o?: number | null,
+    t?: string | null,
+    operation?: number | null,
+    text?: string | null
+  }[] | null
 }[] | null
 ```
 </Accordion>
@@ -149,18 +153,18 @@ await corsair.wachete.api.folders.list({ parentId: '576b3f7e-e126-4e92-9b95-f72a
   method?: string | null,
   url?: string | null,
   headers?: {
-    key: string,
-    value: string
+    key?: string | null,
+    value?: string | null
   }[] | null,
   body?: string | null,
   xPath?: string | null,
   excludeXPath?: string | null,
   regex?: string | null,
   alerts?: {
-    type: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number,
+    type?: string | number | null,
     value?: string | null,
     parameters?: {
-      compare?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null,
+      compare?: string | number | null,
       value?: string | null
     } | null
   }[] | null,
@@ -171,31 +175,36 @@ await corsair.wachete.api.folders.list({ parentId: '576b3f7e-e126-4e92-9b95-f72a
     valueChangedTimestamp?: string | null,
     raw?: string | null,
     error?: string | null,
-    diff?: any[] | null
+    diff?: {
+      o?: number | null,
+      t?: string | null,
+      operation?: number | null,
+      text?: string | null
+    }[] | null
   } | null,
   notificationEndpoints?: {
-    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
-    value: string
+    type?: string | number | null,
+    value?: string | null
   }[] | null,
   proxies?: {
-    location: string
+    location?: string | null
   }[] | null,
-  location?: us | gb | number | null,
+  location?: string | number | null,
   dynamicContent?: boolean | null,
   scrollPage?: boolean | null,
   ignoreInvalidPages?: boolean | null,
   collectRawHtml?: boolean | null,
-  jobType?: SinglePage | Portal | number | null,
+  jobType?: string | number | null,
   crawlingDepth?: number | null,
   crawlBinaryContent?: boolean | null,
   urlFilter?: {
     include?: {
-      filter: string,
-      type: Contains | Regex | number
+      filter?: string | null,
+      type?: string | number | null
     }[] | null,
     exclude?: {
-      filter: string,
-      type: Contains | Regex | number
+      filter?: string | null,
+      type?: string | number | null
     }[] | null
   } | null,
   crawlPagesFromAllDomains?: boolean | null,
@@ -298,7 +307,7 @@ await corsair.wachete.api.folders.upsert({ name: 'Products' });
 
 `notifications.get`
 
-Read one notification as the HTML that was sent
+Read one notification: the monitor name, URL, time and the HTML that was sent
 
 **Risk:** `read`
 
@@ -318,7 +327,7 @@ await corsair.wachete.api.notifications.get({ alertId: 'alert-1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jobType` | `SinglePage \| Portal \| number \| null` | No | SinglePage watches one page; Portal crawls a site. Defaults to SinglePage. |
+| `jobType` | `string \| number \| null` | No | — |
 | `syntheticExpression` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
@@ -367,7 +376,7 @@ await corsair.wachete.api.notifications.list({ taskId: '9f7e1ae7-9a7f-49e0-baa2-
 ```ts
 {
   id?: string | null,
-  type?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null,
+  type?: string | number | null,
   current?: string | null,
   comparand?: string | null,
   html?: string | null,
@@ -447,7 +456,7 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 | `name` | `string \| null` | No | — |
 | `method` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
-| `headers` | `object[] \| null` | No | Request headers, as `{ key, value }` pairs. |
+| `headers` | `object[] \| null` | No | — |
 | `body` | `string \| null` | No | — |
 | `xPath` | `string \| null` | No | — |
 | `excludeXPath` | `string \| null` | No | — |
@@ -458,15 +467,15 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 | `data` | `object \| null` | No | — |
 | `notificationEndpoints` | `object[] \| null` | No | — |
 | `proxies` | `object[] \| null` | No | — |
-| `location` | `us \| gb \| number \| null` | No | The location to check from. The docs name us and gb. |
+| `location` | `string \| number \| null` | No | — |
 | `dynamicContent` | `boolean \| null` | No | — |
 | `scrollPage` | `boolean \| null` | No | — |
 | `ignoreInvalidPages` | `boolean \| null` | No | — |
 | `collectRawHtml` | `boolean \| null` | No | — |
-| `jobType` | `SinglePage \| Portal \| number \| null` | No | SinglePage watches one page; Portal crawls a site. Defaults to SinglePage. |
+| `jobType` | `string \| number \| null` | No | — |
 | `crawlingDepth` | `number \| null` | No | — |
 | `crawlBinaryContent` | `boolean \| null` | No | — |
-| `urlFilter` | `object \| null` | No | Portal only: which crawled URLs to keep or skip. |
+| `urlFilter` | `object \| null` | No | — |
 | `crawlPagesFromAllDomains` | `boolean \| null` | No | — |
 | `note` | `string \| null` | No | — |
 
@@ -475,8 +484,8 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 
 ```ts
 {
-  key: string,
-  value: string
+  key?: string | null,
+  value?: string | null
 }[] | null
 ```
 </Accordion>
@@ -485,10 +494,10 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 
 ```ts
 {
-  type: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number,
+  type?: string | number | null,
   value?: string | null,
   parameters?: {
-    compare?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null,
+    compare?: string | number | null,
     value?: string | null
   } | null
 }[] | null
@@ -503,7 +512,12 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
   valueChangedTimestamp?: string | null,
   raw?: string | null,
   error?: string | null,
-  diff?: any[] | null
+  diff?: {
+    o?: number | null,
+    t?: string | null,
+    operation?: number | null,
+    text?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -512,8 +526,8 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 
 ```ts
 {
-  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
-  value: string
+  type?: string | number | null,
+  value?: string | null
 }[] | null
 ```
 </Accordion>
@@ -522,7 +536,7 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 
 ```ts
 {
-  location: string
+  location?: string | null
 }[] | null
 ```
 </Accordion>
@@ -532,12 +546,12 @@ await corsair.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e'
 ```ts
 {
   include?: {
-    filter: string,
-    type: Contains | Regex | number
+    filter?: string | null,
+    type?: string | number | null
   }[] | null,
   exclude?: {
-    filter: string,
-    type: Contains | Regex | number
+    filter?: string | null,
+    type?: string | number | null
   }[] | null
 } | null
 ```
@@ -568,7 +582,32 @@ await corsair.wachete.api.tasks.pages({ id: 'c0a1b2c3-1111-2222-3333-44445555666
 
 
 
-**Output:** `Record<string, any>[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  url?: string | null,
+  data?: {
+    lastCheckTimestamp?: string | null,
+    valueChangedTimestamp?: string | null,
+    raw?: string | null,
+    error?: string | null,
+    diff?: {
+      o?: number | null,
+      t?: string | null,
+      operation?: number | null,
+      text?: string | null
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -589,7 +628,7 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | Yes | A search term matched against monitor names. |
+| `query` | `string` | Yes | A word matched against monitor names and URLs. Whole words only: a hyphenated name is found by one of its words, not the full name. |
 
 
 
@@ -605,18 +644,18 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
   method?: string | null,
   url?: string | null,
   headers?: {
-    key: string,
-    value: string
+    key?: string | null,
+    value?: string | null
   }[] | null,
   body?: string | null,
   xPath?: string | null,
   excludeXPath?: string | null,
   regex?: string | null,
   alerts?: {
-    type: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number,
+    type?: string | number | null,
     value?: string | null,
     parameters?: {
-      compare?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null,
+      compare?: string | number | null,
       value?: string | null
     } | null
   }[] | null,
@@ -627,31 +666,36 @@ await corsair.wachete.api.tasks.search({ query: 'docs' });
     valueChangedTimestamp?: string | null,
     raw?: string | null,
     error?: string | null,
-    diff?: any[] | null
+    diff?: {
+      o?: number | null,
+      t?: string | null,
+      operation?: number | null,
+      text?: string | null
+    }[] | null
   } | null,
   notificationEndpoints?: {
-    type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
-    value: string
+    type?: string | number | null,
+    value?: string | null
   }[] | null,
   proxies?: {
-    location: string
+    location?: string | null
   }[] | null,
-  location?: us | gb | number | null,
+  location?: string | number | null,
   dynamicContent?: boolean | null,
   scrollPage?: boolean | null,
   ignoreInvalidPages?: boolean | null,
   collectRawHtml?: boolean | null,
-  jobType?: SinglePage | Portal | number | null,
+  jobType?: string | number | null,
   crawlingDepth?: number | null,
   crawlBinaryContent?: boolean | null,
   urlFilter?: {
     include?: {
-      filter: string,
-      type: Contains | Regex | number
+      filter?: string | null,
+      type?: string | number | null
     }[] | null,
     exclude?: {
-      filter: string,
-      type: Contains | Regex | number
+      filter?: string | null,
+      type?: string | number | null
     }[] | null
   } | null,
   crawlPagesFromAllDomains?: boolean | null,
@@ -777,7 +821,7 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 | `name` | `string \| null` | No | — |
 | `method` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
-| `headers` | `object[] \| null` | No | Request headers, as `{ key, value }` pairs. |
+| `headers` | `object[] \| null` | No | — |
 | `body` | `string \| null` | No | — |
 | `xPath` | `string \| null` | No | — |
 | `excludeXPath` | `string \| null` | No | — |
@@ -788,15 +832,15 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 | `data` | `object \| null` | No | — |
 | `notificationEndpoints` | `object[] \| null` | No | — |
 | `proxies` | `object[] \| null` | No | — |
-| `location` | `us \| gb \| number \| null` | No | The location to check from. The docs name us and gb. |
+| `location` | `string \| number \| null` | No | — |
 | `dynamicContent` | `boolean \| null` | No | — |
 | `scrollPage` | `boolean \| null` | No | — |
 | `ignoreInvalidPages` | `boolean \| null` | No | — |
 | `collectRawHtml` | `boolean \| null` | No | — |
-| `jobType` | `SinglePage \| Portal \| number \| null` | No | SinglePage watches one page; Portal crawls a site. Defaults to SinglePage. |
+| `jobType` | `string \| number \| null` | No | — |
 | `crawlingDepth` | `number \| null` | No | — |
 | `crawlBinaryContent` | `boolean \| null` | No | — |
-| `urlFilter` | `object \| null` | No | Portal only: which crawled URLs to keep or skip. |
+| `urlFilter` | `object \| null` | No | — |
 | `crawlPagesFromAllDomains` | `boolean \| null` | No | — |
 | `note` | `string \| null` | No | — |
 
@@ -805,8 +849,8 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  key: string,
-  value: string
+  key?: string | null,
+  value?: string | null
 }[] | null
 ```
 </Accordion>
@@ -815,10 +859,10 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  type: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number,
+  type?: string | number | null,
   value?: string | null,
   parameters?: {
-    compare?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null,
+    compare?: string | number | null,
     value?: string | null
   } | null
 }[] | null
@@ -833,7 +877,12 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
   valueChangedTimestamp?: string | null,
   raw?: string | null,
   error?: string | null,
-  diff?: any[] | null
+  diff?: {
+    o?: number | null,
+    t?: string | null,
+    operation?: number | null,
+    text?: string | null
+  }[] | null
 } | null
 ```
 </Accordion>
@@ -842,8 +891,8 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92,
-  value: string
+  type?: string | number | null,
+  value?: string | null
 }[] | null
 ```
 </Accordion>
@@ -852,7 +901,7 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 
 ```ts
 {
-  location: string
+  location?: string | null
 }[] | null
 ```
 </Accordion>
@@ -862,12 +911,12 @@ await corsair.wachete.api.tasks.upsert({ name: 'My First Monitor', url: 'http://
 ```ts
 {
   include?: {
-    filter: string,
-    type: Contains | Regex | number
+    filter?: string | null,
+    type?: string | number | null
   }[] | null,
   exclude?: {
-    filter: string,
-    type: Contains | Regex | number
+    filter?: string | null,
+    type?: string | number | null
   }[] | null
 } | null
 ```
