@@ -112,6 +112,8 @@ await corsair.renderform.api.render({ template: 'template_1234', data: { 'my-tex
 | `metadata` | `Record<string, JsonValue>` | No | Extra data passed through to the webhook. |
 | `batchName` | `string` | No | Groups renders together, and can be filtered on in results.list. |
 | `cache` | `boolean` | No | Defaults to true. False forces a fresh render and skips the cache, which costs credits. |
+| `width` | `number` | No | Output width in pixels. Renderform crops the image to it from the top left corner. |
+| `height` | `number` | No | Output height in pixels. Renderform crops the image to it from the top left corner. |
 | `waitTime` | `number` | No | Milliseconds to wait before rendering. At most 5000. |
 | `outputFormat` | `jpeg \| png \| webp \| pdf \| mp4 \| webm` | No | Overrides the template's format. A video format needs a template made in the Advanced Editor and always renders asynchronously. |
 | `duration` | `number` | No | Video renders only: length in milliseconds. Every started second costs 5 credits. |
@@ -212,7 +214,7 @@ await corsair.renderform.api.results.list({ template: 'template_1234', page: 0, 
 | `template` | `string` | No | Only renders of this template. |
 | `batch` | `string` | No | Only renders in this batch. |
 | `page` | `number` | No | — |
-| `size` | `number` | No | — |
+| `size` | `number` | No | At most 50. |
 
 
 
@@ -458,7 +460,7 @@ await corsair.renderform.api.templates.list({ name: 'Instagram', tags: ['marketi
 | `tags` | `string[]` | No | Only templates with these tags. |
 | `sourceTemplateId` | `string` | No | Only templates created from this source template. |
 | `page` | `number` | No | 0-based page number. |
-| `size` | `number` | No | Page size. |
+| `size` | `number` | No | Page size, at most 50. |
 
 
 
