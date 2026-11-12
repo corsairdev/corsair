@@ -40,6 +40,7 @@ export type CapturedRequest = {
 export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
+	// unknown: JSON.parse returns any; the body is narrowed by asRecord below.
 	const parsedBody = init.body
 		? (JSON.parse(String(init.body)) as unknown)
 		: undefined;

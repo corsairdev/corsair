@@ -52,7 +52,8 @@ describeIfKey('live U301 API', () => {
 		);
 
 		expect(Array.isArray(result.links)).toBe(true);
-		expect(typeof result.total).toBe('number');
+		// The page count is in `metadata`, not at the top level.
+		expect(typeof result.metadata?.total).toBe('number');
 	});
 
 	it('reads one link by its short form and echoes the slug', async () => {
@@ -63,9 +64,14 @@ describeIfKey('live U301 API', () => {
 				perPage: 1,
 			} as never,
 		);
-		const first = listed.links?.[0];
-		const shortlink = first?.shortlink;
-		if (!shortlink) return;
+		// A list row names its short link `shortUrl`, with a scheme the endpoint
+		// strips. An empty workspace has nothing to read, which is logged rather
+		// than passed silently.
+		const shortlink = listed.links?.[0]?.shortUrl;
+		if (!shortlink) {
+			console.warn('No links in the workspace: links.get was not exercised.');
+			return;
+		}
 
 		const one = await Api.get(
 			liveContext() as never,
@@ -75,9 +81,7 @@ describeIfKey('live U301 API', () => {
 		);
 
 		expect(typeof one.slug).toBe('string');
-		// The input schema accepts a string; `String` keeps the narrowing explicit
-		// for the compiler without changing the value.
-		expect(one.slug).toBe(String(shortlink).split('/').pop());
+		expect(one.slug).toBe(shortlink.split('/').pop());
 	});
 
 	it('reads click buckets through the output schema', async () => {

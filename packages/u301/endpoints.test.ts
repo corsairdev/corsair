@@ -79,6 +79,8 @@ describe('links.create', () => {
 			comment: 'spring campaign',
 		});
 
+		// unknown: the bulk item is the JSON the endpoint sent; the cast only lets
+		// toMatchObject read its fields.
 		const body = lastRequest(fetchMock).bodyArray?.[0] as Record<
 			string,
 			unknown
