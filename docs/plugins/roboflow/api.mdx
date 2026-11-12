@@ -58,7 +58,7 @@ await corsair.roboflow.api.images.upload({ project: 'roboflow/chess-sample-4ckfl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project` | `string` | Yes | The project URL slug or workspace/project ID. |
+| `project` | `string` | Yes | The project URL slug, or a workspace/project ID whose workspace is the API key's own. |
 | `image` | `string` | Yes | A publicly reachable image URL, or a base64 data URI. Up to 20MB. |
 | `name` | `string` | No | The file name to record, when the image is a data URI. |
 | `batch` | `string` | No | A batch name to group the upload under. |
