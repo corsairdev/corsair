@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Userlist plugin"
+sidebarTitle: "Overview"
 description: "Customer messaging with Userlist - push users, companies, relationships and events, send transactional email and in-app messages, and receive webhooks for user, company, relationship, form and message activity."
 ---
 
@@ -78,7 +79,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-A call with no saved key throws `AuthMissingError`. Save the Push API key on the account before calling, or pass `key` in the plugin options. Incoming deliveries verify with the `webhookSecret` option, which is a subscription's own signing secret and not the Push key.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 userlist()
