@@ -49,16 +49,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 /**
  * Drops unset query values so an absent filter is not serialised. Rollbar reads
  * `status` and `level` as repeatable filters, so an empty value is a different
- * query.
+ * query. A `null` is kept: in a PATCH body it clears a field.
  */
-export function queryOf(
-	values: Record<
-		string,
-		string | number | boolean | undefined | (string | number)[]
-	>,
-): Record<string, string | number | boolean | undefined | (string | number)[]> {
+export function queryOf<
+	V extends string | number | boolean | null | (string | number)[],
+>(values: Record<string, V | undefined>): Record<string, V> {
 	const kept = Object.entries(values).filter(
-		([, value]) => value !== undefined,
+		(entry): entry is [string, V] => entry[1] !== undefined,
 	);
 	return Object.fromEntries(kept);
 }

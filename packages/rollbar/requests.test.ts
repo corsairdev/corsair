@@ -141,6 +141,21 @@ describe('items.update', () => {
 		expect(request.query).toEqual({});
 	});
 
+	it('sends null to clear an assignment', async () => {
+		respond(fetchMock, ITEM_UPDATE_RESULT);
+
+		await invoke(Endpoints.itemsUpdate, {
+			item_id: ITEM_ID,
+			assigned_user_id: null,
+			assigned_team_id: null,
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			assigned_user_id: null,
+			assigned_team_id: null,
+		});
+	});
+
 	it('rejects a status Rollbar does not define', async () => {
 		await expect(
 			invoke(Endpoints.itemsUpdate, { item_id: ITEM_ID, status: 'closed' }),

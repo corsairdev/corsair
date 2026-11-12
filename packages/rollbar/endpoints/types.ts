@@ -178,8 +178,18 @@ const ItemsUpdateInputSchema = z
 		status: StatusSchema.optional(),
 		level: LevelSchema.optional(),
 		title: z.string().optional().describe('A new title, up to 255 characters.'),
-		assigned_user_id: z.number().int().optional(),
-		assigned_team_id: z.number().int().optional(),
+		assigned_user_id: z
+			.number()
+			.int()
+			.nullable()
+			.optional()
+			.describe('The user to assign, or null to clear the assignment.'),
+		assigned_team_id: z
+			.number()
+			.int()
+			.nullable()
+			.optional()
+			.describe('The team to assign, or null to clear the assignment.'),
 		resolved_in_version: z
 			.string()
 			.max(40)
