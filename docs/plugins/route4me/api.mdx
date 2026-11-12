@@ -640,7 +640,7 @@ await corsair.route4me.api.orders.list({ page: 0, per_page: 50, search_query: 'c
   local_time_window_end?: number | null,
   local_timezone_string?: string | null,
   territory_ids?: string[] | null,
-  custom_data?: string[] | null,
+  custom_data?: Record<string, any> | any[] | null,
   workflow_uuid?: string[] | null
 }[]
 ```
