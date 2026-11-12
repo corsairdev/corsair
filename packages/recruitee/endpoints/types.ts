@@ -122,6 +122,15 @@ const OfferTranslationSchema = z
 	})
 	.loose();
 
+/**
+ * A tag or source. The search answers `{ id, name }`; the candidate route
+ * answers the name alone.
+ */
+const NamedSchema = z.union([
+	z.string(),
+	z.object({ id: z.number().nullish(), name: z.string().nullish() }).loose(),
+]);
+
 const CandidateSchema = z
 	.object({
 		id: z.number().nullish(),
@@ -131,7 +140,7 @@ const CandidateSchema = z
 		social_links: z.array(z.string()).nullish(),
 		links: z.array(z.string()).nullish(),
 		cover_letter: z.string().nullish(),
-		sources: z.array(z.string()).nullish(),
+		sources: z.array(NamedSchema).nullish(),
 		admin_id: z.number().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
@@ -141,7 +150,7 @@ const CandidateSchema = z
 		photo_url: z.string().nullish(),
 		cv_url: z.string().nullish(),
 		placements: z.array(PlacementSchema).nullish(),
-		tags: z.array(z.string()).nullish(),
+		tags: z.array(NamedSchema).nullish(),
 	})
 	.loose();
 

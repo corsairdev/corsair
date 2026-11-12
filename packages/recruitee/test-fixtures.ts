@@ -73,8 +73,10 @@ export const SEARCH_HIT = {
 	name: 'John Smith',
 	emails: ['john@example.com'],
 	phones: [],
-	sources: ['Indeed'],
-	tags: ['Sample'],
+	// The search sends tags and sources as objects; the candidate route sends
+	// their names as strings.
+	sources: [{ id: 4117420, name: 'Indeed' }],
+	tags: [{ id: 4117407, name: 'Sample' }],
 	source: 'manual',
 	positive_ratings: 0,
 	created_at: '2026-10-26T06:43:01.146466Z',

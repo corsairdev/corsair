@@ -74,6 +74,9 @@ describe('candidates.list', () => {
 		});
 		expect(result.candidates[0]?.name).toBe('John Smith');
 		expect(result.candidates[0]?.placements?.[0]?.stage?.name).toBe('Applied');
+		expect(result.candidates[0]?.tags).toEqual([
+			{ id: 4117407, name: 'Sample' },
+		]);
 		expect(result.total).toBe(1);
 		expect(result.next_page).toBeNull();
 	});
