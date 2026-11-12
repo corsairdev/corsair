@@ -152,7 +152,7 @@ const rocketReachEndpointMeta = {
 			'Read the current state of one or more profile lookups by profile ID or RR-Request-ID',
 	},
 	'person.search': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Search people by title, employer, skills, school and other filters, returning summaries without contact details',
 	},
@@ -162,7 +162,7 @@ const rocketReachEndpointMeta = {
 			'Look up one company by domain, name, LinkedIn URL, ID or ticker, spending a lookup credit',
 	},
 	'company.search': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Search companies by name, domain, industry, size, revenue and other filters',
 	},

@@ -8,7 +8,12 @@ import { z } from 'zod';
 // The one exception is the universal account: it returns `api_key`, the caller's
 // own credential, which the client strips before the schema ever sees it.
 
-const IdSchema = z.union([z.number().int(), z.string().min(1)]);
+const NonBlankStringSchema = z
+	.string()
+	.min(1)
+	.refine((value) => value.trim().length > 0, 'Must not be blank');
+
+const IdSchema = z.union([z.number().int(), NonBlankStringSchema]);
 
 /**
  * A JSON value. Used where a field's shape belongs to the data rather than the
@@ -224,11 +229,11 @@ const CreditUsageSchema = z
 	.object({
 		credit_type: z.string().nullish(),
 		allocated: z
-			.number()
+			.union([z.number(), z.literal('inf')])
 			.nullish()
 			.describe('RocketReach sends the string "inf" on an unlimited plan.'),
 		used: z.number().nullish(),
-		remaining: z.number().nullish(),
+		remaining: z.union([z.number(), z.literal('inf')]).nullish(),
 	})
 	.loose();
 
@@ -307,35 +312,28 @@ export const ROCKETREACH_LOOKUP_TYPES = [
 	'premium',
 	'premium (feeds disabled)',
 	'bulk',
+	'phone',
+	'enrich',
 ] as const;
 
 const LookupInputSchema = z.object({
-	email: z.string().min(1).optional().describe('An email address.'),
+	email: NonBlankStringSchema.optional().describe('An email address.'),
 	id: IdSchema.optional().describe('A RocketReach profile ID.'),
-	linkedin_url: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Such as www.linkedin.com/in/jamesgullbrand.'),
-	name: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Requires current_employer as well.'),
-	current_employer: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Requires name as well.'),
-	title: z.string().min(1).optional(),
-	phone: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('E.164 or international format.'),
+	linkedin_url: NonBlankStringSchema.optional().describe(
+		'Such as www.linkedin.com/in/jamesgullbrand.',
+	),
+	name: NonBlankStringSchema.optional().describe(
+		'Requires current_employer as well.',
+	),
+	current_employer: NonBlankStringSchema.optional().describe(
+		'Requires name as well.',
+	),
+	title: NonBlankStringSchema.optional(),
+	phone: NonBlankStringSchema.optional().describe(
+		'E.164 or international format.',
+	),
 	npi_number: z
-		.string()
-		.min(1)
+		.union([z.number().int(), z.string().regex(/^\d+$/)])
 		.optional()
 		.describe('For a US healthcare professional.'),
 	lookup_type: z
@@ -355,7 +353,26 @@ const LookupInputSchema = z.object({
 		.describe('Post the finished result to this webhook instead of polling.'),
 });
 
-const PersonLookupInputSchema = LookupInputSchema;
+function hasPersonIdentifier(
+	input: z.infer<typeof LookupInputSchema>,
+): boolean {
+	return (
+		input.email !== undefined ||
+		input.id !== undefined ||
+		input.linkedin_url !== undefined ||
+		input.phone !== undefined ||
+		input.npi_number !== undefined ||
+		(input.name !== undefined && input.current_employer !== undefined)
+	);
+}
+
+const personIdentifierMessage =
+	'Provide email, id, linkedin_url, phone, npi_number, or name with current_employer';
+
+const PersonLookupInputSchema = LookupInputSchema.refine(
+	hasPersonIdentifier,
+	personIdentifierMessage,
+);
 
 export type PersonLookupInput = z.infer<typeof PersonLookupInputSchema>;
 
@@ -364,7 +381,8 @@ const PersonLookupResponseSchema = ProfileSchema;
 export type PersonLookupResponse = z.infer<typeof PersonLookupResponseSchema>;
 
 const PersonBulkLookupInputSchema = z.object({
-	queries: LookupInputSchema.omit({ lookup_type: true, webhook_id: true })
+	queries: LookupInputSchema.omit({ webhook_id: true })
+		.refine(hasPersonIdentifier, personIdentifierMessage)
 		.array()
 		.min(1)
 		.max(100)
@@ -400,20 +418,21 @@ export type PersonBulkLookupResponse = z.infer<
 	typeof PersonBulkLookupResponseSchema
 >;
 
-const PersonCheckStatusInputSchema = z.object({
-	ids: z
-		.array(IdSchema)
-		.min(1)
-		.optional()
-		.describe('The profile IDs to check.'),
-	rr_request_id: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
+const PersonCheckStatusInputSchema = z
+	.object({
+		ids: z
+			.array(IdSchema)
+			.min(1)
+			.optional()
+			.describe('The profile IDs to check.'),
+		rr_request_id: NonBlankStringSchema.optional().describe(
 			'The RR-Request-ID from a lookup or bulk lookup. Takes priority over ids.',
 		),
-});
+	})
+	.refine(
+		(input) => input.ids !== undefined || input.rr_request_id !== undefined,
+		'Provide ids or rr_request_id',
+	);
 
 export type PersonCheckStatusInput = z.infer<
 	typeof PersonCheckStatusInputSchema
@@ -432,6 +451,18 @@ export type PersonCheckStatusResponse = z.infer<
  * seventy; the ones here are the contact-prospecting fields, and any other
  * documented key is still sent because the object is `.loose()`.
  */
+// unknown: loose query objects may include additional provider-defined filters.
+function hasSearchFilter(query: Record<string, unknown>): boolean {
+	return Object.values(query).some((value) =>
+		typeof value === 'string'
+			? value.trim().length > 0
+			: Array.isArray(value) &&
+				value.some(
+					(item) => typeof item === 'string' && item.trim().length > 0,
+				),
+	);
+}
+
 const PersonQuerySchema = z
 	.object({
 		name: z.array(z.string()).optional().describe('Full names.'),
@@ -499,7 +530,8 @@ const PersonQuerySchema = z
 			.optional()
 			.describe('Only profiles updated since this date.'),
 	})
-	.loose();
+	.loose()
+	.refine(hasSearchFilter, 'Provide at least one non-empty search filter');
 
 export type RocketReachPersonQuery = z.infer<typeof PersonQuerySchema>;
 
@@ -518,7 +550,7 @@ const PersonSearchInputSchema = z.object({
 		.min(1)
 		.max(100)
 		.optional()
-		.describe('Defaults to 100, maximum 100.'),
+		.describe('Defaults to 10, maximum 100.'),
 	order_by: z
 		.enum(['relevance', 'popularity', 'score'])
 		.optional()
@@ -533,13 +565,18 @@ export type PersonSearchResponse = z.infer<typeof PersonSearchResponseSchema>;
 
 // ── company.lookup ────────────────────────────────────────────────────────
 
-const CompanyLookupInputSchema = z.object({
-	domain: z.string().min(1).optional().describe('Preferred identifier.'),
-	id: IdSchema.optional().describe('A RocketReach company ID.'),
-	name: z.string().min(1).optional(),
-	linkedin_url: z.string().min(1).optional(),
-	ticker: z.string().min(1).optional().describe('A stock ticker.'),
-});
+const CompanyLookupInputSchema = z
+	.object({
+		domain: NonBlankStringSchema.optional().describe('Preferred identifier.'),
+		id: IdSchema.optional().describe('A RocketReach company ID.'),
+		name: NonBlankStringSchema.optional(),
+		linkedin_url: NonBlankStringSchema.optional(),
+		ticker: NonBlankStringSchema.optional().describe('A stock ticker.'),
+	})
+	.refine(
+		(input) => Object.values(input).some((value) => value !== undefined),
+		'Provide a company identifier',
+	);
 
 export type CompanyLookupInput = z.infer<typeof CompanyLookupInputSchema>;
 
@@ -620,6 +657,7 @@ const CompanySearchInputSchema = z.object({
 			phone: z.array(z.string()).optional(),
 		})
 		.loose()
+		.refine(hasSearchFilter, 'Provide at least one non-empty search filter')
 		.describe('At least one filter.'),
 	start: z.number().int().min(1).max(10_000).optional(),
 	page_size: z.number().int().min(1).max(100).optional(),
@@ -650,7 +688,7 @@ export type CompanySearchResponse = z.infer<typeof CompanySearchResponseSchema>;
 // ── email.verify ──────────────────────────────────────────────────────────
 
 const EmailVerifyInputSchema = z.object({
-	email: z.string().min(1).describe('The address to verify.'),
+	email: NonBlankStringSchema.describe('The address to verify.'),
 });
 
 export type EmailVerifyInput = z.infer<typeof EmailVerifyInputSchema>;

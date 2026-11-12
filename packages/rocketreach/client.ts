@@ -17,8 +17,8 @@ export const ROCKETREACH_API_BASE = 'https://api.rocketreach.co/api/v2';
  *
  * `error_code` is usually a string slug (`authentication_failed`,
  * `not_found`), but the email-verification route's insufficient-credits body
- * puts the integer `202` there instead, so it is kept untyped and exposed as a
- * string when it is one. The body is read rather than the status alone, because
+ * puts the integer `202` there instead, so both forms are kept in the error
+ * and its message. The body is read rather than the status alone, because
  * a `403` means two different things (see `isOutOfLookupCredits`).
  */
 export class RocketReachAPIError extends Error {
@@ -138,9 +138,10 @@ export function describeRocketReachError(
 	const { message, code } = failure(body);
 	const text = message ?? fallback;
 	const label = status === undefined ? '' : `RocketReach ${status}`;
+	const codeText = code === undefined ? undefined : String(code);
 	const withCode =
-		typeof code === 'string' && code.length > 0 && code !== text
-			? `${label ? `${label} (${code})` : code}`
+		codeText !== undefined && codeText.length > 0 && codeText !== text
+			? `${label ? `${label} (${codeText})` : codeText}`
 			: label;
 	return withCode ? `${withCode}: ${text}` : text;
 }

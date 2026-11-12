@@ -16,7 +16,9 @@ const API_KEY = 'rocketreach-secret-test-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('Unexpected unmocked fetch');
+	});
 });
 
 afterEach(() => {
@@ -123,6 +125,7 @@ describe('RocketReach client', () => {
 
 		expect(error.status).toBe(402);
 		expect(error.code).toBe(202);
+		expect(error.message).toContain('RocketReach 402 (202):');
 		// The pool and where to buy more are what a caller needs.
 		expect(error.creditType).toBe('email_verification');
 		expect(error.purchaseUrl).toContain('purchase_credits');

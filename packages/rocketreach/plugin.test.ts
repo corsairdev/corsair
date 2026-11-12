@@ -75,15 +75,13 @@ describe('rocketreach plugin definition', () => {
 			(operation) => meta[operation as keyof typeof meta]?.riskLevel !== 'read',
 		);
 
-		// A lookup, search or verification spends a credit, so it is a write even
+		// A lookup or verification spends a credit, so it is a write even
 		// though its HTTP verb may be GET.
 		expect(writes.sort()).toEqual([
 			'company.lookup',
-			'company.search',
 			'email.verify',
 			'person.bulkLookup',
 			'person.lookup',
-			'person.search',
 		]);
 	});
 

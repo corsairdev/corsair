@@ -57,7 +57,7 @@ export function lookupQuery(input: {
 	current_employer?: string;
 	title?: string;
 	phone?: string;
-	npi_number?: string;
+	npi_number?: string | number;
 	lookup_type?: string;
 	return_cached_emails?: boolean;
 	webhook_id?: number;

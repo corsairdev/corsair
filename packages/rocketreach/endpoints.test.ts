@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Account, Company, Email, Person } from './endpoints';
+import type { PersonSearchResponse } from './endpoints/types';
 import {
 	ACCOUNT,
 	COMPANY,
@@ -16,6 +17,7 @@ import {
 	PROGRESS_PROFILE,
 	UNIVERSAL_ACCOUNT,
 } from './test-fixtures';
+import type { AnyEndpoint } from './test-support';
 import { invoke, lastRequest, respond, respondEmpty } from './test-support';
 
 jest.mock('corsair/core', () => ({
@@ -28,7 +30,9 @@ const mockLog = jest.mocked(logEventFromContext);
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('Unexpected unmocked fetch');
+	});
 	mockLog.mockClear();
 });
 
@@ -337,7 +341,10 @@ describe('person.checkStatus', () => {
 	});
 
 	it('rejects a call with neither identifier', async () => {
-		await expect(invoke(Person.checkStatus, {})).rejects.toThrow();
+		await expect(invoke(Person.checkStatus, {})).rejects.toThrow(
+			'Provide ids or rr_request_id',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -368,7 +375,7 @@ describe('person.search', () => {
 
 		const result = (await invoke(Person.search, {
 			query: { current_title: ['CTO'] },
-		})) as { teaser?: unknown; suppressed?: string }[];
+		})) as PersonSearchResponse;
 
 		expect(result[0]?.teaser).toBeDefined();
 		// suppressed is a string, as RocketReach sends it.
@@ -444,7 +451,10 @@ describe('company.lookup', () => {
 	});
 
 	it('rejects a lookup with no identifier', async () => {
-		await expect(invoke(Company.lookup, {})).rejects.toThrow();
+		await expect(invoke(Company.lookup, {})).rejects.toThrow(
+			'Provide a company identifier',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -575,5 +585,74 @@ describe('error propagation', () => {
 
 		expect(error.status).toBe(402);
 		expect(error.creditType).toBe('email_verification');
+	});
+});
+
+// unknown: these negative cases deliberately pass values outside endpoint types.
+const invalidIdentifiers: [string, AnyEndpoint, unknown][] = [
+	['empty person', Person.lookup, {}],
+	['name only', Person.lookup, { name: 'Example' }],
+	['employer only', Person.lookup, { current_employer: 'Example' }],
+	['blank person email', Person.lookup, { email: '   ' }],
+	['empty bulk item', Person.bulkLookup, { queries: [{}] }],
+	['bulk name only', Person.bulkLookup, { queries: [{ name: 'Example' }] }],
+	['blank company domain', Company.lookup, { domain: '   ' }],
+	['empty status', Person.checkStatus, {}],
+	['blank request ID', Person.checkStatus, { rr_request_id: '   ' }],
+	['empty person query', Person.search, { query: {} }],
+	['empty filter array', Person.search, { query: { name: [] } }],
+	['blank filter', Person.search, { query: { name: ['   '] } }],
+	['empty company query', Company.search, { query: {} }],
+	['empty company filter', Company.search, { query: { domain: [] } }],
+];
+
+it.each(
+	invalidIdentifiers,
+)('rejects %s before fetching', async (_, endpoint, input) => {
+	await expect(invoke(endpoint, input)).rejects.toMatchObject({
+		name: 'ZodError',
+	});
+	expect(fetchMock).not.toHaveBeenCalled();
+});
+
+it('accepts an unlimited account allocation', async () => {
+	respond(fetchMock, {
+		credit_usage: [{ allocated: 'inf', remaining: 'inf' }],
+	});
+	await expect(invoke(Account.get, {})).resolves.toMatchObject({
+		credit_usage: [{ allocated: 'inf', remaining: 'inf' }],
+	});
+});
+
+it.each([
+	'phone',
+	'enrich',
+])('accepts documented %s lookup types', async (lookup_type) => {
+	respond(fetchMock, COMPLETE_PROFILE);
+	await invoke(Person.lookup, { id: 123456, lookup_type });
+	expect(lastRequest(fetchMock).query.lookup_type).toBe(lookup_type);
+});
+
+it('accepts a numeric NPI identifier', async () => {
+	respond(fetchMock, COMPLETE_PROFILE);
+	await invoke(Person.lookup, { npi_number: 1234567890 });
+	expect(lastRequest(fetchMock).query.npi_number).toBe('1234567890');
+});
+
+it('preserves the lookup type for bulk items', async () => {
+	respondEmpty(fetchMock);
+	await invoke(Person.bulkLookup, {
+		queries: [{ id: 123456, lookup_type: 'phone' }],
+	});
+	expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+		queries: [{ id: 123456, lookup_type: 'phone' }],
+	});
+});
+
+it('accepts an additional documented search filter', async () => {
+	respond(fetchMock, PERSON_SEARCH, 201);
+	await invoke(Person.search, { query: { company_id: ['123456'] } });
+	expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+		query: { company_id: ['123456'] },
 	});
 });
