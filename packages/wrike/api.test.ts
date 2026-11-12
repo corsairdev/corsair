@@ -7,7 +7,7 @@
  * Read-only: nothing here creates, edits or deletes a task.
  */
 import { Contacts, Tasks, Timelogs } from './endpoints';
-import type { WrikeContext } from './index';
+import type { WrikeContext, WrikeHostOption } from './index';
 
 const token = process.env.WRIKE_PERMANENT_TOKEN;
 
@@ -24,7 +24,14 @@ if (!token) {
  * A Wrike token only works against the host that issued it, so the host is a
  * plugin option. `www` is the default; set `WRIKE_HOST` for a regional one.
  */
-const host = process.env.WRIKE_HOST as 'www' | 'app-eu' | undefined;
+const hostEnv = process.env.WRIKE_HOST;
+const hostKeys: WrikeHostOption[] = ['www', 'eu', 'us2'];
+if (hostEnv !== undefined && !hostKeys.includes(hostEnv as WrikeHostOption)) {
+	throw new Error(
+		`WRIKE_HOST must be one of ${hostKeys.join(', ')}; got ${hostEnv}`,
+	);
+}
+const host = hostEnv as WrikeHostOption | undefined;
 
 function liveContext(): WrikeContext {
 	// unknown: a real context also carries the database, hooks and key manager;
@@ -59,11 +66,11 @@ describeIfKey('live Wrike API', () => {
 		expect(Array.isArray(result.data)).toBe(true);
 	});
 
-	it('lists comments in the account, which is a paged endpoint', async () => {
+	it('lists comments in the account, capped by limit', async () => {
 		const result = await Timelogs.listComments(
 			liveContext() as never,
 			{
-				pageSize: 5,
+				limit: 5,
 			} as never,
 		);
 
