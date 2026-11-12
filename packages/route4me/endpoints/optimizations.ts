@@ -47,7 +47,9 @@ function readsOneOptimization(
 		offset + returned < total;
 
 	return {
-		optimizations: optimizations ?? [],
+		// Passed through unset: a body without the list fails the output parse
+		// instead of reading as "no optimizations".
+		optimizations,
 		total_records: typeof total === 'number' ? total : null,
 		next_offset: hasNext ? offset + returned : null,
 	};
