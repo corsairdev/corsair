@@ -1,0 +1,140 @@
+{
+  "id": "yandex",
+  "displayName": "Yandex Translate",
+  "description": "Translation with Yandex Cloud - translate passages between languages, detect the language of text, and list the supported languages.",
+  "npmPackageName": "@corsair-dev/yandex",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "yandex.api.detectLanguages.run",
+      "shortPath": "detectLanguages.run",
+      "description": "Detect the language of each passage, one result per entry and in order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "texts",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detections",
+            "optional": false,
+            "type": "{ languageCode: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "yandex.api.listLanguages.run",
+      "shortPath": "listLanguages.run",
+      "description": "List the supported languages, with their codes and display names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ code?: string | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "yandex.api.translate.text",
+      "shortPath": "translate.text",
+      "description": "Translate up to 1,000 passages into a target language, detecting the source per passage when it is not given",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targetLanguageCode",
+            "optional": false,
+            "type": "string",
+            "description": "The language to translate into, such as `ru` or `en`."
+          },
+          {
+            "key": "texts",
+            "optional": false,
+            "type": "string[]",
+            "description": "The passages to translate. Each is translated separately."
+          },
+          {
+            "key": "sourceLanguageCode",
+            "optional": true,
+            "type": "string",
+            "description": "The source language. Omit to detect it."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "PLAIN_TEXT | HTML",
+            "description": "How the text is interpreted. Defaults to PLAIN_TEXT."
+          },
+          {
+            "key": "speller",
+            "optional": true,
+            "type": "boolean",
+            "description": "Correct spelling in the result."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "translations",
+            "optional": false,
+            "type": "{ text: string, detectedLanguageCode?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
