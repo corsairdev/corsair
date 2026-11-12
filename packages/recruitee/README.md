@@ -12,17 +12,17 @@ pnpm add @corsair-dev/recruitee
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `candidates.create` | `recruitee.api.candidates.create` | `write` | Add a candidate manually and assign them to an offer at its default stage |
-| `candidates.delete` | `recruitee.api.candidates.delete` | `destructive` | Delete a candidate permanently |
+| `candidates.create` | `recruitee.api.candidates.create` | `write` | Add a candidate manually and assign them to a published or internal offer at its default stage |
+| `candidates.delete` | `recruitee.api.candidates.delete` | `destructive` | Delete a candidate. Recruitee keeps them restorable in its deleted list for 7 days, then removes them |
 | `candidates.get` | `recruitee.api.candidates.get` | `read` | Fetch one candidate with their contact details, stage, status and placements |
-| `candidates.list` | `recruitee.api.candidates.list` | `read` | Search candidates with offer, stage, status and location filters, plus offset paging |
-| `candidates.update` | `recruitee.api.candidates.update` | `write` | Update a candidate: their name, contacts, cover letter, status or stage |
+| `candidates.list` | `recruitee.api.candidates.list` | `read` | Search candidates by text, offer, stage, status, department or location, a page at a time |
+| `candidates.update` | `recruitee.api.candidates.update` | `write` | Update a candidate profile: their name, emails, phones or cover letter |
 | `departments.list` | `recruitee.api.departments.list` | `read` | List the company departments with how many offers each has |
-| `locations.list` | `recruitee.api.locations.list` | `read` | List the company locations with how many offers each has |
-| `offers.create` | `recruitee.api.offers.create` | `write` | Create an offer as a job or a talent pool, optionally already published |
+| `locations.list` | `recruitee.api.locations.list` | `read` | List the company locations with their city, country and address |
+| `offers.create` | `recruitee.api.offers.create` | `write` | Create an offer as a draft job or talent pool; publishing is done in Recruitee |
 | `offers.get` | `recruitee.api.offers.get` | `read` | Fetch one offer with its title, slug, description, requirements and state |
-| `offers.list` | `recruitee.api.offers.list` | `read` | List offers (jobs and talent pools) with department, location, status and kind filters |
-| `offers.update` | `recruitee.api.offers.update` | `write` | Update an offer: its title, description, requirements, department, location or status |
+| `offers.list` | `recruitee.api.offers.list` | `read` | List offers with status, department, location and kind filters, a page at a time |
+| `offers.update` | `recruitee.api.offers.update` | `write` | Update an offer: its title, description, requirements, department or locations |
 
 ## Auth
 
