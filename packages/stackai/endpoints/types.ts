@@ -191,6 +191,24 @@ export const schemas = {
 	},
 } as const;
 
+export const EndpointInputSchemas = {
+	'projects.ioSchema': schemas['projects.ioSchema'].input,
+	'runs.start': schemas['runs.start'].input,
+	'runs.list': schemas['runs.list'].input,
+	'runs.get': schemas['runs.get'].input,
+	'runs.cancel': schemas['runs.cancel'].input,
+	'runs.resume': schemas['runs.resume'].input,
+} satisfies { [K in keyof typeof schemas]: (typeof schemas)[K]['input'] };
+
+export const EndpointOutputSchemas = {
+	'projects.ioSchema': schemas['projects.ioSchema'].output,
+	'runs.start': schemas['runs.start'].output,
+	'runs.list': schemas['runs.list'].output,
+	'runs.get': schemas['runs.get'].output,
+	'runs.cancel': schemas['runs.cancel'].output,
+	'runs.resume': schemas['runs.resume'].output,
+} satisfies { [K in keyof typeof schemas]: (typeof schemas)[K]['output'] };
+
 export type StackAIEndpointInputs = {
 	[K in keyof typeof schemas]: z.input<(typeof schemas)[K]['input']>;
 };

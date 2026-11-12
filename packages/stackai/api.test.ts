@@ -1,3 +1,4 @@
+import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { StackAIAPIError, stackai } from './index';
 
@@ -55,6 +56,22 @@ afterEach(() => {
 });
 
 describe('StackAI public endpoints', () => {
+	it('exports input and output registries for every registered operation', () => {
+		const endpointSchemas = plugin.endpointSchemas!;
+		expect(Object.keys(EndpointInputSchemas).sort()).toEqual(
+			Object.keys(endpointSchemas).sort(),
+		);
+		expect(Object.keys(EndpointOutputSchemas).sort()).toEqual(
+			Object.keys(endpointSchemas).sort(),
+		);
+		for (const key of Object.keys(EndpointInputSchemas) as Array<
+			keyof typeof EndpointInputSchemas
+		>) {
+			expect(EndpointInputSchemas[key]).toBe(endpointSchemas[key]?.input);
+			expect(EndpointOutputSchemas[key]).toBe(endpointSchemas[key]?.output);
+		}
+	});
+
 	it('reads a project schema with an encoded path and version', async () => {
 		const body = {
 			data: {
