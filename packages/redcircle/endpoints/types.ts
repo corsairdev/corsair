@@ -77,25 +77,24 @@ const MaxPageSchema = z
 		`Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is ${REDCIRCLE_MAX_PAGE}.`,
 	);
 
+const SelectorSchema = z
+	.string()
+	.refine((value) => value.trim().length > 0, 'Selector must not be empty.');
+
 // ── products ──────────────────────────────────────────────────────────────
 
 const ProductsGetInputSchema = z
 	.object({
-		tcin: z.string().optional().describe('The Target TCIN (item id).'),
-		dpci: z
-			.string()
-			.optional()
-			.describe(
-				'A DPCI code; it is searched first, then the first match read.',
-			),
-		gtin: z
-			.string()
-			.optional()
-			.describe('A GTIN/ISBN/UPC; it overrides `tcin` and `dpci`.'),
-		url: z
-			.string()
-			.optional()
-			.describe('A Target product URL, which overrides every other selector.'),
+		tcin: SelectorSchema.optional().describe('The Target TCIN (item id).'),
+		dpci: SelectorSchema.optional().describe(
+			'A DPCI code; it is searched first, then the first match read.',
+		),
+		gtin: SelectorSchema.optional().describe(
+			'A GTIN/ISBN/UPC; it overrides `tcin` and `dpci`.',
+		),
+		url: SelectorSchema.optional().describe(
+			'A Target product URL, which overrides every other selector.',
+		),
 	})
 	.superRefine((value, ctx) => {
 		// RedCircle needs one selector; the URL wins over the rest, so a bare call
@@ -234,10 +233,9 @@ const SearchDeliverySchema = z.enum([
 
 const SearchInputSchema = z
 	.object({
-		search_term: z
-			.string()
-			.optional()
-			.describe('The term to search Target for; `url` is an alternative.'),
+		search_term: SelectorSchema.optional().describe(
+			'The term to search Target for; `url` is an alternative.',
+		),
 		category_id: z.string().optional(),
 		sort_by: SearchSortSchema.optional(),
 		delivery_type: SearchDeliverySchema.optional(),
@@ -245,12 +243,9 @@ const SearchInputSchema = z
 			.string()
 			.optional()
 			.describe('The store to localise an in-store filter to.'),
-		url: z
-			.string()
-			.optional()
-			.describe(
-				'A Target search-results URL, which overrides every other parameter.',
-			),
+		url: SelectorSchema.optional().describe(
+			'A Target search-results URL, which overrides every other parameter.',
+		),
 		page: PageSchema,
 		max_page: MaxPageSchema,
 	})
@@ -300,10 +295,10 @@ export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 
 const ReviewsListInputSchema = z
 	.object({
-		tcin: z.string().optional().describe('The Target TCIN (item id).'),
-		dpci: z.string().optional(),
-		gtin: z.string().optional(),
-		url: z.string().optional(),
+		tcin: SelectorSchema.optional().describe('The Target TCIN (item id).'),
+		dpci: SelectorSchema.optional(),
+		gtin: SelectorSchema.optional(),
+		url: SelectorSchema.optional(),
 		sort_by: z
 			.enum([
 				'most_recent',

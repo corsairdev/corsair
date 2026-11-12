@@ -266,3 +266,27 @@ describe('envelope handling', () => {
 		).rejects.toThrow();
 	});
 });
+
+describe('selector validation', () => {
+	const selectors = [
+		[Endpoints.productsGet, 'tcin'],
+		[Endpoints.productsGet, 'dpci'],
+		[Endpoints.productsGet, 'gtin'],
+		[Endpoints.productsGet, 'url'],
+		[Endpoints.searchProducts, 'search_term'],
+		[Endpoints.searchProducts, 'url'],
+		[Endpoints.reviewsList, 'tcin'],
+		[Endpoints.reviewsList, 'dpci'],
+		[Endpoints.reviewsList, 'gtin'],
+		[Endpoints.reviewsList, 'url'],
+	] as const;
+	it.each(selectors)(
+		'rejects empty %p %s selectors before fetch',
+		async (endpoint, selector) => {
+			for (const value of ['', '   ']) {
+				await expect(invoke(endpoint, { [selector]: value })).rejects.toThrow();
+				expect(fetchMock).not.toHaveBeenCalled();
+			}
+		},
+	);
+});
