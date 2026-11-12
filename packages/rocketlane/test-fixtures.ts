@@ -88,17 +88,20 @@ export const TASK = {
 	project: {
 		projectId: PROJECT_ID,
 		projectName: 'Acme onboarding',
-		status: 'ACTIVE',
 	},
-	status: { statusId: 1, statusName: 'In progress' },
+	status: { value: 2, label: 'In progress' },
 	phase: { phaseId: 11, phaseName: 'Discover' },
-	priority: { priorityId: 2, priorityName: 'High' },
+	priority: { value: 2, label: 'High' },
 	fields: [
-		{ fieldId: 7, fieldName: 'Effort estimate', fieldType: 'NUMBER', value: 3 },
+		{
+			fieldId: 7,
+			fieldLabel: 'Effort estimate',
+			fieldValue: 3,
+			fieldValueLabel: '3',
+		},
 	],
-	// The assignee wrapper differs between the create and the read response.
-	assignees: { users: [USER_REF] },
-	followers: { users: [] },
+	assignees: { members: [USER_REF], placeholders: [] },
+	followers: { members: [], placeholders: [] },
 	dependencies: [],
 	parent: null,
 };
@@ -113,22 +116,39 @@ export const PROJECT = {
 	dueDate: '2027-01-31',
 	createdAt: 1794200000,
 	updatedAt: 1794344670,
-	visibility: 'CUSTOMER',
-	status: 'ACTIVE',
+	visibility: 'EVERYONE',
+	// The reference's status is an object, not a string.
+	status: { value: 2, label: 'In progress' },
 	currency: 'USD',
 	annualizedRecurringRevenue: 120000,
 	projectFee: 45000,
 	budgetedHours: 320,
 	allocatedHours: 180,
-	inferredProgress: 55,
+	inferredProgress: 'RUNNING_LATE',
+	progressPercentage: 55,
 	archived: false,
-	contractType: 'FIXED_FEE',
 	owner: USER_REF,
-	customer: { companyId: COMPANY_ID, companyName: 'Acme Inc' },
-	fields: [],
-	teamMembers: [USER_REF],
+	customer: {
+		companyId: COMPANY_ID,
+		companyName: 'Acme Inc',
+		companyUrl: 'https://acme.example.com',
+	},
+	fields: [
+		{
+			fieldId: 8,
+			fieldLabel: 'Region',
+			fieldValue: 'EMEA',
+			fieldValueLabel: 'EMEA',
+		},
+	],
+	teamMembers: {
+		members: [USER_REF],
+		customers: [],
+		customerChampion: null,
+	},
 	sources: [],
-	partners: [],
+	partnerCompanies: [],
+	financials: { contractType: 'FIXED_FEE' },
 };
 
 export const PROJECT_PAGE = { data: [PROJECT], pagination: PAGINATION };
@@ -137,7 +157,7 @@ export const COMPANY = {
 	companyId: COMPANY_ID,
 	companyName: 'Acme Inc',
 	companyUrl: 'https://acme.example.com',
-	visibility: 'CUSTOMER',
+	visibility: 'EVERYONE',
 	description: 'Enterprise customer',
 	createdAt: 1794100000,
 	updatedAt: 1794344670,
@@ -145,7 +165,18 @@ export const COMPANY = {
 	createdBy: USER_REF,
 	updatedBy: USER_REF,
 	fields: [],
-	notes: [],
+	notes: [
+		{
+			noteId: 12,
+			fieldId: 13,
+			fieldLabel: 'Account notes',
+			noteTitle: 'Renewal',
+			noteText: 'Renews in March',
+			tags: [{ tagId: 1, label: 'sales', color: 'blue' }],
+			createdAt: 1794100000,
+			updatedAt: 1794100000,
+		},
+	],
 };
 
 export const COMPANY_PAGE = { data: [COMPANY], pagination: PAGINATION };
@@ -164,9 +195,9 @@ export const USER = {
 	role: { roleId: 1, roleName: 'Project manager' },
 	company: { companyId: COMPANY_ID, companyName: 'Acme Inc' },
 	fields: [],
-	// Provider-shaped blobs.
-	permission: { canEdit: true },
-	holidayCalendar: { calendarId: 2 },
+	permission: { permissionId: 3, permissionName: 'Admin' },
+	// The reference spells it `calender`.
+	holidayCalendar: { calenderId: 2, calenderName: 'US holidays' },
 };
 
 export const USER_PAGE = { data: [USER], pagination: PAGINATION };
@@ -178,7 +209,7 @@ export const TIME_ENTRY = {
 	activityName: 'Discovery workshop',
 	notes: 'Ran the session with the customer team',
 	billable: true,
-	sourceType: 'WEB',
+	sourceType: 'TASK',
 	status: 'APPROVED',
 	deleted: false,
 	createdAt: 1794300000,
@@ -195,10 +226,9 @@ export const TIME_ENTRY = {
 	submittedBy: USER_REF,
 	approvedBy: USER_REF,
 	fields: [],
-	// Rate blocks are provider-shaped and differ by plan.
-	costRate: { amount: 50, currency: 'USD' },
-	billRate: { amount: 150, currency: 'USD' },
-	budget: { budgetId: 9 },
+	costRate: { rate: 50, currency: 'USD' },
+	billRate: { rate: 150, currency: 'USD' },
+	budget: { budgetId: 9, budgetName: 'Delivery' },
 };
 
 export const TIME_ENTRY_PAGE = { data: [TIME_ENTRY], pagination: PAGINATION };

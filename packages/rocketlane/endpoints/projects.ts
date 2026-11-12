@@ -170,7 +170,7 @@ export const update: RocketlaneEndpoints['projectsUpdate'] = (ctx, input) =>
 			shape: singleShape('project'),
 			log: (parsed, result) => ({
 				projectId: parsed.project_id,
-				status: result.project.status ?? undefined,
+				status: result.project.status?.value ?? undefined,
 			}),
 		},
 	);

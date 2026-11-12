@@ -252,7 +252,17 @@ export const CompanyNoteSchema = z
 		noteText: z.string().nullish(),
 		createdAt: z.number().nullish(),
 		updatedAt: z.number().nullish(),
-		tags: z.array(z.record(z.string(), z.string())).nullish(),
+		tags: z
+			.array(
+				z
+					.object({
+						tagId: z.number().nullish(),
+						label: z.string().nullish(),
+						color: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
@@ -287,21 +297,24 @@ export const UserRefSchema = z
 
 export type RocketlaneUserRef = z.infer<typeof UserRefSchema>;
 
-/** A custom field value as the API returns it, alongside its definition. */
+/** A custom field value as the API returns it, with its label. */
 export const FieldValueSchema = z
 	.object({
 		fieldId: z.number().nullish(),
-		fieldName: z.string().nullish(),
-		fieldType: z.string().nullish(),
-		value: z
-			.union([
-				z.string(),
-				z.number(),
-				z.boolean(),
-				z.array(z.string()),
-				z.array(z.number()),
-			])
-			.nullish(),
+		fieldLabel: z.string().nullish(),
+		// unknown: the value's type follows the field's type (text, number,
+		// date, a single or multi select id list, a user reference), and the
+		// reference types it as both a string and an object.
+		fieldValue: z.unknown().optional(),
+		fieldValueLabel: z.unknown().optional(),
+	})
+	.loose();
+
+/** A status or priority: a numeric value and its display label. */
+const ValueLabelSchema = z
+	.object({
+		value: z.number().nullish(),
+		label: z.string().nullish(),
 	})
 	.loose();
 
@@ -376,7 +389,6 @@ const TaskProjectSchema = z
 	.object({
 		projectId: z.number().nullish(),
 		projectName: z.string().nullish(),
-		status: z.string().nullish(),
 	})
 	.loose();
 
@@ -406,13 +418,7 @@ const TaskSchema = z
 		createdBy: UserRefSchema.nullish(),
 		updatedBy: UserRefSchema.nullish(),
 		project: TaskProjectSchema.nullish(),
-		status: z
-			.object({
-				statusId: z.number().nullish(),
-				statusName: z.string().nullish(),
-			})
-			.loose()
-			.nullish(),
+		status: ValueLabelSchema.nullish(),
 		phase: z
 			.object({
 				phaseId: z.number().nullish(),
@@ -420,13 +426,7 @@ const TaskSchema = z
 			})
 			.loose()
 			.nullish(),
-		priority: z
-			.object({
-				priorityId: z.number().nullish(),
-				priorityName: z.string().nullish(),
-			})
-			.loose()
-			.nullish(),
+		priority: ValueLabelSchema.nullish(),
 		fields: z.array(FieldValueSchema).nullish(),
 		assignees: AssigneesSchema.nullish(),
 		followers: FollowersSchema.nullish(),
@@ -564,40 +564,47 @@ const ProjectSchema = z
 		createdAt: z.number().nullish(),
 		updatedAt: z.number().nullish(),
 		visibility: z.string().nullish(),
-		status: z.string().nullish(),
 		externalReferenceId: z.string().nullish(),
 		currency: z.string().nullish(),
 		annualizedRecurringRevenue: z.number().nullish(),
 		projectFee: z.number().nullish(),
 		budgetedHours: z.number().nullish(),
 		allocatedHours: z.number().nullish(),
-		inferredProgress: z.number().nullish(),
+		trackedHours: z.number().nullish(),
+		progressPercentage: z.number().nullish(),
+		/** `ON_TRACK`, `AHEAD_OF_TIME`, `RUNNING_LATE` or `NONE`. */
+		inferredProgress: z.string().nullish(),
 		archived: z.boolean().nullish(),
-		contractType: z.string().nullish(),
 		customersInvited: z.number().nullish(),
 		customersJoined: z.number().nullish(),
 		owner: UserRefSchema.nullish(),
-		// The customer block is company id plus name; both spellings appear.
+		status: ValueLabelSchema.nullish(),
 		customer: z
 			.object({
 				companyId: z.number().nullish(),
 				companyName: z.string().nullish(),
-				customerId: z.number().nullish(),
-				customerName: z.string().nullish(),
-			})
-			.loose()
-			.nullish(),
-		company: z
-			.object({
-				companyId: z.number().nullish(),
-				companyName: z.string().nullish(),
+				companyUrl: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
 		fields: z.array(FieldValueSchema).nullish(),
-		teamMembers: z.array(UserRefSchema).nullish(),
+		teamMembers: z
+			.object({
+				members: z.array(UserRefSchema).nullish(),
+				customers: z.array(UserRefSchema).nullish(),
+				customerChampion: UserRefSchema.nullish(),
+			})
+			.loose()
+			.nullish(),
 		sources: z.array(ProjectSourceSchema).nullish(),
-		partners: z.array(ProjectPartnerSchema).nullish(),
+		partnerCompanies: z.array(ProjectPartnerSchema).nullish(),
+		financials: z
+			.object({
+				/** `FIXED_FEE`, `TIME_AND_MATERIAL`, `SUBSCRIPTION` or `NON_BILLABLE`. */
+				contractType: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
 	})
 	.loose();
 

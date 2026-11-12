@@ -165,7 +165,10 @@ describe('tasks.get', () => {
 		expect(request.path).toBe(`/api/1.0/tasks/${TASK_ID}`);
 		expect(request.query).toEqual({ includeAllFields: 'true' });
 		expect(result.task.project?.projectName).toBe('Acme onboarding');
-		expect(result.task.status?.statusName).toBe('In progress');
+		expect(result.task.status?.label).toBe('In progress');
+		expect(result.task.priority?.value).toBe(2);
+		expect(result.task.assignees?.members?.[0]?.userId).toBe(USER_ID);
+		expect(result.task.fields?.[0]?.fieldLabel).toBe('Effort estimate');
 	});
 
 	it('rejects a non-positive id before sending anything', async () => {
@@ -323,6 +326,11 @@ describe('projects.get', () => {
 		expect(lastRequest(fetchMock).path).toBe(`/api/1.0/projects/${PROJECT_ID}`);
 		expect(result.project.owner?.emailId).toBe('sam@example.com');
 		expect(result.project.projectFee).toBe(45000);
+		// The reference returns these as objects and an enum string.
+		expect(result.project.status?.label).toBe('In progress');
+		expect(result.project.inferredProgress).toBe('RUNNING_LATE');
+		expect(result.project.teamMembers?.members?.[0]?.userId).toBe(USER_ID);
+		expect(result.project.financials?.contractType).toBe('FIXED_FEE');
 	});
 });
 
@@ -468,6 +476,7 @@ describe('companies', () => {
 		})) as Awaited<ReturnType<typeof Directory.companiesGet>>;
 
 		expect(result.company.companyUrl).toBe('https://acme.example.com');
+		expect(result.company.notes?.[0]?.tags?.[0]?.tagId).toBe(1);
 	});
 
 	it('creates a company with its account owner', async () => {
@@ -538,6 +547,8 @@ describe('users', () => {
 		})) as Awaited<ReturnType<typeof Directory.usersGet>>;
 
 		expect(result.user.role?.roleName).toBe('Project manager');
+		expect(result.user.holidayCalendar?.calenderName).toBe('US holidays');
+		expect(result.user.permission?.permissionName).toBe('Admin');
 	});
 });
 
@@ -571,6 +582,7 @@ describe('time entries', () => {
 			`/api/1.0/time-entries/${TIME_ENTRY_ID}`,
 		);
 		expect(result.time_entry.status).toBe('APPROVED');
+		expect(result.time_entry.billRate?.rate).toBe(150);
 	});
 
 	it('creates an entry with its nested project and task', async () => {
