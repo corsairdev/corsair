@@ -32,7 +32,7 @@ See [`route-inventory.md`](./route-inventory.md) for per-family counts, exclusio
 | `contentTrust.infoV0` | `POST /documentmanager/csc/v0/info` | Public | [Content Trust OpenAPI](https://dev.digicert.com/api-reference/openapi/document-trust.json) |
 | `contentTrust.infoV1` | `POST /documentmanager/csc/v1/info` | Public | [Content Trust OpenAPI](https://dev.digicert.com/api-reference/openapi/document-trust.json) |
 
-CertCentral defaults to the US API base URL. Set `certCentralRegion: 'eu'` for CertCentral Europe. Report Library uses separate regional hosts selected by `reportRegion` (`us` or `eu`). DigiCert ONE calls default to the US hostname; `digicertOneRegion` selects the documented US, Japan, Switzerland, Netherlands, or Australia production hostname.
+CertCentral defaults to the US API base URL. Set `certCentralRegion: 'eu'` for CertCentral Europe. Report Library uses separate regional hosts selected by `reportRegion` (`us` or `eu`). DigiCert ONE calls default to the US hostname; `digicertOneRegion` selects the documented US, Japan, Switzerland, Netherlands, Australia, or India production hostname.
 
 CertCentral documents rolling rate limits of 100 requests per 5 seconds and 1,000 per 3 minutes, per API key. A 429 response uses an `errors` array with `request_limit_exceeded`; this client leaves rate-limit retries to Corsair's HTTP transport. See [rate limits](https://dev.digicert.com/certcentral-apis/services-api/rate-limits.html) and [error formats](https://dev.digicert.com/certcentral-apis/services-api/errors.html).
 

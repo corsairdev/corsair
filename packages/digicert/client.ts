@@ -9,7 +9,7 @@ export type DigicertApiFamily =
 	| 'reportLibrary'
 	| 'trustLifecycle'
 	| 'contentTrust';
-export type DigiCertOneRegion = 'us' | 'jp' | 'ch' | 'nl' | 'au';
+export type DigiCertOneRegion = 'us' | 'jp' | 'ch' | 'nl' | 'au' | 'in';
 
 export const DIGICERT_ONE_HOSTS: Record<DigiCertOneRegion, string> = {
 	us: 'one.digicert.com',
@@ -17,6 +17,7 @@ export const DIGICERT_ONE_HOSTS: Record<DigiCertOneRegion, string> = {
 	ch: 'one.ch.digicert.com',
 	nl: 'one.nl.digicert.com',
 	au: 'one.au.digicert.com',
+	in: 'one.digicert.co.in',
 };
 
 export class DigicertAPIError extends Error {
@@ -126,6 +127,7 @@ export async function makeDigicertRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: defaultHeaders,
+		ENCODE_PATH: encodePathSegment,
 	};
 	const requestOptions: ApiRequestOptions = {
 		method,
@@ -159,7 +161,7 @@ function stringHeaders(
 
 // The shared transport decodes every non-JSON response with `response.text()`,
 // which corrupts binary downloads (for example certificate DER bytes). Binary
-// operations therefore bypass it and read `arrayBuffer()` directly.
+// operations therefore bypass it and read the response stream as bounded chunks.
 async function requestBinary<T>(options: {
 	base: string;
 	endpoint: string;
@@ -236,13 +238,33 @@ async function requestBinary<T>(options: {
 		const parsed: unknown = await response.json();
 		return parsed as T;
 	}
-	const buffer = await response.arrayBuffer();
-	if (buffer.byteLength > MAX_BINARY_BYTES) {
-		throw new Error(
-			`DigiCert binary response exceeds ${MAX_BINARY_BYTES} bytes`,
-		);
+	const reader = response.body?.getReader();
+	if (!reader) return [] as T;
+	const chunks: Uint8Array[] = [];
+	let byteLength = 0;
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			byteLength += value.byteLength;
+			if (byteLength > MAX_BINARY_BYTES) {
+				await reader.cancel().catch(() => undefined);
+				throw new Error(
+					`DigiCert binary response exceeds ${MAX_BINARY_BYTES} bytes`,
+				);
+			}
+			chunks.push(value);
+		}
+	} finally {
+		reader.releaseLock();
 	}
-	return Array.from(new Uint8Array(buffer)) as T;
+	const bytes = new Uint8Array(byteLength);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return Array.from(bytes) as T;
 }
 
 function retryAfterMs(response: Response): number | undefined {
@@ -304,15 +326,24 @@ function buildUrl(
 	path?: ApiRequestOptions['path'],
 	query?: ApiRequestOptions['query'],
 ): string {
-	// `unknown`: path values are provider-defined scalars; encodeURI only needs their string form.
+	// `unknown`: path values are provider-defined scalars; each becomes one URL segment.
 	const pathParts: Record<string, unknown> = path ?? {};
 	const resolved = endpoint.replace(/{(.*?)}/g, (match, key: string) =>
-		Object.hasOwn(pathParts, key) ? encodeURI(String(pathParts[key])) : match,
+		Object.hasOwn(pathParts, key) ? encodePathSegment(pathParts[key]) : match,
 	);
 	const baseUrl = base.endsWith('/') ? base.slice(0, -1) : base;
 	const relative = resolved.startsWith('/') ? resolved.slice(1) : resolved;
 	const queryString = serializeQuery(query);
 	return `${baseUrl}/${relative}${queryString}`;
+}
+
+function encodePathSegment(value: unknown): string {
+	// `unknown`: path values are provider-defined scalars validated per operation.
+	const segment = String(value);
+	if (segment === '.' || segment === '..') {
+		throw new Error('DigiCert path parameters cannot be dot segments');
+	}
+	return encodeURIComponent(segment);
 }
 
 function serializeQuery(query?: ApiRequestOptions['query']): string {

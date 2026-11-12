@@ -253,8 +253,8 @@ const doc_12638b157910Output = z
 	.optional();
 const doc_ad55507625c4Input = z
 	.object({
-		path: z.object({}).strict().default({}),
-		query: z.object({ target_account_id: z.number().int() }).strict(),
+		path: z.object({ target_account_id: z.number().int().positive() }).strict(),
+		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
@@ -8055,21 +8055,21 @@ const doc_f22fa239a636Input = z
 	.object({
 		path: z
 			.object({
-				report_identifier: z.string().min(1),
-				report_run_identifier: z.string().min(1),
+				report_identifier: z.string().uuid(),
+				report_run_identifier: z.string().uuid(),
 			})
 			.strict(),
 		query: z
 			.object({
-				report_format: z.string(),
-				split_report_sequence: z.number().int().optional(),
+				report_format: z.enum(['JSON', 'CSV', 'EXCEL', 'ZIP']),
+				split_report_sequence: z.number().int().min(0).optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const doc_f22fa239a636Output = z.json().optional();
+const doc_f22fa239a636Output = z.array(z.number().int().min(0).max(255));
 const doc_d6c0bc13eb4bInput = z
 	.object({
 		path: z.object({ report_identifier: z.string().min(1) }).strict(),
@@ -8118,11 +8118,10 @@ const doc_08c16f4a80d4Output = z
 	.optional();
 const doc_b285fe5a9222Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ report_identifier: z.string().uuid() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.json().optional(),
 	})
 	.strict();
 const doc_b285fe5a9222Output = z
@@ -8832,7 +8831,7 @@ export const generatedDocEndpoints = {
 		}),
 		moveOrders: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/account/move-orders/<target_account_id>',
+			path: '/account/move-orders/{target_account_id}',
 			method: 'POST',
 			operationId: 'certcentralApi.moveOrders',
 			inputSchema: generatedSchemas.doc_ad55507625c4Input,
@@ -10944,9 +10943,10 @@ export const generatedDocEndpoints = {
 		}),
 		downloadReport: createOpenApiEndpoint({
 			family: 'reportLibrary',
-			path: '/report/{report_identifier}/{report_run_identifier}',
+			path: '/report/{report_identifier}/{report_run_identifier}/download',
 			method: 'GET',
 			operationId: 'reportLibraryApi.downloadReport',
+			responseType: 'binary',
 			inputSchema: generatedSchemas.doc_f22fa239a636Input,
 			outputSchema: generatedSchemas.doc_f22fa239a636Output,
 		}),
@@ -10976,7 +10976,7 @@ export const generatedDocEndpoints = {
 		}),
 		startReportRun: createOpenApiEndpoint({
 			family: 'reportLibrary',
-			path: '/report/%7B%7Breport_identifier%7D%7D/run',
+			path: '/report/{report_identifier}/run',
 			method: 'POST',
 			operationId: 'reportLibraryApi.startReportRun',
 			inputSchema: generatedSchemas.doc_b285fe5a9222Input,
@@ -13746,8 +13746,8 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.moveOrders',
 		endpoint: generatedDocEndpoints.certcentralApi.moveOrders,
 		input: {
-			path: {},
-			query: { target_account_id: 1 },
+			path: { target_account_id: 1 },
+			query: {},
 			headers: {},
 			cookies: {},
 			body: { order_ids: 'fixture' },
@@ -13755,7 +13755,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/account/move-orders/<target_account_id>',
+			path: '/account/move-orders/{target_account_id}',
 			method: 'POST',
 		},
 	},
@@ -19028,15 +19028,18 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'reportLibraryApi.downloadReport',
 		endpoint: generatedDocEndpoints.reportLibraryApi.downloadReport,
 		input: {
-			path: { report_identifier: 'fixture', report_run_identifier: 'fixture' },
-			query: { report_format: 'fixture' },
+			path: {
+				report_identifier: '00000000-0000-4000-8000-000000000001',
+				report_run_identifier: '00000000-0000-4000-8000-000000000002',
+			},
+			query: { report_format: 'ZIP' },
 			headers: {},
 			cookies: {},
 		},
-		outputExample: {},
+		outputExample: [],
 		expected: {
 			family: 'reportLibrary',
-			path: '/report/{report_identifier}/{report_run_identifier}',
+			path: '/report/{report_identifier}/{report_run_identifier}/download',
 			method: 'GET',
 		},
 	},
@@ -19092,11 +19095,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'reportLibraryApi.startReportRun',
 		endpoint: generatedDocEndpoints.reportLibraryApi.startReportRun,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { report_identifier: '00000000-0000-4000-8000-000000000001' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'reportLibrary',
-			path: '/report/%7B%7Breport_identifier%7D%7D/run',
+			path: '/report/{report_identifier}/run',
 			method: 'POST',
 		},
 	},

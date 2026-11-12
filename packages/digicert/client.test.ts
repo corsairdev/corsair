@@ -158,6 +158,19 @@ describe('makeDigicertRequest', () => {
 		});
 	});
 
+	it('supports the documented India DigiCert ONE region', async () => {
+		mockRequest.mockResolvedValue([]);
+		await makeDigicertRequest(
+			'accountManager',
+			'/account/api/v1/locales',
+			'one-service-token',
+			{ digicertOneRegion: 'in' },
+		);
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			BASE: 'https://one.digicert.co.in',
+		});
+	});
+
 	it('uses Bearer authorization for documented Content Trust OAuth2 routes', async () => {
 		mockRequest.mockResolvedValue({ data: { credentials: [] } });
 		await makeDigicertRequest(
@@ -219,6 +232,80 @@ describe('makeDigicertRequest', () => {
 				| undefined;
 			expect(init?.headers?.get('x-api-key')).toBe('one-token');
 			expect(mockRequest).not.toHaveBeenCalled();
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('keeps path parameters inside one encoded URL segment', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn(
+			async () =>
+				new Response(Uint8Array.from([0x30]), {
+					status: 200,
+					headers: { 'Content-Type': 'application/octet-stream' },
+				}),
+		) as typeof fetch;
+		try {
+			await makeDigicertRequest(
+				'privateCA',
+				'/certificate-authority/api/v1/ca/{id}/download',
+				'one-token',
+				{ binary: true, path: { id: '../account/123' } },
+			);
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://one.digicert.com/certificate-authority/api/v1/ca/..%2Faccount%2F123/download',
+				expect.anything(),
+			);
+			mockRequest.mockResolvedValueOnce({});
+			await makeDigicertRequest('certcentral', '/user/{id}', 'key', {
+				method: 'GET',
+				path: { id: '../account/123' },
+			});
+			expect(
+				mockRequest.mock.calls[0]?.[0]?.ENCODE_PATH?.('../account/123'),
+			).toBe('..%2Faccount%2F123');
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{ binary: true, path: { id: '..' } },
+				),
+			).rejects.toThrow('dot segments');
+			expect(global.fetch).toHaveBeenCalledTimes(1);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('cancels a binary stream when it exceeds the limit without Content-Length', async () => {
+		const originalFetch = global.fetch;
+		const chunk = new Uint8Array(16 * 1024 * 1024);
+		let canceled = false;
+		const body = new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.enqueue(chunk);
+				controller.enqueue(chunk);
+				controller.enqueue(new Uint8Array(1));
+			},
+			cancel() {
+				canceled = true;
+			},
+		});
+		global.fetch = jest.fn(
+			async () => new Response(body, { status: 200 }),
+		) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{ binary: true, path: { id: 'ca-1' } },
+				),
+			).rejects.toThrow('binary response exceeds');
+			expect(canceled).toBe(true);
 		} finally {
 			global.fetch = originalFetch;
 		}

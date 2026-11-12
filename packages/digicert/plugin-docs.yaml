@@ -1581,7 +1581,7 @@ apiExamples:
       query: {}
   certcentralApi.moveOrders:
     args:
-      query:
+      path:
         target_account_id: 1
       body:
         order_ids: example
@@ -3787,10 +3787,14 @@ apiExamples:
   reportLibraryApi.downloadReport:
     args:
       path:
-        report_identifier: example
-        report_run_identifier: example
+        report_identifier: 00000000-0000-4000-8000-000000000001
+        report_run_identifier: 00000000-0000-4000-8000-000000000002
       query:
-        report_format: example
+        report_format: EXCEL
+  reportLibraryApi.startReportRun:
+    args:
+      path:
+        report_identifier: 00000000-0000-4000-8000-000000000001
   reportLibraryApi.editReport:
     args:
       path:

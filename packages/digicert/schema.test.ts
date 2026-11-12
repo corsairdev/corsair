@@ -60,6 +60,7 @@ const intermediateRecord = {
 	id: '1001',
 	subject_common_name: 'Example Intermediate CA',
 	subject_org_name: 'Example Inc',
+	valid_from: '2021-01-01 00:00:00',
 	issuer_common_name: 'Example Root CA',
 	status: 'valid',
 	valid_to: '2031-01-01',
@@ -157,7 +158,16 @@ describe('DigiCert endpoint schemas', () => {
 			{ reportIdentifier: '00000000-0000-4000-8000-000000000001' },
 			{ reportIdentifier: 'invalid' },
 		],
-		['customReportQuery', { fields: ['id'] }, { fields: [] }],
+		[
+			'customReportQuery',
+			{
+				fields: ['id'],
+				container_id: '123',
+				organization_id: '112233',
+				user_id: 'user-123',
+			},
+			{ fields: [] },
+		],
 		[
 			'customReportById',
 			{ id: 123, fields: ['id'] },
@@ -312,6 +322,55 @@ describe('DigiCert endpoint schemas', () => {
 				items: [{ id: 'file-1', file_name: 'aia.cer' }],
 			}),
 		).toMatchObject({ items: [{ id: 'file-1' }] });
+	});
+
+	it('accepts documented Custom Reports string ID filters', () => {
+		const schema = DigicertEndpointInputSchemas.customReportQuery;
+		expect(
+			schema.safeParse({
+				fields: ['id'],
+				container_id: '8',
+				organization_id: '112233',
+				user_id: 'user-123',
+			}).success,
+		).toBe(true);
+		expect(
+			schema.safeParse({ fields: ['id'], organization_id: 112233 }).success,
+		).toBe(false);
+	});
+
+	it('requires generated path parameters and validates report download bytes', () => {
+		const moveOrders = generatedDocEndpointSchemas['certcentralApi.moveOrders'];
+		expect(
+			moveOrders.input.safeParse({
+				query: { target_account_id: 1 },
+				body: { order_ids: '123' },
+			}).success,
+		).toBe(false);
+		expect(
+			moveOrders.input.safeParse({
+				path: { target_account_id: 1 },
+				query: {},
+				body: { order_ids: '123' },
+			}).success,
+		).toBe(true);
+
+		const startReportRun =
+			generatedDocEndpointSchemas['reportLibraryApi.startReportRun'].input;
+		expect(startReportRun.safeParse({ path: {}, query: {} }).success).toBe(
+			false,
+		);
+		expect(
+			startReportRun.safeParse({
+				path: { report_identifier: '00000000-0000-4000-8000-000000000001' },
+				query: {},
+			}).success,
+		).toBe(true);
+
+		const download =
+			generatedDocEndpointSchemas['reportLibraryApi.downloadReport'].output;
+		expect(download.parse([0, 0x50, 0xff])).toEqual([0, 0x50, 0xff]);
+		expect(download.safeParse([256]).success).toBe(false);
 	});
 
 	it('keeps report create and edit bodies nested', () => {

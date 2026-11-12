@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import type { DigiCertOneRegion } from './client';
 import { endpoints } from './endpoints';
 import {
 	generatedDocEndpointMeta,
@@ -41,7 +42,7 @@ export type DigicertPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	certCentralRegion?: 'us' | 'eu';
 	reportRegion?: 'us' | 'eu';
-	digicertOneRegion?: 'us' | 'jp' | 'ch' | 'nl' | 'au';
+	digicertOneRegion?: DigiCertOneRegion;
 	hooks?: InternalDigicertPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof digicertEndpointsNested>;

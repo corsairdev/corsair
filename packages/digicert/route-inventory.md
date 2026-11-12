@@ -51,12 +51,12 @@ the Custom Reports pair account for the 7 modes beyond the 656 endpoints.
 |---|---|---|
 | CertCentral Services, Custom Reports, Report Library | `api_key` | `X-DC-DEVKEY` |
 | Account Manager, Private CA, Trust Lifecycle Manager | `digicert_one_api_key` (service user token) | `x-api-key` |
-| Content Trust / CSC | `api_key` (or OAuth2 bearer for the 18 operations that document it) | `x-api-key` / `Authorization` |
+| Content Trust / CSC | `digicert_one_api_key` (or OAuth2 bearer for the 18 operations that document it) | `x-api-key` / `Authorization` |
 | Public Trust Lifecycle version and CSC `info` routes | none | — |
 
 CertCentral and Report Library each have a US and an EU host; DigiCert ONE has
-US, JP, CH, NL, and AU hosts. Regions are selected per plugin option, not per
-call.
+US, JP, CH, NL, AU, and IN hosts. Regions are selected per plugin option, not
+per call.
 
 ## Schema fidelity
 

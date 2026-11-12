@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDigicertRequest } from './client';
 import { endpoints } from './endpoints';
-import { generatedDocTestCases } from './endpoints/generated-docs';
+import {
+	generatedDocEndpoints,
+	generatedDocTestCases,
+} from './endpoints/generated-docs';
 import {
 	generatedOpenApiOAuthOperationIds,
 	generatedOpenApiTestCases,
@@ -294,6 +297,9 @@ describe('DigiCert endpoint requests', () => {
 		await endpoints.customReportOrders(ctx, {
 			fields: ['id', 'status'],
 			status: 'issued',
+			container_id: '8',
+			organization_id: '112233',
+			user_id: 'user-123',
 			limit: 5,
 		});
 		expect(call.mock.calls[0]).toEqual([
@@ -302,7 +308,10 @@ describe('DigiCert endpoint requests', () => {
 			'test-key',
 			expect.objectContaining({
 				method: 'POST',
-				body: { query: '{order_details(status:"issued",limit:5){id status}}' },
+				body: {
+					query:
+						'{order_details(status:"issued",container_id:"8",organization_id:"112233",user_id:"user-123",limit:5){id status}}',
+				},
 			}),
 		]);
 		call.mockResolvedValue({
@@ -496,6 +505,36 @@ describe('DigiCert endpoint requests', () => {
 				method: 'GET',
 				binary: true,
 				path: { id: 'ca-1' },
+			}),
+		);
+	});
+
+	it('downloads Report Library files through the binary response path', async () => {
+		const bytes = [0x50, 0x4b, 0x03, 0x04, 0xff];
+		call.mockResolvedValueOnce(bytes);
+		const reportIdentifier = '00000000-0000-4000-8000-000000000001';
+		const reportRunIdentifier = '00000000-0000-4000-8000-000000000002';
+		await expect(
+			generatedDocEndpoints.reportLibraryApi.downloadReport(ctx, {
+				path: {
+					report_identifier: reportIdentifier,
+					report_run_identifier: reportRunIdentifier,
+				},
+				query: { report_format: 'EXCEL' },
+			}),
+		).resolves.toEqual(bytes);
+		expect(call).toHaveBeenCalledWith(
+			'reportLibrary',
+			'/report/{report_identifier}/{report_run_identifier}/download',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				binary: true,
+				path: {
+					report_identifier: reportIdentifier,
+					report_run_identifier: reportRunIdentifier,
+				},
+				query: { report_format: 'EXCEL' },
 			}),
 		);
 	});
