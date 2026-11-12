@@ -2,6 +2,7 @@ import type { UserflowEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
+	conditionParam,
 	UserflowEndpointInputSchemas as Inputs,
 	UserflowEndpointOutputSchemas as Outputs,
 } from './types';
@@ -92,7 +93,7 @@ export const list: UserflowEndpoints['groupsList'] = (ctx, input) =>
 			query: {
 				limit,
 				starting_after,
-				condition,
+				condition: conditionParam(condition),
 				user_id,
 				segment_id,
 				order_by,

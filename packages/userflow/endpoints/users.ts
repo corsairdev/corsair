@@ -2,6 +2,7 @@ import type { UserflowEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
+	conditionParam,
 	UserflowEndpointInputSchemas as Inputs,
 	UserflowEndpointOutputSchemas as Outputs,
 } from './types';
@@ -103,7 +104,7 @@ export const list: UserflowEndpoints['usersList'] = (ctx, input) =>
 				email,
 				group_id,
 				segment_id,
-				condition,
+				condition: conditionParam(condition),
 				// The client sends an array as order_by[]=a&order_by[]=b.
 				order_by,
 				expand,

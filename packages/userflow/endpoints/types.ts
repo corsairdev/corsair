@@ -145,6 +145,40 @@ const UserSchema = z
 
 export type UserflowUser = z.infer<typeof UserSchema>;
 
+/**
+ * Userflow's `condition` is a JSON document, not an expression string; anything
+ * else is a 400 "Invalid JSON provided in condition param". An object is
+ * serialised by the request builder, and a string must already be JSON.
+ */
+const ConditionSchema = z
+	.union([
+		// unknown: a condition is a tree of clauses and attribute tests whose
+		// value types depend on the operator; Userflow validates it.
+		z.record(z.string(), z.unknown()),
+		z.string().refine(
+			(value) => {
+				try {
+					return typeof JSON.parse(value) === 'object';
+				} catch {
+					return false;
+				}
+			},
+			{ message: 'condition must be a JSON object or its JSON string.' },
+		),
+	])
+	.optional()
+	.describe(
+		'A JSON condition, e.g. `{ type: "attribute", attribute_name: "plan", operator: "eq", value: "Pro" }`. Prefix group attributes with `group/`; combine with `{ type: "clause", operator: "and", conditions: [...] }`. Rejected when it matches more than 10,000 records.',
+	);
+
+/** Sends an object condition as the JSON string Userflow parses. */
+export function conditionParam(
+	condition: z.output<typeof ConditionSchema>,
+): string | undefined {
+	if (condition === undefined) return undefined;
+	return typeof condition === 'string' ? condition : JSON.stringify(condition);
+}
+
 const ExpandSchema = z
 	.string()
 	.optional()
@@ -265,12 +299,7 @@ const UsersListInputSchema = z.object({
 		.describe(
 			'Only users in this segment; the id is in the segment menu in the UI.',
 		),
-	condition: z
-		.string()
-		.optional()
-		.describe(
-			'A filter expression over any attribute, e.g. `attributes.plan_name:eq:plus`.',
-		),
+	condition: ConditionSchema,
 	order_by: orderBySchema(
 		[
 			'created_at',
@@ -331,7 +360,7 @@ export type GroupsDeleteResponse = z.infer<typeof GroupsDeleteResponseSchema>;
 
 const GroupsListInputSchema = z.object({
 	...PagingSchema,
-	condition: z.string().optional(),
+	condition: ConditionSchema,
 	user_id: z
 		.string()
 		.optional()

@@ -173,14 +173,38 @@ describe('users', () => {
 			email: 'evelyn@example.com',
 			group_id: group.id,
 			segment_id: 'seg_1',
-			condition: 'attributes.plan_name:eq:plus',
+			condition: {
+				type: 'attribute',
+				attribute_name: 'plan',
+				operator: 'eq',
+				value: 'plus',
+			},
 		});
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.query.email).toBe('evelyn@example.com');
 		expect(sent.query.group_id).toBe(group.id);
 		expect(sent.query.segment_id).toBe('seg_1');
-		expect(sent.query.condition).toBe('attributes.plan_name:eq:plus');
+		// Live 11-12: a non-JSON condition is a 400 "Invalid JSON provided".
+		expect(JSON.parse(sent.query.condition ?? '')).toEqual({
+			type: 'attribute',
+			attribute_name: 'plan',
+			operator: 'eq',
+			value: 'plus',
+		});
+	});
+
+	it('passes a condition already given as a JSON string through, and refuses other text', async () => {
+		respond(fetchMock, groupsPage);
+		const json =
+			'{"type":"attribute","attribute_name":"group/plan","operator":"eq","value":"Pro"}';
+
+		await invoke(Groups.list, { condition: json });
+
+		expect(lastRequest(fetchMock).query.condition).toBe(json);
+		await expect(
+			invoke(Groups.list, { condition: 'attributes.plan:eq:plus' }),
+		).rejects.toThrow();
 	});
 
 	it('reports no more pages when has_more is false', async () => {
