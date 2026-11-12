@@ -88,7 +88,10 @@ export class UserflowAPIError extends Error {
 		const error = asRecord(asRecord(this.body)?.error);
 		this.code = readString(error, 'code');
 		this.docUrl = readString(error, 'doc_url');
-		this.requestId = readString(asRecord(this.body), 'request_id');
+		// The live API nests request_id inside `error`; older docs put it at the top.
+		this.requestId =
+			readString(error, 'request_id') ??
+			readString(asRecord(this.body), 'request_id');
 	}
 
 	/** True for either key type being wrong, missing or revoked. */
@@ -154,6 +157,24 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+const REDACTED = '[redacted]';
+
+/**
+ * Userflow echoes a rejected key in its message ("Invalid API key provided:
+ * ak_..."), so the key is cut out of the error before anything can log it.
+ */
+// unknown: an error body is arbitrary JSON or text.
+export function redactKey(value: unknown, apiKey: string): unknown {
+	if (!apiKey) return value;
+	if (typeof value === 'string') return value.split(apiKey).join(REDACTED);
+	if (value === null || typeof value !== 'object') return value;
+	try {
+		return JSON.parse(JSON.stringify(value).split(apiKey).join(REDACTED));
+	} catch {
+		return undefined;
+	}
+}
+
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeUserflowRequest(
 	apiKey: string,
@@ -186,14 +207,28 @@ export async function makeUserflowRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// The ApiError is not kept as the cause: its body holds the echoed key.
+			const body = redactKey(error.body, apiKey);
 			throw new UserflowAPIError(
-				describeUserflowError(error.status, error.body, error.message),
-				{ cause: error },
+				describeUserflowError(
+					error.status,
+					body,
+					String(redactKey(error.message, apiKey)),
+				),
+				{
+					status: error.status,
+					body,
+					retryAfter: error.retryAfter,
+					method: error.request.method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new UserflowAPIError(error.message, { cause: error, method });
+			throw new UserflowAPIError(String(redactKey(error.message, apiKey)), {
+				cause: error,
+				method,
+			});
 		}
 		throw new UserflowAPIError('Unknown Userflow error', { method });
 	}

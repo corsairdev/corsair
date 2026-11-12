@@ -107,6 +107,40 @@ describe('makeUserflowRequest', () => {
 		);
 	});
 
+	it('redacts the key when Userflow echoes it back in a 401', async () => {
+		// The live API answers "Invalid API key provided: <the key sent>".
+		respond(
+			fetchMock,
+			{
+				error: {
+					code: 'invalid_api_key',
+					message: `Invalid API key provided: ${API_KEY}`,
+					request_id: 'GOczx44z6cvnpTsYBp0E',
+				},
+			},
+			401,
+		);
+
+		const error = (await makeUserflowRequest(API_KEY, {
+			method: 'GET',
+			path: '/users',
+		}).catch((thrown: unknown) => thrown)) as UserflowAPIError;
+
+		expect(error.code).toBe('invalid_api_key');
+		expect(error.requestId).toBe('GOczx44z6cvnpTsYBp0E');
+		expect(error.message).not.toContain(API_KEY);
+		expect(JSON.stringify(error.body)).not.toContain(API_KEY);
+		expect(
+			String((error.cause as Error | undefined)?.message ?? ''),
+		).not.toContain(API_KEY);
+		expect(
+			JSON.stringify(
+				(error.cause as { body?: unknown } | undefined)?.body ?? null,
+			),
+		).not.toContain(API_KEY);
+		expect(error.message).toContain('[redacted]');
+	});
+
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 

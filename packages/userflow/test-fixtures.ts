@@ -315,8 +315,9 @@ export const invalidEnvKey = {
 		code: 'invalid_api_key',
 		message: 'Invalid API key provided: BADKEY',
 		doc_url: 'https://userflow.com/docs/api#users-api-authentication',
+		// The live API nests request_id inside error (seen 11-12).
+		request_id: 'GOblteh_bhb6oJMOA4PD',
 	},
-	request_id: 'GOblteh_bhb6oJMOA4PD',
 };
 
 /** The Accounts API reports a wrong key type with its own code. */
@@ -325,8 +326,8 @@ export const invalidPersonalKey = {
 		code: 'invalid_pak',
 		message: 'Invalid Personal API Key provided: BADKEY',
 		doc_url: 'https://userflow.com/docs/api#accounts-api-authentication',
+		request_id: 'GObltkzMcod',
 	},
-	request_id: 'GObltkzMcod',
 };
 
 export const pendingInvite = {
