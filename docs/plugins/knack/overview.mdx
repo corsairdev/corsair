@@ -13,7 +13,8 @@ Knack issues a per-app Application ID and API key, and every request carries bot
 - **Read-only mirrors.** Every value comes back twice: `field_23` is the display string and `field_23_raw` is the typed form. Only the plain `field_N` is writable; the plugin rejects a `_raw` or `_html` key in a write rather than sending it.
 - **A missing record is not a 404.** Knack answers 200 with an empty records list for an id that does not exist, and 200 with `{}` for an object key that is not in the app. `records.get` and `objects.get` raise on those answers, so a missing record cannot look like one with no fields.
 - **Filters need their index.** Knack reads `filters[0][field]`, `filters[0][operator]` and `filters[0][value]`. The unindexed form is silently ignored and returns every record, so the plugin builds the indexed names itself.
-- **Rate limits.** 10 requests a second for every plan, answered as a 429 whose body is the plain text `Rate limit exceeded`. A short window is retried; a reset more than a minute away is the daily plan allowance and fails immediately.
+- **Rate limits.** 10 requests a second for every plan, answered as a 429 whose body is the plain text `Rate limit exceeded`. A short window is retried; a 429 that says `Plan Limit Exceeded`, or a reset more than a minute away, is the daily plan allowance and fails immediately.
+- **HIPAA apps are not supported.** The plugin calls `api.knack.com`. Apps moved to Knack's HIPAA environment before July 1, 2026 must use `usgc-api.knack.com`, so their requests are rejected.
 - **Records only, not app structure.** The plugin reads tables and fields, and writes records. Creating tables or fields is not part of the REST API.
 - **Webhooks.** The plugin does not receive webhooks; Knack exposes no subscription call.
 

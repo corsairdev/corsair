@@ -283,7 +283,7 @@ await corsair.knack.api.records.list({ object_key: 'object_3', rows_per_page: 25
 | `sort_order` | `asc \| desc` | No | Used only with `sort_field`. |
 | `filters` | `object[]` | No | Conditions a record must meet. All of them must match. |
 
-Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators are Knack's own: `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank`, `is any`, and for numbers `higher than` / `lower than` (there is no `is greater than`); dates use `is before`, `is after` and the `is today` family. `is blank` takes no value. Every filter in a list must match. `rows_per_page` is 1000 at most.
+Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators are Knack's own: `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank`, `is any`, and for numbers `higher than` / `lower than` (there is no `is greater than`); dates use `is before`, `is after` and the `is today` family. Operators that compare need a `value`; `is blank`, `is not blank`, `is any` and the `is today` family take none. Every filter in a list must match. `rows_per_page` is 1000 at most.
 
 <AccordionGroup>
 <Accordion title="filters full type">
