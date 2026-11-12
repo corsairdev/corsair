@@ -19,6 +19,15 @@ const PageSchema = z
 
 const pagingQuery = { limit: LimitSchema, page: PageSchema };
 
+/**
+ * An update with nothing to change would send an empty wrapper, which Recruitee
+ * answers with the unchanged record. Zod strips keys the schema does not know,
+ * so a stage-only candidate update lands here too.
+ */
+function hasAnyField(fields: Record<string, unknown>): boolean {
+	return Object.values(fields).some((value) => value !== undefined);
+}
+
 const pagingFields = {
 	total: z
 		.number()
@@ -209,13 +218,18 @@ export type CandidatesCreateResponse = z.infer<
  * The profile fields the update route takes. Stage moves and disqualification
  * belong to the candidate's placement on an offer, not to this route.
  */
-const CandidatesUpdateInputSchema = z.object({
-	candidate_id: z.number().int().positive(),
-	name: z.string().optional(),
-	emails: z.array(z.string()).optional(),
-	phones: z.array(z.string()).optional(),
-	cover_letter: z.string().optional(),
-});
+const CandidatesUpdateInputSchema = z
+	.object({
+		candidate_id: z.number().int().positive(),
+		name: z.string().optional(),
+		emails: z.array(z.string()).optional(),
+		phones: z.array(z.string()).optional(),
+		cover_letter: z.string().optional(),
+	})
+	.refine(
+		({ candidate_id: _id, ...fields }) => hasAnyField(fields),
+		'Name at least one of name, emails, phones or cover_letter. Stage moves and disqualification are not part of this route.',
+	);
 
 export type CandidatesUpdateInput = z.input<typeof CandidatesUpdateInputSchema>;
 
@@ -334,9 +348,14 @@ export type OffersCreateInput = z.input<typeof OffersCreateInputSchema>;
 const OffersCreateResponseSchema = z.object({ offer: OfferSchema });
 export type OffersCreateResponse = z.infer<typeof OffersCreateResponseSchema>;
 
-const OffersUpdateInputSchema = OffersCreateInputSchema.partial().extend({
-	offer_id: z.number().int().positive(),
-});
+const OffersUpdateInputSchema = OffersCreateInputSchema.partial()
+	.extend({
+		offer_id: z.number().int().positive(),
+	})
+	.refine(
+		({ offer_id: _id, ...fields }) => hasAnyField(fields),
+		'Name at least one field to change. Publishing and closing an offer are done in Recruitee.',
+	);
 
 export type OffersUpdateInput = z.input<typeof OffersUpdateInputSchema>;
 

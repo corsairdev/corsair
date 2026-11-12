@@ -217,16 +217,16 @@ describe('candidates.update and delete', () => {
 		expect(request.json()).toEqual({ candidate: { name: 'John A. Smith' } });
 	});
 
-	it('sends no stage on the profile update, which the route ignores', async () => {
-		respond(fetchMock, { candidate: CANDIDATE });
-
-		await invoke(Endpoints.candidatesUpdate, {
+	it('rejects a stage-only update instead of sending an empty patch', async () => {
+		const error = await invoke(Endpoints.candidatesUpdate, {
 			candidate_id: CANDIDATE_ID,
 			stage: 'Interview',
-		});
+		}).catch((caught: Error) => caught);
 
-		// Stage moves belong to the placement, so the field is not in the schema.
-		expect(lastRequest(fetchMock).json()).toEqual({ candidate: {} });
+		// Stage moves belong to the placement, so the field is not in the schema
+		// and nothing the route can change is left.
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('deletes a candidate and reports the id', async () => {
@@ -330,6 +330,15 @@ describe('offers', () => {
 		expect(request.json()).toEqual({
 			offer: { title: 'Staff Backend Engineer' },
 		});
+	});
+
+	it('rejects an update that names no field to change', async () => {
+		const error = await invoke(Endpoints.offersUpdate, {
+			offer_id: OFFER_ID,
+		}).catch((caught: Error) => caught);
+
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
