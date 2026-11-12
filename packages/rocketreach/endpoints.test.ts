@@ -371,15 +371,16 @@ describe('person.search', () => {
 	});
 
 	it('keeps the teaser and the suppressed flag', async () => {
-		respond(fetchMock, PERSON_SEARCH, 201);
+		// suppressed is a string, as RocketReach sends it. The fixture rows carry
+		// none, so one is added here; without it the check could not fail.
+		respond(fetchMock, [{ ...PERSON_SEARCH[0], suppressed: 'true' }], 201);
 
 		const result = (await invoke(Person.search, {
 			query: { current_title: ['CTO'] },
 		})) as PersonSearchResponse;
 
 		expect(result[0]?.teaser).toBeDefined();
-		// suppressed is a string, as RocketReach sends it.
-		expect(result[0]?.suppressed).toBeUndefined();
+		expect(result[0]?.suppressed).toBe('true');
 	});
 
 	it('rejects a page size over the documented 100', async () => {
