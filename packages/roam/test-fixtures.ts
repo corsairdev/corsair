@@ -76,8 +76,7 @@ export const TOKEN_INFO = {
 export const USER_PAGE = {
 	ok: true,
 	users: [USER],
-	cursor: 'next-cursor-1',
-	hasMore: true,
+	nextCursor: 'next-cursor-1',
 };
 
 export const CHAT = {
@@ -92,8 +91,6 @@ export const CHAT = {
 export const CHAT_PAGE = {
 	ok: true,
 	chats: [CHAT],
-	cursor: null,
-	hasMore: false,
 };
 
 export const MESSAGE = {
@@ -120,8 +117,7 @@ export const MESSAGE = {
 export const MESSAGE_PAGE = {
 	ok: true,
 	messages: [MESSAGE],
-	cursor: 'cursor-2',
-	hasMore: true,
+	nextCursor: 'cursor-2',
 };
 
 export const CHAT_POST = {
@@ -170,8 +166,6 @@ export const GROUP = {
 export const GROUP_PAGE = {
 	ok: true,
 	groups: [GROUP],
-	cursor: null,
-	hasMore: false,
 };
 
 export const MEETING = {
@@ -189,8 +183,6 @@ export const MEETING = {
 export const MEETING_PAGE = {
 	ok: true,
 	meetings: [MEETING],
-	cursor: null,
-	hasMore: false,
 };
 
 export const TRANSCRIPT = {

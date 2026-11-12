@@ -13,7 +13,7 @@ overviewNote: |
   - **Scheduling a post returns a different shape.** Passing `send_at` returns `scheduledMessageId` instead of a live `timestamp`.
   - **`chat.history` needs a target.** It reads one chat or one group, so `chat_id` or `group_id` is required; without one Roam returns an unscoped history.
   - **Messages are edited, not replaced.** `chat.update` takes the chat and the message `timestamp`, and needs exactly one new content type.
-  - **Paging is a cursor.** Lists answer `cursor` plus `hasMore`, and the plugin returns `next_cursor`. A list with no cursor is the last page.
+  - **Paging is a cursor.** `users.list`, `chat.list`, `chat.history`, `groups.list` and `meetings.list` answer Roam's `nextCursor`, which the plugin returns as `next_cursor` with `has_more`. Pass it back as `cursor` for the next page; `next_cursor: null` is the last page, and a call without a cursor starts at the first. `reactions.list` is not paged, and `users.list` with `ids` returns every match in one answer.
 examples:
   read:
     path: chat.history

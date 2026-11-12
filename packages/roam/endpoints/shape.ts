@@ -1,22 +1,29 @@
 import { asRecord } from 'corsair/core';
 
 /**
- * Roam answers a list as `{ ok: true, <key>: [...], cursor, hasMore }`, so the
- * array key differs per method. `next_cursor` is copied up beside the provider's
- * own `cursor` so a caller pages with one field; it is derived here rather than
- * in a zod transform because the docs generator reads a transform's input side.
+ * Roam answers a list as `{ ok: true, <key>: [...], nextCursor }`, so the array
+ * key differs per method and the next page's cursor is `nextCursor`, absent on
+ * the last page. It is copied out as `next_cursor`, and `has_more` is derived
+ * from it; both are set here rather than in a zod transform because the docs
+ * generator reads a transform's input side.
  */
 export function listShape(key: string) {
 	return (
+		// unknown: the response body has not passed the output schema yet; that
+		// schema validates what this returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
 	) => {
 		const record = asRecord(raw);
+		const nextCursor =
+			typeof record?.nextCursor === 'string' && record.nextCursor.length > 0
+				? record.nextCursor
+				: null;
 		return {
 			[key]: record?.[key],
-			next_cursor: typeof record?.cursor === 'string' ? record.cursor : null,
-			has_more: record?.hasMore === true,
+			next_cursor: nextCursor,
+			has_more: nextCursor !== null,
 		};
 	};
 }
@@ -29,6 +36,8 @@ export function listShape(key: string) {
  */
 export function envelopeShape(key: string) {
 	return (
+		// unknown: the response body has not passed the output schema yet; that
+		// schema validates what this returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
