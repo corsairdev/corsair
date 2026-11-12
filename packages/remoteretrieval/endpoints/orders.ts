@@ -18,8 +18,8 @@ export const validate: RemoteRetrievalEndpoints['validate'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/validate/user', replayable: true }),
 		{
+			// The account email stays out of the event log.
 			log: (_, result) => ({
-				email: result.email ?? undefined,
 				status: result.status ?? undefined,
 			}),
 		},

@@ -54,7 +54,7 @@ describe('validate', () => {
 		expect(result.status).toBe('Success');
 	});
 
-	it('logs the account email', async () => {
+	it('logs the status, never the account email', async () => {
 		respond(fetchMock, VALIDATED);
 
 		await invoke(Api.validate, {});
@@ -62,9 +62,10 @@ describe('validate', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'remoteretrieval.validate',
-			{ email: 'abc@example.com', status: 'Success' },
+			{ status: 'Success' },
 			'completed',
 		);
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('abc@example.com');
 	});
 });
 
