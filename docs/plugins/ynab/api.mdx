@@ -578,7 +578,7 @@ await corsair.ynab.api.categories.update({ budgetId: 'last-used', month: '2024-0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
-| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`. |
+| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC). |
 | `categoryId` | `string` | Yes | — |
 | `budgeted` | `number` | Yes | The new budgeted amount for the month, in milliunits. This replaces the value rather than adding to it. |
 
@@ -638,7 +638,7 @@ await corsair.ynab.api.months.get({ budgetId: 'last-used', month: '2024-06-01' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
-| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`. |
+| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC). |
 
 
 
@@ -982,7 +982,14 @@ await corsair.ynab.api.transactions.create({ budgetId: 'last-used', transactions
   cleared?: cleared | uncleared | reconciled,
   approved?: boolean,
   flag_color?: string | null,
-  import_id?: string
+  import_id?: string,
+  subtransactions?: {
+    amount: number,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    memo?: string | null
+  }[]
 }[]
 ```
 </Accordion>
@@ -1197,7 +1204,7 @@ await corsair.ynab.api.transactions.get({ budgetId: 'last-used', transactionId: 
 
 `transactions.list`
 
-List transactions, optionally since a date or only the uncategorized or unapproved ones
+List transactions, optionally since a date or only the uncategorized or unapproved ones. Without since_date, only the past year comes back.
 
 **Risk:** `read`
 
@@ -1210,7 +1217,7 @@ await corsair.ynab.api.transactions.list({ budgetId: 'last-used', since_date: '2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
-| `since_date` | `string` | No | A date as `yyyy-MM-dd`, with no time or zone. |
+| `since_date` | `string` | No | Only transactions on or after this date, as `yyyy-MM-dd`. When omitted, YNAB returns transactions from one year ago onward, so pass an earlier date for older history. |
 | `type` | `uncategorized \| unapproved` | No | Only transactions matching this kind. |
 | `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
 
