@@ -47,11 +47,14 @@ export const errorHandlers = {
 	// 429, if it arrives; no per-second limit is documented for management.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => apiError(error)?.status === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: apiError(error)?.retryAfter,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) =>
+			apiError(error)?.replayable === true
+				? {
+						maxRetries: 3,
+						headersRetryAfterMs: apiError(error)?.retryAfter,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 },
 	},
 	// 5xx, and only for an operation that declared itself replayable. Inference is
 	// billed per image and an upload is billed per image, so neither is resent.

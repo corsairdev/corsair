@@ -20,6 +20,7 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: handlers return different retry configurations, asserted by each test.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
@@ -97,12 +98,19 @@ describe('Roboflow error handlers', () => {
 	});
 
 	it('matches a 429 as a rate limit if one arrives', async () => {
-		const error = apiError({ status: 429, retryAfter: 2000 });
+		const error = apiError({ status: 429, retryAfter: 2000, replayable: true });
 
 		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toMatchObject({
 			maxRetries: 3,
 			headersRetryAfterMs: 2000,
+		});
+	});
+
+	it('does not retry a rate-limited write', async () => {
+		const error = apiError({ status: 429, replayable: false, method: 'POST' });
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
