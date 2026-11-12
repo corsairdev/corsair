@@ -2564,6 +2564,14 @@
                 ]
               },
               {
+                "group": "Kickbox",
+                "pages": [
+                  "plugins/kickbox/overview",
+                  "plugins/kickbox/api",
+                  "plugins/kickbox/database"
+                ]
+              },
+              {
                 "group": "Klaviyo",
                 "pages": [
                   "plugins/klaviyo/overview",
