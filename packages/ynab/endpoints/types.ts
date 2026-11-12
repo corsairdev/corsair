@@ -555,7 +555,9 @@ export type MonthsGetResponse = z.infer<typeof MonthsGetResponseSchema>;
 
 const TransactionsListInputSchema = z.object({
 	budgetId: BudgetIdSchema,
-	since_date: DateSchema.optional(),
+	since_date: DateSchema.optional().describe(
+		'Only transactions on or after this date, as `yyyy-MM-dd`. When omitted, YNAB returns transactions from one year ago onward, so pass an earlier date for older history.',
+	),
 	type: z
 		.enum(['uncategorized', 'unapproved'])
 		.optional()

@@ -659,3 +659,11 @@ describe('scheduled transaction input', () => {
 		);
 	});
 });
+
+describe('round 2 review fixes', () => {
+	it('documents that an omitted since_date returns only the past year', () => {
+		const description =
+			YnabEndpointInputSchemas.transactionsList.shape.since_date.description;
+		expect(description).toMatch(/one year ago/);
+	});
+});

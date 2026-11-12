@@ -290,7 +290,7 @@ const ynabEndpointMeta = {
 	'transactions.list': {
 		riskLevel: 'read',
 		description:
-			'List transactions, optionally since a date or only the uncategorized or unapproved ones',
+			'List transactions, optionally since a date or only the uncategorized or unapproved ones. Without since_date, only the past year comes back.',
 	},
 	'transactions.get': {
 		riskLevel: 'read',
