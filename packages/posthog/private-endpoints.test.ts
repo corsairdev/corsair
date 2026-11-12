@@ -50,6 +50,7 @@ import { posthog, posthogEndpointSchemas } from './index';
 
 type OutputKey = keyof typeof PostHogEndpointOutputSchemas;
 
+// Saved JSON responses; each test parses them with the schema it checks.
 function fixture(name: string): unknown {
 	return JSON.parse(
 		readFileSync(join(__dirname, 'test-data', `${name}.json`), 'utf8'),
@@ -62,6 +63,7 @@ function mockFetch(
 	handler: (
 		url: string,
 		init: RequestInit,
+		// Mocked response body: any JSON a test wants fetch to return.
 	) => { status: number; body: unknown },
 ): FetchCall[] {
 	const calls: FetchCall[] = [];
@@ -89,6 +91,7 @@ function authHeader(call: FetchCall): string | undefined {
 		: headers.Authorization;
 }
 
+// Request bodies differ per endpoint; tests assert the fields they care about.
 function jsonBody(call: FetchCall): Record<string, unknown> {
 	return JSON.parse(String(call.init.body));
 }
@@ -413,6 +416,7 @@ describe('PostHog read endpoints build the right requests', () => {
 	});
 
 	it('drops the extra row the query runner adds for hasMore', async () => {
+		// Only the row count matters in this test.
 		const body = fixture('errorTrackingIssuesList') as { results: unknown[] };
 		const one = body.results[0];
 		mockFetch(() => ({
@@ -761,6 +765,7 @@ describe('PostHog sends each action to the right place', () => {
 	// [operation, minimal input, method, path, a key the body must carry].
 	const P = '/api/projects/5';
 	const E = '/api/environments/5';
+	// Inputs differ per endpoint; each row carries the minimal input for its action.
 	const cases: [string, Record<string, unknown>, string, string, string?][] = [
 		['organizations.list', {}, 'GET', '/api/organizations/'],
 		['organizations.get', {}, 'GET', '/api/organizations/@current/'],

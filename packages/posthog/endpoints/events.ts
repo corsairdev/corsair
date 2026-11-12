@@ -18,6 +18,7 @@ import { PostHogEndpointInputSchemas } from './types';
  */
 async function capture<T>(
 	ctxKey: string,
+	// Capture payload; its fields come from the capture input schema.
 	payload: Record<string, unknown>,
 ): Promise<T> {
 	const credentials = unpackPostHogCredentials(ctxKey);

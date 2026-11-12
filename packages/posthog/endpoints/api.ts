@@ -28,6 +28,7 @@ export type ApiRequest = {
 	path: string;
 	method?: PostHogApiOptions['method'];
 	query?: Record<string, QueryValue>;
+	// JSON request body; built from input the endpoint's schema has already checked.
 	body?: Record<string, unknown>;
 	/** Small payload for the event log: ids and filters, never results. */
 	log?: Record<string, unknown>;
@@ -82,6 +83,7 @@ export function defineApiEndpoint<K extends ApiEndpointKey>(
 		};
 		const { project_id, ...rest } = input;
 		const request = build(rest as ScopedInput<K>);
+		// Unknown until the output schema checks it below.
 		const response = await makePostHogApiRequest<unknown>(
 			unpackPostHogCredentials(ctx.key),
 			request.path,

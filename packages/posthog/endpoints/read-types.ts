@@ -1,12 +1,17 @@
-import { z } from 'zod';
-
 // Read schemas for PostHog's private API (personal API key).
 //
 // PostHog adds fields to these objects often, so every object is .loose() and
-// every field optional. Fields typed z.unknown() hold PostHog's own nested
-// structures (query definitions, filters, insight results, query rows) whose
-// shape depends on the query kind or flag type; typing them strictly would
-// break on the next PostHog release without making callers any safer.
+// every field optional. Free-form nested structures use PostHogJson below.
+
+import { z } from 'zod';
+
+/**
+ * PostHog's own nested JSON (query definitions, filters, insight results,
+ * query rows, Hog function inputs). Its shape depends on the query kind,
+ * flag type or the user's configuration, so a stricter schema would reject
+ * valid data on the next PostHog release without making callers safer.
+ */
+export const PostHogJson = z.unknown();
 
 export const Timestamp = z.string().nullable().optional();
 
@@ -77,9 +82,9 @@ export const QueryRunInputSchema = ProjectScopeSchema.extend({
 
 export const QueryRunResponseSchema = z
 	.object({
-		columns: z.array(z.unknown()).nullable().optional(),
-		types: z.array(z.unknown()).nullable().optional(),
-		results: z.unknown(),
+		columns: z.array(PostHogJson).nullable().optional(),
+		types: z.array(PostHogJson).nullable().optional(),
+		results: PostHogJson,
 		hasMore: z.boolean().nullable().optional(),
 		limit: z.number().nullable().optional(),
 		offset: z.number().nullable().optional(),
@@ -100,8 +105,8 @@ export const InsightSchema = z
 		name: z.string().nullable().optional(),
 		derived_name: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		query: z.unknown().optional(),
-		result: z.unknown().optional(),
+		query: PostHogJson.optional(),
+		result: PostHogJson.optional(),
 		favorited: z.boolean().optional(),
 		saved: z.boolean().optional(),
 		deleted: z.boolean().optional(),
@@ -146,7 +151,7 @@ export const DashboardSchema = z
 					.object({
 						id: z.number().int().optional(),
 						insight: InsightSchema.nullable().optional(),
-						text: z.unknown().optional(),
+						text: PostHogJson.optional(),
 					})
 					.loose(),
 			)
@@ -169,7 +174,7 @@ export const PersonSchema = z
 		uuid: z.string().optional(),
 		name: z.string().nullable().optional(),
 		distinct_ids: z.array(z.string()).optional(),
-		properties: z.record(z.string(), z.unknown()).optional(),
+		properties: z.record(z.string(), PostHogJson).optional(),
 		created_at: Timestamp,
 		last_seen_at: Timestamp,
 	})
@@ -194,7 +199,7 @@ export const FeatureFlagSchema = z
 		name: z.string().nullable().optional(),
 		active: z.boolean().optional(),
 		deleted: z.boolean().optional(),
-		filters: z.record(z.string(), z.unknown()).optional(),
+		filters: z.record(z.string(), PostHogJson).optional(),
 		rollout_percentage: z.number().nullable().optional(),
 		ensure_experience_continuity: z.boolean().nullable().optional(),
 		status: z.string().optional(),
@@ -219,7 +224,7 @@ export const FeatureFlagsUpdateInputSchema = ProjectScopeSchema.extend({
 	name: z.string().optional(),
 	active: z.boolean().optional(),
 	/** Full release conditions; replaces the flag's existing `filters`. */
-	filters: z.record(z.string(), z.unknown()).optional(),
+	filters: z.record(z.string(), PostHogJson).optional(),
 	tags: z.array(z.string()).optional(),
 	ensure_experience_continuity: z.boolean().optional(),
 }).refine(
@@ -249,7 +254,7 @@ export const SessionRecordingSchema = z
 		start_url: z.string().nullable().optional(),
 		viewed: z.boolean().optional(),
 		ongoing: z.boolean().nullable().optional(),
-		person: z.unknown().optional(),
+		person: PostHogJson.optional(),
 	})
 	.loose();
 
@@ -281,7 +286,7 @@ export const ErrorTrackingIssueSchema = z
 		library: z.string().nullable().optional(),
 		first_seen: Timestamp,
 		last_seen: Timestamp,
-		assignee: z.unknown().optional(),
+		assignee: PostHogJson.optional(),
 		aggregations: z
 			.object({
 				occurrences: z.number().nullable().optional(),
@@ -334,8 +339,8 @@ export const ExperimentSchema = z
 		start_date: Timestamp,
 		end_date: Timestamp,
 		archived: z.boolean().optional(),
-		parameters: z.unknown().optional(),
-		metrics: z.unknown().optional(),
+		parameters: PostHogJson.optional(),
+		metrics: PostHogJson.optional(),
 		created_at: Timestamp,
 		created_by: UserBasicSchema,
 	})
@@ -353,7 +358,7 @@ export const SurveySchema = z
 		name: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
 		type: z.string().nullable().optional(),
-		questions: z.array(z.unknown()).nullable().optional(),
+		questions: z.array(PostHogJson).nullable().optional(),
 		start_date: Timestamp,
 		end_date: Timestamp,
 		archived: z.boolean().optional(),
@@ -379,7 +384,7 @@ export const CohortSchema = z
 		is_static: z.boolean().optional(),
 		is_calculating: z.boolean().optional(),
 		deleted: z.boolean().optional(),
-		filters: z.unknown().optional(),
+		filters: PostHogJson.optional(),
 		created_at: Timestamp,
 		created_by: UserBasicSchema,
 	})
@@ -393,7 +398,7 @@ export const ActionSchema = z
 		id: z.number().int(),
 		name: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		steps: z.array(z.unknown()).optional(),
+		steps: z.array(PostHogJson).optional(),
 		tags: z.array(z.string()).optional(),
 		deleted: z.boolean().optional(),
 		created_at: Timestamp,
@@ -502,8 +507,8 @@ export const OrganizationSchema = z
 		slug: z.string().nullable().optional(),
 		membership_level: z.number().nullable().optional(),
 		created_at: Timestamp,
-		teams: z.array(z.unknown()).optional(),
-		projects: z.array(z.unknown()).optional(),
+		teams: z.array(PostHogJson).optional(),
+		projects: z.array(PostHogJson).optional(),
 	})
 	.loose();
 
@@ -530,7 +535,7 @@ export const NotebookSchema = z
 		id: z.string(),
 		short_id: z.string(),
 		title: z.string().nullable().optional(),
-		content: z.unknown().optional(),
+		content: PostHogJson.optional(),
 		text_content: z.string().nullable().optional(),
 		version: z.number().int().optional(),
 		deleted: z.boolean().optional(),
@@ -556,9 +561,9 @@ export const AlertSchema = z
 		name: z.string().nullable().optional(),
 		enabled: z.boolean().optional(),
 		state: z.string().nullable().optional(),
-		condition: z.unknown().optional(),
-		threshold: z.unknown().optional(),
-		insight: z.unknown().optional(),
+		condition: PostHogJson.optional(),
+		threshold: PostHogJson.optional(),
+		insight: PostHogJson.optional(),
 		calculation_interval: z.string().nullable().optional(),
 		last_checked_at: Timestamp,
 		created_at: Timestamp,
@@ -578,7 +583,7 @@ export const EarlyAccessFeatureSchema = z
 		description: z.string().nullable().optional(),
 		stage: z.string().optional(),
 		documentation_url: z.string().nullable().optional(),
-		feature_flag: z.unknown().optional(),
+		feature_flag: PostHogJson.optional(),
 		created_at: Timestamp,
 	})
 	.loose();
@@ -593,7 +598,7 @@ export const BatchExportSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		model: z.string().nullable().optional(),
-		destination: z.unknown().optional(),
+		destination: PostHogJson.optional(),
 		interval: z.string().optional(),
 		paused: z.boolean().optional(),
 		created_at: Timestamp,
@@ -614,11 +619,11 @@ export const HogFunctionSchema = z
 		enabled: z.boolean().optional(),
 		deleted: z.boolean().optional(),
 		hog: z.string().optional(),
-		inputs_schema: z.unknown().optional(),
-		inputs: z.unknown().optional(),
-		filters: z.unknown().optional(),
-		status: z.unknown().optional(),
-		template: z.unknown().optional(),
+		inputs_schema: PostHogJson.optional(),
+		inputs: PostHogJson.optional(),
+		filters: PostHogJson.optional(),
+		status: PostHogJson.optional(),
+		template: PostHogJson.optional(),
 		created_at: Timestamp,
 		updated_at: Timestamp,
 	})
@@ -642,8 +647,8 @@ export const WarehouseTableSchema = z
 		format: z.string().nullable().optional(),
 		url_pattern: z.string().nullable().optional(),
 		row_count: z.number().nullable().optional(),
-		columns: z.unknown().optional(),
-		external_data_source: z.unknown().optional(),
+		columns: PostHogJson.optional(),
+		external_data_source: PostHogJson.optional(),
 		created_at: Timestamp,
 	})
 	.loose();
@@ -664,8 +669,8 @@ export const SessionRecordingPlaylistSchema = z
 		pinned: z.boolean().optional(),
 		deleted: z.boolean().optional(),
 		type: z.string().nullable().optional(),
-		filters: z.unknown().optional(),
-		recordings_counts: z.unknown().optional(),
+		filters: PostHogJson.optional(),
+		recordings_counts: PostHogJson.optional(),
 		created_at: Timestamp,
 		last_modified_at: Timestamp,
 	})
@@ -788,7 +793,7 @@ export const LogsQueryInputSchema = ProjectScopeSchema.extend({
 					key: z.string().min(1),
 					type: z.enum(['log', 'log_attribute', 'log_resource_attribute']),
 					operator: z.string().min(1),
-					value: z.unknown().optional(),
+					value: PostHogJson.optional(),
 				})
 				.loose(),
 		)
@@ -810,13 +815,13 @@ export const LogsQueryResponseSchema = z
 					body: z.string().nullable().optional(),
 					severity_text: z.string().nullable().optional(),
 					service_name: z.string().nullable().optional(),
-					attributes: z.record(z.string(), z.unknown()).optional(),
-					resource_attributes: z.record(z.string(), z.unknown()).optional(),
+					attributes: z.record(z.string(), PostHogJson).optional(),
+					resource_attributes: z.record(z.string(), PostHogJson).optional(),
 				})
 				.loose(),
 		),
 		hasMore: z.boolean().nullable().optional(),
 		nextCursor: z.string().nullable().optional(),
-		columns: z.unknown().optional(),
+		columns: PostHogJson.optional(),
 	})
 	.loose();

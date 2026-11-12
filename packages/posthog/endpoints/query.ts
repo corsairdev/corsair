@@ -87,6 +87,7 @@ export const errorTrackingIssuesList =
 			// hasMore; drop it so callers get exactly `limit` issues.
 			transform: (response) => {
 				const limit = input.limit ?? 10;
+				// Only the length of results matters here; the output schema checks the rows.
 				const res = response as { results?: unknown[] };
 				return Array.isArray(res.results) && res.results.length > limit
 					? { ...res, results: res.results.slice(0, limit) }

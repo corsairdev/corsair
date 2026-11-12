@@ -128,6 +128,7 @@ type PostHogQuery = Record<
 // schema has already validated what goes into it.
 export type PostHogApiOptions = {
 	method?: HttpMethod;
+	// JSON request body; each endpoint's input schema has already checked its fields.
 	body?: Record<string, unknown>;
 	query?: PostHogQuery;
 	/** Overrides the connection's project for this call. */
@@ -140,6 +141,7 @@ async function sendPostHogRequest<T>(
 	token: string,
 	options: {
 		method?: HttpMethod;
+		// JSON request body; each endpoint's input schema has already checked its fields.
 		body?: Record<string, unknown>;
 		query?: PostHogQuery;
 	},
@@ -192,6 +194,7 @@ export async function makePostHogRequest<T>(
 	apiKey: string,
 	options: {
 		method?: HttpMethod;
+		// JSON request body; each endpoint's input schema has already checked its fields.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		base?: string;

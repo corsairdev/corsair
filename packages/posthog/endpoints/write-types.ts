@@ -1,18 +1,21 @@
 import { z } from 'zod';
-import { ProjectScopeSchema } from './read-types';
+import { PostHogJson, ProjectScopeSchema } from './read-types';
 
 // Inputs for PostHog's write actions. Release conditions, queries, metrics and
 // survey questions are PostHog's own nested structures and pass through as
 // records (z.record / loose objects); PostHog validates them server-side.
 
 function hasChange(keys: readonly string[]) {
+	// Runs on any update input object; only checks which keys are set.
 	return (value: Record<string, unknown>) =>
 		keys.some((key) => value[key] !== undefined);
 }
 const CHANGE_MESSAGE = { message: 'Provide at least one field to update' };
 
 const QueryObject = z.object({ kind: z.string().min(1) }).loose();
-const PostHogRecord = z.record(z.string(), z.unknown());
+// Release conditions, metrics, filters and survey questions: PostHog's own
+// nested JSON, validated by PostHog server-side.
+const PostHogRecord = z.record(z.string(), PostHogJson);
 const IdInput = ProjectScopeSchema.extend({ id: z.number().int().positive() });
 
 // ── Insights ─────────────────────────────────────────────────────────────────
@@ -218,7 +221,8 @@ export const PersonsUpdatePropertyInputSchema = ProjectScopeSchema.extend({
 	/** Person UUID. */
 	id: z.string().min(1),
 	key: z.string().min(1),
-	value: z.unknown(),
+	/** Any JSON value; person properties are schemaless in PostHog. */
+	value: PostHogJson,
 });
 export const PersonsDeletePropertyInputSchema = ProjectScopeSchema.extend({
 	id: z.string().min(1),
