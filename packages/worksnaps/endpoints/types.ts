@@ -145,12 +145,24 @@ function collection<T extends z.ZodType>(item: T) {
 	// type attribute, which the parser reads as an empty string.
 	return z
 		.union([z.array(item), z.object({}).loose(), z.literal('')])
-		.transform((value) => {
+		.transform((value, ctx): z.output<T>[] => {
 			if (value === '') return [];
 			if (Array.isArray(value)) return value;
 			// unknown: an empty or single-child object, read for its array.
 			const first = Object.values(value).find((entry) => Array.isArray(entry));
-			return Array.isArray(first) ? first : [];
+			if (!Array.isArray(first)) return [];
+			// Rows found inside a wrapper get the same checks and coercion as a
+			// bare array, and keep the row type instead of widening to any[].
+			const rows = z.array(item).safeParse(first);
+			if (!rows.success) {
+				ctx.addIssue({
+					code: 'custom',
+					input: first,
+					message: `Invalid collection row: ${rows.error.message}`,
+				});
+				return z.NEVER;
+			}
+			return rows.data;
 		});
 }
 

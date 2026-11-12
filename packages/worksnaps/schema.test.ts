@@ -1,3 +1,4 @@
+import { WorksnapsEndpointOutputSchemas } from './endpoints/types';
 import { WorksnapsSchema } from './schema';
 
 describe('Worksnaps schema', () => {
@@ -24,3 +25,21 @@ describe('Worksnaps schema', () => {
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
 // needs a corresponding test.
+
+describe('list collections', () => {
+	it('checks rows read out of a wrapper object like rows in a bare array', () => {
+		const result = WorksnapsEndpointOutputSchemas.projectsList.parse({
+			projects: { project: [{ id: '7', name: 'Deck' }], total: '1' },
+		});
+		const row = result.projects[0];
+		expect(row?.id).toBe(7);
+		// @ts-expect-error a row id is a number after parsing, not a string.
+		const asString: string = row?.id;
+		expect(asString).toBe(7);
+		expect(() =>
+			WorksnapsEndpointOutputSchemas.projectsList.parse({
+				projects: { project: [{ id: 'not-a-number' }], total: '1' },
+			}),
+		).toThrow();
+	});
+});
