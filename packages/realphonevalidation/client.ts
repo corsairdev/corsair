@@ -18,7 +18,7 @@ export type RealPhoneValidationService =
 	| 'TurboV3.php'
 	| 'Turbo.php'
 	| 'RealPhoneValidationTurbo.php'
-	| 'Scrub.php'
+	| 'RealPhoneValidationScrub.php'
 	| 'ScrubPlus.php'
 	| 'RealPhoneValidationActive.php'
 	| 'WirelessID.php'
@@ -104,8 +104,15 @@ export class RealPhoneValidationAPIError extends Error {
 		);
 	}
 
-	/** The token is fine but the account is out of balance. */
+	/**
+	 * The token is fine but the account is out of balance. The email service
+	 * uses 102 for a malformed address instead, so 102 means a balance only on
+	 * the phone routes.
+	 */
 	get isQuotaError(): boolean {
+		if (this.service === 'EmailVerify.php' && this.serviceStatus === '102') {
+			return false;
+		}
 		return (
 			this.serviceStatus === '102' ||
 			(this.detail?.toLowerCase().includes('balance') ?? false)
@@ -115,11 +122,15 @@ export class RealPhoneValidationAPIError extends Error {
 	/**
 	 * A phone or email the service could not read: `invalid phone`,
 	 * `invalid-format`, `invalid-phone`, `bad-zip-code`, `-1` for a missing
-	 * number, or the email service's `-1` for a malformed address.
+	 * number, or the email service's `-1` and `102` for a malformed address. A
+	 * `-1` whose message is `server-unavailable` or `timeout` is an outage, not a
+	 * bad value.
 	 */
 	get isValidationError(): boolean {
 		if (this.status === 400 || this.status === 422) return true;
+		if (this.isServerError) return false;
 		const status = this.serviceStatus;
+		if (this.service === 'EmailVerify.php' && status === '102') return true;
 		return (
 			status === 'invalid phone' ||
 			status === 'invalid-format' ||
@@ -138,10 +149,18 @@ export class RealPhoneValidationAPIError extends Error {
 		return this.status === 403 || this.status === 429;
 	}
 
-	/** The service itself was unreachable: `server-unavailable`. */
+	/**
+	 * The service itself was unreachable: `server-unavailable` as the status, or
+	 * as the message of a `-1` (Wireless ID, email), or the email service's
+	 * `timeout`.
+	 */
 	get isServerError(): boolean {
+		const detail = this.detail?.toLowerCase();
 		return (
-			(this.status ?? 0) >= 500 || this.serviceStatus === 'server-unavailable'
+			(this.status ?? 0) >= 500 ||
+			this.serviceStatus === 'server-unavailable' ||
+			detail === 'server-unavailable' ||
+			detail === 'timeout'
 		);
 	}
 }
@@ -158,8 +177,9 @@ function failure(body: unknown): {
 	const record = asRecord(body);
 	if (!record) return {};
 
-	// The email service reports a failed request with `retval: "-1"` and no
-	// `status` at all, so this is the only signal it gives that nothing ran.
+	// The email service reports a failed request with `retval: "-1"` (or `102`
+	// for a malformed address) and no `status` at all, so this is the only
+	// signal it gives that nothing ran.
 	const rawRetval = record.retval;
 	const retval =
 		typeof rawRetval === 'string'
@@ -224,9 +244,9 @@ export function readServiceRefusal(body: unknown): {
 	detail?: string;
 } {
 	const { status, detail, retval } = failure(body);
-	// The email service's only failure signal is retval -1.
+	// The email service's only failure signals are retval -1 and 102.
 	if (status === undefined) {
-		return retval === '-1'
+		return retval === '-1' || retval === '102'
 			? { refused: true, status: retval, detail }
 			: { refused: false };
 	}
@@ -261,7 +281,7 @@ export type RealPhoneValidationRequest = {
 /**
  * The docs recommend **10 calls per second** and answer a burst with a `403`.
  * There is no Retry-After documented, so the handler backs off on its own and
- * reads the header only if one arrives.
+ * uses the header only if one arrives.
  */
 const REALPHONEVALIDATION_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -269,9 +289,10 @@ const REALPHONEVALIDATION_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
-	// The throttle is a 403, which is also what an unrecognised route returns, so
-	// the client keeps rate-limit retries out of corsair/http entirely.
-	isRateLimitError: () => false,
+	// corsair/http reads Retry-After only from a response this matches. With
+	// maxRetries 0 it never retries here: the 403 is also what the load balancer
+	// answers to a malformed token, so error-handlers.ts decides on retries.
+	isRateLimitError: (status) => status === 403 || status === 429,
 };
 
 /**

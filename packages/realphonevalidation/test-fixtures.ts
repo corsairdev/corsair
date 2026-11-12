@@ -196,6 +196,29 @@ export const EMAIL_BAD_FORMAT = {
 	error_text: 'invalid email address format',
 };
 
+/**
+ * The documented 102 on the email service: a malformed address, not an empty
+ * balance as on the DNC routes.
+ */
+export const EMAIL_RETVAL_102 = {
+	retval: '102',
+	error_text: 'invalid email address format',
+};
+
+/**
+ * A Turbo V3 answer for a number whose carrier gives no subscriber name. The
+ * services build their JSON from XML, so an empty element arrives as {} (the
+ * same way error_text does), not as "".
+ */
+export const TURBO_V3_NO_CALLER_NAME = {
+	status: 'connected',
+	error_text: {},
+	phone_type: 'Landline',
+	caller_name: {},
+	carrier: {},
+	caller_type: 'Unavailable',
+};
+
 // ── refusals that arrive inside a 200 ─────────────────────────────────────
 
 /** The documented bad-token answer on the status routes. */

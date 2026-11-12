@@ -9,12 +9,17 @@ export function testContext(apiKey = 'rpv-test-token') {
 }
 
 // never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant. Each endpoint returns its own output type, so
-// the shared return is unknown.
-export type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+// parameters are contravariant. Result is the endpoint's own output type, so a
+// test reads typed fields with no cast.
+export type AnyEndpoint<Result> = (ctx: never, input: never) => Promise<Result>;
 
-// unknown: negative cases pass values no schema accepts.
-export function invoke(endpoint: AnyEndpoint, input: unknown) {
+// unknown: negative cases pass values no schema accepts. The never casts hand
+// the fake context and raw input to an endpoint typed for the real ones; the
+// endpoint parses both at runtime.
+export function invoke<Result>(
+	endpoint: AnyEndpoint<Result>,
+	input: unknown,
+): Promise<Result> {
 	return endpoint(testContext() as never, input as never);
 }
 

@@ -89,7 +89,7 @@ export const scrub: RealPhoneValidationEndpoints['scrub'] = (ctx, input) =>
 		ctx,
 		{
 			event: 'scrub',
-			service: 'Scrub.php',
+			service: 'RealPhoneValidationScrub.php',
 			input: Inputs.scrub,
 			output: Outputs.scrub,
 		},

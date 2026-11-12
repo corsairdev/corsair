@@ -142,6 +142,23 @@ describe('RealPhoneValidation client', () => {
 		expect(error.service).toBe('Turbo.php');
 	});
 
+	it('keeps a Retry-After from a 403, so the handler can wait that long', async () => {
+		respond(THROTTLED, 403, { 'Retry-After': '7' });
+
+		const error = await failure(
+			makeRealPhoneValidationRequest(TOKEN, 'Turbo.php', {
+				method: 'GET',
+				query: { phone: '7275555555' },
+				replayable: true,
+			}),
+		);
+
+		expect(error.isRateLimit).toBe(true);
+		expect(error.retryAfter).toBe(7000);
+		// corsair/http itself must not retry: retries belong to error-handlers.ts.
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it('drops the cause of an HTTP error, which would retain the token', async () => {
 		respond(THROTTLED, 403);
 
@@ -355,6 +372,24 @@ describe('assertNotRefused', () => {
 		expect((thrown as RealPhoneValidationAPIError).isValidationError).toBe(
 			true,
 		);
+	});
+
+	it('marks -1 with server-unavailable as a server error, not a bad number', () => {
+		// unknown: the thrown error is narrowed below.
+		let thrown: unknown;
+		try {
+			assertNotRefused(
+				{ RESPONSECODE: '-1', RESPONSEMSG: 'server-unavailable' },
+				'WirelessID.php',
+				{ method: 'GET', replayable: true },
+			);
+		} catch (error) {
+			thrown = error;
+		}
+
+		const error = thrown as RealPhoneValidationAPIError;
+		expect(error.isServerError).toBe(true);
+		expect(error.isValidationError).toBe(false);
 	});
 
 	it('does nothing for a real result', () => {
