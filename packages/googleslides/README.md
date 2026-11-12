@@ -23,7 +23,7 @@ pnpm add @corsair-dev/googleslides
 | `elements.zOrder` | `googleslides.api.elements.zOrder` | `write` | Change which elements sit in front of others |
 | `presentations.copy` | `googleslides.api.presentations.copy` | `write` | Copy a presentation to a new file |
 | `presentations.create` | `googleslides.api.presentations.create` | `write` | Create a blank presentation |
-| `presentations.delete` | `googleslides.api.presentations.delete` | `destructive` | Permanently delete a presentation from Drive, without using the trash [DESTRUCTIVE · IRREVERSIBLE] |
+| `presentations.delete` | `googleslides.api.presentations.delete` | `destructive` | Permanently delete a presentation from Drive, without using the trash; refuses any file that is not a presentation [DESTRUCTIVE · IRREVERSIBLE] |
 | `presentations.exportPdf` | `googleslides.api.presentations.exportPdf` | `read` | Export a presentation to PDF or PPTX as base64 |
 | `presentations.get` | `googleslides.api.presentations.get` | `read` | Read a presentation with slide and layout counts |
 | `presentations.list` | `googleslides.api.presentations.list` | `read` | List presentations in Drive, filtered and paged |
