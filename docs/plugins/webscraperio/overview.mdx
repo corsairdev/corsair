@@ -1,20 +1,21 @@
 ---
-title: Overview
-description: "Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account plan and page allowance."
+title: "Web Scraper Cloud plugin"
+sidebarTitle: "Overview"
+description: "Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account's page credits."
 ---
 
 Use **Web Scraper Cloud** through Corsair: one client, typed API calls.
 
-Create an API token in the Web Scraper Cloud app under **Account → API**. It travels as an `api_token` **query parameter**, not a header, and every call is against `https://api.webscraper.io/api/v1`.
+Create an API token in the Web Scraper Cloud app under **Account → API**. The plugin sends it as `Authorization: Bearer <token>` on every call to `https://api.webscraper.io/api/v1`.
 
-- **The token is a query parameter.** There is no bearer header; the plugin adds `api_token` to every request, so a bare request without it is refused with `401 Unauthorized, invalid api_token.`
-- **The public v1 surface is small — and this plugin wraps exactly it.** The routes the API serves are `GET /sitemaps`, `GET /sitemap/{id}`, `POST /sitemap` and `GET /account`. Scraping jobs and their scraped data live behind the Cloud web app rather than these routes, so the plugin does not invent endpoints for them; if you need job data programmatically, that is not available through this API today.
+- **The token goes in a Bearer header.** That is what the provider's API reference documents. The older `api_token` query parameter still works, but it would put the key in every request URL, so the plugin does not use it. A wrong token is refused with `401 Unauthorized, invalid Bearer token.`
+- **This plugin covers sitemaps and the account.** It wraps `GET /sitemaps`, `GET /sitemap/{id}`, `POST /sitemap` and `GET /account`. The Cloud API also serves sitemap update and delete, schedulers, tags, and scraping jobs (start, status, stop, and downloading the scraped data); those are not in this plugin yet.
 - **Two error shapes, and they mean different things.** A handled failure is `{ success: false, error }` — that is what a bad token produces. An unrouted request is Laravel's own 404 `{ message: "The route ... could not be found." }`, which means the *path* is wrong. The plugin keeps them apart, so a 404 from a mistyped path is not reported as a missing sitemap.
 - **A 403 is a plan problem, not a key problem.** A 401 means the token is wrong; a 403 means the token works but the plan does not include the call.
-- **A sitemap is the scraping configuration.** Its `selectors` define what is extracted and its `start_urls` where the crawl begins, so reading one tells you what a scrape would do without running it.
-- **`sitemaps.create` takes the export as-is.** The body is the JSON the browser extension exports — `_id`, name, `startUrl`, `selectors`, `startUrls` — and its shape belongs to the builder, so the plugin passes it through unchanged rather than pretending to model it.
-- **Lists come in two shapes.** `sitemaps.list` accepts both a flat `data` array and a paginated `data.data` object, and counts either the same way.
-- **`account.get` is the cheapest check.** It returns the plan and how many pages and jobs are used against the allowance, so it verifies a token and reports the quota in one call.
+- **A sitemap is the scraping configuration.** `sitemaps.get` returns its definition in `data.sitemap` as a JSON string; parse it to read `startUrl` (where the crawl begins) and `selectors` (what is extracted).
+- **`sitemaps.create` takes the export as-is.** The body is the JSON the browser extension exports (`_id`, `startUrl`, `selectors`), and its shape belongs to the builder, so the plugin passes it through unchanged. The answer is the new sitemap's `id`.
+- **The list is paginated.** `sitemaps.list` returns `{ id, name }` rows in `data`, with `current_page`, `last_page`, `total` and `per_page` at the root; pass `page` until it reaches `last_page`, and `tag` to filter.
+- **`account.get` is the cheapest check.** It returns the user's email and name and the `page_credits` left, so it verifies a token and reports the remaining credits in one call.
 
 **What you get:**
 
@@ -74,7 +75,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-A call with no saved key throws `AuthMissingError`. Save a Web Scraper Cloud API token on the account before calling, or pass `key` in the plugin options.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 webscraperio()
@@ -119,8 +120,7 @@ const tenant = corsair.withTenant('acme');
 await tenant.webscraperio.api.sitemaps.create({
 	sitemap: {
 		_id: 'product_catalogue',
-		name: 'Product catalogue',
-		startUrl: 'https://acme.example/products',
+		startUrl: ['https://acme.example/products'],
 		selectors: [],
 	},
 });

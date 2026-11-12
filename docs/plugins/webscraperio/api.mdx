@@ -1,9 +1,8 @@
 ---
-title: API
+title: "Web Scraper Cloud API reference"
+sidebarTitle: "API"
 description: "API reference for Web Scraper Cloud: every `webscraperio.api.*` operation with input and output types."
 ---
-
-Every `webscraperio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -15,7 +14,7 @@ Every `webscraperio.api.*` operation is listed below with parameter shapes and r
 
 `account.get`
 
-Read the account plan and how much of the page and job allowance is used; the cheapest way to check a token
+Read the account user and the page credits left; the cheapest way to check a token
 
 **Risk:** `read`
 
@@ -38,15 +37,10 @@ await corsair.webscraperio.api.account.get({});
 
 ```ts
 {
-  id?: number | null,
-  name?: string | null,
   email?: string | null,
-  plan?: string | null,
-  pages_allowed?: number | null,
-  pages_used?: number | null,
-  scraping_jobs_allowed?: number | null,
-  scraping_jobs_used?: number | null,
-  created_at?: string | null
+  firstname?: string | null,
+  lastname?: string | null,
+  page_credits?: number | null
 } | null
 ```
 </Accordion>
@@ -67,14 +61,14 @@ Create a sitemap from the definition the browser extension exports, selectors in
 **Risk:** `write`
 
 ```ts
-await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalogue', name: 'Product catalogue', startUrl: 'https://acme.example/products', selectors: [{ id: 'name', selector: 'h1.title', type: 'text' }] } });
+await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalogue', startUrl: ['https://acme.example/products'], selectors: [{ id: 'name', parentSelectors: ['_root'], type: 'SelectorText', selector: 'h1.title', multiple: false }] } });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `sitemap` | `Record<string, any>` | Yes | The sitemap definition: `_id`, name, startUrl, selectors and startUrls, in the form the browser extension exports. |
+| `sitemap` | `Record<string, any>` | Yes | The sitemap definition in the form the browser extension exports: `_id`, `startUrl` (an array of URLs) and `selectors`. |
 
 
 
@@ -92,14 +86,7 @@ await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalo
 {
   id?: number | null,
   name?: string | null,
-  url?: string | null,
-  status?: string | null,
-  created_at?: string | null,
-  updated_at?: string | null,
-  selectors?: Record<string, any>[] | null,
-  start_urls?: Record<string, any>[] | null,
-  jobs?: Record<string, any>[] | null,
-  jobs_count?: number | null
+  sitemap?: string | null
 } | null
 ```
 </Accordion>
@@ -113,7 +100,7 @@ await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalo
 
 `sitemaps.get`
 
-Read one sitemap with its selectors, start URLs and status
+Read one sitemap: its id, name and definition (start URLs and selectors) as a JSON string
 
 **Risk:** `read`
 
@@ -143,14 +130,7 @@ await corsair.webscraperio.api.sitemaps.get({ id: 42 });
 {
   id?: number | null,
   name?: string | null,
-  url?: string | null,
-  status?: string | null,
-  created_at?: string | null,
-  updated_at?: string | null,
-  selectors?: Record<string, any>[] | null,
-  start_urls?: Record<string, any>[] | null,
-  jobs?: Record<string, any>[] | null,
-  jobs_count?: number | null
+  sitemap?: string | null
 } | null
 ```
 </Accordion>
@@ -164,7 +144,7 @@ await corsair.webscraperio.api.sitemaps.get({ id: 42 });
 
 `sitemaps.list`
 
-List the sitemaps on the account
+List the sitemaps on the account (id and name), a page at a time, optionally filtered by tag
 
 **Risk:** `read`
 
@@ -177,6 +157,7 @@ await corsair.webscraperio.api.sitemaps.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `tag` | `string` | No | Only return sitemaps carrying this tag. |
 
 
 
@@ -185,7 +166,11 @@ await corsair.webscraperio.api.sitemaps.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
-| `data` | `object[] \| object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `last_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -194,31 +179,8 @@ await corsair.webscraperio.api.sitemaps.list({});
 {
   id?: number | null,
   name?: string | null,
-  url?: string | null,
-  status?: string | null,
-  created_at?: string | null,
-  updated_at?: string | null,
-  selectors?: Record<string, any>[] | null,
-  start_urls?: Record<string, any>[] | null,
-  jobs?: Record<string, any>[] | null,
-  jobs_count?: number | null
-}[] | {
-  data?: {
-    id?: number | null,
-    name?: string | null,
-    url?: string | null,
-    status?: string | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    selectors?: Record<string, any>[] | null,
-    start_urls?: Record<string, any>[] | null,
-    jobs?: Record<string, any>[] | null,
-    jobs_count?: number | null
-  }[] | null,
-  total?: number | null,
-  current_page?: number | null,
-  last_page?: number | null
-} | null | null
+  sitemap?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
