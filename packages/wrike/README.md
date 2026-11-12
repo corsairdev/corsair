@@ -21,7 +21,7 @@ pnpm add @corsair-dev/wrike
 | `contacts.get` | `wrike.api.contacts.get` | `read` | Read one contact by id, or `me` for the one behind the token |
 | `contacts.list` | `wrike.api.contacts.list` | `read` | List the contacts on the account, optionally only active ones or only yourself |
 | `folders.create` | `wrike.api.folders.create` | `write` | Create a folder inside another, or in the account root when given its virtual root id |
-| `folders.delete` | `wrike.api.folders.delete` | `destructive` | Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents |
+| `folders.delete` | `wrike.api.folders.delete` | `destructive` | Move a folder and every folder and task inside it to the recycle bin unless they have parents outside the deleted folder; Wrike does not refuse a folder with contents |
 | `folders.get` | `wrike.api.folders.get` | `read` | Read one folder or project |
 | `folders.list` | `wrike.api.folders.list` | `read` | List folders and projects, each with its parent and scope |
 | `folders.tasks` | `wrike.api.folders.tasks` | `read` | List the tasks in a folder, optionally including every descendant folder |

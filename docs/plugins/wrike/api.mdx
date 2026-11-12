@@ -490,7 +490,7 @@ await corsair.wrike.api.folders.create({ parentId: 'IEAABCDEF12345', title: 'Che
 
 `folders.delete`
 
-Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents
+Move a folder and every folder and task inside it to the recycle bin unless they have parents outside the deleted folder; Wrike does not refuse a folder with contents
 
 **Risk:** `destructive`
 
@@ -804,6 +804,7 @@ await corsair.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship 
 | `dueDate` | `string` | No | Shorthand for `dates.due`, as yyyy-MM-dd. |
 | `dates` | `object` | No | Wrike schedules a task through this object; startDate and dueDate are folded into it. |
 | `parents` | `string[]` | No | Additional parent folders, beyond the one in the path. |
+| `superTasks` | `string[]` | No | Parent task ids for a subtask. Use the Root Folder API id as folderId. |
 | `customFields` | `Record<string, any>[]` | No | — |
 | `metadata` | `Record<string, any>[]` | No | — |
 

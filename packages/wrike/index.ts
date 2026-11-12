@@ -267,7 +267,7 @@ const wrikeEndpointMeta = {
 	'folders.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents',
+			'Move a folder and every folder and task inside it to the recycle bin unless they have parents outside the deleted folder; Wrike does not refuse a folder with contents',
 	},
 	'timelogs.list': {
 		riskLevel: 'read',

@@ -117,6 +117,9 @@ describe('wrike plugin definition', () => {
 		const description =
 			meta['folders.delete' as keyof typeof meta]?.description ?? '';
 		expect(description).toContain('every folder and task inside it');
+		expect(description).toContain(
+			'unless they have parents outside the deleted folder',
+		);
 		expect(description).not.toContain('recursive');
 	});
 
