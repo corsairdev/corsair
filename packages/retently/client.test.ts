@@ -6,7 +6,12 @@ import {
 	RetentlyAPIError,
 	segment,
 } from './client';
-import { BAD_KEY, INVALID_KEY, RATE_LIMITED } from './test-fixtures';
+import {
+	BAD_KEY,
+	INVALID_KEY,
+	RATE_LIMITED,
+	READ_ONLY_KEY,
+} from './test-fixtures';
 
 const API_KEY = 'retently-secret-test-key';
 
@@ -118,6 +123,22 @@ describe('Retently client', () => {
 		expect(error.message).toBe('Retently 401: Account not found');
 		expect(error.isAuthError).toBe(true);
 		expect(error.isNotFound).toBe(false);
+	});
+
+	it('reports a read-only key as a permission error, not an auth error', async () => {
+		respond(READ_ONLY_KEY, 403);
+
+		const error = await failure(
+			makeRetentlyRequest(API_KEY, {
+				method: 'POST',
+				path: '/customers',
+				replayable: false,
+			}),
+		);
+
+		expect(error.status).toBe(403);
+		expect(error.isPermissionError).toBe(true);
+		expect(error.isAuthError).toBe(false);
 	});
 
 	it('keeps the documented "Invalid API key." wording', async () => {

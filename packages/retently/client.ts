@@ -57,9 +57,12 @@ export class RetentlyAPIError extends Error {
 		this.replayable = options.replayable ?? false;
 	}
 
-	/** The key is missing, unknown, or for a deleted account. */
+	/**
+	 * The key is missing, unknown, or for a deleted account. A 403 is not one:
+	 * the key is valid but read-only, or the campaign is inactive.
+	 */
 	get isAuthError(): boolean {
-		return this.status === 401 || this.status === 403;
+		return this.status === 401;
 	}
 
 	/** The account has write permission but the key is read-only. */
