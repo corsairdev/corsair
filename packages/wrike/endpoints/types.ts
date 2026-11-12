@@ -311,6 +311,13 @@ const TasksCreateInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Additional parent folders, beyond the one in the path.'),
+	superTasks: z
+		.array(IdSchema)
+		.min(1)
+		.optional()
+		.describe(
+			'Parent task ids for a subtask. Use the Root Folder API id as folderId.',
+		),
 	// unknown: custom fields are account-defined, so their ids and values have no
 	// static shape; the object is passed through as the API sent it.
 	customFields: z.array(z.record(z.string(), z.unknown())).min(1).optional(),

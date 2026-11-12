@@ -161,6 +161,16 @@ describe('tasks', () => {
 		expect(sent.body).not.toHaveProperty('dates');
 	});
 
+	it('preserves the task parent when creating a subtask', async () => {
+		respond(fetchMock, tasksEnvelope);
+		await invoke(Tasks.create, {
+			folderId,
+			title: 'Child task',
+			superTasks: [taskId],
+		});
+		expect(lastRequest(fetchMock).body).toMatchObject({ superTasks: [taskId] });
+	});
+
 	it('folds start and due dates into the dates object Wrike schedules by', async () => {
 		respond(fetchMock, tasksEnvelope);
 
