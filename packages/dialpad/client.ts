@@ -73,7 +73,7 @@ function sensitiveValues(value: unknown, fieldName = ''): string[] {
 	if (typeof value !== 'object' || value === null) {
 		return SENSITIVE_FIELD_NAMES.has(normalizedFieldName(fieldName)) &&
 			typeof value === 'string' &&
-			value.length >= 4
+			value.length > 0
 			? [value]
 			: [];
 	}

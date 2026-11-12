@@ -423,12 +423,13 @@ describe('Dialpad HTTP request behavior', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('redacts secret request fields and echoed values from propagated errors', async () => {
+	it('redacts short secrets echoed in nested propagated error bodies', async () => {
 		fetchMock.mockResolvedValue(
 			new Response(
 				JSON.stringify({
-					password: 'short-secret',
-					message: 'Rejected short-secret',
+					password: 'abc',
+					message: 'Rejected abc',
+					details: ['Provider echoed abc'],
 				}),
 				{
 					status: 400,
@@ -440,7 +441,7 @@ describe('Dialpad HTTP request behavior', () => {
 		// `unknown` because a rejected request can contain any thrown value.
 		const error = await makeDialpadRequest(
 			DialpadOperationDefinitions['accesscontrolpolicies.create'],
-			{ body: { password: 'short-secret' } },
+			{ body: { password: 'abc' } },
 			{ apiKey: 'safe-test-token' },
 		).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
@@ -450,8 +451,9 @@ describe('Dialpad HTTP request behavior', () => {
 		expect(error.body).toEqual({
 			password: '[REDACTED]',
 			message: 'Rejected [REDACTED]',
+			details: ['Provider echoed [REDACTED]'],
 		});
 		expect(error.request.body).toEqual({ password: '[REDACTED]' });
-		expect(error.message).not.toContain('short-secret');
+		expect(error.message).not.toContain('abc');
 	});
 });
