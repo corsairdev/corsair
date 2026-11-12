@@ -655,7 +655,7 @@ await corsair.refiner.api.responses.store({ id: 'user-1', form_uuid: '3894dc20-8
 | `date` | `string` | No | ISO 8601, when the response was recorded. Defaults to now, so set it on a historical import. |
 | `prevent_duplicates` | `boolean` | No | Refiner detects duplicates by default; false turns that off. |
 | `tags` | `string[]` | No | Up to 20 tags for the response. |
-| `account` | `Record<string, string \| number \| boolean>` | No | — |
+| `account` | `Record<string, string \| number \| boolean>` | No | A nested account object, with at least an id, to group the contact under one account. |
 
 
 
