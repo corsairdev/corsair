@@ -333,13 +333,18 @@ describe('groups and meetings', () => {
 		const result = (await invoke(Endpoints.meetingList, {
 			after: '2026-11-01T00:00:00.000Z',
 			limit: 10,
+			expand: ['summary', 'chapters'],
 		})) as Awaited<ReturnType<typeof Endpoints.meetingList>>;
 
-		expect(lastRequest(fetchMock).path).toBe('/v1/meeting.list');
-		expect(result.meetings[0]?.duration).toBe(1800);
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/v1/meeting.list');
+		expect(request.query.expand).toBe('summary,chapters');
+		expect(result.meetings[0]?.start).toBe('2026-11-10T10:00:00.000Z');
+		expect(result.meetings[0]?.participantCount).toBe(2);
+		expect(result.meetings[0]?.host?.name).toBe('Sam Rivera');
 	});
 
-	it('reads a transcript with its segments', async () => {
+	it('reads a transcript with its cues', async () => {
 		respond(fetchMock, TRANSCRIPT);
 
 		const result = (await invoke(Endpoints.meetingTranscript, {
@@ -347,8 +352,9 @@ describe('groups and meetings', () => {
 		})) as Awaited<ReturnType<typeof Endpoints.meetingTranscript>>;
 
 		expect(lastRequest(fetchMock).query).toEqual({ id: MEETING_ID });
-		expect(result.transcript.segments).toHaveLength(2);
-		expect(result.transcript.segments?.[0]?.speaker).toBe('Sam Rivera');
+		expect(result.transcript.cues).toHaveLength(2);
+		expect(result.transcript.cues?.[0]?.speakerId).toBe(USER_ID);
+		expect(result.transcript.cues?.[1]?.text).toBe('Sounds good.');
 	});
 
 	it('rejects a transcript with no meeting id', async () => {

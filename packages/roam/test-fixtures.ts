@@ -215,13 +215,11 @@ export const GROUP_PAGE = {
 export const MEETING = {
 	id: MEETING_ID,
 	title: 'Weekly sync',
-	startedAt: '2026-11-10T10:00:00.000Z',
-	endedAt: '2026-11-10T10:30:00.000Z',
-	created: '2026-11-10T09:55:00.000Z',
-	duration: 1800,
-	status: 'ended',
-	participants: [USER_REF],
-	locationId: null,
+	start: '2026-11-10T10:00:00.000Z',
+	participantCount: 2,
+	hasVideo: false,
+	videoStatus: 'none',
+	host: { type: 'member', id: USER_ID, name: 'Sam Rivera' },
 };
 
 export const MEETING_PAGE = {
@@ -232,10 +230,8 @@ export const MEETING_PAGE = {
 export const TRANSCRIPT = {
 	ok: true,
 	id: MEETING_ID,
-	language: 'en',
-	segments: [
-		{ start: 0, end: 5, speaker: 'Sam Rivera', text: 'Let us start.' },
-		{ start: 5, end: 12, speaker: 'Jordan Lee', text: 'Sounds good.' },
+	cues: [
+		{ speakerId: USER_ID, text: 'Let us start.', start: 0, end: 5000 },
+		{ speakerId: GROUP_ID, text: 'Sounds good.', start: 5000, end: 12000 },
 	],
-	vtt: null,
 };

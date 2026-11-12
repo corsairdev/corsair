@@ -57,4 +57,4 @@ apiNotes:
   'chat.post': 'Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` schedules instead of sending.'
   'chat.update': 'Needs exactly one new content type, and identifies the message by chat and timestamp.'
   'reactions.add': 'The `name` is an emoji name such as `thumbsup`, not the emoji character.'
-  'meetings.transcript': 'Returns segments with their speaker, start and end; the plugin asks for JSON rather than WebVTT.'
+  'meetings.transcript': 'Returns `cues` with the speaker''s user id, start and end; the plugin asks for JSON rather than WebVTT.'

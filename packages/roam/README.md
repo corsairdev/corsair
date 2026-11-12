@@ -18,7 +18,7 @@ pnpm add @corsair-dev/roam
 | `chat.update` | `roam.api.chat.update` | `write` | Edit a message the token posted, replacing its content |
 | `groups.list` | `roam.api.groups.list` | `read` | List groups with a search phrase and type filter, plus cursor paging |
 | `meetings.list` | `roam.api.meetings.list` | `read` | List meetings with a time window, plus cursor paging |
-| `meetings.transcript` | `roam.api.meetings.transcript` | `read` | Fetch a meeting’s transcript segments with their speaker and timing |
+| `meetings.transcript` | `roam.api.meetings.transcript` | `read` | Fetch a meeting’s transcript cues with their speaker id and timing |
 | `reactions.add` | `roam.api.reactions.add` | `write` | Add an emoji reaction to a message |
 | `reactions.list` | `roam.api.reactions.list` | `read` | List the reactions on a message with their counts and users |
 | `token.info` | `roam.api.token.info` | `read` | Read the account behind the token: its user, granted scopes and pinned API version |

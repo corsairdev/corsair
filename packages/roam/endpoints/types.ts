@@ -571,22 +571,57 @@ const MeetingListInputSchema = z.object({
 	after: z.string().optional().describe('Only meetings after this timestamp.'),
 	limit: LimitSchema,
 	cursor: CursorSchema,
-	expand: ExpandSchema,
+	expand: z
+		.array(z.enum(['summary', 'actionItems', 'chapters']))
+		.optional()
+		.describe(
+			'Fields to inline on each meeting. Roam caps `limit` at 10 when any is set.',
+		),
 });
 
 export type MeetingListInput = z.input<typeof MeetingListInputSchema>;
+
+const MeetingHostSchema = z
+	.object({
+		type: z.string().nullish(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+	})
+	.loose();
+
+/** Present only when `expand` asks for `actionItems`. */
+const ActionItemSchema = z
+	.object({
+		id: z.string().nullish(),
+		title: z.string().nullish(),
+		complete: z.boolean().nullish(),
+		assigneeId: z.string().nullish(),
+	})
+	.loose();
+
+/** Present only when `expand` asks for `chapters`. */
+const ChapterSchema = z
+	.object({
+		name: z.string().nullish(),
+		start: z.number().nullish(),
+		synopsis: z.string().nullish(),
+	})
+	.loose();
 
 const MeetingSchema = z
 	.object({
 		id: z.string().nullish(),
 		title: z.string().nullish(),
-		startedAt: z.string().nullish(),
-		endedAt: z.string().nullish(),
-		created: z.string().nullish(),
-		duration: z.number().nullish(),
-		status: z.string().nullish(),
-		participants: z.array(UserRefSchema).nullish(),
-		locationId: z.string().nullish(),
+		subtitle: z.string().nullish(),
+		start: z.string().nullish().describe('When the meeting started, RFC 3339.'),
+		participantCount: z.number().nullish(),
+		hasVideo: z.boolean().nullish(),
+		videoStatus: z.string().nullish(),
+		host: MeetingHostSchema.nullish(),
+		summary: z.string().nullish(),
+		actionItems: z.array(ActionItemSchema).nullish(),
+		chapters: z.array(ChapterSchema).nullish(),
 	})
 	.loose();
 
@@ -608,27 +643,26 @@ export type MeetingTranscriptInput = z.input<
 >;
 
 /**
- * A transcript answers either structured segments or, when asked for WebVTT, a
- * non-JSON body. This plugin asks for JSON, so the segments are what it returns;
- * `vtt` is present only when Roam included a rendered copy.
+ * A transcript answers either structured cues or, when asked for WebVTT, a
+ * non-JSON body. This plugin asks for JSON, so the cues are what it returns.
+ * Each cue names its speaker by user id; `users.info` resolves the name.
  */
-const TranscriptSegmentSchema = z
+const TranscriptCueSchema = z
 	.object({
+		speakerId: z.string().nullish(),
+		text: z.string().nullish(),
 		start: z.number().nullish(),
 		end: z.number().nullish(),
-		speaker: z.string().nullish(),
-		text: z.string().nullish(),
 	})
 	.loose();
 
 const MeetingTranscriptResponseSchema = z.object({
-	transcript: z.object({
-		id: z.string().nullish(),
-		language: z.string().nullish(),
-		segments: z.array(TranscriptSegmentSchema).nullish(),
-		vtt: z.string().nullish(),
-		ok: z.boolean().nullish(),
-	}),
+	transcript: z
+		.object({
+			id: z.string().nullish(),
+			cues: z.array(TranscriptCueSchema).nullish(),
+		})
+		.loose(),
 });
 
 export type MeetingTranscriptResponse = z.infer<

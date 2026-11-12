@@ -369,7 +369,7 @@ export const meetingTranscript: RoamEndpoints['meetingTranscript'] = (
 			// A transcript is meeting content, so only its shape is logged.
 			log: (_, result) => ({
 				meetingId: result.transcript.id ?? '',
-				segments: result.transcript.segments?.length ?? 0,
+				cues: result.transcript.cues?.length ?? 0,
 			}),
 		},
 	);

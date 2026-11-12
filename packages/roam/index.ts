@@ -195,7 +195,7 @@ const roamEndpointMeta = {
 	'meetings.transcript': {
 		riskLevel: 'read',
 		description:
-			'Fetch a meeting’s transcript segments with their speaker and timing',
+			'Fetch a meeting’s transcript cues with their speaker id and timing',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof roamEndpointsNested>;
 
