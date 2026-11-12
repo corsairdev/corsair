@@ -309,7 +309,10 @@ export async function requestRampClientCredentialsToken({
 	environment?: RampEnvironment;
 }): Promise<RampClientCredentialsToken> {
 	let response: Response;
+	let text: string;
 	try {
+		// The signal covers the body read too: a body that stalls after the
+		// headers arrive times out the same way.
 		response = await fetch(rampTokenUrl(environment), {
 			method: 'POST',
 			headers: {
@@ -323,6 +326,7 @@ export async function requestRampClientCredentialsToken({
 			}).toString(),
 			signal: AbortSignal.timeout(RAMP_TOKEN_TIMEOUT_MS),
 		});
+		text = await response.text();
 	} catch (error) {
 		const name = (error as { name?: string } | undefined)?.name;
 		if (name === 'TimeoutError' || name === 'AbortError') {
@@ -336,7 +340,6 @@ export async function requestRampClientCredentialsToken({
 			method: 'POST',
 		});
 	}
-	const text = await response.text();
 	let body: unknown;
 	try {
 		body = text ? JSON.parse(text) : undefined;

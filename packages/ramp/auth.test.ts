@@ -416,6 +416,35 @@ describe('token request limits', () => {
 		expect(writes).toEqual({});
 	});
 
+	it('reports a body that stalls after the headers as the same timeout', async () => {
+		fetchMock.mockImplementationOnce(async () => {
+			const response = new Response('{}', { status: 200 });
+			jest
+				.spyOn(response, 'text')
+				.mockRejectedValue(
+					new DOMException('The operation timed out.', 'TimeoutError'),
+				);
+			return response;
+		});
+		const { keys, writes } = oauthKeys({
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+		});
+
+		const error = await captureError(
+			keyBuilderOf(ramp({ authType: 'oauth_2', clientCredentials: true }))(
+				oauthCtx(keys),
+				'endpoint',
+			),
+		);
+
+		expect(error).toBeInstanceOf(RampAPIError);
+		expect(error.message).toBe(
+			`Ramp token request timed out after ${RAMP_TOKEN_TIMEOUT_MS / 1000} s`,
+		);
+		expect(writes).toEqual({});
+	});
+
 	it('writes the new token before its expiry', async () => {
 		respond(fetchMock, {
 			access_token: 'ramp_tok_ordered',
