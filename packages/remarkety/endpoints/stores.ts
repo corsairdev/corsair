@@ -204,11 +204,17 @@ export const unsubscribe: RemarketyEndpoints['contactsUnsubscribe'] = (
 	);
 
 /** A one-segment path, exported so the campaign routes can reuse it. */
-export function campaignPath(storeId: number, suffix = ''): string {
+export function campaignPath(
+	storeId: string | number,
+	suffix = '',
+): string {
 	return storePath(storeId, `/campaigns${suffix}`);
 }
 
 /** The campaign id as a path segment, used by the per-campaign routes. */
-export function campaignIdPath(storeId: number, campaignId: number): string {
+export function campaignIdPath(
+	storeId: string | number,
+	campaignId: number,
+): string {
 	return campaignPath(storeId, `/${segment(campaignId)}`);
 }

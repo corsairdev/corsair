@@ -161,7 +161,7 @@ export const types: RemarketyEndpoints['campaignsTypes'] = (ctx, input) =>
 
 /** The path one campaign rule's email template lives at. */
 function templatePath(
-	storeId: number,
+	storeId: string | number,
 	campaignId: number,
 	ruleId: number,
 	suffix = '',

@@ -40,10 +40,16 @@ const JsonValueSchema: z.ZodType<RemarketyJsonValue> = z.lazy(() =>
 
 const JsonObjectSchema = z.record(z.string(), JsonValueSchema);
 
+/**
+ * The store ID shown on Settings > API Keys is a short string such as `AbC123xy`,
+ * and that is what the store routes take. The numeric `id` that `stores.get`
+ * returns is accepted too.
+ */
 const StoreIdSchema = z
-	.number()
-	.int()
-	.describe('The store ID, which the store routes are scoped to.');
+	.union([z.string().min(1), z.number().int()])
+	.describe(
+		'The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id.',
+	);
 
 // ── stores ────────────────────────────────────────────────────────────────
 
@@ -102,7 +108,7 @@ export type StoresCreateResponse = z.infer<typeof StoresCreateResponseSchema>;
  * rather than `PUT /stores/{storeId}`.
  */
 const StoresUpdateInputSchema = z.object({
-	id: StoreIdSchema,
+	id: z.number().int().describe('The numeric store id that stores.get returns.'),
 	...StoreInputShape,
 });
 

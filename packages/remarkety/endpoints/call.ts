@@ -43,6 +43,6 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /** A store-scoped path. */
-export function storePath(storeId: number, suffix = ''): string {
+export function storePath(storeId: string | number, suffix = ''): string {
 	return `/stores/${encodeURIComponent(String(storeId))}${suffix}`;
 }

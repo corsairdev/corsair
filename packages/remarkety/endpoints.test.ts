@@ -176,6 +176,29 @@ describe('stores.status', () => {
 	});
 });
 
+describe('store ids', () => {
+	it('takes the string store ID from the API Keys page', async () => {
+		respond(fetchMock, STORE_STATUS);
+
+		await invoke(Stores.status, { storeId: 'AbC123xy' });
+
+		expect(lastRequest(fetchMock).path).toBe('/api/v1/stores/AbC123xy/status');
+	});
+
+	it('encodes a store ID that carries a path character', async () => {
+		respond(fetchMock, STORE_STATUS);
+
+		await invoke(Stores.status, { storeId: 'a/b' });
+
+		expect(lastRequest(fetchMock).path).toBe('/api/v1/stores/a%2Fb/status');
+	});
+
+	it('rejects an empty store ID', async () => {
+		await expect(invoke(Stores.status, { storeId: '' })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('contacts.create', () => {
 	it('posts the contact with its marketing flags', async () => {
 		respond(fetchMock, {});
