@@ -3,3 +3,518 @@ displayName: Square
 description: Square's commerce API. Take and refund payments, create orders, payment links and invoices, manage customers, cards, disputes, catalog and inventory, and read locations and merchant settings, in the Square sandbox or in production.
 domain: squareup.com
 recommendedAuth: api_key
+overviewNote: |-
+  Authentication is a Square access token, sent as a Bearer token: a personal access token or an OAuth token. Square runs production and a sandbox as separate worlds, and a token only works in the one it came from. The plugin calls production by default; pass `square({ environment: 'sandbox' })` to call `connect.squareupsandbox.com` with a sandbox token. Every request sends `Square-Version: 2026-09-16`. Inputs and answers use Square's own snake_case field names, and a money amount is `{ amount, currency }` with the amount in the currency's smallest unit (cents for USD).
+
+  **Idempotency.** Calls that create or change money, or that Square lets you repeat safely, take an `idempotency_key`: `payments.create`, `payments.update`, `payments.refund`, `orders.pay` and `cards.create` require one, and many more accept one. You supply the key; the plugin sends it unchanged and never makes one up. Reuse the same key to retry the same call: Square then returns the first result instead of acting twice, so a timed-out charge cannot charge a card twice. A new key is a new payment. If the response to `payments.create` was lost and you cannot tell whether it ran, `payments.cancelByIdempotencyKey` voids it by the same key.
+
+  **Operations that move money:** `payments.create`, `payments.update`, `payments.complete`, `payments.cancel`, `payments.cancelByIdempotencyKey`, `payments.refund`, `orders.pay`, `invoices.publish` (it may charge the card on file) and `disputes.accept`. Their descriptions say so. `payments.refund`, `payments.cancel` and `disputes.accept` cannot be undone.
+
+  **Retries.** A 429 is retried for every operation: Square rejected the request without running it. After a 5xx or a timeout the first attempt may have run, so only reads, `PUT`, `DELETE`, read-only searches and `POST` calls that carry an `idempotency_key` are retried, with the same key. A write without a key is never retried after a server error. A declined card (`PAYMENT_METHOD_ERROR`) is Square's answer and is never retried.
+
+  **Pagination.** List and search operations take `cursor` and `limit` and return the next `cursor`; pass it back for the next page. It goes in the query string for `GET` lists and in the body for the `POST` searches.
+
+  **Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64` with a `filename`; the plugin sends it to Square as multipart.
+
+  **Not included yet:** Square's GraphQL endpoint, webhook triggers, and the other API families (bookings beyond the business profile, loyalty, gift cards, payouts, team, labor, terminal, subscriptions).
+examples:
+  read:
+    path: locations.list
+    title: List the seller's locations
+    args: {}
+  write:
+    path: customers.create
+    title: Create a customer
+    args: &a1
+      given_name: Ada
+      family_name: Lovelace
+      email_address: ada@example.com
+apiNotes:
+  payments.create: "Pass `source_id` from Square's Web Payments SDK, a card on file (`cards.create`), or in the sandbox the test nonce `cnon:card-nonce-ok`. The payment completes immediately unless you set `autocomplete: false`; finish a delayed one with `payments.complete`."
+  payments.cancelByIdempotencyKey: The `idempotency_key` here names the payment to cancel (the key of the `payments.create` call that made it). It does not make this call repeatable.
+  payments.refund: Pass `payment_id` and `amount_money`. A refund cannot be reversed; use a new `idempotency_key` for a second refund, and the same one to retry the first.
+  orders.pay: The total of `payment_ids` must equal the order total. Approved payments that reference this `order_id` but are not listed in `payment_ids` are canceled.
+  invoices.publish: Needs the invoice `version` from `invoices.get`. Square then emails the customer and/or charges the card on file, depending on the invoice.
+  locations.create: Locations can't be deleted; deactivate one with `locations.update`.
+  webhookSubscriptions.updateSignatureKey: The old signature key stops verifying as soon as the new one is issued.
+  customers.removeGroup: "An HTTP `DELETE`, but classified as a write: `customers.addGroup` puts the customer back in the group."
+  merchants.get: Pass `me` as `merchant_id` for the merchant that owns the access token.
+  catalog.upsert: "Replaces the whole object: any field left out of the request is cleared, nested variations included. Read it with `catalog.get` first and send it back complete."
+  disputes.createEvidenceFile: "`file_base64` is the file; `content_type` (in the JSON part) is its MIME type. Sent as multipart with the file in `image_file`."
+  invoices.createAttachment: "`content_type` is the file's MIME type and defaults to `image/jpeg`. Sent as multipart with the file in `image_file`."
+  oauth.getTokenStatus: Reports the scopes and expiry of the access token the plugin is using.
+apiExamples:
+  disputes.accept:
+    args:
+      dispute_id: <dispute id>
+  customers.addGroup:
+    args:
+      customer_id: <customer id>
+      group_id: <group id>
+  customAttributes.customer.bulkUpsert:
+    args:
+      values:
+        example:
+          customer_id: <customer id>
+          custom_attribute: {}
+  customAttributes.location.bulkUpsert:
+    args:
+      values:
+        example:
+          location_id: <location id>
+          custom_attribute: {}
+  customAttributes.merchant.bulkUpsert:
+    args:
+      values:
+        example:
+          merchant_id: <merchant id>
+          custom_attribute: {}
+  customers.bulkDelete:
+    args:
+      customer_ids:
+        - <customer ids>
+  channels.bulkGet:
+    args:
+      channel_ids:
+        - <channel ids>
+  customers.bulkUpdate:
+    args:
+      customers:
+        example: {}
+  orders.calculate:
+    args:
+      order:
+        location_id: <location id>
+  invoices.cancel:
+    args:
+      invoice_id: <invoice id>
+      version: 1
+  payments.cancel:
+    args:
+      payment_id: <payment id>
+  customers.bulkCreate:
+    args:
+      customers:
+        example: {}
+  cards.create:
+    args:
+      idempotency_key: <idempotency key>
+      source_id: <source id>
+      card: {}
+  customers.create:
+    args: *a1
+  customAttributeDefinitions.customer.create:
+    args:
+      custom_attribute_definition: {}
+  customerGroups.create:
+    args:
+      group:
+        name: <name>
+  disputes.createEvidenceFile:
+    args:
+      dispute_id: <dispute id>
+      idempotency_key: <idempotency key>
+      file_base64: aGVsbG8gd29ybGQ=
+      filename: evidence.txt
+      content_type: image/png
+  disputes.createEvidenceText:
+    args:
+      dispute_id: <dispute id>
+      idempotency_key: <idempotency key>
+      evidence_text: <evidence text>
+  invoices.createAttachment:
+    args:
+      invoice_id: <invoice id>
+      file_base64: aGVsbG8gd29ybGQ=
+      filename: evidence.txt
+  locations.create:
+    args: {}
+  customAttributeDefinitions.location.create:
+    args:
+      custom_attribute_definition: {}
+  customers.delete:
+    args:
+      customer_id: <customer id>
+  customAttributes.customer.delete:
+    args:
+      customer_id: <customer id>
+      key: <key>
+  customAttributeDefinitions.customer.delete:
+    args:
+      key: <key>
+  customerGroups.delete:
+    args:
+      group_id: <group id>
+  disputes.deleteEvidence:
+    args:
+      dispute_id: <dispute id>
+      evidence_id: <evidence id>
+  invoices.delete:
+    args:
+      invoice_id: <invoice id>
+  invoices.deleteAttachment:
+    args:
+      invoice_id: <invoice id>
+      attachment_id: <attachment id>
+  customAttributes.location.delete:
+    args:
+      location_id: <location id>
+      key: <key>
+  customAttributeDefinitions.location.delete:
+    args:
+      key: <key>
+  customAttributes.location.bulkDelete:
+    args:
+      values:
+        example: {}
+  customAttributes.merchant.delete:
+    args:
+      merchant_id: <merchant id>
+      key: <key>
+  customAttributeDefinitions.merchant.delete:
+    args:
+      key: <key>
+  customAttributes.merchant.bulkDelete:
+    args:
+      values:
+        example: {}
+  webhookSubscriptions.delete:
+    args:
+      subscription_id: <subscription id>
+  bookings.getBusinessProfile:
+    args: {}
+  merchants.get:
+    args:
+      merchant_id: <merchant id>
+  customAttributes.customer.get:
+    args:
+      customer_id: <customer id>
+      key: <key>
+  customAttributeDefinitions.customer.get:
+    args:
+      key: <key>
+  disputes.getEvidence:
+    args:
+      dispute_id: <dispute id>
+      evidence_id: <evidence id>
+  invoices.get:
+    args:
+      invoice_id: <invoice id>
+  checkout.getLocationSettings:
+    args:
+      location_id: <location id>
+  channels.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  customAttributeDefinitions.customer.list:
+    args:
+      limit: 1
+      cursor: <cursor>
+  customAttributes.customer.list:
+    args:
+      customer_id: <customer id>
+      limit: 1
+      cursor: <cursor>
+  customerGroups.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  customerSegments.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  customers.list:
+    args:
+      limit: 25
+  disputes.listEvidence:
+    args:
+      dispute_id: <dispute id>
+      cursor: <cursor>
+  invoices.list:
+    args:
+      location_id: <location id>
+      cursor: <cursor>
+      limit: 1
+  customAttributeDefinitions.location.list:
+    args:
+      limit: 1
+      cursor: <cursor>
+  locations.list:
+    args: {}
+  customAttributes.location.list:
+    args:
+      location_id: <location id>
+      limit: 1
+      cursor: <cursor>
+  customAttributeDefinitions.merchant.list:
+    args:
+      limit: 1
+      cursor: <cursor>
+  merchants.list:
+    args:
+      cursor: 1
+  customAttributes.merchant.list:
+    args:
+      merchant_id: <merchant id>
+      limit: 1
+      cursor: <cursor>
+  payments.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  webhookEventTypes.list:
+    args: {}
+  webhookSubscriptions.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  customers.removeGroup:
+    args:
+      customer_id: <customer id>
+      group_id: <group id>
+  customers.bulkGet:
+    args:
+      customer_ids:
+        - <customer ids>
+  channels.get:
+    args:
+      channel_id: <channel id>
+  customers.get:
+    args:
+      customer_id: <customer id>
+  customerGroups.get:
+    args:
+      group_id: <group id>
+  customerSegments.get:
+    args:
+      segment_id: <segment id>
+  disputes.get:
+    args:
+      dispute_id: <dispute id>
+  locations.get:
+    args:
+      location_id: <location id>
+  customAttributes.location.get:
+    args:
+      location_id: <location id>
+      key: <key>
+  customAttributeDefinitions.location.get:
+    args:
+      key: <key>
+  customAttributes.merchant.get:
+    args:
+      merchant_id: <merchant id>
+      key: <key>
+  customAttributeDefinitions.merchant.get:
+    args:
+      key: <key>
+  orders.get:
+    args:
+      order_id: <order id>
+  paymentLinks.get:
+    args:
+      id: <id>
+  oauth.getTokenStatus:
+    args: {}
+  webhookSubscriptions.get:
+    args:
+      subscription_id: <subscription id>
+  customers.search:
+    args:
+      query:
+        filter:
+          email_address:
+            exact: ada@example.com
+      limit: 10
+  orders.search:
+    args:
+      cursor: <cursor>
+      limit: 1
+  disputes.submitEvidence:
+    args:
+      dispute_id: <dispute id>
+  webhookSubscriptions.test:
+    args:
+      subscription_id: <subscription id>
+  customers.update:
+    args:
+      customer_id: <customer id>
+  customAttributeDefinitions.customer.update:
+    args:
+      key: <key>
+      custom_attribute_definition: {}
+  customerGroups.update:
+    args:
+      group_id: <group id>
+      group:
+        name: <name>
+  locations.update:
+    args:
+      location_id: <location id>
+  customAttributeDefinitions.location.update:
+    args:
+      key: <key>
+      custom_attribute_definition: {}
+  customAttributeDefinitions.merchant.update:
+    args:
+      key: <key>
+      custom_attribute_definition: {}
+  checkout.updateLocationSettings:
+    args:
+      location_id: <location id>
+      location_settings: {}
+  orders.update:
+    args:
+      order_id: <order id>
+  webhookSubscriptions.update:
+    args:
+      subscription_id: <subscription id>
+  webhookSubscriptions.updateSignatureKey:
+    args:
+      subscription_id: <subscription id>
+  customAttributes.customer.upsert:
+    args:
+      customer_id: <customer id>
+      key: <key>
+      custom_attribute: {}
+  customAttributes.location.upsert:
+    args:
+      location_id: <location id>
+      key: <key>
+      custom_attribute: {}
+  customAttributes.merchant.upsert:
+    args:
+      merchant_id: <merchant id>
+      key: <key>
+      custom_attribute: {}
+  payments.create:
+    args:
+      source_id: cnon:card-nonce-ok
+      idempotency_key: <a unique key; reuse it to retry this charge>
+      amount_money:
+        amount: 1000
+        currency: USD
+      location_id: <location id>
+  payments.get:
+    args:
+      payment_id: <payment id>
+  payments.update:
+    args:
+      payment_id: <payment id>
+      idempotency_key: <idempotency key>
+  payments.complete:
+    args:
+      payment_id: <payment id>
+  payments.refund:
+    args:
+      idempotency_key: <a unique key; reuse it to retry this refund>
+      payment_id: <payment id>
+      amount_money:
+        amount: 500
+        currency: USD
+  refunds.get:
+    args:
+      refund_id: <refund id>
+  refunds.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  orders.create:
+    args:
+      idempotency_key: <a unique key>
+      order:
+        location_id: <location id>
+        line_items:
+          - name: Coffee
+            quantity: "1"
+            base_price_money:
+              amount: 350
+              currency: USD
+  orders.pay:
+    args:
+      order_id: <order id>
+      idempotency_key: <a unique key; reuse it to retry>
+      payment_ids:
+        - <payment id>
+  paymentLinks.create:
+    args: {}
+  paymentLinks.list:
+    args:
+      cursor: <cursor>
+      limit: 1
+  paymentLinks.delete:
+    args:
+      id: <id>
+  invoices.create:
+    args:
+      invoice: {}
+  invoices.publish:
+    args:
+      invoice_id: <invoice id>
+      version: 0
+  invoices.update:
+    args:
+      invoice_id: <invoice id>
+      invoice: {}
+  invoices.search:
+    args:
+      query:
+        filter:
+          location_ids:
+            - <location ids>
+      cursor: <cursor>
+      limit: 1
+  disputes.list:
+    args:
+      cursor: <cursor>
+  cards.list:
+    args:
+      cursor: <cursor>
+  cards.get:
+    args:
+      card_id: <card id>
+  cards.disable:
+    args:
+      card_id: <card id>
+  webhookSubscriptions.create:
+    args:
+      subscription: {}
+  catalog.list:
+    args:
+      cursor: <cursor>
+  catalog.search:
+    args:
+      cursor: <cursor>
+      limit: 1
+  catalog.get:
+    args:
+      object_id: <object id>
+  catalog.upsert:
+    args:
+      idempotency_key: <idempotency key>
+      object:
+        type: ITEM
+        id: <id>
+  catalog.delete:
+    args:
+      object_id: <object id>
+  inventory.batchGet:
+    args:
+      cursor: <cursor>
+      limit: 1
+  inventory.get:
+    args:
+      catalog_object_id: <catalog object id>
+      cursor: <cursor>
+  payments.cancelByIdempotencyKey:
+    args:
+      idempotency_key: <the idempotency_key of the payments.create call to void>
+  paymentLinks.update:
+    args:
+      id: <id>
+      payment_link:
+        version: 1
+  customAttributeDefinitions.merchant.create:
+    args:
+      custom_attribute_definition: {}

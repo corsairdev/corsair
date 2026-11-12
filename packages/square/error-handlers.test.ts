@@ -2,6 +2,7 @@ import type { RetryStrategy } from 'corsair/core';
 import { makeSquareRequest, SquareAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
+// unknown: response bodies are arbitrary JSON, as Square sends them.
 function jsonResponse(
 	body: unknown,
 	status: number,
@@ -45,6 +46,7 @@ async function strategyFor(error: Error): Promise<RetryStrategy> {
 	return chosen.handler(error);
 }
 
+// unknown: the error body is arbitrary JSON, as Square sends it.
 async function failureOf(
 	status: number,
 	body: unknown,
@@ -53,6 +55,7 @@ async function failureOf(
 ): Promise<SquareAPIError> {
 	fetchMock.mockResolvedValueOnce(jsonResponse(body, status, headers));
 	const error = await makeSquareRequest('/v2/payments', 'tok', options).catch(
+		// unknown: a rejection can carry any value; the check below narrows it.
 		(e: unknown) => e,
 	);
 	if (!(error instanceof SquareAPIError)) throw new Error('expected a failure');
@@ -106,6 +109,7 @@ describe('Square retry policy on a 5xx', () => {
 
 	it('retries a keyed POST after a timeout, and not a keyless one', async () => {
 		fetchMock.mockRejectedValue(new DOMException('timed out', 'TimeoutError'));
+		// unknown: a rejection can carry any value; the check below narrows it.
 		const keyedError = await makeSquareRequest('/v2/payments', 'tok', keyed)
 			.then(() => undefined)
 			.catch((e: unknown) => e);

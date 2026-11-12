@@ -51,6 +51,7 @@ export class SquareAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		public readonly retryAfter?: number,
+		// unknown: Square's raw error body, kept as received for the caller.
 		public readonly body?: unknown,
 		public readonly errors: SquareErrorEntry[] = [],
 		// True when sending the same request again after a 5xx or a timeout
@@ -67,8 +68,13 @@ type QueryValue = string | number | boolean | undefined;
 
 export type SquareRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown: a request body is whatever JSON the operation's input schema
+	// produced; it is validated before it gets here.
 	body?: Record<string, unknown>;
-	formData?: Record<string, unknown>;
+	/** Sent as multipart/form-data; fetch sets the boundary. */
+	formData?: FormData;
+	/** Values for `{name}` placeholders in the endpoint; each is URI-encoded. */
+	path?: Record<string, string | number>;
 	query?: Record<string, QueryValue>;
 	environment?: SquareEnvironment;
 	// Set for read-only POSTs (search, calculate, bulk retrieve), which can be
@@ -110,6 +116,7 @@ export async function makeSquareRequest<T>(
 		method = 'GET',
 		body,
 		formData,
+		path,
 		query,
 		environment = 'production',
 	} = options;
@@ -122,14 +129,17 @@ export async function makeSquareRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: token,
 		HEADERS: { 'Square-Version': SQUARE_API_VERSION },
+		ENCODE_PATH: encodeURIComponent,
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		path,
 		query,
+		// A FormData body goes out as is; fetch sets the multipart boundary.
 		...(formData
-			? { formData }
+			? { body: formData }
 			: body !== undefined
 				? { body, mediaType: 'application/json' }
 				: {}),
