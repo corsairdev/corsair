@@ -53,6 +53,14 @@ describe('Ragic error handlers', () => {
 		expect(await matches(apiError({ code: 106 }))).toBe('AUTH_ERROR');
 	});
 
+	it('matches code 304, an invalid secret key, as an auth error', async () => {
+		expect(await matches(apiError({ code: 304 }))).toBe('AUTH_ERROR');
+	});
+
+	it('matches code 404, a missing record, as not found', async () => {
+		expect(await matches(apiError({ code: 404 }))).toBe('NOT_FOUND_ERROR');
+	});
+
 	it('matches code 109 as an exhausted record allowance', async () => {
 		const error = apiError({ code: 109 });
 

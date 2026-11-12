@@ -62,8 +62,8 @@ export class RagicAPIError extends Error {
 	}
 
 	/**
-	 * Codes 105 ("Authentication Required Before Using API") and 106 ("No Access
-	 * Right"). 106 is also what a non-admin API key gets from the schema route, and
+	 * Codes 105 ("Authentication Required Before Using API"), 106 ("No Access
+	 * Right") and 304 ("Secret Key Is Invalid"). 106 is also what a non-admin API key gets from the schema route, and
 	 * what both a missing and a wrong key get on a protected sheet, so it covers
 	 * auth and permission together.
 	 */
@@ -71,18 +71,20 @@ export class RagicAPIError extends Error {
 		return (
 			this.code === 105 ||
 			this.code === 106 ||
+			this.code === 304 ||
 			this.status === 401 ||
 			this.status === 403
 		);
 	}
 
-	/** No such account, folder, sheet or record. */
+	/** No such account, folder, sheet or record (body code 404, "Record Not Found"). */
 	get isNotFound(): boolean {
 		return (
 			this.code === 101 ||
 			this.code === 102 ||
 			this.code === 103 ||
 			this.code === 108 ||
+			this.code === 404 ||
 			this.status === 404
 		);
 	}

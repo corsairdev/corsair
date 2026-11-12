@@ -29,9 +29,10 @@ export const errorHandlers = {
 					};
 		},
 	},
-	// 105 auth required, 106 no access right. A missing key and a wrong key both
-	// answer 106 as the guest account, and a non-manager key answers it on the
-	// schema route, so this covers both an unusable key and a real permission gap.
+	// 105 auth required, 106 no access right, 304 invalid secret key. A missing key
+	// and a wrong key both answer 106 as the guest account, and a non-manager key
+	// answers it on the schema route, so this covers both an unusable key and a
+	// real permission gap.
 	AUTH_ERROR: {
 		match: (error: Error) => apiError(error)?.isAuthError === true,
 		handler: async () => ({ maxRetries: 0 }),
@@ -43,7 +44,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 101 bad account, 102 bad path, 103 bad sheet index, 108 could not load the
-	// form. The caller has to address a different sheet.
+	// form, 404 no such record. The caller has to address something else.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => apiError(error)?.isNotFound === true,
 		handler: async () => ({ maxRetries: 0 }),
