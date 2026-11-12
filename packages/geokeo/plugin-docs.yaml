@@ -1,0 +1,38 @@
+displayName: Geokeo
+description: Geocode both ways with Geokeo - turn an address or place name into coordinates and components, and turn coordinates back into the places nearest them, from OpenStreetMap data.
+domain: geokeo.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the API key from your Geokeo dashboard's API tab. The key travels as the `api` **query parameter**, which is where the API expects it — not `api_key`.
+
+  Things to know before you call:
+
+  - **Every answer is HTTP 200, including a refusal.** A live probe with a bad key answered **200** with `{"status":"ACCESS_DENIED"}`, and a request with no key answered `{"status":"INVALID_REQUEST"}`. The status line says nothing, so the plugin reads `status` and throws unless it is `ok` or `ZERO_RESULTS`.
+  - **`ZERO_RESULTS` is not an error.** It means the query was valid but matched nothing, and the docs say that request **is not charged**. The plugin returns it as an empty `results` list so a caller can tell it apart from a refusal.
+  - **`ACCESS_DENIED` covers more than a bad key.** The docs say it also covers an IP or HTTP referrer restriction set on the account, so a key that works elsewhere can still be refused here.
+  - **The coordinates are strings.** Geokeo sends `"lat": "40.74843124430164"`, not a number. The raw fields are kept as documented, and `lat`, `lng` and `distance_km` are added beside them already parsed, so nothing has to convert them again.
+  - **The distance has its unit glued on.** A reverse result carries `"distance": "0.0010302984507433km"` as one string. That is kept as-is, and `distance_km` holds the number.
+  - **The query is capped at 50 characters.** The plugin rejects a longer `q` before the request rather than letting Geokeo answer `INVALID_REQUEST`.
+  - **There is a class and a type, not a category tree.** Each result carries an OpenStreetMap `class` (such as `tourism`) and a `type` within it (such as `attraction`), which is a coarser signal than a full category path.
+  - **There are two endpoints, and that is the whole API.** Geokeo offers forward and reverse geocoding only; there is no batch route, no autocomplete and no place details.
+examples:
+  read:
+    path: geocode.forward
+    title: Turn a place name into coordinates
+    args:
+      q: empire state building
+      country: us
+  read2:
+    path: geocode.reverse
+    title: Turn coordinates into the nearest places
+    args:
+      lat: 40.74842
+      lng: -73.9856
+apiExamples:
+  geocode.forward:
+    call: "{ q: 'empire state building', country: 'us' }"
+  geocode.reverse:
+    call: "{ lat: 40.74842, lng: -73.9856 }"
+apiNotes:
+  geocode.forward: '`q` is capped at 50 characters, and `country` is a two-letter ISO code.'
+  geocode.reverse: 'A result carries `distance` as a string with the unit glued on, plus a parsed `distance_km`.'

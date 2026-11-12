@@ -1,0 +1,176 @@
+---
+title: "Geokeo API reference"
+sidebarTitle: "API"
+description: "API reference for the Geokeo plugin in Corsair: every `geokeo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Geocode
+
+### forward
+
+`geocode.forward`
+
+Turn an address or place name into coordinates, a formatted address and its components, with the OpenStreetMap class and type of the match
+
+**Risk:** `read`
+
+```ts
+await corsair.geokeo.api.geocode.forward({ q: 'empire state building', country: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | What to look up, up to 50 characters, such as `empire state building` |
+| `country` | `string` | No | Restricts the search to one country, such as `us` or `de` |
+| `format` | `json \| xml` | No | Defaults to `json`; XML would not parse into these schemas |
+
+`q` is capped at 50 characters, and `country` is a two-letter ISO code.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `credits` | `string` | No | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  class?: string,
+  type?: string,
+  address_components: {
+    name?: string,
+    island?: string,
+    neighbourhood?: string,
+    street?: string,
+    subdistrict?: string,
+    district?: string,
+    city?: string,
+    state?: string,
+    postcode?: string,
+    country?: string
+  },
+  formatted_address: string,
+  geometry: {
+    location: {
+      lat: string,
+      lng: string
+    },
+    viewport?: {
+      northeast: {
+        lat: string,
+        lng: string
+      },
+      southwest: {
+        lat: string,
+        lng: string
+      }
+    }
+  },
+  osmurl?: string,
+  distance?: string,
+  lat?: number | null,
+  lng?: number | null,
+  distance_km?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocode.reverse`
+
+Turn a latitude and longitude into the places nearest it, each with its address, its components and how far away it is
+
+**Risk:** `read`
+
+```ts
+await corsair.geokeo.api.geocode.reverse({ lat: 40.74842, lng: -73.9856 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the point to reverse |
+| `lng` | `number` | Yes | Longitude of the point to reverse |
+| `format` | `json \| xml` | No | Defaults to `json`; XML would not parse into these schemas |
+
+A result carries `distance` as a string with the unit glued on, plus a parsed `distance_km`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `credits` | `string` | No | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  class?: string,
+  type?: string,
+  address_components: {
+    name?: string,
+    island?: string,
+    neighbourhood?: string,
+    street?: string,
+    subdistrict?: string,
+    district?: string,
+    city?: string,
+    state?: string,
+    postcode?: string,
+    country?: string
+  },
+  formatted_address: string,
+  geometry: {
+    location: {
+      lat: string,
+      lng: string
+    },
+    viewport?: {
+      northeast: {
+        lat: string,
+        lng: string
+      },
+      southwest: {
+        lat: string,
+        lng: string
+      }
+    }
+  },
+  osmurl?: string,
+  distance?: string,
+  lat?: number | null,
+  lng?: number | null,
+  distance_km?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

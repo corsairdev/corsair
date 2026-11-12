@@ -2140,6 +2140,14 @@
                 ]
               },
               {
+                "group": "Geokeo",
+                "pages": [
+                  "plugins/geokeo/overview",
+                  "plugins/geokeo/api",
+                  "plugins/geokeo/database"
+                ]
+              },
+              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
