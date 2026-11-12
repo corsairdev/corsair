@@ -1006,7 +1006,7 @@ await corsair.userflow.api.groups.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
 | `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
-| `condition` | `string` | No | — |
+| `condition` | `Record<string, any> \| string` | No | A JSON condition, e.g. `{ type: "attribute", attribute_name: "plan", operator: "eq", value: "Pro" }`. Prefix group attributes with `group/`; combine with `{ type: "clause", operator: "and", conditions: [...] }`. Rejected when it matches more than 10,000 records. |
 | `user_id` | `string` | No | Only the groups this user belongs to. |
 | `segment_id` | `string` | No | Only the groups in this segment. |
 | `order_by` | `created_at \| attributes.name \| string \| (created_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
@@ -1684,7 +1684,7 @@ await corsair.userflow.api.users.list({ email: 'evelyn@example.com', order_by: [
 | `email` | `string` | No | Only the user whose `email` attribute equals this value. |
 | `group_id` | `string` | No | Only members of this group. |
 | `segment_id` | `string` | No | Only users in this segment; the id is in the segment menu in the UI. |
-| `condition` | `string` | No | A filter expression over any attribute, e.g. `attributes.plan_name:eq:plus`. |
+| `condition` | `Record<string, any> \| string` | No | A JSON condition, e.g. `{ type: "attribute", attribute_name: "plan", operator: "eq", value: "Pro" }`. Prefix group attributes with `group/`; combine with `{ type: "clause", operator: "and", conditions: [...] }`. Rejected when it matches more than 10,000 records. |
 | `order_by` | `created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string \| (created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. Userflow defaults to `created_at`. |
 | `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
