@@ -14,7 +14,11 @@ const API_KEY = 'refiner-secret-test-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Any call a test did not queue a response for throws, so no test can reach
+	// the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
