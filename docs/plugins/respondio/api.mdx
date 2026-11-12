@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for respond.io: every `respondio.api.*` operation with input and output types."
+title: "respond.io API reference"
+sidebarTitle: "API"
+description: "API reference for the respond.io plugin in Corsair: every `respondio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `respondio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -28,7 +27,7 @@ await corsair.respondio.api.contacts.addTags({ identifier: 'id:1', tags: ['vip',
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `tags` | `string[]` | Yes | The tags to add or remove. |
+| `tags` | `string[]` | Yes | The tags to add or remove, 1 to 10. |
 
 
 
@@ -36,8 +35,7 @@ await corsair.respondio.api.contacts.addTags({ identifier: 'id:1', tags: ['vip',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -60,6 +58,8 @@ await corsair.respondio.api.contacts.channels({ identifier: 'id:1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 
 
 
@@ -78,7 +78,10 @@ await corsair.respondio.api.contacts.channels({ identifier: 'id:1' });
   id?: number | null,
   name?: string | null,
   source?: string | null,
-  status?: string | null
+  meta?: Record<string, JsonValue> | null,
+  lastMessageTime?: number | null,
+  lastIncomingMessageTime?: number | null,
+  created_at?: number | null
 }[] | null
 ```
 </Accordion>
@@ -142,7 +145,7 @@ await corsair.respondio.api.contacts.create({ identifier: 'phone:+60123456789', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
+| `code` | `number \| string \| null` | No | 200 on success. |
 | `message` | `string \| null` | No | — |
 
 
@@ -173,8 +176,7 @@ await corsair.respondio.api.contacts.delete({ identifier: 'id:12345' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -197,7 +199,7 @@ await corsair.respondio.api.contacts.deleteTags({ identifier: 'id:1', tags: ['vi
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `tags` | `string[]` | Yes | The tags to add or remove. |
+| `tags` | `string[]` | Yes | The tags to add or remove, 1 to 10. |
 
 
 
@@ -205,8 +207,7 @@ await corsair.respondio.api.contacts.deleteTags({ identifier: 'id:1', tags: ['vi
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -251,6 +252,7 @@ await corsair.respondio.api.contacts.get({ identifier: 'id:12345' });
 | `lifecycle` | `string \| null` | No | The lifecycle stage name, such as Hot Lead. |
 | `created_at` | `number \| null` | No | Unix timestamp in seconds. |
 | `isBlocked` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="custom_fields full type">
@@ -270,7 +272,13 @@ await corsair.respondio.api.contacts.get({ identifier: 'id:12345' });
   id?: number | null,
   firstName?: string | null,
   lastName?: string | null,
-  email?: string | null
+  email?: string | null,
+  role?: string | null,
+  team?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  restrictions?: string[] | null
 } | null
 ```
 </Accordion>
@@ -284,12 +292,12 @@ await corsair.respondio.api.contacts.get({ identifier: 'id:12345' });
 
 `contacts.lifecycle`
 
-Move a contact to a lifecycle stage
+Move a contact to a lifecycle stage by name, or clear it with null
 
 **Risk:** `write`
 
 ```ts
-await corsair.respondio.api.contacts.lifecycle({ identifier: 'id:1', lifecycle: 'Hot Lead' });
+await corsair.respondio.api.contacts.lifecycle({ identifier: 'id:1', name: 'Hot Lead' });
 ```
 
 **Input**
@@ -297,7 +305,7 @@ await corsair.respondio.api.contacts.lifecycle({ identifier: 'id:1', lifecycle: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `lifecycle` | `string` | Yes | The lifecycle stage to move the contact to. |
+| `name` | `string \| null` | Yes | The lifecycle stage to move the contact to. null removes the stage. |
 
 
 
@@ -305,7 +313,7 @@ await corsair.respondio.api.contacts.lifecycle({ identifier: 'id:1', lifecycle: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
+| `code` | `number \| string \| null` | No | 200 on success. |
 | `message` | `string \| null` | No | — |
 
 
@@ -321,18 +329,18 @@ List contacts with an $and or $or filter over fields, tags and lifecycle, a free
 **Risk:** `read`
 
 ```ts
-await corsair.respondio.api.contacts.list({ filter: { $and: [{ category: 'contactTag', field: 'vip', operator: 'hasAnyOf', value: ['vip'] }] }, limit: 50 });
+await corsair.respondio.api.contacts.list({ filter: { $and: [{ category: 'contactTag', field: 'vip', operator: 'hasAnyOf', value: ['vip'] }] }, timezone: 'Asia/Kuala_Lumpur', limit: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter` | `object` | No | Every condition in $and must hold; any one in $or must. |
-| `search` | `string` | No | A free-text search across the contacts. |
-| `timezone` | `string` | No | An IANA timezone used to interpret any timestamp condition, such as Asia/Kuala_Lumpur. |
-| `limit` | `number` | No | Page size. |
-| `cursorId` | `string` | No | The cursor for the next page, from the previous answer. |
+| `filter` | `object` | No | Every condition in $and must hold; any one in $or must. Defaults to no conditions. |
+| `search` | `string` | No | A free-text search across the contacts. Defaults to empty, which matches every contact. |
+| `timezone` | `string` | No | An IANA timezone used to interpret any timestamp condition, such as Asia/Kuala_Lumpur. Defaults to UTC. |
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 
 <AccordionGroup>
 <Accordion title="filter full type">
@@ -394,11 +402,18 @@ await corsair.respondio.api.contacts.list({ filter: { $and: [{ category: 'contac
     id?: number | null,
     firstName?: string | null,
     lastName?: string | null,
-    email?: string | null
+    email?: string | null,
+    role?: string | null,
+    team?: {
+      id?: number | null,
+      name?: string | null
+    } | null,
+    restrictions?: string[] | null
   } | null,
   lifecycle?: string | null,
   created_at?: number | null,
-  isBlocked?: boolean | null
+  isBlocked?: boolean | null,
+  locale?: string | null
 }[] | null
 ```
 </Accordion>
@@ -422,20 +437,39 @@ await corsair.respondio.api.contacts.list({ filter: { $and: [{ category: 'contac
 
 `contacts.merge`
 
-Merge one contact into another and remove the second, keeping the first
+Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed
 
 **Risk:** `destructive`
 
 ```ts
-await corsair.respondio.api.contacts.merge({ identifier: 'id:1', mergeWith: 'id:2' });
+await corsair.respondio.api.contacts.merge({ contactIds: [1, 2], firstName: 'Muhammad', email: 'test@example.com' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `identifier` | `string` | Yes | The contact that survives the merge. |
-| `mergeWith` | `string` | Yes | The contact merged into the first one and then removed. |
+| `firstName` | `string` | Yes | — |
+| `lastName` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | In E.164 form, such as +60123456789. |
+| `email` | `string \| null` | No | — |
+| `language` | `string \| null` | No | An ISO 639-1 language code, such as en or ms. |
+| `profilePic` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | An ISO 3166-1 alpha-2 country code, such as MY or US. |
+| `custom_fields` | `object[] \| null` | No | — |
+| `contactIds` | `[number, number]` | Yes | The IDs of the two contacts to merge. The older one survives; the other is removed. |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  name: string,
+  value?: string | number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -443,8 +477,7 @@ await corsair.respondio.api.contacts.merge({ identifier: 'id:1', mergeWith: 'id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -494,8 +527,7 @@ await corsair.respondio.api.contacts.update({ identifier: 'id:12345', firstName:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -545,8 +577,7 @@ await corsair.respondio.api.contacts.upsert({ identifier: 'email:a@b.com', first
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string \| null` | No | A string, unlike the error code. |
-| `message` | `string \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -571,7 +602,7 @@ await corsair.respondio.api.conversations.assign({ identifier: 'id:1', assignee:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `assignee` | `string \| null` | No | A user ID or email. Leave it out or send null to unassign the contact. |
+| `assignee` | `number \| string \| null` | No | A user ID (from space.listUsers) or a user email. Leave it out or send null to unassign the contact. |
 
 
 
@@ -579,7 +610,7 @@ await corsair.respondio.api.conversations.assign({ identifier: 'id:1', assignee:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contactId` | `number \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -612,7 +643,7 @@ await corsair.respondio.api.conversations.status({ identifier: 'id:1', status: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contactId` | `number \| null` | No | — |
+| `contactId` | `number \| null` | No | The ID of the contact the action was performed on. |
 
 
 
@@ -685,7 +716,7 @@ await corsair.respondio.api.messages.get({ identifier: 'id:1', messageId: 126296
 | `traffic` | `string \| null` | No | incoming or outgoing. |
 | `message` | `object \| null` | No | The message body, whose shape follows its type. |
 | `status` | `object[] \| null` | No | — |
-| `sender` | `object \| null` | No | Who sent it: a user, AI Agent, broadcast, workflow, API or echo. |
+| `sender` | `object \| null` | No | Who sent it. |
 
 <AccordionGroup>
 <Accordion title="message full type">
@@ -701,8 +732,9 @@ await corsair.respondio.api.messages.get({ identifier: 'id:1', messageId: 126296
 
 ```ts
 {
-  status?: string | null,
-  timestamp?: number | null
+  value?: string | null,
+  timestamp?: number | null,
+  message?: string | null
 }[] | null
 ```
 </Accordion>
@@ -711,7 +743,7 @@ await corsair.respondio.api.messages.get({ identifier: 'id:1', messageId: 126296
 
 ```ts
 {
-  type?: string | null
+  source?: string | null
 } | null
 ```
 </Accordion>
@@ -738,7 +770,7 @@ await corsair.respondio.api.messages.list({ identifier: 'id:1', limit: 50, inclu
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `cursorId` | `string` | No | Where the next batch starts, from the previous pagination.next. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 | `includeComments` | `boolean` | No | True mixes the contact's comments into the list, each item then carrying a type of message or comment. A page can be empty while pagination.next is still set, so keep paging until next is null. |
 | `limit` | `number` | No | Page size, at most 50. |
 
@@ -784,7 +816,7 @@ await corsair.respondio.api.messages.send({ identifier: 'id:12345', channelId: 4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
-| `channelId` | `number \| null` | No | The channel to send on. Omit it to use the last channel the contact interacted on; a customPayload message requires it. |
+| `channelId` | `number \| null` | No | The channel to send on. Omit it to use the last channel the contact interacted on; a custom_payload message requires it. |
 | `message` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -792,9 +824,9 @@ await corsair.respondio.api.messages.send({ identifier: 'id:12345', channelId: 4
 
 ```ts
 {
-  type: text | attachment | customPayload | quickReply | whatsAppTemplate | email | facebookTemplate,
+  type: text | attachment | custom_payload | quick_reply | whatsapp_template | email | facebook_template,
   text?: string | null,
-  messageTag?: string | null
+  messageTag?: ACCOUNT_UPDATE | POST_PURCHASE_UPDATE | CONFIRMED_EVENT_UPDATE | null
 }
 ```
 </Accordion>
@@ -842,6 +874,21 @@ await corsair.respondio.api.space.getUser({ id: 67890 });
 | `firstName` | `string \| null` | No | — |
 | `lastName` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | owner, manager or agent. |
+| `team` | `object \| null` | No | — |
+| `restrictions` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -863,8 +910,8 @@ await corsair.respondio.api.space.listChannels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `cursorId` | `string` | No | — |
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 
 
 
@@ -883,7 +930,6 @@ await corsair.respondio.api.space.listChannels({});
   id?: number | null,
   name?: string | null,
   source?: string | null,
-  status?: string | null,
   created_at?: number | null
 }[] | null
 ```
@@ -916,7 +962,13 @@ List the closing notes a conversation can be closed with, sorted by category
 await corsair.respondio.api.space.listClosingNotes({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
+
 
 
 **Output**
@@ -931,9 +983,8 @@ await corsair.respondio.api.space.listClosingNotes({});
 
 ```ts
 {
-  id?: number | null,
-  name?: string | null,
-  category?: string | null
+  category?: string | null,
+  description?: string | null
 }[] | null
 ```
 </Accordion>
@@ -965,7 +1016,13 @@ List the custom field definitions, whose types a contact write must match
 await corsair.respondio.api.space.listCustomFields({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
+
 
 
 **Output**
@@ -982,8 +1039,9 @@ await corsair.respondio.api.space.listCustomFields({});
 {
   id?: number | null,
   name?: string | null,
-  type?: string | null,
-  options?: string[] | null
+  description?: string | null,
+  dataType?: string | null,
+  allowedValues?: string[] | null
 }[] | null
 ```
 </Accordion>
@@ -1019,6 +1077,8 @@ await corsair.respondio.api.space.listTemplates({ channelId: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 | `channelId` | `number` | Yes | The channel whose templates to list. |
 
 
@@ -1037,9 +1097,11 @@ await corsair.respondio.api.space.listTemplates({ channelId: 42 });
 {
   id?: number | null,
   name?: string | null,
-  language?: string | null,
+  languageCode?: string | null,
+  category?: string | null,
   status?: string | null,
-  category?: string | null
+  channelId?: number | null,
+  components?: Record<string, JsonValue>[] | null
 }[] | null
 ```
 </Accordion>
@@ -1075,8 +1137,8 @@ await corsair.respondio.api.space.listUsers({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `cursorId` | `string` | No | — |
+| `limit` | `number` | No | Page size, 1 to 99. respond.io defaults to 10. |
+| `cursorId` | `string \| number` | No | Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it. |
 
 
 
@@ -1095,7 +1157,13 @@ await corsair.respondio.api.space.listUsers({ limit: 50 });
   id?: number | null,
   firstName?: string | null,
   lastName?: string | null,
-  email?: string | null
+  email?: string | null,
+  role?: string | null,
+  team?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  restrictions?: string[] | null
 }[] | null
 ```
 </Accordion>
