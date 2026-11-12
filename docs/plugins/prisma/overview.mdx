@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Prisma plugin"
+sidebarTitle: "Overview"
 description: "Database platform API. Manage Prisma Postgres projects, databases, connection strings and backups, list workspaces, regions and integrations, and run read-only queries, writes and schema inspection over Postgres."
 ---
 
@@ -26,16 +27,20 @@ databases, restoring backups, and revoking connections.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/prisma
+npm install corsair @corsair-dev/prisma better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/prisma
+yarn add corsair @corsair-dev/prisma better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/prisma
+pnpm install corsair @corsair-dev/prisma better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/prisma
+bun add corsair @corsair-dev/prisma better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
