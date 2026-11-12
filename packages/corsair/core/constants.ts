@@ -502,6 +502,7 @@ export const BaseProviders = [
 	'workiom',
 	'worksnaps',
 	'worldnewsapi',
+	'wrike',
 	'writer',
 	'xero',
 	'xquik',
@@ -1008,6 +1009,7 @@ export const ProviderDisplayNames = {
 	workiom: 'Workiom',
 	worksnaps: 'Worksnaps',
 	worldnewsapi: 'World News API',
+	wrike: 'Wrike',
 	writer: 'Writer',
 	xero: 'Xero',
 	xquik: 'XQuik',
@@ -1521,6 +1523,7 @@ export type AllProviders =
 	| 'workiom'
 	| 'worksnaps'
 	| 'worldnewsapi'
+	| 'wrike'
 	| 'writer'
 	| 'xero'
 	| 'xquik'
