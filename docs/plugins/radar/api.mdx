@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Radar: every `radar.api.*` operation with input and output types."
+title: "Radar API reference"
+sidebarTitle: "API"
+description: "API reference for the Radar plugin in Corsair: every `radar.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `radar.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -35,7 +34,7 @@ await corsair.radar.api.events.conversion({ name: 'in_app_purchase', user_id: 'u
 | `created_at` | `string` | No | — |
 | `metadata` | `Record<string, string \| number \| boolean>` | No | — |
 
-The name may only contain letters, digits and underscores, and one identifier is required.
+Requires the Enterprise plan. The name may only contain letters, digits and underscores, and one identifier is required.
 
 
 
@@ -311,7 +310,7 @@ await corsair.radar.api.geofences.list({ tag: 'store', limit: 100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `geofences` | `object[]` | Yes | — |
-| `has_more` | `boolean` | Yes | True when Radar reports more rows. Page by passing the last row’s timestamp as `updated_before`. |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -374,14 +373,15 @@ await corsair.radar.api.geofences.upsert({ tag: 'store', external_id: 'store-42'
 | `tag` | `string` | Yes | The geofence group. |
 | `external_id` | `string` | Yes | A stable id within the tag. |
 | `description` | `string` | Yes | — |
-| `type` | `circle \| polygon \| isochrone` | Yes | — |
-| `radius` | `number` | No | Required for `circle` and `isochrone`, in meters. |
+| `type` | `(circle \| polygon \| isochrone) & string` | Yes | — |
+| `mode` | `foot \| bike \| car` | No | Required travel mode for an isochrone. |
+| `radius` | `number` | No | Required for circle in meters, or isochrone in travel minutes. |
 | `center` | `number[]` | No | [longitude, latitude] for a circle or isochrone. |
 | `ring` | `number[][]` | No | A closed ring of [longitude, latitude] pairs for a polygon, first point repeated last. |
 | `address` | `string` | No | — |
 | `metadata` | `Record<string, string \| number \| boolean>` | No | — |
 
-A polygon takes a closed `ring` instead of a centre and radius; geometry is `[longitude, latitude]`.
+A polygon takes a closed `ring`; geometry is `[longitude, latitude]`. An isochrone requires `mode`, and its `radius` is travel minutes.
 
 
 
@@ -427,7 +427,7 @@ A polygon takes a closed `ring` instead of a centre and radius; geometry is `[lo
 
 `search.geofences`
 
-Search geofences near a point, filtered by tag or external id
+Search geofences near a point, filtered by tag
 
 **Risk:** `read`
 
@@ -442,7 +442,6 @@ await corsair.radar.api.search.geofences({ near: '40.70390,-73.98670', radius: 5
 | `near` | `string` | Yes | `latitude,longitude` for the search centre. |
 | `radius` | `number` | No | Search radius in meters. |
 | `tags` | `string[]` | No | — |
-| `externalIds` | `string[]` | No | — |
 | `limit` | `number` | No | — |
 
 
@@ -500,7 +499,7 @@ await corsair.radar.api.search.geofences({ near: '40.70390,-73.98670', radius: 5
 
 `search.places`
 
-Search the places database near a point, filtered by name, chain, category or country
+Search the places database near a point, filtered by chain or category within a radius
 
 **Risk:** `read`
 
@@ -512,14 +511,11 @@ await corsair.radar.api.search.places({ near: '40.70390,-73.98670', categories: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `near` | `string` | Yes | `latitude,longitude` for the search centre, or a place id prefixed with `placeId:`. |
-| `query` | `string` | No | A name to match. |
+| `near` | `string` | Yes | `latitude,longitude` for the search centre. |
 | `chains` | `string[]` | No | — |
-| `categories` | `string[]` | No | Place categories, such as `restaurant` or `coffee-shop`. |
-| `groups` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `radius` | `number` | No | — |
 | `limit` | `number` | No | — |
-| `country` | `string[]` | No | — |
-| `lang` | `string` | No | — |
 
 
 
@@ -542,7 +538,12 @@ await corsair.radar.api.search.places({ near: '40.70390,-73.98670', categories: 
     coordinates?: number[] | null
   } | null,
   categories?: string[] | null,
-  chain?: Record<string, string> | null,
+  chain?: {
+    name?: string | null,
+    slug?: string | null,
+    externalId?: string | null,
+    metadata?: Record<string, string | number | boolean> | null
+  } | null,
   address?: {
     latitude?: number | null,
     longitude?: number | null,
@@ -862,8 +863,6 @@ await corsair.radar.api.trips.list({ status: ['started'], user_id: 'user-1' });
 | `include_locations` | `boolean` | No | — |
 | `created_after` | `string` | No | — |
 | `created_before` | `string` | No | — |
-| `updated_after` | `string` | No | A date or ISO string: return records updated after it. |
-| `updated_before` | `string` | No | A date or ISO string: return records updated before it. Pass the last row’s timestamp to page. |
 | `sort_by` | `createdAt \| updatedAt` | No | — |
 | `delayed` | `boolean` | No | — |
 
@@ -874,7 +873,7 @@ await corsair.radar.api.trips.list({ status: ['started'], user_id: 'user-1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `trips` | `object[]` | Yes | — |
-| `has_more` | `boolean` | Yes | True when Radar reports more rows. Page by passing the last row’s timestamp as `updated_before`. |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -945,7 +944,7 @@ await corsair.radar.api.trips.update({ trip_id: '6f5b2c3d4e5f6a7b8c9d0e1f', stat
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `trip_id` | `string` | Yes | — |
-| `status` | `pending \| started \| approaching \| arrived \| completed \| canceled \| expired` | No | — |
+| `status` | `pending \| started \| approaching \| arrived \| completed \| canceled` | Yes | — |
 | `mode` | `foot \| bike \| car` | No | — |
 | `destination_geofence_tag` | `string` | No | — |
 | `destination_geofence_external_id` | `string` | No | — |
@@ -1110,7 +1109,7 @@ await corsair.radar.api.users.list({ limit: 100, updated_before: '2026-11-01T00:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
-| `has_more` | `boolean` | Yes | True when Radar reports more rows. Page by passing the last row’s timestamp as `updated_before`. |
+| `has_more` | `boolean` | Yes | True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt. |
 | `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
