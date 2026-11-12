@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Rocketlane: every `rocketlane.api.*` operation with input and output types."
+title: "Rocketlane API reference"
+sidebarTitle: "API"
+description: "API reference for the Rocketlane plugin in Corsair: every `rocketlane.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `rocketlane.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -30,7 +29,7 @@ await corsair.rocketlane.api.companies.create({ company_name: 'Acme Inc', accoun
 | `company_name` | `string` | Yes | The company name. |
 | `account_owner` | `object` | Yes | — |
 | `company_url` | `string` | No | The company website. |
-| `visibility` | `PRIVATE \| PUBLIC \| CUSTOMER` | No | — |
+| `visibility` | `EVERYONE \| MEMBERS` | No | — |
 | `description` | `string` | No | — |
 | `fields` | `object[]` | No | — |
 
@@ -96,9 +95,9 @@ await corsair.rocketlane.api.companies.create({ company_name: 'Acme Inc', accoun
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   notes?: {
     noteId?: number | null,
@@ -108,7 +107,11 @@ await corsair.rocketlane.api.companies.create({ company_name: 'Acme Inc', accoun
     noteText?: string | null,
     createdAt?: number | null,
     updatedAt?: number | null,
-    tags?: Record<string, string>[] | null
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
   }[] | null
 }
 ```
@@ -210,9 +213,9 @@ await corsair.rocketlane.api.companies.get({ company_id: 301 });
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   notes?: {
     noteId?: number | null,
@@ -222,7 +225,11 @@ await corsair.rocketlane.api.companies.get({ company_id: 301 });
     noteText?: string | null,
     createdAt?: number | null,
     updatedAt?: number | null,
-    tags?: Record<string, string>[] | null
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
   }[] | null
 }
 ```
@@ -242,20 +249,34 @@ List customer companies with search and token paging
 **Risk:** `read`
 
 ```ts
-await corsair.rocketlane.api.companies.list({ match: 'acme', page_size: 50 });
+await corsair.rocketlane.api.companies.list({ company_name: { cn: 'acme' }, page_size: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted or larger. |
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
 | `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
 | `include_fields` | `string[]` | No | — |
 | `include_all_fields` | `boolean` | No | — |
 | `sort_by` | `string` | No | — |
-| `sort_order` | `asc \| desc` | No | — |
-| `match` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `company_name` | `object` | No | Search by company name, e.g. `{ cn: "acme" }`. |
+
+<AccordionGroup>
+<Accordion title="company_name full type">
+
+```ts
+{
+  eq?: string,
+  cn?: string,
+  nc?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -301,9 +322,9 @@ await corsair.rocketlane.api.companies.list({ match: 'acme', page_size: 50 });
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   notes?: {
     noteId?: number | null,
@@ -313,7 +334,11 @@ await corsair.rocketlane.api.companies.list({ match: 'acme', page_size: 50 });
     noteText?: string | null,
     createdAt?: number | null,
     updatedAt?: number | null,
-    tags?: Record<string, string>[] | null
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
   }[] | null
 }[]
 ```
@@ -356,7 +381,7 @@ await corsair.rocketlane.api.companies.update({ company_id: 301, description: 'E
 | `company_name` | `string` | No | The company name. |
 | `account_owner` | `object` | No | — |
 | `company_url` | `string` | No | The company website. |
-| `visibility` | `PRIVATE \| PUBLIC \| CUSTOMER` | No | — |
+| `visibility` | `EVERYONE \| MEMBERS` | No | — |
 | `description` | `string` | No | — |
 | `fields` | `object[]` | No | — |
 | `company_id` | `number` | Yes | — |
@@ -423,9 +448,9 @@ await corsair.rocketlane.api.companies.update({ company_id: 301, description: 'E
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   notes?: {
     noteId?: number | null,
@@ -435,7 +460,11 @@ await corsair.rocketlane.api.companies.update({ company_id: 301, description: 'E
     noteText?: string | null,
     createdAt?: number | null,
     updatedAt?: number | null,
-    tags?: Record<string, string>[] | null
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
   }[] | null
 }
 ```
@@ -485,7 +514,7 @@ Keeps the records and removes the project from active lists; it is not a delete.
 
 `projects.create`
 
-Create a project from a customer and an owner, with its dates, visibility and financial details
+Create a project from a customer and an owner, with its dates, visibility and financial details; Rocketlane emails an invite to each team member added
 
 **Risk:** `write`
 
@@ -502,8 +531,8 @@ await corsair.rocketlane.api.projects.create({ project_name: 'Acme onboarding', 
 | `owner` | `object` | Yes | — |
 | `start_date` | `string` | No | An ISO date. |
 | `due_date` | `string` | No | An ISO date on or after `start_date`. |
-| `visibility` | `PRIVATE \| PUBLIC \| CUSTOMER` | No | Who can see the project. |
-| `team_member_ids` | `number[]` | No | Users to add to the project. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | `EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members. |
+| `team_member_ids` | `number[]` | No | Users to add to the project. Rocketlane emails each of them an invite. |
 | `currency` | `string` | No | A three-letter currency code. |
 | `annualized_recurring_revenue` | `number` | No | — |
 | `project_fee` | `number` | No | — |
@@ -567,16 +596,20 @@ The customer and owner blocks each need an id or a name.
   createdAt?: number | null,
   updatedAt?: number | null,
   visibility?: string | null,
-  status?: string | null,
   externalReferenceId?: string | null,
-  currency?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
   annualizedRecurringRevenue?: number | null,
   projectFee?: number | null,
   budgetedHours?: number | null,
   allocatedHours?: number | null,
-  inferredProgress?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
   archived?: boolean | null,
-  contractType?: string | null,
   customersInvited?: number | null,
   customersJoined?: number | null,
   owner?: {
@@ -585,39 +618,55 @@ The customer and owner blocks each need an id or a name.
     firstName?: string | null,
     lastName?: string | null
   } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
   customer?: {
     companyId?: number | null,
     companyName?: string | null,
-    customerId?: number | null,
-    customerName?: string | null
-  } | null,
-  company?: {
-    companyId?: number | null,
-    companyName?: string | null
+    companyUrl?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   teamMembers?: {
-    userId?: number | null,
-    emailId?: string | null,
-    firstName?: string | null,
-    lastName?: string | null
-  }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
   sources?: {
     prefix?: string | null,
     startDate?: string | null,
     templateId?: number | null,
     templateName?: string | null
   }[] | null,
-  partners?: {
+  partnerCompanies?: {
     companyId?: number | null,
     companyName?: string | null,
     companyUrl?: string | null
-  }[] | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -698,16 +747,20 @@ await corsair.rocketlane.api.projects.get({ project_id: 201 });
   createdAt?: number | null,
   updatedAt?: number | null,
   visibility?: string | null,
-  status?: string | null,
   externalReferenceId?: string | null,
-  currency?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
   annualizedRecurringRevenue?: number | null,
   projectFee?: number | null,
   budgetedHours?: number | null,
   allocatedHours?: number | null,
-  inferredProgress?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
   archived?: boolean | null,
-  contractType?: string | null,
   customersInvited?: number | null,
   customersJoined?: number | null,
   owner?: {
@@ -716,39 +769,55 @@ await corsair.rocketlane.api.projects.get({ project_id: 201 });
     firstName?: string | null,
     lastName?: string | null
   } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
   customer?: {
     companyId?: number | null,
     companyName?: string | null,
-    customerId?: number | null,
-    customerName?: string | null
-  } | null,
-  company?: {
-    companyId?: number | null,
-    companyName?: string | null
+    companyUrl?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   teamMembers?: {
-    userId?: number | null,
-    emailId?: string | null,
-    firstName?: string | null,
-    lastName?: string | null
-  }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
   sources?: {
     prefix?: string | null,
     startDate?: string | null,
     templateId?: number | null,
     templateName?: string | null
   }[] | null,
-  partners?: {
+  partnerCompanies?: {
     companyId?: number | null,
     companyName?: string | null,
     companyUrl?: string | null
-  }[] | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -767,20 +836,20 @@ List projects with filters for company, customer, team member, status and financ
 **Risk:** `read`
 
 ```ts
-await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { oneOf: ['ACTIVE'] }, page_size: 50 });
+await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { oneOf: [2] }, page_size: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted or larger. |
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
 | `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
 | `include_fields` | `string[]` | No | — |
 | `include_all_fields` | `boolean` | No | — |
 | `sort_by` | `string` | No | — |
-| `sort_order` | `asc \| desc` | No | — |
-| `match` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
 | `project_name` | `object` | No | — |
 | `status` | `object` | No | — |
 | `company_id` | `object` | No | — |
@@ -885,9 +954,7 @@ await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { 
 {
   eq?: number,
   gt?: number,
-  ge?: number,
-  lt?: number,
-  le?: number
+  lt?: number
 }
 ```
 </Accordion>
@@ -898,9 +965,7 @@ await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { 
 {
   eq?: number,
   gt?: number,
-  ge?: number,
-  lt?: number,
-  le?: number
+  lt?: number
 }
 ```
 </Accordion>
@@ -956,16 +1021,20 @@ await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { 
   createdAt?: number | null,
   updatedAt?: number | null,
   visibility?: string | null,
-  status?: string | null,
   externalReferenceId?: string | null,
-  currency?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
   annualizedRecurringRevenue?: number | null,
   projectFee?: number | null,
   budgetedHours?: number | null,
   allocatedHours?: number | null,
-  inferredProgress?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
   archived?: boolean | null,
-  contractType?: string | null,
   customersInvited?: number | null,
   customersJoined?: number | null,
   owner?: {
@@ -974,39 +1043,55 @@ await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { 
     firstName?: string | null,
     lastName?: string | null
   } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
   customer?: {
     companyId?: number | null,
     companyName?: string | null,
-    customerId?: number | null,
-    customerName?: string | null
-  } | null,
-  company?: {
-    companyId?: number | null,
-    companyName?: string | null
+    companyUrl?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   teamMembers?: {
-    userId?: number | null,
-    emailId?: string | null,
-    firstName?: string | null,
-    lastName?: string | null
-  }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
   sources?: {
     prefix?: string | null,
     startDate?: string | null,
     templateId?: number | null,
     templateName?: string | null
   }[] | null,
-  partners?: {
+  partnerCompanies?: {
     companyId?: number | null,
     companyName?: string | null,
     companyUrl?: string | null
-  }[] | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -1033,7 +1118,7 @@ await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { 
 
 `projects.update`
 
-Update a project: its name, dates, visibility, team members or financial details
+Update a project: its name, dates, visibility, owner, custom fields or financial figures
 
 **Risk:** `write`
 
@@ -1046,33 +1131,18 @@ await corsair.rocketlane.api.projects.update({ project_id: 201, project_name: 'A
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project_name` | `string` | No | The project title. |
-| `customer` | `object` | No | — |
 | `owner` | `object` | No | — |
 | `start_date` | `string` | No | An ISO date. |
 | `due_date` | `string` | No | An ISO date on or after `start_date`. |
-| `visibility` | `PRIVATE \| PUBLIC \| CUSTOMER` | No | Who can see the project. |
-| `team_member_ids` | `number[]` | No | Users to add to the project. |
-| `currency` | `string` | No | A three-letter currency code. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | `EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members. |
 | `annualized_recurring_revenue` | `number` | No | — |
 | `project_fee` | `number` | No | — |
 | `budgeted_hours` | `number` | No | — |
 | `external_reference_id` | `string` | No | — |
-| `auto_create_company` | `boolean` | No | Create the customer company when it does not exist. |
-| `assign_project_owner` | `boolean` | No | — |
 | `fields` | `object[]` | No | — |
 | `project_id` | `number` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="customer full type">
-
-```ts
-{
-  company_id?: number,
-  company_name?: string
-}
-```
-</Accordion>
-
 <Accordion title="owner full type">
 
 ```ts
@@ -1114,16 +1184,20 @@ await corsair.rocketlane.api.projects.update({ project_id: 201, project_name: 'A
   createdAt?: number | null,
   updatedAt?: number | null,
   visibility?: string | null,
-  status?: string | null,
   externalReferenceId?: string | null,
-  currency?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
   annualizedRecurringRevenue?: number | null,
   projectFee?: number | null,
   budgetedHours?: number | null,
   allocatedHours?: number | null,
-  inferredProgress?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
   archived?: boolean | null,
-  contractType?: string | null,
   customersInvited?: number | null,
   customersJoined?: number | null,
   owner?: {
@@ -1132,39 +1206,55 @@ await corsair.rocketlane.api.projects.update({ project_id: 201, project_name: 'A
     firstName?: string | null,
     lastName?: string | null
   } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
   customer?: {
     companyId?: number | null,
     companyName?: string | null,
-    customerId?: number | null,
-    customerName?: string | null
-  } | null,
-  company?: {
-    companyId?: number | null,
-    companyName?: string | null
+    companyUrl?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   teamMembers?: {
-    userId?: number | null,
-    emailId?: string | null,
-    firstName?: string | null,
-    lastName?: string | null
-  }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
   sources?: {
     prefix?: string | null,
     startDate?: string | null,
     templateId?: number | null,
     templateName?: string | null
   }[] | null,
-  partners?: {
+  partnerCompanies?: {
     companyId?: number | null,
     companyName?: string | null,
     companyUrl?: string | null
-  }[] | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -1203,7 +1293,7 @@ await corsair.rocketlane.api.tasks.create({ task_name: 'Kickoff workshop', proje
 | `at_risk` | `boolean` | No | — |
 | `type` | `string` | No | — |
 | `phase` | `object` | No | Pick the phase by id or by name. |
-| `status` | `object` | No | Pick the status by id or by name. |
+| `status` | `object` | No | The task status, by its numeric value. |
 | `external_reference_id` | `string` | No | — |
 | `private` | `boolean` | No | — |
 | `billable` | `boolean` | No | — |
@@ -1229,8 +1319,7 @@ Assignees take `user_id` or `email`; the body sends them as `userId` and `emailI
 
 ```ts
 {
-  statusId?: number,
-  statusName?: string
+  value: number
 }
 ```
 </Accordion>
@@ -1304,26 +1393,25 @@ Assignees take `user_id` or `email`; the body sends them as `userId` and `emailI
   } | null,
   project?: {
     projectId?: number | null,
-    projectName?: string | null,
-    status?: string | null
+    projectName?: string | null
   } | null,
   status?: {
-    statusId?: number | null,
-    statusName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   phase?: {
     phaseId?: number | null,
     phaseName?: string | null
   } | null,
   priority?: {
-    priorityId?: number | null,
-    priorityName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   assignees?: {
     members?: {
@@ -1467,26 +1555,25 @@ await corsair.rocketlane.api.tasks.get({ task_id: 9001 });
   } | null,
   project?: {
     projectId?: number | null,
-    projectName?: string | null,
-    status?: string | null
+    projectName?: string | null
   } | null,
   status?: {
-    statusId?: number | null,
-    statusName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   phase?: {
     phaseId?: number | null,
     phaseName?: string | null
   } | null,
   priority?: {
-    priorityId?: number | null,
-    priorityName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   assignees?: {
     members?: {
@@ -1545,13 +1632,13 @@ await corsair.rocketlane.api.tasks.list({ project_id: { eq: 201 }, task_name: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted or larger. |
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
 | `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
 | `include_fields` | `string[]` | No | A projection: only these fields come back. |
 | `include_all_fields` | `boolean` | No | Return every custom field as well as the defaults. |
 | `sort_by` | `string` | No | — |
-| `sort_order` | `asc \| desc` | No | — |
-| `match` | `string` | No | A free-text search across the record. |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
 | `project_id` | `object` | No | — |
 | `phase_id` | `object` | No | — |
 | `task_name` | `object` | No | — |
@@ -1564,8 +1651,8 @@ await corsair.rocketlane.api.tasks.list({ project_id: { eq: 201 }, task_name: { 
 | `progress` | `object` | No | — |
 | `start_date` | `object` | No | — |
 | `due_date` | `object` | No | — |
-| `created_at` | `object` | No | — |
-| `updated_at` | `object` | No | — |
+| `created_at` | `object` | No | Epoch milliseconds. |
+| `updated_at` | `object` | No | Epoch milliseconds. |
 
 Filters are `field.operator` keys; the token from `pagination.nextPageToken` expires after 15 minutes.
 
@@ -1574,9 +1661,7 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 
 ```ts
 {
-  eq?: number,
-  oneOf?: number[],
-  noneOf?: number[]
+  eq?: number
 }
 ```
 </Accordion>
@@ -1585,9 +1670,7 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 
 ```ts
 {
-  eq?: number,
-  oneOf?: number[],
-  noneOf?: number[]
+  eq?: number
 }
 ```
 </Accordion>
@@ -1660,9 +1743,7 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 {
   eq?: number,
   gt?: number,
-  ge?: number,
-  lt?: number,
-  le?: number
+  lt?: number
 }
 ```
 </Accordion>
@@ -1673,9 +1754,7 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 {
   eq?: number,
   gt?: number,
-  ge?: number,
-  lt?: number,
-  le?: number
+  lt?: number
 }
 ```
 </Accordion>
@@ -1710,11 +1789,11 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 
 ```ts
 {
-  eq?: string,
-  gt?: string,
-  ge?: string,
-  lt?: string,
-  le?: string
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
 }
 ```
 </Accordion>
@@ -1723,11 +1802,11 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 
 ```ts
 {
-  eq?: string,
-  gt?: string,
-  ge?: string,
-  lt?: string,
-  le?: string
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
 }
 ```
 </Accordion>
@@ -1785,26 +1864,25 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
   } | null,
   project?: {
     projectId?: number | null,
-    projectName?: string | null,
-    status?: string | null
+    projectName?: string | null
   } | null,
   status?: {
-    statusId?: number | null,
-    statusName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   phase?: {
     phaseId?: number | null,
     phaseName?: string | null
   } | null,
   priority?: {
-    priorityId?: number | null,
-    priorityName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   assignees?: {
     members?: {
@@ -1864,7 +1942,7 @@ Filters are `field.operator` keys; the token from `pagination.nextPageToken` exp
 
 `tasks.update`
 
-Update a task: its name, dates, effort, progress, status, phase or custom fields
+Update a task: its name, description, dates, effort, progress, status or custom fields
 
 **Risk:** `write`
 
@@ -1877,7 +1955,6 @@ await corsair.rocketlane.api.tasks.update({ task_id: 9001, progress: 80, due_dat
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task_name` | `string` | No | The task title. |
-| `project_id` | `number` | No | The project the task belongs to. |
 | `task_description` | `string` | No | — |
 | `task_private_note` | `string` | No | — |
 | `start_date` | `string` | No | An ISO date. |
@@ -1886,45 +1963,19 @@ await corsair.rocketlane.api.tasks.update({ task_id: 9001, progress: 80, due_dat
 | `progress` | `number` | No | — |
 | `at_risk` | `boolean` | No | — |
 | `type` | `string` | No | — |
-| `phase` | `object` | No | Pick the phase by id or by name. |
-| `status` | `object` | No | Pick the status by id or by name. |
+| `status` | `object` | No | The task status, by its numeric value. |
 | `external_reference_id` | `string` | No | — |
 | `private` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `assignees` | `object[]` | No | — |
-| `follower_ids` | `number[]` | No | — |
-| `parent_task_id` | `number` | No | — |
 | `fields` | `object[]` | No | Custom field values, keyed by the field id. |
 | `task_id` | `number` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="phase full type">
-
-```ts
-{
-  phaseId?: number,
-  phaseName?: string
-}
-```
-</Accordion>
-
 <Accordion title="status full type">
 
 ```ts
 {
-  statusId?: number,
-  statusName?: string
+  value: number
 }
-```
-</Accordion>
-
-<Accordion title="assignees full type">
-
-```ts
-{
-  user_id?: number,
-  email?: string
-}[]
 ```
 </Accordion>
 
@@ -1987,26 +2038,25 @@ await corsair.rocketlane.api.tasks.update({ task_id: 9001, progress: 80, due_dat
   } | null,
   project?: {
     projectId?: number | null,
-    projectName?: string | null,
-    status?: string | null
+    projectName?: string | null
   } | null,
   status?: {
-    statusId?: number | null,
-    statusName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   phase?: {
     phaseId?: number | null,
     phaseName?: string | null
   } | null,
   priority?: {
-    priorityId?: number | null,
-    priorityName?: string | null
+    value?: number | null,
+    label?: string | null
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   assignees?: {
     members?: {
@@ -2161,9 +2211,9 @@ Rocketlane rejects an entry that pushes a single day past 1440 minutes.
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   costRate?: {
     rate?: number | null,
@@ -2317,9 +2367,9 @@ await corsair.rocketlane.api.timeEntries.get({ time_entry_id: 501 });
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   costRate?: {
     rate?: number | null,
@@ -2358,12 +2408,12 @@ await corsair.rocketlane.api.timeEntries.list({ date: { ge: '2026-11-01', le: '2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted or larger. |
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
 | `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
 | `include_fields` | `string[]` | No | — |
 | `sort_by` | `string` | No | — |
-| `sort_order` | `asc \| desc` | No | — |
-| `match` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
 | `date` | `object` | No | Filter on the entry date, as an ISO date. |
 | `project_id` | `object` | No | — |
 | `task_id` | `object` | No | — |
@@ -2532,9 +2582,9 @@ The date operators are `eq`, `gt`, `ge`, `lt` and `le`.
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   costRate?: {
     rate?: number | null,
@@ -2624,9 +2674,9 @@ await corsair.rocketlane.api.users.get({ user_id: 401 });
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   permission?: {
     permissionId?: number | null,
@@ -2661,12 +2711,12 @@ await corsair.rocketlane.api.users.list({ page_size: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted or larger. |
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
 | `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
 | `include_fields` | `string[]` | No | — |
-| `match` | `string` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
 | `sort_by` | `string` | No | — |
-| `sort_order` | `asc \| desc` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
 
 
 
@@ -2705,9 +2755,9 @@ await corsair.rocketlane.api.users.list({ page_size: 50 });
   } | null,
   fields?: {
     fieldId?: number | null,
-    fieldName?: string | null,
-    fieldType?: string | null,
-    value?: string | number | boolean | string[] | number[] | null
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
   }[] | null,
   permission?: {
     permissionId?: number | null,
