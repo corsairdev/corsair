@@ -131,6 +131,18 @@ describe('categorize.all', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	// One call classifies one target, so a url and an email naming two
+	// different domains is refused rather than sent together.
+	it('rejects a body with both url and email', async () => {
+		await expect(
+			invoke(Categorize.all, {
+				url: 'https://a.example',
+				email: 'user@b.example',
+			}),
+		).rejects.toThrow(/either `url` or `email`/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	// A logo and company block can both be absent, which the docs allow.
 	it('accepts an answer with no logo and no company block', async () => {
 		respond(categorizeSparse);
@@ -384,6 +396,14 @@ describe('discovery.search', () => {
 			},
 		});
 		expect(result.total_pages).toBe(43);
+	});
+
+	// Klazify documents top_n as 1 to 1,000,000.
+	it('rejects a top_n above 1,000,000 before sending', async () => {
+		await expect(
+			invoke(Discovery.search, { top_n: 1_000_001 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	// The documented result fields, not guesses at them: a loose schema would

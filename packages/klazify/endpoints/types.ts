@@ -16,14 +16,14 @@ export const KlazifyTargetSchema = z
 			.min(1)
 			.optional()
 			.describe(
-				'The URL to classify, e.g. `https://apple.com`. Give this or `email`.',
+				'The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both.',
 			),
 		email: z
 			.string()
 			.min(1)
 			.optional()
 			.describe(
-				'An email address to classify by its domain. Give this or `url`.',
+				'An email address to classify by its domain. Give this or `url`, not both.',
 			),
 		refresh: z
 			.boolean()
@@ -38,6 +38,14 @@ export const KlazifyTargetSchema = z
 				code: 'custom',
 				path: ['url'],
 				message: 'Give either `url` or `email` as the target to classify.',
+			});
+		}
+		// One call classifies one target; two could name different domains.
+		if (input.url !== undefined && input.email !== undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['email'],
+				message: 'Give either `url` or `email`, not both.',
 			});
 		}
 	});
@@ -384,9 +392,10 @@ export const KlazifyDiscoveryInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
+		.max(1_000_000)
 		.optional()
 		.describe(
-			'Only domains with a global rank at or below this are searched. Unranked domains are excluded when it is set.',
+			'Only domains with a global rank at or below this are searched, 1 to 1,000,000. Unranked domains are excluded when it is set.',
 		),
 	filters: z
 		.object({
