@@ -212,7 +212,7 @@ const unisenderEndpointMeta = {
 	'contacts.subscribe': {
 		riskLevel: 'write',
 		description:
-			'Add or update a contact in one or more lists, choosing whether to send a confirmation email; the resulting status says whether the address can be mailed yet',
+			'Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email',
 	},
 	'contacts.unsubscribe': {
 		riskLevel: 'write',
@@ -231,7 +231,7 @@ const unisenderEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Import up to 500 contacts from columnar data; role addresses such as sales@ are skipped on purpose, and a `delete` column marks contacts for removal',
+			'Import up to 500 contacts from columnar data, with list membership in an email_list_ids column; role addresses such as sales@ are skipped on purpose, and a `delete` column removes contacts',
 	},
 	'contacts.count': {
 		riskLevel: 'read',
@@ -262,7 +262,7 @@ const unisenderEndpointMeta = {
 	'messages.sendEmail': {
 		riskLevel: 'write',
 		description:
-			'Send one transactional email to a single recipient; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL',
+			'Send one transactional email to a single recipient, who is added to list_id if not already in it; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL',
 	},
 	'messages.status': {
 		riskLevel: 'read',

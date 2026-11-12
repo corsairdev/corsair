@@ -109,9 +109,10 @@ export const get: UnisenderEndpoints['contactsGet'] = (ctx, input) =>
 /**
  * Adds or updates a contact in one or more lists.
  *
- * `double_optin` decides what happens: 0 adds without a confirmation email, 1 sends
- * one, and 3 adds without any email at all. The contact's resulting `status` says
- * which happened — `active` means it can be mailed, `invited` means it cannot yet.
+ * `double_optin` decides what happens: 0, the default, sends a confirmation email and
+ * leaves the contact `invited` until they accept; 3 adds them as `new` with no email;
+ * 4 adds a known `new` or `active` contact silently and invites anyone else. Read the
+ * resulting status with contacts.get.
  */
 export const subscribe: UnisenderEndpoints['contactsSubscribe'] = (
 	ctx,
@@ -272,7 +273,7 @@ export const count: UnisenderEndpoints['contactsCount'] = (ctx, input) =>
 /**
  * Requests an export of the contact data.
  *
- * The method is asynchronous: it acknowledges the request, and the file is posted to
+ * The method is asynchronous: it answers a `task_uuid`, and the file is posted to
  * `notify_url` when it is ready.
  */
 export const exportContacts: UnisenderEndpoints['contactsExport'] = (
