@@ -12,10 +12,19 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint(testContext, input as never);
 }
 
+// Any call a test did not queue a response for throws, so no test can reach the
+// real API.
+function unmocked(): never {
+	throw new Error('unmocked fetch in a unit test');
+}
+
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(unmocked);
 	afterEach(() => {
 		fetchMock.mockReset();
+		fetchMock.mockImplementation(unmocked);
 	});
 	return fetchMock;
 }
