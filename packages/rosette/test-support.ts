@@ -41,6 +41,7 @@ export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
 		query: Object.fromEntries(parsed.searchParams),
 		method: init.method,
 		headers: new Headers(init.headers),
+		// unknown: parsed request JSON; tests narrow it through bodyRecord.
 		body: init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,
 		bodyRecord: asRecord(
 			init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,

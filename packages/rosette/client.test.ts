@@ -11,7 +11,10 @@ const KEY = 'rosette-secret-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// An unqueued response must fail the test rather than reach the real API.
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('unmocked fetch'));
 });
 
 afterEach(() => {

@@ -20,6 +20,8 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler returns its own retry settings, and the tests assert on
+// the fields they care about.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(

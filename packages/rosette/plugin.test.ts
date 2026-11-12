@@ -51,7 +51,8 @@ describe('rosette plugin definition', () => {
 
 	it('exposes exactly the sixteen catalog operations', () => {
 		// The tree mixes flat operations with a `semantics` group, so both shapes are
-		// walked.
+		// walked. unknown: a value is an endpoint function or a nested group, told
+		// apart by the typeof check.
 		const names = (tree: Record<string, unknown>, prefix = ''): string[] =>
 			Object.entries(tree).flatMap(([key, value]) =>
 				typeof value === 'function'
