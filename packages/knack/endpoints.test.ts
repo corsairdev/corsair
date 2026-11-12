@@ -307,6 +307,29 @@ describe('records.list', () => {
 		expect(sent.query['filters[0][value]']).toBeUndefined();
 	});
 
+	// Every operator that compares against something needs the value; without
+	// it Knack gets an operator alone and its answer is undocumented.
+	it.each([
+		'is',
+		'is not',
+		'contains',
+		'does not contain',
+		'starts with',
+		'ends with',
+		'higher than',
+		'lower than',
+		'is before',
+		'is after',
+	])('rejects %s without a value before sending', async (operator) => {
+		await expect(
+			invoke(Records.list, {
+				object_key: 'object_1',
+				filters: [{ field: 'field_4', operator }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	// Knack returns at most 1,000 records a page.
 	it('rejects rows_per_page above 1000 before sending', async () => {
 		await expect(

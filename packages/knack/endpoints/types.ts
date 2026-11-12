@@ -217,19 +217,46 @@ export const KNACK_FILTER_OPERATORS = [
 	'is after current time',
 ] as const;
 
-export const KnackFilterSchema = z.object({
-	field: z
-		.string()
-		.regex(/^field_\d+$/, 'A field key looks like `field_23`.')
-		.describe('The field to filter on, e.g. `field_23`.'),
-	operator: z.enum(KNACK_FILTER_OPERATORS),
-	value: z
-		.string()
-		.optional()
-		.describe(
-			'The value to compare against, sent as text (a number too). Not needed for `is blank`, `is not blank` or the `is today` family.',
-		),
-});
+/**
+ * The operators that compare a field against something. Without a value Knack
+ * would receive the operator alone, so these fail validation instead.
+ */
+const KNACK_VALUE_OPERATORS: ReadonlySet<string> = new Set([
+	'is',
+	'is not',
+	'contains',
+	'does not contain',
+	'starts with',
+	'ends with',
+	'higher than',
+	'lower than',
+	'is before',
+	'is after',
+]);
+
+export const KnackFilterSchema = z
+	.object({
+		field: z
+			.string()
+			.regex(/^field_\d+$/, 'A field key looks like `field_23`.')
+			.describe('The field to filter on, e.g. `field_23`.'),
+		operator: z.enum(KNACK_FILTER_OPERATORS),
+		value: z
+			.string()
+			.optional()
+			.describe(
+				'The value to compare against, sent as text (a number too). Required for every operator except `is blank`, `is not blank`, `is any` and the `is today` / current time family.',
+			),
+	})
+	.superRefine((filter, ctx) => {
+		if (filter.value === undefined && KNACK_VALUE_OPERATORS.has(filter.operator)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['value'],
+				message: `The \`${filter.operator}\` operator needs a value.`,
+			});
+		}
+	});
 
 export type KnackFilter = z.infer<typeof KnackFilterSchema>;
 
