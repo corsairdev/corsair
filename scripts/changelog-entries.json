@@ -3914,5 +3914,68 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.47",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.22",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.22",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.49",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.29",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.27",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.1.179",
+    "isNew": false,
+    "changes": []
   }
 ]
