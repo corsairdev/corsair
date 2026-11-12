@@ -1,5 +1,31 @@
 import { z } from 'zod';
 
+function isBase64(value: string): boolean {
+	if (value.length === 0 || value.length % 4 !== 0) return false;
+	const padding = value.endsWith('==') ? 2 : value.endsWith('=') ? 1 : 0;
+	const dataLength = value.length - padding;
+	if (dataLength === 0) return false;
+	for (let index = 0; index < dataLength; index += 1) {
+		const code = value.charCodeAt(index);
+		const isUppercase = code >= 65 && code <= 90;
+		const isLowercase = code >= 97 && code <= 122;
+		const isDigit = code >= 48 && code <= 57;
+		if (
+			!isUppercase &&
+			!isLowercase &&
+			!isDigit &&
+			code !== 43 &&
+			code !== 47
+		) {
+			return false;
+		}
+	}
+	for (let index = dataLength; index < value.length; index += 1) {
+		if (value.charCodeAt(index) !== 61) return false;
+	}
+	return true;
+}
+
 // `unknown` because OpenAPI marks some values as arbitrary JSON; they are narrowed by their containing endpoint schema.
 const FreeformJsonSchema = z.unknown();
 
@@ -86,11 +112,7 @@ export const EnvelopeItemCreateManyInputSchema = z
 							.string()
 							.min(4)
 							.max(22369624)
-							.regex(
-								new RegExp(
-									'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
-								),
-							),
+							.refine(isBase64, { message: 'Expected valid base64 data' }),
 					})
 					.strict(),
 			)
@@ -5679,11 +5701,7 @@ export const EnvelopeCreateInputSchema = z
 							.string()
 							.min(4)
 							.max(22369624)
-							.regex(
-								new RegExp(
-									'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
-								),
-							),
+							.refine(isBase64, { message: 'Expected valid base64 data' }),
 					})
 					.strict(),
 			)
@@ -5908,11 +5926,7 @@ export const EnvelopeUseInputSchema = z
 							.string()
 							.min(4)
 							.max(22369624)
-							.regex(
-								new RegExp(
-									'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
-								),
-							),
+							.refine(isBase64, { message: 'Expected valid base64 data' }),
 					})
 					.strict(),
 			)
@@ -7645,11 +7659,7 @@ export const DocumentCreateInputSchema = z
 					.string()
 					.min(4)
 					.max(22369624)
-					.regex(
-						new RegExp(
-							'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
-						),
-					),
+					.refine(isBase64, { message: 'Expected valid base64 data' }),
 			})
 			.strict(),
 	})
@@ -17960,11 +17970,7 @@ export const TemplateCreateTemplateInputSchema = z
 					.string()
 					.min(4)
 					.max(22369624)
-					.regex(
-						new RegExp(
-							'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
-						),
-					),
+					.refine(isBase64, { message: 'Expected valid base64 data' }),
 			})
 			.strict(),
 	})

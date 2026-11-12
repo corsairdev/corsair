@@ -36,4 +36,20 @@ describe('Documenso v2 operation schemas', () => {
 			}
 		});
 	}
+
+	it('validates a large PDF upload without regex backtracking', () => {
+		const largePdfBase64 = Buffer.alloc(12 * 1024 * 1024).toString('base64');
+		const sample = DocumensoOperationDefinitions.envelopeCreate.inputExample;
+		const parsed = DocumensoEndpointInputSchemas.envelopeCreate.parse({
+			...sample,
+			files: [
+				{
+					filename: 'large-contract.pdf',
+					contentType: 'application/pdf',
+					contentBase64: largePdfBase64,
+				},
+			],
+		});
+		expect(parsed.files?.[0]?.contentBase64).toBe(largePdfBase64);
+	});
 });

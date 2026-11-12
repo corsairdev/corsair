@@ -16,6 +16,17 @@ references:
     url: https://docs.documenso.com/docs/developers/api/migrate-to-envelopes
   - title: API rate limits
     url: https://docs.documenso.com/docs/developers/api/rate-limits
+examples:
+  read:
+    path: envelopes.find.get
+    title: List envelopes
+    args:
+      perPage: 1
+  write:
+    path: envelopes.update.post
+    title: Update an envelope
+    args:
+      envelopeId: envelope_sample
 apiNotes:
   documents.get.get: "Deprecated Documenso v2 route (GET /document/{documentId}); use the corresponding envelope-based operation for new integrations."
   documents.getMany.post: "Deprecated Documenso v2 route (POST /document/get-many); use the corresponding envelope-based operation for new integrations."

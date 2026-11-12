@@ -100,19 +100,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`documents.attachments.find.get`**
+**List envelopes**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.documenso.api.documents.attachments.find.get({});
+await tenant.documenso.api.envelopes.find.get({ perPage: 1 });
 ```
 
 
-**`documents.attachments.create.post`**
+**Update an envelope**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.documenso.api.documents.attachments.create.post({});
+await tenant.documenso.api.envelopes.update.post({ envelopeId: 'envelope_sample' });
 ```
 
 

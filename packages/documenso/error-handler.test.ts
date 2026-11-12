@@ -1,5 +1,6 @@
 import { DocumensoAPIError } from './client';
 import { errorHandlers } from './error-handlers';
+import { documenso } from './index';
 
 describe('Documenso error handlers', () => {
 	it('recognizes 429 and preserves the exact Retry-After delay without retries', async () => {
@@ -46,5 +47,32 @@ describe('Documenso error handlers', () => {
 		const names = Object.keys(errorHandlers);
 		expect(names.at(-1)).toBe('DEFAULT');
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+
+	it('orders caller handlers ahead of built-ins and keeps the caller fallback last', () => {
+		const plugin = documenso({
+			errorHandlers: {
+				NETWORK_ERROR: {
+					match: (error: Error) => error.message === 'custom network failure',
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+		const handlers = plugin.errorHandlers;
+		if (!handlers) throw new Error('Documenso error handlers are missing');
+		const names = Object.keys(handlers);
+		expect(names.indexOf('NETWORK_ERROR')).toBeLessThan(
+			names.indexOf('DEFAULT'),
+		);
+		expect(names.at(-1)).toBe('DEFAULT');
+		const customError = new Error('custom network failure');
+		expect(
+			handlers.NETWORK_ERROR?.match(customError, {
+				pluginId: 'documenso',
+				operation: 'envelopes.find.get',
+				input: {},
+				originalError: customError,
+			}),
+		).toBe(true);
 	});
 });

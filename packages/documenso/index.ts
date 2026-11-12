@@ -945,6 +945,15 @@ export function documenso<const T extends DocumensoPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtInHandlers } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callerHandlers } =
+		options.errorHandlers ?? {};
+	const orderedErrorHandlers = {
+		...callerHandlers,
+		...builtInHandlers,
+		...callerHandlers,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
 	return {
 		id: 'documenso',
 		authConfig: documensoAuthConfig,
@@ -955,7 +964,7 @@ export function documenso<const T extends DocumensoPluginOptions>(
 		webhooks: {},
 		endpointMeta: documensoEndpointMeta,
 		endpointSchemas: documensoEndpointSchemas,
-		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		errorHandlers: orderedErrorHandlers,
 		keyBuilder: async (ctx: DocumensoKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key !== undefined) {
