@@ -10,11 +10,9 @@ function getStatus(error: Error): number | undefined {
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('too many requests') || msg.includes('429');
-		},
+		// Status only: message text can contain "429" without any HTTP call
+		// (e.g. a Zod error for batch order index 429), which must not retry.
+		match: (error: Error) => getStatus(error) === 429,
 		// Kalshi's 429 carries no Retry-After header (body: {"error":"too many
 		// requests"}), so back off exponentially with jitter. Each retry re-enters
 		// the client, which signs it again with a fresh timestamp.

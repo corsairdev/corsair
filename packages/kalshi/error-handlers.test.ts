@@ -58,10 +58,10 @@ describe('Kalshi error handlers', () => {
 			).toBe(true);
 		});
 
-		it('matches the 429 body text when no status is available', () => {
+		it('does not match rate-limit text without a status', () => {
 			expect(
 				errorHandlers.RATE_LIMIT_ERROR.match(new Error('too many requests')),
-			).toBe(true);
+			).toBe(false);
 		});
 
 		it('does not match an unrelated 500', () => {
