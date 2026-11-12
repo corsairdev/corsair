@@ -3268,6 +3268,14 @@
                 ]
               },
               {
+                "group": "Route4Me",
+                "pages": [
+                  "plugins/route4me/overview",
+                  "plugins/route4me/api",
+                  "plugins/route4me/database"
+                ]
+              },
+              {
                 "group": "Runpod",
                 "pages": [
                   "plugins/runpod/overview",
