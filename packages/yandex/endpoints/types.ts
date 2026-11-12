@@ -33,6 +33,18 @@ export type TranslateOutput = z.infer<typeof TranslateOutputSchema>;
 // ── translate ─────────────────────────────────────────────────────────────
 
 /**
+ * Yandex requires folder_id on every call made with a user account's IAM token,
+ * however many folders that account reaches. A service account's key or token
+ * uses the service account's own folder, so the field can be left out there.
+ */
+const FolderIdSchema = z
+	.string()
+	.optional()
+	.describe(
+		"The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder.",
+	);
+
+/**
  * Translates up to 10,000 characters in one call, across up to 1,000 separate
  * `texts`. `targetLanguageCode` is required; `sourceLanguageCode` is optional,
  * and leaving it out asks Yandex to detect it per text.
@@ -57,12 +69,7 @@ const TranslateInputSchema = z
 			.optional()
 			.describe('How the text is interpreted. Defaults to PLAIN_TEXT.'),
 		speller: z.boolean().optional().describe('Correct spelling in the result.'),
-		folderId: z
-			.string()
-			.optional()
-			.describe(
-				'The folder the key belongs to. Only needed when the key is an IAM token covering several.',
-			),
+		folderId: FolderIdSchema,
 	})
 	.superRefine((value, ctx) => {
 		// The documented limit is 10,000 characters across every text.
@@ -103,7 +110,7 @@ export type DetectOutput = z.infer<typeof DetectOutputSchema>;
 const DetectInputSchema = z
 	.object({
 		texts: z.array(z.string().min(1)).min(1).max(1000),
-		folderId: z.string().optional(),
+		folderId: FolderIdSchema,
 	})
 	.superRefine((value, ctx) => {
 		// The documented limit is 1,000 characters per request, and each passage is
@@ -129,7 +136,7 @@ export type DetectInput = z.infer<typeof DetectInputSchema>;
  * offered here.
  */
 const LanguagesInputSchema = z.object({
-	folderId: z.string().optional(),
+	folderId: FolderIdSchema,
 });
 
 export type LanguagesInput = z.infer<typeof LanguagesInputSchema>;

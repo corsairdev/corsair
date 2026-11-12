@@ -27,7 +27,7 @@ await corsair.yandex.api.detectLanguages.run({ texts: ['Hello', 'Guten Tag'] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `texts` | `string[]` | Yes | — |
-| `folderId` | `string` | No | — |
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
 
 
 
@@ -70,7 +70,7 @@ await corsair.yandex.api.listLanguages.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `folderId` | `string` | No | — |
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
 
 
 
@@ -119,7 +119,7 @@ await corsair.yandex.api.translate.text({ targetLanguageCode: 'ru', texts: ['Hel
 | `sourceLanguageCode` | `string` | No | The source language. Omit to detect it. |
 | `format` | `PLAIN_TEXT \| HTML` | No | How the text is interpreted. Defaults to PLAIN_TEXT. |
 | `speller` | `boolean` | No | Correct spelling in the result. |
-| `folderId` | `string` | No | The folder the key belongs to. Only needed when the key is an IAM token covering several. |
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
 
 
 

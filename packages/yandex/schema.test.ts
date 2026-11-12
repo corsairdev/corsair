@@ -1,3 +1,4 @@
+import { YandexEndpointInputSchemas } from './endpoints/types';
 import { YandexSchema } from './schema';
 
 describe('Yandex schema', () => {
@@ -24,3 +25,18 @@ describe('Yandex schema', () => {
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
 // needs a corresponding test.
+
+describe('folderId descriptions', () => {
+	it.each(['translate', 'detectLanguages', 'listLanguages'] as const)(
+		'%s says a user-account IAM token always needs folderId',
+		(operation) => {
+			// Yandex requires folder_id on every call made with a user account's IAM
+			// token, however many folders the account reaches. Saying it was only
+			// needed for several folders told single-folder users to drop it.
+			const description =
+				YandexEndpointInputSchemas[operation].shape.folderId.description ?? '';
+			expect(description).toMatch(/user account/i);
+			expect(description).not.toMatch(/several/i);
+		},
+	);
+});
