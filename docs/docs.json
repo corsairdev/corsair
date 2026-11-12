@@ -3663,6 +3663,14 @@
                 ]
               },
               {
+                "group": "StackAI",
+                "pages": [
+                  "plugins/stackai/overview",
+                  "plugins/stackai/api",
+                  "plugins/stackai/database"
+                ]
+              },
+              {
                 "group": "Starton",
                 "pages": [
                   "plugins/starton/overview",

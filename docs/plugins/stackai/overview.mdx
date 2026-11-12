@@ -1,0 +1,132 @@
+---
+title: "StackAI plugin"
+sidebarTitle: "Overview"
+description: "Inspect project input and output schemas and manage asynchronous StackAI runs."
+---
+
+Use **StackAI** through Corsair: one client, typed API calls.
+
+Use a StackAI personal API key or supported user token. The hosted origin is https://api.stack-ai.com; configure `baseURL` for a private deployment. The key needs `projects.read`, `projects.run`, and `analytics.read` as appropriate. Start, cancel, and resume return the JSON body and the actual `Location` header; a successful response does not mean the run has completed. The plugin prevents Corsair retries from resending writes, though custom root handlers may delay and reprocess the failure. Reconcile ambiguous write failures before manually retrying. Never attach credentials to an untrusted Location URL.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/stackai better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/stackai better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/stackai better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/stackai better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { stackai } from '@corsair-dev/stackai';
+
+export const corsair = createCorsair({
+	plugins: [
+		stackai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+stackai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'stackai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List runs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stackai.api.runs.list({ page_size: 25 });
+```
+
+
+**Start a project run**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stackai.api.runs.start({
+	project_id: 'example-project',
+	input: { in-0: 'Hello' },
+});
+```
+
+
+See the full list on the [API](/plugins/stackai/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/stackai/api">
+    Every `stackai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
