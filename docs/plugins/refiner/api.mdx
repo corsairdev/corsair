@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Refiner: every `refiner.api.*` operation with input and output types."
+title: "Refiner API reference"
+sidebarTitle: "API"
+description: "API reference for the Refiner plugin in Corsair: every `refiner.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `refiner.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -637,7 +636,7 @@ await corsair.refiner.api.responses.list({ form_uuid: '3894dc20-8fe9-11ea-892e-d
 
 `responses.store`
 
-Store a survey response for a user, attaching it to an existing survey; use it to import history or feed a custom survey UI
+Store a survey response for a user on an existing survey, to import history or feed a custom survey UI. Answers go in as top-level keys named by question identifier, such as &#123; id: 'user-1', form_uuid, nps: 9, feedback: 'Fast setup' &#125;
 
 **Risk:** `write`
 
@@ -803,7 +802,7 @@ await corsair.refiner.api.segments.sync({ id: 'user-1', segment_uuid: '0ff87720-
 
 `users.identify`
 
-Identify a user by ID or email, creating the contact on first sight and attaching any traits you send
+Identify a user by ID or email, creating the contact on first sight. Every other top-level key is saved as a trait, such as &#123; id: 'user-1', plan: 'pro', signed_up_at: '2024-01-15' &#125;
 
 **Risk:** `write`
 
