@@ -176,9 +176,17 @@ export async function makeWorksnapsRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// The ApiError holds the request, and with it the token and any body
+			// (users.create sends a password), so only the fields the handlers
+			// read are copied and the cause is dropped.
 			throw new WorksnapsAPIError(
 				describeWorksnapsError(error.status, error.body, error.message),
-				{ cause: error },
+				{
+					status: error.status,
+					body: error.body,
+					retryAfter: error.retryAfter,
+					method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

@@ -71,6 +71,27 @@ describe('makeWorksnapsRequest', () => {
 		expect(error.isAuthError).toBe(true);
 	});
 
+	it('keeps the request body, and with it a password, out of the error', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('<errors><error>Login taken</error></errors>', {
+				status: 422,
+			}),
+		);
+
+		const error = (await makeWorksnapsRequest(API_KEY, {
+			method: 'POST',
+			path: '/users.xml',
+			body: '<user><password>correct horse battery</password></user>',
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
+		}).catch((thrown: unknown) => thrown)) as WorksnapsAPIError;
+
+		expect(error.status).toBe(422);
+		expect(error.method).toBe('POST');
+		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('correct horse');
+	});
+
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
