@@ -1020,8 +1020,6 @@ describe('fixes from the second 11-12 review', () => {
 
 		const result = await invoke(Incidents.get, { id: incident.id });
 
-		expect(result.rootCause?.responseHeaders).toEqual(
-			withRepeatedHeader.rootCause.responseHeaders,
-		);
+		expect(result).toEqual(withRepeatedHeader);
 	});
 });
