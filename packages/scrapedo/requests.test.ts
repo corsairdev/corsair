@@ -160,7 +160,9 @@ describe('scrape.json', () => {
 	it('returns the iframe content when showFrames is set', async () => {
 		respond({
 			...JSON_BODY,
-			frames: [{ url: 'https://example.com/frame', content: '<p>in frame</p>' }],
+			frames: [
+				{ url: 'https://example.com/frame', content: '<p>in frame</p>' },
+			],
 		});
 
 		const result = await endpoints().scrape.json(makeCtx(), {

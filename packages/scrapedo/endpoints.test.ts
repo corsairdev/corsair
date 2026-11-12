@@ -96,7 +96,10 @@ describe('scrape input validation', () => {
 	});
 
 	it('rejects a render-only option when render is unset, since the API defaults it to false', () => {
-		const result = Inputs.scrapeHtml.safeParse({ ...base, waitSelector: '#app' });
+		const result = Inputs.scrapeHtml.safeParse({
+			...base,
+			waitSelector: '#app',
+		});
 		expect(result.success).toBe(false);
 		if (result.success) throw new Error('expected a rejection');
 		expect(result.error.issues[0]?.path).toEqual(['waitSelector']);
