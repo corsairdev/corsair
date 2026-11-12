@@ -24,6 +24,7 @@ const pagingQuery = { limit: LimitSchema, page: PageSchema };
  * answers with the unchanged record. Zod strips keys the schema does not know,
  * so a stage-only candidate update lands here too.
  */
+// unknown: candidate and offer updates have different value types; only presence matters here.
 function hasAnyField(fields: Record<string, unknown>): boolean {
 	return Object.values(fields).some((value) => value !== undefined);
 }

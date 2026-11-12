@@ -37,6 +37,7 @@ type PluginInternals = {
 	endpointSchemas: Record<string, { input?: unknown; output?: unknown }>;
 	endpointMeta: Record<string, { riskLevel: string; description: string }>;
 	authConfig?: Record<string, { account?: readonly string[] }>;
+	// unknown: webhook payload types vary; these tests inspect only registration keys.
 	webhooks: Record<string, unknown>;
 	// unknown: the matcher narrows its own request argument; a test that calls it
 	// with no headers cannot name a stricter parameter type.
