@@ -117,10 +117,10 @@ export const list: UserflowEndpoints['webhookSubscriptionsList'] = (
 			output: Outputs.webhookSubscriptionsList,
 		},
 		input,
-		({ limit, starting_after }) => ({
+		({ limit, starting_after, order_by }) => ({
 			method: 'GET',
 			path: '/webhook_subscriptions',
-			query: { limit, starting_after },
+			query: { limit, starting_after, order_by },
 		}),
 		{
 			log: (_, result) => ({

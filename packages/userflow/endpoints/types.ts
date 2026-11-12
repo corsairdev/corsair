@@ -484,10 +484,12 @@ const ContentListInputSchema = z.object({
 		.enum(USERFLOW_CONTENT_TYPES)
 		.optional()
 		.describe('Only content of this type.'),
-	order_by: z
-		.array(z.enum(['created_at', 'name']))
-		.min(1)
-		.optional(),
+	order_by: orderBySchema(
+		['created_at', 'name'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
+	// draft_version and published_version come back null unless expanded.
+	expand: ExpandSchema,
 });
 
 export type ContentListInput = z.infer<typeof ContentListInputSchema>;
@@ -633,10 +635,10 @@ const ContentSessionsListInputSchema = z.object({
 	...PagingSchema,
 	content_id: z.string().optional().describe('Only sessions of this content.'),
 	user_id: z.string().optional().describe('Only this user sessions.'),
-	order_by: z
-		.array(z.enum(['created_at', 'last_activity_at']))
-		.min(1)
-		.optional(),
+	order_by: orderBySchema(
+		['created_at', 'last_activity_at'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 	expand: ExpandSchema,
 });
 
@@ -687,10 +689,10 @@ const AttributesListInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Only attributes used by any of these events.'),
-	order_by: z
-		.array(z.enum(['created_at', 'display_name', 'name']))
-		.min(1)
-		.optional(),
+	order_by: orderBySchema(
+		['created_at', 'display_name', 'name'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 });
 
 export type AttributesListInput = z.infer<typeof AttributesListInputSchema>;
@@ -716,10 +718,10 @@ export type UserflowEventDefinition = z.infer<typeof EventDefinitionSchema>;
 
 const EventDefinitionsListInputSchema = z.object({
 	...PagingSchema,
-	order_by: z
-		.array(z.enum(['created_at', 'display_name', 'name']))
-		.min(1)
-		.optional(),
+	order_by: orderBySchema(
+		['created_at', 'display_name', 'name'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 });
 
 export type EventDefinitionsListInput = z.infer<
@@ -841,7 +843,13 @@ export type WebhookSubscriptionsDeleteResponse = z.infer<
 	typeof WebhookSubscriptionsDeleteResponseSchema
 >;
 
-const WebhookSubscriptionsListInputSchema = z.object({ ...PagingSchema });
+const WebhookSubscriptionsListInputSchema = z.object({
+	...PagingSchema,
+	order_by: orderBySchema(
+		['created_at', 'url'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
+});
 
 export type WebhookSubscriptionsListInput = z.infer<
 	typeof WebhookSubscriptionsListInputSchema
@@ -889,10 +897,10 @@ export type UserflowAccount = z.infer<typeof AccountSchema>;
 
 const AccountsListInputSchema = z.object({
 	...PagingSchema,
-	order_by: z
-		.array(z.enum(['name', 'created_at']))
-		.min(1)
-		.optional(),
+	order_by: orderBySchema(
+		['name', 'created_at'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 });
 
 export type AccountsListInput = z.infer<typeof AccountsListInputSchema>;
@@ -956,7 +964,10 @@ const MembersListInputSchema = z.object({
 	...PagingSchema,
 	email: z.array(z.string().min(1)).min(1).optional(),
 	role: z.array(z.enum(USERFLOW_MEMBER_ROLES)).min(1).optional(),
-	order_by: z.array(z.literal('created_at')).min(1).optional(),
+	order_by: orderBySchema(
+		['created_at'],
+		'Sort by `created_at`, or `-created_at` for newest first.',
+	),
 });
 
 export type MembersListInput = z.infer<typeof MembersListInputSchema>;
@@ -1036,6 +1047,10 @@ const InvitesListInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Only expired invites, or only the ones still open.'),
+	order_by: orderBySchema(
+		['name', 'created_at'],
+		'Sort field or fields, each optionally prefixed with "-" for descending.',
+	),
 });
 
 export type InvitesListInput = z.infer<typeof InvitesListInputSchema>;

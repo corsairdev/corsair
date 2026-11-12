@@ -148,10 +148,10 @@ export const listInvites: UserflowEndpoints['invitesList'] = (ctx, input) =>
 			output: Outputs.invitesList,
 		},
 		input,
-		({ account_id, limit, starting_after, email, is_expired }) => ({
+		({ account_id, limit, starting_after, email, is_expired, order_by }) => ({
 			method: 'GET',
 			path: `/accounts/${segment(account_id)}/invites`,
-			query: { limit, starting_after, email, is_expired },
+			query: { limit, starting_after, email, is_expired, order_by },
 		}),
 		{
 			log: ({ account_id }, result) => ({

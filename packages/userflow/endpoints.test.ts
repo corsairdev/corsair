@@ -717,6 +717,54 @@ describe('ordering and filters', () => {
 		).rejects.toThrow();
 	});
 
+	it('sends expand when listing content versions', async () => {
+		respond(fetchMock, contentVersionsPage);
+
+		await invoke(Content.listVersions, {
+			content_id: 'c_1',
+			expand: 'questions',
+		});
+
+		expect(lastRequest(fetchMock).query.expand).toBe('questions');
+	});
+
+	it('sends expand when listing content', async () => {
+		respond(fetchMock, contentPage);
+
+		await invoke(Content.list, { expand: 'published_version' });
+
+		expect(lastRequest(fetchMock).query.expand).toBe('published_version');
+	});
+
+	it.each([
+		['content', () => Content.list, {}, ['-name']],
+		['sessions', () => ContentSessions.list, {}, ['-last_activity_at']],
+		['attributes', () => Attributes.listAttributes, {}, '-created_at'],
+		['event definitions', () => Attributes.listEvents, {}, ['-name']],
+		['accounts', () => Accounts.listAccounts, {}, '-name'],
+		[
+			'members',
+			() => Accounts.listMembers,
+			{ account_id: 'a_1' },
+			'-created_at',
+		],
+		['invites', () => Accounts.listInvites, { account_id: 'a_1' }, ['-name']],
+		['webhook subscriptions', () => WebhookSubscriptions.list, {}, '-url'],
+	] as const)(
+		'accepts a descending or scalar order_by on %s and sends it',
+		async (_name, endpoint, extra, orderBy) => {
+			respond(fetchMock, { object: 'list', data: [], has_more: false });
+
+			await invoke(endpoint(), { ...extra, order_by: orderBy });
+
+			const sent = lastRequest(fetchMock).queryPairs.filter(([key]) =>
+				key.startsWith('order_by'),
+			);
+			const expected = typeof orderBy === 'string' ? orderBy : orderBy[0];
+			expect(sent.map(([, value]) => value)).toEqual([expected]);
+		},
+	);
+
 	it('forwards the documented group filters', async () => {
 		respond(fetchMock, groupsPage);
 

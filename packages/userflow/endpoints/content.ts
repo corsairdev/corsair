@@ -37,10 +37,10 @@ export const list: UserflowEndpoints['contentList'] = (ctx, input) =>
 			output: Outputs.contentList,
 		},
 		input,
-		({ limit, starting_after, type, order_by }) => ({
+		({ limit, starting_after, type, order_by, expand }) => ({
 			method: 'GET',
 			path: '/content',
-			query: { limit, starting_after, type, order_by },
+			query: { limit, starting_after, type, order_by, expand },
 		}),
 		{
 			log: (_, result) => ({
@@ -92,10 +92,10 @@ export const listVersions: UserflowEndpoints['contentVersionsList'] = (
 			output: Outputs.contentVersionsList,
 		},
 		input,
-		({ content_id, limit, starting_after, number, order_by }) => ({
+		({ content_id, limit, starting_after, number, order_by, expand }) => ({
 			method: 'GET',
 			path: '/content_versions',
-			query: { content_id, limit, starting_after, number, order_by },
+			query: { content_id, limit, starting_after, number, order_by, expand },
 		}),
 		{
 			log: ({ content_id }, result) => ({
