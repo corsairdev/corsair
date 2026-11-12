@@ -33,21 +33,23 @@ describeIfKey('live Worksnaps API', () => {
 	it('lists projects through the output schema, including an empty list', async () => {
 		const result = await Projects.list(liveContext() as never, {} as never);
 
-		// An account with no projects answers `<projects type="array"/>`, which used
-		// to fail the parse.
-		expect(Array.isArray(result.projects ?? [])).toBe(true);
+		// An account with no projects answers a bare `<projects/>`, which must
+		// come back as [] rather than undefined.
+		expect(Array.isArray(result.projects)).toBe(true);
 	});
 
 	it('reads the account user through the output schema', async () => {
 		const result = await Users.me(liveContext() as never, {} as never);
 
-		expect(result).toBeDefined();
+		expect(result.user.id).toEqual(expect.any(Number));
+		// /me.xml sends the token back; the plugin drops it.
+		expect(JSON.stringify(result)).not.toContain(token as string);
 	});
 
 	it('lists users through the output schema', async () => {
 		const result = await Users.list(liveContext() as never, {} as never);
 
-		expect(Array.isArray(result.users ?? [])).toBe(true);
+		expect(Array.isArray(result.users)).toBe(true);
 	});
 
 	it('reads a project when the account has one', async () => {
