@@ -111,6 +111,17 @@ describe('Refiner error handlers', () => {
 		});
 	});
 
+	it('retries a network failure only when the operation declared itself replayable', async () => {
+		const read = apiError({ method: 'GET', replayable: true });
+		const track = apiError({ method: 'POST', replayable: false });
+
+		expect(await matches(read)).toBe('NETWORK_ERROR');
+		await expect(run('NETWORK_ERROR', read)).resolves.toMatchObject({
+			maxRetries: 2,
+		});
+		expect(await matches(track)).toBe('DEFAULT');
+	});
+
 	it('falls back to DEFAULT for anything else', async () => {
 		expect(await matches(new Error('something odd'))).toBe('DEFAULT');
 	});

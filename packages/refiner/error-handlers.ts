@@ -66,6 +66,18 @@ export const errorHandlers = {
 				: { maxRetries: 0 };
 		},
 	},
+	// No status: fetch failed or timed out before Refiner answered. Only a
+	// replayable operation retries, for the same reason as a 5xx.
+	NETWORK_ERROR: {
+		match: (error: Error) => {
+			const api = apiError(error);
+			return api !== undefined && api.status === undefined && api.replayable;
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// 429 is handled above; anything else that is not a recognised status.
 	DEFAULT: {
 		match: () => true,
