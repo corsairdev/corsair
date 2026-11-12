@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Records from './endpoints';
+import type { RagicRecordSet, RecordsCommentResponse } from './endpoints/types';
 import {
 	BAD_PARAMS,
 	COMMENT_ADDED,
@@ -70,10 +71,7 @@ describe('records.list', () => {
 	it('lists records from a sheet', async () => {
 		respond(fetchMock, RECORDS);
 
-		const result = (await invoke(Records.list, SHEET)) as Record<
-			string,
-			Record<string, unknown>
-		>;
+		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/demo/sales/1');
@@ -85,10 +83,7 @@ describe('records.list', () => {
 	it('keeps the row-id keys as strings', async () => {
 		respond(fetchMock, RECORDS);
 
-		const result = (await invoke(Records.list, SHEET)) as Record<
-			string,
-			unknown
-		>;
+		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
 
 		expect(Object.keys(result)).toEqual(['12345', '12346']);
 	});
@@ -96,10 +91,7 @@ describe('records.list', () => {
 	it('reads field names by default', async () => {
 		respond(fetchMock, RECORDS_BY_NAME);
 
-		const result = (await invoke(Records.list, SHEET)) as Record<
-			string,
-			Record<string, unknown>
-		>;
+		const result = (await invoke(Records.list, SHEET)) as RagicRecordSet;
 
 		expect(result['1']?.['Account Name']).toBe('Alphabet Inc.');
 	});
@@ -263,7 +255,7 @@ describe('records.get', () => {
 		const result = (await invoke(Records.get, {
 			...SHEET,
 			recordId: 12345,
-		})) as Record<string, Record<string, unknown>>;
+		})) as RagicRecordSet;
 
 		expect(lastRequest(fetchMock).path).toBe('/demo/sales/1/12345');
 		expect(result['12345']?._ragicId).toBe(12345);
@@ -275,12 +267,10 @@ describe('records.get', () => {
 		const result = (await invoke(Records.get, {
 			...SHEET,
 			recordId: 41,
-		})) as Record<string, Record<string, Record<string, unknown>>>;
+		})) as RagicRecordSet;
 
-		const subtable = result['41']?._subtable_2000154 as Record<
-			string,
-			Record<string, unknown>
-		>;
+		// A subtable is itself a record set nested in the record.
+		const subtable = result['41']?._subtable_2000154 as RagicRecordSet;
 		expect(subtable['0']?.['Contact Name']).toBe('Jeff Kuo');
 		expect(subtable['1']?.['Title']).toBe('Marketing');
 	});
@@ -513,7 +503,7 @@ describe('records.comment', () => {
 			...SHEET,
 			recordId: 2,
 			comment: 'Please review this order.',
-		})) as Record<string, unknown>;
+		})) as RecordsCommentResponse;
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
