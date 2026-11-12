@@ -60,6 +60,8 @@ local approval expires after 15 minutes; request a new URL if needed. Uploads
 require a public IPv4 connection to `storage.googleapis.com`, do not follow
 redirects, and never send the DocsBot API key to storage. This API buffers the
 file in memory and does not currently provide a streaming upload interface.
+There is no built-in upload timeout; a stalled connection may leave the upload
+pending until the connection closes.
 
 ## Webhooks
 
