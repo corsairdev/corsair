@@ -155,6 +155,29 @@ export const LIBRARY_VERSIONS = {
 	],
 };
 
+/**
+ * What `GET /libraries/{id}/versions` actually answered live on 11-12: the rows
+ * sit under `libraries`, not the documented `libraryVersions`, and carry no
+ * `isPublished`.
+ */
+export const LIBRARY_VERSIONS_LIVE = {
+	libraries: [
+		{
+			id: '3LzaHTAfowdyqKeb8ZxMrWUXQMd',
+			versionId: '3LzaHQewLTaIJxAd2cuYLaScuAs',
+			name: 'corsair-plugin-test',
+			description: 'corsair plugin live test',
+			code: 'export function corsairPluginTest(value) {\n  return value;\n}',
+			language: 'javascript',
+			handleName: 'corsairPluginTest',
+			createdAt: '2026-11-12T04:54:21.101Z',
+			updatedAt: '2026-11-12T04:54:21.101Z',
+			importName: 'corsairPluginTest',
+			externalId: null,
+		},
+	],
+};
+
 export const PUBLISHED = { published: true };
 
 // Live against api.rudderstack.com with an unrecognised bearer token.

@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { RudderStackTransformationEndpoints } from '..';
 import { call, segment } from './call';
 import {
@@ -91,6 +92,15 @@ export const listVersions: RudderStackTransformationEndpoints['librariesListVers
 				replayable: true,
 			}),
 			{
+				// The docs show the rows under `libraryVersions`, but the live API sends
+				// them under `libraries`, so either key fills `libraryVersions`.
+				// unknown: the response body before the output schema parses it.
+				shape: (raw: unknown) => {
+					const body = asRecord(raw);
+					if (!body || body.libraryVersions !== undefined) return raw;
+					const { libraries, ...rest } = body;
+					return { ...rest, libraryVersions: libraries };
+				},
 				log: (_, result) => ({
 					count: result.libraryVersions?.length ?? 0,
 					published:

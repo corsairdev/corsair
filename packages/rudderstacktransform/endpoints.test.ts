@@ -4,6 +4,7 @@ import {
 	LIBRARIES,
 	LIBRARY,
 	LIBRARY_VERSIONS,
+	LIBRARY_VERSIONS_LIVE,
 	NOT_PUBLISHED,
 	PUBLISH_TEST_FAILED,
 	PUBLISHED,
@@ -437,6 +438,19 @@ describe('libraries.listVersions', () => {
 		);
 		expect(result.libraryVersions?.[0]?.isPublished).toBe(false);
 		expect(result.libraryVersions?.[1]?.isPublished).toBe(true);
+	});
+
+	it('reads the rows RudderStack sends under libraries', async () => {
+		respond(fetchMock, LIBRARY_VERSIONS_LIVE);
+
+		const result = (await invoke(Libraries.listVersions, {
+			id: '3LzaHTAfowdyqKeb8ZxMrWUXQMd',
+		})) as { libraryVersions?: { versionId?: string }[] };
+
+		expect(result.libraryVersions).toHaveLength(1);
+		expect(result.libraryVersions?.[0]?.versionId).toBe(
+			'3LzaHQewLTaIJxAd2cuYLaScuAs',
+		);
 	});
 
 	it('logs how many revisions are published', async () => {

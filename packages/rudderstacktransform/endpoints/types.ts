@@ -329,7 +329,12 @@ export type LibraryVersionsInput = z.infer<typeof LibraryVersionsInputSchema>;
 
 const LibraryVersionsResponseSchema = z
 	.object({
-		libraryVersions: z.array(LibrarySchema).nullish(),
+		libraryVersions: z
+			.array(LibrarySchema)
+			.nullish()
+			.describe(
+				'The revisions. The live API sends them under `libraries`; the plugin moves them here.',
+			),
 	})
 	.loose();
 
