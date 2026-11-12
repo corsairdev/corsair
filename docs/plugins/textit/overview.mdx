@@ -9,7 +9,7 @@ Use **TextIt** through Corsair: one client, typed API calls.
 TextIt API v2 uses an API token from your TextIt account. List operations return a page with `next`, `previous` and `results`; pass the `cursor` from the next link to request another page.
 
 - Sending messages and broadcasts and starting flows can contact real people. Bulk contact and message actions include permanent deletion.
-- Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or a `failures` array when some messages could not be updated.
+- Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
 - Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
 - Rate-limited requests throw a `TextItAPIError` with `retryAfter` in milliseconds when TextIt supplies a numeric `Retry-After`. The default handlers do not retry; custom error handlers must not replay writes.
 - Outbound resthook subscription management is supported; inbound webhook verification is not included.

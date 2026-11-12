@@ -6,7 +6,10 @@ describe('TextIt documentation examples', () => {
 		const docs = require('./plugin-docs.yaml') as {
 			apiExamples: Record<string, { args?: object; call?: string }>;
 			examples: { write: { path: string; args: object } };
+			overviewNote: string;
 		};
+		expect(docs.overviewNote).toContain('{ failures: [...] }');
+		expect(docs.overviewNote).toContain('result.failures');
 		for (const [operation, schemas] of Object.entries(textItEndpointSchemas)) {
 			const example = docs.apiExamples[operation];
 			// Blob cannot be represented as YAML data; the raw documented call constructs one.
