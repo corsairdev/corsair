@@ -98,7 +98,11 @@ describe('Ragic error handlers', () => {
 	});
 
 	it('retries a rate-limited read: HTTP 429 or body code 204', async () => {
-		const status429 = apiError({ status: 429, method: 'GET', replayable: true });
+		const status429 = apiError({
+			status: 429,
+			method: 'GET',
+			replayable: true,
+		});
 		const code204 = apiError({ code: 204, method: 'GET', replayable: true });
 
 		expect(await matches(status429)).toBe('RATE_LIMIT_ERROR');

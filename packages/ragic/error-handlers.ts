@@ -23,7 +23,10 @@ export const errorHandlers = {
 			if (api?.replayable !== true) return { maxRetries: 0 };
 			return api.retryAfter
 				? { maxRetries: 3, headersRetryAfterMs: api.retryAfter }
-				: { maxRetries: 3, retryStrategy: 'exponential_backoff_jitter' as const };
+				: {
+						maxRetries: 3,
+						retryStrategy: 'exponential_backoff_jitter' as const,
+					};
 		},
 	},
 	// 105 auth required, 106 no access right. A missing key and a wrong key both
