@@ -24,7 +24,7 @@ await corsair.conversiontools.api.account.getConfig({});
 
 **Input:** _empty object_
 
-These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls.
+These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. In the expanded output types, enum values render bare, so `type?: string | boolean | enum | number` lists the literal strings `'string'`, `'boolean'`, `'enum'`, and `'number'` that a converter option accepts; it is not a TypeScript primitive type.
 
 
 **Output**
