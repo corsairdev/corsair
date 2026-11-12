@@ -291,6 +291,9 @@ describe('request method tagging', () => {
 		)) as Route4MeAPIError;
 
 		expect(error.method).toBe('POST');
+		expect(error.replayable).toBe(false);
+		expect(error.status).toBe(500);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('keeps the route id out of a path-encoded request', async () => {
