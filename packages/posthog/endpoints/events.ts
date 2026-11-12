@@ -9,7 +9,10 @@ import {
 } from '../client';
 import type { PostHogEndpoints } from '../index';
 import type { PostHogEndpointOutputs } from './types';
-import { PostHogEndpointInputSchemas } from './types';
+import {
+	PostHogEndpointInputSchemas,
+	PostHogSuccessResponseSchema,
+} from './types';
 
 /**
  * Sends one event to `/capture/`. With a personal key the project token is
@@ -30,19 +33,25 @@ async function capture<T>(
 			base,
 		});
 	};
+	let response: T;
 	try {
-		return await send();
+		response = await send();
 	} catch (error) {
 		if (
-			error instanceof PostHogAPIError &&
-			error.status === 401 &&
-			isPersonalApiKey(credentials.key)
+			!(
+				error instanceof PostHogAPIError &&
+				error.status === 401 &&
+				isPersonalApiKey(credentials.key)
+			)
 		) {
-			invalidateCaptureToken(credentials);
-			return send();
+			throw error;
 		}
-		throw error;
+		invalidateCaptureToken(credentials);
+		response = await send();
 	}
+	// Throws if /capture/ answers with something other than its success shape.
+	PostHogSuccessResponseSchema.parse(response);
+	return response;
 }
 
 /** Optional timestamp and uuid, only when given. */

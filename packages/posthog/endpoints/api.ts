@@ -94,22 +94,21 @@ export function defineApiEndpoint<K extends ApiEndpointKey>(
 				projectId: project_id,
 			},
 		);
+		const result = request.transform ? request.transform(response) : response;
+		const parsed = outputSchema.safeParse(result);
+		if (!parsed.success) {
+			const issue = parsed.error.issues[0];
+			throw new Error(
+				`[posthog] ${eventType}: response did not match the schema at ${issue?.path.join('.') || '(root)'}: ${issue?.message}`,
+			);
+		}
 		await logEventFromContext(
 			ctx,
 			eventType,
 			{ ...(request.log ?? {}), ...(project_id ? { project_id } : {}) },
 			'completed',
 		);
-
-		const result = request.transform ? request.transform(response) : response;
-		const parsed = outputSchema.safeParse(result);
-		if (parsed.success) return parsed.data;
-		// PostHog changed a shape we rely on: hand back what it sent and say so.
-		const issue = parsed.error.issues[0];
-		console.warn(
-			`[posthog] ${eventType}: response did not match the schema at ${issue?.path.join('.') || '(root)'}: ${issue?.message}`,
-		);
-		return result;
+		return parsed.data;
 	};
 	// The handler's parameter and return types come from the zod schemas for
 	// key K; TypeScript can't relate them to PostHogEndpoints[K] generically,

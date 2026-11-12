@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
 	CAPTURE_TOKEN_TTL_MS,
@@ -467,7 +467,12 @@ describe('PostHog project scope', () => {
 	});
 
 	it('uses a per-call project_id and never sends it to PostHog', async () => {
-		const calls = mockFetch(() => ({ status: 200, body: fixture('queryRun') }));
+		const calls = mockFetch((url) => ({
+			status: 200,
+			body: fixture(
+				url.includes('/query/') ? 'queryRun' : 'propertyDefinitionsList',
+			),
+		}));
 		await run(ctx, { query: 'select 1', project_id: 99 });
 		expect(calls[0]!.url).toBe('https://us.posthog.com/api/projects/99/query/');
 		expect(jsonBody(calls[0]!)).not.toHaveProperty('project_id');
@@ -479,9 +484,11 @@ describe('PostHog project scope', () => {
 	});
 
 	it('reaches organization endpoints without a project id', async () => {
-		const calls = mockFetch(() => ({
+		const calls = mockFetch((url) => ({
 			status: 200,
-			body: fixture('projectsList'),
+			body: fixture(
+				url.includes('/projects/') ? 'projectsList' : 'organizationsGet',
+			),
 		}));
 		const noProject = ctxFor({ key: PHX, host: 'https://us.posthog.com' });
 		await projectsList(noProject, {});
@@ -735,13 +742,10 @@ describe('PostHog input and output validation', () => {
 		expect(calls).toHaveLength(0);
 	});
 
-	it('returns the raw response with a warning when PostHog changes a shape', async () => {
+	it('throws when a PostHog response does not match the schema', async () => {
 		mockFetch(() => ({ status: 200, body: { unexpected: true } }));
-		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-		const result = await insightsDelete(ctx, { id: 7 });
-		expect(result).toEqual({ unexpected: true });
-		expect(warn).toHaveBeenCalledWith(
-			expect.stringContaining('posthog.insights.delete'),
+		await expect(insightsDelete(ctx, { id: 7 })).rejects.toThrow(
+			'posthog.insights.delete',
 		);
 	});
 
@@ -985,9 +989,15 @@ describe('PostHog sends each action to the right place', () => {
 	it.each(rows)(
 		'$operation → $method $path',
 		async ({ operation, input, method, path, bodyKey }) => {
-			jest.spyOn(console, 'warn').mockImplementation(() => {});
-			const calls = mockFetch(() => ({ status: 200, body: {} }));
 			const [group, action] = operation.split('.') as [string, string];
+			// Hand back the action's recorded response so the output check passes
+			// and the test asserts only the request.
+			const name = `${group}${action[0]!.toUpperCase()}${action.slice(1)}`;
+			// alerts.get has no recording (the project has no alerts).
+			const body = existsSync(join(__dirname, 'test-data', `${name}.json`))
+				? fixture(name)
+				: { id: 'a1', name: 'Signups dropped', enabled: true };
+			const calls = mockFetch(() => ({ status: 200, body }));
 			const handler = tree[group]?.[action];
 			expect(handler).toBeDefined();
 			await handler!(ctx, input as never);

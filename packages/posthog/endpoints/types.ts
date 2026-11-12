@@ -226,7 +226,8 @@ export type PostHogEndpointInputs = {
 	>;
 };
 
-const PostHogSuccessResponseSchema = z.union([
+/** What `/capture/` answers: `{ status: 1 }` or `{ status: 'Ok' }`. */
+export const PostHogSuccessResponseSchema = z.union([
 	z.number(),
 	z.string(),
 	z
@@ -235,7 +236,6 @@ const PostHogSuccessResponseSchema = z.union([
 			message: z.string().optional(),
 		})
 		.loose(),
-	z.any(),
 ]);
 
 export const PostHogEndpointOutputSchemas = {
