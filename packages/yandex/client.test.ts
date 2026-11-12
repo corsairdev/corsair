@@ -75,8 +75,8 @@ describe('makeYandexRequest', () => {
 			method: 'POST',
 			path: '/translate/v2/translate',
 			body: {},
-		// unknown: a promise can reject with any value; the cast narrows it to the
-		// plugin's error type for the assertions.
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as YandexAPIError;
 
 		expect(error).toBeInstanceOf(YandexAPIError);
@@ -93,8 +93,8 @@ describe('makeYandexRequest', () => {
 		const error = (await makeYandexRequest(API_KEY, {
 			method: 'POST',
 			path: '/translate/v2/translate',
-		// unknown: a promise can reject with any value; the cast narrows it to the
-		// plugin's error type for the assertions.
+			// unknown: a promise can reject with any value; the cast narrows it to the
+			// plugin's error type for the assertions.
 		}).catch((thrown: unknown) => thrown)) as YandexAPIError;
 
 		expect(error.message).toBe('fetch failed');

@@ -84,8 +84,8 @@ describe('translate', () => {
 		const result = (await invoke(Translate.translate, {
 			targetLanguageCode: 'ru',
 			texts: ['Hello', 'World'],
-		// unknown: only the length is asserted; the row shape is validated by the
-		// output schema in the cases that read fields.
+			// unknown: only the length is asserted; the row shape is validated by the
+			// output schema in the cases that read fields.
 		})) as { translations?: unknown[] };
 
 		expect(result.translations).toHaveLength(2);
@@ -117,6 +117,7 @@ describe('translate', () => {
 			texts: ['a confidential sentence'],
 		});
 
+		// unknown: the logged payload is open; only its keys are asserted here.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(JSON.stringify(logged)).not.toContain('confidential');
 		// Only the size and the languages.
@@ -222,6 +223,7 @@ describe('detect', () => {
 
 		await invoke(Translate.detect, { texts: ['secret phrase', 'another'] });
 
+		// unknown: the logged payload is open; only its keys are asserted here.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(JSON.stringify(logged)).not.toContain('secret');
 		expect(logged.passages).toBe(2);
@@ -236,6 +238,7 @@ describe('languages', () => {
 	it('lists the supported languages', async () => {
 		respond(fetchMock, languages);
 
+		// unknown: only the length is asserted; the output schema checks the rows.
 		const result = (await invoke(Translate.languages, {})) as {
 			languages?: unknown[];
 		};
