@@ -352,3 +352,26 @@ export const FORBIDDEN = {
 };
 
 export const SERVER_ERROR = { error: 'Server error.' };
+
+/**
+ * Live `GET /reporting?type=ratings` (11-12, trial account): with buckets 0 to 10
+ * in order, Refiner encodes `data` as a JSON array indexed by rating, not as the
+ * object the docs show.
+ */
+export const REPORT_RATINGS_LIVE = {
+	data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+	sum: 28,
+	count: 3,
+	average: 9.33,
+	date_range_start: '2026-11-01T00:00:00.000000Z',
+	date_range_end: '2026-11-12T06:57:37.918344Z',
+};
+
+/** Live `GET /reporting?type=distribution` with no data: `data` is `[]`. */
+export const REPORT_DISTRIBUTION_EMPTY_LIVE = {
+	data: [],
+	responses: 0,
+	datapoints: 0,
+	date_range_start: '2026-11-01T00:00:00.000000Z',
+	date_range_end: '2026-11-12T06:57:42.937875Z',
+};

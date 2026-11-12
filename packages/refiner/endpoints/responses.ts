@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { RefinerEndpoints } from '..';
 import { bracketQuery, listQuery } from '../client';
 import { call } from './call';
@@ -127,6 +128,20 @@ export const tag: RefinerEndpoints['responsesTag'] = (ctx, input) =>
 		},
 	);
 
+/**
+ * Turns a report's `data` into a bucket-to-count map when it arrives as an array.
+ *
+ * Live, a ratings report sends `data` as `[0, 0, …, 2, 1]` (index n is the count
+ * for rating n), and an empty distribution sends `[]`: Refiner's JSON encoder
+ * writes buckets numbered 0 to n in order as an array, and an object otherwise.
+ * unknown: raw is the response body before the output schema parses it.
+ */
+function bucketsAsMap(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record || !Array.isArray(record.data)) return raw;
+	return { ...record, data: Object.fromEntries(record.data.entries()) };
+}
+
 export const report: RefinerEndpoints['reportingGet'] = (ctx, input) =>
 	call(
 		ctx,
@@ -154,6 +169,7 @@ export const report: RefinerEndpoints['reportingGet'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
+			shape: bucketsAsMap,
 			log: (parsed, result) => ({
 				type: parsed.type,
 				nps: result.nps ?? undefined,

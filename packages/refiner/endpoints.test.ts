@@ -10,6 +10,7 @@ import {
 import type {
 	ContactsListResponse,
 	FormsHistoryResponse,
+	ReportingResponse,
 	ResponsesListResponse,
 } from './endpoints/types';
 import {
@@ -27,8 +28,10 @@ import {
 	REPORT_COUNT,
 	REPORT_CSAT,
 	REPORT_DISTRIBUTION,
+	REPORT_DISTRIBUTION_EMPTY_LIVE,
 	REPORT_NPS,
 	REPORT_RATINGS,
+	REPORT_RATINGS_LIVE,
 	RESPONSE_STORED,
 	RESPONSES,
 	SEGMENT_SYNCED,
@@ -473,6 +476,31 @@ describe('reporting.get', () => {
 
 		expect(result.average).toBe(5);
 		expect(result.sum).toBe(5);
+	});
+
+	it('reads a live ratings report whose buckets arrive as an array', async () => {
+		respond(fetchMock, REPORT_RATINGS_LIVE);
+
+		const result = (await invoke(Responses.report, {
+			type: 'ratings',
+		})) as ReportingResponse;
+
+		// Index n of the array is the count for rating n.
+		expect(result.data?.['9']).toBe(2);
+		expect(result.data?.['10']).toBe(1);
+		expect(result.data?.['0']).toBe(0);
+		expect(result.average).toBe(9.33);
+	});
+
+	it('reads an empty distribution report, whose data is []', async () => {
+		respond(fetchMock, REPORT_DISTRIBUTION_EMPTY_LIVE);
+
+		const result = (await invoke(Responses.report, {
+			type: 'distribution',
+		})) as ReportingResponse;
+
+		expect(result.data).toEqual({});
+		expect(result.responses).toBe(0);
 	});
 
 	it('reads a distribution report', async () => {
