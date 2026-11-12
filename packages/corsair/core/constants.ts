@@ -381,6 +381,7 @@ export const BaseProviders = [
 	'redcircle',
 	'reddit',
 	'reducto',
+	'referralrock',
 	'remoet',
 	'removebg',
 	'render',
@@ -875,6 +876,7 @@ export const ProviderDisplayNames = {
 	redcircle: 'RedCircle API',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
+	referralrock: 'Referral Rock',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
 	render: 'Render',
@@ -1376,6 +1378,7 @@ export type AllProviders =
 	| 'redcircle'
 	| 'reddit'
 	| 'reducto'
+	| 'referralrock'
 	| 'remoet'
 	| 'removebg'
 	| 'render'

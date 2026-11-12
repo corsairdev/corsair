@@ -3194,6 +3194,14 @@
                 ]
               },
               {
+                "group": "Referral Rock",
+                "pages": [
+                  "plugins/referralrock/overview",
+                  "plugins/referralrock/api",
+                  "plugins/referralrock/database"
+                ]
+              },
+              {
                 "group": "Remoet",
                 "pages": [
                   "plugins/remoet/overview",
