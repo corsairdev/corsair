@@ -431,6 +431,18 @@ export const presentationsRemove: GoogleSlidesEndpoints['presentationsDelete'] =
 			},
 			input,
 			async (parsed) => {
+				// The Drive scope can delete any file, but this operation is approved
+				// as deleting a deck, so a document, sheet or folder id is refused.
+				const file = await makeDriveRequest<{ mimeType?: string }>(
+					`/files/${encodeURIComponent(parsed.presentationId)}`,
+					ctx,
+					{ query: { fields: 'mimeType', supportsAllDrives: true } },
+				);
+				if (file.mimeType !== PRESENTATION_MIME_TYPE) {
+					throw new Error(
+						`presentations.delete refused: ${parsed.presentationId} is not a Google Slides presentation (Drive reports ${file.mimeType ?? 'no MIME type'}).`,
+					);
+				}
 				// Drive answers 204 with no body, so a resolved promise is the only
 				// success signal; a refusal throws inside makeDriveRequest.
 				await makeDriveRequest<void>(

@@ -337,18 +337,39 @@ describe('presentations.exportPdf', () => {
 });
 
 describe('presentations.delete', () => {
-	it('deletes the Drive file and reports it', async () => {
-		mockRequest.mockResolvedValue(undefined);
+	it('checks the file is a deck, then deletes it and reports it', async () => {
+		mockRequest
+			.mockResolvedValueOnce({
+				mimeType: 'application/vnd.google-apps.presentation',
+			})
+			.mockResolvedValueOnce(undefined);
 
 		const result = await PresentationsEndpoints.delete(ctx, {
 			presentationId: 'deck-1',
 		});
 
-		expect(calledUrl()).toBe(
+		expect(calledUrl(0)).toBe(
 			'https://www.googleapis.com/drive/v3/files/deck-1',
 		);
-		expect(calledOptions().method).toBe('DELETE');
+		expect(calledOptions(0).method ?? 'GET').toBe('GET');
+		expect(calledQuery(0)).toMatchObject({ fields: 'mimeType' });
+		expect(calledUrl(1)).toBe(
+			'https://www.googleapis.com/drive/v3/files/deck-1',
+		);
+		expect(calledOptions(1).method).toBe('DELETE');
 		expect(result).toEqual({ presentationId: 'deck-1', deleted: true });
+	});
+
+	it('refuses to delete a Drive file that is not a presentation', async () => {
+		mockRequest.mockResolvedValueOnce({
+			mimeType: 'application/vnd.google-apps.spreadsheet',
+		});
+
+		await expect(
+			PresentationsEndpoints.delete(ctx, { presentationId: 'sheet-1' }),
+		).rejects.toThrow(/not a Google Slides presentation/);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(calledOptions(0).method ?? 'GET').toBe('GET');
 	});
 });
 
@@ -454,7 +475,11 @@ describe('persistence keeps what a list row cannot carry', () => {
 	it('removes the cached row once the deck is deleted', async () => {
 		const presentations = makeStore();
 		const storeCtx = makeContext({ db: { presentations } });
-		mockRequest.mockResolvedValue(undefined);
+		mockRequest
+			.mockResolvedValueOnce({
+				mimeType: 'application/vnd.google-apps.presentation',
+			})
+			.mockResolvedValueOnce(undefined);
 
 		await PresentationsEndpoints.delete(storeCtx, {
 			presentationId: 'deck-1',
@@ -467,7 +492,11 @@ describe('persistence keeps what a list row cannot carry', () => {
 		const presentations = makeStore();
 		presentations.deleteByEntityId.mockRejectedValue(new Error('db down'));
 		const storeCtx = makeContext({ db: { presentations } });
-		mockRequest.mockResolvedValue(undefined);
+		mockRequest
+			.mockResolvedValueOnce({
+				mimeType: 'application/vnd.google-apps.presentation',
+			})
+			.mockResolvedValueOnce(undefined);
 		const warn = jest
 			.spyOn(console, 'warn')
 			.mockImplementation(() => undefined);
