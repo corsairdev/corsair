@@ -3689,5 +3689,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/remarkety",
+    "dir": "packages/remarkety",
+    "name": "Remarkety",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
