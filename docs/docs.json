@@ -3364,6 +3364,14 @@
                 ]
               },
               {
+                "group": "Revolt (Stoat)",
+                "pages": [
+                  "plugins/revolt/overview",
+                  "plugins/revolt/api",
+                  "plugins/revolt/database"
+                ]
+              },
+              {
                 "group": "Roam HQ",
                 "pages": [
                   "plugins/roam/overview",
