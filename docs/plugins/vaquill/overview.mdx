@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Vaquill plugin"
+sidebarTitle: "Overview"
 description: "US primary law as an API. Search statutes, regulations and court rules, resolve citations, and read section text, histories and cross-state equivalents."
 ---
 
@@ -17,16 +18,20 @@ Use **Vaquill** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/vaquill
+npm install corsair @corsair-dev/vaquill better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/vaquill
+yarn add corsair @corsair-dev/vaquill better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/vaquill
+pnpm install corsair @corsair-dev/vaquill better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/vaquill
+bun add corsair @corsair-dev/vaquill better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

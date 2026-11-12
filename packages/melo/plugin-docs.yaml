@@ -1,0 +1,66 @@
+displayName: Melo
+description: French real-estate listings through the Melo API (Stream Estate) - search properties across listing sites, read price-per-meter and points-of-interest indicators, look up locations and cities, and manage saved searches.
+domain: melo.io
+recommendedAuth: api_key
+overviewNote: |
+  **Melo is the product, Stream Estate is the API.** melo.io is the French real-estate aggregator; its developer API is served from `https://api.stream.estate` and documented at docs.stream.estate (docs.melo.io redirects there). The plugin calls `https://api.stream.estate` and authenticates with the `X-API-KEY` header. Create the key on the API Keys page of the Stream Estate console (stream.estate/console). The API is paid: a subscription, or pay-as-you-go per returned item.
+
+  **Checked live on 11-11** (pay-as-you-go account: free starting credit, then EUR 0.01 per returned item, so ask for small pages). All 13 operations ran through the plugin and `api.test.ts` passes. What the run showed:
+
+  - Response shapes match the schemas, with one exception now fixed: advert `events` carry booleans in `fieldOldValue` / `fieldNewValue` when an advert expires, not strings. Location `id` is an integer. No enum value outside the documented ones appeared, though output enums stay open in case one does.
+  - `searches.create` needs more than the spec says: a location (`includedCities`, `includedDepartments`, `includedZipcodes`, `lat`/`lon`/`radius` or `geoShapes`) and one of `budgetMin`, `budgetMax`, `pricePerMeterMin` or `pricePerMeterMax`, or Melo answers 400 naming what is missing.
+  - `searches.update` is a PUT, but fields left out keep their saved values: an update without `budgetMax` or `includedDepartments` kept both.
+  - `webhooks.simulate` answers 200 with `{"success":true,"code":200,"error":null}` and delivers one POST to the endpoint (a `match` payload, or `event` / `adEvent` / `match` for an event type).
+  - `properties.listSimilar` is served by a redirect to a `/documents/properties` search; fetch follows it.
+  - `indicators.pointsOfInterest` answered an empty collection to every query tried, and sometimes took 30 to 40 s, past the 20 s request timeout (the retry then succeeded). Its item shape is still unverified.
+  - No rate-limit headers were seen, so the 429 handling (three retries, 1s/2s/4s backoff, `Retry-After` if one arrives) is still untested.
+  - The update example in the documentation sets a webhook without `notificationEnabled`, which the notification rules in the same spec forbid, so the plugin follows the rules, not the example.
+
+  **The OpenAPI spec was the source of truth over earlier notes.** The locations route is `/public/location-autocomplete`, the cities route is `/cities`, and the webhook test route is `GET /webhook-tester`. There are 13 operations, exactly the ones in the spec.
+
+  Things to know before you call:
+
+  - **Filters are IRIs.** `includedCities`, `includedDepartments` and the other place filters take IRIs such as `/departments/77` (Paris; department ids are Melo's own, not INSEE codes), not names. Get them from `indicators.locations` (which needs a key here even though Melo serves the route publicly) or `indicators.cities`.
+  - **Numbers stand for words.** `transactionType` is 0 for sale and 1 for rent. `propertyTypes` is 0 apartment, 1 house, 2 building, 3 parking, 4 office, 5 land, 6 shop. Inputs are strict, so a misspelled filter throws instead of silently returning unfiltered data.
+  - **Paging.** `properties.list` and the other collections return the Hydra fields untouched plus a `nextPage` number, or `null` on the last page. Pass it back as `page`. `itemsPerPage` is capped at 30.
+  - **Saved searches.** `searches.create` and `searches.update` need `title`, `transactionType` and `propertyTypes`. A webhook endpoint needs `notificationEnabled: true`, and an event endpoint also needs at least one `subscribedEvents`. `searches.delete` is irreversible.
+  - **Webhook deliveries are not handled.** The plugin does not receive webhooks. `webhooks.simulate` is an API call: it asks Melo to send a test `match` (or the event in `eventType`) to an endpoint you give it, so it is a write with a side effect. It is not replayed after a 5xx or a transport failure; a 429 is retried, like every other operation.
+  - **Content type.** Melo answers `application/ld+json` only when asked for it, so the plugin sends `Accept: application/ld+json` and decodes the body itself. A wrong key answers 401 with the plain text `Authentication failed`.
+examples:
+  read:
+    path: indicators.locations
+    title: Find the place IRIs for a name
+    args:
+      query: paris
+  write:
+    path: webhooks.simulate
+    title: Send a test match to a webhook endpoint
+    args:
+      endpoint: https://hooks.example.com/melo
+apiExamples:
+  properties.list:
+    call: "{ includedDepartments: ['/departments/77'], propertyTypes: [1], transactionType: 0, budgetMax: 450000, itemsPerPage: 20 }"
+  properties.get:
+    call: "{ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c457' }"
+  properties.listSimilar:
+    call: "{ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c457', itemsPerPage: 10 }"
+  indicators.pricePerMeter:
+    call: "{ includedDepartments: ['/departments/77'], propertyTypes: [0], transactionType: 0, aggregationInterval: 'year' }"
+  indicators.pointsOfInterest:
+    call: "{ facilities: ['school'], lat: 48.8803424, lon: 2.333215, radius: 0.5 }"
+  indicators.locations:
+    call: "{ query: 'paris' }"
+  indicators.cities:
+    call: "{ insee: '75056' }"
+  searches.list:
+    call: "{}"
+  searches.get:
+    call: "{ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d' }"
+  searches.create:
+    call: "{ title: 'Houses in Paris', transactionType: 0, propertyTypes: [1], includedDepartments: ['/departments/77'], budgetMax: 450000 }"
+  searches.update:
+    call: "{ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', title: 'Houses and flats in Paris', transactionType: 0, propertyTypes: [1, 0], budgetMax: 500000 }"
+  searches.delete:
+    call: "{ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d' }"
+  webhooks.simulate:
+    call: "{ endpoint: 'https://hooks.example.com/melo', eventType: 'ad.update.price' }"
