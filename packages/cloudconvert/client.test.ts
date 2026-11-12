@@ -176,9 +176,12 @@ describe('makeCloudConvertRequest', () => {
 					secret_access_key: 'fixture-secret-key',
 					private_key: 'fixture-private-key',
 					session_token: 'fixture-session-token',
+					storage_access_key: 'fixture-storage-key',
+					sas_token: 'fixture-sas-token',
 				},
 			},
 		};
+
 		const error = new ApiError(
 			{ method: 'POST', url: '/jobs', body: requestBody },
 			{
@@ -234,6 +237,65 @@ describe('makeCloudConvertRequest', () => {
 					secret_access_key: '[REDACTED]',
 					private_key: '[REDACTED]',
 					session_token: '[REDACTED]',
+					storage_access_key: '[REDACTED]',
+					sas_token: '[REDACTED]',
+				},
+			},
+		});
+	});
+
+	it('redacts inline generic-task credentials and auth headers', async () => {
+		const requestBody = {
+			tasks: {
+				import: {
+					operation: 'import/sftp',
+					host: 'sftp.example.test',
+					username: 'fixture-user',
+					password: 'fixture-password',
+				},
+				upload: {
+					operation: 'export/upload',
+					url: 'https://example.test/upload',
+					headers: { Authorization: 'Bearer fixture-token' },
+				},
+			},
+		};
+		mockedRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/jobs', body: requestBody },
+				{
+					url: 'https://api.cloudconvert.com/v2/jobs',
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: { code: 'INVALID_DATA' },
+				},
+				'Unprocessable Entity',
+			),
+		);
+
+		await expect(
+			makeCloudConvertRequest('fixture-api-key', {
+				method: 'POST',
+				path: '/jobs',
+				body: requestBody,
+			}),
+		).rejects.toMatchObject({
+			request: {
+				body: {
+					tasks: {
+						import: {
+							operation: 'import/sftp',
+							host: 'sftp.example.test',
+							username: 'fixture-user',
+							password: '[REDACTED]',
+						},
+						upload: {
+							operation: 'export/upload',
+							url: 'https://example.test/upload',
+							headers: { Authorization: '[REDACTED]' },
+						},
+					},
 				},
 			},
 		});

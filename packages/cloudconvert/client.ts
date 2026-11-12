@@ -126,6 +126,9 @@ export async function makeCloudConvertRequest<T>(
 	}
 }
 
+// Credential names that may appear in an echoed request body: stored export
+// credentials, plus inline task credentials CloudConvert accepts for generic
+// tasks (Azure storage keys/SAS tokens, SFTP passwords, custom headers).
 const SENSITIVE_REQUEST_FIELDS = new Set([
 	'accesskeyid',
 	'authorization',
@@ -133,8 +136,10 @@ const SENSITIVE_REQUEST_FIELDS = new Set([
 	'password',
 	'privatekey',
 	'projectid',
+	'sastoken',
 	'secretaccesskey',
 	'sessiontoken',
+	'storageaccesskey',
 ]);
 
 function normalizedFieldName(field: string): string {
