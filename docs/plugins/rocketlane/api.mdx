@@ -49,7 +49,7 @@ await corsair.rocketlane.api.companies.create({ company_name: 'Acme Inc', accoun
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
@@ -402,7 +402,7 @@ await corsair.rocketlane.api.companies.update({ company_id: 301, description: 'E
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
@@ -570,7 +570,7 @@ The customer and owner blocks each need an id or a name.
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
@@ -1158,7 +1158,7 @@ await corsair.rocketlane.api.projects.update({ project_id: 201, project_name: 'A
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
@@ -1296,7 +1296,6 @@ await corsair.rocketlane.api.tasks.create({ task_name: 'Kickoff workshop', proje
 | `status` | `object` | No | The task status, by its numeric value. |
 | `external_reference_id` | `string` | No | — |
 | `private` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
 | `assignees` | `object[]` | No | — |
 | `follower_ids` | `number[]` | No | — |
 | `parent_task_id` | `number` | No | — |
@@ -1339,7 +1338,7 @@ Assignees take `user_id` or `email`; the body sends them as `userId` and `emailI
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
@@ -1984,7 +1983,7 @@ await corsair.rocketlane.api.tasks.update({ task_id: 9001, progress: 80, due_dat
 ```ts
 {
   fieldId: number,
-  value: string | number | boolean | string[]
+  value: string | number | boolean | string[] | number[]
 }[]
 ```
 </Accordion>
