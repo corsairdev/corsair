@@ -221,6 +221,32 @@ describe('contacts.create', () => {
 		});
 	});
 
+	it('sends custom properties as one object, which is what Remarkety accepts', async () => {
+		respond(fetchMock, {});
+
+		await invoke(Stores.createContact, {
+			storeId: STORE_ID,
+			email: 'jane@example.com',
+			properties: { country: 'US', rewardsPoints: 100 },
+		});
+
+		expect(lastRequest(fetchMock).bodyRecord?.properties).toEqual({
+			country: 'US',
+			rewardsPoints: 100,
+		});
+	});
+
+	it('rejects properties as an array, which Remarkety answers with a 400', async () => {
+		await expect(
+			invoke(Stores.createContact, {
+				storeId: STORE_ID,
+				email: 'jane@example.com',
+				properties: [{ country: 'US' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a contact with no email', async () => {
 		await expect(
 			invoke(Stores.createContact, { storeId: STORE_ID }),

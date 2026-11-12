@@ -170,8 +170,8 @@ export const createContact: RemarketyEndpoints['contactsCreate'] = (
 				doubleOptin,
 				allowedMarketing,
 			},
-			// Creating the same contact twice sends two marketing permissions; there is
-			// no documented upsert.
+			// Remarkety updates a contact it already has, but a replay can send the
+			// double opt-in email a second time, so it is not resent.
 			replayable: false,
 		}),
 		{

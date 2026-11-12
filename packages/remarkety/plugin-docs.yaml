@@ -16,6 +16,7 @@ overviewNote: |
 
   Things worth knowing before a write:
 
+  - **`contacts.create` emails the contact by default.** Remarkety's `doubleOptin` defaults to true and sends a confirmation request; pass `doubleOptin: false` to add a contact without it. `properties` is one object, not a list.
   - **`stores.create` and `stores.update` carry a *different* secret.** The `apiKey` there is the key Remarkety uses to sync that store; it is not the token this plugin authenticates with.
   - **`stores.update` is `PUT /stores` with the id in the body**, not `PUT /stores/{id}`. The same is true of `campaigns.update`, which is `PUT /stores/{storeId}/campaigns`.
   - **`mode` decides whether a campaign sends.** `run` starts it contacting shoppers, `test` sends a sample to `testEmail`, and `stop` halts it. Check the current mode with `campaigns.get` before updating, and remember a `stop` is the safe state to build in.
@@ -27,12 +28,12 @@ examples:
     path: rules.list
     title: List the rules a campaign can use
     args:
-      storeId: 1
+      storeId: AbC123xy
   write:
     path: contacts.create
     title: Create a contact with marketing permission
     args:
-      storeId: 1
+      storeId: AbC123xy
       email: jane@example.com
       firstName: Jane
       allowedMarketing: true
@@ -42,38 +43,38 @@ apiExamples:
   stores.update:
     call: "{ id: 1, name: 'Renamed Store', apiKey: 'store-sync-key' }"
   stores.get:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   stores.delete:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   stores.status:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   contacts.create:
-    call: "{ storeId: 1, email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true }"
+    call: "{ storeId: 'AbC123xy', email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true }"
   contacts.unsubscribe:
-    call: "{ storeId: 1, email: 'jane@example.com' }"
+    call: "{ storeId: 'AbC123xy', email: 'jane@example.com' }"
   campaigns.create:
-    call: "{ storeId: 1, type: 'abandoned-cart', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'delay', operator: 'eq', value: '1' }] }] }"
+    call: "{ storeId: 'AbC123xy', type: 'TRIGGER_CART_RECOVERY', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'CART_FOLLOWUP_TIME', operator: 'is', value: '60' }] }] }"
   campaigns.update:
-    call: "{ storeId: 1, id: 7, mode: 'run' }"
+    call: "{ storeId: 'AbC123xy', id: 7, mode: 'run' }"
   campaigns.get:
-    call: "{ storeId: 1, campaignId: 7 }"
+    call: "{ storeId: 'AbC123xy', campaignId: 7 }"
   campaigns.delete:
-    call: "{ storeId: 1, campaignId: 7 }"
+    call: "{ storeId: 'AbC123xy', campaignId: 7 }"
   campaigns.types:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   emailTemplates.get:
-    call: "{ storeId: 1, campaignId: 7, ruleId: 1 }"
+    call: "{ storeId: 'AbC123xy', campaignId: 7, ruleId: 1 }"
   emailTemplates.update:
-    call: "{ storeId: 1, campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' }"
+    call: "{ storeId: 'AbC123xy', campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' }"
   masterTemplates.list:
-    call: "{ storeId: 1, q: 'promo' }"
+    call: "{ storeId: 'AbC123xy', q: 'promo' }"
   products.list:
-    call: "{ storeId: 1, q: 'T-Shirt', limit: 50, page: 0 }"
+    call: "{ storeId: 'AbC123xy', q: 'T-Shirt', limit: 50, page: 0 }"
   rules.list:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   rules.get:
-    call: "{ storeId: 1, ruleType: 'delay' }"
+    call: "{ storeId: 'AbC123xy', ruleType: 'CART_FOLLOWUP_TIME' }"
   segments.count:
-    call: "{ storeId: 1 }"
+    call: "{ storeId: 'AbC123xy' }"
   segments.list:
-    call: "{ storeId: 1, page: 0, limit: 100 }"
+    call: "{ storeId: 'AbC123xy', page: 0, limit: 100 }"

@@ -173,15 +173,14 @@ const ContactsCreateInputSchema = z.object({
 	firstName: z.string().optional(),
 	lastName: z.string().optional(),
 	tags: z.array(z.string()).optional(),
-	properties: z
-		.array(JsonObjectSchema)
-		.optional()
-		.describe('Custom contact properties, as name/value objects.'),
+	properties: JsonObjectSchema.optional().describe(
+		'Custom contact properties as one object, such as { country: "US", city: "Austin", rewardsPoints: 100 }. Remarkety refuses an array.',
+	),
 	doubleOptin: z
 		.boolean()
 		.optional()
 		.describe(
-			'True sends the contact a confirmation email from Remarkety before they can be marketed to.',
+			'Remarkety defaults this to true, which emails the contact a confirmation request before they can be marketed to. Pass false to add the contact without that email.',
 		),
 	allowedMarketing: z
 		.boolean()
