@@ -609,13 +609,10 @@ export type RemarketyEndpointInputs = {
 	campaignsUpdate: CampaignsUpdateInput;
 	campaignsGet: CampaignsGetInput;
 	campaignsDelete: CampaignsDeleteInput;
-	campaignsStats: CampaignsStatsInput;
 	campaignsTypes: CampaignsTypesInput;
 	emailTemplateGet: EmailTemplateGetInput;
 	emailTemplateUpdate: EmailTemplateUpdateInput;
-	emailPreview: EmailPreviewInput;
 	masterTemplatesList: MasterTemplatesListInput;
-	masterTemplateSwitch: MasterTemplateSwitchInput;
 	productsList: ProductsListInput;
 	rulesList: RulesListInput;
 	rulesGet: RulesGetInput;
@@ -635,13 +632,10 @@ export type RemarketyEndpointOutputs = {
 	campaignsUpdate: CampaignsUpdateResponse;
 	campaignsGet: CampaignsGetResponse;
 	campaignsDelete: CampaignsDeleteResponse;
-	campaignsStats: CampaignsStatsResponse;
 	campaignsTypes: CampaignsTypesResponse;
 	emailTemplateGet: EmailTemplateGetResponse;
 	emailTemplateUpdate: EmailTemplateUpdateResponse;
-	emailPreview: EmailPreviewResponse;
 	masterTemplatesList: MasterTemplatesListResponse;
-	masterTemplateSwitch: MasterTemplateSwitchResponse;
 	productsList: ProductsListResponse;
 	rulesList: RulesListResponse;
 	rulesGet: RulesGetResponse;
