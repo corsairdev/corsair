@@ -29,7 +29,6 @@ examples:
     title: Create a company contact
     args:
       name: Acme Inc
-      type: company
       country: nl
       mailing_address:
         street: Damrak
