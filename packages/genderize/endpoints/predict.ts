@@ -1,0 +1,99 @@
+import { logEventFromContext } from 'corsair/core';
+import type { GenderizeContext, GenderizeEndpoints } from '..';
+import type { GenderizeCredentials } from '../client';
+import { definedQuery, makeGenderizeRequest } from '../client';
+import {
+	GenderizeEndpointInputSchemas,
+	GenderizeEndpointOutputSchemas,
+} from './types';
+
+/**
+ * Genderize authenticates with a query parameter, so the key is resolved here
+ * rather than in a header. An empty key is dropped instead of sent, which lets
+ * the API fall back to its IP-scoped allowance.
+ */
+async function resolveCredentials(
+	ctx: GenderizeContext,
+	override: string | undefined,
+): Promise<GenderizeCredentials> {
+	if (override) return { apiKey: override };
+	if (ctx.options.key) return { apiKey: ctx.options.key };
+
+	const stored = await ctx.keys.get_api_key();
+	return { apiKey: stored ?? undefined };
+}
+
+/** A name is personal data, so the log records the prediction, not the name. */
+export const predict: GenderizeEndpoints['name']['predict'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = GenderizeEndpointInputSchemas.predict.parse(input ?? {});
+
+	const raw = await makeGenderizeRequest(
+		await resolveCredentials(ctx, parsed.apikey),
+		{
+			path: '/',
+			query: definedQuery({
+				name: parsed.name,
+				country_id: parsed.country_id,
+			}),
+		},
+	);
+
+	const result = GenderizeEndpointOutputSchemas.predict.parse(raw);
+
+	await logEventFromContext(
+		ctx,
+		'genderize.name.predict',
+		{
+			gender: result.gender ?? 'unknown',
+			probability: result.probability,
+			count: result.count,
+			country_id: result.country_id,
+		},
+		'completed',
+	);
+	return result;
+};
+
+/**
+ * A batch sends repeated `name[]` parameters and answers an array in the same
+ * order. The key is one `apikey` for the whole request, so it cannot vary per
+ * name; the first name's override is the batch's, and it is read from the
+ * dedicated field.
+ */
+export const batch: GenderizeEndpoints['batch']['names'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = GenderizeEndpointInputSchemas.batch.parse(input ?? {});
+
+	const raw = await makeGenderizeRequest(
+		await resolveCredentials(ctx, parsed.apikey),
+		{
+			path: '/',
+			// `name[]` is the documented spelling for a batch, and the query builder
+			// repeats an array key rather than joining it.
+			query: definedQuery({
+				'name[]': parsed.names,
+				country_id: parsed.country_id,
+			}),
+		},
+	);
+
+	const result = GenderizeEndpointOutputSchemas.batch.parse(raw);
+
+	await logEventFromContext(
+		ctx,
+		'genderize.batch.names',
+		{
+			count: result.length,
+			// A batch is charged per name, and the ones with no match are the useful
+			// number when reconciling.
+			unknown: result.filter((row) => row.gender === null).length,
+		},
+		'completed',
+	);
+	return result;
+};
