@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "DNSFilter plugin"
+sidebarTitle: "Overview"
 description: "Cloud DNS security and content filtering - manage networks, policies, roaming clients, block pages, and traffic reporting."
 ---
 
@@ -17,16 +18,20 @@ Use **DNSFilter** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/dnsfilter
+npm install corsair @corsair-dev/dnsfilter better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/dnsfilter
+yarn add corsair @corsair-dev/dnsfilter better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/dnsfilter
+pnpm install corsair @corsair-dev/dnsfilter better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/dnsfilter
+bun add corsair @corsair-dev/dnsfilter better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

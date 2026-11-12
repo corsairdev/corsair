@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Snowflake plugin"
+sidebarTitle: "Overview"
 description: "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution."
 ---
 
@@ -16,16 +17,20 @@ Use **Snowflake** through Corsair: one client, typed API calls.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/snowflake
+npm install corsair @corsair-dev/snowflake better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/snowflake
+yarn add corsair @corsair-dev/snowflake better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/snowflake
+pnpm install corsair @corsair-dev/snowflake better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/snowflake
+bun add corsair @corsair-dev/snowflake better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
