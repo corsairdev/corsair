@@ -230,7 +230,6 @@ const ChannelSchema = z
 export type RevoltChannel = z.infer<typeof ChannelSchema>;
 
 const UserDmsResponseSchema = z.object({
-	users: z.array(UserSchema),
 	channels: z.array(ChannelSchema),
 });
 
@@ -281,7 +280,12 @@ const MessagesListInputSchema = z
 			.enum(['Oldest', 'Latest', 'Relevance'])
 			.optional()
 			.describe('Only meaningful with `nearby`.'),
-		include_users: z.boolean().optional(),
+		include_users: z
+			.boolean()
+			.optional()
+			.describe(
+				'Return the authors as `users` and `members` beside the messages. Defaults to true.',
+			),
 	})
 	.superRefine((value, ctx) => {
 		// A `sort` without `nearby` is meaningless, and `before` with `after`

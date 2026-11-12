@@ -180,7 +180,7 @@ const revoltEndpointMeta = {
 	'users.dms': {
 		riskLevel: 'read',
 		description:
-			'List the direct-message channels the account is in, with the users they belong to',
+			'List the direct-message and group channels the account is in, with their recipient ids',
 	},
 	'channels.get': {
 		riskLevel: 'read',

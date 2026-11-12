@@ -55,11 +55,8 @@ export const userDms: RevoltEndpoints['userDms'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/users/dms', replayable: true }),
 		{
-			// The route answers the DM channels beside the users they belong to.
-			shape: (raw) => {
-				const record = asRecord(raw);
-				return { users: record?.users, channels: record?.channels };
-			},
+			// The route answers a bare array of channels; it sends no users.
+			shape: (raw) => ({ channels: raw }),
 			log: (_, result) => ({ count: result.channels.length }),
 		},
 	);
@@ -148,7 +145,9 @@ export const messagesList: RevoltEndpoints['messagesList'] = (ctx, input) =>
 				after: parsed.after,
 				nearby: parsed.nearby,
 				sort: parsed.sort,
-				include_users: parsed.include_users,
+				// Authors come back inline only when asked for, so the plugin asks
+				// unless the caller opts out.
+				include_users: parsed.include_users ?? true,
 			}),
 		}),
 		{

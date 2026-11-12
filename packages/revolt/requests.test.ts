@@ -5,6 +5,7 @@ import {
 	DM_LIST,
 	MEMBER_LIST,
 	MESSAGE,
+	MESSAGE_ARRAY,
 	MESSAGE_ID,
 	MESSAGE_LIST,
 	SERVER,
@@ -61,7 +62,7 @@ describe('users.get and users.dms', () => {
 		expect(result.user.display_name).toBe('Sam Rivera');
 	});
 
-	it('lists DM channels with their users', async () => {
+	it('lists DM channels from the bare array the route answers', async () => {
 		respond(fetchMock, DM_LIST);
 
 		const result = (await invoke(Endpoints.userDms, {})) as Awaited<
@@ -70,7 +71,7 @@ describe('users.get and users.dms', () => {
 
 		expect(lastRequest(fetchMock).path).toBe('/users/dms');
 		expect(result.channels[0]?.channel_type).toBe('DirectMessage');
-		expect(result.users[0]?.username).toBe('sam');
+		expect(result.channels[0]?.recipients).toHaveLength(2);
 	});
 });
 
@@ -123,11 +124,25 @@ describe('messages', () => {
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe(`/channels/${CHANNEL_ID}/messages`);
-		expect(request.query).toEqual({ limit: '50' });
+		// The authors only come back inline when include_users is sent.
+		expect(request.query).toEqual({ limit: '50', include_users: 'true' });
 		expect(result.messages[0]?.content).toBe('Standup in five');
 		// The response carries the users and members the messages reference.
 		expect(result.users?.[0]?.username).toBe('sam');
 		expect(result.members?.[0]?.nickname).toBe('Sam');
+	});
+
+	it('reads the bare array answered when include_users is false', async () => {
+		respond(fetchMock, MESSAGE_ARRAY);
+
+		const result = (await invoke(Endpoints.messagesList, {
+			channel_id: CHANNEL_ID,
+			include_users: false,
+		})) as Awaited<ReturnType<typeof Endpoints.messagesList>>;
+
+		expect(lastRequest(fetchMock).query).toEqual({ include_users: 'false' });
+		expect(result.messages[0]?.content).toBe('Standup in five');
+		expect(result.users).toBeUndefined();
 	});
 
 	it('rejects sort without nearby, which the API ignores alone', async () => {

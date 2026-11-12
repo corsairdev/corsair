@@ -97,11 +97,15 @@ export const MESSAGE = {
 	member: MEMBER,
 };
 
+/** With `include_users=true` the list comes back as an object. */
 export const MESSAGE_LIST = {
 	messages: [MESSAGE],
 	users: [USER],
 	members: [MEMBER],
 };
+
+/** Without `include_users` the same route answers a bare array (live, 11-12). */
+export const MESSAGE_ARRAY = [MESSAGE];
 
 export const CHANNEL = {
 	_id: CHANNEL_ID,
@@ -118,16 +122,13 @@ export const CHANNEL = {
 export const DM_CHANNEL = {
 	_id: '01F8Z4D5E6F7G8H9J0K1L2M3N4',
 	channel_type: 'DirectMessage',
-	name: null,
-	description: null,
-	server: null,
-	owner: null,
-	recipients: [USER_ID],
-	default_permissions: 0,
-	icon: null,
+	active: true,
+	recipients: [USER_ID, '01F8Z5E6F7G8H9J0K1L2M3N4P5'],
+	last_message_id: MESSAGE_ID,
 };
 
-export const DM_LIST = { users: [USER], channels: [DM_CHANNEL] };
+/** `GET /users/dms` answers a bare array of channels, with no users beside it. */
+export const DM_LIST = [DM_CHANNEL];
 
 export const SERVER = {
 	_id: SERVER_ID,
