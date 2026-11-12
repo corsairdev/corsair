@@ -511,6 +511,7 @@ export const BaseProviders = [
 	'wati',
 	'webex',
 	'webflow',
+	'webscraperio',
 	'webscrapingai',
 	'webvizio',
 	'whatsapp',
@@ -1043,6 +1044,7 @@ export const ProviderDisplayNames = {
 	wati: 'Wati',
 	webex: 'Webex',
 	webflow: 'Webflow',
+	webscraperio: 'WebScraper.io',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
@@ -1582,6 +1584,7 @@ export type AllProviders =
 	| 'wati'
 	| 'webex'
 	| 'webflow'
+	| 'webscraperio'
 	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'

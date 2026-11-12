@@ -4250,6 +4250,14 @@
                 ]
               },
               {
+                "group": "Web Scraper Cloud",
+                "pages": [
+                  "plugins/webscraperio/overview",
+                  "plugins/webscraperio/api",
+                  "plugins/webscraperio/database"
+                ]
+              },
+              {
                 "group": "Webflow",
                 "pages": [
                   "plugins/webflow/overview",
