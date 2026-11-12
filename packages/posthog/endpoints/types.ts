@@ -226,17 +226,17 @@ export type PostHogEndpointInputs = {
 	>;
 };
 
-/** What `/capture/` answers: `{ status: 1 }` or `{ status: 'Ok' }`. */
-export const PostHogSuccessResponseSchema = z.union([
-	z.number(),
-	z.string(),
-	z
-		.object({
-			status: z.union([z.number(), z.string()]).optional(),
-			message: z.string().optional(),
-		})
-		.loose(),
-]);
+/**
+ * What `/capture/` answers on success: `{ status: 'Ok' }`, or `{ status: 1 }`
+ * from older PostHog versions. Anything else (an empty object, another status)
+ * fails the check.
+ */
+export const PostHogSuccessResponseSchema = z
+	.object({
+		status: z.union([z.literal('Ok'), z.literal(1)]),
+		message: z.string().optional(),
+	})
+	.loose();
 
 export const PostHogEndpointOutputSchemas = {
 	aliasCreate: PostHogSuccessResponseSchema,

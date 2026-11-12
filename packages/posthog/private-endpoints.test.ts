@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
 	CAPTURE_TOKEN_TTL_MS,
@@ -993,10 +993,12 @@ describe('PostHog sends each action to the right place', () => {
 			// Hand back the action's recorded response so the output check passes
 			// and the test asserts only the request.
 			const name = `${group}${action[0]!.toUpperCase()}${action.slice(1)}`;
-			// alerts.get has no recording (the project has no alerts).
-			const body = existsSync(join(__dirname, 'test-data', `${name}.json`))
-				? fixture(name)
-				: { id: 'a1', name: 'Signups dropped', enabled: true };
+			// alerts.get has no recording (the project has no alerts); every other
+			// action must have one, so a missing file fails here.
+			const body =
+				operation === 'alerts.get'
+					? { id: 'a1', name: 'Signups dropped', enabled: true }
+					: fixture(name);
 			const calls = mockFetch(() => ({ status: 200, body }));
 			const handler = tree[group]?.[action];
 			expect(handler).toBeDefined();
@@ -1007,6 +1009,28 @@ describe('PostHog sends each action to the right place', () => {
 			if (bodyKey) expect(jsonBody(calls[0]!)).toHaveProperty([bodyKey]);
 		},
 	);
+});
+
+describe('PostHog capture response', () => {
+	it('accepts the documented success answers', () => {
+		expect(
+			PostHogEndpointOutputSchemas.eventCreate.safeParse({ status: 'Ok' })
+				.success,
+		).toBe(true);
+		expect(
+			PostHogEndpointOutputSchemas.eventCreate.safeParse({ status: 1 }).success,
+		).toBe(true);
+	});
+
+	it('rejects an empty or failed capture answer', () => {
+		expect(PostHogEndpointOutputSchemas.eventCreate.safeParse({}).success).toBe(
+			false,
+		);
+		expect(
+			PostHogEndpointOutputSchemas.eventCreate.safeParse({ status: 'failed' })
+				.success,
+		).toBe(false);
+	});
 });
 
 describe('PostHog retries', () => {
