@@ -72,10 +72,19 @@ describeIfKey('live Rollbar API', () => {
 	});
 
 	it('lists deploys through the output schema', async () => {
+		const { projects } = await Endpoints.projectsList(liveContext(), {});
+		const project = projects.find((entry) => entry.id != null);
+		if (project?.id == null) {
+			throw new Error(
+				'The live deploy check requires an accessible Rollbar project.',
+			);
+		}
+
 		const result = await Endpoints.deploysList(
 			liveContext() as never,
 			{
 				page: 1,
+				project_id: project.id,
 			} as never,
 		);
 
