@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// `unknown`: DigiCert's OpenAPI spec omits these provider-defined value shapes,
+// so narrower validation would require inventing undocumented constraints.
+const unspecifiedProviderValue = () => z.unknown();
+
 const r_2db205955e7eInput = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -693,7 +697,7 @@ const r_f05dba0a427dOutput = z
 		user_confirmed_lang: z.boolean().optional(),
 		disable_api_access_token: z.boolean().optional(),
 		disable_cac_upload: z.boolean().optional(),
-		applications: z.array(z.unknown()).optional(),
+		applications: z.array(unspecifiedProviderValue()).optional(),
 		accounts: z
 			.array(
 				z
@@ -986,7 +990,7 @@ const r_fbfdfcedaba1Output = z.array(
 			user_confirmed_lang: z.boolean().optional(),
 			disable_api_access_token: z.boolean().optional(),
 			disable_cac_upload: z.boolean().optional(),
-			applications: z.array(z.unknown()).optional(),
+			applications: z.array(unspecifiedProviderValue()).optional(),
 			accounts: z
 				.array(
 					z
@@ -1112,7 +1116,7 @@ const r_97a1d92f48f0Output = z.array(
 			user_confirmed_lang: z.boolean().optional(),
 			disable_api_access_token: z.boolean().optional(),
 			disable_cac_upload: z.boolean().optional(),
-			applications: z.array(z.unknown()).optional(),
+			applications: z.array(unspecifiedProviderValue()).optional(),
 			accounts: z
 				.array(
 					z
@@ -1773,7 +1777,7 @@ const r_35f6309030acInput = z
 			.passthrough(),
 	})
 	.strict();
-const r_35f6309030acOutput = z.unknown();
+const r_35f6309030acOutput = unspecifiedProviderValue();
 const r_6ab53e3e6059Input = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -1793,7 +1797,7 @@ const r_a48e8840fc8cInput = z
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_a48e8840fc8cOutput = z.unknown();
+const r_a48e8840fc8cOutput = unspecifiedProviderValue();
 const r_9e9cfb59b47aInput = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -2374,7 +2378,7 @@ const r_419129d1877aOutput = z.intersection(
 										.optional(),
 									private_key_usage_period: z
 										.object({
-											critical: z.unknown().optional(),
+											critical: unspecifiedProviderValue().optional(),
 											not_after: z.string().optional(),
 											not_before: z.string().optional(),
 										})
@@ -3211,7 +3215,7 @@ const r_bb6316690c68Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -4016,7 +4020,7 @@ const r_bb6316690c68Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -4834,7 +4838,7 @@ const r_e2d08c123889Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -5361,9 +5365,9 @@ const r_2ff5d2e16aebInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				issue_end_entities: z.unknown().optional(),
-				issue_ica_intermediates: z.unknown().optional(),
-				issue_unmanaged_ca: z.unknown().optional(),
+				issue_end_entities: unspecifiedProviderValue().optional(),
+				issue_ica_intermediates: unspecifiedProviderValue().optional(),
+				issue_unmanaged_ca: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -6211,7 +6215,9 @@ const r_85b7ca4c4f50Output = z
 	.object({
 		cert_blob: z.array(z.number().int()).optional(),
 		cert_type: z.string().optional(),
-		children: z.array(z.record(z.string(), z.unknown())).optional(),
+		children: z
+			.array(z.record(z.string(), unspecifiedProviderValue()))
+			.optional(),
 		id: z.string().optional(),
 		name: z.string().optional(),
 		parsed_subject: z
@@ -6223,7 +6229,7 @@ const r_85b7ca4c4f50Output = z
 						z
 							.object({
 								type: z.array(z.number().int()).optional(),
-								value: z.unknown().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough(),
 					)
@@ -6234,7 +6240,7 @@ const r_85b7ca4c4f50Output = z
 						z
 							.object({
 								type: z.array(z.number().int()).optional(),
-								value: z.unknown().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough(),
 					)
@@ -6866,7 +6872,7 @@ const r_47971e5aadf2Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -7676,7 +7682,7 @@ const r_81b7e6e852baOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -8744,7 +8750,7 @@ const r_2e0b14749b40Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -9549,7 +9555,7 @@ const r_2e0b14749b40Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -10368,7 +10374,7 @@ const r_bed51bae8a4dInput = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -11173,7 +11179,7 @@ const r_bed51bae8a4dOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -11992,7 +11998,7 @@ const r_9a3dba0916b3Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -12797,7 +12803,7 @@ const r_9a3dba0916b3Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -13616,7 +13622,7 @@ const r_39765268d88fInput = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -14421,7 +14427,7 @@ const r_39765268d88fOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -14939,7 +14945,7 @@ const r_96e6bdf242a9Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -15356,7 +15362,7 @@ const r_96e6bdf242a9Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -15854,7 +15860,7 @@ const r_672dcfb0f9e0Output = z.intersection(
 										.optional(),
 									private_key_usage_period: z
 										.object({
-											critical: z.unknown().optional(),
+											critical: unspecifiedProviderValue().optional(),
 											not_after: z.string().optional(),
 											not_before: z.string().optional(),
 										})
@@ -16411,7 +16417,7 @@ const r_62e5e3240f68Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -16945,7 +16951,7 @@ const r_62e5e3240f68Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})

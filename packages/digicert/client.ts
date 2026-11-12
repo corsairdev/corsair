@@ -143,7 +143,7 @@ export async function makeDigicertRequest<T>(
 
 const MAX_BINARY_BYTES = 32 * 1024 * 1024;
 const MAX_BINARY_RATE_LIMIT_RETRIES = 3;
-const MAX_BINARY_RETRY_DELAY_MS = 30_000;
+const MAX_BINARY_BACKOFF_DELAY_MS = 30_000;
 
 function stringHeaders(
 	headers: ApiRequestOptions['headers'],
@@ -198,9 +198,12 @@ async function requestBinary<T>(options: {
 		// Best-effort cancellation releases the rate-limited response before retrying.
 		await response.body?.cancel().catch(() => undefined);
 		const backoff = 1000 * 2 ** attempt;
-		await sleep(
-			Math.min(Math.max(0, retryAfter ?? backoff), MAX_BINARY_RETRY_DELAY_MS),
-		);
+		// Preserve an explicit provider Retry-After; only cap our fallback backoff.
+		const retryDelay =
+			retryAfter === undefined
+				? Math.min(backoff, MAX_BINARY_BACKOFF_DELAY_MS)
+				: Math.max(0, retryAfter);
+		await sleep(retryDelay);
 	}
 	if (!response.ok) {
 		const retryAfter = retryAfterMs(response);
@@ -256,6 +259,7 @@ function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// `unknown`: provider error JSON is untrusted and has no shared documented shape.
 async function readErrorBody(response: Response): Promise<unknown> {
 	const text = await response.text();
 	if (!text) return undefined;

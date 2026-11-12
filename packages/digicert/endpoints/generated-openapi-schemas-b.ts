@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// `unknown`: DigiCert's OpenAPI spec omits these provider-defined value shapes,
+// so narrower validation would require inventing undocumented constraints.
+const unspecifiedProviderValue = () => z.unknown();
+
 const r_652f18b2b4b6Output = z
 	.object({
 		account_assignments: z
@@ -248,7 +252,7 @@ const r_652f18b2b4b6Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -870,7 +874,7 @@ const r_1343adaa2bdbOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -1204,9 +1208,10 @@ const r_f55c3dc3abceOutput = z.intersection(
 									crl_scope: z.string().optional(),
 									generation: z
 										.object({
-											crl_frequency_hours: z.unknown().optional(),
-											crl_validity_hours: z.unknown().optional(),
-											override_global: z.unknown().optional(),
+											crl_frequency_hours:
+												unspecifiedProviderValue().optional(),
+											crl_validity_hours: unspecifiedProviderValue().optional(),
+											override_global: unspecifiedProviderValue().optional(),
 										})
 										.passthrough()
 										.optional(),
@@ -1260,9 +1265,9 @@ const r_b4cfb481a98cInput = z
 						crl_scope: z.string().optional(),
 						generation: z
 							.object({
-								crl_frequency_hours: z.unknown().optional(),
-								crl_validity_hours: z.unknown().optional(),
-								override_global: z.unknown().optional(),
+								crl_frequency_hours: unspecifiedProviderValue().optional(),
+								crl_validity_hours: unspecifiedProviderValue().optional(),
+								override_global: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -1318,9 +1323,9 @@ const r_865bfb3a91f3Output = z
 				crl_scope: z.string().optional(),
 				generation: z
 					.object({
-						crl_frequency_hours: z.unknown().optional(),
-						crl_validity_hours: z.unknown().optional(),
-						override_global: z.unknown().optional(),
+						crl_frequency_hours: unspecifiedProviderValue().optional(),
+						crl_validity_hours: unspecifiedProviderValue().optional(),
+						override_global: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -1444,9 +1449,9 @@ const r_611f78545acbOutput = z
 		crl_scope: z.string().optional(),
 		generation: z
 			.object({
-				crl_frequency_hours: z.unknown().optional(),
-				crl_validity_hours: z.unknown().optional(),
-				override_global: z.unknown().optional(),
+				crl_frequency_hours: unspecifiedProviderValue().optional(),
+				crl_validity_hours: unspecifiedProviderValue().optional(),
+				override_global: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -1478,9 +1483,9 @@ const r_f35b7c3e0b8aInput = z
 				crl_scope: z.string().optional(),
 				generation: z
 					.object({
-						crl_frequency_hours: z.unknown().optional(),
-						crl_validity_hours: z.unknown().optional(),
-						override_global: z.unknown().optional(),
+						crl_frequency_hours: unspecifiedProviderValue().optional(),
+						crl_validity_hours: unspecifiedProviderValue().optional(),
+						override_global: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -1716,7 +1721,7 @@ const r_860e43c6a58aOutput = z.intersection(
 							escrow_default: z.boolean().optional(),
 							hsm_provider: z
 								.object({
-									enabled: z.unknown().optional(),
+									enabled: unspecifiedProviderValue().optional(),
 									max_concurrent_ops: z.number().int().optional(),
 									name: z.string().optional(),
 								})
@@ -1945,7 +1950,7 @@ const r_07af58d0eb37Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -2362,7 +2367,7 @@ const r_07af58d0eb37Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -2783,7 +2788,7 @@ const r_aaa0dcb230feOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -3232,7 +3237,7 @@ const r_8c26364ba4e1Input = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -3649,7 +3654,7 @@ const r_8c26364ba4e1Output = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -4068,7 +4073,7 @@ const r_8fc8acf59dceInput = z
 							.optional(),
 						private_key_usage_period: z
 							.object({
-								critical: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
 								not_after: z.string().optional(),
 								not_before: z.string().optional(),
 							})
@@ -4485,7 +4490,7 @@ const r_8fc8acf59dceOutput = z
 					.optional(),
 				private_key_usage_period: z
 					.object({
-						critical: z.unknown().optional(),
+						critical: unspecifiedProviderValue().optional(),
 						not_after: z.string().optional(),
 						not_before: z.string().optional(),
 					})
@@ -4930,7 +4935,7 @@ const r_e6f593872eaaOutput = z.intersection(
 										.optional(),
 									private_key_usage_period: z
 										.object({
-											critical: z.unknown().optional(),
+											critical: unspecifiedProviderValue().optional(),
 											not_after: z.string().optional(),
 											not_before: z.string().optional(),
 										})
@@ -5563,8 +5568,8 @@ const r_2eeb27b0266eInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				profileId: z.unknown().optional(),
-				expiry_at: z.unknown().nullable().optional(),
+				profileId: unspecifiedProviderValue().optional(),
+				expiry_at: unspecifiedProviderValue().nullable().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -5572,10 +5577,10 @@ const r_2eeb27b0266eInput = z
 	.strict();
 const r_2eeb27b0266eOutput = z
 	.object({
-		eab_kid: z.unknown().optional(),
-		eab_hmac: z.unknown().optional(),
-		directory_url: z.unknown().optional(),
-		expiry_date: z.unknown().nullable().optional(),
+		eab_kid: unspecifiedProviderValue().optional(),
+		eab_hmac: unspecifiedProviderValue().optional(),
+		directory_url: unspecifiedProviderValue().optional(),
+		expiry_date: unspecifiedProviderValue().nullable().optional(),
 	})
 	.passthrough();
 const r_145c99f05651Input = z
@@ -5586,37 +5591,37 @@ const r_145c99f05651Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				targets: z
 					.object({
-						agents: z.unknown().optional(),
-						groups: z.unknown().optional(),
+						agents: unspecifiedProviderValue().optional(),
+						groups: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				options: z
 					.object({
-						os_certificate_store_scan: z.unknown().optional(),
-						file_system_scan: z.unknown().optional(),
-						file_system_scan_types: z.unknown().optional(),
-						keystore_credentials: z.unknown().optional(),
+						os_certificate_store_scan: unspecifiedProviderValue().optional(),
+						file_system_scan: unspecifiedProviderValue().optional(),
+						file_system_scan_types: unspecifiedProviderValue().optional(),
+						keystore_credentials: unspecifiedProviderValue().optional(),
 						os_cert_store_scan_options: z
 							.object({
-								local_machine_stores: z.unknown().optional(),
-								current_user_stores: z.unknown().optional(),
+								local_machine_stores: unspecifiedProviderValue().optional(),
+								current_user_stores: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						data_business_unit_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
+						data_business_unit_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				schedule: z
 					.object({
 						frequency: z.enum(['ONE_TIME', 'DAILY', 'WEEKLY', 'MONTHLY']),
-						start_time: z.unknown(),
-						timezone: z.unknown().optional(),
-						days_to_run: z.unknown().optional(),
-						day_of_month: z.unknown().optional(),
+						start_time: unspecifiedProviderValue(),
+						timezone: unspecifiedProviderValue().optional(),
+						days_to_run: unspecifiedProviderValue().optional(),
+						day_of_month: unspecifiedProviderValue().optional(),
 						week_of_month: z
 							.union([
 								z.literal('FIRST'),
@@ -5636,8 +5641,8 @@ const r_145c99f05651Input = z
 const r_145c99f05651Output = z.undefined();
 const r_99ffa6002270Input = z
 	.object({
-		path: z.object({ agentId: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ agentId: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -5646,27 +5651,36 @@ const r_99ffa6002270Output = z.undefined();
 const r_ed3ac2b880e3Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ agents: z.unknown().optional() }).passthrough(),
+		body: z
+			.object({ agents: unspecifiedProviderValue().optional() })
+			.passthrough(),
 	})
 	.strict();
 const r_ed3ac2b880e3Output = z.undefined();
 const r_214735411dd4Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ agents: z.unknown().optional() }).passthrough(),
+		body: z
+			.object({ agents: unspecifiedProviderValue().optional() })
+			.passthrough(),
 	})
 	.strict();
 const r_214735411dd4Output = z.undefined();
 const r_98ae93786afeInput = z
 	.object({
-		path: z.object({ agentId: z.unknown(), time: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z
+			.object({
+				agentId: unspecifiedProviderValue(),
+				time: unspecifiedProviderValue(),
+			})
+			.strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -5674,8 +5688,13 @@ const r_98ae93786afeInput = z
 const r_98ae93786afeOutput = z.undefined();
 const r_b907984f070bInput = z
 	.object({
-		path: z.object({ agentId: z.unknown(), time: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z
+			.object({
+				agentId: unspecifiedProviderValue(),
+				time: unspecifiedProviderValue(),
+			})
+			.strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -5683,8 +5702,13 @@ const r_b907984f070bInput = z
 const r_b907984f070bOutput = z.undefined();
 const r_1e4c8b4f1269Input = z
 	.object({
-		path: z.object({ agentId: z.unknown(), scanId: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z
+			.object({
+				agentId: unspecifiedProviderValue(),
+				scanId: unspecifiedProviderValue(),
+			})
+			.strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -5692,17 +5716,17 @@ const r_1e4c8b4f1269Input = z
 const r_1e4c8b4f1269Output = z.undefined();
 const r_73d4daf6bd17Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				limit: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 				searchParams: z
-					.object({ skipped: z.unknown().optional() })
+					.object({ skipped: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -5712,17 +5736,17 @@ const r_73d4daf6bd17Input = z
 const r_73d4daf6bd17Output = z.undefined();
 const r_a4a835e15a4fInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
 				category: z.enum(['CURRENT', 'PAST']).optional(),
-				limit: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 				status: z
 					.enum(['COMPLETED', 'DELETED', 'FAILED', 'PARTIAL', 'SKIPPED'])
 					.optional(),
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -5735,11 +5759,11 @@ const r_b1de500e018cInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				limit: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown(),
-				search_query: z.unknown().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue(),
+				search_query: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -5749,71 +5773,74 @@ const r_b1de500e018cInput = z
 const r_b1de500e018cOutput = z.undefined();
 const r_b5bd22f27e1dInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_b5bd22f27e1dOutput = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		status: z.unknown().optional(),
-		status_details: z.unknown().optional(),
-		version: z.unknown().optional(),
-		account_id: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		status: unspecifiedProviderValue().optional(),
+		status_details: unspecifiedProviderValue().optional(),
+		version: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
 		business_unit: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		app_info: z
 			.object({
-				name: z.unknown().optional(),
-				version: z.unknown().optional(),
-				arch: z.unknown().optional(),
-				flavor: z.unknown().optional(),
-				automation_order: z.unknown().optional(),
+				name: unspecifiedProviderValue().optional(),
+				version: unspecifiedProviderValue().optional(),
+				arch: unspecifiedProviderValue().optional(),
+				flavor: unspecifiedProviderValue().optional(),
+				automation_order: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		management_key: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		updated_at: z.unknown().optional(),
-		inventories: z.unknown().optional(),
-		os_name: z.unknown().optional(),
-		os_version: z.unknown().optional(),
-		agent_group: z.unknown().optional(),
-		host_name: z.unknown().optional(),
+		management_key: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		updated_at: unspecifiedProviderValue().optional(),
+		inventories: unspecifiedProviderValue().optional(),
+		os_name: unspecifiedProviderValue().optional(),
+		os_version: unspecifiedProviderValue().optional(),
+		agent_group: unspecifiedProviderValue().optional(),
+		host_name: unspecifiedProviderValue().optional(),
 		sni: z
 			.object({
-				is_enabled: z.unknown().optional(),
-				items: z.unknown().optional(),
+				is_enabled: unspecifiedProviderValue().optional(),
+				items: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		error_message: z.unknown().optional(),
-		auto_update_enabled: z.unknown().optional(),
-		deployed_at: z.unknown().optional(),
-		os_info: z.unknown().optional(),
-		hb_interval: z.unknown().optional(),
-		recipients: z.unknown().optional(),
-		upgradable: z.unknown().optional(),
-		post_install_service_restart: z.unknown().optional(),
-		proxy_host: z.unknown().optional(),
-		license_key: z.unknown().optional(),
+		error_message: unspecifiedProviderValue().optional(),
+		auto_update_enabled: unspecifiedProviderValue().optional(),
+		deployed_at: unspecifiedProviderValue().optional(),
+		os_info: unspecifiedProviderValue().optional(),
+		hb_interval: unspecifiedProviderValue().optional(),
+		recipients: unspecifiedProviderValue().optional(),
+		upgradable: unspecifiedProviderValue().optional(),
+		post_install_service_restart: unspecifiedProviderValue().optional(),
+		proxy_host: unspecifiedProviderValue().optional(),
+		license_key: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_308eb2d1df1cInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				ids: z.unknown().optional(),
-				location_preference: z.unknown().optional(),
+				ids: unspecifiedProviderValue().optional(),
+				location_preference: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -5822,48 +5849,54 @@ const r_308eb2d1df1cOutput = z.undefined();
 const r_920a440ee1dfInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ ids: z.unknown().optional() }).passthrough().optional(),
+		body: z
+			.object({ ids: unspecifiedProviderValue().optional() })
+			.passthrough()
+			.optional(),
 	})
 	.strict();
 const r_920a440ee1dfOutput = z.undefined();
 const r_0b702b08d456Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ ids: z.unknown().optional() }).passthrough().optional(),
+		body: z
+			.object({ ids: unspecifiedProviderValue().optional() })
+			.passthrough()
+			.optional(),
 	})
 	.strict();
 const r_0b702b08d456Output = z.undefined();
 const r_5e7f03054b55Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				agent_group: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				hb_interval: z.unknown().optional(),
-				id: z.unknown().optional(),
-				inventories: z.unknown().optional(),
-				name: z.unknown().optional(),
-				recipients: z.unknown().optional(),
+				agent_group: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				hb_interval: unspecifiedProviderValue().optional(),
+				id: unspecifiedProviderValue().optional(),
+				inventories: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+				recipients: unspecifiedProviderValue().optional(),
 				sni: z
 					.object({
-						is_enabled: z.unknown().optional(),
-						items: z.unknown().optional(),
+						is_enabled: unspecifiedProviderValue().optional(),
+						items: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				version: z.unknown().optional(),
-				script_settings: z.unknown().optional(),
-				post_install_service_restart: z.unknown().optional(),
+				version: unspecifiedProviderValue().optional(),
+				script_settings: unspecifiedProviderValue().optional(),
+				post_install_service_restart: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -5873,17 +5906,17 @@ const r_5e7f03054b55Output = z.undefined();
 const r_5c203004de20Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				id: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
 				inventory: z
 					.object({
-						acme_client_id: z.unknown().optional(),
-						app_name: z.unknown().optional(),
-						app_version: z.unknown().optional(),
+						acme_client_id: unspecifiedProviderValue().optional(),
+						app_name: unspecifiedProviderValue().optional(),
+						app_version: unspecifiedProviderValue().optional(),
 						automation_status: z
 							.enum([
 								'ACME_ACCOUNT_CREATED',
@@ -5936,14 +5969,14 @@ const r_5c203004de20Input = z
 								'SCAN_IN_PROGRESS',
 							])
 							.optional(),
-						id: z.unknown().optional(),
-						ip: z.unknown().optional(),
+						id: unspecifiedProviderValue().optional(),
+						ip: unspecifiedProviderValue().optional(),
 						port: z
-							.object({ port: z.unknown().optional() })
+							.object({ port: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
-						script_args: z.unknown().optional(),
-						script_path: z.unknown().optional(),
+						script_args: unspecifiedProviderValue().optional(),
+						script_path: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -5956,13 +5989,13 @@ const r_5c203004de20Output = z.undefined();
 const r_97fb243f7243Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				field: z.unknown().optional(),
-				searchQuery: z.unknown().optional(),
+				field: unspecifiedProviderValue().optional(),
+				searchQuery: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -5974,9 +6007,9 @@ const r_1664e1d5afc5Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				operation_system: z.unknown().optional(),
-				type: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				operation_system: unspecifiedProviderValue().optional(),
+				type: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -5987,19 +6020,19 @@ const r_1664e1d5afc5Output = z.undefined();
 const r_99797a8dc240Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
-				os: z.unknown().optional(),
-				type: z.unknown().optional(),
-				path: z.unknown().optional(),
-				executionCommand: z.unknown().optional(),
-				description: z.unknown().optional(),
-				automationId: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+				os: unspecifiedProviderValue().optional(),
+				type: unspecifiedProviderValue().optional(),
+				path: unspecifiedProviderValue().optional(),
+				executionCommand: unspecifiedProviderValue().optional(),
+				description: unspecifiedProviderValue().optional(),
+				automationId: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6008,8 +6041,8 @@ const r_99797a8dc240Input = z
 const r_99797a8dc240Output = z.undefined();
 const r_b4f767ee3a21Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -6017,20 +6050,20 @@ const r_b4f767ee3a21Input = z
 const r_b4f767ee3a21Output = z.undefined();
 const r_92967c73d90eInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
-				os: z.unknown().optional(),
-				type: z.unknown().optional(),
-				path: z.unknown().optional(),
-				executionCommand: z.unknown().optional(),
-				description: z.unknown().optional(),
-				automationId: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+				os: unspecifiedProviderValue().optional(),
+				type: unspecifiedProviderValue().optional(),
+				path: unspecifiedProviderValue().optional(),
+				executionCommand: unspecifiedProviderValue().optional(),
+				description: unspecifiedProviderValue().optional(),
+				automationId: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6040,31 +6073,37 @@ const r_92967c73d90eOutput = z.undefined();
 const r_28403eaf35f7Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown().optional(),
+		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
 const r_28403eaf35f7Output = z.undefined();
 const r_692763a58cdaInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ ids: z.unknown().optional() }).passthrough().optional(),
+		body: z
+			.object({ ids: unspecifiedProviderValue().optional() })
+			.passthrough()
+			.optional(),
 	})
 	.strict();
 const r_692763a58cdaOutput = z.undefined();
 const r_14cebde31ad8Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ comment: z.unknown().optional(), ids: z.unknown().optional() })
+			.object({
+				comment: unspecifiedProviderValue().optional(),
+				ids: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 	})
@@ -6073,10 +6112,13 @@ const r_14cebde31ad8Output = z.undefined();
 const r_6873b02914f1Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ ids: z.unknown().optional() }).passthrough().optional(),
+		body: z
+			.object({ ids: unspecifiedProviderValue().optional() })
+			.passthrough()
+			.optional(),
 	})
 	.strict();
 const r_6873b02914f1Output = z.undefined();
@@ -6084,7 +6126,10 @@ const r_cd67d7ceb107Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
-			.object({ account_id: z.unknown(), default: z.unknown().optional() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				default: unspecifiedProviderValue().optional(),
+			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6094,15 +6139,15 @@ const r_cd67d7ceb107Output = z.undefined();
 const r_2b409ddd1947Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				linux_restricted_ports: z.unknown().optional(),
-				manual_approval: z.unknown().optional(),
-				scan_block_list: z.unknown().optional(),
-				windows_restricted_ports: z.unknown().optional(),
+				linux_restricted_ports: unspecifiedProviderValue().optional(),
+				manual_approval: unspecifiedProviderValue().optional(),
+				scan_block_list: unspecifiedProviderValue().optional(),
+				windows_restricted_ports: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6112,15 +6157,15 @@ const r_2b409ddd1947Output = z.undefined();
 const r_f8e988a67b87Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				linux_restricted_ports: z.unknown().optional(),
-				manual_approval: z.unknown().optional(),
-				scan_block_list: z.unknown().optional(),
-				windows_restricted_ports: z.unknown().optional(),
+				linux_restricted_ports: unspecifiedProviderValue().optional(),
+				manual_approval: unspecifiedProviderValue().optional(),
+				scan_block_list: unspecifiedProviderValue().optional(),
+				windows_restricted_ports: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6135,8 +6180,8 @@ const r_90ec560047bdInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				automation_id: z.unknown(),
-				account_id: z.unknown(),
+				automation_id: unspecifiedProviderValue(),
+				account_id: unspecifiedProviderValue(),
 				action_type: z.enum([
 					'ENROLL',
 					'GET_NEXT_CERT',
@@ -6146,40 +6191,40 @@ const r_90ec560047bdInput = z
 				]),
 				auto_renew_settings: z
 					.object({
-						auto_renew_certificate_and_order: z.unknown(),
+						auto_renew_certificate_and_order: unspecifiedProviderValue(),
 						auto_renew_time: z
 							.object({
-								days: z.unknown().optional(),
-								hours: z.unknown().optional(),
-								minutes: z.unknown().optional(),
-								time_format: z.unknown(),
-								zone: z.unknown(),
+								days: unspecifiedProviderValue().optional(),
+								hours: unspecifiedProviderValue().optional(),
+								minutes: unspecifiedProviderValue().optional(),
+								time_format: unspecifiedProviderValue(),
+								zone: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						before_expiration: z.unknown(),
+						before_expiration: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
-				cn: z.unknown(),
-				custom_fields: z.unknown().optional(),
-				dns_integration_id: z.unknown().optional(),
-				profile_id: z.unknown(),
-				redirect_port: z.unknown().optional(),
-				run_now: z.unknown().optional(),
-				sans: z.unknown().optional(),
+				cn: unspecifiedProviderValue(),
+				custom_fields: unspecifiedProviderValue().optional(),
+				dns_integration_id: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue(),
+				redirect_port: unspecifiedProviderValue().optional(),
+				run_now: unspecifiedProviderValue().optional(),
+				sans: unspecifiedProviderValue().optional(),
 				schedule_settings: z
 					.object({
-						hours: z.unknown().optional(),
-						minutes: z.unknown().optional(),
-						start_date: z.unknown(),
-						time_format: z.unknown(),
-						zone: z.unknown().optional(),
+						hours: unspecifiedProviderValue().optional(),
+						minutes: unspecifiedProviderValue().optional(),
+						start_date: unspecifiedProviderValue(),
+						time_format: unspecifiedProviderValue(),
+						zone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				match_wildcard_subdomain: z.unknown().optional(),
-				custom_attributes_field: z.unknown().optional(),
+				match_wildcard_subdomain: unspecifiedProviderValue().optional(),
+				custom_attributes_field: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6194,43 +6239,44 @@ const r_e3b44e3e638bInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				profile_id: z.unknown().optional(),
-				cn: z.unknown().optional(),
-				sans: z.unknown().optional(),
-				account_id: z.unknown().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				cn: unspecifiedProviderValue().optional(),
+				sans: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 				auto_renew_settings: z
 					.object({
-						auto_renew_certificate_and_order: z.unknown(),
+						auto_renew_certificate_and_order: unspecifiedProviderValue(),
 						auto_renew_time: z
 							.object({
-								days: z.unknown().optional(),
-								hours: z.unknown().optional(),
-								minutes: z.unknown().optional(),
-								time_format: z.unknown(),
-								zone: z.unknown(),
+								days: unspecifiedProviderValue().optional(),
+								hours: unspecifiedProviderValue().optional(),
+								minutes: unspecifiedProviderValue().optional(),
+								time_format: unspecifiedProviderValue(),
+								zone: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						before_expiration: z.unknown(),
+						before_expiration: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
 				additional_order_options: z
 					.object({
-						comments_to_administrator: z.unknown().optional(),
-						order_specific_renewal_message: z.unknown().optional(),
-						additional_emails: z.unknown().optional(),
+						comments_to_administrator: unspecifiedProviderValue().optional(),
+						order_specific_renewal_message:
+							unspecifiedProviderValue().optional(),
+						additional_emails: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				cert_delivery_settings: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				cert_delivery_settings: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 				action_type: z
 					.enum(['ENROLL', 'GET_NEXT_CERT', 'REISSUE', 'RENEW', 'TRANSFER'])
 					.optional(),
-				inventory_id: z.unknown().optional(),
-				source_certificate_id: z.unknown().optional(),
-				custom_attributes_field: z.unknown().optional(),
+				inventory_id: unspecifiedProviderValue().optional(),
+				source_certificate_id: unspecifiedProviderValue().optional(),
+				custom_attributes_field: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6245,19 +6291,19 @@ const r_4470d3e39ef2Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
-				record_ids: z.unknown().optional(),
-				awr_profile_id: z.unknown().optional(),
-				sensor_profile_id: z.unknown().optional(),
-				agent_profile_id: z.unknown().optional(),
-				ca_name: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				record_ids: unspecifiedProviderValue().optional(),
+				awr_profile_id: unspecifiedProviderValue().optional(),
+				sensor_profile_id: unspecifiedProviderValue().optional(),
+				agent_profile_id: unspecifiedProviderValue().optional(),
+				ca_name: unspecifiedProviderValue().optional(),
 				bulk_action_type: z
 					.object({
 						primaryAction: z
 							.enum(['ENROLL', 'GET_NEXT_CERT', 'REISSUE', 'RENEW', 'TRANSFER'])
 							.optional(),
-						renewalStartDate: z.unknown().optional(),
-						secondaryActions: z.unknown().optional(),
+						renewalStartDate: unspecifiedProviderValue().optional(),
+						secondaryActions: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -6275,29 +6321,29 @@ const r_c0eb04e32216Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				automation_ids: z.unknown(),
-				account_id: z.unknown(),
-				custom_fields: z.unknown().optional(),
-				dns_integration_id: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				run_now: z.unknown().optional(),
+				automation_ids: unspecifiedProviderValue(),
+				account_id: unspecifiedProviderValue(),
+				custom_fields: unspecifiedProviderValue().optional(),
+				dns_integration_id: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				run_now: unspecifiedProviderValue().optional(),
 				schedule_settings: z
 					.object({
-						hours: z.unknown().optional(),
-						minutes: z.unknown().optional(),
-						start_date: z.unknown(),
-						time_format: z.unknown(),
-						zone: z.unknown().optional(),
+						hours: unspecifiedProviderValue().optional(),
+						minutes: unspecifiedProviderValue().optional(),
+						start_date: unspecifiedProviderValue(),
+						time_format: unspecifiedProviderValue(),
+						zone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				awr_profile_id: z.unknown().optional(),
-				sensor_profile_id: z.unknown().optional(),
-				agent_profile_id: z.unknown().optional(),
+				awr_profile_id: unspecifiedProviderValue().optional(),
+				sensor_profile_id: unspecifiedProviderValue().optional(),
+				agent_profile_id: unspecifiedProviderValue().optional(),
 				bulk_action_type: z
 					.enum(['ENROLL', 'GET_NEXT_CERT', 'REISSUE', 'RENEW', 'TRANSFER'])
 					.optional(),
-				bulk_automation_batch_name: z.unknown().optional(),
+				bulk_automation_batch_name: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6306,7 +6352,7 @@ const r_c0eb04e32216Input = z
 const r_c0eb04e32216Output = z.undefined();
 const r_710554dcec90Input = z
 	.object({
-		path: z.object({ automation_id: z.unknown() }).strict(),
+		path: z.object({ automation_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6314,66 +6360,75 @@ const r_710554dcec90Input = z
 	.strict();
 const r_710554dcec90Output = z
 	.object({
-		id: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
 		automation_flow_details: z
 			.object({
-				auto_renew_enabled: z.unknown().optional(),
+				auto_renew_enabled: unspecifiedProviderValue().optional(),
 				auto_renew_settings: z
 					.object({
-						auto_renew_certificate_and_order: z.unknown(),
+						auto_renew_certificate_and_order: unspecifiedProviderValue(),
 						auto_renew_time: z
 							.object({
-								days: z.unknown().optional(),
-								hours: z.unknown().optional(),
-								minutes: z.unknown().optional(),
-								time_format: z.unknown(),
-								zone: z.unknown(),
+								days: unspecifiedProviderValue().optional(),
+								hours: unspecifiedProviderValue().optional(),
+								minutes: unspecifiedProviderValue().optional(),
+								time_format: unspecifiedProviderValue(),
+								zone: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						before_expiration: z.unknown(),
+						before_expiration: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
 				automation_error: z
 					.object({
-						error_code: z.unknown().optional(),
-						error_message: z.unknown().optional(),
-						solution: z.unknown().optional(),
+						error_code: unspecifiedProviderValue().optional(),
+						error_message: unspecifiedProviderValue().optional(),
+						solution: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				is_retry_applicable: z.unknown().optional(),
-				last_initiated_time: z.unknown().optional(),
-				last_run_time: z.unknown().optional(),
-				next_run_time: z.unknown().optional(),
+				is_retry_applicable: unspecifiedProviderValue().optional(),
+				last_initiated_time: unspecifiedProviderValue().optional(),
+				last_run_time: unspecifiedProviderValue().optional(),
+				next_run_time: unspecifiedProviderValue().optional(),
 				organization: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 				dns_integration: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 				profile: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 				schedule_settings: z
 					.object({
-						hours: z.unknown().optional(),
-						minutes: z.unknown().optional(),
-						start_date: z.unknown(),
-						time_format: z.unknown(),
-						zone: z.unknown().optional(),
+						hours: unspecifiedProviderValue().optional(),
+						minutes: unspecifiedProviderValue().optional(),
+						start_date: unspecifiedProviderValue(),
+						time_format: unspecifiedProviderValue(),
+						zone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				template: z
 					.object({
-						id: z.unknown().optional(),
-						name: z.unknown().optional(),
-						trust_type: z.unknown().optional(),
+						id: unspecifiedProviderValue().optional(),
+						name: unspecifiedProviderValue().optional(),
+						trust_type: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -6423,28 +6478,28 @@ const r_710554dcec90Output = z
 					'REMOVED',
 					'SCAN_IN_PROGRESS',
 				]),
-				z.unknown(),
+				unspecifiedProviderValue(),
 			)
 			.optional(),
 		certificate_details: z
 			.object({
-				cert_validity: z.unknown().optional(),
-				common_name: z.unknown().optional(),
-				ip: z.unknown().optional(),
-				key_algorithm: z.unknown().optional(),
-				key_size: z.unknown().optional(),
-				order_id: z.unknown().optional(),
-				order_valid_till: z.unknown().optional(),
-				port: z.unknown().optional(),
+				cert_validity: unspecifiedProviderValue().optional(),
+				common_name: unspecifiedProviderValue().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				key_algorithm: unspecifiedProviderValue().optional(),
+				key_size: unspecifiedProviderValue().optional(),
+				order_id: unspecifiedProviderValue().optional(),
+				order_valid_till: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
 				previous_action_type: z
 					.enum(['ENROLL', 'GET_NEXT_CERT', 'REISSUE', 'RENEW', 'TRANSFER'])
 					.optional(),
-				product_name: z.unknown().optional(),
-				product_type: z.unknown().optional(),
-				redirect_port: z.unknown().optional(),
-				sans: z.unknown().optional(),
-				serial_number: z.unknown().optional(),
-				signature_hash: z.unknown().optional(),
+				product_name: unspecifiedProviderValue().optional(),
+				product_type: unspecifiedProviderValue().optional(),
+				redirect_port: unspecifiedProviderValue().optional(),
+				sans: unspecifiedProviderValue().optional(),
+				serial_number: unspecifiedProviderValue().optional(),
+				signature_hash: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -6452,39 +6507,39 @@ const r_710554dcec90Output = z
 	.passthrough();
 const r_bcabad219d28Input = z
 	.object({
-		path: z.object({ automation_id: z.unknown() }).strict(),
+		path: z.object({ automation_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				auto_renew_settings: z
 					.object({
-						auto_renew_certificate_and_order: z.unknown(),
+						auto_renew_certificate_and_order: unspecifiedProviderValue(),
 						auto_renew_time: z
 							.object({
-								days: z.unknown().optional(),
-								hours: z.unknown().optional(),
-								minutes: z.unknown().optional(),
-								time_format: z.unknown(),
-								zone: z.unknown(),
+								days: unspecifiedProviderValue().optional(),
+								hours: unspecifiedProviderValue().optional(),
+								minutes: unspecifiedProviderValue().optional(),
+								time_format: unspecifiedProviderValue(),
+								zone: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						before_expiration: z.unknown(),
+						before_expiration: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
-				profile_id: z.unknown(),
-				run_now: z.unknown().optional(),
+				profile_id: unspecifiedProviderValue(),
+				run_now: unspecifiedProviderValue().optional(),
 				schedule_settings: z
 					.object({
-						hours: z.unknown().optional(),
-						minutes: z.unknown().optional(),
-						start_date: z.unknown(),
-						time_format: z.unknown(),
-						zone: z.unknown().optional(),
+						hours: unspecifiedProviderValue().optional(),
+						minutes: unspecifiedProviderValue().optional(),
+						start_date: unspecifiedProviderValue(),
+						time_format: unspecifiedProviderValue(),
+						zone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -6496,7 +6551,7 @@ const r_bcabad219d28Input = z
 const r_bcabad219d28Output = z.undefined();
 const r_fdcddee44a8eInput = z
 	.object({
-		path: z.object({ automation_id: z.unknown() }).strict(),
+		path: z.object({ automation_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6505,7 +6560,7 @@ const r_fdcddee44a8eInput = z
 const r_fdcddee44a8eOutput = z.undefined();
 const r_f993fc71dd6cInput = z
 	.object({
-		path: z.object({ automation_id: z.unknown() }).strict(),
+		path: z.object({ automation_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6517,10 +6572,10 @@ const r_948c3283fb77Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 				application: z
 					.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER', 'A10'])
 					.optional(),
@@ -6567,12 +6622,12 @@ const r_948c3283fb77Input = z
 						'SCAN_IN_PROGRESS',
 					])
 					.optional(),
-				device: z.unknown().optional(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				source: z.unknown().optional(),
-				system_name: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				device: unspecifiedProviderValue().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				source: unspecifiedProviderValue().optional(),
+				system_name: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -6582,41 +6637,45 @@ const r_948c3283fb77Input = z
 	.strict();
 const r_948c3283fb77Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_ef7eddd600a0Input = z
 	.object({
-		path: z.object({ automation_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ automation_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_ef7eddd600a0Output = z
 	.object({
-		id: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
 		automation: z
 			.intersection(
 				z.intersection(
-					z.unknown(),
+					unspecifiedProviderValue(),
 					z
 						.object({
-							id: z.unknown().optional(),
-							ip: z.unknown().optional(),
-							port: z.unknown().optional(),
-							system_name: z.unknown().optional(),
-							application: z.unknown().optional(),
-							device: z.unknown().optional(),
+							id: unspecifiedProviderValue().optional(),
+							ip: unspecifiedProviderValue().optional(),
+							port: unspecifiedProviderValue().optional(),
+							system_name: unspecifiedProviderValue().optional(),
+							application: unspecifiedProviderValue().optional(),
+							device: unspecifiedProviderValue().optional(),
 							profile: z
 								.object({
-									id: z.unknown().optional(),
-									name: z.unknown().optional(),
+									id: unspecifiedProviderValue().optional(),
+									name: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
-							is_auto_renew: z.unknown().optional(),
+							is_auto_renew: unspecifiedProviderValue().optional(),
 							automation_status: z
 								.enum([
 									'ACME_ACCOUNT_CREATED',
@@ -6671,8 +6730,8 @@ const r_ef7eddd600a0Output = z
 											'TRANSFER',
 										])
 										.optional(),
-									renewalStartDate: z.unknown().optional(),
-									secondaryActions: z.unknown().optional(),
+									renewalStartDate: unspecifiedProviderValue().optional(),
+									secondaryActions: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
@@ -6681,48 +6740,48 @@ const r_ef7eddd600a0Output = z
 				),
 				z
 					.object({
-						os_name: z.unknown().optional(),
-						os_version: z.unknown().optional(),
+						os_name: unspecifiedProviderValue().optional(),
+						os_version: unspecifiedProviderValue().optional(),
 						app_info: z
 							.object({
-								name: z.unknown().optional(),
-								version: z.unknown().optional(),
-								arch: z.unknown().optional(),
-								flavor: z.unknown().optional(),
-								automation_order: z.unknown().optional(),
+								name: unspecifiedProviderValue().optional(),
+								version: unspecifiedProviderValue().optional(),
+								arch: unspecifiedProviderValue().optional(),
+								flavor: unspecifiedProviderValue().optional(),
+								automation_order: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						category: z
 							.enum(['CLOUD_SERVICE', 'APPLIANCE', 'DNS_INTEGRATION'])
 							.optional(),
-						first_discovered: z.unknown().optional(),
-						last_discovered: z.unknown().optional(),
-						last_initiated_time: z.unknown().optional(),
-						last_run: z.unknown().optional(),
-						next_run: z.unknown().optional(),
-						common_name: z.unknown().optional(),
-						domain_name: z.unknown().optional(),
-						source: z.unknown().optional(),
-						custom_fields: z.unknown().optional(),
-						tags: z.unknown().optional(),
+						first_discovered: unspecifiedProviderValue().optional(),
+						last_discovered: unspecifiedProviderValue().optional(),
+						last_initiated_time: unspecifiedProviderValue().optional(),
+						last_run: unspecifiedProviderValue().optional(),
+						next_run: unspecifiedProviderValue().optional(),
+						common_name: unspecifiedProviderValue().optional(),
+						domain_name: unspecifiedProviderValue().optional(),
+						source: unspecifiedProviderValue().optional(),
+						custom_fields: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			)
 			.optional(),
 		certificate: z
 			.intersection(
-				z.unknown(),
+				unspecifiedProviderValue(),
 				z
 					.object({
-						id: z.unknown().optional(),
-						inventory_id: z.unknown().optional(),
-						ip: z.unknown().optional(),
-						port: z.unknown().optional(),
-						application: z.unknown().optional(),
-						system_name: z.unknown().optional(),
-						attributes: z.unknown().optional(),
-						auto_renew_status: z.unknown().optional(),
+						id: unspecifiedProviderValue().optional(),
+						inventory_id: unspecifiedProviderValue().optional(),
+						ip: unspecifiedProviderValue().optional(),
+						port: unspecifiedProviderValue().optional(),
+						application: unspecifiedProviderValue().optional(),
+						system_name: unspecifiedProviderValue().optional(),
+						attributes: unspecifiedProviderValue().optional(),
+						auto_renew_status: unspecifiedProviderValue().optional(),
 						automation_action: z
 							.object({
 								primaryAction: z
@@ -6734,8 +6793,8 @@ const r_ef7eddd600a0Output = z
 										'TRANSFER',
 									])
 									.optional(),
-								renewalStartDate: z.unknown().optional(),
-								secondaryActions: z.unknown().optional(),
+								renewalStartDate: unspecifiedProviderValue().optional(),
+								secondaryActions: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -6782,57 +6841,60 @@ const r_ef7eddd600a0Output = z
 									'REMOVED',
 									'SCAN_IN_PROGRESS',
 								]),
-								z.unknown(),
+								unspecifiedProviderValue(),
 							)
 							.optional(),
 						business_unit: z
-							.object({ id: z.unknown(), name: z.unknown().optional() })
+							.object({
+								id: unspecifiedProviderValue(),
+								name: unspecifiedProviderValue().optional(),
+							})
 							.passthrough()
 							.optional(),
-						ca_cert_id: z.unknown().optional(),
+						ca_cert_id: unspecifiedProviderValue().optional(),
 						cc_settings: z
 							.object({
 								auto_renew_settings: z
 									.object({
-										auto_renew_certificate_and_order: z.unknown(),
+										auto_renew_certificate_and_order:
+											unspecifiedProviderValue(),
 										auto_renew_time: z
 											.object({
-												days: z.unknown().optional(),
-												hours: z.unknown().optional(),
-												minutes: z.unknown().optional(),
-												time_format: z.unknown(),
-												zone: z.unknown(),
+												days: unspecifiedProviderValue().optional(),
+												hours: unspecifiedProviderValue().optional(),
+												minutes: unspecifiedProviderValue().optional(),
+												time_format: unspecifiedProviderValue(),
+												zone: unspecifiedProviderValue(),
 											})
 											.passthrough()
 											.optional(),
-										before_expiration: z.unknown(),
+										before_expiration: unspecifiedProviderValue(),
 									})
 									.passthrough()
 									.optional(),
-								contacts: z.unknown().optional(),
-								http_signed_exchange: z.unknown().optional(),
-								key_sizes: z.unknown().optional(),
-								account_id: z.unknown().optional(),
-								is_custom_validity: z.unknown().optional(),
-								duplicate_minimum_validity_days: z
-									.unknown()
+								contacts: unspecifiedProviderValue().optional(),
+								http_signed_exchange: unspecifiedProviderValue().optional(),
+								key_sizes: unspecifiedProviderValue().optional(),
+								account_id: unspecifiedProviderValue().optional(),
+								is_custom_validity: unspecifiedProviderValue().optional(),
+								duplicate_minimum_validity_days: unspecifiedProviderValue()
 									.nullable()
 									.optional(),
-								key_type: z.unknown().optional(),
-								order_coverage_length: z.unknown().optional(),
-								override_validity: z.unknown().optional(),
+								key_type: unspecifiedProviderValue().optional(),
+								order_coverage_length: unspecifiedProviderValue().optional(),
+								override_validity: unspecifiedProviderValue().optional(),
 								organization: z
 									.object({
-										id: z.unknown().optional(),
-										name: z.unknown().optional(),
-										value: z.unknown().optional(),
+										id: unspecifiedProviderValue().optional(),
+										name: unspecifiedProviderValue().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 								organization_contact: z
 									.object({
-										id: z.unknown(),
-										name: z.unknown(),
+										id: unspecifiedProviderValue(),
+										name: unspecifiedProviderValue(),
 										contact_type: z.enum([
 											'organization_contact',
 											'technical_contact',
@@ -6879,53 +6941,53 @@ const r_ef7eddd600a0Output = z
 								]),
 								signature_algorithm: z
 									.object({
-										id: z.unknown().optional(),
-										name: z.unknown().optional(),
+										id: unspecifiedProviderValue().optional(),
+										name: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 								container: z
 									.object({
-										id: z.unknown().optional(),
-										name: z.unknown().optional(),
-										value: z.unknown().optional(),
+										id: unspecifiedProviderValue().optional(),
+										name: unspecifiedProviderValue().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
-								region: z.unknown().optional(),
+								region: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						common_name: z.unknown().optional(),
+						common_name: unspecifiedProviderValue().optional(),
 						dual_approval_status: z
 							.object({
-								admins_approved: z.unknown().optional(),
-								dual_approve_enabled: z.unknown().optional(),
+								admins_approved: unspecifiedProviderValue().optional(),
+								dual_approve_enabled: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						enrollment: z.unknown().optional(),
-						escrow: z.unknown().optional(),
-						external_ca_name: z.unknown().optional(),
+						enrollment: unspecifiedProviderValue().optional(),
+						escrow: unspecifiedProviderValue().optional(),
+						external_ca_name: unspecifiedProviderValue().optional(),
 						ica: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						key_length: z.unknown().optional(),
-						key_type: z.unknown().optional(),
-						managing_integration: z.unknown().optional(),
-						notes: z.unknown().optional(),
-						order_id: z.unknown().optional(),
-						organization_name: z.unknown().optional(),
-						organization_unit: z.unknown().optional(),
-						organization_identifier: z.unknown().optional(),
+						key_length: unspecifiedProviderValue().optional(),
+						key_type: unspecifiedProviderValue().optional(),
+						managing_integration: unspecifiedProviderValue().optional(),
+						notes: unspecifiedProviderValue().optional(),
+						order_id: unspecifiedProviderValue().optional(),
+						organization_name: unspecifiedProviderValue().optional(),
+						organization_unit: unspecifiedProviderValue().optional(),
+						organization_identifier: unspecifiedProviderValue().optional(),
 						profile: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -6945,22 +7007,26 @@ const r_ef7eddd600a0Output = z
 							.optional(),
 						seat: z
 							.object({
-								id: z.unknown().optional(),
-								active: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								active: unspecifiedProviderValue().optional(),
 								business_unit: z
-									.object({ id: z.unknown(), name: z.unknown().optional() })
+									.object({
+										id: unspecifiedProviderValue(),
+										name: unspecifiedProviderValue().optional(),
+									})
 									.passthrough()
 									.optional(),
-								created_at: z.unknown().optional(),
-								email: z.unknown().optional(),
-								number_of_pending: z.unknown().optional(),
-								phone: z.unknown().optional(),
-								seat_allowed_for_enrollment: z.unknown().optional(),
-								seat_id: z.unknown().optional(),
-								seat_name: z.unknown().optional(),
+								created_at: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
+								number_of_pending: unspecifiedProviderValue().optional(),
+								phone: unspecifiedProviderValue().optional(),
+								seat_allowed_for_enrollment:
+									unspecifiedProviderValue().optional(),
+								seat_id: unspecifiedProviderValue().optional(),
+								seat_name: unspecifiedProviderValue().optional(),
 								seat_type: z
 									.object({
-										id: z.unknown().optional(),
+										id: unspecifiedProviderValue().optional(),
 										name: z
 											.intersection(
 												z.intersection(
@@ -6973,9 +7039,9 @@ const r_ef7eddd600a0Output = z
 														'ORGANIZATION_SEAT',
 														'CERTIFICATE_MANAGEMENT_SEAT',
 													]),
-													z.unknown(),
+													unspecifiedProviderValue(),
 												),
-												z.unknown(),
+												unspecifiedProviderValue(),
 											)
 											.optional(),
 									})
@@ -6984,13 +7050,13 @@ const r_ef7eddd600a0Output = z
 							})
 							.passthrough()
 							.optional(),
-						serial_number: z.unknown().optional(),
+						serial_number: unspecifiedProviderValue().optional(),
 						status: z
 							.enum(['deleted', 'expired', 'issued', 'revoked', 'suspended'])
 							.optional(),
-						subject_email: z.unknown().optional(),
-						valid_from: z.unknown().optional(),
-						valid_to: z.unknown().optional(),
+						subject_email: unspecifiedProviderValue().optional(),
+						valid_from: unspecifiedProviderValue().optional(),
+						valid_to: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			)
@@ -7002,14 +7068,14 @@ const r_382f226cdcf4Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown().optional(),
-				name: z.unknown().optional(),
-				created_at_from: z.unknown().optional(),
-				created_at_to: z.unknown().optional(),
-				active: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+				created_at_from: unspecifiedProviderValue().optional(),
+				created_at_to: unspecifiedProviderValue().optional(),
+				active: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -7019,9 +7085,13 @@ const r_382f226cdcf4Input = z
 	.strict();
 const r_382f226cdcf4Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_5bec67c21dcfInput = z
 	.object({
@@ -7031,8 +7101,8 @@ const r_5bec67c21dcfInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				name: z.unknown(),
-				account: z.object({ id: z.unknown() }).passthrough(),
+				name: unspecifiedProviderValue(),
+				account: z.object({ id: unspecifiedProviderValue() }).passthrough(),
 			})
 			.passthrough()
 			.optional(),
@@ -7040,16 +7110,19 @@ const r_5bec67c21dcfInput = z
 	.strict();
 const r_5bec67c21dcfOutput = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		active: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		account: z.object({ id: z.unknown() }).passthrough().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		active: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		account: z
+			.object({ id: unspecifiedProviderValue() })
+			.passthrough()
+			.optional(),
 	})
 	.passthrough();
 const r_162c051d7b24Input = z
 	.object({
-		path: z.object({ bu_id: z.unknown() }).strict(),
+		path: z.object({ bu_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7057,21 +7130,24 @@ const r_162c051d7b24Input = z
 	.strict();
 const r_162c051d7b24Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		active: z.unknown().optional(),
-		created_at: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		active: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
 		account: z
-			.object({ id: z.unknown().optional(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		admins: z.unknown().optional(),
-		available_seats_stats: z.unknown().optional(),
+		admins: unspecifiedProviderValue().optional(),
+		available_seats_stats: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_38929d3c5c45Input = z
 	.object({
-		path: z.object({ bu_id: z.unknown() }).strict(),
+		path: z.object({ bu_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7080,27 +7156,32 @@ const r_38929d3c5c45Input = z
 const r_38929d3c5c45Output = z.undefined();
 const r_e130670d7f5aInput = z
 	.object({
-		path: z.object({ bu_id: z.unknown() }).strict(),
+		path: z.object({ bu_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown().optional(),
+		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
-const r_e130670d7f5aOutput = z.unknown();
+const r_e130670d7f5aOutput = unspecifiedProviderValue();
 const r_59f4fecff54aInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ id: z.unknown() }).passthrough(),
+		body: z.object({ id: unspecifiedProviderValue() }).passthrough(),
 	})
 	.strict();
-const r_59f4fecff54aOutput = z.unknown();
+const r_59f4fecff54aOutput = unspecifiedProviderValue();
 const r_78c077df3817Input = z
 	.object({
-		path: z.object({ id: z.unknown(), adminId: z.unknown() }).strict(),
+		path: z
+			.object({
+				id: unspecifiedProviderValue(),
+				adminId: unspecifiedProviderValue(),
+			})
+			.strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7112,13 +7193,13 @@ const r_23c269effbe6Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown(),
-				first_name: z.unknown().optional(),
-				last_name: z.unknown().optional(),
-				email: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue(),
+				first_name: unspecifiedProviderValue().optional(),
+				last_name: unspecifiedProviderValue().optional(),
+				email: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -7126,7 +7207,10 @@ const r_23c269effbe6Input = z
 	})
 	.strict();
 const r_23c269effbe6Output = z
-	.object({ total: z.unknown().optional(), items: z.unknown().optional() })
+	.object({
+		total: unspecifiedProviderValue().optional(),
+		items: unspecifiedProviderValue().optional(),
+	})
 	.passthrough();
 const r_e254ce295d12Input = z
 	.object({
@@ -7136,13 +7220,13 @@ const r_e254ce295d12Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				certificate_owner: z
 					.object({
-						first_name: z.unknown().optional(),
-						last_name: z.unknown().optional(),
-						email: z.unknown(),
-						custom_identifier: z.unknown().optional(),
+						first_name: unspecifiedProviderValue().optional(),
+						last_name: unspecifiedProviderValue().optional(),
+						email: unspecifiedProviderValue(),
+						custom_identifier: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			})
@@ -7151,47 +7235,47 @@ const r_e254ce295d12Input = z
 	.strict();
 const r_e254ce295d12Output = z
 	.object({
-		id: z.unknown().optional(),
-		first_name: z.unknown().optional(),
-		last_name: z.unknown().optional(),
-		email: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		custom_identifier: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		first_name: unspecifiedProviderValue().optional(),
+		last_name: unspecifiedProviderValue().optional(),
+		email: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		custom_identifier: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_589d79d3192eInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_589d79d3192eOutput = z
 	.object({
-		id: z.unknown().optional(),
-		first_name: z.unknown().optional(),
-		last_name: z.unknown().optional(),
-		email: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		custom_identifier: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		first_name: unspecifiedProviderValue().optional(),
+		last_name: unspecifiedProviderValue().optional(),
+		email: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		custom_identifier: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_c0711fd42515Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				certificate_owner: z
 					.object({
-						first_name: z.unknown().optional(),
-						last_name: z.unknown().optional(),
-						email: z.unknown(),
-						custom_identifier: z.unknown().optional(),
+						first_name: unspecifiedProviderValue().optional(),
+						last_name: unspecifiedProviderValue().optional(),
+						email: unspecifiedProviderValue(),
+						custom_identifier: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			})
@@ -7200,17 +7284,17 @@ const r_c0711fd42515Input = z
 	.strict();
 const r_c0711fd42515Output = z
 	.object({
-		id: z.unknown().optional(),
-		first_name: z.unknown().optional(),
-		last_name: z.unknown().optional(),
-		email: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		custom_identifier: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		first_name: unspecifiedProviderValue().optional(),
+		last_name: unspecifiedProviderValue().optional(),
+		email: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		custom_identifier: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_9f6fcd99fd97Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7218,30 +7302,36 @@ const r_9f6fcd99fd97Input = z
 	.strict();
 const r_9f6fcd99fd97Output = z
 	.object({
-		status: z.unknown().optional(),
-		affected_profiles: z.unknown().optional(),
+		status: unspecifiedProviderValue().optional(),
+		affected_profiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_08c5118e8629Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ account_id: z.unknown(), certificate_owner_ids: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				certificate_owner_ids: unspecifiedProviderValue(),
+			})
 			.passthrough(),
 	})
 	.strict();
 const r_08c5118e8629Output = z.undefined();
 const r_a4a3093d5297Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ account_id: z.unknown(), certificate_owner_ids: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				certificate_owner_ids: unspecifiedProviderValue(),
+			})
 			.passthrough(),
 	})
 	.strict();
@@ -7257,56 +7347,57 @@ const r_4ea70ee9ce09Input = z
 				z
 					.object({
 						profile: z
-							.object({ id: z.unknown().optional() })
+							.object({ id: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 						seat: z
 							.object({
-								seat_id: z.unknown().optional(),
-								email: z.unknown().optional(),
+								seat_id: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						csr: z.unknown().optional(),
+						csr: unspecifiedProviderValue().optional(),
 						validity: z
 							.object({
 								unit: z
 									.enum(['years', 'months', 'days', 'hours', 'minutes'])
 									.optional(),
-								duration: z.unknown().optional(),
+								duration: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						delivery_format: z
 							.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 							.optional(),
-						include_ca_chain: z.unknown().optional(),
+						include_ca_chain: unspecifiedProviderValue().optional(),
 						attributes: z
 							.object({
 								subject: z
 									.object({
-										common_name: z.unknown().optional(),
-										organization_name: z.unknown().optional(),
-										organization_units: z.unknown().optional(),
-										description: z.unknown().optional(),
-										serial_number: z.unknown().optional(),
-										pseudonym: z.unknown().optional(),
-										unique_identifier: z.unknown().optional(),
-										user_identifier: z.unknown().optional(),
-										domain_component: z.unknown().optional(),
-										dn_qualifier: z.unknown().optional(),
-										unstructured_name: z.unknown().optional(),
-										unstructured_address: z.unknown().optional(),
-										street_address: z.unknown().optional(),
-										locality: z.unknown().optional(),
-										state: z.unknown().optional(),
-										postal_code: z.unknown().optional(),
-										country: z.unknown().optional(),
-										email: z.unknown().optional(),
-										title: z.unknown().optional(),
-										given_name: z.unknown().optional(),
-										surname: z.unknown().optional(),
-										organization_identifier: z.unknown().optional(),
+										common_name: unspecifiedProviderValue().optional(),
+										organization_name: unspecifiedProviderValue().optional(),
+										organization_units: unspecifiedProviderValue().optional(),
+										description: unspecifiedProviderValue().optional(),
+										serial_number: unspecifiedProviderValue().optional(),
+										pseudonym: unspecifiedProviderValue().optional(),
+										unique_identifier: unspecifiedProviderValue().optional(),
+										user_identifier: unspecifiedProviderValue().optional(),
+										domain_component: unspecifiedProviderValue().optional(),
+										dn_qualifier: unspecifiedProviderValue().optional(),
+										unstructured_name: unspecifiedProviderValue().optional(),
+										unstructured_address: unspecifiedProviderValue().optional(),
+										street_address: unspecifiedProviderValue().optional(),
+										locality: unspecifiedProviderValue().optional(),
+										state: unspecifiedProviderValue().optional(),
+										postal_code: unspecifiedProviderValue().optional(),
+										country: unspecifiedProviderValue().optional(),
+										email: unspecifiedProviderValue().optional(),
+										title: unspecifiedProviderValue().optional(),
+										given_name: unspecifiedProviderValue().optional(),
+										surname: unspecifiedProviderValue().optional(),
+										organization_identifier:
+											unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -7314,20 +7405,22 @@ const r_4ea70ee9ce09Input = z
 									.object({
 										san: z
 											.object({
-												dns_names: z.unknown().optional(),
-												emails: z.unknown().optional(),
-												ip_addresses: z.unknown().optional(),
+												dns_names: unspecifiedProviderValue().optional(),
+												emails: unspecifiedProviderValue().optional(),
+												ip_addresses: unspecifiedProviderValue().optional(),
 												other_names: z
 													.object({
-														guid: z.unknown().optional(),
-														raw_other_names: z.unknown().optional(),
+														guid: unspecifiedProviderValue().optional(),
+														raw_other_names:
+															unspecifiedProviderValue().optional(),
 													})
 													.passthrough()
 													.optional(),
-												registered_ids: z.unknown().optional(),
-												directory_name: z.unknown().optional(),
-												uris: z.unknown().optional(),
-												user_principal_names: z.unknown().optional(),
+												registered_ids: unspecifiedProviderValue().optional(),
+												directory_name: unspecifiedProviderValue().optional(),
+												uris: unspecifiedProviderValue().optional(),
+												user_principal_names:
+													unspecifiedProviderValue().optional(),
 											})
 											.passthrough()
 											.optional(),
@@ -7335,8 +7428,8 @@ const r_4ea70ee9ce09Input = z
 											.object({
 												directory_name: z
 													.object({
-														value: z.unknown().optional(),
-														critical: z.unknown().optional(),
+														value: unspecifiedProviderValue().optional(),
+														critical: unspecifiedProviderValue().optional(),
 													})
 													.passthrough()
 													.optional(),
@@ -7344,106 +7437,110 @@ const r_4ea70ee9ce09Input = z
 											.passthrough()
 											.optional(),
 										security_identifier: z
-											.object({ additional_values: z.unknown().optional() })
+											.object({
+												additional_values:
+													unspecifiedProviderValue().optional(),
+											})
 											.passthrough()
 											.optional(),
 										lei: z
 											.object({
-												value: z.unknown().optional(),
-												critical: z.unknown().optional(),
+												value: unspecifiedProviderValue().optional(),
+												critical: unspecifiedProviderValue().optional(),
 											})
 											.passthrough()
 											.optional(),
 										lei_role: z
 											.object({
-												value: z.unknown().optional(),
-												critical: z.unknown().optional(),
+												value: unspecifiedProviderValue().optional(),
+												critical: unspecifiedProviderValue().optional(),
 											})
 											.passthrough()
 											.optional(),
 									})
 									.passthrough()
 									.optional(),
-								custom_values: z.unknown().optional(),
-								tnc_accepted: z.unknown().optional(),
+								custom_values: unspecifiedProviderValue().optional(),
+								tnc_accepted: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						tags: z.unknown().optional(),
-						cert_owner_ids: z.unknown().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						cert_owner_ids: unspecifiedProviderValue().optional(),
 						ca_attributes: z
 							.object({
 								schema: z
 									.object({
-										ct_log_option: z.unknown().optional(),
+										ct_log_option: unspecifiedProviderValue().optional(),
 										dcv_method: z
 											.enum(['dns-cname-token', 'dns-txt-token', 'http-token'])
 											.optional(),
-										renewal_of_order_id: z.unknown().optional(),
-										skip_domain_validation: z.unknown().optional(),
+										renewal_of_order_id: unspecifiedProviderValue().optional(),
+										skip_domain_validation:
+											unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough()
 							.optional(),
-						custom_attributes: z.unknown().optional(),
+						custom_attributes: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				z
 					.object({
 						profile: z
-							.object({ id: z.unknown().optional() })
+							.object({ id: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 						seat: z
 							.object({
-								seat_id: z.unknown().optional(),
-								email: z.unknown().optional(),
+								seat_id: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						csr: z.unknown().optional(),
+						csr: unspecifiedProviderValue().optional(),
 						validity: z
 							.object({
 								unit: z
 									.enum(['years', 'months', 'days', 'hours', 'minutes'])
 									.optional(),
-								duration: z.unknown().optional(),
+								duration: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						delivery_format: z
 							.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 							.optional(),
-						include_ca_chain: z.unknown().optional(),
+						include_ca_chain: unspecifiedProviderValue().optional(),
 						attributes: z
 							.object({
 								subject: z
 									.object({
-										pseudonym: z.unknown().optional(),
-										title: z.unknown().optional(),
-										given_name: z.unknown().optional(),
-										surname: z.unknown().optional(),
-										UserPrincipalName: z.unknown().optional(),
-										email: z.unknown().optional(),
+										pseudonym: unspecifiedProviderValue().optional(),
+										title: unspecifiedProviderValue().optional(),
+										given_name: unspecifiedProviderValue().optional(),
+										surname: unspecifiedProviderValue().optional(),
+										UserPrincipalName: unspecifiedProviderValue().optional(),
+										email: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 								extensions: z
 									.object({
 										san: z
-											.object({ emails: z.unknown().optional() })
+											.object({ emails: unspecifiedProviderValue().optional() })
 											.passthrough()
 											.optional(),
 									})
 									.passthrough()
 									.optional(),
-								custom_values: z.unknown().optional(),
+								custom_values: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						tags: z.unknown().optional(),
+						tags: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			])
@@ -7452,13 +7549,13 @@ const r_4ea70ee9ce09Input = z
 	.strict();
 const r_4ea70ee9ce09Output = z
 	.object({
-		serial_number: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
 		delivery_format: z
 			.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 			.optional(),
-		certificate: z.unknown().optional(),
-		pkcs12_password: z.unknown().optional(),
-		request_id: z.unknown().optional(),
+		certificate: unspecifiedProviderValue().optional(),
+		pkcs12_password: unspecifiedProviderValue().optional(),
+		request_id: unspecifiedProviderValue().optional(),
 		dv_details: z
 			.object({
 				schema: z
@@ -7466,7 +7563,7 @@ const r_4ea70ee9ce09Output = z
 						dcv_method: z
 							.enum(['dns-cname-token', 'dns-txt-token', 'http-token'])
 							.optional(),
-						dcv_random_value: z.unknown().optional(),
+						dcv_random_value: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -7477,14 +7574,14 @@ const r_4ea70ee9ce09Output = z
 	.passthrough();
 const r_aba4f70417deInput = z
 	.object({
-		path: z.object({ request_id: z.unknown() }).strict(),
+		path: z.object({ request_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
 				profile: z
-					.object({ id: z.unknown().optional() })
+					.object({ id: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
 			})
@@ -7494,19 +7591,19 @@ const r_aba4f70417deInput = z
 	.strict();
 const r_aba4f70417deOutput = z
 	.object({
-		serial_number: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
 		delivery_format: z
 			.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 			.optional(),
-		certificate: z.unknown().optional(),
+		certificate: unspecifiedProviderValue().optional(),
 		status: z.enum(['ISSUED', 'PENDING', 'REJECTED']).optional(),
 	})
 	.passthrough();
 const r_ef37eb3829e2Input = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z
-			.object({ thumbprint_sha256: z.unknown().optional() })
+			.object({ thumbprint_sha256: unspecifiedProviderValue().optional() })
 			.strict()
 			.default({}),
 		headers: z.object({}).strict().default({}),
@@ -7516,11 +7613,11 @@ const r_ef37eb3829e2Input = z
 const r_ef37eb3829e2Output = z.undefined();
 const r_b8f4fd999e91Input = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				thumbprint_sha256: z.unknown().optional(),
-				account_id: z.unknown().optional(),
+				thumbprint_sha256: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -7528,21 +7625,21 @@ const r_b8f4fd999e91Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				csr: z.unknown().optional(),
+				csr: unspecifiedProviderValue().optional(),
 				validity: z
 					.object({
 						unit: z
 							.enum(['years', 'months', 'days', 'hours', 'minutes'])
 							.optional(),
-						duration: z.unknown().optional(),
+						duration: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				delivery_format: z
 					.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 					.optional(),
-				include_ca_chain: z.unknown().optional(),
-				renewal_comment: z.unknown().optional(),
+				include_ca_chain: unspecifiedProviderValue().optional(),
+				renewal_comment: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -7550,73 +7647,79 @@ const r_b8f4fd999e91Input = z
 	.strict();
 const r_b8f4fd999e91Output = z
 	.object({
-		agent_id: z.unknown().optional(),
-		application: z.unknown().optional(),
-		attributes: z.unknown().optional(),
-		auth_fields: z.unknown().optional(),
-		auto_renew_status: z.unknown().optional(),
+		agent_id: unspecifiedProviderValue().optional(),
+		application: unspecifiedProviderValue().optional(),
+		attributes: unspecifiedProviderValue().optional(),
+		auth_fields: unspecifiedProviderValue().optional(),
+		auto_renew_status: unspecifiedProviderValue().optional(),
 		automation_action: z
 			.object({
 				primaryAction: z
 					.enum(['ENROLL', 'GET_NEXT_CERT', 'REISSUE', 'RENEW', 'TRANSFER'])
 					.optional(),
-				renewalStartDate: z.unknown().optional(),
-				secondaryActions: z.unknown().optional(),
+				renewalStartDate: unspecifiedProviderValue().optional(),
+				secondaryActions: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		automation_status: z.unknown().optional(),
+		automation_status: unspecifiedProviderValue().optional(),
 		business_unit: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		ca_cert_id: z.unknown().optional(),
+		ca_cert_id: unspecifiedProviderValue().optional(),
 		cc_settings: z
 			.object({
 				auto_renew_settings: z
 					.object({
-						auto_renew_certificate_and_order: z.unknown(),
+						auto_renew_certificate_and_order: unspecifiedProviderValue(),
 						auto_renew_time: z
 							.object({
-								days: z.unknown().optional(),
-								hours: z.unknown().optional(),
-								minutes: z.unknown().optional(),
-								time_format: z.unknown(),
-								zone: z.unknown(),
+								days: unspecifiedProviderValue().optional(),
+								hours: unspecifiedProviderValue().optional(),
+								minutes: unspecifiedProviderValue().optional(),
+								time_format: unspecifiedProviderValue(),
+								zone: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						before_expiration: z.unknown(),
+						before_expiration: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
-				contacts: z.unknown().optional(),
-				ct_log_option: z.unknown().optional(),
-				ct_log_value: z.unknown().optional(),
-				http_signed_exchange: z.unknown().optional(),
-				key_size: z.unknown().optional(),
-				key_type: z.unknown().optional(),
+				contacts: unspecifiedProviderValue().optional(),
+				ct_log_option: unspecifiedProviderValue().optional(),
+				ct_log_value: unspecifiedProviderValue().optional(),
+				http_signed_exchange: unspecifiedProviderValue().optional(),
+				key_size: unspecifiedProviderValue().optional(),
+				key_type: unspecifiedProviderValue().optional(),
 				order_coverage_length: z
 					.object({
 						chronology: z
 							.object({
-								calendarType: z.unknown().optional(),
-								id: z.unknown().optional(),
+								calendarType: unspecifiedProviderValue().optional(),
+								id: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						days: z.unknown().optional(),
-						months: z.unknown().optional(),
-						negative: z.unknown().optional(),
-						units: z.unknown().optional(),
-						years: z.unknown().optional(),
-						zero: z.unknown().optional(),
+						days: unspecifiedProviderValue().optional(),
+						months: unspecifiedProviderValue().optional(),
+						negative: unspecifiedProviderValue().optional(),
+						units: unspecifiedProviderValue().optional(),
+						years: unspecifiedProviderValue().optional(),
+						zero: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				override_validity: z.unknown().optional(),
+				override_validity: unspecifiedProviderValue().optional(),
 				organization: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 				product_type: z.enum([
@@ -7656,48 +7759,57 @@ const r_b8f4fd999e91Output = z
 					'wildcard_dv_rapidssl',
 				]),
 				signature_algorithm: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 			})
 			.passthrough()
 			.optional(),
-		common_name: z.unknown().optional(),
-		days_till_renewal: z.unknown().optional(),
+		common_name: unspecifiedProviderValue().optional(),
+		days_till_renewal: unspecifiedProviderValue().optional(),
 		dual_approval_status: z
 			.object({
-				admins_approved: z.unknown().optional(),
-				dual_approve_enabled: z.unknown().optional(),
+				admins_approved: unspecifiedProviderValue().optional(),
+				dual_approve_enabled: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		enrollment: z.object({ id: z.unknown() }).passthrough().optional(),
-		escrow: z.unknown().optional(),
-		external_ca_name: z.unknown().optional(),
-		ica: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+		enrollment: z
+			.object({ id: unspecifiedProviderValue() })
 			.passthrough()
 			.optional(),
-		id: z.unknown(),
-		inventory_id: z.unknown().optional(),
-		ip: z.unknown().optional(),
-		key_length: z.unknown().optional(),
-		key_type: z.unknown().optional(),
-		key_usage: z.unknown().optional(),
-		managing_integration: z.unknown().optional(),
-		notes: z.unknown().optional(),
-		order_id: z.unknown().optional(),
-		organization_name: z.unknown().optional(),
-		organization_unit: z.unknown().optional(),
-		port: z.unknown().optional(),
-		private_key_algorithm: z.unknown().optional(),
-		product_type: z.unknown().optional(),
+		escrow: unspecifiedProviderValue().optional(),
+		external_ca_name: unspecifiedProviderValue().optional(),
+		ica: z
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
+			.passthrough()
+			.optional(),
+		id: unspecifiedProviderValue(),
+		inventory_id: unspecifiedProviderValue().optional(),
+		ip: unspecifiedProviderValue().optional(),
+		key_length: unspecifiedProviderValue().optional(),
+		key_type: unspecifiedProviderValue().optional(),
+		key_usage: unspecifiedProviderValue().optional(),
+		managing_integration: unspecifiedProviderValue().optional(),
+		notes: unspecifiedProviderValue().optional(),
+		order_id: unspecifiedProviderValue().optional(),
+		organization_name: unspecifiedProviderValue().optional(),
+		organization_unit: unspecifiedProviderValue().optional(),
+		port: unspecifiedProviderValue().optional(),
+		private_key_algorithm: unspecifiedProviderValue().optional(),
+		product_type: unspecifiedProviderValue().optional(),
 		profile: z
 			.object({
-				authentication_method: z.unknown().optional(),
-				enrollment_method: z.unknown().optional(),
-				id: z.unknown(),
-				name: z.unknown().optional(),
+				authentication_method: unspecifiedProviderValue().optional(),
+				enrollment_method: unspecifiedProviderValue().optional(),
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
 				status: z.enum(['action_needed', 'active', 'suspended']).optional(),
 				trust_type: z.enum(['private', 'public']).optional(),
 			})
@@ -7717,33 +7829,39 @@ const r_b8f4fd999e91Output = z
 				'unspecified',
 			])
 			.optional(),
-		root_ca_name: z.unknown().optional(),
+		root_ca_name: unspecifiedProviderValue().optional(),
 		seat: z
 			.object({
-				active: z.unknown().optional(),
+				active: unspecifiedProviderValue().optional(),
 				business_unit: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				created_at: z.unknown().optional(),
-				email: z.unknown().optional(),
-				id: z.unknown().optional(),
-				number_of_pending: z.unknown().optional(),
-				phone: z.unknown().optional(),
-				seat_allowed_for_enrollment: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
-				seat_name: z.unknown().optional(),
+				created_at: unspecifiedProviderValue().optional(),
+				email: unspecifiedProviderValue().optional(),
+				id: unspecifiedProviderValue().optional(),
+				number_of_pending: unspecifiedProviderValue().optional(),
+				phone: unspecifiedProviderValue().optional(),
+				seat_allowed_for_enrollment: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
+				seat_name: unspecifiedProviderValue().optional(),
 				seat_type: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				seat_creation_date: z.unknown().optional(),
+				seat_creation_date: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		serial_number: z.unknown().optional(),
-		signing_algorithm: z.unknown().optional(),
-		source: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
+		signing_algorithm: unspecifiedProviderValue().optional(),
+		source: unspecifiedProviderValue().optional(),
 		status: z
 			.enum([
 				'deleted',
@@ -7757,145 +7875,154 @@ const r_b8f4fd999e91Output = z
 			.optional(),
 		subject: z
 			.object({
-				common_name: z.unknown().optional(),
-				country: z.unknown().optional(),
-				locality: z.unknown().optional(),
-				organization_name: z.unknown().optional(),
-				organization_units: z.unknown().optional(),
-				postal_code: z.unknown().optional(),
-				state: z.unknown().optional(),
-				street_address: z.unknown().optional(),
+				common_name: unspecifiedProviderValue().optional(),
+				country: unspecifiedProviderValue().optional(),
+				locality: unspecifiedProviderValue().optional(),
+				organization_name: unspecifiedProviderValue().optional(),
+				organization_units: unspecifiedProviderValue().optional(),
+				postal_code: unspecifiedProviderValue().optional(),
+				state: unspecifiedProviderValue().optional(),
+				street_address: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		subject_email: z.unknown().optional(),
-		system_name: z.unknown().optional(),
-		tags: z.unknown().optional(),
-		thumbprint: z.unknown().optional(),
-		valid_from: z.unknown().optional(),
-		valid_to: z.unknown().optional(),
-		automation_instance_count: z.unknown().optional(),
-		discovery_instance_count: z.unknown().optional(),
+		subject_email: unspecifiedProviderValue().optional(),
+		system_name: unspecifiedProviderValue().optional(),
+		tags: unspecifiedProviderValue().optional(),
+		thumbprint: unspecifiedProviderValue().optional(),
+		valid_from: unspecifiedProviderValue().optional(),
+		valid_to: unspecifiedProviderValue().optional(),
+		automation_instance_count: unspecifiedProviderValue().optional(),
+		discovery_instance_count: unspecifiedProviderValue().optional(),
 		delivery_format: z
 			.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 			.optional(),
-		certificate: z.unknown().optional(),
-		pkcs12_password: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		revocation_date: z.unknown().optional(),
-		san_email: z.unknown().optional(),
-		thumbprint_sha1: z.unknown().optional(),
-		cert_arn: z.unknown().optional(),
-		azure_cert_id: z.unknown().optional(),
-		gcp_metadata: z.unknown().optional(),
-		recovery_comment: z.unknown().optional(),
-		cert_issues: z.unknown().optional(),
-		cert_security_rating: z.unknown().optional(),
+		certificate: unspecifiedProviderValue().optional(),
+		pkcs12_password: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		revocation_date: unspecifiedProviderValue().optional(),
+		san_email: unspecifiedProviderValue().optional(),
+		thumbprint_sha1: unspecifiedProviderValue().optional(),
+		cert_arn: unspecifiedProviderValue().optional(),
+		azure_cert_id: unspecifiedProviderValue().optional(),
+		gcp_metadata: unspecifiedProviderValue().optional(),
+		recovery_comment: unspecifiedProviderValue().optional(),
+		cert_issues: unspecifiedProviderValue().optional(),
+		cert_security_rating: unspecifiedProviderValue().optional(),
 		security_rating_info: z
 			.object({
-				security_rating: z.unknown().optional(),
+				security_rating: unspecifiedProviderValue().optional(),
 				handshake_protocols: z
 					.object({
-						cipher_algorithm: z.unknown().optional(),
-						key_size: z.unknown().optional(),
-						protocol: z.unknown().optional(),
+						cipher_algorithm: unspecifiedProviderValue().optional(),
+						key_size: unspecifiedProviderValue().optional(),
+						protocol: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				security_headers: z.unknown().optional(),
-				http_response_headers: z.unknown().optional(),
+				security_headers: unspecifiedProviderValue().optional(),
+				http_response_headers: unspecifiedProviderValue().optional(),
 				certificate_chain: z
 					.object({
-						cert_chain_details: z.unknown().optional(),
-						no_of_cert_chain_found: z.unknown().optional(),
+						cert_chain_details: unspecifiedProviderValue().optional(),
+						no_of_cert_chain_found: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				security_rating_score: z.unknown().optional(),
-				certificate_chain_score: z.unknown().optional(),
-				handshake_protocols_score: z.unknown().optional(),
-				security_headers_score: z.unknown().optional(),
-				http_response_headers_score: z.unknown().optional(),
-				protocol_ciphers: z.unknown().optional(),
+				security_rating_score: unspecifiedProviderValue().optional(),
+				certificate_chain_score: unspecifiedProviderValue().optional(),
+				handshake_protocols_score: unspecifiedProviderValue().optional(),
+				security_headers_score: unspecifiedProviderValue().optional(),
+				http_response_headers_score: unspecifiedProviderValue().optional(),
+				protocol_ciphers: unspecifiedProviderValue().optional(),
 				protocol_ciphers_score: z
 					.object({
-						protocols: z.unknown().optional(),
-						score: z.unknown().optional(),
+						protocols: unspecifiedProviderValue().optional(),
+						score: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 			})
 			.passthrough()
 			.optional(),
-		server_id: z.unknown().optional(),
-		server_id_type: z.unknown().optional(),
-		first_discovered_date: z.unknown().optional(),
-		last_discovered_date: z.unknown().optional(),
-		application_version: z.unknown().optional(),
-		os_name: z.unknown().optional(),
-		os_version: z.unknown().optional(),
-		ca_vendor: z.unknown().optional(),
-		renewed_cert_id: z.unknown().optional(),
-		expires_in_days: z.unknown().optional(),
-		connector_tags: z.unknown().optional(),
-		parent_id: z.unknown().optional(),
-		has_warning: z.unknown().optional(),
-		quantum_safe: z.unknown().optional(),
+		server_id: unspecifiedProviderValue().optional(),
+		server_id_type: unspecifiedProviderValue().optional(),
+		first_discovered_date: unspecifiedProviderValue().optional(),
+		last_discovered_date: unspecifiedProviderValue().optional(),
+		application_version: unspecifiedProviderValue().optional(),
+		os_name: unspecifiedProviderValue().optional(),
+		os_version: unspecifiedProviderValue().optional(),
+		ca_vendor: unspecifiedProviderValue().optional(),
+		renewed_cert_id: unspecifiedProviderValue().optional(),
+		expires_in_days: unspecifiedProviderValue().optional(),
+		connector_tags: unspecifiedProviderValue().optional(),
+		parent_id: unspecifiedProviderValue().optional(),
+		has_warning: unspecifiedProviderValue().optional(),
+		quantum_safe: unspecifiedProviderValue().optional(),
 		related_connector: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		vault_connector: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		vault_uri: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		managing_ca: z.unknown().optional(),
-		escrow_client_key_id: z.unknown().optional(),
-		cc_account_id: z.unknown().optional(),
-		cc_container_id: z.unknown().optional(),
-		security_identifier: z.unknown().optional(),
-		ian_string: z.unknown().optional(),
-		aws_acm: z.unknown().optional(),
-		connector_provider: z.unknown().optional(),
-		extended_key_usage: z.unknown().optional(),
-		file_path: z.unknown().optional(),
-		file_name: z.unknown().optional(),
-		file_type: z.unknown().optional(),
-		system_scan_cert_id: z.unknown().optional(),
-		intune_deployment_details: z.unknown().optional(),
-		found_in_archive: z.unknown().optional(),
-		msca_template_name: z.unknown().optional(),
-		cert_delivery_details: z.unknown().optional(),
-		dcone_user_id: z.unknown().optional(),
-		dcone_user_email: z.unknown().optional(),
-		bulk_job_name: z.unknown().optional(),
-		bulk_operation_job_id: z.unknown().optional(),
-		bulk_operation_job_name: z.unknown().optional(),
-		vs_partition: z.unknown().optional(),
-		vs_alias: z.unknown().optional(),
-		domain_name: z.unknown().optional(),
-		host_name: z.unknown().optional(),
-		renewal_window: z.unknown().optional(),
-		custom_attributes: z.unknown().optional(),
-		cert_owners: z.unknown().optional(),
-		protocols: z.unknown().optional(),
-		smime_cert_profile_type: z.unknown().optional(),
+		managing_ca: unspecifiedProviderValue().optional(),
+		escrow_client_key_id: unspecifiedProviderValue().optional(),
+		cc_account_id: unspecifiedProviderValue().optional(),
+		cc_container_id: unspecifiedProviderValue().optional(),
+		security_identifier: unspecifiedProviderValue().optional(),
+		ian_string: unspecifiedProviderValue().optional(),
+		aws_acm: unspecifiedProviderValue().optional(),
+		connector_provider: unspecifiedProviderValue().optional(),
+		extended_key_usage: unspecifiedProviderValue().optional(),
+		file_path: unspecifiedProviderValue().optional(),
+		file_name: unspecifiedProviderValue().optional(),
+		file_type: unspecifiedProviderValue().optional(),
+		system_scan_cert_id: unspecifiedProviderValue().optional(),
+		intune_deployment_details: unspecifiedProviderValue().optional(),
+		found_in_archive: unspecifiedProviderValue().optional(),
+		msca_template_name: unspecifiedProviderValue().optional(),
+		cert_delivery_details: unspecifiedProviderValue().optional(),
+		dcone_user_id: unspecifiedProviderValue().optional(),
+		dcone_user_email: unspecifiedProviderValue().optional(),
+		bulk_job_name: unspecifiedProviderValue().optional(),
+		bulk_operation_job_id: unspecifiedProviderValue().optional(),
+		bulk_operation_job_name: unspecifiedProviderValue().optional(),
+		vs_partition: unspecifiedProviderValue().optional(),
+		vs_alias: unspecifiedProviderValue().optional(),
+		domain_name: unspecifiedProviderValue().optional(),
+		host_name: unspecifiedProviderValue().optional(),
+		renewal_window: unspecifiedProviderValue().optional(),
+		custom_attributes: unspecifiedProviderValue().optional(),
+		cert_owners: unspecifiedProviderValue().optional(),
+		protocols: unspecifiedProviderValue().optional(),
+		smime_cert_profile_type: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_c6787b39d482Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				certificate_ids: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				certificate_ids: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -7905,13 +8032,13 @@ const r_c6787b39d482Output = z.undefined();
 const r_15baf5205f5fInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				certificate_ids: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				certificate_ids: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -7922,42 +8049,44 @@ const r_795aa866d75eInput = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
-			.object({ trap_seat_duplicate_error: z.unknown().optional() })
+			.object({
+				trap_seat_duplicate_error: unspecifiedProviderValue().optional(),
+			})
 			.strict()
 			.default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown().optional(),
+		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
-const r_795aa866d75eOutput = z.unknown();
+const r_795aa866d75eOutput = unspecifiedProviderValue();
 const r_cd0ce04fc2f9Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				business_unit_name: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
-				seat_type_id: z.unknown().optional(),
-				serial_number: z.unknown().optional(),
-				valid_from: z.unknown().optional(),
-				valid_to: z.unknown().optional(),
-				common_name: z.unknown().optional(),
-				aki: z.unknown().optional(),
-				issuing_ca_id: z.unknown().optional(),
-				issuing_ca_name: z.unknown().optional(),
-				issuing_ca_serial_number: z.unknown().optional(),
-				status: z.unknown().optional(),
-				thumbprint: z.unknown().optional(),
-				enrollment_id: z.unknown().optional(),
-				custom_attributes: z.unknown().optional(),
-				cert_owners: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				business_unit_name: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
+				seat_type_id: unspecifiedProviderValue().optional(),
+				serial_number: unspecifiedProviderValue().optional(),
+				valid_from: unspecifiedProviderValue().optional(),
+				valid_to: unspecifiedProviderValue().optional(),
+				common_name: unspecifiedProviderValue().optional(),
+				aki: unspecifiedProviderValue().optional(),
+				issuing_ca_id: unspecifiedProviderValue().optional(),
+				issuing_ca_name: unspecifiedProviderValue().optional(),
+				issuing_ca_serial_number: unspecifiedProviderValue().optional(),
+				status: unspecifiedProviderValue().optional(),
+				thumbprint: unspecifiedProviderValue().optional(),
+				enrollment_id: unspecifiedProviderValue().optional(),
+				custom_attributes: unspecifiedProviderValue().optional(),
+				cert_owners: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -7967,10 +8096,17 @@ const r_cd0ce04fc2f9Input = z
 	.strict();
 const r_cd0ce04fc2f9Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
 	z
-		.object({ has_more: z.unknown().optional(), items: z.unknown().optional() })
+		.object({
+			has_more: unspecifiedProviderValue().optional(),
+			items: unspecifiedProviderValue().optional(),
+		})
 		.passthrough(),
 );
 const r_47b5ee161d58Input = z
@@ -7978,13 +8114,13 @@ const r_47b5ee161d58Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				status: z
 					.enum(['issued', 'revoked', 'expired', 'suspended'])
 					.optional(),
 				issuer_type: z.enum(['private_ca']).optional(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -7993,21 +8129,28 @@ const r_47b5ee161d58Input = z
 	.strict();
 const r_47b5ee161d58Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
 	z
-		.object({ has_more: z.unknown().optional(), items: z.unknown().optional() })
+		.object({
+			has_more: unspecifiedProviderValue().optional(),
+			items: unspecifiedProviderValue().optional(),
+		})
 		.passthrough(),
 );
 const r_cb5f6a5e8c6eInput = z
 	.object({
-		path: z.object({ certificate_id: z.unknown() }).strict(),
+		path: z.object({ certificate_id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				ip: z.unknown().optional(),
-				survey_id: z.unknown().optional(),
-				port: z.unknown().optional(),
-				server_id: z.unknown().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				survey_id: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				server_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -8018,11 +8161,11 @@ const r_cb5f6a5e8c6eInput = z
 const r_cb5f6a5e8c6eOutput = z.undefined();
 const r_c1e6841c6826Input = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				thumbprint_sha256: z.unknown().optional(),
-				account_id: z.unknown().optional(),
+				thumbprint_sha256: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -8033,31 +8176,43 @@ const r_c1e6841c6826Input = z
 const r_c1e6841c6826Output = z
 	.object({
 		profile: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		seat: z
-			.object({ seat_id: z.unknown().optional() })
+			.object({ seat_id: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
 		seat_type: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		business_unit: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		account: z.object({ id: z.unknown() }).passthrough().optional(),
-		certificate: z.unknown().optional(),
-		ica: z.object({ id: z.unknown() }).passthrough().optional(),
-		common_name: z.unknown().optional(),
+		account: z
+			.object({ id: unspecifiedProviderValue() })
+			.passthrough()
+			.optional(),
+		certificate: unspecifiedProviderValue().optional(),
+		ica: z.object({ id: unspecifiedProviderValue() }).passthrough().optional(),
+		common_name: unspecifiedProviderValue().optional(),
 		status: z.enum(['issued', 'revoked', 'expired', 'suspended']).optional(),
-		serial_number: z.unknown().optional(),
-		thumbprint: z.unknown().optional(),
-		valid_from: z.unknown().optional(),
-		valid_to: z.unknown().optional(),
-		notes: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
+		thumbprint: unspecifiedProviderValue().optional(),
+		valid_from: unspecifiedProviderValue().optional(),
+		valid_to: unspecifiedProviderValue().optional(),
+		notes: unspecifiedProviderValue().optional(),
 		revocation: z
 			.object({
 				reason: z
@@ -8074,116 +8229,116 @@ const r_c1e6841c6826Output = z
 						'unspecified',
 					])
 					.optional(),
-				revocation_date: z.unknown().optional(),
-				comments: z.unknown().optional(),
+				revocation_date: unspecifiedProviderValue().optional(),
+				comments: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
 		ca_response_attributes: z
 			.object({
 				schema: z
-					.object({ order_id: z.unknown().optional() })
+					.object({ order_id: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
 			})
 			.passthrough()
 			.optional(),
-		template_name: z.unknown().optional(),
-		issuing_ca_name: z.unknown().optional(),
-		key_size: z.unknown().optional(),
-		signature_algorithm: z.unknown().optional(),
+		template_name: unspecifiedProviderValue().optional(),
+		issuing_ca_name: unspecifiedProviderValue().optional(),
+		key_size: unspecifiedProviderValue().optional(),
+		signature_algorithm: unspecifiedProviderValue().optional(),
 		subject: z
 			.object({
-				common_name: z.unknown().optional(),
-				organization_name: z.unknown().optional(),
-				organization_units: z.unknown().optional(),
-				description: z.unknown().optional(),
-				serial_number: z.unknown().optional(),
-				pseudonym: z.unknown().optional(),
-				unique_identifier: z.unknown().optional(),
-				user_identifier: z.unknown().optional(),
-				domain_component: z.unknown().optional(),
-				dn_qualifier: z.unknown().optional(),
-				unstructured_name: z.unknown().optional(),
-				unstructured_address: z.unknown().optional(),
-				street_address: z.unknown().optional(),
-				locality: z.unknown().optional(),
-				state: z.unknown().optional(),
-				postal_code: z.unknown().optional(),
-				country: z.unknown().optional(),
-				email: z.unknown().optional(),
-				title: z.unknown().optional(),
-				given_name: z.unknown().optional(),
-				surname: z.unknown().optional(),
-				organization_identifier: z.unknown().optional(),
+				common_name: unspecifiedProviderValue().optional(),
+				organization_name: unspecifiedProviderValue().optional(),
+				organization_units: unspecifiedProviderValue().optional(),
+				description: unspecifiedProviderValue().optional(),
+				serial_number: unspecifiedProviderValue().optional(),
+				pseudonym: unspecifiedProviderValue().optional(),
+				unique_identifier: unspecifiedProviderValue().optional(),
+				user_identifier: unspecifiedProviderValue().optional(),
+				domain_component: unspecifiedProviderValue().optional(),
+				dn_qualifier: unspecifiedProviderValue().optional(),
+				unstructured_name: unspecifiedProviderValue().optional(),
+				unstructured_address: unspecifiedProviderValue().optional(),
+				street_address: unspecifiedProviderValue().optional(),
+				locality: unspecifiedProviderValue().optional(),
+				state: unspecifiedProviderValue().optional(),
+				postal_code: unspecifiedProviderValue().optional(),
+				country: unspecifiedProviderValue().optional(),
+				email: unspecifiedProviderValue().optional(),
+				title: unspecifiedProviderValue().optional(),
+				given_name: unspecifiedProviderValue().optional(),
+				surname: unspecifiedProviderValue().optional(),
+				organization_identifier: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		cert_security_rating: z.unknown().optional(),
+		cert_security_rating: unspecifiedProviderValue().optional(),
 		security_rating_info: z
 			.object({
-				security_rating: z.unknown().optional(),
+				security_rating: unspecifiedProviderValue().optional(),
 				handshake_protocols: z
 					.object({
-						cipher_algorithm: z.unknown().optional(),
-						key_size: z.unknown().optional(),
-						protocol: z.unknown().optional(),
+						cipher_algorithm: unspecifiedProviderValue().optional(),
+						key_size: unspecifiedProviderValue().optional(),
+						protocol: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				security_headers: z.unknown().optional(),
-				http_response_headers: z.unknown().optional(),
+				security_headers: unspecifiedProviderValue().optional(),
+				http_response_headers: unspecifiedProviderValue().optional(),
 				certificate_chain: z
 					.object({
-						cert_chain_details: z.unknown().optional(),
-						no_of_cert_chain_found: z.unknown().optional(),
+						cert_chain_details: unspecifiedProviderValue().optional(),
+						no_of_cert_chain_found: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				security_rating_score: z.unknown().optional(),
-				certificate_chain_score: z.unknown().optional(),
-				handshake_protocols_score: z.unknown().optional(),
-				security_headers_score: z.unknown().optional(),
-				http_response_headers_score: z.unknown().optional(),
-				protocol_ciphers: z.unknown().optional(),
+				security_rating_score: unspecifiedProviderValue().optional(),
+				certificate_chain_score: unspecifiedProviderValue().optional(),
+				handshake_protocols_score: unspecifiedProviderValue().optional(),
+				security_headers_score: unspecifiedProviderValue().optional(),
+				http_response_headers_score: unspecifiedProviderValue().optional(),
+				protocol_ciphers: unspecifiedProviderValue().optional(),
 				protocol_ciphers_score: z
 					.object({
-						protocols: z.unknown().optional(),
-						score: z.unknown().optional(),
+						protocols: unspecifiedProviderValue().optional(),
+						score: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 			})
 			.passthrough()
 			.optional(),
-		file_path: z.unknown().optional(),
-		file_name: z.unknown().optional(),
-		file_type: z.unknown().optional(),
-		ip: z.unknown().optional(),
-		port: z.unknown().optional(),
-		net_scan_domain_name: z.unknown().optional(),
-		application: z.unknown().optional(),
-		automation_status: z.unknown().optional(),
-		ca_vendor: z.unknown().optional(),
-		connector: z.unknown().optional(),
-		dcone_user_id: z.unknown().optional(),
-		enrollment_method: z.unknown().optional(),
-		system_name: z.unknown().optional(),
-		source: z.unknown().optional(),
-		scan_name: z.unknown().optional(),
-		expires_in_days: z.unknown().optional(),
-		instance_count: z.unknown().optional(),
-		extended_key_usage: z.unknown().optional(),
-		msca_template_name: z.unknown().optional(),
-		escrow: z.unknown().optional(),
-		attributes: z.unknown().optional(),
+		file_path: unspecifiedProviderValue().optional(),
+		file_name: unspecifiedProviderValue().optional(),
+		file_type: unspecifiedProviderValue().optional(),
+		ip: unspecifiedProviderValue().optional(),
+		port: unspecifiedProviderValue().optional(),
+		net_scan_domain_name: unspecifiedProviderValue().optional(),
+		application: unspecifiedProviderValue().optional(),
+		automation_status: unspecifiedProviderValue().optional(),
+		ca_vendor: unspecifiedProviderValue().optional(),
+		connector: unspecifiedProviderValue().optional(),
+		dcone_user_id: unspecifiedProviderValue().optional(),
+		enrollment_method: unspecifiedProviderValue().optional(),
+		system_name: unspecifiedProviderValue().optional(),
+		source: unspecifiedProviderValue().optional(),
+		scan_name: unspecifiedProviderValue().optional(),
+		expires_in_days: unspecifiedProviderValue().optional(),
+		instance_count: unspecifiedProviderValue().optional(),
+		extended_key_usage: unspecifiedProviderValue().optional(),
+		msca_template_name: unspecifiedProviderValue().optional(),
+		escrow: unspecifiedProviderValue().optional(),
+		attributes: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_b85de13db956Input = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z
-			.object({ thumbprint_sha256: z.unknown().optional() })
+			.object({ thumbprint_sha256: unspecifiedProviderValue().optional() })
 			.strict()
 			.default({}),
 		headers: z.object({}).strict().default({}),
@@ -8193,17 +8348,17 @@ const r_b85de13db956Input = z
 const r_b85de13db956Output = z
 	.object({
 		delivery_format: z.enum(['pkcs12']).optional(),
-		certificate: z.unknown().optional(),
-		pkcs12_password: z.unknown().optional(),
+		certificate: unspecifiedProviderValue().optional(),
+		pkcs12_password: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_d7ae6dc4292dInput = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				thumbprint_sha256: z.unknown().optional(),
-				account_id: z.unknown().optional(),
+				thumbprint_sha256: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -8228,7 +8383,7 @@ const r_d7ae6dc4292dInput = z
 const r_d7ae6dc4292dOutput = z.undefined();
 const r_32308d9d0956Input = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8237,7 +8392,7 @@ const r_32308d9d0956Input = z
 const r_32308d9d0956Output = z.undefined();
 const r_e81b68e657ccInput = z
 	.object({
-		path: z.object({ serial_number: z.unknown() }).strict(),
+		path: z.object({ serial_number: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8245,8 +8400,8 @@ const r_e81b68e657ccInput = z
 	.strict();
 const r_e81b68e657ccOutput = z
 	.object({
-		pkcs7: z.unknown().optional(),
-		x509_cert_chain: z.unknown().optional(),
+		pkcs7: unspecifiedProviderValue().optional(),
+		x509_cert_chain: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_00aaa42b68c2Input = z
@@ -8254,8 +8409,8 @@ const r_00aaa42b68c2Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown().optional(),
-				exclude_certificate_status: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				exclude_certificate_status: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -8264,16 +8419,16 @@ const r_00aaa42b68c2Input = z
 	})
 	.strict();
 const r_00aaa42b68c2Output = z
-	.object({ total_count: z.unknown().optional() })
+	.object({ total_count: unspecifiedProviderValue().optional() })
 	.passthrough();
 const r_a09ad9571231Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown().optional(),
-				exclude_certificate_status: z.unknown().optional(),
-				cursor: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				exclude_certificate_status: unspecifiedProviderValue().optional(),
+				cursor: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -8283,9 +8438,9 @@ const r_a09ad9571231Input = z
 	.strict();
 const r_a09ad9571231Output = z
 	.object({
-		batch_size: z.unknown().optional(),
-		cursor: z.unknown().nullable().optional(),
-		items: z.unknown().optional(),
+		batch_size: unspecifiedProviderValue().optional(),
+		cursor: unspecifiedProviderValue().nullable().optional(),
+		items: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_565bb358f1fcInput = z
@@ -8298,35 +8453,36 @@ const r_565bb358f1fcInput = z
 			.union([
 				z
 					.object({
-						name: z.unknown(),
-						business_unit_id: z.unknown(),
-						account_id: z.unknown(),
+						name: unspecifiedProviderValue(),
+						business_unit_id: unspecifiedProviderValue(),
+						account_id: unspecifiedProviderValue(),
 						preset_id: z.enum(['36cbd4c2-f6e7-4a35-a4e6-e03ebf939cb4']),
-						tags: z.unknown().optional(),
-						username: z.unknown(),
-						password: z.unknown(),
-						api_key: z.unknown(),
-						credentials: z.unknown().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						username: unspecifiedProviderValue(),
+						password: unspecifiedProviderValue(),
+						api_key: unspecifiedProviderValue(),
+						credentials: unspecifiedProviderValue().optional(),
 						region: z.enum(['US', 'EU']),
 						import_attributes: z
 							.object({
-								all_valid_certificates_from_last_4_years: z
-									.unknown()
-									.optional(),
-								all_expired_certificates_within: z.unknown().optional(),
-								all_revoked_certificates_that_are_valid: z.unknown().optional(),
-								business_unit_id: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								all_valid_certificates_from_last_4_years:
+									unspecifiedProviderValue().optional(),
+								all_expired_certificates_within:
+									unspecifiedProviderValue().optional(),
+								all_revoked_certificates_that_are_valid:
+									unspecifiedProviderValue().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
-								cc_division_bu_mapping: z.unknown().optional(),
-								import_all_data: z.unknown().optional(),
-								business_unit_name: z.unknown().optional(),
+								cc_division_bu_mapping: unspecifiedProviderValue().optional(),
+								import_all_data: unspecifiedProviderValue().optional(),
+								business_unit_name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -8334,39 +8490,41 @@ const r_565bb358f1fcInput = z
 					.passthrough(),
 				z
 					.object({
-						account_id: z.unknown(),
-						business_unit_id: z.unknown().optional(),
-						name: z.unknown(),
+						account_id: unspecifiedProviderValue(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						name: unspecifiedProviderValue(),
 						preset_id: z.enum(['a7f721aa-4796-4815-9128-6796fedbb917']),
-						username: z.unknown(),
-						password: z.unknown(),
-						url: z.unknown(),
+						username: unspecifiedProviderValue(),
+						password: unspecifiedProviderValue(),
+						url: unspecifiedProviderValue(),
 					})
 					.passthrough(),
 				z
 					.object({
-						account_id: z.unknown(),
-						business_unit_id: z.unknown(),
-						name: z.unknown(),
-						preset_id: z.unknown(),
-						core_attributes: z.unknown(),
-						config_attributes: z.unknown(),
+						account_id: unspecifiedProviderValue(),
+						business_unit_id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+						preset_id: unspecifiedProviderValue(),
+						core_attributes: unspecifiedProviderValue(),
+						config_attributes: unspecifiedProviderValue(),
 						additional_attributes: z
 							.object({
-								all_valid_certificates_from_last_4_years: z
-									.unknown()
-									.optional(),
-								all_expired_certificates_within: z.unknown().optional(),
-								all_revoked_certificates_that_are_valid: z.unknown().optional(),
-								business_unit_id: z.unknown().optional(),
-								s3_bucket_name: z.unknown().optional(),
-								is_new_s3_bucket_required: z.unknown().optional(),
-								last_fetched_time: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								all_valid_certificates_from_last_4_years:
+									unspecifiedProviderValue().optional(),
+								all_expired_certificates_within:
+									unspecifiedProviderValue().optional(),
+								all_revoked_certificates_that_are_valid:
+									unspecifiedProviderValue().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								s3_bucket_name: unspecifiedProviderValue().optional(),
+								is_new_s3_bucket_required:
+									unspecifiedProviderValue().optional(),
+								last_fetched_time: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -8385,17 +8543,17 @@ const r_c4f2ebc60dafInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				limit: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				limit: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				name: z.unknown().optional(),
+				name: unspecifiedProviderValue().optional(),
 				provider: z
 					.enum([
 						'CERTCENTRAL',
@@ -8439,9 +8597,9 @@ const r_c4f2ebc60dafInput = z
 						'DELETED',
 					])
 					.optional(),
-				last_completed_at: z.unknown().optional(),
-				next_update: z.unknown().optional(),
-				business_unit_name: z.unknown().optional(),
+				last_completed_at: unspecifiedProviderValue().optional(),
+				next_update: unspecifiedProviderValue().optional(),
+				business_unit_name: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -8451,7 +8609,7 @@ const r_c4f2ebc60dafOutput = z.undefined();
 const r_cac1d643fd7dInput = z
 	.object({
 		path: z.object({ field: z.enum(['provider', 'type']) }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8459,9 +8617,12 @@ const r_cac1d643fd7dInput = z
 const r_cac1d643fd7dOutput = z.undefined();
 const r_9fdfa9ff199aInput = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
 		query: z
-			.object({ account_id: z.unknown(), template_id: z.unknown().optional() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				template_id: unspecifiedProviderValue().optional(),
+			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8470,43 +8631,45 @@ const r_9fdfa9ff199aInput = z
 const r_9fdfa9ff199aOutput = z.undefined();
 const r_6ae814861232Input = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.union([
 				z
 					.object({
-						name: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
 						preset_id: z
 							.enum(['1c389430-7885-4eb3-82e9-96fec17de7a6'])
 							.optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						aws_account_id: z.unknown().optional(),
-						aws_region: z.unknown().optional(),
-						authentication_method: z.unknown().optional(),
-						aws_access_key_id: z.unknown().optional(),
-						aws_secret_key: z.unknown().optional(),
-						profile_name: z.unknown().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						aws_account_id: unspecifiedProviderValue().optional(),
+						aws_region: unspecifiedProviderValue().optional(),
+						authentication_method: unspecifiedProviderValue().optional(),
+						aws_access_key_id: unspecifiedProviderValue().optional(),
+						aws_secret_key: unspecifiedProviderValue().optional(),
+						profile_name: unspecifiedProviderValue().optional(),
 						import_attributes: z
 							.object({
-								all_valid_certificates_from_last_4_years: z
-									.unknown()
-									.optional(),
-								all_expired_certificates_within: z.unknown().optional(),
-								all_revoked_certificates_that_are_valid: z.unknown().optional(),
-								business_unit_id: z.unknown().optional(),
-								s3_bucket_name: z.unknown().optional(),
-								is_new_s3_bucket_required: z.unknown().optional(),
-								last_fetched_time: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								all_valid_certificates_from_last_4_years:
+									unspecifiedProviderValue().optional(),
+								all_expired_certificates_within:
+									unspecifiedProviderValue().optional(),
+								all_revoked_certificates_that_are_valid:
+									unspecifiedProviderValue().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								s3_bucket_name: unspecifiedProviderValue().optional(),
+								is_new_s3_bucket_required:
+									unspecifiedProviderValue().optional(),
+								last_fetched_time: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -8517,34 +8680,36 @@ const r_6ae814861232Input = z
 					.passthrough(),
 				z
 					.object({
-						name: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
 						preset_id: z
 							.enum(['36cbd4c2-f6e7-4a35-a4e6-e03ebf939cb4'])
 							.optional(),
-						api_key: z.unknown().optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						username: z.unknown().optional(),
-						password: z.unknown().optional(),
-						credentials: z.unknown().optional(),
+						api_key: unspecifiedProviderValue().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						username: unspecifiedProviderValue().optional(),
+						password: unspecifiedProviderValue().optional(),
+						credentials: unspecifiedProviderValue().optional(),
 						region: z.enum(['US', 'EU']).optional(),
 						import_attributes: z
 							.object({
-								all_valid_certificates_from_last_4_years: z
-									.unknown()
-									.optional(),
-								all_expired_certificates_within: z.unknown().optional(),
-								all_revoked_certificates_that_are_valid: z.unknown().optional(),
-								business_unit_id: z.unknown().optional(),
-								s3_bucket_name: z.unknown().optional(),
-								is_new_s3_bucket_required: z.unknown().optional(),
-								last_fetched_time: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								all_valid_certificates_from_last_4_years:
+									unspecifiedProviderValue().optional(),
+								all_expired_certificates_within:
+									unspecifiedProviderValue().optional(),
+								all_revoked_certificates_that_are_valid:
+									unspecifiedProviderValue().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								s3_bucket_name: unspecifiedProviderValue().optional(),
+								is_new_s3_bucket_required:
+									unspecifiedProviderValue().optional(),
+								last_fetched_time: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -8555,32 +8720,34 @@ const r_6ae814861232Input = z
 					.passthrough(),
 				z
 					.object({
-						name: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
 						preset_id: z
 							.enum(['36cbd4c2-f6e7-4a35-a4e6-e03ebf939cb4'])
 							.optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						username: z.unknown().optional(),
-						password: z.unknown().optional(),
-						additional_properties: z.unknown().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						username: unspecifiedProviderValue().optional(),
+						password: unspecifiedProviderValue().optional(),
+						additional_properties: unspecifiedProviderValue().optional(),
 						import_attributes: z
 							.object({
-								all_valid_certificates_from_last_4_years: z
-									.unknown()
-									.optional(),
-								all_expired_certificates_within: z.unknown().optional(),
-								all_revoked_certificates_that_are_valid: z.unknown().optional(),
-								business_unit_id: z.unknown().optional(),
-								s3_bucket_name: z.unknown().optional(),
-								is_new_s3_bucket_required: z.unknown().optional(),
-								last_fetched_time: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								all_valid_certificates_from_last_4_years:
+									unspecifiedProviderValue().optional(),
+								all_expired_certificates_within:
+									unspecifiedProviderValue().optional(),
+								all_revoked_certificates_that_are_valid:
+									unspecifiedProviderValue().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								s3_bucket_name: unspecifiedProviderValue().optional(),
+								is_new_s3_bucket_required:
+									unspecifiedProviderValue().optional(),
+								last_fetched_time: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -8591,38 +8758,38 @@ const r_6ae814861232Input = z
 					.passthrough(),
 				z
 					.object({
-						name: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
 						preset_id: z
 							.enum(['36cbd4c2-f6e7-4a35-a4e6-e03ebf939cb4'])
 							.optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						username: z.unknown().optional(),
-						password: z.unknown().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						username: unspecifiedProviderValue().optional(),
+						password: unspecifiedProviderValue().optional(),
 						import_attributes: z
 							.object({
 								import: z
 									.object({
-										certificates: z.unknown().optional(),
-										unsecured_ips_ports: z.unknown().optional(),
+										certificates: unspecifiedProviderValue().optional(),
+										unsecured_ips_ports: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 								include_data: z
 									.object({
-										ciphers: z.unknown().optional(),
-										security_ratings: z.unknown().optional(),
-										vulnerabilities: z.unknown().optional(),
+										ciphers: unspecifiedProviderValue().optional(),
+										security_ratings: unspecifiedProviderValue().optional(),
+										vulnerabilities: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
-								business_unit_id: z.unknown().optional(),
-								tags: z.unknown().optional(),
+								business_unit_id: unspecifiedProviderValue().optional(),
+								tags: unspecifiedProviderValue().optional(),
 								schedule_frequency: z
 									.object({
 										units: z.enum(['HOURS', 'MINUTES', 'WEEKS']).optional(),
-										value: z.unknown().optional(),
+										value: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -8633,29 +8800,29 @@ const r_6ae814861232Input = z
 					.passthrough(),
 				z
 					.object({
-						name: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
 						preset_id: z
 							.enum(['1c389430-7885-4eb3-82e9-96fec17de7a6'])
 							.optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						username: z.unknown().optional(),
-						password: z.unknown().optional(),
-						url: z.unknown().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						username: unspecifiedProviderValue().optional(),
+						password: unspecifiedProviderValue().optional(),
+						url: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				z
 					.object({
-						name: z.unknown().optional(),
-						preset_id: z.unknown().optional(),
-						api_key: z.unknown().optional(),
-						sensor_id: z.unknown().optional(),
-						tags: z.unknown().optional(),
-						business_unit_id: z.unknown().optional(),
-						core_attributes: z.unknown().optional(),
-						config_attributes: z.unknown().optional(),
-						additional_attributes: z.unknown().optional(),
+						name: unspecifiedProviderValue().optional(),
+						preset_id: unspecifiedProviderValue().optional(),
+						api_key: unspecifiedProviderValue().optional(),
+						sensor_id: unspecifiedProviderValue().optional(),
+						tags: unspecifiedProviderValue().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
+						core_attributes: unspecifiedProviderValue().optional(),
+						config_attributes: unspecifiedProviderValue().optional(),
+						additional_attributes: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			])
@@ -8665,8 +8832,8 @@ const r_6ae814861232Input = z
 const r_6ae814861232Output = z.undefined();
 const r_ddbe3acdfffaInput = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8674,8 +8841,8 @@ const r_ddbe3acdfffaInput = z
 const r_ddbe3acdfffaOutput = z.undefined();
 const r_cd2034a0a43dInput = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8683,8 +8850,8 @@ const r_cd2034a0a43dInput = z
 const r_cd2034a0a43dOutput = z.undefined();
 const r_e97c7e325ac0Input = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8692,8 +8859,8 @@ const r_e97c7e325ac0Input = z
 const r_e97c7e325ac0Output = z.undefined();
 const r_3ae1daaeb731Input = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8701,8 +8868,8 @@ const r_3ae1daaeb731Input = z
 const r_3ae1daaeb731Output = z.undefined();
 const r_c594c0e3a8d1Input = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8710,8 +8877,8 @@ const r_c594c0e3a8d1Input = z
 const r_c594c0e3a8d1Output = z.undefined();
 const r_2b39cff6b19aInput = z
 	.object({
-		path: z.object({ connector_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ connector_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -8722,8 +8889,8 @@ const r_13488561d95dInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				name: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
 				type: z
 					.enum([
 						'TEXT_FIELD',
@@ -8739,7 +8906,10 @@ const r_13488561d95dInput = z
 	})
 	.strict();
 const r_13488561d95dOutput = z
-	.object({ total: z.unknown().optional(), items: z.unknown().optional() })
+	.object({
+		total: unspecifiedProviderValue().optional(),
+		items: unspecifiedProviderValue().optional(),
+	})
 	.passthrough();
 const r_0d465a62c1baInput = z
 	.object({
@@ -8749,21 +8919,21 @@ const r_0d465a62c1baInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 				custom_attribute: z
 					.object({
-						name: z.unknown(),
+						name: unspecifiedProviderValue(),
 						type: z.enum([
 							'TEXT_FIELD',
 							'DROP_DOWN_LIST',
 							'GROUPED_DROP_DOWN',
 							'FIXED_VALUE',
 						]),
-						items: z.unknown().optional(),
-						required: z.unknown().optional(),
-						default_value: z.unknown().optional(),
-						multi_select: z.unknown().optional(),
-						grouped_items: z.unknown().optional(),
+						items: unspecifiedProviderValue().optional(),
+						required: unspecifiedProviderValue().optional(),
+						default_value: unspecifiedProviderValue().optional(),
+						multi_select: unspecifiedProviderValue().optional(),
+						grouped_items: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			})
@@ -8772,35 +8942,35 @@ const r_0d465a62c1baInput = z
 	.strict();
 const r_0d465a62c1baOutput = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		type: z.unknown().optional(),
-		items: z.unknown().optional(),
-		required: z.unknown().optional(),
-		default_value: z.unknown().optional(),
-		multi_select: z.unknown().optional(),
-		grouped_items: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		type: unspecifiedProviderValue().optional(),
+		items: unspecifiedProviderValue().optional(),
+		required: unspecifiedProviderValue().optional(),
+		default_value: unspecifiedProviderValue().optional(),
+		multi_select: unspecifiedProviderValue().optional(),
+		grouped_items: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_ffd3d18f94d9Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_ffd3d18f94d9Output = z.unknown();
+const r_ffd3d18f94d9Output = unspecifiedProviderValue();
 const r_9c0ee24ba5a8Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
-				custom_attributes_request: z.unknown(),
+				account_id: unspecifiedProviderValue(),
+				custom_attributes_request: unspecifiedProviderValue(),
 			})
 			.passthrough(),
 	})
@@ -8808,19 +8978,22 @@ const r_9c0ee24ba5a8Input = z
 const r_9c0ee24ba5a8Output = z.undefined();
 const r_7593ade75363Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ account_id: z.unknown(), custom_attribute_ids: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				custom_attribute_ids: unspecifiedProviderValue(),
+			})
 			.passthrough(),
 	})
 	.strict();
 const r_7593ade75363Output = z.undefined();
 const r_38b65a4ff043Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8828,38 +9001,38 @@ const r_38b65a4ff043Input = z
 	.strict();
 const r_38b65a4ff043Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		type: z.unknown().optional(),
-		items: z.unknown().optional(),
-		required: z.unknown().optional(),
-		default_value: z.unknown().optional(),
-		multi_select: z.unknown().optional(),
-		grouped_items: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		type: unspecifiedProviderValue().optional(),
+		items: unspecifiedProviderValue().optional(),
+		required: unspecifiedProviderValue().optional(),
+		default_value: unspecifiedProviderValue().optional(),
+		multi_select: unspecifiedProviderValue().optional(),
+		grouped_items: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_aa2372f83a2eInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
 				custom_attribute: z
 					.object({
-						name: z.unknown(),
+						name: unspecifiedProviderValue(),
 						type: z.enum([
 							'TEXT_FIELD',
 							'DROP_DOWN_LIST',
 							'GROUPED_DROP_DOWN',
 							'FIXED_VALUE',
 						]),
-						items: z.unknown().optional(),
-						required: z.unknown().optional(),
-						default_value: z.unknown().optional(),
-						multi_select: z.unknown().optional(),
-						grouped_items: z.unknown().optional(),
+						items: unspecifiedProviderValue().optional(),
+						required: unspecifiedProviderValue().optional(),
+						default_value: unspecifiedProviderValue().optional(),
+						multi_select: unspecifiedProviderValue().optional(),
+						grouped_items: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			})
@@ -8868,19 +9041,19 @@ const r_aa2372f83a2eInput = z
 	.strict();
 const r_aa2372f83a2eOutput = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		type: z.unknown().optional(),
-		items: z.unknown().optional(),
-		required: z.unknown().optional(),
-		default_value: z.unknown().optional(),
-		multi_select: z.unknown().optional(),
-		grouped_items: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		type: unspecifiedProviderValue().optional(),
+		items: unspecifiedProviderValue().optional(),
+		required: unspecifiedProviderValue().optional(),
+		default_value: unspecifiedProviderValue().optional(),
+		multi_select: unspecifiedProviderValue().optional(),
+		grouped_items: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_d11c9f59c2deInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8888,14 +9061,14 @@ const r_d11c9f59c2deInput = z
 	.strict();
 const r_d11c9f59c2deOutput = z
 	.object({
-		status: z.unknown().optional(),
-		affected_profiles: z.unknown().optional(),
+		status: unspecifiedProviderValue().optional(),
+		affected_profiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_f31cdd16607bInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
@@ -8906,14 +9079,16 @@ const r_f31cdd16607bInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.object({ connector_ids: z.unknown().optional() }).passthrough(),
+						z
+							.object({ connector_ids: unspecifiedProviderValue().optional() })
+							.passthrough(),
 					)
 					.optional(),
 				network_scan_filter: z
@@ -8922,15 +9097,17 @@ const r_f31cdd16607bInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
 						z
-							.object({ network_scan_ids: z.unknown().optional() })
+							.object({
+								network_scan_ids: unspecifiedProviderValue().optional(),
+							})
 							.passthrough(),
 					)
 					.optional(),
@@ -8940,14 +9117,14 @@ const r_f31cdd16607bInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.unknown(),
+						unspecifiedProviderValue(),
 					)
 					.optional(),
 				ct_log_scan_filter: z
@@ -8956,14 +9133,14 @@ const r_f31cdd16607bInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.unknown(),
+						unspecifiedProviderValue(),
 					)
 					.optional(),
 			})
@@ -8971,12 +9148,15 @@ const r_f31cdd16607bInput = z
 			.optional(),
 	})
 	.strict();
-const r_f31cdd16607bOutput = z.unknown();
+const r_f31cdd16607bOutput = unspecifiedProviderValue();
 const r_413eadd6d21dInput = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
-			.object({ account_id: z.unknown(), source_type: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				source_type: unspecifiedProviderValue(),
+			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -8988,14 +9168,16 @@ const r_413eadd6d21dInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.object({ connector_ids: z.unknown().optional() }).passthrough(),
+						z
+							.object({ connector_ids: unspecifiedProviderValue().optional() })
+							.passthrough(),
 					)
 					.optional(),
 				network_scan_filter: z
@@ -9004,15 +9186,17 @@ const r_413eadd6d21dInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
 						z
-							.object({ network_scan_ids: z.unknown().optional() })
+							.object({
+								network_scan_ids: unspecifiedProviderValue().optional(),
+							})
 							.passthrough(),
 					)
 					.optional(),
@@ -9022,14 +9206,14 @@ const r_413eadd6d21dInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.unknown(),
+						unspecifiedProviderValue(),
 					)
 					.optional(),
 				ct_log_scan_filter: z
@@ -9038,14 +9222,14 @@ const r_413eadd6d21dInput = z
 							.object({
 								cn_san_filter: z
 									.object({
-										common_names: z.unknown().optional(),
-										sans: z.unknown().optional(),
+										common_names: unspecifiedProviderValue().optional(),
+										sans: unspecifiedProviderValue().optional(),
 									})
 									.passthrough()
 									.optional(),
 							})
 							.passthrough(),
-						z.unknown(),
+						unspecifiedProviderValue(),
 					)
 					.optional(),
 			})
@@ -9059,13 +9243,13 @@ const r_90e92b7da5a3Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				search: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				unassigned: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				search: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				unassigned: unspecifiedProviderValue().optional(),
 				status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9074,110 +9258,116 @@ const r_90e92b7da5a3Input = z
 	.strict();
 const r_90e92b7da5a3Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_a1438d4fc523Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ devices: z.unknown() }).passthrough(),
+		body: z.object({ devices: unspecifiedProviderValue() }).passthrough(),
 	})
 	.strict();
-const r_a1438d4fc523Output = z.unknown();
+const r_a1438d4fc523Output = unspecifiedProviderValue();
 const r_e0d550d921c4Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ deviceInventoryIds: z.unknown() }).passthrough(),
+		body: z
+			.object({ deviceInventoryIds: unspecifiedProviderValue() })
+			.passthrough(),
 	})
 	.strict();
 const r_e0d550d921c4Output = z
 	.object({
-		count: z.unknown().optional(),
-		message: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
+		count: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_db452f94fae3Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_db452f94fae3Output = z
 	.object({
-		id: z.unknown().optional(),
-		accountId: z.unknown().optional(),
-		deviceName: z.unknown().optional(),
-		serialNumber: z.unknown().optional(),
-		udid: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		accountId: unspecifiedProviderValue().optional(),
+		deviceName: unspecifiedProviderValue().optional(),
+		serialNumber: unspecifiedProviderValue().optional(),
+		udid: unspecifiedProviderValue().optional(),
 		status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
-		profileIds: z.unknown().optional(),
-		profiles: z.unknown().optional(),
-		createdAt: z.unknown().optional(),
-		updatedAt: z.unknown().optional(),
-		createdBy: z.unknown().optional(),
-		updatedBy: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
-		message: z.unknown().optional(),
+		profileIds: unspecifiedProviderValue().optional(),
+		profiles: unspecifiedProviderValue().optional(),
+		createdAt: unspecifiedProviderValue().optional(),
+		updatedAt: unspecifiedProviderValue().optional(),
+		createdBy: unspecifiedProviderValue().optional(),
+		updatedBy: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_38524550bc70Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				id: z.unknown().optional(),
-				accountId: z.unknown().optional(),
-				deviceName: z.unknown().optional(),
-				serialNumber: z.unknown().optional(),
-				udid: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				accountId: unspecifiedProviderValue().optional(),
+				deviceName: unspecifiedProviderValue().optional(),
+				serialNumber: unspecifiedProviderValue().optional(),
+				udid: unspecifiedProviderValue().optional(),
 				status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
-				profileIds: z.unknown().optional(),
-				profiles: z.unknown().optional(),
-				createdAt: z.unknown().optional(),
-				updatedAt: z.unknown().optional(),
-				createdBy: z.unknown().optional(),
-				updatedBy: z.unknown().optional(),
-				rejectedProfiles: z.unknown().optional(),
-				message: z.unknown().optional(),
+				profileIds: unspecifiedProviderValue().optional(),
+				profiles: unspecifiedProviderValue().optional(),
+				createdAt: unspecifiedProviderValue().optional(),
+				updatedAt: unspecifiedProviderValue().optional(),
+				createdBy: unspecifiedProviderValue().optional(),
+				updatedBy: unspecifiedProviderValue().optional(),
+				rejectedProfiles: unspecifiedProviderValue().optional(),
+				message: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
 	.strict();
 const r_38524550bc70Output = z
 	.object({
-		id: z.unknown().optional(),
-		accountId: z.unknown().optional(),
-		deviceName: z.unknown().optional(),
-		serialNumber: z.unknown().optional(),
-		udid: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		accountId: unspecifiedProviderValue().optional(),
+		deviceName: unspecifiedProviderValue().optional(),
+		serialNumber: unspecifiedProviderValue().optional(),
+		udid: unspecifiedProviderValue().optional(),
 		status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
-		profileIds: z.unknown().optional(),
-		profiles: z.unknown().optional(),
-		createdAt: z.unknown().optional(),
-		updatedAt: z.unknown().optional(),
-		createdBy: z.unknown().optional(),
-		updatedBy: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
-		message: z.unknown().optional(),
+		profileIds: unspecifiedProviderValue().optional(),
+		profiles: unspecifiedProviderValue().optional(),
+		createdAt: unspecifiedProviderValue().optional(),
+		updatedAt: unspecifiedProviderValue().optional(),
+		createdBy: unspecifiedProviderValue().optional(),
+		updatedBy: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_01008ef1501aInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -9186,19 +9376,19 @@ const r_01008ef1501aOutput = z.undefined();
 const r_6ac8994ec3c4Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ file: z.unknown() }).passthrough(),
+		body: z.object({ file: unspecifiedProviderValue() }).passthrough(),
 	})
 	.strict();
 const r_6ac8994ec3c4Output = z
 	.object({
-		totalRows: z.unknown().optional(),
-		imported: z.unknown().optional(),
-		skipped: z.unknown().optional(),
-		failed: z.unknown().optional(),
-		errors: z.unknown().optional(),
+		totalRows: unspecifiedProviderValue().optional(),
+		imported: unspecifiedProviderValue().optional(),
+		skipped: unspecifiedProviderValue().optional(),
+		failed: unspecifiedProviderValue().optional(),
+		errors: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_2ff73ca5e82fInput = z
@@ -9206,10 +9396,10 @@ const r_2ff73ca5e82fInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				search: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				unassigned: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				search: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				unassigned: unspecifiedProviderValue().optional(),
 				status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
 			})
 			.strict(),
@@ -9220,70 +9410,80 @@ const r_2ff73ca5e82fInput = z
 const r_2ff73ca5e82fOutput = z.string();
 const r_371fd4d4a326Input = z
 	.object({
-		path: z.object({ profileId: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ deviceInventoryIds: z.unknown() }).passthrough(),
+		body: z
+			.object({ deviceInventoryIds: unspecifiedProviderValue() })
+			.passthrough(),
 	})
 	.strict();
 const r_371fd4d4a326Output = z
 	.object({
-		count: z.unknown().optional(),
-		message: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
+		count: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_27064376ccadInput = z
 	.object({
-		path: z.object({ profileId: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ deviceInventoryIds: z.unknown() }).passthrough(),
+		body: z
+			.object({ deviceInventoryIds: unspecifiedProviderValue() })
+			.passthrough(),
 	})
 	.strict();
 const r_27064376ccadOutput = z
 	.object({
-		count: z.unknown().optional(),
-		message: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
+		count: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_b106e7869ed7Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ deviceInventoryIds: z.unknown(), profileIds: z.unknown() })
+			.object({
+				deviceInventoryIds: unspecifiedProviderValue(),
+				profileIds: unspecifiedProviderValue(),
+			})
 			.passthrough(),
 	})
 	.strict();
 const r_b106e7869ed7Output = z
 	.object({
-		count: z.unknown().optional(),
-		message: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
+		count: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_67f447c0dbdcInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ deviceInventoryIds: z.unknown(), profileIds: z.unknown() })
+			.object({
+				deviceInventoryIds: unspecifiedProviderValue(),
+				profileIds: unspecifiedProviderValue(),
+			})
 			.passthrough(),
 	})
 	.strict();
 const r_67f447c0dbdcOutput = z
 	.object({
-		count: z.unknown().optional(),
-		message: z.unknown().optional(),
-		rejectedProfiles: z.unknown().optional(),
+		count: unspecifiedProviderValue().optional(),
+		message: unspecifiedProviderValue().optional(),
+		rejectedProfiles: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_21affda0f31fInput = z
@@ -9291,15 +9491,20 @@ const r_21affda0f31fInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				application: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				application: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 				automationStatus: z
 					.enum([
 						'ACME_ACCOUNT_CREATED',
@@ -9343,9 +9548,9 @@ const r_21affda0f31fInput = z
 						'SCAN_IN_PROGRESS',
 					])
 					.optional(),
-				virtualServerName: z.unknown().optional(),
-				isAutoRenew: z.unknown().optional(),
-				hasBeenAutomated: z.unknown().optional(),
+				virtualServerName: unspecifiedProviderValue().optional(),
+				isAutoRenew: unspecifiedProviderValue().optional(),
+				hasBeenAutomated: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9358,12 +9563,17 @@ const r_99aba927208cInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				application: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				application: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 				automationStatus: z
 					.enum([
 						'ACME_ACCOUNT_CREATED',
@@ -9407,9 +9617,9 @@ const r_99aba927208cInput = z
 						'SCAN_IN_PROGRESS',
 					])
 					.optional(),
-				virtualServerName: z.unknown().optional(),
-				isAutoRenew: z.unknown().optional(),
-				hasBeenAutomated: z.unknown().optional(),
+				virtualServerName: unspecifiedProviderValue().optional(),
+				isAutoRenew: unspecifiedProviderValue().optional(),
+				hasBeenAutomated: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9421,7 +9631,10 @@ const r_427ad84ed835Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
-			.object({ account_id: z.unknown(), portlet_ids: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				portlet_ids: unspecifiedProviderValue(),
+			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -9433,15 +9646,20 @@ const r_832902848134Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				application: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				application: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 				automationStatus: z
 					.enum([
 						'ACME_ACCOUNT_CREATED',
@@ -9485,11 +9703,11 @@ const r_832902848134Input = z
 						'SCAN_IN_PROGRESS',
 					])
 					.optional(),
-				virtualServerName: z.unknown().optional(),
-				isAutoRenew: z.unknown().optional(),
-				hasBeenAutomated: z.unknown().optional(),
-				certificateThumbprint: z.unknown().optional(),
-				common_name: z.unknown().optional(),
+				virtualServerName: unspecifiedProviderValue().optional(),
+				isAutoRenew: unspecifiedProviderValue().optional(),
+				hasBeenAutomated: unspecifiedProviderValue().optional(),
+				certificateThumbprint: unspecifiedProviderValue().optional(),
+				common_name: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9502,12 +9720,17 @@ const r_ae14a0cad4edInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				application: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				application: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 				automationStatus: z
 					.enum([
 						'ACME_ACCOUNT_CREATED',
@@ -9551,11 +9774,11 @@ const r_ae14a0cad4edInput = z
 						'SCAN_IN_PROGRESS',
 					])
 					.optional(),
-				virtualServerName: z.unknown().optional(),
-				isAutoRenew: z.unknown().optional(),
-				hasBeenAutomated: z.unknown().optional(),
-				certificateThumbprint: z.unknown().optional(),
-				common_name: z.unknown().optional(),
+				virtualServerName: unspecifiedProviderValue().optional(),
+				isAutoRenew: unspecifiedProviderValue().optional(),
+				hasBeenAutomated: unspecifiedProviderValue().optional(),
+				certificateThumbprint: unspecifiedProviderValue().optional(),
+				common_name: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9565,13 +9788,13 @@ const r_ae14a0cad4edInput = z
 const r_ae14a0cad4edOutput = z.undefined();
 const r_a7822a6bdea6Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
-				instance_type: z.unknown(),
-				account_id: z.unknown(),
-				inventory_type: z.unknown(),
-				certificate_id: z.unknown().optional(),
+				instance_type: unspecifiedProviderValue(),
+				account_id: unspecifiedProviderValue(),
+				inventory_type: unspecifiedProviderValue(),
+				certificate_id: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9584,19 +9807,24 @@ const r_659d2b8e8aceInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				businessUnitName: z.unknown().optional(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				source: z.unknown().optional(),
-				tags: z.unknown().optional(),
-				scanName: z.unknown().optional(),
-				commonName: z.unknown().optional(),
-				certificateThumbprint: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				businessUnitName: unspecifiedProviderValue().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				source: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
+				scanName: unspecifiedProviderValue().optional(),
+				commonName: unspecifiedProviderValue().optional(),
+				certificateThumbprint: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9609,16 +9837,21 @@ const r_4a9d25a10305Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				businessUnitName: z.unknown().optional(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				connector: z.unknown().optional(),
-				source: z.unknown().optional(),
-				tags: z.unknown().optional(),
-				scanName: z.unknown().optional(),
-				commonName: z.unknown().optional(),
-				certificateThumbprint: z.unknown().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				businessUnitName: unspecifiedProviderValue().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				connector: unspecifiedProviderValue().optional(),
+				source: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
+				scanName: unspecifiedProviderValue().optional(),
+				commonName: unspecifiedProviderValue().optional(),
+				certificateThumbprint: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -9631,18 +9864,26 @@ const r_eaa4afa67b1cInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account: z.object({ id: z.unknown(), name: z.unknown() }).passthrough(),
-				certificateThumbprint: z.unknown(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account: z
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue(),
+					})
+					.passthrough(),
+				certificateThumbprint: unspecifiedProviderValue(),
 				businessUnit: z
-					.object({ id: z.unknown().optional(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue().optional(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				ip: z.unknown().optional(),
-				port: z.unknown().optional(),
-				application: z.unknown().optional(),
+				ip: unspecifiedProviderValue().optional(),
+				port: unspecifiedProviderValue().optional(),
+				application: unspecifiedProviderValue().optional(),
 				automationStatus: z
 					.enum([
 						'ACME_ACCOUNT_CREATED',
@@ -9701,45 +9942,48 @@ const r_889a59dc528aInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				profile: z.unknown(),
+				profile: unspecifiedProviderValue(),
 				seat: z
-					.object({ seat_id: z.unknown(), email: z.unknown() })
+					.object({
+						seat_id: unspecifiedProviderValue(),
+						email: unspecifiedProviderValue(),
+					})
 					.passthrough(),
 				attributes: z
 					.object({
-						csr: z.unknown().optional(),
+						csr: unspecifiedProviderValue().optional(),
 						subject: z
 							.object({
-								common_name: z.unknown().optional(),
-								organization_name: z.unknown().optional(),
-								organization_units: z.unknown().optional(),
-								description: z.unknown().optional(),
-								serial_number: z.unknown().optional(),
-								pseudonym: z.unknown().optional(),
-								unique_identifier: z.unknown().optional(),
-								user_identifier: z.unknown().optional(),
-								domain_component: z.unknown().optional(),
-								dn_qualifier: z.unknown().optional(),
-								unstructured_name: z.unknown().optional(),
-								unstructured_address: z.unknown().optional(),
-								street_address: z.unknown().optional(),
-								locality: z.unknown().optional(),
-								state: z.unknown().optional(),
-								postal_code: z.unknown().optional(),
-								country: z.unknown().optional(),
-								email: z.unknown().optional(),
-								title: z.unknown().optional(),
-								given_name: z.unknown().optional(),
-								surname: z.unknown().optional(),
-								organization_identifier: z.unknown().optional(),
+								common_name: unspecifiedProviderValue().optional(),
+								organization_name: unspecifiedProviderValue().optional(),
+								organization_units: unspecifiedProviderValue().optional(),
+								description: unspecifiedProviderValue().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								pseudonym: unspecifiedProviderValue().optional(),
+								unique_identifier: unspecifiedProviderValue().optional(),
+								user_identifier: unspecifiedProviderValue().optional(),
+								domain_component: unspecifiedProviderValue().optional(),
+								dn_qualifier: unspecifiedProviderValue().optional(),
+								unstructured_name: unspecifiedProviderValue().optional(),
+								unstructured_address: unspecifiedProviderValue().optional(),
+								street_address: unspecifiedProviderValue().optional(),
+								locality: unspecifiedProviderValue().optional(),
+								state: unspecifiedProviderValue().optional(),
+								postal_code: unspecifiedProviderValue().optional(),
+								country: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
+								title: unspecifiedProviderValue().optional(),
+								given_name: unspecifiedProviderValue().optional(),
+								surname: unspecifiedProviderValue().optional(),
+								organization_identifier: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						custom_values: z.unknown().optional(),
+						custom_values: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
-				enrollment_code: z.unknown().optional(),
-				expiry_date: z.unknown().optional(),
+				enrollment_code: unspecifiedProviderValue().optional(),
+				expiry_date: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -9747,16 +9991,16 @@ const r_889a59dc528aInput = z
 	.strict();
 const r_889a59dc528aOutput = z
 	.object({
-		id: z.unknown().optional(),
-		seat_id: z.unknown().optional(),
-		profile_id: z.unknown().optional(),
-		profile_name: z.unknown().optional(),
-		enrollment_code: z.unknown().optional(),
-		creation_date_time: z.unknown().optional(),
-		expiry_date_time: z.unknown().optional(),
-		status: z.unknown().optional(),
-		number_of_bad_attempts: z.unknown().optional(),
-		enrollment_url: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		seat_id: unspecifiedProviderValue().optional(),
+		profile_id: unspecifiedProviderValue().optional(),
+		profile_name: unspecifiedProviderValue().optional(),
+		enrollment_code: unspecifiedProviderValue().optional(),
+		creation_date_time: unspecifiedProviderValue().optional(),
+		expiry_date_time: unspecifiedProviderValue().optional(),
+		status: unspecifiedProviderValue().optional(),
+		number_of_bad_attempts: unspecifiedProviderValue().optional(),
+		enrollment_url: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_604d6ac29079Input = z
@@ -9767,40 +10011,46 @@ const r_604d6ac29079Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				seat: z.object({ id: z.unknown() }).passthrough().optional(),
-				profile: z.object({ id: z.unknown() }).passthrough().optional(),
-				enrollment_code: z.unknown().optional(),
-				csr: z.unknown().optional(),
+				seat: z
+					.object({ id: unspecifiedProviderValue() })
+					.passthrough()
+					.optional(),
+				profile: z
+					.object({ id: unspecifiedProviderValue() })
+					.passthrough()
+					.optional(),
+				enrollment_code: unspecifiedProviderValue().optional(),
+				csr: unspecifiedProviderValue().optional(),
 				attributes: z
 					.object({
 						subject: z
 							.object({
-								common_name: z.unknown().optional(),
-								organization_name: z.unknown().optional(),
-								organization_units: z.unknown().optional(),
-								description: z.unknown().optional(),
-								serial_number: z.unknown().optional(),
-								pseudonym: z.unknown().optional(),
-								unique_identifier: z.unknown().optional(),
-								user_identifier: z.unknown().optional(),
-								domain_component: z.unknown().optional(),
-								dn_qualifier: z.unknown().optional(),
-								unstructured_name: z.unknown().optional(),
-								unstructured_address: z.unknown().optional(),
-								street_address: z.unknown().optional(),
-								locality: z.unknown().optional(),
-								state: z.unknown().optional(),
-								postal_code: z.unknown().optional(),
-								country: z.unknown().optional(),
-								email: z.unknown().optional(),
-								title: z.unknown().optional(),
-								given_name: z.unknown().optional(),
-								surname: z.unknown().optional(),
-								organization_identifier: z.unknown().optional(),
+								common_name: unspecifiedProviderValue().optional(),
+								organization_name: unspecifiedProviderValue().optional(),
+								organization_units: unspecifiedProviderValue().optional(),
+								description: unspecifiedProviderValue().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								pseudonym: unspecifiedProviderValue().optional(),
+								unique_identifier: unspecifiedProviderValue().optional(),
+								user_identifier: unspecifiedProviderValue().optional(),
+								domain_component: unspecifiedProviderValue().optional(),
+								dn_qualifier: unspecifiedProviderValue().optional(),
+								unstructured_name: unspecifiedProviderValue().optional(),
+								unstructured_address: unspecifiedProviderValue().optional(),
+								street_address: unspecifiedProviderValue().optional(),
+								locality: unspecifiedProviderValue().optional(),
+								state: unspecifiedProviderValue().optional(),
+								postal_code: unspecifiedProviderValue().optional(),
+								country: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
+								title: unspecifiedProviderValue().optional(),
+								given_name: unspecifiedProviderValue().optional(),
+								surname: unspecifiedProviderValue().optional(),
+								organization_identifier: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						custom_values: z.unknown().optional(),
+						custom_values: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -9809,11 +10059,11 @@ const r_604d6ac29079Input = z
 						unit: z
 							.enum(['years', 'months', 'days', 'hours', 'minutes'])
 							.optional(),
-						duration: z.unknown().optional(),
+						duration: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				custom_attributes: z.unknown().optional(),
+				custom_attributes: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -9821,13 +10071,13 @@ const r_604d6ac29079Input = z
 	.strict();
 const r_604d6ac29079Output = z
 	.object({
-		serial_number: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
 		delivery_format: z
 			.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 			.optional(),
-		certificate: z.unknown().optional(),
-		pkcs12_password: z.unknown().optional(),
-		request_id: z.unknown().optional(),
+		certificate: unspecifiedProviderValue().optional(),
+		pkcs12_password: unspecifiedProviderValue().optional(),
+		request_id: unspecifiedProviderValue().optional(),
 		dv_details: z
 			.object({
 				schema: z
@@ -9835,7 +10085,7 @@ const r_604d6ac29079Output = z
 						dcv_method: z
 							.enum(['dns-cname-token', 'dns-txt-token', 'http-token'])
 							.optional(),
-						dcv_random_value: z.unknown().optional(),
+						dcv_random_value: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -9846,7 +10096,7 @@ const r_604d6ac29079Output = z
 	.passthrough();
 const r_6d7a2c7d5b92Input = z
 	.object({
-		path: z.object({ enrollment_id: z.unknown() }).strict(),
+		path: z.object({ enrollment_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -9863,8 +10113,8 @@ const r_6d7a2c7d5b92Input = z
 					'redeemed',
 					'rejected',
 				]),
-				message_to_user: z.unknown().optional(),
-				custom_validity_days: z.unknown().optional(),
+				message_to_user: unspecifiedProviderValue().optional(),
+				custom_validity_days: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -9873,23 +10123,23 @@ const r_6d7a2c7d5b92Input = z
 const r_6d7a2c7d5b92Output = z.undefined();
 const r_c1244e33b2b4Input = z
 	.object({
-		path: z.object({ enrollment_code: z.unknown() }).strict(),
-		query: z.object({ seat_id: z.unknown() }).strict(),
+		path: z.object({ enrollment_code: unspecifiedProviderValue() }).strict(),
+		query: z.object({ seat_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_c1244e33b2b4Output = z
 	.object({
-		id: z.unknown().optional(),
-		seat_id: z.unknown().optional(),
-		profile_id: z.unknown().optional(),
-		profile_name: z.unknown().optional(),
-		enrollment_code: z.unknown().optional(),
-		creation_date_time: z.unknown().optional(),
-		expiry_date_time: z.unknown().optional(),
-		status: z.unknown().optional(),
-		number_of_bad_attempts: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		seat_id: unspecifiedProviderValue().optional(),
+		profile_id: unspecifiedProviderValue().optional(),
+		profile_name: unspecifiedProviderValue().optional(),
+		enrollment_code: unspecifiedProviderValue().optional(),
+		creation_date_time: unspecifiedProviderValue().optional(),
+		expiry_date_time: unspecifiedProviderValue().optional(),
+		status: unspecifiedProviderValue().optional(),
+		number_of_bad_attempts: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_fa40e5e88461Input = z
@@ -9897,21 +10147,21 @@ const r_fa40e5e88461Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				created_at_from: z.unknown().optional(),
-				created_at_to: z.unknown().optional(),
-				expires_at_from: z.unknown().optional(),
-				expires_at_to: z.unknown().optional(),
-				email: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
-				seat_identifier: z.unknown().optional(),
-				seat_name: z.unknown().optional(),
-				status: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				created_at_from: unspecifiedProviderValue().optional(),
+				created_at_to: unspecifiedProviderValue().optional(),
+				expires_at_from: unspecifiedProviderValue().optional(),
+				expires_at_to: unspecifiedProviderValue().optional(),
+				email: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
+				seat_identifier: unspecifiedProviderValue().optional(),
+				seat_name: unspecifiedProviderValue().optional(),
+				status: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -9921,13 +10171,17 @@ const r_fa40e5e88461Input = z
 	.strict();
 const r_fa40e5e88461Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_4ef7dea657b7Input = z
 	.object({
-		path: z.object({ enrollment_id: z.unknown() }).strict(),
+		path: z.object({ enrollment_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -9935,7 +10189,7 @@ const r_4ef7dea657b7Input = z
 	.strict();
 const r_4ef7dea657b7Output = z
 	.object({
-		id: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
 		status: z
 			.enum([
 				'created',
@@ -9949,17 +10203,20 @@ const r_4ef7dea657b7Output = z
 				'redeemed',
 			])
 			.optional(),
-		email: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		expires_at: z.unknown().optional(),
+		email: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		expires_at: unspecifiedProviderValue().optional(),
 		profile: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		seat: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
 				seat_type: z
 					.enum([
 						'USER_SEAT',
@@ -9975,13 +10232,16 @@ const r_4ef7dea657b7Output = z
 			.passthrough()
 			.optional(),
 		business_unit: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		message_to_user: z.unknown().optional(),
-		seat_id_mapping_value: z.unknown().optional(),
-		approved_by_current_user: z.unknown().optional(),
-		comments: z.unknown().optional(),
+		message_to_user: unspecifiedProviderValue().optional(),
+		seat_id_mapping_value: unspecifiedProviderValue().optional(),
+		approved_by_current_user: unspecifiedProviderValue().optional(),
+		comments: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_2edfe1f4b869Input = z
@@ -9992,54 +10252,59 @@ const r_2edfe1f4b869Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				profile: z.object({ id: z.unknown() }).passthrough().optional(),
-				email: z.unknown().optional(),
-				csr: z.unknown().optional(),
-				comments: z.unknown().optional(),
-				saml_response_id: z.unknown().optional(),
+				profile: z
+					.object({ id: unspecifiedProviderValue() })
+					.passthrough()
+					.optional(),
+				email: unspecifiedProviderValue().optional(),
+				csr: unspecifiedProviderValue().optional(),
+				comments: unspecifiedProviderValue().optional(),
+				saml_response_id: unspecifiedProviderValue().optional(),
 				attributes: z
 					.object({
 						subject: z
 							.object({
-								common_name: z.unknown().optional(),
-								organization_name: z.unknown().optional(),
-								organization_units: z.unknown().optional(),
-								description: z.unknown().optional(),
-								serial_number: z.unknown().optional(),
-								pseudonym: z.unknown().optional(),
-								unique_identifier: z.unknown().optional(),
-								user_identifier: z.unknown().optional(),
-								domain_component: z.unknown().optional(),
-								dn_qualifier: z.unknown().optional(),
-								unstructured_name: z.unknown().optional(),
-								unstructured_address: z.unknown().optional(),
-								street_address: z.unknown().optional(),
-								locality: z.unknown().optional(),
-								state: z.unknown().optional(),
-								postal_code: z.unknown().optional(),
-								country: z.unknown().optional(),
-								email: z.unknown().optional(),
-								title: z.unknown().optional(),
-								given_name: z.unknown().optional(),
-								surname: z.unknown().optional(),
-								organization_identifier: z.unknown().optional(),
+								common_name: unspecifiedProviderValue().optional(),
+								organization_name: unspecifiedProviderValue().optional(),
+								organization_units: unspecifiedProviderValue().optional(),
+								description: unspecifiedProviderValue().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								pseudonym: unspecifiedProviderValue().optional(),
+								unique_identifier: unspecifiedProviderValue().optional(),
+								user_identifier: unspecifiedProviderValue().optional(),
+								domain_component: unspecifiedProviderValue().optional(),
+								dn_qualifier: unspecifiedProviderValue().optional(),
+								unstructured_name: unspecifiedProviderValue().optional(),
+								unstructured_address: unspecifiedProviderValue().optional(),
+								street_address: unspecifiedProviderValue().optional(),
+								locality: unspecifiedProviderValue().optional(),
+								state: unspecifiedProviderValue().optional(),
+								postal_code: unspecifiedProviderValue().optional(),
+								country: unspecifiedProviderValue().optional(),
+								email: unspecifiedProviderValue().optional(),
+								title: unspecifiedProviderValue().optional(),
+								given_name: unspecifiedProviderValue().optional(),
+								surname: unspecifiedProviderValue().optional(),
+								organization_identifier: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						custom_values: z.unknown().optional(),
+						custom_values: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				authentication_attributes: z.unknown().optional(),
+				authentication_attributes: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
 	})
 	.strict();
-const r_2edfe1f4b869Output = z.object({ id: z.unknown() }).passthrough();
+const r_2edfe1f4b869Output = z
+	.object({ id: unspecifiedProviderValue() })
+	.passthrough();
 const r_2b49885a43e5Input = z
 	.object({
-		path: z.object({ certificate_id: z.unknown() }).strict(),
+		path: z.object({ certificate_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -10048,12 +10313,12 @@ const r_2b49885a43e5Input = z
 const r_2b49885a43e5Output = z
 	.object({
 		attributes: z
-			.object({ custom_values: z.unknown().optional() })
+			.object({ custom_values: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
-		email: z.unknown().optional(),
-		enrollment_id: z.unknown().optional(),
-		enrollment_secret: z.unknown().optional(),
+		email: unspecifiedProviderValue().optional(),
+		enrollment_id: unspecifiedProviderValue().optional(),
+		enrollment_secret: unspecifiedProviderValue().optional(),
 		enrollment_status: z
 			.enum([
 				'approved',
@@ -10067,148 +10332,165 @@ const r_2b49885a43e5Output = z
 				'rejected',
 			])
 			.optional(),
-		has_parent: z.unknown().optional(),
+		has_parent: unspecifiedProviderValue().optional(),
 		profile: z
 			.object({
 				account: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
 				acme_credentials: z
 					.object({
-						directory_url: z.unknown().optional(),
-						eab_hmac: z.unknown().optional(),
-						eab_kid: z.unknown().optional(),
+						directory_url: unspecifiedProviderValue().optional(),
+						eab_hmac: unspecifiedProviderValue().optional(),
+						eab_kid: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				action_needed_reason: z.unknown().optional(),
-				active: z.unknown().optional(),
-				additional_recipients: z.unknown().optional(),
+				action_needed_reason: unspecifiedProviderValue().optional(),
+				active: unspecifiedProviderValue().optional(),
+				additional_recipients: unspecifiedProviderValue().optional(),
 				admin_contact: z
 					.object({
-						account_id: z.unknown().optional(),
-						email: z.unknown().optional(),
-						enabled: z.unknown().optional(),
-						id: z.unknown().optional(),
-						name: z.unknown().optional(),
-						phone: z.unknown().optional(),
-						profile_id: z.unknown().optional(),
+						account_id: unspecifiedProviderValue().optional(),
+						email: unspecifiedProviderValue().optional(),
+						enabled: unspecifiedProviderValue().optional(),
+						id: unspecifiedProviderValue().optional(),
+						name: unspecifiedProviderValue().optional(),
+						phone: unspecifiedProviderValue().optional(),
+						profile_id: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				allow_validity_from_rest_api: z.unknown().optional(),
-				api_token_ids: z.unknown().optional(),
-				authentication_fields: z.unknown().optional(),
-				authentication_method: z.unknown().optional(),
-				automated_renewal: z.unknown().optional(),
+				allow_validity_from_rest_api: unspecifiedProviderValue().optional(),
+				api_token_ids: unspecifiedProviderValue().optional(),
+				authentication_fields: unspecifiedProviderValue().optional(),
+				authentication_method: unspecifiedProviderValue().optional(),
+				automated_renewal: unspecifiedProviderValue().optional(),
 				business_unit: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				ca_chain_value: z.unknown().optional(),
+				ca_chain_value: unspecifiedProviderValue().optional(),
 				ca_settings: z
 					.object({
 						auto_renew_settings: z
 							.object({
-								auto_renew_certificate_and_order: z.unknown(),
+								auto_renew_certificate_and_order: unspecifiedProviderValue(),
 								auto_renew_time: z
 									.object({
-										days: z.unknown().optional(),
-										hours: z.unknown().optional(),
-										minutes: z.unknown().optional(),
-										time_format: z.unknown(),
-										zone: z.unknown(),
+										days: unspecifiedProviderValue().optional(),
+										hours: unspecifiedProviderValue().optional(),
+										minutes: unspecifiedProviderValue().optional(),
+										time_format: unspecifiedProviderValue(),
+										zone: unspecifiedProviderValue(),
 									})
 									.passthrough()
 									.optional(),
-								before_expiration: z.unknown(),
+								before_expiration: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						contacts: z.unknown().optional(),
+						contacts: unspecifiedProviderValue().optional(),
 						msca_settings: z
 							.object({
-								certificate_fields: z.unknown().optional(),
-								extensions: z.unknown().optional(),
-								name: z.unknown().optional(),
+								certificate_fields: unspecifiedProviderValue().optional(),
+								extensions: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						organization: z
-							.object({ id: z.unknown(), name: z.unknown() })
+							.object({
+								id: unspecifiedProviderValue(),
+								name: unspecifiedProviderValue(),
+							})
 							.passthrough()
 							.optional(),
 					})
 					.passthrough()
 					.optional(),
-				cc_settings: z.unknown().optional(),
+				cc_settings: unspecifiedProviderValue().optional(),
 				cert_delivery_format: z
 					.enum(['pkcs12', 'pkcs12_der', 'pkcs12_pem', 'pkcs7', 'x509'])
 					.optional(),
 				connector: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				days_till_enrollment_expires: z.unknown().optional(),
-				digicert_desktop_client_settings: z.unknown().optional(),
-				digicert_trust_assistant_settings: z.unknown().optional(),
-				duplicate_certificate_allowed: z.unknown().optional(),
-				email_templates: z.unknown().optional(),
-				embed_enrollment_code_in_url: z.unknown().optional(),
-				enable_dual_admin_approval: z.unknown().optional(),
-				enable_ldap_search: z.unknown().optional(),
-				enrollment_code_length: z.unknown().optional(),
-				enrollment_method: z.unknown().optional(),
-				enrollment_urls: z.unknown().optional(),
-				fields: z.unknown().optional(),
-				fixed_enrollment_url: z.unknown().optional(),
-				global_enrollment_code: z.unknown().optional(),
-				global_enrollment_code_enabled: z.unknown().optional(),
+				days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+				digicert_desktop_client_settings: unspecifiedProviderValue().optional(),
+				digicert_trust_assistant_settings:
+					unspecifiedProviderValue().optional(),
+				duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
+				email_templates: unspecifiedProviderValue().optional(),
+				embed_enrollment_code_in_url: unspecifiedProviderValue().optional(),
+				enable_dual_admin_approval: unspecifiedProviderValue().optional(),
+				enable_ldap_search: unspecifiedProviderValue().optional(),
+				enrollment_code_length: unspecifiedProviderValue().optional(),
+				enrollment_method: unspecifiedProviderValue().optional(),
+				enrollment_urls: unspecifiedProviderValue().optional(),
+				fields: unspecifiedProviderValue().optional(),
+				fixed_enrollment_url: unspecifiedProviderValue().optional(),
+				global_enrollment_code: unspecifiedProviderValue().optional(),
+				global_enrollment_code_enabled: unspecifiedProviderValue().optional(),
 				ica: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough()
 					.optional(),
-				id: z.unknown().optional(),
-				instruction_file_id: z.unknown().optional(),
-				instruction_file_name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				instruction_file_id: unspecifiedProviderValue().optional(),
+				instruction_file_name: unspecifiedProviderValue().optional(),
 				instruction_format: z
 					.enum(['doc', 'docx', 'pdf', 'ppt', 'pptx', 'txt'])
 					.optional(),
 				intune_settings: z
 					.object({
-						intune_app_id: z.unknown().optional(),
-						intune_app_key: z.unknown().optional(),
-						intune_push_enabled: z.unknown().optional(),
-						intune_tenant_name: z.unknown().optional(),
+						intune_app_id: unspecifiedProviderValue().optional(),
+						intune_app_key: unspecifiedProviderValue().optional(),
+						intune_push_enabled: unspecifiedProviderValue().optional(),
+						intune_tenant_name: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				key_escrow_policy: z
 					.object({
-						dual_admin_recovery: z.unknown().optional(),
+						dual_admin_recovery: unspecifiedProviderValue().optional(),
 						key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-						key_escrow_enabled: z.unknown().optional(),
+						key_escrow_enabled: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				max_number_of_bad_attempts: z.unknown().optional(),
+				max_number_of_bad_attempts: unspecifiedProviderValue().optional(),
 				microsoft_auto_enrollment_client_settings: z
 					.object({
 						crypto_providers: z
 							.object({
-								modifiable: z.unknown().optional(),
-								providers: z.unknown().optional(),
+								modifiable: unspecifiedProviderValue().optional(),
+								providers: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						end_entity_type: z.enum(['machine', 'user']).optional(),
-						enroll_on_behalf_of: z.unknown().optional(),
-						enroll_on_behalf_of_modifiable: z.unknown().optional(),
+						enroll_on_behalf_of: unspecifiedProviderValue().optional(),
+						enroll_on_behalf_of_modifiable:
+							unspecifiedProviderValue().optional(),
 						enrollment_mode: z
 							.object({
 								mode: z.enum(['inform_user', 'silent']),
-								modifiable: z.unknown().optional(),
+								modifiable: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -10217,37 +10499,37 @@ const r_2b49885a43e5Output = z
 							.optional(),
 						private_key_export: z
 							.object({
-								allowed: z.unknown().optional(),
-								modifiable: z.unknown().optional(),
+								allowed: unspecifiedProviderValue().optional(),
+								modifiable: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						publish_to_ad: z.unknown().optional(),
-						template_oid: z.unknown().optional(),
-						template_schema_version: z.unknown().optional(),
-						windows_hello_logon: z.unknown().optional(),
+						publish_to_ad: unspecifiedProviderValue().optional(),
+						template_oid: unspecifiedProviderValue().optional(),
+						template_schema_version: unspecifiedProviderValue().optional(),
+						windows_hello_logon: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				name: z.unknown().optional(),
-				notify_requestor: z.unknown().optional(),
+				name: unspecifiedProviderValue().optional(),
+				notify_requestor: unspecifiedProviderValue().optional(),
 				platform8_api_key: z
 					.object({
-						id: z.unknown().optional(),
-						name: z.unknown().optional(),
-						value: z.unknown().optional(),
+						id: unspecifiedProviderValue().optional(),
+						name: unspecifiedProviderValue().optional(),
+						value: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				renewal_window_days: z.unknown().optional(),
+				renewal_window_days: unspecifiedProviderValue().optional(),
 				saml_settings: z
 					.object({
-						enforce_manual_approval: z.unknown().optional(),
-						idp_certificate: z.unknown().optional(),
-						idp_issuer: z.unknown().optional(),
-						idp_single_logout_url: z.unknown().optional(),
-						idp_url: z.unknown().optional(),
-						sp_certificate: z.unknown().optional(),
+						enforce_manual_approval: unspecifiedProviderValue().optional(),
+						idp_certificate: unspecifiedProviderValue().optional(),
+						idp_issuer: unspecifiedProviderValue().optional(),
+						idp_single_logout_url: unspecifiedProviderValue().optional(),
+						idp_url: unspecifiedProviderValue().optional(),
+						sp_certificate: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -10282,44 +10564,49 @@ const r_2b49885a43e5Output = z
 						'upn',
 					])
 					.optional(),
-				seat_type_id: z.unknown().optional(),
-				seat_type_name: z.unknown().optional(),
-				suspended: z.unknown().optional(),
+				seat_type_id: unspecifiedProviderValue().optional(),
+				seat_type_name: unspecifiedProviderValue().optional(),
+				suspended: unspecifiedProviderValue().optional(),
 				template: z
 					.object({
-						id: z.unknown(),
-						name: z.unknown().optional(),
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
 						trust_type: z.enum(['private', 'public']).optional(),
 					})
 					.passthrough()
 					.optional(),
-				use_custom_contact: z.unknown().optional(),
+				use_custom_contact: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		serial_number: z.unknown().optional(),
+		serial_number: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_a730dc9722bbInput = z
 	.object({
-		path: z.object({ certificate_id: z.unknown() }).strict(),
+		path: z.object({ certificate_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				profile: z.object({ id: z.unknown() }).passthrough().optional(),
-				csr: z.unknown().optional(),
-				saml_response_id: z.unknown().optional(),
+				profile: z
+					.object({ id: unspecifiedProviderValue() })
+					.passthrough()
+					.optional(),
+				csr: unspecifiedProviderValue().optional(),
+				saml_response_id: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
 	})
 	.strict();
-const r_a730dc9722bbOutput = z.object({ id: z.unknown() }).passthrough();
+const r_a730dc9722bbOutput = z
+	.object({ id: unspecifiedProviderValue() })
+	.passthrough();
 const r_a38f059e2a70Input = z
 	.object({
-		path: z.object({ profileId: z.unknown() }).strict(),
+		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -10328,21 +10615,21 @@ const r_a38f059e2a70Input = z
 const r_a38f059e2a70Output = z.undefined();
 const r_aa991ba230c3Input = z
 	.object({
-		path: z.object({ profileId: z.unknown() }).strict(),
+		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown().optional(),
+		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
 const r_aa991ba230c3Output = z.undefined();
 const r_af7ddf1c733dInput = z
 	.object({
-		path: z.object({ profileId: z.unknown() }).strict(),
+		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown().optional(),
+		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
 const r_af7ddf1c733dOutput = z.undefined();
@@ -10351,11 +10638,11 @@ const r_e827e3bec28aInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				search_query: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				search_query: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -10364,9 +10651,13 @@ const r_e827e3bec28aInput = z
 	.strict();
 const r_e827e3bec28aOutput = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_fe3221ef0855Input = z
 	.object({
@@ -10376,13 +10667,13 @@ const r_fe3221ef0855Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				name: z.unknown(),
+				name: unspecifiedProviderValue(),
 				integration_type: z
 					.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER', 'A10'])
 					.optional(),
-				sensor_id: z.unknown(),
+				sensor_id: unspecifiedProviderValue(),
 				category: z.enum(['APPLIANCE', 'CLOUD_SERVICE', 'DNS_INTEGRATION']),
-				parameters: z.unknown(),
+				parameters: unspecifiedProviderValue(),
 			})
 			.passthrough()
 			.optional(),
@@ -10390,8 +10681,8 @@ const r_fe3221ef0855Input = z
 	.strict();
 const r_fe3221ef0855Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
 		status: z
 			.enum([
 				'INITIAL',
@@ -10409,41 +10700,41 @@ const r_fe3221ef0855Output = z
 				'ACTION_NEEDED',
 			])
 			.optional(),
-		status_details: z.unknown().optional(),
+		status_details: unspecifiedProviderValue().optional(),
 		type: z
 			.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER', 'A10'])
 			.optional(),
 		application_name: z
 			.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER'])
 			.optional(),
-		parameter_id: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		business_unit_id: z.unknown().optional(),
+		parameter_id: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		business_unit_id: unspecifiedProviderValue().optional(),
 		app_info: z
 			.object({
-				name: z.unknown().optional(),
-				version: z.unknown().optional(),
-				arch: z.unknown().optional(),
-				flavor: z.unknown().optional(),
-				automation_order: z.unknown().optional(),
+				name: unspecifiedProviderValue().optional(),
+				version: unspecifiedProviderValue().optional(),
+				arch: unspecifiedProviderValue().optional(),
+				flavor: unspecifiedProviderValue().optional(),
+				automation_order: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		management_key: z.unknown().optional(),
-		is_fips_present: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		updated: z.unknown().optional(),
+		management_key: unspecifiedProviderValue().optional(),
+		is_fips_present: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		updated: unspecifiedProviderValue().optional(),
 		category: z
 			.enum(['CLOUD_SERVICE', 'APPLIANCE', 'DNS_INTEGRATION'])
 			.optional(),
-		ha_peers: z.unknown().optional(),
-		parameters: z.unknown().optional(),
-		sensor_ids: z.unknown().optional(),
+		ha_peers: unspecifiedProviderValue().optional(),
+		parameters: unspecifiedProviderValue().optional(),
+		sensor_ids: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_cf48324a6d66Input = z
 	.object({
-		path: z.object({ integration_id: z.unknown() }).strict(),
+		path: z.object({ integration_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -10451,8 +10742,8 @@ const r_cf48324a6d66Input = z
 	.strict();
 const r_cf48324a6d66Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
 		status: z
 			.enum([
 				'INITIAL',
@@ -10470,36 +10761,36 @@ const r_cf48324a6d66Output = z
 				'ACTION_NEEDED',
 			])
 			.optional(),
-		status_details: z.unknown().optional(),
+		status_details: unspecifiedProviderValue().optional(),
 		type: z
 			.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER', 'A10'])
 			.optional(),
 		application_name: z
 			.enum(['AWS', 'AWS-CLOUDFRONT', 'BIGIP', 'NETSCALER'])
 			.optional(),
-		parameter_id: z.unknown().optional(),
-		account_id: z.unknown().optional(),
-		business_unit_id: z.unknown().optional(),
+		parameter_id: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		business_unit_id: unspecifiedProviderValue().optional(),
 		app_info: z
 			.object({
-				name: z.unknown().optional(),
-				version: z.unknown().optional(),
-				arch: z.unknown().optional(),
-				flavor: z.unknown().optional(),
-				automation_order: z.unknown().optional(),
+				name: unspecifiedProviderValue().optional(),
+				version: unspecifiedProviderValue().optional(),
+				arch: unspecifiedProviderValue().optional(),
+				flavor: unspecifiedProviderValue().optional(),
+				automation_order: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		management_key: z.unknown().optional(),
-		is_fips_present: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		updated: z.unknown().optional(),
+		management_key: unspecifiedProviderValue().optional(),
+		is_fips_present: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		updated: unspecifiedProviderValue().optional(),
 		category: z
 			.enum(['CLOUD_SERVICE', 'APPLIANCE', 'DNS_INTEGRATION'])
 			.optional(),
-		ha_peers: z.unknown().optional(),
-		parameters: z.unknown().optional(),
-		sensor_ids: z.unknown().optional(),
+		ha_peers: unspecifiedProviderValue().optional(),
+		parameters: unspecifiedProviderValue().optional(),
+		sensor_ids: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_31f08184b392Input = z
@@ -10508,19 +10799,22 @@ const r_31f08184b392Input = z
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ integrations: z.unknown() }).passthrough().optional(),
+		body: z
+			.object({ integrations: unspecifiedProviderValue() })
+			.passthrough()
+			.optional(),
 	})
 	.strict();
-const r_31f08184b392Output = z.unknown();
+const r_31f08184b392Output = unspecifiedProviderValue();
 const r_5f0c91e25af4Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -10535,7 +10829,7 @@ const r_090e1558aef3Input = z
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ integrations: z.unknown().optional() })
+			.object({ integrations: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
 	})
@@ -10543,7 +10837,7 @@ const r_090e1558aef3Input = z
 const r_090e1558aef3Output = z.undefined();
 const r_a12209ad174fInput = z
 	.object({
-		path: z.object({ integration_id: z.unknown() }).strict(),
+		path: z.object({ integration_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -10568,7 +10862,7 @@ const r_a7f9ba1b6636Input = z
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_a7f9ba1b6636Output = z.unknown();
+const r_a7f9ba1b6636Output = unspecifiedProviderValue();
 const r_cd234014f0ffInput = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -10577,14 +10871,17 @@ const r_cd234014f0ffInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				name: z.unknown(),
-				description: z.unknown().optional(),
-				business_unit_id: z.unknown(),
+				name: unspecifiedProviderValue(),
+				description: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue(),
 				ica: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough(),
-				account_id: z.unknown(),
-				template_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
+				template_id: unspecifiedProviderValue(),
 				enrollment_method: z.enum([
 					'digicert_desktop_client',
 					'android',
@@ -10627,31 +10924,31 @@ const r_cd234014f0ffInput = z
 				cert_delivery_format: z
 					.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem', 'pkcs12_der'])
 					.optional(),
-				custom_extended_key_usages: z.unknown().optional(),
-				renewal_window_days: z.unknown(),
-				days_till_enrollment_expires: z.unknown().optional(),
-				duplicate_certificate_allowed: z.unknown().optional(),
-				notify_requestor: z.unknown().optional(),
-				embed_enrollment_code_in_url: z.unknown().optional(),
-				grace_period_enabled: z.unknown().optional(),
-				enable_ldap_search: z.unknown().optional(),
-				self_service_portal_active: z.unknown().optional(),
-				global_enrollment_code: z.unknown().optional(),
-				fields: z.unknown().optional(),
-				connector_id: z.unknown().optional(),
-				use_custom_contact: z.unknown().optional(),
+				custom_extended_key_usages: unspecifiedProviderValue().optional(),
+				renewal_window_days: unspecifiedProviderValue(),
+				days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+				duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
+				notify_requestor: unspecifiedProviderValue().optional(),
+				embed_enrollment_code_in_url: unspecifiedProviderValue().optional(),
+				grace_period_enabled: unspecifiedProviderValue().optional(),
+				enable_ldap_search: unspecifiedProviderValue().optional(),
+				self_service_portal_active: unspecifiedProviderValue().optional(),
+				global_enrollment_code: unspecifiedProviderValue().optional(),
+				fields: unspecifiedProviderValue().optional(),
+				connector_id: unspecifiedProviderValue().optional(),
+				use_custom_contact: unspecifiedProviderValue().optional(),
 				ca_settings: z
 					.object({
-						contacts: z.unknown().optional(),
+						contacts: unspecifiedProviderValue().optional(),
 						certificate_fields: z
 							.object({
-								validity_period: z.unknown().optional(),
-								renewal_period: z.unknown().optional(),
-								key_type: z.unknown().optional(),
-								key_size: z.unknown().optional(),
-								signature_algorithm: z.unknown().optional(),
-								crypto_providers: z.unknown().optional(),
-								arn: z.unknown().optional(),
+								validity_period: unspecifiedProviderValue().optional(),
+								renewal_period: unspecifiedProviderValue().optional(),
+								key_type: unspecifiedProviderValue().optional(),
+								key_size: unspecifiedProviderValue().optional(),
+								signature_algorithm: unspecifiedProviderValue().optional(),
+								crypto_providers: unspecifiedProviderValue().optional(),
+								arn: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -10662,42 +10959,44 @@ const r_cd234014f0ffInput = z
 					.object({
 						auto_renew_settings: z
 							.object({
-								auto_renew_certificate_and_order: z.unknown(),
+								auto_renew_certificate_and_order: unspecifiedProviderValue(),
 								auto_renew_time: z
 									.object({
-										days: z.unknown().optional(),
-										hours: z.unknown().optional(),
-										minutes: z.unknown().optional(),
-										time_format: z.unknown(),
-										zone: z.unknown(),
+										days: unspecifiedProviderValue().optional(),
+										hours: unspecifiedProviderValue().optional(),
+										minutes: unspecifiedProviderValue().optional(),
+										time_format: unspecifiedProviderValue(),
+										zone: unspecifiedProviderValue(),
 									})
 									.passthrough()
 									.optional(),
-								before_expiration: z.unknown(),
+								before_expiration: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						contacts: z.unknown().optional(),
-						http_signed_exchange: z.unknown().optional(),
-						key_sizes: z.unknown().optional(),
-						account_id: z.unknown().optional(),
-						is_custom_validity: z.unknown().optional(),
-						duplicate_minimum_validity_days: z.unknown().nullable().optional(),
-						key_type: z.unknown().optional(),
-						order_coverage_length: z.unknown().optional(),
-						override_validity: z.unknown().optional(),
+						contacts: unspecifiedProviderValue().optional(),
+						http_signed_exchange: unspecifiedProviderValue().optional(),
+						key_sizes: unspecifiedProviderValue().optional(),
+						account_id: unspecifiedProviderValue().optional(),
+						is_custom_validity: unspecifiedProviderValue().optional(),
+						duplicate_minimum_validity_days: unspecifiedProviderValue()
+							.nullable()
+							.optional(),
+						key_type: unspecifiedProviderValue().optional(),
+						order_coverage_length: unspecifiedProviderValue().optional(),
+						override_validity: unspecifiedProviderValue().optional(),
 						organization: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
-								value: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						organization_contact: z
 							.object({
-								id: z.unknown(),
-								name: z.unknown(),
+								id: unspecifiedProviderValue(),
+								name: unspecifiedProviderValue(),
 								contact_type: z.enum([
 									'organization_contact',
 									'technical_contact',
@@ -10744,49 +11043,51 @@ const r_cd234014f0ffInput = z
 						]),
 						signature_algorithm: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						container: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
-								value: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						region: z.unknown().optional(),
+						region: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				key_escrow_policy: z
 					.object({
-						key_escrow_enabled: z.unknown(),
+						key_escrow_enabled: unspecifiedProviderValue(),
 						key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-						dual_admin_recovery: z.unknown(),
+						dual_admin_recovery: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
-				tags: z.unknown().optional(),
-				api_token_binding_enabled: z.unknown().nullable().optional(),
-				api_token_ids: z.unknown().optional(),
-				ssp_auth_operations: z.unknown().optional(),
-				ssp_open_operations: z.unknown().optional(),
-				allowed_user_group: z.unknown().optional(),
-				allowed_fqdn_regex: z.unknown().optional(),
-				additional_recipients: z.unknown().optional(),
-				certificate_owner_ids: z.unknown().optional(),
+				tags: unspecifiedProviderValue().optional(),
+				api_token_binding_enabled: unspecifiedProviderValue()
+					.nullable()
+					.optional(),
+				api_token_ids: unspecifiedProviderValue().optional(),
+				ssp_auth_operations: unspecifiedProviderValue().optional(),
+				ssp_open_operations: unspecifiedProviderValue().optional(),
+				allowed_user_group: unspecifiedProviderValue().optional(),
+				allowed_fqdn_regex: unspecifiedProviderValue().optional(),
+				additional_recipients: unspecifiedProviderValue().optional(),
+				certificate_owner_ids: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
 	.strict();
 const r_cd234014f0ffOutput = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		description: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		description: unspecifiedProviderValue().optional(),
 		status: z
 			.enum(['Active', 'Deleted', 'Suspended', 'Action needed'])
 			.optional(),
@@ -10808,14 +11109,14 @@ const r_cd234014f0ffOutput = z
 				'MATCH_ISSUER',
 			])
 			.optional(),
-		publish_to_public_directory: z.unknown().optional(),
-		renewal_period_days: z.unknown().optional(),
-		duplicate_cert_policy: z.unknown().optional(),
-		override_cert_validity_via_api: z.unknown().optional(),
+		publish_to_public_directory: unspecifiedProviderValue().optional(),
+		renewal_period_days: unspecifiedProviderValue().optional(),
+		duplicate_cert_policy: unspecifiedProviderValue().optional(),
+		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
 		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-		account_id: z.unknown().optional(),
-		business_unit_id: z.unknown().optional(),
-		business_unit_name: z.unknown().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		business_unit_id: unspecifiedProviderValue().optional(),
+		business_unit_name: unspecifiedProviderValue().optional(),
 		enrollment_method: z
 			.enum([
 				'digicert_desktop_client',
@@ -10844,49 +11145,52 @@ const r_cd234014f0ffOutput = z
 				'no_auth',
 			])
 			.optional(),
-		days_till_enrollment_expires: z.unknown().optional(),
-		automated_renewal: z.unknown().optional(),
-		global_enrollment_code_enabled: z.unknown().optional(),
-		renewal_window_days: z.unknown().optional(),
-		connector_id: z.unknown().optional(),
+		days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+		automated_renewal: unspecifiedProviderValue().optional(),
+		global_enrollment_code_enabled: unspecifiedProviderValue().optional(),
+		renewal_window_days: unspecifiedProviderValue().optional(),
+		connector_id: unspecifiedProviderValue().optional(),
 		ica: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		key_escrow_policy: z
 			.object({
-				key_escrow_enabled: z.unknown(),
+				key_escrow_enabled: unspecifiedProviderValue(),
 				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-				dual_admin_recovery: z.unknown(),
+				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
 			.optional(),
 		private_key_attributes: z
-			.object({ key_size: z.unknown().optional() })
+			.object({ key_size: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
-		api_token_binding_enabled: z.unknown().optional(),
-		api_token_ids: z.unknown().optional(),
-		enable_dual_admin_approval: z.unknown().optional(),
-		enable_ldap_search: z.unknown().optional(),
+		api_token_binding_enabled: unspecifiedProviderValue().optional(),
+		api_token_ids: unspecifiedProviderValue().optional(),
+		enable_dual_admin_approval: unspecifiedProviderValue().optional(),
+		enable_ldap_search: unspecifiedProviderValue().optional(),
 		acme_credentials: z
 			.object({
-				eab_kid: z.unknown().optional(),
-				eab_hmac: z.unknown().optional(),
-				directory_url: z.unknown().optional(),
+				eab_kid: unspecifiedProviderValue().optional(),
+				eab_hmac: unspecifiedProviderValue().optional(),
+				directory_url: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		tags: z.unknown().optional(),
-		useCustomContact: z.unknown().optional(),
-		duplicate_certificate_allowed: z.unknown().optional(),
+		tags: unspecifiedProviderValue().optional(),
+		useCustomContact: unspecifiedProviderValue().optional(),
+		duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
 		cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-		notifyRequestor: z.unknown().optional(),
-		custom_extended_key_usages: z.unknown().optional(),
+		notifyRequestor: unspecifiedProviderValue().optional(),
+		custom_extended_key_usages: unspecifiedProviderValue().optional(),
 		certificate: z
 			.object({
 				subject: z
-					.object({ attributes: z.unknown().optional() })
+					.object({ attributes: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
 				validity: z
@@ -10894,7 +11198,7 @@ const r_cd234014f0ffOutput = z
 						unit: z
 							.enum(['years', 'months', 'days', 'hours', 'minutes'])
 							.optional(),
-						duration: z.unknown().optional(),
+						duration: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -10902,15 +11206,15 @@ const r_cd234014f0ffOutput = z
 					.object({
 						san: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						issuer_alt_name: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -10921,14 +11225,16 @@ const r_cd234014f0ffOutput = z
 					.intersection(
 						z
 							.object({
-								serial_number: z.unknown().optional(),
-								subject_dn: z.unknown().optional(),
-								certificate: z.unknown().optional(),
-								root: z.unknown().optional(),
-								chain: z.unknown().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								subject_dn: unspecifiedProviderValue().optional(),
+								certificate: unspecifiedProviderValue().optional(),
+								root: unspecifiedProviderValue().optional(),
+								chain: unspecifiedProviderValue().optional(),
 							})
 							.passthrough(),
-						z.object({ chain: z.unknown().optional() }).passthrough(),
+						z
+							.object({ chain: unspecifiedProviderValue().optional() })
+							.passthrough(),
 					)
 					.optional(),
 			})
@@ -10936,54 +11242,57 @@ const r_cd234014f0ffOutput = z
 			.optional(),
 		template: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
 				trust_type: z.enum(['private', 'public']).optional(),
 			})
 			.passthrough()
 			.optional(),
-		allowed_list: z.unknown().optional(),
-		allowed_key_sizes: z.unknown().optional(),
+		allowed_list: unspecifiedProviderValue().optional(),
+		allowed_key_sizes: unspecifiedProviderValue().optional(),
 		fields: z
 			.object({
-				optional: z.unknown().optional(),
-				multiple: z.unknown().optional(),
-				key: z.unknown().optional(),
-				type: z.unknown().optional(),
-				input: z.unknown().optional(),
-				oid: z.unknown().optional(),
-				dataType: z.unknown().optional(),
-				allowed_groups: z.unknown().optional(),
-				sources: z.unknown().optional(),
-				labels: z.unknown().optional(),
+				optional: unspecifiedProviderValue().optional(),
+				multiple: unspecifiedProviderValue().optional(),
+				key: unspecifiedProviderValue().optional(),
+				type: unspecifiedProviderValue().optional(),
+				input: unspecifiedProviderValue().optional(),
+				oid: unspecifiedProviderValue().optional(),
+				dataType: unspecifiedProviderValue().optional(),
+				allowed_groups: unspecifiedProviderValue().optional(),
+				sources: unspecifiedProviderValue().optional(),
+				labels: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		custom_attributes_fields: z.unknown().optional(),
-		certificate_owners: z.unknown().optional(),
-		additional_recipients: z.unknown().optional(),
-		self_service_portal_active: z.unknown().optional(),
-		ssp_auth_operations: z.unknown().optional(),
-		ssp_open_operations: z.unknown().optional(),
-		allowed_user_group: z.unknown().optional(),
+		custom_attributes_fields: unspecifiedProviderValue().optional(),
+		certificate_owners: unspecifiedProviderValue().optional(),
+		additional_recipients: unspecifiedProviderValue().optional(),
+		self_service_portal_active: unspecifiedProviderValue().optional(),
+		ssp_auth_operations: unspecifiedProviderValue().optional(),
+		ssp_open_operations: unspecifiedProviderValue().optional(),
+		allowed_user_group: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_9a2ea6339160Input = z
 	.object({
-		path: z.object({ profile_id: z.unknown() }).strict(),
+		path: z.object({ profile_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				name: z.unknown(),
-				description: z.unknown().optional(),
-				business_unit_id: z.unknown(),
+				name: unspecifiedProviderValue(),
+				description: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue(),
 				ica: z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough(),
-				account_id: z.unknown(),
-				template_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
+				template_id: unspecifiedProviderValue(),
 				enrollment_method: z.enum([
 					'digicert_desktop_client',
 					'android',
@@ -11026,31 +11335,31 @@ const r_9a2ea6339160Input = z
 				cert_delivery_format: z
 					.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem', 'pkcs12_der'])
 					.optional(),
-				custom_extended_key_usages: z.unknown().optional(),
-				renewal_window_days: z.unknown(),
-				days_till_enrollment_expires: z.unknown().optional(),
-				duplicate_certificate_allowed: z.unknown().optional(),
-				notify_requestor: z.unknown().optional(),
-				embed_enrollment_code_in_url: z.unknown().optional(),
-				grace_period_enabled: z.unknown().optional(),
-				enable_ldap_search: z.unknown().optional(),
-				self_service_portal_active: z.unknown().optional(),
-				global_enrollment_code: z.unknown().optional(),
-				fields: z.unknown().optional(),
-				connector_id: z.unknown().optional(),
-				use_custom_contact: z.unknown().optional(),
+				custom_extended_key_usages: unspecifiedProviderValue().optional(),
+				renewal_window_days: unspecifiedProviderValue(),
+				days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+				duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
+				notify_requestor: unspecifiedProviderValue().optional(),
+				embed_enrollment_code_in_url: unspecifiedProviderValue().optional(),
+				grace_period_enabled: unspecifiedProviderValue().optional(),
+				enable_ldap_search: unspecifiedProviderValue().optional(),
+				self_service_portal_active: unspecifiedProviderValue().optional(),
+				global_enrollment_code: unspecifiedProviderValue().optional(),
+				fields: unspecifiedProviderValue().optional(),
+				connector_id: unspecifiedProviderValue().optional(),
+				use_custom_contact: unspecifiedProviderValue().optional(),
 				ca_settings: z
 					.object({
-						contacts: z.unknown().optional(),
+						contacts: unspecifiedProviderValue().optional(),
 						certificate_fields: z
 							.object({
-								validity_period: z.unknown().optional(),
-								renewal_period: z.unknown().optional(),
-								key_type: z.unknown().optional(),
-								key_size: z.unknown().optional(),
-								signature_algorithm: z.unknown().optional(),
-								crypto_providers: z.unknown().optional(),
-								arn: z.unknown().optional(),
+								validity_period: unspecifiedProviderValue().optional(),
+								renewal_period: unspecifiedProviderValue().optional(),
+								key_type: unspecifiedProviderValue().optional(),
+								key_size: unspecifiedProviderValue().optional(),
+								signature_algorithm: unspecifiedProviderValue().optional(),
+								crypto_providers: unspecifiedProviderValue().optional(),
+								arn: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -11061,42 +11370,44 @@ const r_9a2ea6339160Input = z
 					.object({
 						auto_renew_settings: z
 							.object({
-								auto_renew_certificate_and_order: z.unknown(),
+								auto_renew_certificate_and_order: unspecifiedProviderValue(),
 								auto_renew_time: z
 									.object({
-										days: z.unknown().optional(),
-										hours: z.unknown().optional(),
-										minutes: z.unknown().optional(),
-										time_format: z.unknown(),
-										zone: z.unknown(),
+										days: unspecifiedProviderValue().optional(),
+										hours: unspecifiedProviderValue().optional(),
+										minutes: unspecifiedProviderValue().optional(),
+										time_format: unspecifiedProviderValue(),
+										zone: unspecifiedProviderValue(),
 									})
 									.passthrough()
 									.optional(),
-								before_expiration: z.unknown(),
+								before_expiration: unspecifiedProviderValue(),
 							})
 							.passthrough()
 							.optional(),
-						contacts: z.unknown().optional(),
-						http_signed_exchange: z.unknown().optional(),
-						key_sizes: z.unknown().optional(),
-						account_id: z.unknown().optional(),
-						is_custom_validity: z.unknown().optional(),
-						duplicate_minimum_validity_days: z.unknown().nullable().optional(),
-						key_type: z.unknown().optional(),
-						order_coverage_length: z.unknown().optional(),
-						override_validity: z.unknown().optional(),
+						contacts: unspecifiedProviderValue().optional(),
+						http_signed_exchange: unspecifiedProviderValue().optional(),
+						key_sizes: unspecifiedProviderValue().optional(),
+						account_id: unspecifiedProviderValue().optional(),
+						is_custom_validity: unspecifiedProviderValue().optional(),
+						duplicate_minimum_validity_days: unspecifiedProviderValue()
+							.nullable()
+							.optional(),
+						key_type: unspecifiedProviderValue().optional(),
+						order_coverage_length: unspecifiedProviderValue().optional(),
+						override_validity: unspecifiedProviderValue().optional(),
 						organization: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
-								value: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						organization_contact: z
 							.object({
-								id: z.unknown(),
-								name: z.unknown(),
+								id: unspecifiedProviderValue(),
+								name: unspecifiedProviderValue(),
 								contact_type: z.enum([
 									'organization_contact',
 									'technical_contact',
@@ -11143,48 +11454,50 @@ const r_9a2ea6339160Input = z
 						]),
 						signature_algorithm: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						container: z
 							.object({
-								id: z.unknown().optional(),
-								name: z.unknown().optional(),
-								value: z.unknown().optional(),
+								id: unspecifiedProviderValue().optional(),
+								name: unspecifiedProviderValue().optional(),
+								value: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
-						region: z.unknown().optional(),
+						region: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				key_escrow_policy: z
 					.object({
-						key_escrow_enabled: z.unknown(),
+						key_escrow_enabled: unspecifiedProviderValue(),
 						key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-						dual_admin_recovery: z.unknown(),
+						dual_admin_recovery: unspecifiedProviderValue(),
 					})
 					.passthrough()
 					.optional(),
-				tags: z.unknown().optional(),
-				api_token_binding_enabled: z.unknown().nullable().optional(),
-				api_token_ids: z.unknown().optional(),
-				ssp_auth_operations: z.unknown().optional(),
-				ssp_open_operations: z.unknown().optional(),
-				allowed_user_group: z.unknown().optional(),
-				allowed_fqdn_regex: z.unknown().optional(),
-				additional_recipients: z.unknown().optional(),
-				certificate_owner_ids: z.unknown().optional(),
+				tags: unspecifiedProviderValue().optional(),
+				api_token_binding_enabled: unspecifiedProviderValue()
+					.nullable()
+					.optional(),
+				api_token_ids: unspecifiedProviderValue().optional(),
+				ssp_auth_operations: unspecifiedProviderValue().optional(),
+				ssp_open_operations: unspecifiedProviderValue().optional(),
+				allowed_user_group: unspecifiedProviderValue().optional(),
+				allowed_fqdn_regex: unspecifiedProviderValue().optional(),
+				additional_recipients: unspecifiedProviderValue().optional(),
+				certificate_owner_ids: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
 	.strict();
 const r_9a2ea6339160Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
 		status: z
 			.enum(['Active', 'Deleted', 'Suspended', 'Action needed'])
 			.optional(),
@@ -11200,13 +11513,13 @@ const r_9a2ea6339160Output = z
 				'MATCH_ISSUER',
 			])
 			.optional(),
-		publish_to_public_directory: z.unknown().optional(),
-		renewal_period_days: z.unknown().optional(),
-		duplicate_cert_policy: z.unknown().optional(),
-		override_cert_validity_via_api: z.unknown().optional(),
+		publish_to_public_directory: unspecifiedProviderValue().optional(),
+		renewal_period_days: unspecifiedProviderValue().optional(),
+		duplicate_cert_policy: unspecifiedProviderValue().optional(),
+		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
 		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-		business_unit_id: z.unknown().optional(),
-		account_id: z.unknown().optional(),
+		business_unit_id: unspecifiedProviderValue().optional(),
+		account_id: unspecifiedProviderValue().optional(),
 		enrollment_method: z
 			.enum([
 				'digicert_desktop_client',
@@ -11237,24 +11550,24 @@ const r_9a2ea6339160Output = z
 			.optional(),
 		key_escrow_policy: z
 			.object({
-				key_escrow_enabled: z.unknown(),
+				key_escrow_enabled: unspecifiedProviderValue(),
 				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-				dual_admin_recovery: z.unknown(),
+				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
 			.optional(),
 		private_key_attributes: z
-			.object({ key_size: z.unknown().optional() })
+			.object({ key_size: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
-		allowed_key_sizes: z.unknown().optional(),
-		api_token_binding_enabled: z.unknown().optional(),
-		api_token_id: z.unknown().optional(),
-		enable_dual_admin_approval: z.unknown().optional(),
+		allowed_key_sizes: unspecifiedProviderValue().optional(),
+		api_token_binding_enabled: unspecifiedProviderValue().optional(),
+		api_token_id: unspecifiedProviderValue().optional(),
+		enable_dual_admin_approval: unspecifiedProviderValue().optional(),
 		certificate: z
 			.object({
 				subject: z
-					.object({ attributes: z.unknown().optional() })
+					.object({ attributes: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
 				validity: z
@@ -11262,7 +11575,7 @@ const r_9a2ea6339160Output = z
 						unit: z
 							.enum(['years', 'months', 'days', 'hours', 'minutes'])
 							.optional(),
-						duration: z.unknown().optional(),
+						duration: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -11270,20 +11583,20 @@ const r_9a2ea6339160Output = z
 					.object({
 						san: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						issuer_alt_name: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						security_identifier: z
-							.object({ attributes: z.unknown().optional() })
+							.object({ attributes: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -11293,14 +11606,16 @@ const r_9a2ea6339160Output = z
 					.intersection(
 						z
 							.object({
-								serial_number: z.unknown().optional(),
-								subject_dn: z.unknown().optional(),
-								certificate: z.unknown().optional(),
-								root: z.unknown().optional(),
-								chain: z.unknown().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								subject_dn: unspecifiedProviderValue().optional(),
+								certificate: unspecifiedProviderValue().optional(),
+								root: unspecifiedProviderValue().optional(),
+								chain: unspecifiedProviderValue().optional(),
 							})
 							.passthrough(),
-						z.object({ chain: z.unknown().optional() }).passthrough(),
+						z
+							.object({ chain: unspecifiedProviderValue().optional() })
+							.passthrough(),
 					)
 					.optional(),
 			})
@@ -11308,14 +11623,14 @@ const r_9a2ea6339160Output = z
 			.optional(),
 		template: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
 				trust_type: z.enum(['private', 'public']).optional(),
 			})
 			.passthrough()
 			.optional(),
-		allowed_list: z.unknown().optional(),
-		custom_extended_key_usages: z.unknown().optional(),
+		allowed_list: unspecifiedProviderValue().optional(),
+		custom_extended_key_usages: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_b31cfc3255d8Input = z
@@ -11323,10 +11638,10 @@ const r_b31cfc3255d8Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				api_token_id: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				api_token_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -11334,10 +11649,10 @@ const r_b31cfc3255d8Input = z
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_b31cfc3255d8Output = z.unknown();
+const r_b31cfc3255d8Output = unspecifiedProviderValue();
 const r_9cd9f0927b03Input = z
 	.object({
-		path: z.object({ profile_id: z.unknown() }).strict(),
+		path: z.object({ profile_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -11345,9 +11660,9 @@ const r_9cd9f0927b03Input = z
 	.strict();
 const r_9cd9f0927b03Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
-		description: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
+		description: unspecifiedProviderValue().optional(),
 		status: z
 			.enum(['Active', 'Deleted', 'Suspended', 'Action needed'])
 			.optional(),
@@ -11369,14 +11684,14 @@ const r_9cd9f0927b03Output = z
 				'MATCH_ISSUER',
 			])
 			.optional(),
-		publish_to_public_directory: z.unknown().optional(),
-		renewal_period_days: z.unknown().optional(),
-		duplicate_cert_policy: z.unknown().optional(),
-		override_cert_validity_via_api: z.unknown().optional(),
+		publish_to_public_directory: unspecifiedProviderValue().optional(),
+		renewal_period_days: unspecifiedProviderValue().optional(),
+		duplicate_cert_policy: unspecifiedProviderValue().optional(),
+		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
 		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-		account_id: z.unknown().optional(),
-		business_unit_id: z.unknown().optional(),
-		business_unit_name: z.unknown().optional(),
+		account_id: unspecifiedProviderValue().optional(),
+		business_unit_id: unspecifiedProviderValue().optional(),
+		business_unit_name: unspecifiedProviderValue().optional(),
 		enrollment_method: z
 			.enum([
 				'digicert_desktop_client',
@@ -11405,49 +11720,52 @@ const r_9cd9f0927b03Output = z
 				'no_auth',
 			])
 			.optional(),
-		days_till_enrollment_expires: z.unknown().optional(),
-		automated_renewal: z.unknown().optional(),
-		global_enrollment_code_enabled: z.unknown().optional(),
-		renewal_window_days: z.unknown().optional(),
-		connector_id: z.unknown().optional(),
+		days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+		automated_renewal: unspecifiedProviderValue().optional(),
+		global_enrollment_code_enabled: unspecifiedProviderValue().optional(),
+		renewal_window_days: unspecifiedProviderValue().optional(),
+		connector_id: unspecifiedProviderValue().optional(),
 		ica: z
-			.object({ id: z.unknown(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
 		key_escrow_policy: z
 			.object({
-				key_escrow_enabled: z.unknown(),
+				key_escrow_enabled: unspecifiedProviderValue(),
 				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-				dual_admin_recovery: z.unknown(),
+				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
 			.optional(),
 		private_key_attributes: z
-			.object({ key_size: z.unknown().optional() })
+			.object({ key_size: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
-		api_token_binding_enabled: z.unknown().optional(),
-		api_token_ids: z.unknown().optional(),
-		enable_dual_admin_approval: z.unknown().optional(),
-		enable_ldap_search: z.unknown().optional(),
+		api_token_binding_enabled: unspecifiedProviderValue().optional(),
+		api_token_ids: unspecifiedProviderValue().optional(),
+		enable_dual_admin_approval: unspecifiedProviderValue().optional(),
+		enable_ldap_search: unspecifiedProviderValue().optional(),
 		acme_credentials: z
 			.object({
-				eab_kid: z.unknown().optional(),
-				eab_hmac: z.unknown().optional(),
-				directory_url: z.unknown().optional(),
+				eab_kid: unspecifiedProviderValue().optional(),
+				eab_hmac: unspecifiedProviderValue().optional(),
+				directory_url: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		tags: z.unknown().optional(),
-		useCustomContact: z.unknown().optional(),
-		duplicate_certificate_allowed: z.unknown().optional(),
+		tags: unspecifiedProviderValue().optional(),
+		useCustomContact: unspecifiedProviderValue().optional(),
+		duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
 		cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-		notifyRequestor: z.unknown().optional(),
-		custom_extended_key_usages: z.unknown().optional(),
+		notifyRequestor: unspecifiedProviderValue().optional(),
+		custom_extended_key_usages: unspecifiedProviderValue().optional(),
 		certificate: z
 			.object({
 				subject: z
-					.object({ attributes: z.unknown().optional() })
+					.object({ attributes: unspecifiedProviderValue().optional() })
 					.passthrough()
 					.optional(),
 				validity: z
@@ -11455,7 +11773,7 @@ const r_9cd9f0927b03Output = z
 						unit: z
 							.enum(['years', 'months', 'days', 'hours', 'minutes'])
 							.optional(),
-						duration: z.unknown().optional(),
+						duration: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -11463,15 +11781,15 @@ const r_9cd9f0927b03Output = z
 					.object({
 						san: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
 						issuer_alt_name: z
 							.object({
-								critical: z.unknown().optional(),
-								attributes: z.unknown().optional(),
+								critical: unspecifiedProviderValue().optional(),
+								attributes: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -11482,14 +11800,16 @@ const r_9cd9f0927b03Output = z
 					.intersection(
 						z
 							.object({
-								serial_number: z.unknown().optional(),
-								subject_dn: z.unknown().optional(),
-								certificate: z.unknown().optional(),
-								root: z.unknown().optional(),
-								chain: z.unknown().optional(),
+								serial_number: unspecifiedProviderValue().optional(),
+								subject_dn: unspecifiedProviderValue().optional(),
+								certificate: unspecifiedProviderValue().optional(),
+								root: unspecifiedProviderValue().optional(),
+								chain: unspecifiedProviderValue().optional(),
 							})
 							.passthrough(),
-						z.object({ chain: z.unknown().optional() }).passthrough(),
+						z
+							.object({ chain: unspecifiedProviderValue().optional() })
+							.passthrough(),
 					)
 					.optional(),
 			})
@@ -11497,36 +11817,36 @@ const r_9cd9f0927b03Output = z
 			.optional(),
 		template: z
 			.object({
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
 				trust_type: z.enum(['private', 'public']).optional(),
 			})
 			.passthrough()
 			.optional(),
-		allowed_list: z.unknown().optional(),
-		allowed_key_sizes: z.unknown().optional(),
+		allowed_list: unspecifiedProviderValue().optional(),
+		allowed_key_sizes: unspecifiedProviderValue().optional(),
 		fields: z
 			.object({
-				optional: z.unknown().optional(),
-				multiple: z.unknown().optional(),
-				key: z.unknown().optional(),
-				type: z.unknown().optional(),
-				input: z.unknown().optional(),
-				oid: z.unknown().optional(),
-				dataType: z.unknown().optional(),
-				allowed_groups: z.unknown().optional(),
-				sources: z.unknown().optional(),
-				labels: z.unknown().optional(),
+				optional: unspecifiedProviderValue().optional(),
+				multiple: unspecifiedProviderValue().optional(),
+				key: unspecifiedProviderValue().optional(),
+				type: unspecifiedProviderValue().optional(),
+				input: unspecifiedProviderValue().optional(),
+				oid: unspecifiedProviderValue().optional(),
+				dataType: unspecifiedProviderValue().optional(),
+				allowed_groups: unspecifiedProviderValue().optional(),
+				sources: unspecifiedProviderValue().optional(),
+				labels: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
-		custom_attributes_fields: z.unknown().optional(),
-		certificate_owners: z.unknown().optional(),
-		additional_recipients: z.unknown().optional(),
-		self_service_portal_active: z.unknown().optional(),
-		ssp_auth_operations: z.unknown().optional(),
-		ssp_open_operations: z.unknown().optional(),
-		allowed_user_group: z.unknown().optional(),
+		custom_attributes_fields: unspecifiedProviderValue().optional(),
+		certificate_owners: unspecifiedProviderValue().optional(),
+		additional_recipients: unspecifiedProviderValue().optional(),
+		self_service_portal_active: unspecifiedProviderValue().optional(),
+		ssp_auth_operations: unspecifiedProviderValue().optional(),
+		ssp_open_operations: unspecifiedProviderValue().optional(),
+		allowed_user_group: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_87c7a8fcf2c3Input = z
@@ -11534,10 +11854,10 @@ const r_87c7a8fcf2c3Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				api_token_id: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				api_token_id: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -11545,10 +11865,10 @@ const r_87c7a8fcf2c3Input = z
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_87c7a8fcf2c3Output = z.unknown();
+const r_87c7a8fcf2c3Output = unspecifiedProviderValue();
 const r_beff76538781Input = z
 	.object({
-		path: z.object({ profile_id: z.unknown() }).strict(),
+		path: z.object({ profile_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -11557,9 +11877,9 @@ const r_beff76538781Input = z
 const r_beff76538781Output = z.union([
 	z
 		.object({
-			id: z.unknown().optional(),
-			name: z.unknown().optional(),
-			description: z.unknown().optional(),
+			id: unspecifiedProviderValue().optional(),
+			name: unspecifiedProviderValue().optional(),
+			description: unspecifiedProviderValue().optional(),
 			status: z
 				.enum(['Active', 'Deleted', 'Suspended', 'Action needed'])
 				.optional(),
@@ -11581,15 +11901,15 @@ const r_beff76538781Output = z.union([
 					'MATCH_ISSUER',
 				])
 				.optional(),
-			publish_to_public_directory: z.unknown().optional(),
-			renewal_period_days: z.unknown().optional(),
-			duplicate_cert_policy: z.unknown().optional(),
-			override_cert_validity_via_api: z.unknown().optional(),
+			publish_to_public_directory: unspecifiedProviderValue().optional(),
+			renewal_period_days: unspecifiedProviderValue().optional(),
+			duplicate_cert_policy: unspecifiedProviderValue().optional(),
+			override_cert_validity_via_api: unspecifiedProviderValue().optional(),
 			certificate_delivery_format: z
 				.enum(['x509', 'pkcs7', 'pkcs12'])
 				.optional(),
-			account_id: z.unknown().optional(),
-			business_unit_id: z.unknown().optional(),
+			account_id: unspecifiedProviderValue().optional(),
+			business_unit_id: unspecifiedProviderValue().optional(),
 			enrollment_method: z
 				.enum([
 					'digicert_desktop_client',
@@ -11618,40 +11938,43 @@ const r_beff76538781Output = z.union([
 					'no_auth',
 				])
 				.optional(),
-			days_till_enrollment_expires: z.unknown().optional(),
-			automated_renewal: z.unknown().optional(),
-			renewal_window_days: z.unknown().optional(),
-			connector_id: z.unknown().optional(),
+			days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+			automated_renewal: unspecifiedProviderValue().optional(),
+			renewal_window_days: unspecifiedProviderValue().optional(),
+			connector_id: unspecifiedProviderValue().optional(),
 			ica: z
-				.object({ id: z.unknown(), name: z.unknown().optional() })
+				.object({
+					id: unspecifiedProviderValue(),
+					name: unspecifiedProviderValue().optional(),
+				})
 				.passthrough()
 				.optional(),
 			key_escrow_policy: z
 				.object({
-					key_escrow_enabled: z.unknown(),
+					key_escrow_enabled: unspecifiedProviderValue(),
 					key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-					dual_admin_recovery: z.unknown(),
+					dual_admin_recovery: unspecifiedProviderValue(),
 				})
 				.passthrough()
 				.optional(),
 			private_key_attributes: z
-				.object({ key_size: z.unknown().optional() })
+				.object({ key_size: unspecifiedProviderValue().optional() })
 				.passthrough()
 				.optional(),
-			api_token_binding_enabled: z.unknown().optional(),
-			api_token_ids: z.unknown().optional(),
-			enable_dual_admin_approval: z.unknown().optional(),
-			enable_ldap_search: z.unknown().optional(),
-			tags: z.unknown().optional(),
-			useCustomContact: z.unknown().optional(),
-			duplicate_certificate_allowed: z.unknown().optional(),
+			api_token_binding_enabled: unspecifiedProviderValue().optional(),
+			api_token_ids: unspecifiedProviderValue().optional(),
+			enable_dual_admin_approval: unspecifiedProviderValue().optional(),
+			enable_ldap_search: unspecifiedProviderValue().optional(),
+			tags: unspecifiedProviderValue().optional(),
+			useCustomContact: unspecifiedProviderValue().optional(),
+			duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
 			cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-			notifyRequestor: z.unknown().optional(),
-			custom_extended_key_usages: z.unknown().optional(),
+			notifyRequestor: unspecifiedProviderValue().optional(),
+			custom_extended_key_usages: unspecifiedProviderValue().optional(),
 			certificate: z
 				.object({
 					subject: z
-						.object({ attributes: z.unknown().optional() })
+						.object({ attributes: unspecifiedProviderValue().optional() })
 						.passthrough()
 						.optional(),
 					validity: z
@@ -11659,7 +11982,7 @@ const r_beff76538781Output = z.union([
 							unit: z
 								.enum(['years', 'months', 'days', 'hours', 'minutes'])
 								.optional(),
-							duration: z.unknown().optional(),
+							duration: unspecifiedProviderValue().optional(),
 						})
 						.passthrough()
 						.optional(),
@@ -11667,15 +11990,15 @@ const r_beff76538781Output = z.union([
 						.object({
 							san: z
 								.object({
-									critical: z.unknown().optional(),
-									attributes: z.unknown().optional(),
+									critical: unspecifiedProviderValue().optional(),
+									attributes: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
 							issuer_alt_name: z
 								.object({
-									critical: z.unknown().optional(),
-									attributes: z.unknown().optional(),
+									critical: unspecifiedProviderValue().optional(),
+									attributes: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
@@ -11686,14 +12009,16 @@ const r_beff76538781Output = z.union([
 						.intersection(
 							z
 								.object({
-									serial_number: z.unknown().optional(),
-									subject_dn: z.unknown().optional(),
-									certificate: z.unknown().optional(),
-									root: z.unknown().optional(),
-									chain: z.unknown().optional(),
+									serial_number: unspecifiedProviderValue().optional(),
+									subject_dn: unspecifiedProviderValue().optional(),
+									certificate: unspecifiedProviderValue().optional(),
+									root: unspecifiedProviderValue().optional(),
+									chain: unspecifiedProviderValue().optional(),
 								})
 								.passthrough(),
-							z.object({ chain: z.unknown().optional() }).passthrough(),
+							z
+								.object({ chain: unspecifiedProviderValue().optional() })
+								.passthrough(),
 						)
 						.optional(),
 				})
@@ -11701,37 +12026,37 @@ const r_beff76538781Output = z.union([
 				.optional(),
 			template: z
 				.object({
-					id: z.unknown().optional(),
-					name: z.unknown().optional(),
+					id: unspecifiedProviderValue().optional(),
+					name: unspecifiedProviderValue().optional(),
 					trust_type: z.enum(['private', 'public']).optional(),
 				})
 				.passthrough()
 				.optional(),
-			allowed_key_sizes: z.unknown().optional(),
+			allowed_key_sizes: unspecifiedProviderValue().optional(),
 			fields: z
 				.object({
-					optional: z.unknown().optional(),
-					multiple: z.unknown().optional(),
-					key: z.unknown().optional(),
-					type: z.unknown().optional(),
-					input: z.unknown().optional(),
-					oid: z.unknown().optional(),
-					dataType: z.unknown().optional(),
-					allowed_groups: z.unknown().optional(),
-					sources: z.unknown().optional(),
-					labels: z.unknown().optional(),
+					optional: unspecifiedProviderValue().optional(),
+					multiple: unspecifiedProviderValue().optional(),
+					key: unspecifiedProviderValue().optional(),
+					type: unspecifiedProviderValue().optional(),
+					input: unspecifiedProviderValue().optional(),
+					oid: unspecifiedProviderValue().optional(),
+					dataType: unspecifiedProviderValue().optional(),
+					allowed_groups: unspecifiedProviderValue().optional(),
+					sources: unspecifiedProviderValue().optional(),
+					labels: unspecifiedProviderValue().optional(),
 				})
 				.passthrough()
 				.optional(),
-			custom_attributes_fields: z.unknown().optional(),
-			certificate_owners: z.unknown().optional(),
+			custom_attributes_fields: unspecifiedProviderValue().optional(),
+			certificate_owners: unspecifiedProviderValue().optional(),
 		})
 		.passthrough(),
 	z
 		.object({
-			id: z.unknown().optional(),
-			name: z.unknown().optional(),
-			description: z.unknown().optional(),
+			id: unspecifiedProviderValue().optional(),
+			name: unspecifiedProviderValue().optional(),
+			description: unspecifiedProviderValue().optional(),
 			status: z
 				.enum(['Active', 'Deleted', 'Suspended', 'Action needed'])
 				.optional(),
@@ -11753,16 +12078,16 @@ const r_beff76538781Output = z.union([
 					'MATCH_ISSUER',
 				])
 				.optional(),
-			publish_to_public_directory: z.unknown().optional(),
-			renewal_period_days: z.unknown().optional(),
-			duplicate_cert_policy: z.unknown().optional(),
-			override_cert_validity_via_api: z.unknown().optional(),
+			publish_to_public_directory: unspecifiedProviderValue().optional(),
+			renewal_period_days: unspecifiedProviderValue().optional(),
+			duplicate_cert_policy: unspecifiedProviderValue().optional(),
+			override_cert_validity_via_api: unspecifiedProviderValue().optional(),
 			certificate_delivery_format: z
 				.enum(['x509', 'pkcs7', 'pkcs12'])
 				.optional(),
-			account_id: z.unknown().optional(),
-			business_unit_id: z.unknown().optional(),
-			business_unit_name: z.unknown().optional(),
+			account_id: unspecifiedProviderValue().optional(),
+			business_unit_id: unspecifiedProviderValue().optional(),
+			business_unit_name: unspecifiedProviderValue().optional(),
 			enrollment_method: z
 				.enum([
 					'digicert_desktop_client',
@@ -11791,49 +12116,52 @@ const r_beff76538781Output = z.union([
 					'no_auth',
 				])
 				.optional(),
-			days_till_enrollment_expires: z.unknown().optional(),
-			automated_renewal: z.unknown().optional(),
-			global_enrollment_code_enabled: z.unknown().optional(),
-			renewal_window_days: z.unknown().optional(),
-			connector_id: z.unknown().optional(),
+			days_till_enrollment_expires: unspecifiedProviderValue().optional(),
+			automated_renewal: unspecifiedProviderValue().optional(),
+			global_enrollment_code_enabled: unspecifiedProviderValue().optional(),
+			renewal_window_days: unspecifiedProviderValue().optional(),
+			connector_id: unspecifiedProviderValue().optional(),
 			ica: z
-				.object({ id: z.unknown(), name: z.unknown().optional() })
+				.object({
+					id: unspecifiedProviderValue(),
+					name: unspecifiedProviderValue().optional(),
+				})
 				.passthrough()
 				.optional(),
 			key_escrow_policy: z
 				.object({
-					key_escrow_enabled: z.unknown(),
+					key_escrow_enabled: unspecifiedProviderValue(),
 					key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
-					dual_admin_recovery: z.unknown(),
+					dual_admin_recovery: unspecifiedProviderValue(),
 				})
 				.passthrough()
 				.optional(),
 			private_key_attributes: z
-				.object({ key_size: z.unknown().optional() })
+				.object({ key_size: unspecifiedProviderValue().optional() })
 				.passthrough()
 				.optional(),
-			api_token_binding_enabled: z.unknown().optional(),
-			api_token_ids: z.unknown().optional(),
-			enable_dual_admin_approval: z.unknown().optional(),
-			enable_ldap_search: z.unknown().optional(),
+			api_token_binding_enabled: unspecifiedProviderValue().optional(),
+			api_token_ids: unspecifiedProviderValue().optional(),
+			enable_dual_admin_approval: unspecifiedProviderValue().optional(),
+			enable_ldap_search: unspecifiedProviderValue().optional(),
 			acme_credentials: z
 				.object({
-					eab_kid: z.unknown().optional(),
-					eab_hmac: z.unknown().optional(),
-					directory_url: z.unknown().optional(),
+					eab_kid: unspecifiedProviderValue().optional(),
+					eab_hmac: unspecifiedProviderValue().optional(),
+					directory_url: unspecifiedProviderValue().optional(),
 				})
 				.passthrough()
 				.optional(),
-			tags: z.unknown().optional(),
-			useCustomContact: z.unknown().optional(),
-			duplicate_certificate_allowed: z.unknown().optional(),
+			tags: unspecifiedProviderValue().optional(),
+			useCustomContact: unspecifiedProviderValue().optional(),
+			duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
 			cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
-			notifyRequestor: z.unknown().optional(),
-			custom_extended_key_usages: z.unknown().optional(),
+			notifyRequestor: unspecifiedProviderValue().optional(),
+			custom_extended_key_usages: unspecifiedProviderValue().optional(),
 			certificate: z
 				.object({
 					subject: z
-						.object({ attributes: z.unknown().optional() })
+						.object({ attributes: unspecifiedProviderValue().optional() })
 						.passthrough()
 						.optional(),
 					validity: z
@@ -11841,7 +12169,7 @@ const r_beff76538781Output = z.union([
 							unit: z
 								.enum(['years', 'months', 'days', 'hours', 'minutes'])
 								.optional(),
-							duration: z.unknown().optional(),
+							duration: unspecifiedProviderValue().optional(),
 						})
 						.passthrough()
 						.optional(),
@@ -11849,15 +12177,15 @@ const r_beff76538781Output = z.union([
 						.object({
 							san: z
 								.object({
-									critical: z.unknown().optional(),
-									attributes: z.unknown().optional(),
+									critical: unspecifiedProviderValue().optional(),
+									attributes: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
 							issuer_alt_name: z
 								.object({
-									critical: z.unknown().optional(),
-									attributes: z.unknown().optional(),
+									critical: unspecifiedProviderValue().optional(),
+									attributes: unspecifiedProviderValue().optional(),
 								})
 								.passthrough()
 								.optional(),
@@ -11868,14 +12196,16 @@ const r_beff76538781Output = z.union([
 						.intersection(
 							z
 								.object({
-									serial_number: z.unknown().optional(),
-									subject_dn: z.unknown().optional(),
-									certificate: z.unknown().optional(),
-									root: z.unknown().optional(),
-									chain: z.unknown().optional(),
+									serial_number: unspecifiedProviderValue().optional(),
+									subject_dn: unspecifiedProviderValue().optional(),
+									certificate: unspecifiedProviderValue().optional(),
+									root: unspecifiedProviderValue().optional(),
+									chain: unspecifiedProviderValue().optional(),
 								})
 								.passthrough(),
-							z.object({ chain: z.unknown().optional() }).passthrough(),
+							z
+								.object({ chain: unspecifiedProviderValue().optional() })
+								.passthrough(),
 						)
 						.optional(),
 				})
@@ -11883,36 +12213,36 @@ const r_beff76538781Output = z.union([
 				.optional(),
 			template: z
 				.object({
-					id: z.unknown().optional(),
-					name: z.unknown().optional(),
+					id: unspecifiedProviderValue().optional(),
+					name: unspecifiedProviderValue().optional(),
 					trust_type: z.enum(['private', 'public']).optional(),
 				})
 				.passthrough()
 				.optional(),
-			allowed_list: z.unknown().optional(),
-			allowed_key_sizes: z.unknown().optional(),
+			allowed_list: unspecifiedProviderValue().optional(),
+			allowed_key_sizes: unspecifiedProviderValue().optional(),
 			fields: z
 				.object({
-					optional: z.unknown().optional(),
-					multiple: z.unknown().optional(),
-					key: z.unknown().optional(),
-					type: z.unknown().optional(),
-					input: z.unknown().optional(),
-					oid: z.unknown().optional(),
-					dataType: z.unknown().optional(),
-					allowed_groups: z.unknown().optional(),
-					sources: z.unknown().optional(),
-					labels: z.unknown().optional(),
+					optional: unspecifiedProviderValue().optional(),
+					multiple: unspecifiedProviderValue().optional(),
+					key: unspecifiedProviderValue().optional(),
+					type: unspecifiedProviderValue().optional(),
+					input: unspecifiedProviderValue().optional(),
+					oid: unspecifiedProviderValue().optional(),
+					dataType: unspecifiedProviderValue().optional(),
+					allowed_groups: unspecifiedProviderValue().optional(),
+					sources: unspecifiedProviderValue().optional(),
+					labels: unspecifiedProviderValue().optional(),
 				})
 				.passthrough()
 				.optional(),
-			custom_attributes_fields: z.unknown().optional(),
-			certificate_owners: z.unknown().optional(),
-			additional_recipients: z.unknown().optional(),
-			self_service_portal_active: z.unknown().optional(),
-			ssp_auth_operations: z.unknown().optional(),
-			ssp_open_operations: z.unknown().optional(),
-			allowed_user_group: z.unknown().optional(),
+			custom_attributes_fields: unspecifiedProviderValue().optional(),
+			certificate_owners: unspecifiedProviderValue().optional(),
+			additional_recipients: unspecifiedProviderValue().optional(),
+			self_service_portal_active: unspecifiedProviderValue().optional(),
+			ssp_auth_operations: unspecifiedProviderValue().optional(),
+			ssp_open_operations: unspecifiedProviderValue().optional(),
+			allowed_user_group: unspecifiedProviderValue().optional(),
 		})
 		.passthrough(),
 ]);
@@ -11921,19 +12251,19 @@ const r_ddb85158bd5dInput = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				admin_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				profile_id: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
-				create_date: z.unknown().optional(),
-				expiry_date: z.unknown().optional(),
-				redeem_date: z.unknown().optional(),
-				reject_date: z.unknown().optional(),
-				reset_date: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				admin_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				profile_id: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
+				create_date: unspecifiedProviderValue().optional(),
+				expiry_date: unspecifiedProviderValue().optional(),
+				redeem_date: unspecifiedProviderValue().optional(),
+				reject_date: unspecifiedProviderValue().optional(),
+				reset_date: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -11943,26 +12273,30 @@ const r_ddb85158bd5dInput = z
 	.strict();
 const r_ddb85158bd5dOutput = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_8544e8ac7f57Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				resource_id: z.unknown().optional(),
-				admin_id: z.unknown().optional(),
-				admin_name: z.unknown().optional(),
-				resource_name: z.unknown().optional(),
-				seat_identifier: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				resource_id: unspecifiedProviderValue().optional(),
+				admin_id: unspecifiedProviderValue().optional(),
+				admin_name: unspecifiedProviderValue().optional(),
+				resource_name: unspecifiedProviderValue().optional(),
+				seat_identifier: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
 				resource_type: z
 					.enum([
 						'enrollment',
@@ -12031,8 +12365,8 @@ const r_8544e8ac7f57Input = z
 					])
 					.optional(),
 				status: z.enum(['success', 'warning', 'failure']).optional(),
-				from: z.unknown().optional(),
-				to: z.unknown().optional(),
+				from: unspecifiedProviderValue().optional(),
+				to: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -12042,13 +12376,17 @@ const r_8544e8ac7f57Input = z
 	.strict();
 const r_8544e8ac7f57Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_fb0b80993f03Input = z
 	.object({
-		path: z.object({ event_id: z.unknown() }).strict(),
+		path: z.object({ event_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -12056,10 +12394,13 @@ const r_fb0b80993f03Input = z
 	.strict();
 const r_fb0b80993f03Output = z
 	.object({
-		id: z.unknown().optional(),
-		account: z.object({ id: z.unknown().optional() }).passthrough().optional(),
+		id: unspecifiedProviderValue().optional(),
+		account: z
+			.object({ id: unspecifiedProviderValue().optional() })
+			.passthrough()
+			.optional(),
 		business_unit: z
-			.object({ id: z.unknown().optional() })
+			.object({ id: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
 		resource_type: z
@@ -12087,7 +12428,7 @@ const r_fb0b80993f03Output = z
 				'self_service_portal',
 			])
 			.optional(),
-		resource_id: z.unknown().optional(),
+		resource_id: unspecifiedProviderValue().optional(),
 		action: z
 			.enum([
 				'create',
@@ -12131,16 +12472,19 @@ const r_fb0b80993f03Output = z
 			])
 			.optional(),
 		user: z
-			.object({ id: z.unknown().optional(), name: z.unknown().optional() })
+			.object({
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+			})
 			.passthrough()
 			.optional(),
-		timestamp: z.unknown().optional(),
-		description: z.unknown().optional(),
+		timestamp: unspecifiedProviderValue().optional(),
+		description: unspecifiedProviderValue().optional(),
 		status: z.enum(['success', 'warning', 'failure']).optional(),
-		error_message: z.unknown().optional(),
-		detailed_error_message: z.unknown().optional(),
-		data: z.unknown().optional(),
-		new_data: z.unknown().optional(),
+		error_message: unspecifiedProviderValue().optional(),
+		detailed_error_message: unspecifiedProviderValue().optional(),
+		data: unspecifiedProviderValue().optional(),
+		new_data: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_f27878dd7018Input = z
@@ -12148,15 +12492,15 @@ const r_f27878dd7018Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				exclude_context_data: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
-				resource_id: z.unknown().optional(),
-				admin_id: z.unknown().optional(),
-				admin_name: z.unknown().optional(),
-				resource_name: z.unknown().optional(),
-				seat_identifier: z.unknown().optional(),
-				seat_id: z.unknown().optional(),
+				exclude_context_data: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				resource_id: unspecifiedProviderValue().optional(),
+				admin_id: unspecifiedProviderValue().optional(),
+				admin_name: unspecifiedProviderValue().optional(),
+				resource_name: unspecifiedProviderValue().optional(),
+				seat_identifier: unspecifiedProviderValue().optional(),
+				seat_id: unspecifiedProviderValue().optional(),
 				resource_type: z
 					.enum([
 						'enrollment',
@@ -12225,8 +12569,8 @@ const r_f27878dd7018Input = z
 					])
 					.optional(),
 				status: z.enum(['success', 'warning', 'failure']).optional(),
-				from: z.unknown().optional(),
-				to: z.unknown().optional(),
+				from: unspecifiedProviderValue().optional(),
+				to: unspecifiedProviderValue().optional(),
 			})
 			.strict()
 			.default({}),
@@ -12235,18 +12579,18 @@ const r_f27878dd7018Input = z
 	})
 	.strict();
 const r_f27878dd7018Output = z.intersection(
-	z.object({ total: z.unknown() }).passthrough(),
-	z.object({ total: z.unknown().optional() }).passthrough(),
+	z.object({ total: unspecifiedProviderValue() }).passthrough(),
+	z.object({ total: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_10c05d173009Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12255,9 +12599,13 @@ const r_10c05d173009Input = z
 	.strict();
 const r_10c05d173009Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_936d50859847Input = z
 	.object({
@@ -12267,15 +12615,15 @@ const r_936d50859847Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
-				name: z.unknown(),
-				description: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue(),
+				description: unspecifiedProviderValue().optional(),
 				type: z.enum(['certificate', 'asset']),
-				rule_id: z.unknown().optional(),
-				status: z.unknown().optional(),
-				assignments: z.unknown().optional(),
-				conditions: z.unknown().optional(),
-				targets: z.unknown().optional(),
+				rule_id: unspecifiedProviderValue().optional(),
+				status: unspecifiedProviderValue().optional(),
+				assignments: unspecifiedProviderValue().optional(),
+				conditions: unspecifiedProviderValue().optional(),
+				targets: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -12284,16 +12632,16 @@ const r_936d50859847Output = z.undefined();
 const r_fba0a11d0af9Input = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.unknown(),
+		body: unspecifiedProviderValue(),
 	})
 	.strict();
 const r_fba0a11d0af9Output = z.undefined();
 const r_39fd79124781Input = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -12301,36 +12649,36 @@ const r_39fd79124781Input = z
 	.strict();
 const r_39fd79124781Output = z
 	.object({
-		name: z.unknown(),
-		account_id: z.unknown(),
-		rule_id: z.unknown().optional(),
+		name: unspecifiedProviderValue(),
+		account_id: unspecifiedProviderValue(),
+		rule_id: unspecifiedProviderValue().optional(),
 		type: z.enum(['certificate', 'asset']).optional(),
-		description: z.unknown().optional(),
-		status: z.unknown().optional(),
-		created_at: z.unknown().optional(),
-		updated_at: z.unknown().optional(),
-		conditions: z.unknown().optional(),
-		assignments: z.unknown().optional(),
-		targets: z.unknown().optional(),
+		description: unspecifiedProviderValue().optional(),
+		status: unspecifiedProviderValue().optional(),
+		created_at: unspecifiedProviderValue().optional(),
+		updated_at: unspecifiedProviderValue().optional(),
+		conditions: unspecifiedProviderValue().optional(),
+		assignments: unspecifiedProviderValue().optional(),
+		targets: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_d1a0900ac1cdInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
-				name: z.unknown(),
-				description: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue(),
+				description: unspecifiedProviderValue().optional(),
 				type: z.enum(['certificate', 'asset']),
-				rule_id: z.unknown().optional(),
-				status: z.unknown().optional(),
-				assignments: z.unknown().optional(),
-				conditions: z.unknown().optional(),
-				targets: z.unknown().optional(),
+				rule_id: unspecifiedProviderValue().optional(),
+				status: unspecifiedProviderValue().optional(),
+				assignments: unspecifiedProviderValue().optional(),
+				conditions: unspecifiedProviderValue().optional(),
+				targets: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -12338,8 +12686,8 @@ const r_d1a0900ac1cdInput = z
 const r_d1a0900ac1cdOutput = z.undefined();
 const r_2c4418daa501Input = z
 	.object({
-		path: z.object({ ruleId: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ ruleId: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -12350,17 +12698,17 @@ const r_716491633306Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				businessUnit: z.unknown().optional(),
-				businessUnitName: z.unknown().optional(),
-				currentScanStatus: z.unknown().optional(),
-				frequency: z.unknown().optional(),
-				lastScanStatus: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				name: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				scanType: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				businessUnit: unspecifiedProviderValue().optional(),
+				businessUnitName: unspecifiedProviderValue().optional(),
+				currentScanStatus: unspecifiedProviderValue().optional(),
+				frequency: unspecifiedProviderValue().optional(),
+				lastScanStatus: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				scanType: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12376,43 +12724,46 @@ const r_f41e8938ed63Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
-				business_unit_id: z.unknown().optional(),
-				cipher_scan: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				cipher_scan: unspecifiedProviderValue().optional(),
 				config: z
 					.object({
-						day_of_month: z.unknown().optional(),
-						days_to_run: z.unknown().optional(),
-						disable_ping: z.unknown().optional(),
-						do_not_follow_http_redirects: z.unknown().optional(),
-						extra_tls_protocols_discovery: z.unknown().optional(),
-						ipv6: z.unknown().optional(),
-						is_os_discovery: z.unknown().optional(),
-						is_server_application_discovery: z.unknown().optional(),
-						refresh_host_ip_inventory: z.unknown().optional(),
-						restrict_emulated_tls_issues_scan: z.unknown().optional(),
+						day_of_month: unspecifiedProviderValue().optional(),
+						days_to_run: unspecifiedProviderValue().optional(),
+						disable_ping: unspecifiedProviderValue().optional(),
+						do_not_follow_http_redirects: unspecifiedProviderValue().optional(),
+						extra_tls_protocols_discovery:
+							unspecifiedProviderValue().optional(),
+						ipv6: unspecifiedProviderValue().optional(),
+						is_os_discovery: unspecifiedProviderValue().optional(),
+						is_server_application_discovery:
+							unspecifiedProviderValue().optional(),
+						refresh_host_ip_inventory: unspecifiedProviderValue().optional(),
+						restrict_emulated_tls_issues_scan:
+							unspecifiedProviderValue().optional(),
 						scan_option: z.enum(['CUSTOM', 'OPTIMIZE']).optional(),
-						sensor_with_ip_port: z.unknown().optional(),
-						sni: z.unknown().optional(),
+						sensor_with_ip_port: unspecifiedProviderValue().optional(),
+						sni: unspecifiedProviderValue().optional(),
 						speed: z.enum(['FAST', 'MEDIUM', 'SLOW']).optional(),
-						ssh_discovery: z.unknown().optional(),
-						start_time: z.unknown().optional(),
-						time_to_complete: z.unknown().optional(),
-						timezone: z.unknown().optional(),
-						tls_ssl_critical_issues: z.unknown().optional(),
-						tls_ssl_non_critical_issues: z.unknown().optional(),
+						ssh_discovery: unspecifiedProviderValue().optional(),
+						start_time: unspecifiedProviderValue().optional(),
+						time_to_complete: unspecifiedProviderValue().optional(),
+						timezone: unspecifiedProviderValue().optional(),
+						tls_ssl_critical_issues: unspecifiedProviderValue().optional(),
+						tls_ssl_non_critical_issues: unspecifiedProviderValue().optional(),
 						week_of_month: z
 							.enum(['FIRST', 'FOURTH', 'LAST', 'SECOND', 'THIRD'])
 							.optional(),
 					})
 					.passthrough(),
-				data_business_unit_id: z.unknown().optional(),
-				enable_debug_ports: z.unknown().optional(),
+				data_business_unit_id: unspecifiedProviderValue().optional(),
+				enable_debug_ports: unspecifiedProviderValue().optional(),
 				frequency: z.enum(['DAILY', 'MONTHLY', 'ONE_TIME', 'WEEKLY']),
-				id: z.unknown().optional(),
-				name: z.unknown(),
-				save_only: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue(),
+				save_only: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -12421,10 +12772,12 @@ const r_f41e8938ed63Output = z.undefined();
 const r_3cab39f7decfInput = z
 	.object({
 		path: z.object({}).strict().default({}),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z.object({ scans: z.unknown().optional() }).passthrough(),
+		body: z
+			.object({ scans: unspecifiedProviderValue().optional() })
+			.passthrough(),
 	})
 	.strict();
 const r_3cab39f7decfOutput = z.undefined();
@@ -12436,43 +12789,46 @@ const r_0d8b21f3f0fcInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown(),
-				business_unit_id: z.unknown().optional(),
-				cipher_scan: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				business_unit_id: unspecifiedProviderValue().optional(),
+				cipher_scan: unspecifiedProviderValue().optional(),
 				config: z
 					.object({
-						day_of_month: z.unknown().optional(),
-						days_to_run: z.unknown().optional(),
-						disable_ping: z.unknown().optional(),
-						do_not_follow_http_redirects: z.unknown().optional(),
-						extra_tls_protocols_discovery: z.unknown().optional(),
-						ipv6: z.unknown().optional(),
-						is_os_discovery: z.unknown().optional(),
-						is_server_application_discovery: z.unknown().optional(),
-						refresh_host_ip_inventory: z.unknown().optional(),
-						restrict_emulated_tls_issues_scan: z.unknown().optional(),
+						day_of_month: unspecifiedProviderValue().optional(),
+						days_to_run: unspecifiedProviderValue().optional(),
+						disable_ping: unspecifiedProviderValue().optional(),
+						do_not_follow_http_redirects: unspecifiedProviderValue().optional(),
+						extra_tls_protocols_discovery:
+							unspecifiedProviderValue().optional(),
+						ipv6: unspecifiedProviderValue().optional(),
+						is_os_discovery: unspecifiedProviderValue().optional(),
+						is_server_application_discovery:
+							unspecifiedProviderValue().optional(),
+						refresh_host_ip_inventory: unspecifiedProviderValue().optional(),
+						restrict_emulated_tls_issues_scan:
+							unspecifiedProviderValue().optional(),
 						scan_option: z.enum(['CUSTOM', 'OPTIMIZE']).optional(),
-						sensor_with_ip_port: z.unknown().optional(),
-						sni: z.unknown().optional(),
+						sensor_with_ip_port: unspecifiedProviderValue().optional(),
+						sni: unspecifiedProviderValue().optional(),
 						speed: z.enum(['FAST', 'MEDIUM', 'SLOW']).optional(),
-						ssh_discovery: z.unknown().optional(),
-						start_time: z.unknown().optional(),
-						time_to_complete: z.unknown().optional(),
-						timezone: z.unknown().optional(),
-						tls_ssl_critical_issues: z.unknown().optional(),
-						tls_ssl_non_critical_issues: z.unknown().optional(),
+						ssh_discovery: unspecifiedProviderValue().optional(),
+						start_time: unspecifiedProviderValue().optional(),
+						time_to_complete: unspecifiedProviderValue().optional(),
+						timezone: unspecifiedProviderValue().optional(),
+						tls_ssl_critical_issues: unspecifiedProviderValue().optional(),
+						tls_ssl_non_critical_issues: unspecifiedProviderValue().optional(),
 						week_of_month: z
 							.enum(['FIRST', 'FOURTH', 'LAST', 'SECOND', 'THIRD'])
 							.optional(),
 					})
 					.passthrough(),
-				data_business_unit_id: z.unknown().optional(),
-				enable_debug_ports: z.unknown().optional(),
+				data_business_unit_id: unspecifiedProviderValue().optional(),
+				enable_debug_ports: unspecifiedProviderValue().optional(),
 				frequency: z.enum(['DAILY', 'MONTHLY', 'ONE_TIME', 'WEEKLY']),
-				id: z.unknown().optional(),
-				name: z.unknown(),
-				save_only: z.unknown().optional(),
-				tags: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue(),
+				save_only: unspecifiedProviderValue().optional(),
+				tags: unspecifiedProviderValue().optional(),
 			})
 			.passthrough(),
 	})
@@ -12480,8 +12836,8 @@ const r_0d8b21f3f0fcInput = z
 const r_0d8b21f3f0fcOutput = z.undefined();
 const r_dc1a10c2c3a6Input = z
 	.object({
-		path: z.object({ scan_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ scan_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -12489,8 +12845,8 @@ const r_dc1a10c2c3a6Input = z
 const r_dc1a10c2c3a6Output = z.undefined();
 const r_38f57b41183dInput = z
 	.object({
-		path: z.object({ scan_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ scan_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -12498,13 +12854,13 @@ const r_38f57b41183dInput = z
 const r_38f57b41183dOutput = z.undefined();
 const r_3b605dc8977cInput = z
 	.object({
-		path: z.object({ id: z.unknown() }).strict(),
+		path: z.object({ id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
 				category: z.enum(['CURRENT', 'PAST']).optional(),
-				limit: z.unknown().optional(),
-				offset: z.unknown().optional(),
-				sort: z.unknown().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
 				status: z
 					.enum([
 						'ADDED',
@@ -12517,7 +12873,7 @@ const r_3b605dc8977cInput = z
 						'SKIPPED',
 					])
 					.optional(),
-				account_id: z.unknown(),
+				account_id: unspecifiedProviderValue(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12533,16 +12889,16 @@ const r_10508ac747cdInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 				input: z
 					.object({
-						data: z.unknown().optional(),
-						type: z.unknown().optional(),
+						data: unspecifiedProviderValue().optional(),
+						type: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
-				included_ip_fqdns: z.unknown().optional(),
-				excluded_ip_fqdns: z.unknown().optional(),
+				included_ip_fqdns: unspecifiedProviderValue().optional(),
+				excluded_ip_fqdns: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -12556,7 +12912,10 @@ const r_feb002186f05Input = z
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ account_id: z.unknown(), name: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue(),
+			})
 			.passthrough()
 			.optional(),
 	})
@@ -12567,10 +12926,10 @@ const r_523236c02350Input = z
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				account_id: z.unknown().optional(),
-				business_unit_id: z.unknown().optional(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
 				seat_type: z
 					.enum([
 						'USER_SEAT',
@@ -12594,9 +12953,13 @@ const r_523236c02350Input = z
 	.strict();
 const r_523236c02350Output = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_495ebdedb32bInput = z
 	.object({
@@ -12608,7 +12971,7 @@ const r_495ebdedb32bInput = z
 			.intersection(
 				z
 					.object({
-						business_unit_id: z.unknown().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
 						seat_type: z
 							.object({
 								id: z
@@ -12623,14 +12986,14 @@ const r_495ebdedb32bInput = z
 							})
 							.passthrough()
 							.optional(),
-						seat_id: z.unknown().optional(),
+						seat_id: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				z
 					.object({
-						seat_name: z.unknown().optional(),
-						email: z.unknown().optional(),
-						phone: z.unknown().optional(),
+						seat_name: unspecifiedProviderValue().optional(),
+						email: unspecifiedProviderValue().optional(),
+						phone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			)
@@ -12640,7 +13003,7 @@ const r_495ebdedb32bInput = z
 const r_495ebdedb32bOutput = z.undefined();
 const r_0d6230796736Input = z
 	.object({
-		path: z.object({ seat_id: z.unknown() }).strict(),
+		path: z.object({ seat_id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
 				seat_type_id: z.enum([
@@ -12652,7 +13015,7 @@ const r_0d6230796736Input = z
 					'DISCOVERY_SEAT',
 					'ORGANIZATION_SEAT',
 				]),
-				business_unit_id: z.unknown().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12661,16 +13024,16 @@ const r_0d6230796736Input = z
 	.strict();
 const r_0d6230796736Output = z
 	.object({
-		seat_id: z.unknown().optional(),
-		seat_name: z.unknown().optional(),
-		email: z.unknown().optional(),
-		phone: z.unknown().optional(),
-		seat_creation_date: z.unknown().optional(),
+		seat_id: unspecifiedProviderValue().optional(),
+		seat_name: unspecifiedProviderValue().optional(),
+		email: unspecifiedProviderValue().optional(),
+		phone: unspecifiedProviderValue().optional(),
+		seat_creation_date: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_5c95b7617096Input = z
 	.object({
-		path: z.object({ seat_id: z.unknown() }).strict(),
+		path: z.object({ seat_id: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -12678,7 +13041,7 @@ const r_5c95b7617096Input = z
 			.intersection(
 				z
 					.object({
-						business_unit_id: z.unknown().optional(),
+						business_unit_id: unspecifiedProviderValue().optional(),
 						seat_type: z
 							.object({
 								id: z
@@ -12695,14 +13058,14 @@ const r_5c95b7617096Input = z
 							})
 							.passthrough()
 							.optional(),
-						seat_id: z.unknown().optional(),
+						seat_id: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 				z
 					.object({
-						seat_name: z.unknown().optional(),
-						email: z.unknown().optional(),
-						phone: z.unknown().optional(),
+						seat_name: unspecifiedProviderValue().optional(),
+						email: unspecifiedProviderValue().optional(),
+						phone: unspecifiedProviderValue().optional(),
 					})
 					.passthrough(),
 			)
@@ -12712,7 +13075,7 @@ const r_5c95b7617096Input = z
 const r_5c95b7617096Output = z.undefined();
 const r_50f5dbf5b576Input = z
 	.object({
-		path: z.object({ seat_id: z.unknown() }).strict(),
+		path: z.object({ seat_id: unspecifiedProviderValue() }).strict(),
 		query: z
 			.object({
 				seat_type_id: z.enum([
@@ -12724,7 +13087,7 @@ const r_50f5dbf5b576Input = z
 					'DISCOVERY_SEAT',
 					'ORGANIZATION_SEAT',
 				]),
-				business_unit_id: z.unknown().optional(),
+				business_unit_id: unspecifiedProviderValue().optional(),
 				revocation_reason: z
 					.enum([
 						'cessation_of_operation',
@@ -12743,44 +13106,47 @@ const r_50f5dbf5b576Output = z.undefined();
 const r_acd12ea8b342Input = z
 	.object({
 		path: z
-			.object({ seat_id: z.unknown(), new_business_unit_id: z.unknown() })
+			.object({
+				seat_id: unspecifiedProviderValue(),
+				new_business_unit_id: unspecifiedProviderValue(),
+			})
 			.strict(),
-		query: z.object({ business_unit_id: z.unknown() }).strict(),
+		query: z.object({ business_unit_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
 const r_acd12ea8b342Output = z
 	.object({
-		seat_id: z.unknown().optional(),
-		seat_name: z.unknown().optional(),
-		email: z.unknown().optional(),
-		phone: z.unknown().optional(),
-		seat_creation_date: z.unknown().optional(),
+		seat_id: unspecifiedProviderValue().optional(),
+		seat_name: unspecifiedProviderValue().optional(),
+		email: unspecifiedProviderValue().optional(),
+		phone: unspecifiedProviderValue().optional(),
+		seat_creation_date: unspecifiedProviderValue().optional(),
 	})
 	.passthrough();
 const r_26265e7690c1Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
-			.object({ account_id: z.unknown().optional() })
+			.object({ account_id: unspecifiedProviderValue().optional() })
 			.strict()
 			.default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_26265e7690c1Output = z.unknown();
+const r_26265e7690c1Output = unspecifiedProviderValue();
 const r_c5bef0f817eeInput = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				offset: z.unknown().optional(),
-				limit: z.unknown().optional(),
-				sort: z.unknown().optional(),
-				search_query: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				offset: unspecifiedProviderValue().optional(),
+				limit: unspecifiedProviderValue().optional(),
+				sort: unspecifiedProviderValue().optional(),
+				search_query: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12789,17 +13155,21 @@ const r_c5bef0f817eeInput = z
 	.strict();
 const r_c5bef0f817eeOutput = z.intersection(
 	z
-		.object({ total: z.unknown(), offset: z.unknown(), limit: z.unknown() })
+		.object({
+			total: unspecifiedProviderValue(),
+			offset: unspecifiedProviderValue(),
+			limit: unspecifiedProviderValue(),
+		})
 		.passthrough(),
-	z.object({ items: z.unknown().optional() }).passthrough(),
+	z.object({ items: unspecifiedProviderValue().optional() }).passthrough(),
 );
 const r_2a5b40269113Input = z
 	.object({
 		path: z.object({}).strict().default({}),
 		query: z
 			.object({
-				account_id: z.unknown(),
-				business_unit_id: z.unknown().optional(),
+				account_id: unspecifiedProviderValue(),
+				business_unit_id: unspecifiedProviderValue().optional(),
 			})
 			.strict(),
 		headers: z.object({}).strict().default({}),
@@ -12808,8 +13178,8 @@ const r_2a5b40269113Input = z
 	.strict();
 const r_2a5b40269113Output = z
 	.object({
-		id: z.unknown().optional(),
-		name: z.unknown().optional(),
+		id: unspecifiedProviderValue().optional(),
+		name: unspecifiedProviderValue().optional(),
 		status: z
 			.enum([
 				'ACTIVE',
@@ -12820,16 +13190,19 @@ const r_2a5b40269113Output = z
 				'VOID',
 			])
 			.optional(),
-		version: z.unknown().optional(),
-		license_key: z.unknown().optional(),
-		debug_enabled: z.unknown().optional(),
-		allowed_actions: z.unknown().optional(),
+		version: unspecifiedProviderValue().optional(),
+		license_key: unspecifiedProviderValue().optional(),
+		debug_enabled: unspecifiedProviderValue().optional(),
+		allowed_actions: unspecifiedProviderValue().optional(),
 		business_unit: z
 			.intersection(
 				z
-					.object({ id: z.unknown(), name: z.unknown().optional() })
+					.object({
+						id: unspecifiedProviderValue(),
+						name: unspecifiedProviderValue().optional(),
+					})
 					.passthrough(),
-				z.unknown(),
+				unspecifiedProviderValue(),
 			)
 			.optional(),
 	})
@@ -12842,8 +13215,8 @@ const r_69deb2fed908Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
-				license_keys: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				license_keys: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -12858,8 +13231,8 @@ const r_359f84ec7e33Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
-				license_keys: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				license_keys: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -12874,25 +13247,28 @@ const r_559e713c21d8Input = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
 				advanced_settings: z
 					.object({
-						debug_enabled: z.unknown().optional(),
-						heartbeat_interval: z.unknown().optional(),
-						heartbeat_port: z.unknown().optional(),
+						debug_enabled: unspecifiedProviderValue().optional(),
+						heartbeat_interval: unspecifiedProviderValue().optional(),
+						heartbeat_port: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
 					.optional(),
 				business_unit: z
 					.intersection(
 						z
-							.object({ id: z.unknown(), name: z.unknown().optional() })
+							.object({
+								id: unspecifiedProviderValue(),
+								name: unspecifiedProviderValue().optional(),
+							})
 							.passthrough(),
-						z.unknown(),
+						unspecifiedProviderValue(),
 					)
 					.optional(),
-				id: z.unknown().optional(),
-				name: z.unknown().optional(),
+				id: unspecifiedProviderValue().optional(),
+				name: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -12907,8 +13283,8 @@ const r_3ccfd3c7488eInput = z
 		cookies: z.object({}).strict().default({}),
 		body: z
 			.object({
-				account_id: z.unknown().optional(),
-				license_keys: z.unknown().optional(),
+				account_id: unspecifiedProviderValue().optional(),
+				license_keys: unspecifiedProviderValue().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -12917,8 +13293,8 @@ const r_3ccfd3c7488eInput = z
 const r_3ccfd3c7488eOutput = z.undefined();
 const r_ae93bfb2ed4dInput = z
 	.object({
-		path: z.object({ sensor_id: z.unknown() }).strict(),
-		query: z.object({ account_id: z.unknown() }).strict(),
+		path: z.object({ sensor_id: unspecifiedProviderValue() }).strict(),
+		query: z.object({ account_id: unspecifiedProviderValue() }).strict(),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -12931,7 +13307,11 @@ const r_e13817c6d741Input = z
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
-			.object({ account_id: z.unknown(), id: z.unknown(), name: z.unknown() })
+			.object({
+				account_id: unspecifiedProviderValue(),
+				id: unspecifiedProviderValue(),
+				name: unspecifiedProviderValue(),
+			})
 			.passthrough()
 			.optional(),
 	})
@@ -12939,7 +13319,7 @@ const r_e13817c6d741Input = z
 const r_e13817c6d741Output = z.undefined();
 const r_a638a4b395a8Input = z
 	.object({
-		path: z.object({ license_key: z.unknown() }).strict(),
+		path: z.object({ license_key: unspecifiedProviderValue() }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -12965,14 +13345,14 @@ const r_ba846e3e9a98Input = z
 	.strict();
 const r_ba846e3e9a98Output = z
 	.object({
-		status: z.unknown().optional(),
+		status: unspecifiedProviderValue().optional(),
 		details: z
 			.object({
 				db_service: z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -12982,7 +13362,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -12992,7 +13372,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13002,7 +13382,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13012,7 +13392,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13022,7 +13402,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13032,7 +13412,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13042,7 +13422,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13052,7 +13432,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13062,7 +13442,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13072,7 +13452,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13082,7 +13462,7 @@ const r_ba846e3e9a98Output = z
 					.object({
 						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
 						details: z
-							.object({ error: z.unknown().optional() })
+							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
 							.optional(),
 					})
@@ -13092,7 +13472,7 @@ const r_ba846e3e9a98Output = z
 			.passthrough()
 			.optional(),
 		scheduled_jobs: z
-			.object({ DEFAULT: z.unknown().optional() })
+			.object({ DEFAULT: unspecifiedProviderValue().optional() })
 			.passthrough()
 			.optional(),
 	})

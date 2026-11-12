@@ -51,7 +51,9 @@ export type OpenApiEndpointConfig<
 
 // Query values are provider-defined JSON scalars or arrays; the per-operation
 // schema validates the exact query shape before this helper flattens it.
+// `unknown`: nested shapes differ between operations and are only serialized here.
 function flattenQuery(query: Record<string, unknown>): Record<string, unknown> {
+	// `unknown`: callers validate query values before flattening and serialization.
 	const flattened: Record<string, unknown> = {};
 	// `unknown`: query values are already schema-checked; this only flattens nested objects.
 	const visit = (key: string, value: unknown): void => {

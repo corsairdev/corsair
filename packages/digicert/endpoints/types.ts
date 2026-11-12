@@ -556,7 +556,8 @@ const CustomReportByIdInputSchema = z
 		fields: z.array(z.enum(CustomReportFields)).min(1),
 	})
 	.strict();
-// Custom Reports returns only user-selected fields; values can be nullable and scalar-typed per field.
+// `unknown`: Custom Reports returns user-selected nullable/scalar fields with no
+// common narrower value type, so this recursive GraphQL JSON schema stays generic.
 const GraphQLValueSchema: z.ZodType<unknown> = z.lazy(() =>
 	z.union([
 		z.string(),
