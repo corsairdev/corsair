@@ -1,0 +1,999 @@
+{
+  "id": "adyntel",
+  "displayName": "Adyntel",
+  "description": "Ad intelligence across Meta, Google, LinkedIn and TikTok - ad libraries, keyword searches, paid versus organic keywords.",
+  "npmPackageName": "@corsair-dev/adyntel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "email"]
+    }
+  ],
+  "api": [
+    {
+      "path": "adyntel.api.google.ads",
+      "shortPath": "google.ads",
+      "description": "List a company's Google ads from Google's Ad Transparency report by domain, filtered by media type and country, with a continuation token per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_domain",
+            "optional": false,
+            "type": "string",
+            "description": "The bare domain, without `https://` or `www.`."
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "text | image | video | all",
+            "description": "Defaults to `all`. Any other value fails validation before the call is sent; Adyntel itself would treat it as `all` and widen the result."
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string",
+            "description": "One country per call; a list is rejected. Leave it out, or send `anywhere`, for worldwide results. Send the same code again with every `continuation_token`."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "`continuation_token` from the previous response."
+          },
+          {
+            "key": "extract_text",
+            "optional": true,
+            "type": "boolean",
+            "description": "Extracts the text inside each creative for one extra credit. The docs table spells it `extract-text`; the OpenAPI spec and this plugin use `extract_text`."
+          },
+          {
+            "key": "all_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Needs `webhook_url`. One credit per page and cannot be stopped."
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not."
+          },
+          {
+            "key": "data_provider",
+            "optional": true,
+            "type": "rapidapi | apify",
+            "description": "Which scraping backend runs the call. Leave it unset to use Adyntel's default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`job started` when a job was queued."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Track via `GET /track/jobs`."
+          },
+          {
+            "key": "jobIds",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "One ID per country, for the multi-country Meta form."
+          },
+          {
+            "key": "failedCountries",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Countries that were never queued and were not charged."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunk_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of POSTs Adyntel made to `webhook_url`."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "`anywhere` when no filter was applied."
+          },
+          {
+            "key": "total_ad_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ advertiser_id?: string | null, advertiser_name?: string | null, creative_id?: string | null, original_url?: string | null, format?: string | null, start?: string | null, last_seen?: string | null, variants?: { content?: string | null, height?: number | null, width?: number | null }[] | null, extracted_text?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.google.shopping",
+      "shortPath": "google.shopping",
+      "description": "Start a Google Shopping ad lookup for a domain: synchronous ads when `shopping` is true, otherwise a task ID to poll with `google.shoppingStatus`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_domain",
+            "optional": false,
+            "type": "string",
+            "description": "The bare domain, without `https://` or `www.`."
+          },
+          {
+            "key": "shopping",
+            "optional": true,
+            "type": "boolean",
+            "description": "`true` runs the synchronous parser and returns the ads in this response. `false` (the default) queues a DataForSEO scrape and answers with an `id` to poll via `google.shoppingStatus`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Queued task ID. Poll it with `google.shoppingStatus`."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ advertiser_id?: string | null, creative_id?: string | null, title?: string | null, format?: string | null, first_shown?: string | null, last_shown?: string | null, url?: string | null, preview_url?: string | null, preview_image?: { height?: number | null, width?: number | null, url?: string | null } | null, rank_group?: number | null, rank_absolute?: number | null, type?: string | null, verified?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.google.shoppingStatus",
+      "shortPath": "google.shoppingStatus",
+      "description": "Read the ads of a Google Shopping lookup started by `google.shopping`; free, and the only way to collect an async task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `id` returned by `google.shopping`. Polling is free."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set when the scrape is still running."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ advertiser_id?: string | null, creative_id?: string | null, title?: string | null, format?: string | null, first_shown?: string | null, last_shown?: string | null, url?: string | null, preview_url?: string | null, preview_image?: { height?: number | null, width?: number | null, url?: string | null } | null, rank_group?: number | null, rank_absolute?: number | null, type?: string | null, verified?: boolean | null }[] | null",
+            "description": "Present once the scrape finished and found ads."
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.keywords.paidVsOrganic",
+      "shortPath": "keywords.paidVsOrganic",
+      "description": "Read paid and organic keyword counts for a domain, with position breakdowns, estimated traffic, ad budget and average CPC",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_domain",
+            "optional": false,
+            "type": "string",
+            "description": "The bare domain, without `https://` or `www.`, e.g. `lokalise.com`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language for the keyword results. Adyntel defaults to `English`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return. Adyntel defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organic",
+            "optional": true,
+            "type": "{ count?: number | null, estimated_traffic?: number | null, pos_1?: number | null, pos_2_3?: number | null, pos_4_10?: number | null, pos_11_20?: number | null, pos_21_30?: number | null, pos_31_40?: number | null, pos_41_50?: number | null, pos_51_60?: number | null, pos_61_70?: number | null, pos_71_80?: number | null, pos_81_90?: number | null, pos_91_100?: number | null, is_new?: number | null, is_up?: number | null, is_down?: number | null, is_lost?: number | null, estimated_ad_budget?: number | null, estimated_avg_cpc?: number | null } | null"
+          },
+          {
+            "key": "organic_percentages",
+            "optional": true,
+            "type": "Record<string, number> | null",
+            "description": "Each `organic` count divided by `organic.count`, as a percentage."
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "{ count?: number | null, estimated_traffic?: number | null, pos_1?: number | null, pos_2_3?: number | null, pos_4_10?: number | null, pos_11_20?: number | null, pos_21_30?: number | null, pos_31_40?: number | null, pos_41_50?: number | null, pos_51_60?: number | null, pos_61_70?: number | null, pos_71_80?: number | null, pos_81_90?: number | null, pos_91_100?: number | null, is_new?: number | null, is_up?: number | null, is_down?: number | null, is_lost?: number | null, estimated_ad_budget?: number | null, estimated_avg_cpc?: number | null } | null"
+          },
+          {
+            "key": "paid_percentages",
+            "optional": true,
+            "type": "Record<string, number> | null",
+            "description": "Each `paid` count divided by `paid.count`, as a percentage."
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.linkedin.ads",
+      "shortPath": "linkedin.ads",
+      "description": "List a company's LinkedIn ads by domain or page ID, with optional date filtering, EU impression data and creative text extraction, each of which costs an extra credit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_domain",
+            "optional": true,
+            "type": "string",
+            "description": "The bare domain, without `https://` or `www.`. Send at least one of this, `linkedin_page_id`, `company_domains` or `linkedin_page_ids`."
+          },
+          {
+            "key": "linkedin_page_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "The numeric page ID, as a string or number."
+          },
+          {
+            "key": "linkedin_page_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Batch mode: several pages in one call."
+          },
+          {
+            "key": "company_domains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Batch mode: several domains in one call."
+          },
+          {
+            "key": "date_filter",
+            "optional": true,
+            "type": "{ preset?: last30d | month | year | lastyear, startdate?: string, enddate?: string }",
+            "description": "Cannot be combined with `impression_data`; together they are a 422."
+          },
+          {
+            "key": "extract",
+            "optional": true,
+            "type": "number_of_ads",
+            "description": "Returns only the ad count instead of the ads."
+          },
+          {
+            "key": "impression_data",
+            "optional": true,
+            "type": "boolean",
+            "description": "Adds `eu_transparency` to each ad for one extra credit. Only EU-served ads carry data; the rest get an empty block."
+          },
+          {
+            "key": "extract_text",
+            "optional": true,
+            "type": "boolean",
+            "description": "Adds `extracted_text` to each ad for one extra credit when the extraction ran. Stacks with `impression_data`."
+          },
+          {
+            "key": "live_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only currently active ads."
+          },
+          {
+            "key": "all_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Needs `webhook_url`. One credit per page and cannot be stopped."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "`continuation_token` from the previous response."
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not."
+          },
+          {
+            "key": "data_provider",
+            "optional": true,
+            "type": "rapidapi | apify",
+            "description": "Which scraping backend runs the call. Leave it unset to use Adyntel's default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`job started` when a job was queued."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Track via `GET /track/jobs`."
+          },
+          {
+            "key": "jobIds",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "One ID per country, for the multi-country Meta form."
+          },
+          {
+            "key": "failedCountries",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Countries that were never queued and were not charged."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunk_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of POSTs Adyntel made to `webhook_url`."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null on the last page."
+          },
+          {
+            "key": "is_last_page",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "total_ads",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ creative_type?: string | null, ad_id?: string | null, type?: string | null, advertiser?: { name?: string | null, logo_url?: string | null, promoted?: boolean | null } | null, commentary?: { text?: string | null, link?: string | null } | null, image?: { alt_text?: string | null, url?: string | null } | null, carousel?: Record<string, any>[] | null, headline?: { title?: string | null, description?: string | null } | null, view_details_link?: string | null, extracted_text?: string | null, eu_transparency?: { startDate?: string | null, endDate?: string | null, adDuration?: string | null, totalImpressions?: string | null, impressionsByCountry?: { impressions?: string | null, country?: string | null }[] | null, targeting?: Record<string, string> | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.linkedin.keywordSearch",
+      "shortPath": "linkedin.keywordSearch",
+      "description": "Search the LinkedIn Ad Library for a keyword, filtered by country and date range, with a continuation token per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "The phrase to search ads for."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code, e.g. `US`."
+          },
+          {
+            "key": "dateOption",
+            "optional": true,
+            "type": "current-month | current-year | last-30-days | last-year | custom-date-range",
+            "description": "`custom-date-range` needs `startDate` and `endDate`."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "`YYYY-MM-DD`."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "`YYYY-MM-DD`."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "`continuation_token` from the previous response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_last_page",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "total_ads",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ creative_type?: string | null, ad_id?: string | null, type?: string | null, advertiser?: { name?: string | null, logo_url?: string | null, promoted?: boolean | null } | null, commentary?: { text?: string | null, link?: string | null } | null, image?: { alt_text?: string | null, url?: string | null } | null, carousel?: Record<string, any>[] | null, headline?: { title?: string | null, description?: string | null } | null, view_details_link?: string | null, extracted_text?: string | null, eu_transparency?: { startDate?: string | null, endDate?: string | null, adDuration?: string | null, totalImpressions?: string | null, impressionsByCountry?: { impressions?: string | null, country?: string | null }[] | null, targeting?: Record<string, string> | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.meta.ads",
+      "shortPath": "meta.ads",
+      "description": "List a company's Facebook and Instagram ads from Meta's Ad Library, by Facebook page or domain, with country, language, media-type and ad-category filters and a continuation token per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string",
+            "description": "The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`. Send exactly one of this or `company_domain`."
+          },
+          {
+            "key": "company_domain",
+            "optional": true,
+            "type": "string",
+            "description": "The bare domain, without `https://` or `www.`, e.g. `zoom.com`. Send exactly one of this or `facebook_url`."
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "One code, or up to 20 for one job per country. The array form needs `webhook_url` and costs one credit per country."
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "image | meme | image_and_meme | video",
+            "description": "Filter to one creative format. `check_ugc` needs `video`."
+          },
+          {
+            "key": "active_status",
+            "optional": true,
+            "type": "inactive | all",
+            "description": "Left out, the call returns active ads only."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "A language name (`Polish`), an ISO 639-1 code (`pl`), or a mixed array matching any of them. An unknown language is a 422."
+          },
+          {
+            "key": "ad_type",
+            "optional": true,
+            "type": "political | properties | employment | financial",
+            "description": "A single special ad category, as Meta labels it. `political` works only with `US`."
+          },
+          {
+            "key": "check_ugc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Adds `is_ugc_video` to each ad. Works only with `media_type: \"video\"`."
+          },
+          {
+            "key": "all_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Follows `continuation_token` to the end. Needs `webhook_url`, costs one credit per page and cannot be stopped."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "`continuation_token` from the previous response."
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`job started` when a job was queued."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Track via `GET /track/jobs`."
+          },
+          {
+            "key": "jobIds",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "One ID per country, for the multi-country Meta form."
+          },
+          {
+            "key": "failedCountries",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Countries that were never queued and were not charged."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunk_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of POSTs Adyntel made to `webhook_url`."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null on the last page."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "media_types",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_result_complete",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "number_of_ads",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count_landing_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unique_landing_pages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "start_min_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_max_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ ad_archive_id?: string | null, page_id?: string | null, page_name?: string | null, is_active?: boolean | null, categories?: string[] | null, collation_id?: string | null, entity_type?: string | null, publisher_platform?: string[] | null, start_date?: number | null, end_date?: number | null, total_active_time?: number | null, is_ugc_video?: boolean | null, snapshot?: { page_id?: string | number | null, page_name?: string | null, page_profile_uri?: string | null, page_profile_picture_url?: string | null, page_is_profile_page?: boolean | null, page_like_count?: number | null, page_entity_type?: string | null, page_categories?: string[] | Record<string, string> | null, current_page_name?: string | null, body?: { text?: string | null, markup?: Record<string, any> | null } | null, caption?: string | null, title?: string | null, link_url?: string | null, link_description?: string | null, cta_text?: string | null, cta_type?: string | null, display_format?: string | null, cards?: Record<string, any>[] | null, images?: Record<string, any>[] | null, videos?: Record<string, any>[] | null, instagram_handle?: string | null, instagram_url?: string | null, instagram_actor_name?: string | null, is_reshared?: boolean | null, root_reshared_post?: Record<string, any> | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.meta.adSearch",
+      "shortPath": "meta.adSearch",
+      "description": "Search the whole Meta ad library for a keyword, optionally limited to one country, with a continuation token per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "The phrase to search the ad library for."
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code, e.g. `US`. Meta also accepts `ALL`."
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string",
+            "description": "`continuation_token` from the previous response."
+          },
+          {
+            "key": "all_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Auto-paginate to the last page. One credit per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continuation_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "media_types",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ad_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "search_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_result_complete",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "number_of_ads",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "start_min_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_max_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ ad_archive_id?: string | null, adArchiveID?: string | null, adid?: string | null, ad_id?: string | null, page_id?: string | number | null, pageID?: string | null, page_name?: string | null, pageName?: string | null, is_active?: boolean | null, isActive?: boolean | null, is_profile_page?: boolean | null, isProfilePage?: boolean | null, categories?: (string | number)[] | null, publisher_platform?: string[] | null, publisherPlatform?: string[] | null, currency?: string | null, start_date?: number | null, startDate?: number | null, end_date?: number | null, endDate?: number | null, total_active_time?: number | null, totalActiveTime?: number | null, entity_type?: string | null, entityType?: string | null, snapshot?: { page_id?: string | number | null, page_name?: string | null, page_profile_uri?: string | null, page_profile_picture_url?: string | null, page_is_profile_page?: boolean | null, page_like_count?: number | null, page_entity_type?: string | null, page_categories?: string[] | Record<string, string> | null, current_page_name?: string | null, body?: { text?: string | null, markup?: Record<string, any> | null } | null, caption?: string | null, title?: string | null, link_url?: string | null, link_description?: string | null, cta_text?: string | null, cta_type?: string | null, display_format?: string | null, cards?: Record<string, any>[] | null, images?: Record<string, any>[] | null, videos?: Record<string, any>[] | null, instagram_handle?: string | null, instagram_url?: string | null, instagram_actor_name?: string | null, is_reshared?: boolean | null, root_reshared_post?: Record<string, any> | null } | null }[][] | null",
+            "description": "One inner array per result page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.tiktok.adDetails",
+      "shortPath": "tiktok.adDetails",
+      "description": "Read one TikTok ad in full, including its advertiser and its targeting, from an ad ID returned by `tiktok.keywordSearch`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ad `id` from `tiktok.keywordSearch`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ad?: { id?: string | null, name?: string | null, audit_status?: string | null, sor_audit_status?: string | null, estimated_audience?: string | null, first_shown_date?: number | null, last_shown_date?: number | null, image_urls?: string[] | null, impression?: number | null, spent?: string | null, type?: string | null, show_mode?: number | null, rejection_info?: string | null, videos?: Record<string, any>[] | null } | null, advertiser?: { adv_biz_ids?: string | null, name?: string | null, registry_location?: string | null, sponsor?: string | null, tt_user?: string | null } | null, targeting?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.tiktok.ads",
+      "shortPath": "tiktok.ads",
+      "description": "List a company's TikTok ads by domain, optionally including the influencers posting sponsored content for the brand, with continuation tokens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_domain",
+            "optional": false,
+            "type": "string",
+            "description": "The brand's own domain. `tiktok.com` is rejected."
+          },
+          {
+            "key": "influencer_ads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also returns influencers posting sponsored content, each with a sample ad. One extra credit."
+          },
+          {
+            "key": "continuation_tokens",
+            "optional": true,
+            "type": "{ brand_ads?: string | null, influencers?: Record<string, string> | null }"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`job started` when a job was queued."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Track via `GET /track/jobs`."
+          },
+          {
+            "key": "jobIds",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "One ID per country, for the multi-country Meta form."
+          },
+          {
+            "key": "failedCountries",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Countries that were never queued and were not charged."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunk_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of POSTs Adyntel made to `webhook_url`."
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "brand_ads",
+            "optional": true,
+            "type": "{ aweme_id?: string | null, url?: string | null, posted_at?: number | null, desc?: string | null, is_ad?: boolean | null, ad_source?: number | null, bc_type?: number | null, region?: string | null, duration?: number | null, shop_product_url?: string | null, stats?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, music?: { title?: string | null, is_commerce_music?: boolean | null, is_original_sound?: boolean | null } | null, anchors?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "influencers",
+            "optional": true,
+            "type": "{ handle?: string | null, uid?: string | null, nickname?: string | null, bio?: string | null, follower_count?: number | null, aweme_count?: number | null, total_favorited?: number | null, trust_tier?: string | null, bc_type?: number | null, discovered_via?: string | null, sample_ad?: { aweme_id?: string | null, url?: string | null, posted_at?: number | null, desc?: string | null, is_ad?: boolean | null, ad_source?: number | null, bc_type?: number | null, region?: string | null, duration?: number | null, shop_product_url?: string | null, stats?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, music?: { title?: string | null, is_commerce_music?: boolean | null, is_original_sound?: boolean | null } | null, anchors?: Record<string, any>[] | null } | null }[] | null",
+            "description": "Present only when the call sent `influencer_ads: true`."
+          },
+          {
+            "key": "continuation_tokens",
+            "optional": true,
+            "type": "{ brand_ads?: string | null, influencers?: Record<string, string> | null } | null"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "{ hit?: boolean | null, age_s?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "adyntel.api.tiktok.keywordSearch",
+      "shortPath": "tiktok.keywordSearch",
+      "description": "Search the TikTok ad library for a keyword, limited to European countries or worldwide. Returns the first page only: the API exposes no paging parameter, so `search_id` and `has_more` are informational and a later page cannot be requested",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "The phrase to search ads for."
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string",
+            "description": "European country codes only on this endpoint; `US` is not accepted. Leave it out for global results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, audit_status?: string | null, sor_audit_status?: string | null, estimated_audience?: string | null, first_shown_date?: number | null, last_shown_date?: number | null, image_urls?: string[] | null, impression?: number | null, spent?: string | null, type?: string | null, show_mode?: number | null, rejection_info?: string | null, videos?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "search_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

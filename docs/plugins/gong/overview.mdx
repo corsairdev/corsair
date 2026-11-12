@@ -1,0 +1,158 @@
+---
+title: "Gong plugin"
+sidebarTitle: "Overview"
+description: "Read Gong calls, transcripts, users, stats, library folders and Engage flows, upload calls and CRM data, and run Gong's data privacy requests."
+---
+
+Use **Gong** through Corsair: one client, typed API calls.
+
+A Gong API key has two halves, an access key and an access key secret. A technical administrator creates them on [Gong's API page](https://app.gong.io/company/api). The plugin needs both and sends them as HTTP Basic. Things to know before you call it:
+
+- **Both halves of the key.** The access key is the connection's API key and the secret is its `api_key_secret` field. In code you can pass `accessKey` and `accessKeySecret` to `gong()` instead.
+- **API host.** Requests go to `https://api.gong.io`. If Gong shows your company its own base URL, such as `https://us-12345.api.gong.io`, pass it as `baseUrl`. The plugin accepts `api.gong.io` and `<name>.api.gong.io` and rejects any other host.
+- **OAuth is a token you bring.** `authType: 'oauth_2'` sends a bearer token as it is. The plugin does not run Gong's OAuth flow and does not refresh the token, and a Gong token lasts one day. Pass the `api_base_url_for_customer` value from Gong's token response as `baseUrl`.
+- **IDs are digit strings.** Gong IDs are 64-bit numbers, too large for a JavaScript number. Pass them as strings, the way `workspaces.list` returns them.
+- **Paging.** A list returns `records.cursor` while more pages exist. Send it back as `cursor` and keep every other input the same.
+- **Rate limits.** Gong allows 3 calls a second and 10,000 a day by default, and answers 429 with `Retry-After`. The plugin waits that long and retries up to three times.
+- **Erasing data cannot be undone.** `dataPrivacy.purgeEmailAddress` and `dataPrivacy.purgePhoneNumber` delete the emails, calls, leads and contacts tied to that address or number. Gong takes several hours to finish.
+- **Credits.** `entities.ask` and `entities.generateBrief` use Gong credits on every call.
+- **Personal data stays out of the event log.** Events record IDs, date ranges and list sizes. Names, email addresses, phone numbers, prospects, call parties and questions are not stored.
+- **Webhooks.** The plugin does not receive webhooks.
+
+**What you get:**
+
+- 66 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gong better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/gong better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gong better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/gong better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gong } from '@corsair-dev/gong';
+
+export const corsair = createCorsair({
+	plugins: [
+		gong(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+gong()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Gong OAuth app.
+
+```ts
+gong({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gong',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List last week's calls**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gong.api.calls.list({ fromDateTime: '2025-06-02T00:00:00Z', toDateTime: '2025-06-09T00:00:00Z' });
+```
+
+
+**Give a user access to a call**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gong.api.permissions.addCallUsers({
+	callAccessList: [{
+		callId: '7782342274025937895',
+		userIds: ['234599484848423'],
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/gong/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gong/api">
+    Every `gong.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,2692 @@
+{
+  "id": "gong",
+  "displayName": "Gong",
+  "description": "Read Gong calls, transcripts, users, stats, library folders and Engage flows, upload calls and CRM data, and run Gong's data privacy requests.",
+  "npmPackageName": "@corsair-dev/gong",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 66,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_key_secret"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "gong.api.accountsEnrich.getResults",
+      "shortPath": "accountsEnrich.getResults",
+      "description": "Retrieve account enrichment results for a job.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accounts",
+            "optional": false,
+            "type": "{ id: string, matched: boolean, dataCategories?: { dataCategory?: string, status?: string, enriched?: boolean, data?: Record<string, any> | null }[] }[]"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.accountsEnrich.start",
+      "shortPath": "accountsEnrich.start",
+      "description": "Start an account enrichment job.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataCategories",
+            "optional": false,
+            "type": "accountData[]"
+          },
+          {
+            "key": "accounts",
+            "optional": false,
+            "type": "{ id: string, accountSearchCriteria: { name?: string, domain?: string, linkedinUrl?: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.auditing.listLogs",
+      "shortPath": "auditing.listLogs",
+      "description": "Retrieve Gong audit log entries for a time range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logType",
+            "optional": false,
+            "type": "AccessLog | UserActivityLog | UserCallPlay | ExternallySharedCallAccess | ExternallySharedCallPlay"
+          },
+          {
+            "key": "fromDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "logEntries",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.add",
+      "shortPath": "calls.add",
+      "description": "Create a Gong call from an externally recorded conversation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientUniqueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "actualStart",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parties",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "primaryUser",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.addRecording",
+      "shortPath": "calls.addRecording",
+      "description": "Upload media for a previously created Gong call.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mediaFile",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve details for one Gong call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.getTranscripts",
+      "shortPath": "calls.getTranscripts",
+      "description": "Retrieve transcripts for calls matching the filter.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDateTime?: string, toDateTime?: string, workspaceId?: string, callIds?: string[], primaryUserIds?: string[] }"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cursor?: string, currentPageNumber?: number, totalRecords?: number, pageSize?: number }"
+          },
+          {
+            "key": "callTranscripts",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List calls within a requested date range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ cursor?: string, currentPageNumber?: number, totalRecords?: number, pageSize?: number }"
+          },
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.calls.listExtensive",
+      "shortPath": "calls.listExtensive",
+      "description": "Retrieve calls with detailed content and filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDateTime?: string, toDateTime?: string, workspaceId?: string, callIds?: string[], primaryUserIds?: string[] }"
+          },
+          {
+            "key": "contentSelector",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ cursor?: string, currentPageNumber?: number, totalRecords?: number, pageSize?: number }"
+          },
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.coaching.list",
+      "shortPath": "coaching.list",
+      "description": "List coaching metrics for users.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace-id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "manager-id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.contactsEnrich.getResults",
+      "shortPath": "contactsEnrich.getResults",
+      "description": "Retrieve contact enrichment results for a job.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: string, matched: boolean, dataCategories?: { dataCategory?: string, status?: string, enriched?: boolean, data?: Record<string, any> | null }[] }[]"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.contactsEnrich.start",
+      "shortPath": "contactsEnrich.start",
+      "description": "Start a contact enrichment job.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataCategories",
+            "optional": false,
+            "type": "(contactData | enrichEmails | enrichPhones)[]"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: string, firstName?: string, lastName?: string, linkedinUrl?: string, email?: string, accountSearchCriteria?: { name?: string, domain?: string, linkedinUrl?: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.deleteIntegration",
+      "shortPath": "crm.deleteIntegration",
+      "description": "Delete a Gong CRM integration and the CRM objects uploaded through it.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "clientRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.getObjects",
+      "shortPath": "crm.getObjects",
+      "description": "Retrieve CRM objects by CRM IDs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD"
+          },
+          {
+            "key": "objectsCrmIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "crmObjectsMap",
+            "optional": false,
+            "type": "Record<string, Record<string, any> | null>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.getRequestStatus",
+      "shortPath": "crm.getRequestStatus",
+      "description": "Retrieve CRM request status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "clientRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ line?: number, description?: string }[]"
+          },
+          {
+            "key": "totalErrorCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalSuccessCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.listIntegrations",
+      "shortPath": "crm.listIntegrations",
+      "description": "List Gong CRM integrations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.listSchemaFields",
+      "shortPath": "crm.listSchemaFields",
+      "description": "List selected CRM schema fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectTypeToSelectedFields",
+            "optional": false,
+            "type": "Record<string, { uniqueName: string, label: string, type: string, lastModified?: string, isDeleted?: boolean, referenceTo?: string, orderedValueList?: string[] }[]>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.registerIntegration",
+      "shortPath": "crm.registerIntegration",
+      "description": "Register a Gong CRM integration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerEmail",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.uploadObjects",
+      "shortPath": "crm.uploadObjects",
+      "description": "Upload CRM objects from a data file.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD | BUSINESS_USER | STAGE"
+          },
+          {
+            "key": "clientRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataFile",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.crm.uploadSchemaFields",
+      "shortPath": "crm.uploadSchemaFields",
+      "description": "Upload selected CRM schema fields.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ uniqueName: string, label: string, type: DATE | DATETIME | NUMBER | PERCENT | CURRENCY | ID | URL | STRING | BOOLEAN | PHONENUMBER | EMAILADDRESS | PICKLIST | REFERENCE | STRINGARRAY, lastModified?: string, isDeleted?: boolean, referenceTo?: string, orderedValueList?: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.dataPrivacy.findEmailReferences",
+      "shortPath": "dataPrivacy.findEmailReferences",
+      "description": "Find Gong records associated with an email address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.dataPrivacy.findPhoneReferences",
+      "shortPath": "dataPrivacy.findPhoneReferences",
+      "description": "Find Gong records associated with a phone number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.dataPrivacy.purgeEmailAddress",
+      "shortPath": "dataPrivacy.purgeEmailAddress",
+      "description": "Delete an email address and the emails, calls, leads and contacts tied to it. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.dataPrivacy.purgePhoneNumber",
+      "shortPath": "dataPrivacy.purgePhoneNumber",
+      "description": "Delete a phone number and the calls, leads and contacts tied to it. Cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.digitalInteractions.add",
+      "shortPath": "digitalInteractions.add",
+      "description": "Add a digital interaction event to Gong.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceSystemName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "MOBILE | PC"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "trackingId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.assign",
+      "shortPath": "engageFlows.assign",
+      "description": "Assign prospects to flows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crmProspectsIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "flowId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flowInstanceOwnerEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "overrides",
+            "optional": true,
+            "type": "{ steps?: Record<string, any>[], flowInstanceVariables?: Record<string, any>[], coolOffOverride?: boolean }"
+          },
+          {
+            "key": "flowInstanceDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flowInstanceIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.assignedProspects",
+      "shortPath": "engageFlows.assignedProspects",
+      "description": "Retrieve prospects assigned to flows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crmProspectsIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "flowInstanceIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prospectsAssigned",
+            "optional": false,
+            "type": "{ flowId?: string, flowName?: string, crmProspectId?: string, flowInstanceId?: string, flowInstanceOwnerEmail?: string, flowInstanceOwnerFullName?: string, flowInstanceCreateDate?: string, flowInstanceStatus?: string, workspaceId?: string, exclusive?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.bulkAssignment",
+      "shortPath": "engageFlows.bulkAssignment",
+      "description": "Submit a bulk flow assignment.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowInstanceOwnerEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flowId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prospects",
+            "optional": false,
+            "type": "{ firstName?: string, lastName?: string, email?: string, jobTitle?: string, linkedInUrl?: string, crmId?: string, accountCrmId?: string, companyName?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "processedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "successCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "failedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ prospect?: { firstName?: string, lastName?: string, email?: string, jobTitle?: string, linkedInUrl?: string, crmId?: string, accountCrmId?: string, companyName?: string }, status?: string, crmId?: string, crmObjectType?: string, flowInstanceId?: string, errorCode?: string, errorMessage?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.folders",
+      "shortPath": "engageFlows.folders",
+      "description": "List Engage flow folders.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowFolderOwnerEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          },
+          {
+            "key": "flows",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.getBulkAssignment",
+      "shortPath": "engageFlows.getBulkAssignment",
+      "description": "Retrieve a bulk flow assignment.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "processedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "successCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "failedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ prospect?: { firstName?: string, lastName?: string, email?: string, jobTitle?: string, linkedInUrl?: string, crmId?: string, accountCrmId?: string, companyName?: string }, status?: string, crmId?: string, crmObjectType?: string, flowInstanceId?: string, errorCode?: string, errorMessage?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.list",
+      "shortPath": "engageFlows.list",
+      "description": "List Engage flows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowOwnerEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mostRecentlyAssigned",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          },
+          {
+            "key": "flows",
+            "optional": false,
+            "type": "{ id?: string, name?: string, folderId?: string, folderName?: string, visibility?: string, creationDate?: string, exclusive?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.search",
+      "shortPath": "engageFlows.search",
+      "description": "Search Engage flows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowOwnerEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flows",
+            "optional": false,
+            "type": "{ id?: string, name?: string, folderId?: string, folderName?: string, visibility?: string, creationDate?: string, exclusive?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.steps",
+      "shortPath": "engageFlows.steps",
+      "description": "Retrieve steps for Engage flows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flows",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.unassign",
+      "shortPath": "engageFlows.unassign",
+      "description": "Unassign flows by instance ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowInstanceIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "unassignedByUserEmail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unassignedFlowInstanceIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.engageFlows.unassignProspects",
+      "shortPath": "engageFlows.unassignProspects",
+      "description": "Unassign prospect flows by CRM ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crmProspectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flowId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unassignedByUserEmail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unassignedFlowInstanceIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.entities.ask",
+      "shortPath": "entities.ask",
+      "description": "Ask a question about a CRM entity. Uses Gong credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "crmEntityType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD"
+          },
+          {
+            "key": "crmEntityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timePeriod",
+            "optional": false,
+            "type": "LAST_7DAYS | LAST_30DAYS | LAST_90DAYS | LAST_90_DAYS_SINCE_LAST_ACTIVITY | LAST_YEAR_SINCE_LAST_ACTIVITY | LAST_YEAR | THIS_WEEK | THIS_MONTH | THIS_YEAR | THIS_QUARTER | CUSTOM_RANGE | ALL_CONVERSATIONS"
+          },
+          {
+            "key": "fromDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numOfCallsSearched",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numOfEmailsSearched",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "{ answerItems?: string[], emailFindings?: Record<string, any>[], callFindings?: Record<string, any>[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.entities.generateBrief",
+      "shortPath": "entities.generateBrief",
+      "description": "Generate an AI brief for a CRM entity. Uses Gong credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "briefName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "crmEntityType",
+            "optional": false,
+            "type": "ACCOUNT | CONTACT | DEAL | LEAD"
+          },
+          {
+            "key": "crmEntityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timePeriod",
+            "optional": false,
+            "type": "LAST_7DAYS | LAST_30DAYS | LAST_90DAYS | LAST_90_DAYS_SINCE_LAST_ACTIVITY | LAST_YEAR_SINCE_LAST_ACTIVITY | LAST_YEAR | THIS_WEEK | THIS_MONTH | THIS_YEAR | THIS_QUARTER | CUSTOM_RANGE | ALL_CONVERSATIONS"
+          },
+          {
+            "key": "fromDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numOfCallsSearched",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numOfEmailsSearched",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "briefSections",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.integrationSettings.update",
+      "shortPath": "integrationSettings.update",
+      "description": "Update Gong integration settings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationTypeSettings",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.library.folderContent",
+      "shortPath": "library.folderContent",
+      "description": "List calls in a library folder.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "{ id: string, title?: string, note?: string, addedBy?: string, created?: string, url?: string, snippet?: { fromSec?: number, toSec?: number } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.library.folders",
+      "shortPath": "library.folders",
+      "description": "Retrieve public library folders.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folders",
+            "optional": false,
+            "type": "{ id: string, name: string, parentFolderId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.outcomes.list",
+      "shortPath": "outcomes.list",
+      "description": "List available call outcomes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "outcomes",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.addCallUsers",
+      "shortPath": "permissions.addCallUsers",
+      "description": "Grant individual users access to calls.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callAccessList",
+            "optional": false,
+            "type": "{ callId: string, userIds: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.createProfile",
+      "shortPath": "permissions.createProfile",
+      "description": "Create a permission profile.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.deleteCallUsers",
+      "shortPath": "permissions.deleteCallUsers",
+      "description": "Remove individual users from call access.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callAccessList",
+            "optional": false,
+            "type": "{ callId: string, userIds: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.getCallUsers",
+      "shortPath": "permissions.getCallUsers",
+      "description": "Retrieve users with individual call access.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ callIds: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callAccessList",
+            "optional": false,
+            "type": "{ callId: string, users?: { userId?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.getProfile",
+      "shortPath": "permissions.getProfile",
+      "description": "Retrieve a permission profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.listProfiles",
+      "shortPath": "permissions.listProfiles",
+      "description": "List permission profiles for a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.listProfileUsers",
+      "shortPath": "permissions.listProfileUsers",
+      "description": "List users attached to a permission profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.permissions.updateProfile",
+      "shortPath": "permissions.updateProfile",
+      "description": "Update a permission profile.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.settings.briefs",
+      "shortPath": "settings.briefs",
+      "description": "List briefs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "briefs",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.settings.scorecards",
+      "shortPath": "settings.scorecards",
+      "description": "List scorecards.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scorecards",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.settings.trackers",
+      "shortPath": "settings.trackers",
+      "description": "List keyword trackers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keywordTrackers",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.stats.aggregate",
+      "shortPath": "stats.aggregate",
+      "description": "Retrieve aggregate user activity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDate: string, toDate: string, createdFromDateTime?: string, createdToDateTime?: string, userIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ totalRecords?: number, currentPageSize?: number, currentPageNumber?: number, cursor?: string }"
+          },
+          {
+            "key": "usersAggregateActivityStats",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "fromDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.stats.aggregateByPeriod",
+      "shortPath": "stats.aggregateByPeriod",
+      "description": "Retrieve aggregate activity by period.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDate: string, toDate: string, createdFromDateTime?: string, createdToDateTime?: string, userIds?: string[] }"
+          },
+          {
+            "key": "aggregationPeriod",
+            "optional": false,
+            "type": "DAY | WEEK | MONTH | QUARTER | YEAR"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ totalRecords?: number, currentPageSize?: number, currentPageNumber?: number, cursor?: string }"
+          },
+          {
+            "key": "usersAggregateActivity",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.stats.answeredScorecards",
+      "shortPath": "stats.answeredScorecards",
+      "description": "Retrieve answered scorecard statistics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ callFromDate?: string, callToDate?: string, reviewFromDate?: string, reviewToDate?: string, reviewMethod?: AUTOMATIC | MANUAL | BOTH, reviewedUserIds?: string[], scorecardIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ totalRecords?: number, currentPageSize?: number, currentPageNumber?: number, cursor?: string }"
+          },
+          {
+            "key": "answeredScorecards",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.stats.dayByDay",
+      "shortPath": "stats.dayByDay",
+      "description": "Retrieve daily user activity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDate: string, toDate: string, createdFromDateTime?: string, createdToDateTime?: string, userIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ totalRecords?: number, currentPageSize?: number, currentPageNumber?: number, cursor?: string }"
+          },
+          {
+            "key": "usersDetailedActivities",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.stats.interaction",
+      "shortPath": "stats.interaction",
+      "description": "Retrieve interaction statistics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ fromDate: string, toDate: string, createdFromDateTime?: string, createdToDateTime?: string, userIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ totalRecords?: number, currentPageSize?: number, currentPageNumber?: number, cursor?: string }"
+          },
+          {
+            "key": "peopleInteractionStats",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "fromDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toDateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.targets.listDefinitions",
+      "shortPath": "targets.listDefinitions",
+      "description": "List target definitions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targets",
+            "optional": false,
+            "type": "{ id?: string, name?: string, description?: string, type?: string, unit?: string, hierarchyType?: string, createdDateTime?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.targets.uploadAssignments",
+      "shortPath": "targets.uploadAssignments",
+      "description": "Upload target assignments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "validateOnly",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "processedRows",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List Gong tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ userId: string, workspaceId?: string, types: (FLOW | MANUAL)[], taskAction: CALL[], status: (OPEN | DONE | DISMISSED)[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: number, userId?: number, created?: string, updated?: string, status?: string, type?: string, actions?: string[], dueDate?: string, title?: string, priority?: { id?: number, name?: string, weight?: number }, hasSpecificTime?: boolean }[]"
+          },
+          {
+            "key": "crmType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.tasks.updateReminder",
+      "shortPath": "tasks.updateReminder",
+      "description": "Update a task reminder.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "OPEN | DONE | DISMISSED"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasSpecificTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve a user by Gong user identifier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.users.getHistory",
+      "shortPath": "users.getHistory",
+      "description": "Retrieve the settings history for a Gong user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userSettingsHistory",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the Gong company workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeAvatars",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.users.listMultiple",
+      "shortPath": "users.listMultiple",
+      "description": "List users matching the supplied filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gong.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List company workspaces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaces",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
