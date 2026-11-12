@@ -328,10 +328,17 @@ describe('jobs.list', () => {
 	it('lists jobs with their paging', async () => {
 		respond(JOBS_LIST_BODY);
 
-		const result = await endpoints().jobs.list(makeCtx(), { pageSize: 10 });
+		const result = await endpoints().jobs.list(makeCtx(), {
+			pageSize: 10,
+			pageNumber: 2,
+		});
 
 		expect(sentUrl().pathname).toBe('/api/v1/jobs');
-		expect(sentQuery().get('pageSize')).toBe('10');
+		// The live API ignores `pageSize`/`pageNumber` and answers 10 per page;
+		// it reads the documented `page_size` and `page`.
+		expect(sentQuery().get('page_size')).toBe('10');
+		expect(sentQuery().get('page')).toBe('2');
+		expect(sentQuery().has('pageSize')).toBe(false);
 		expect(result.jobs).toHaveLength(1);
 		expect(result.total_count).toBe(1);
 	});

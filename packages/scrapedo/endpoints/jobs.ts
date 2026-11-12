@@ -170,7 +170,10 @@ export const list: ScrapeDoEndpoints['jobsList'] = async (ctx, rawInput) => {
 		kind: 'async',
 		method: 'GET',
 		path: '/jobs',
-		query: { pageNumber: input.pageNumber, pageSize: input.pageSize },
+		// The provider's names are `page` and `page_size`
+		// (https://scrape.do/documentation/async-api/list-jobs/); it ignores the
+		// camelCase ones and answers its default 10 per page.
+		query: { page: input.pageNumber, page_size: input.pageSize },
 	});
 	const body = readAsync(parseJsonObject(answer.body));
 	const jobs = Array.isArray(body.Jobs) ? body.Jobs : [];
