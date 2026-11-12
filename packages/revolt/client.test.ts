@@ -6,10 +6,11 @@ import {
 	RevoltAPIError,
 } from './client';
 import {
-	BLOCKED,
+	MISSING_PERMISSION,
 	NOT_FOUND,
 	RATE_LIMITED,
 	UNAUTHORIZED,
+	UNPROCESSABLE,
 	VALIDATION_ERROR,
 } from './test-fixtures';
 import { captureError, lastRequest, respond, spyOnFetch } from './test-support';
@@ -69,8 +70,8 @@ describe('credential headers', () => {
 	});
 });
 
-describe('the error envelope', () => {
-	it('reads the live 401 body', async () => {
+describe('the error body', () => {
+	it('reads the live 401 envelope', async () => {
 		respond(fetchMock, UNAUTHORIZED, 401);
 
 		const error = (await captureError(
@@ -85,13 +86,49 @@ describe('the error envelope', () => {
 		expect(error.status).toBe(401);
 		expect(error.reason).toBe('Unauthorized');
 		expect(error.isAuthError).toBe(true);
-		// The body's code repeats the status, so it is printed once.
+		// The envelope's code repeats the status, so it is printed once.
 		expect(error.message).toBe(
 			'Revolt 401: The request requires user authentication.',
 		);
 	});
 
-	it('reads a 404 and a 400', async () => {
+	it('reads the live 422 envelope for a body Rocket cannot parse', async () => {
+		respond(fetchMock, UNPROCESSABLE, 422);
+
+		const error = (await captureError(
+			makeRevoltRequest('key', 'bot', REVOLT_API_BASE, {
+				method: 'POST',
+				path: '/channels/x/messages',
+				body: { content: 'x', replies: [{ id: 'y' }] },
+				replayable: false,
+			}),
+		)) as RevoltAPIError;
+
+		expect(error.isValidationError).toBe(true);
+		expect(error.message).toMatch(/^Revolt 422: The request was well-formed/);
+	});
+
+	it('names the error type and the missing permission', async () => {
+		respond(fetchMock, MISSING_PERMISSION, 403);
+
+		const error = (await captureError(
+			makeRevoltRequest('key', 'bot', REVOLT_API_BASE, {
+				method: 'PATCH',
+				path: '/channels/x',
+				body: { name: 'y' },
+				replayable: false,
+			}),
+		)) as RevoltAPIError;
+
+		expect(error.reason).toBe('MissingPermission');
+		expect(error.isAuthError).toBe(true);
+		// The source location is not repeated in the message.
+		expect(error.message).toBe(
+			'Revolt 403: MissingPermission (permission: ManageChannel)',
+		);
+	});
+
+	it('reads a 404 and a 422', async () => {
 		respond(fetchMock, NOT_FOUND, 404);
 		const notFound = (await captureError(
 			makeRevoltRequest('key', 'bot', REVOLT_API_BASE, {
@@ -101,18 +138,19 @@ describe('the error envelope', () => {
 			}),
 		)) as RevoltAPIError;
 		expect(notFound.isNotFound).toBe(true);
+		expect(notFound.message).toBe('Revolt 404: NotFound');
 
-		respond(fetchMock, VALIDATION_ERROR, 400);
+		respond(fetchMock, VALIDATION_ERROR, 422);
 		const invalid = (await captureError(
 			makeRevoltRequest('key', 'bot', REVOLT_API_BASE, {
 				method: 'POST',
 				path: '/channels/x/messages',
-				body: { content: '' },
+				body: {},
 				replayable: false,
 			}),
 		)) as RevoltAPIError;
 		expect(invalid.isValidationError).toBe(true);
-		expect(invalid.message).toContain('cannot be empty');
+		expect(invalid.message).toBe('Revolt 422: EmptyMessage');
 	});
 
 	it('reads the body retry_after on a 429', async () => {
@@ -126,28 +164,12 @@ describe('the error envelope', () => {
 			}),
 		)) as RevoltAPIError;
 
-		// The docs give this value in milliseconds, so it is used as-is.
+		// Revolt sends this in milliseconds, so it is used as-is.
 		expect(error.retryAfter).toBe(1200);
-		expect(error.isBlockedError).toBe(false);
+		expect(error.message).toMatch(/^Revolt 429: /);
 	});
 
-	it('reports a Blocked 429 separately from a rate limit', async () => {
-		respond(fetchMock, BLOCKED, 429);
-
-		const error = (await captureError(
-			makeRevoltRequest('key', 'bot', REVOLT_API_BASE, {
-				method: 'POST',
-				path: '/channels/x/messages',
-				body: { content: 'hi' },
-				replayable: false,
-			}),
-		)) as RevoltAPIError;
-
-		expect(error.status).toBe(429);
-		expect(error.isBlockedError).toBe(true);
-	});
-
-	it('describes a body with no error key from the fallback', () => {
+	it('describes a body with no type from the fallback', () => {
 		expect(describeRevoltError(500, {}, 'Request failed')).toBe(
 			'Revolt 500: Request failed',
 		);

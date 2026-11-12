@@ -28,25 +28,23 @@ export const REVOLT_TOKEN_HEADERS = {
 } as const satisfies Record<RevoltCredential, string>;
 
 /**
- * Revolt answers every failure in one flat envelope, and the code repeats the
- * HTTP status:
+ * Revolt answers a failure in one of two bodies (live, 11-12):
  *
- * ```json
- * { "error": { "code": 401, "reason": "Unauthorized",
- *              "description": "The request requires user authentication." } }
- * ```
+ * - Its own handlers name the error `type`, the source `location`, and
+ *   sometimes a field saying what was missing or exceeded:
+ *   `{ "type": "MissingPermission", "permission": "ManageChannel", "location": "…" }`.
+ * - Rocket's catcher, which answers a missing or bad token (401) or a body it
+ *   cannot parse (422), uses an envelope whose code repeats the status:
+ *   `{ "error": { "code": 401, "reason": "Unauthorized",
+ *                 "description": "The request requires user authentication." } }`.
  *
- * `reason` is the short category and `description` the sentence, so both are
- * kept. A 429 is different: it carries rate-limit headers and a body naming
- * `retry_after`, which the docs express in **milliseconds**.
+ * A 429 carries only `{ "retry_after": 9825 }`, in **milliseconds**.
  */
 export class RevoltAPIError extends Error {
 	readonly status?: number;
-	/** The `error.code`, which repeats the HTTP status. */
-	readonly code?: number;
-	/** The short category, such as `Unauthorized`. */
+	/** The body's `type` (`NotFound`, `MissingPermission`) or the envelope's `reason`. */
 	readonly reason?: string;
-	/** The sentence explaining the failure. */
+	/** The envelope's sentence, or the body's extra fields (`permission: ManageChannel`). */
 	readonly description?: string;
 	/** Milliseconds to wait, from `Retry-After` or the body's `retry_after`. */
 	readonly retryAfter?: number;
@@ -60,7 +58,6 @@ export class RevoltAPIError extends Error {
 		options: {
 			cause?: Error;
 			status?: number;
-			code?: number;
 			reason?: string;
 			description?: string;
 			retryAfter?: number;
@@ -71,7 +68,6 @@ export class RevoltAPIError extends Error {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'RevoltAPIError';
 		this.status = options.status;
-		this.code = options.code;
 		this.reason = options.reason;
 		this.description = options.description;
 		this.retryAfter = options.retryAfter;
@@ -79,7 +75,7 @@ export class RevoltAPIError extends Error {
 		this.replayable = options.replayable ?? false;
 	}
 
-	/** The token is missing, malformed, or for the wrong credential header. */
+	/** The token is missing, malformed, or lacks the permission. */
 	get isAuthError(): boolean {
 		return this.status === 401 || this.status === 403;
 	}
@@ -89,47 +85,63 @@ export class RevoltAPIError extends Error {
 		return this.status === 404;
 	}
 
-	/** A body or path Revolt refused. */
+	/** A body or path Revolt refused, such as `EmptyMessage` (422). */
 	get isValidationError(): boolean {
-		return this.status === 400 || this.status === 413;
-	}
-
-	/** Revolt blocks an action it considers abusive. */
-	get isBlockedError(): boolean {
-		return this.status === 429 && this.reason === 'Blocked';
+		return this.status === 400 || this.status === 413 || this.status === 422;
 	}
 }
 
+/** Body fields that are not worth repeating in the message. */
+const SKIPPED_ERROR_FIELDS = new Set(['type', 'location', 'retry_after']);
+
 /**
- * Reads the `error` object out of a body.
+ * Reads the error out of either body, and a 429's `retry_after`.
  * unknown: the body is provider JSON until this reader narrows it.
  */
 function errorBody(body: unknown): {
-	code?: number;
 	reason?: string;
 	description?: string;
 	retryAfter?: number;
 } {
-	const outer = asRecord(body);
-	const inner = asRecord(outer?.error);
-	const code = inner?.code;
-	const reason = inner?.reason;
-	const description = inner?.description;
-	// A rate-limit body carries `retry_after` beside the error object.
-	const retry = outer?.retry_after;
+	const record = asRecord(body);
+	const retry = record?.retry_after;
+	const retryAfter = typeof retry === 'number' ? retry : undefined;
+
+	// Rocket's catcher envelope: `reason` is the category, `description` the
+	// sentence.
+	const envelope = asRecord(record?.error);
+	if (envelope) {
+		const { reason, description } = envelope;
+		return {
+			reason: typeof reason === 'string' ? reason : undefined,
+			description:
+				typeof description === 'string' && description.length > 0
+					? description
+					: undefined,
+			retryAfter,
+		};
+	}
+
+	// Revolt's own `{ type, location, ... }` body.
+	const type = record?.type;
+	const details = Object.entries(record ?? {})
+		.filter(
+			([key, value]) =>
+				!SKIPPED_ERROR_FIELDS.has(key) &&
+				(typeof value === 'string' || typeof value === 'number'),
+		)
+		.map(([key, value]) => `${key}: ${String(value)}`);
 	return {
-		code: typeof code === 'number' ? code : undefined,
-		reason: typeof reason === 'string' ? reason : undefined,
-		description:
-			typeof description === 'string' && description.length > 0
-				? description
-				: undefined,
-		retryAfter: typeof retry === 'number' ? retry : undefined,
+		reason: typeof type === 'string' ? type : undefined,
+		description: details.length > 0 ? details.join(', ') : undefined,
+		retryAfter,
 	};
 }
 
 /**
- * Builds the message for an error body.
+ * Builds the message for an error body, such as
+ * `Revolt 401: The request requires user authentication.` or
+ * `Revolt 403: MissingPermission (permission: ManageChannel)`.
  * unknown: the body is untyped until `errorBody` narrows it.
  */
 export function describeRevoltError(
@@ -137,15 +149,16 @@ export function describeRevoltError(
 	body: unknown,
 	fallback: string,
 ): string {
-	const { code, reason, description } = errorBody(body);
-	// The body's `code` repeats the HTTP status, so printing both would read
-	// `Revolt 401 401`; it is only added when it disagrees.
-	const parts = [status];
-	if (code !== undefined && code !== status) parts.push(code);
-	const label = parts.filter((part) => part !== undefined).join(' ');
-	// The description is the sentence; `reason` alone is too terse on its own.
-	const text = description ?? reason ?? fallback;
-	return label ? `Revolt ${label}: ${text}` : text;
+	const record = asRecord(body);
+	const { reason, description } = errorBody(body);
+	let text = fallback;
+	if (record?.error !== undefined) {
+		// The envelope's description is the sentence; `reason` alone is terse.
+		text = description ?? reason ?? fallback;
+	} else if (reason) {
+		text = description ? `${reason} (${description})` : reason;
+	}
+	return status !== undefined ? `Revolt ${status}: ${text}` : text;
 }
 
 export type RevoltQuery = Record<string, RevoltValue | undefined>;
@@ -168,8 +181,8 @@ export function segment(value: string | number): string {
 
 /**
  * Revolt rate-limits per bucket with `X-RateLimit-*` headers. A 429 carries a
- * `retry_after` in the body, which the docs give in milliseconds, so the handler
- * reads that rather than a header.
+ * `retry_after` in the body, in milliseconds, and no `Retry-After` header, so
+ * the handler reads the body.
  */
 const REVOLT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -225,14 +238,13 @@ export async function makeRevoltRequest(
 		);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const { code, reason, description, retryAfter } = errorBody(error.body);
+			const { reason, description, retryAfter } = errorBody(error.body);
 			// The cause holds the request, and with it the token header, so the
 			// fields the handlers need are copied and the cause is dropped.
 			throw new RevoltAPIError(
 				describeRevoltError(error.status, error.body, error.message),
 				{
 					status: error.status,
-					code,
 					reason,
 					description,
 					retryAfter: error.retryAfter ?? retryAfter,

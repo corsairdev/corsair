@@ -84,34 +84,16 @@ describe('retry behaviour', () => {
 		}
 	});
 
-	it('never retries a Blocked 429, which no retry clears', async () => {
-		jest.useFakeTimers();
-		const { corsair, testDb } = await createClient({ key: 'rv-token' });
-		try {
-			respond(fetchMock, { error: { code: 429, reason: 'Blocked' } }, 429);
-
-			await expect(
-				withFakeTimers(
-					corsair.revolt.api.messages.send({
-						channel_id: CHANNEL_ID,
-						content: 'hi',
-					}),
-				),
-			).rejects.toThrow(/Revolt 429/);
-			// One attempt: a block is matched before the rate-limit handler.
-			expect(fetchMock).toHaveBeenCalledTimes(1);
-		} finally {
-			testDb.cleanup();
-		}
-	});
-
 	it('does not replay a send that failed with a 5xx', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: 'rv-token' });
 		try {
 			respond(
 				fetchMock,
-				{ error: { code: 500, reason: 'InternalError' } },
+				{
+					type: 'InternalError',
+					location: 'crates/core/database/src/x.rs:1:1',
+				},
 				500,
 			);
 

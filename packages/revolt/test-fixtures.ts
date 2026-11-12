@@ -1,12 +1,13 @@
 // Fixtures follow the published Stoat API 0.16.3 OpenAPI document
-// (https://api.stoat.chat/openapi.json). The error bodies are live responses.
+// (https://api.stoat.chat/openapi.json), checked against live answers from a
+// self-hosted Stoat 0.16.2 on 11-12. The error bodies are live responses.
 
 export const USER_ID = '01F8Z0T8Y4W4Z8X3K5M2N1P0Q9';
 export const CHANNEL_ID = '01F8Z1A2B3C4D5E6F7G8H9J0K1';
 export const MESSAGE_ID = '01F8Z2B3C4D5E6F7G8H9J0K1L2';
 export const SERVER_ID = '01F8Z3C4D5E6F7G8H9J0K1L2M3';
 
-/** The live 401, verbatim from a keyless call. */
+/** The live 401 from Rocket's catcher, verbatim (sent `Accept: application/json`). */
 export const UNAUTHORIZED = {
 	error: {
 		code: 401,
@@ -15,42 +16,37 @@ export const UNAUTHORIZED = {
 	},
 };
 
-/** A 404 in the same envelope. */
+/** The live 422 for a body Rocket cannot parse, such as a reply without `mention`. */
+export const UNPROCESSABLE = {
+	error: {
+		code: 422,
+		reason: 'Unprocessable Entity',
+		description:
+			'The request was well-formed but was unable to be followed due to semantic errors.',
+	},
+};
+
+/** A 404 names the error `type` and the source location. */
 export const NOT_FOUND = {
-	error: {
-		code: 404,
-		reason: 'NotFound',
-		description: 'Not found.',
-	},
+	type: 'NotFound',
+	location: 'crates/core/database/src/models/channels/ops/mongodb.rs:23:70',
 };
 
-/** A refused body. */
+/** A message with no content and no attachment answers 422. */
 export const VALIDATION_ERROR = {
-	error: {
-		code: 400,
-		reason: 'FailedValidation',
-		description: 'Message content cannot be empty.',
-	},
+	type: 'EmptyMessage',
+	location: 'crates/core/database/src/models/messages/model.rs:297:24',
 };
 
-/** A rate limit, whose `retry_after` the docs give in milliseconds. */
-export const RATE_LIMITED = {
-	error: {
-		code: 429,
-		reason: 'RateLimited',
-		description: 'Too many requests.',
-	},
-	retry_after: 1200,
+/** A bot without the right names the permission it lacks. */
+export const MISSING_PERMISSION = {
+	type: 'MissingPermission',
+	permission: 'ManageChannel',
+	location: 'crates/core/permissions/src/models/mod.rs:80:17',
 };
 
-/** A block, which also arrives as a 429 but never clears on a retry. */
-export const BLOCKED = {
-	error: {
-		code: 429,
-		reason: 'Blocked',
-		description: 'The request was blocked.',
-	},
-};
+/** A rate limit carries only `retry_after`, in milliseconds. */
+export const RATE_LIMITED = { retry_after: 1200 };
 
 export const USER = {
 	_id: USER_ID,

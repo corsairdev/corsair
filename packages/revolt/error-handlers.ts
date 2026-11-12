@@ -6,25 +6,18 @@ function statusOf(error: Error): number | undefined {
 }
 
 /**
- * Revolt's error taxonomy, from its own `error.reason` values:
+ * Revolt's error taxonomy, by status and the body's `type`:
  *
- * - `Unauthorized` and `Forbidden` are a missing or insufficient token.
- * - `NotFound` is an unknown message, channel, server or user.
- * - `InvalidProperty`, `PayloadTooLarge` and `FailedValidation` are a refused
- *   body; a retry sends the same request.
- * - `RateLimited` is the per-bucket limit. The body carries `retry_after` in
+ * - `401` (an HTML page) is a missing or bad token; `403` with
+ *   `MissingPermission` is a token without the right.
+ * - `404` with `NotFound` is an unknown message, channel, server or user.
+ * - `400`, `413` and `422` (`EmptyMessage`, `FailedValidation`,
+ *   `PayloadTooLarge`) are a refused body; a retry sends the same request.
+ * - `429` is the per-bucket limit. The body carries `retry_after` in
  *   milliseconds, which the handler waits before retrying.
- * - `Blocked` is Revolt refusing an action it considers abusive. It also arrives
- *   as a 429, but no retry can clear it, so it is matched first.
  * - `5xx` is only replayed for a read.
  */
 export const errorHandlers = {
-	// A block answers 429 as well, so it must be matched before the rate limit.
-	BLOCKED_ERROR: {
-		match: (error: Error) =>
-			error instanceof RevoltAPIError && error.isBlockedError,
-		handler: async () => ({ maxRetries: 0 }),
-	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
@@ -46,6 +39,7 @@ export const errorHandlers = {
 				error.name === 'ZodError' ||
 				status === 400 ||
 				status === 413 ||
+				status === 422 ||
 				(error instanceof RevoltAPIError && error.isValidationError)
 			);
 		},

@@ -53,29 +53,12 @@ function firstMatch(
 
 const handlers = asHandlerMap(errorHandlers);
 
-describe('block handling', () => {
-	it('matches a Blocked 429 and never retries it', async () => {
-		const error = rvError({ status: 429, reason: 'Blocked' });
-
-		expect(claims(handlers, 'BLOCKED_ERROR', error)).toBe(true);
-		const result = await decide(handlers, 'BLOCKED_ERROR', error);
-		expect(result?.maxRetries).toBe(0);
-	});
-
-	it('stops before the rate-limit handler, which would have retried', () => {
-		// A block also answers 429, so ordering is what keeps it from looping.
-		expect(
-			firstMatch(handlers, rvError({ status: 429, reason: 'Blocked' })),
-		).toBe('BLOCKED_ERROR');
-	});
-});
-
 describe('rate limit handling', () => {
-	it('retries a RateLimited 429 with exponential backoff', async () => {
+	it('retries a 429 with exponential backoff', async () => {
 		const result = await decide(
 			handlers,
 			'RATE_LIMIT_ERROR',
-			rvError({ status: 429, reason: 'RateLimited' }),
+			rvError({ status: 429 }),
 		);
 
 		expect(result?.maxRetries).toBe(3);
@@ -86,7 +69,7 @@ describe('rate limit handling', () => {
 		const result = await decide(
 			handlers,
 			'RATE_LIMIT_ERROR',
-			rvError({ status: 429, reason: 'RateLimited', retryAfter: 1200 }),
+			rvError({ status: 429, retryAfter: 1200 }),
 		);
 
 		expect(result?.headersRetryAfterMs).toBe(1200);
@@ -105,7 +88,10 @@ describe('auth handling', () => {
 });
 
 describe('validation handling', () => {
-	it('matches a 400, a 413 and a zod rejection', () => {
+	it('matches a 400, a 413, a 422 and a zod rejection', () => {
+		expect(claims(handlers, 'VALIDATION_ERROR', rvError({ status: 422 }))).toBe(
+			true,
+		);
 		expect(claims(handlers, 'VALIDATION_ERROR', rvError({ status: 400 }))).toBe(
 			true,
 		);
