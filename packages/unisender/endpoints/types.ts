@@ -389,7 +389,7 @@ const FieldSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		type: z.string().nullish().describe('string, text, number or date.'),
+		type: z.string().nullish().describe('string, text, number, date or bool.'),
 		is_visible: z.number().nullish().describe('1 when shown in the admin.'),
 		view_pos: z.number().nullish().describe('Display order.'),
 	})
@@ -407,8 +407,10 @@ const FieldsCreateInputSchema = z.object({
 		.min(1)
 		.describe('The field name, as used in fields[...] arguments.'),
 	type: z
-		.enum(['string', 'text', 'number', 'date'])
-		.describe('string for a short value, text for a long one.'),
+		.enum(['string', 'text', 'number', 'date', 'bool'])
+		.describe(
+			'string for a short value, text for a long one, bool for 1/0. Unisender stores every type as text; the type only changes the admin form.',
+		),
 	is_visible: z
 		.union([z.literal(0), z.literal(1)])
 		.optional()

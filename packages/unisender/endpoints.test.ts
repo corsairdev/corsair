@@ -314,6 +314,14 @@ describe('fields and tags', () => {
 		expect(result.result.id).toBe(33110);
 	});
 
+	it('creates a bool field, which the docs list and the live API accepts', async () => {
+		respond(fetchMock, FIELD_CREATED);
+
+		await invoke(Api.createField, { name: 'opted_in', type: 'bool' });
+
+		expect(lastRequest(fetchMock).form.type).toBe('bool');
+	});
+
 	it('rejects a field type the docs do not list', async () => {
 		await expect(
 			invoke(Api.createField, { name: 'city', type: 'boolean' }),
