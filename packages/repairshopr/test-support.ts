@@ -41,7 +41,6 @@ export function respond(
 export async function captureError<T>(promise: Promise<T>): Promise<Error> {
 	try {
 		await promise;
-		throw new Error('the operation resolved; this test expects a rejection');
 	} catch (caught) {
 		// A non-Error rejection is itself worth failing on: this plugin throws
 		// RepairshoprAPIError or ZodError and nothing else.
@@ -50,6 +49,9 @@ export async function captureError<T>(promise: Promise<T>): Promise<Error> {
 			`the operation rejected with a non-Error value: ${String(caught)}`,
 		);
 	}
+	// Outside the try, so this failure is not caught and returned as if it were
+	// the operation's own error.
+	throw new Error('the operation resolved; this test expects a rejection');
 }
 
 /**
