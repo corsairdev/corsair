@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "RiteKit plugin"
+sidebarTitle: "Overview"
 description: "Hashtag stats and suggestions, emoji, quote images, link shortening, person and company insights, and article extraction with RiteKit."
 ---
 
@@ -11,7 +12,7 @@ Things to know before you call:
 
 - **Credits, not requests, are the budget.** Each endpoint costs 1 or 2 credits and the monthly allowance is shared across all of them, so a `402` means the month's credits are gone: the plugin reports it as `isQuotaExhausted` and never retries, because waiting cannot refill them. The rate limit itself is 100 calls per second.
 - **Two `401` messages mean different things.** A call with no Client ID gets `Endpoint is not accessible`; a Client ID RiteKit does not recognise gets `Verification failed`. Both are a `401`, and the plugin keeps RiteKit's `info` hint on the error because it usually names the fix.
-- **Hashtag fields are named differently per route.** `hashtags.stats`, `hashtags.suggestions` and `hashtags.forImage` return rows under `data`; `hashtags.forUrl` returns them under `hashtags`; `hashtags.trending` returns `tags` and calls the image share `photos` where the others call it `images`. The response models follow each route rather than pretending they match.
+- **Hashtag fields are named differently per route.** `hashtags.stats` returns rows under `stats` (and the tags it read under `hashtags`); `hashtags.suggestions` and `hashtags.forImage` return them under `data`; `hashtags.forUrl` returns them under `hashtags`; `hashtags.trending` returns `tags` and calls the image share `photos` where the others call it `images`. The response models follow each route rather than pretending they match.
 - **The `color` number needs its legend.** A stats row's `color` is 0 unused, 1 overused, 2 good, 3 great, and `hashtags.stats` returns the labels in a `color` array beside the rows. `hashtags.trending`'s `green` filter is the same idea, and the API reads it as `1` rather than `true`.
 - **`images` / `links` / `mentions` are percentages, not counts.** A value of `0.35` means 0.35% of the hashtag's tweets carry an image, which is why the fields are fractional.
 - **`hashtags.stats` takes up to 100 tags in one call**, joined into a single comma-separated `tags` value. The plugin rejects a longer list rather than letting RiteKit truncate it.
