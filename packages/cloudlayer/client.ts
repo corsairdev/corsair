@@ -64,20 +64,46 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// Field names whose values are secrets regardless of how short they are.
+// Short generic strings stay out of the redaction set so provider messages
+// such as "1 page" are not mangled.
+const SENSITIVE_REQUEST_FIELDS = new Set([
+	'apikey',
+	'authorization',
+	'password',
+	'secret',
+	'token',
+]);
+
+function isSensitiveRequestField(field: string): boolean {
+	return SENSITIVE_REQUEST_FIELDS.has(field.replace(/[_-]/g, '').toLowerCase());
+}
+
 // `unknown` because request payloads are arbitrary JSON values traversed
 // recursively; each branch narrows the value before reading it.
-function collectRequestStrings(value: unknown, strings: Set<string>): void {
+function collectRequestStrings(
+	value: unknown,
+	strings: Set<string>,
+	sensitive = false,
+): void {
 	if (typeof value === 'string') {
-		if (value.length >= 8) strings.add(value);
+		if (value.length > 0 && (sensitive || value.length >= 8)) {
+			strings.add(value);
+		}
 		return;
 	}
 	if (Array.isArray(value)) {
-		for (const item of value) collectRequestStrings(item, strings);
+		for (const item of value) collectRequestStrings(item, strings, sensitive);
 		return;
 	}
 	if (isRecord(value)) {
-		for (const item of Object.values(value))
-			collectRequestStrings(item, strings);
+		for (const [field, item] of Object.entries(value)) {
+			collectRequestStrings(
+				item,
+				strings,
+				sensitive || isSensitiveRequestField(field),
+			);
+		}
 	}
 }
 

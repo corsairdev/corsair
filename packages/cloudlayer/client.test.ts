@@ -270,6 +270,34 @@ describe('makeCloudlayerRequest', () => {
 		expect(consoleLog).not.toHaveBeenCalled();
 	});
 
+	it('redacts short sensitive field values echoed by the provider', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				Response.json(
+					{ statusCode: 400, message: 'Invalid password abc123 for page 1' },
+					{ status: 400, statusText: 'Bad Request' },
+				),
+			);
+
+		// `unknown` because a rejection value has no static type; the
+		// assertions below narrow it to ApiError.
+		const error = await makeCloudlayerSyncRequest(
+			'/template/pdf',
+			'unit-test-key',
+			{
+				method: 'POST',
+				body: { template: 'invoice', data: { password: 'abc123' } },
+			},
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected sync request to throw ApiError');
+		}
+		expect(error.message).toBe('Invalid password [REDACTED] for page 1');
+	});
+
 	it('uses the v1 URL route and preserves retry-after on binary errors', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response('rate limited', {
