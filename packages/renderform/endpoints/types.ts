@@ -220,7 +220,13 @@ const TemplatesListInputSchema = z.object({
 		.optional()
 		.describe('Only templates created from this source template.'),
 	page: z.number().int().min(0).optional().describe('0-based page number.'),
-	size: z.number().int().min(1).optional().describe('Page size.'),
+	size: z
+		.number()
+		.int()
+		.min(1)
+		.max(50)
+		.optional()
+		.describe('Page size, at most 50.'),
 });
 
 export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
@@ -391,7 +397,7 @@ const ResultsListInputSchema = z.object({
 	template: z.string().optional().describe('Only renders of this template.'),
 	batch: z.string().optional().describe('Only renders in this batch.'),
 	page: z.number().int().min(0).optional(),
-	size: z.number().int().min(1).optional(),
+	size: z.number().int().min(1).max(50).optional().describe('At most 50.'),
 });
 
 export type ResultsListInput = z.infer<typeof ResultsListInputSchema>;

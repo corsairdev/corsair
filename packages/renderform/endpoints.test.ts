@@ -343,6 +343,22 @@ describe('pdf', () => {
 	});
 });
 
+describe('page size', () => {
+	it('rejects a results page larger than 50', async () => {
+		respond(fetchMock, RESULTS);
+
+		await expect(invoke(Render.results, { size: 51 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a templates page larger than 50', async () => {
+		respond(fetchMock, TEMPLATES);
+
+		await expect(invoke(Templates.list, { size: 51 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('templates.list', () => {
 	it('reads the bare array, not a page', async () => {
 		respond(fetchMock, TEMPLATES);
