@@ -149,17 +149,37 @@ type BrowserOnlyOptions = {
 	block_resource?: readonly string[];
 };
 
+/** Browser actions that page-source mode skips. */
+const PAGE_SOURCE_SKIPPED_OPTIONS = [
+	'js_snippet',
+	'wait_for_selector',
+] as const;
+
 /**
  * The provider accepts these fields with `browser: false` and silently ignores
- * them, which reads as a success while the setting never applied. Every
- * operation that takes the shared options runs this so the request fails here
- * instead.
+ * them, which reads as a success while the setting never applied. The same
+ * holds for `js_snippet` and `wait_for_selector` under `return_page_source:
+ * true`, which returns the server HTML without running browser actions (seen
+ * live: the snippet's DOM change was missing). Every operation that takes the
+ * shared options runs this so the request fails here instead.
  */
 function checkBrowserOnlyOptions(
 	input: BrowserOnlyOptions,
 	ctx: z.RefinementCtx,
 ): void {
-	if (input.browser !== false) return;
+	if (input.browser !== false) {
+		if (input.return_page_source !== true) return;
+		for (const key of PAGE_SOURCE_SKIPPED_OPTIONS) {
+			if (input[key] !== undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: [key],
+					message: `Not applied with \`return_page_source: true\`, which skips browser actions; remove \`${key}\` or set \`return_page_source: false\`.`,
+				});
+			}
+		}
+		return;
+	}
 	for (const key of BROWSER_ONLY_OPTIONS) {
 		if (input[key] !== undefined) {
 			ctx.addIssue({

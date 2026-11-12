@@ -283,6 +283,38 @@ describe('input validation', () => {
 		).not.toThrow();
 	});
 
+	// Live 11-12: with return_page_source=true a js_snippet that marks the DOM
+	// left no mark, at 2 credits instead of 10; the browser actions never ran.
+	it('rejects js_snippet or wait_for_selector with return_page_source: true', () => {
+		for (const [key, value] of [
+			['js_snippet', 'aGk='],
+			['wait_for_selector', '#x'],
+		] as const) {
+			const result = Inputs.scrapeHtml.safeParse({
+				...base,
+				return_page_source: true,
+				[key]: value,
+			});
+			expect({ key, success: result.success }).toEqual({
+				key,
+				success: false,
+			});
+			if (!result.success) {
+				expect(result.error.issues[0]?.path).toEqual([key]);
+			}
+		}
+	});
+
+	it('accepts js_snippet with return_page_source: false', () => {
+		expect(() =>
+			Inputs.scrapeHtml.parse({
+				...base,
+				return_page_source: false,
+				js_snippet: 'aGk=',
+			}),
+		).not.toThrow();
+	});
+
 	it('rejects an empty extract_properties', () => {
 		expect(() =>
 			Inputs.extractData.parse({ ...base, extract_properties: '   ' }),
