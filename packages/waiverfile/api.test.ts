@@ -77,7 +77,11 @@ describeIfKey('live WaiverFile API', () => {
 			pageSize: 10,
 		});
 		const waiverID = listed.Waivers?.[0]?.WaiverID;
-		if (!waiverID) return;
+		if (!waiverID) {
+			throw new Error(
+				'No signed waiver in the last 60 days: sign one on the test site to run the PDF check.',
+			);
+		}
 
 		const pdf = await Waivers.pdf(liveContext(), { waiverID });
 
@@ -91,6 +95,7 @@ describeIfKey('live WaiverFile API', () => {
 	it('never exposes the API key in a returned object', async () => {
 		const result = await Forms.active(liveContext(), {});
 
-		expect(JSON.stringify(result)).not.toContain(apiKey as string);
+		// A boolean, so a failure cannot print the key it found.
+		expect(JSON.stringify(result).includes(apiKey as string)).toBe(false);
 	});
 });
