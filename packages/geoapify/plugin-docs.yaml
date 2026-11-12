@@ -1,0 +1,67 @@
+displayName: Geoapify
+description: Geocode addresses in both directions with Geoapify - autocomplete them, search places by category, calculate routes, isolines and route matrices, and read time zones, boundaries, postcodes and elevation.
+domain: geoapify.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the API key from your Geoapify dashboard. The key travels as the `apiKey` **query parameter**, which is where every Geoapify API expects it.
+
+  Things to know before you call:
+
+  - **Two API versions live on one host.** Geocoding, routing, isolines, the route matrix, postcodes, boundaries, elevation, IP geolocation and timezones are `/v1`; places, place details and place info are `/v2`. The plugin picks the right one per operation, so a caller never has to think about it.
+  - **Geoapify answers GeoJSON by default.** Every response would be a feature collection with the geometry inline, which is awkward to read when all you want is an address. The plugin asks for `format: json`, so `results` is a plain array. Pass `format: 'geojson'` on the endpoints that offer it when you do want the geometry.
+  - **`places` has no `format` parameter at all.** It always answers a feature collection, so its results sit under `features` with the place under `properties`.
+  - **A pair with no route is not a failure.** In `routeMatrix`, an unreachable source-to-target pair carries an `error` and no distance, and the rest of the matrix is still valid.
+  - **The EU host exists.** `region: 'eu'` sends the request to `api-eu.geoapify.com`, where processing stays in the European Union. It takes the same operations and the same key.
+  - **`limit` has a per-API maximum.** It is 100 on the geocoding routes and 500 on places, and the plugin rejects a larger value before the request rather than letting the gateway answer 400.
+  - **A 429 is not always a burst.** It covers an exhausted quota too, so a retry can fail the same way; the plugin retries with backoff and honours `Retry-After`.
+  - **Geocoding is a read.** Every operation here computes an answer and changes nothing on Geoapify's side, so all of them are `read`.
+examples:
+  read:
+    path: geocode.forward
+    title: Turn an address into coordinates
+    args:
+      text: Berlin
+      countrycodes: [de]
+      limit: 3
+  read2:
+    path: places.search
+    title: Find restaurants inside an area
+    args:
+      categories: [catering.restaurant]
+      filter: "circle:13.4,52.5,1000"
+      limit: 10
+apiExamples:
+  geocode.forward:
+    call: "{ text: 'Berlin', countrycodes: ['de'], limit: 3 }"
+  geocode.reverse:
+    call: "{ lat: 52.5, lon: 13.4 }"
+  geocode.autocomplete:
+    call: "{ text: '10 Downing', countrycodes: ['gb'] }"
+  places.search:
+    call: "{ categories: ['catering.restaurant'], filter: 'circle:13.4,52.5,1000' }"
+  places.details:
+    call: "{ id: '51289a4b5f3d4d0f4058f2e9c8a1b7d6' }"
+  routing.route:
+    call: "{ waypoints: ['52.5,13.4', '52.6,13.5'], mode: 'drive' }"
+  routing.isoline:
+    call: "{ lat: 52.5, lon: 13.4, type: 'time', range: [300, 600] }"
+  routing.matrix:
+    call: "{ mode: 'drive', sources: ['52.5,13.4'], targets: ['52.6,13.5'] }"
+  geo.ip:
+    call: "{ ip: '54.201.16.177' }"
+  geo.timezone:
+    call: "{ lat: 52.5, lon: 13.4 }"
+  geo.postcodeSearch:
+    call: "{ postcode: '10115', countrycode: 'de' }"
+  geo.postcodeList:
+    call: "{ text: '1011', countrycode: 'de' }"
+  geo.boundaries:
+    call: "{ lat: 52.5, lon: 13.4, boundaries: ['city', 'country'] }"
+  geo.elevation:
+    call: "{ locations: [{ lat: 52.5, lon: 13.4 }] }"
+apiNotes:
+  geocode.forward: 'Asks for `format: json`; pass `format: geojson` when you want the geometry.'
+  places.search: 'A v2 route, so it always answers a feature collection under `features`.'
+  routing.route: '`format` defaults to `json` here; `geojson` adds the route geometry.'
+  routing.matrix: 'A pair with no route carries an `error` and no distance, and the rest of the matrix is still valid.'
+  geo.boundaries: 'Identify the place by `id`, by `lat`/`lon`, or by `osm_id` with `osm_type`.'
