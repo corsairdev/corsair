@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Ragic: every `ragic.api.*` operation with input and output types."
+title: "Ragic API reference"
+sidebarTitle: "API"
+description: "API reference for the Ragic plugin in Corsair: every `ragic.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `ragic.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -35,7 +34,7 @@ await corsair.ragic.api.records.comment({ account: 'demo', path: '/sales', sheet
 
 
 
-**Output:** `Record<string, JsonValue>`
+**Output:** `Record<string, Record<string, JsonValue>>`
 
 
 ---
@@ -75,10 +74,11 @@ await corsair.ragic.api.records.create({ account: 'demo', path: '/sales', sheetI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `recordId` | `number \| null` | No | The new record id. |
-| `_ragicId` | `number \| null` | No | — |
-| `status` | `string \| null` | No | — |
+| `status` | `string \| null` | No | SUCCESS when the record was saved. |
 | `msg` | `string \| null` | No | — |
+| `ragicId` | `number \| null` | No | The record id (_ragicId). |
+| `rv` | `any` | No | — |
+| `data` | `Record<string, JsonValue> \| null` | No | The saved record, keyed by field ID, with its reserved keys. |
 
 
 
@@ -88,7 +88,7 @@ await corsair.ragic.api.records.create({ account: 'demo', path: '/sales', sheetI
 
 `records.delete`
 
-Permanently delete one record by id
+Delete one record by id. Ragic moves it to the sheet's recycle bin, where it can be restored from the Ragic UI
 
 **Risk:** `destructive`
 
@@ -111,8 +111,9 @@ await corsair.ragic.api.records.delete({ account: 'demo', path: '/sales', sheetI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string \| null` | No | SUCCESS on a deleted record. |
-| `msg` | `string \| null` | No | — |
+| `msg` | `string \| null` | No | Says the record went to the recycle bin. |
+| `ragicId` | `number \| null` | No | The deleted record id. |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -122,7 +123,7 @@ await corsair.ragic.api.records.delete({ account: 'demo', path: '/sales', sheetI
 
 `records.get`
 
-Read one record by id, optionally with its subtable, comments, history or unmasked fields
+Read one record by id, optionally with its subtable, comments, history or unmasked fields. An unknown or deleted id answers an empty object
 
 **Risk:** `read`
 
@@ -337,10 +338,11 @@ await corsair.ragic.api.records.update({ account: 'demo', path: '/sales', sheetI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `recordId` | `number \| null` | No | The new record id. |
-| `_ragicId` | `number \| null` | No | — |
-| `status` | `string \| null` | No | — |
+| `status` | `string \| null` | No | SUCCESS when the record was saved. |
 | `msg` | `string \| null` | No | — |
+| `ragicId` | `number \| null` | No | The record id (_ragicId). |
+| `rv` | `any` | No | — |
+| `data` | `Record<string, JsonValue> \| null` | No | The saved record, keyed by field ID, with its reserved keys. |
 
 
 
@@ -411,7 +413,7 @@ await corsair.ragic.api.schema.get({ account: 'demo', path: '/sales', sheetIndex
 
 ```ts
 {
-  subtableKey?: string | null,
+  subtableKey?: number | string | null,
   fields?: {
     fieldId?: number | string | null,
     fieldName?: string | null,

@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Ragic plugin"
+sidebarTitle: "Overview"
 description: "Read, filter, create, update and delete records on any Ragic sheet, post comments, lock records and read a sheet's field schema."
 ---
 
@@ -19,11 +20,14 @@ Writing, in practice:
 - **Use `schema.get` first.** A write needs field IDs, and a form's fields differ per account. `schema.get` returns them with their types and, for a select field, up to 50 options — but it needs an **account manager's** API key, so a non-admin key gets `403 no right`.
 - **Subtable rows are grouped by row id.** On create, give every field of one row the same *negative* id under `_subtable_<id>` so Ragic can tell which values belong together. On update, use the *positive* row id you read from the record. To delete a row, send `_DELSUB_<subtableId>` with an array of row ids.
 - **Dates are `yyyy/MM/dd` or `yyyy/MM/dd HH:mm:ss`**, in filters and in field values, never ISO 8601.
-- **`where` is a three-part filter.** `{ fieldId, op, value }` becomes `fieldId,op,value`, and several conditions are sent as a repeated `where` parameter. Repeated `eq`/`regex`/`like` on one field is an **OR**; a `gte` with an `lte` on one field is a **range (AND)**. Leave `value` out to match an empty field.
+- **`where` is a three-part filter.** `{ fieldId, op, value }` becomes `fieldId,op,value`, and several conditions are sent as a repeated `where` parameter. A comma or `%` in the value is encoded the way Ragic expects, so pass the value as plain text. Repeated `eq`/`regex`/`like` on one field is an **OR**; a `gte` with an `lte` on one field is a **range (AND)**. Leave `value` out to match an empty field.
 - **A listing returns 1,000 records by default.** Set `limit` explicitly for more, and `subtables: false` when you do not need them, which makes the response far smaller.
 - **Writes run more than the save.** Workflows, AI Agents and notifications run by default; `doWorkflow: false`, `doAIAgent: false` and `notification: false` turn them off, and `doValidation: true` refuses a save that breaks the sheet's validation rules. `checkLock: true` refuses to edit a locked record.
-- **`records.lock` / `records.unlock`** map to Ragic's bare `lock` / `unlock` query flag on a POST to the record, and need the same permission as locking in the form.
-- **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. The plugin retries a 5xx twice for reads only.
+- **`records.lock` / `records.unlock`** map to Ragic's bare `lock` / `unlock` query flag on a POST to the record, and need the same permission as locking in the form. An update with `checkLock: true` on a locked record fails with code `402`.
+- **`records.delete` moves the record to the sheet's recycle bin**, where it can be restored from the Ragic UI. Reading a deleted or unknown id answers an empty object rather than an error.
+- **A write answers `{ status, msg, ragicId, data }`**: `ragicId` is the record id and `data` is the saved record keyed by field ID. A save that breaks a field rule (a required field left empty, a duplicate key) comes back as `status: "INVALID"` with code `202`, and the plugin throws it.
+- **`records.comment`** is sent as multipart form data with Ragic's `comment` flag, which is the only form the comment route accepts, and answers the new comment keyed by its row id.
+- **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. A `429` or body code `204` ("Request Frequency Too High") is retried up to three times, and a 5xx twice, for reads and updates only; a create, comment or delete is never sent twice.
 
 **What you get:**
 
