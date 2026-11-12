@@ -314,4 +314,28 @@ describe('page envelope', () => {
 
 		await expect(invoke(Endpoints.campaignsList, {})).rejects.toThrow();
 	});
+
+	it('reads the false prevUrl and nextUrl Raisely sends at either end', async () => {
+		// The body an anonymous GET /v3/profiles?campaign=<unknown> returned on
+		// 2026-11-12: Raisely marks a missing neighbour page with `false`.
+		respond(fetchMock, {
+			data: [],
+			pagination: {
+				total: 0,
+				pages: 0,
+				prevUrl: false,
+				nextUrl: false,
+				offset: 0,
+				limit: 100,
+			},
+		});
+
+		const result = (await invoke(Endpoints.profilesList, {
+			campaign: CAMPAIGN_UUID,
+		})) as Awaited<ReturnType<typeof Endpoints.profilesList>>;
+
+		expect(result.profiles).toEqual([]);
+		expect(result.pagination?.nextUrl).toBe(false);
+		expect(result.next_offset).toBeNull();
+	});
 });

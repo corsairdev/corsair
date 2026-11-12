@@ -53,8 +53,9 @@ export const PaginationSchema = z
 		pages: z.number().nullish(),
 		offset: z.number().nullish(),
 		limit: z.number().nullish(),
-		prevUrl: z.string().nullish(),
-		nextUrl: z.string().nullish(),
+		// Raisely sends `false`, not null, when there is no page on that side.
+		prevUrl: z.union([z.string(), z.boolean()]).nullish(),
+		nextUrl: z.union([z.string(), z.boolean()]).nullish(),
 	})
 	.loose();
 
