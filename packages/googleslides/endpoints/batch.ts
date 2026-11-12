@@ -46,8 +46,16 @@ export const batchUpdate: GoogleSlidesEndpoints['batchUpdate'] = async (
 			// Refused rather than forwarded: this endpoint is declared destructive
 			// so a deletion needs approval, and forwarding one here anyway would
 			// let it through under a different declaration than slides.remove.
+			// Every key with a value is checked, not only the first: a request
+			// written as { insertText: undefined, deleteObject: {...} } keeps both
+			// keys after parsing, and JSON encoding then drops the undefined one,
+			// so Google would receive the deletion alone.
 			const irreversible = parsed.requests
-				.map((request) => Object.keys(request)[0])
+				.flatMap((request) =>
+					Object.entries(request)
+						.filter(([, value]) => value !== undefined)
+						.map(([key]) => key),
+				)
 				.filter((key) =>
 					IRREVERSIBLE_REQUEST_TYPES.includes(
 						key as (typeof IRREVERSIBLE_REQUEST_TYPES)[number],

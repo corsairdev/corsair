@@ -436,6 +436,20 @@ describe('batch.update refusal of irreversible requests', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('refuses a deletion hidden behind an undefined first key', async () => {
+		// JSON encoding drops the undefined insertText, so Google would receive
+		// the deleteObject alone if only the first key were checked.
+		await expect(
+			BatchEndpoints.update(ctx, {
+				presentationId: 'deck-1',
+				requests: [
+					{ insertText: undefined, deleteObject: { objectId: 'slide-1' } },
+				],
+			}),
+		).rejects.toThrow(/deleteObject/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('refuses a batch that mixes a safe edit with a deletion', async () => {
 		await expect(
 			BatchEndpoints.update(ctx, {
