@@ -96,6 +96,7 @@ describe('contacts', () => {
 		})) as {
 			result: {
 				email?: { email?: string; status?: string };
+				// unknown: only the list count is checked here.
 				lists?: unknown[];
 			};
 		};
@@ -122,23 +123,23 @@ describe('contacts', () => {
 			list_ids: [134, 135],
 			email: 'test@example.org',
 			fields: { city: 'Berlin' },
-		})) as { result: { email?: { status?: string } } };
+		})) as { result: { person_id?: number | string } };
 
 		const form = lastRequest(fetchMock).form;
 		expect(form.list_ids).toBe('134,135');
 		// The email rides in the fields map, which is how subscribe takes it.
 		expect(form['fields[email]']).toBe('test@example.org');
 		expect(form['fields[city]']).toBe('Berlin');
-		expect(result.result.email?.status).toBe('active');
+		// Only the id comes back; contacts.get reads the confirmation status.
+		expect(result.result).toEqual({ person_id: 42 });
 	});
 
-	it('reports an invited contact as not yet mailable', async () => {
+	it('reads an invited contact as not yet mailable', async () => {
 		respond(fetchMock, CONTACT_INVITED);
 
-		const result = (await invoke(Api.subscribe, {
-			list_ids: [1],
-			email: 'new@example.org',
-		})) as { result: { email?: { status?: string } } };
+		const result = (await invoke(Api.get, { email: 'new@example.org' })) as {
+			result: { email?: { status?: string } };
+		};
 
 		// The default double opt-in leaves the contact invited, not active.
 		expect(result.result.email?.status).toBe('invited');
@@ -218,7 +219,7 @@ describe('contacts', () => {
 				['b@example.com', 'Bob'],
 			],
 		})) as {
-			result: Record<string, { created?: number; skipped?: number }>;
+			result: { total?: number; inserted?: number; updated?: number };
 		};
 
 		const form = lastRequest(fetchMock).form;
@@ -226,10 +227,12 @@ describe('contacts', () => {
 		// The row and column are both indexed, as the method documents.
 		expect(form['data[0][0]']).toBe('a@example.com');
 		expect(form['data[1][1]']).toBe('Bob');
-		expect(result.result['55688']?.created).toBe(3);
+		expect(result.result.total).toBe(3);
+		expect(result.result.inserted).toBe(1);
+		expect(result.result.updated).toBe(1);
 	});
 
-	it('surfaces a skipped role address from an import', async () => {
+	it('surfaces the rows an import refused in its log', async () => {
 		respond(fetchMock, IMPORTED);
 
 		const result = (await invoke(Api.importContacts, {
@@ -237,12 +240,17 @@ describe('contacts', () => {
 			field_names: ['email'],
 			data: [['sales@example.org']],
 		})) as {
-			result: Record<string, { errors?: string[]; skipped?: number }>;
+			result: {
+				invalid?: number;
+				log?: { index?: number | string; code?: string }[];
+			};
 		};
 
-		// A role address is refused on purpose, so skipped is normal.
-		expect(result.result['55688']?.skipped).toBe(1);
-		expect(result.result['55688']?.errors?.[0]).toContain('role address');
+		expect(result.result.invalid).toBe(1);
+		expect(result.result.log?.[0]).toMatchObject({
+			index: '2',
+			code: 'invalid_email',
+		});
 	});
 
 	it('rejects an import over the documented 500 contacts', async () => {
@@ -277,15 +285,19 @@ describe('contacts', () => {
 	it('requests an export on the async route', async () => {
 		respond(fetchMock, EXPORT_REQUESTED);
 
-		await invoke(Api.exportContacts, {
+		const result = (await invoke(Api.exportContacts, {
 			list_id: 55688,
 			notify_url: 'https://example.com/hook',
-		});
+		})) as { result: { task_uuid?: string; status?: string } };
 
 		const request = lastRequest(fetchMock);
 		// The export is asynchronous, so it lives under /async/.
 		expect(request.path).toBe('/en/api/async/exportContacts');
 		expect(request.form.notify_url).toBe('https://example.com/hook');
+		expect(result.result.task_uuid).toBe(
+			'07f99e2e-5a1c-4c2b-9e0d-2f6b1d3a8c41',
+		);
+		expect(result.result.status).toBe('new');
 	});
 });
 

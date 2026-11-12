@@ -20,6 +20,7 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler returns its own retry options; the tests match on them.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(

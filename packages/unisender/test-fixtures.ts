@@ -39,12 +39,8 @@ export const CONTACT_INVITED = {
 	},
 };
 
-export const SUBSCRIBED = {
-	result: {
-		person: { id: 42 },
-		email: { email: 'test@example.org', status: 'active' },
-	},
-};
+/** A subscribe answers only the contact's id, as on the live API (11-12). */
+export const SUBSCRIBED = { result: { person_id: 42 } };
 
 export const UNSUBSCRIBED = {
 	result: {
@@ -54,16 +50,19 @@ export const UNSUBSCRIBED = {
 
 export const EXCLUDED = { result: { excluded: 1 } };
 
-/** An import answers a map keyed by list id, with counts per outcome. */
+/**
+ * An import answers one summary for the whole call, with a log entry for each row
+ * it did not take (the documented importContacts shape).
+ */
 export const IMPORTED = {
 	result: {
-		'55688': {
-			created: 3,
-			updated: 1,
-			skipped: 1,
-			invalid: 0,
-			errors: ['Contact sales@example.org skipped: role address'],
-		},
+		total: 3,
+		inserted: 1,
+		updated: 1,
+		deleted: 0,
+		new_emails: 1,
+		invalid: 1,
+		log: [{ index: '2', code: 'invalid_email', message: 'Invalid email' }],
 	},
 };
 
@@ -75,7 +74,10 @@ export const CONTACT_COUNT = {
 	},
 };
 
-export const EXPORT_REQUESTED = { result: { exported: 1 } };
+/** An export answers a task, as on the live API (11-12). */
+export const EXPORT_REQUESTED = {
+	result: { task_uuid: '07f99e2e-5a1c-4c2b-9e0d-2f6b1d3a8c41', status: 'new' },
+};
 
 export const FIELDS = {
 	result: [
