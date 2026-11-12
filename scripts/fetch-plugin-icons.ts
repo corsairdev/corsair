@@ -102,7 +102,11 @@ async function onLightTile(bytes: Buffer): Promise<Buffer> {
  * surface. The white connected to the image edge becomes transparent; white
  * inside the mark stays.
  */
-const PLUGIN_ICON_CLEAR_EDGE_WHITE = new Set(['griptape', 'recallai']);
+const PLUGIN_ICON_CLEAR_EDGE_WHITE = new Set([
+	'griptape',
+	'recallai',
+	'taggun',
+]);
 
 /** A channel value at or above this counts as background white. */
 const EDGE_WHITE_MIN = 236;
@@ -172,6 +176,15 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	classmarker:
 		'https://media.brand.dev/90bbd6a6-80a8-44fc-ba31-fbad0b3a875f.png',
 	waboxapp: 'https://media.brand.dev/c94b6487-73cb-4185-8ed1-27d6a2e0c3b0.png',
+	// twenty-icons only has a 32px favicon, and servicenow.com refuses the
+	// fetcher (403); the context.dev Brand API has the same mark at 144px.
+	servicenow:
+		'https://media.brand.dev/9337827e-7757-4546-8838-111605ed1bce.png',
+	// linguapop.eu only has a 32px favicon; the context.dev Brand API has the
+	// same boxed "L" at 128px.
+	linguapop: 'https://media.brand.dev/696c8734-772f-402c-8de8-fc9fbcdfd9c8.png',
+	// The site's own 256px touch icon (the tag gun); its favicon is 32px.
+	taggun: 'https://www.taggun.io/apple-touch-icon.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.
