@@ -390,6 +390,7 @@ export const BaseProviders = [
 	'removebg',
 	'render',
 	'rentman',
+	'repairshopr',
 	'replicate',
 	'replyio',
 	'resend',
@@ -901,6 +902,7 @@ export const ProviderDisplayNames = {
 	removebg: 'remove.bg',
 	render: 'Render',
 	rentman: 'Rentman',
+	repairshopr: 'RepairShopr',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
@@ -1419,6 +1421,7 @@ export type AllProviders =
 	| 'removebg'
 	| 'render'
 	| 'rentman'
+	| 'repairshopr'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
