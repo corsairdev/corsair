@@ -162,6 +162,21 @@ describe('files', () => {
 		});
 	});
 
+	it('accepts a vote verdict VirusTotal adds later', async () => {
+		respond(fetchMock, {
+			data: { ...vote.data, attributes: { verdict: 'suspicious' } },
+		});
+
+		const result = await invoke(Files.vote, {
+			id: fileId,
+			verdict: 'harmless',
+		});
+
+		expect(result).toEqual({
+			data: { ...vote.data, attributes: { verdict: 'suspicious' } },
+		});
+	});
+
 	it('rejects a verdict that is neither malicious nor harmless', async () => {
 		await expect(
 			invoke(Files.vote, { id: fileId, verdict: 'maybe' }),
@@ -228,6 +243,20 @@ describe('urls', () => {
 
 		expect(lastRequest(fetchMock).path).toBe(
 			`/api/v3/urls/${urlIdentifier}/analyse`,
+		);
+	});
+
+	it('logs a URL rescan without the reversible URL identifier', async () => {
+		respond(fetchMock, analysisDescriptor);
+
+		await invoke(Urls.rescan, { id: urlIdentifier });
+
+		// The base64url id decodes back to the URL, query tokens included.
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'virustotal.urls.rescan',
+			{ analysis: analysisDescriptor.data.id },
+			'completed',
 		);
 	});
 
@@ -370,7 +399,7 @@ describe('analyses', () => {
 });
 
 describe('comments', () => {
-	it('lists comments across the account', async () => {
+	it('lists the latest comments on VirusTotal', async () => {
 		respond(fetchMock, commentsPage);
 
 		const result = await invoke(Comments.list, { limit: 20 });

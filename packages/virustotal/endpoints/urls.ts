@@ -67,8 +67,9 @@ export const rescan: VirustotalEndpoints['urlsRescan'] = (ctx, input) =>
 		input,
 		({ id }) => ({ method: 'POST', path: `/urls/${segment(id)}/analyse` }),
 		{
-			log: (parsed, result) => ({
-				id: parsed.id,
+			// The id is the URL in base64url, so it would log the URL, query tokens
+			// and all. Like urls.scan, only the analysis it produced is logged.
+			log: (_, result) => ({
 				analysis: result.data?.id ?? undefined,
 			}),
 		},

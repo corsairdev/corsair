@@ -256,7 +256,10 @@ const VoteSchema = z
 		id: z.string().nullish(),
 		attributes: z
 			.object({
-				verdict: z.enum(['malicious', 'harmless']).nullish(),
+				// Output stays open: an unknown verdict must not fail the read.
+				verdict: z
+					.union([z.enum(['malicious', 'harmless']), z.string()])
+					.nullish(),
 				date: z.number().nullish(),
 			})
 			.loose()
@@ -285,7 +288,6 @@ const VotesCollectionSchema = z
 
 export type VirustotalVotes = z.infer<typeof VotesCollectionSchema>;
 
-/** Scanning and rescanning both answer an object descriptor with just an id. */
 /**
  * The descriptor a scan or rescan returns. `id` is what `analyses.get` takes, so it
  * is required: an empty `data: {}` with a 200 would otherwise be logged as a
