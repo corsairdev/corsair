@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import * as Records from './endpoints';
 import { RagicAPIError } from './client';
+import * as Records from './endpoints';
 import type {
 	RagicRecordSet,
 	RecordsCommentResponse,
