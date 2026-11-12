@@ -174,7 +174,7 @@ const vectorshiftEndpointMeta = {
 			'Read one knowledge base by id, or by name with an optional owner',
 	},
 	'knowledgeBases.query': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches',
 	},

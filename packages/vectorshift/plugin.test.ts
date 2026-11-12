@@ -71,13 +71,18 @@ describe('vectorshift plugin definition', () => {
 		}
 	});
 
-	it('marks only the two lookups as reads', () => {
+	it('marks the lookups and the knowledge base query as reads', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const reads = operations.filter(
 			(operation) => meta[operation as keyof typeof meta]?.riskLevel === 'read',
 		);
 
-		expect(reads.sort()).toEqual(['knowledgeBases.get', 'pipelines.list']);
+		// A query retrieves and answers; it changes nothing in the account.
+		expect(reads.sort()).toEqual([
+			'knowledgeBases.get',
+			'knowledgeBases.query',
+			'pipelines.list',
+		]);
 	});
 
 	it('marks runs and creates as writes, since they execute or make objects', () => {
