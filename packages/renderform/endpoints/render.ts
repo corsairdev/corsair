@@ -14,8 +14,9 @@ import {
  * exactly that reason.
  *
  * A render costs credits unless it is served from the cache. `cache: false` forces
- * a fresh render and the cost; a `requestId` and `version` are the same key, so
- * reusing one is how a caller asks for the cached file.
+ * a fresh render and the cost. The same template, `version`, data and output
+ * settings return the cached file; `requestId` only looks the render up in
+ * `results.get` and is not a cache key.
  */
 export const render: RenderformEndpoints['render'] = (ctx, input) =>
 	call(
