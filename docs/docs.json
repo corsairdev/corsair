@@ -2548,6 +2548,14 @@
                 ]
               },
               {
+                "group": "Kanbanize",
+                "pages": [
+                  "plugins/kanbanize/overview",
+                  "plugins/kanbanize/api",
+                  "plugins/kanbanize/database"
+                ]
+              },
+              {
                 "group": "Keenable",
                 "pages": [
                   "plugins/keenable/overview",
