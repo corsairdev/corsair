@@ -274,6 +274,35 @@ describe('webhook handlers', () => {
 		});
 	});
 
+	it.each([
+		['userCreated', userCreated],
+		['relationshipCreated', relationshipCreated],
+		['messageOpened', messageOpened],
+	] as const)(
+		'accepts %s that the Hub already verified, when no key was built',
+		async (name, payload) => {
+			const webhook = UserlistWebhooks[name];
+			const result = await webhook.handler(
+				{ key: undefined } as never,
+				{
+					...request(payload, { signature: 'not-checked' }),
+					hubVerified: true,
+				} as never,
+			);
+
+			expect(result.success).toBe(true);
+		},
+	);
+
+	it('still checks the signature when hubVerified is absent', async () => {
+		const result = await UserlistWebhooks.userCreated.handler(
+			{ key: undefined } as never,
+			request(userCreated) as never,
+		);
+
+		expect(result).toMatchObject({ success: false, statusCode: 401 });
+	});
+
 	it('keeps the fields Userlist documents for each payload', async () => {
 		const subscribed = await UserlistWebhooks.userSubscribed.handler(
 			context,

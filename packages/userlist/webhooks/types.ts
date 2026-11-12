@@ -258,13 +258,20 @@ const SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
  * The signed payload is `${timestamp}.${rawBody}` and the key is the webhook
  * secret shown on the webhook configuration screen — not the Push API key.
  * Comparison is constant-time, and a stale timestamp is refused so a captured
- * request cannot be replayed.
+ * request cannot be replayed. A request the Hub already verified
+ * (`hubVerified: true`) is accepted without a secret.
  */
 export function verifyUserlistWebhookSignature(
 	// unknown: only the raw body and headers are read, never the payload.
 	request: WebhookRequest<unknown>,
 	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
+	// The Hub tunnel sets hubVerified only after authenticating the envelope,
+	// and in that case the framework builds no key, so there is nothing to check.
+	if ((request as { hubVerified?: boolean }).hubVerified === true) {
+		return { valid: true };
+	}
+
 	if (!webhookSecret) {
 		return { valid: false, error: 'Missing webhook secret' };
 	}
