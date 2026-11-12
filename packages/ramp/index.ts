@@ -63,6 +63,14 @@ export type RampPluginOptions = {
 	environment?: RampEnvironment;
 	/** Scopes to request; defaults to every scope the operations use. */
 	scopes?: readonly string[];
+	/**
+	 * Single-business mode for `oauth_2`: with no refresh token stored, mint a
+	 * Client Credentials token from the app's own client ID and secret. That
+	 * token reaches the business that owns the app, and the client ID and secret
+	 * are shared by every tenant, so turn this on only when the app serves one
+	 * business. Off by default: a tenant without a refresh token must connect.
+	 */
+	clientCredentials?: boolean;
 	hooks?: InternalRampPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof rampEndpointsNested>;
@@ -354,9 +362,12 @@ export function ramp<const T extends RampPluginOptions>(
 				]);
 				// An authorization-code connection has a refresh token: core refreshes
 				// it (Basic auth at the token URL; Ramp keeps the same refresh token).
-				// Without one, a client ID and secret mint a Client Credentials token,
-				// which Ramp issues for 10 days with no refresh token.
+				// In single-business mode only, a missing refresh token falls back to
+				// a Client Credentials token (10 days, no refresh token). Elsewhere a
+				// tenant without one gets AuthMissingError and is asked to connect,
+				// never the app owner's token.
 				if (
+					options.clientCredentials === true &&
 					!refreshToken &&
 					credentials.client_id &&
 					credentials.client_secret

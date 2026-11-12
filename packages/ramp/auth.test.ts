@@ -121,7 +121,24 @@ describe('oauthConfig', () => {
 	});
 });
 
-describe('oauth_2 without a refresh token: Client Credentials', () => {
+describe('oauth_2 without a refresh token, outside single-business mode', () => {
+	it('asks the tenant to connect instead of minting the app owner’s token', async () => {
+		const { keys, writes } = oauthKeys({
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+		});
+
+		const error = await captureError(
+			keyBuilderOf(ramp({ authType: 'oauth_2' }))(oauthCtx(keys), 'endpoint'),
+		);
+
+		expect(error.name).toBe('AuthMissingError');
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(writes).toEqual({});
+	});
+});
+
+describe('oauth_2 without a refresh token: Client Credentials (single-business mode)', () => {
 	it('mints a token with Basic auth and every scope, then stores it with its expiry', async () => {
 		respond(fetchMock, {
 			access_token: 'ramp_business_tok_minted',
@@ -133,10 +150,9 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 			client_secret: CLIENT_SECRET,
 		});
 
-		const token = await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
-			oauthCtx(keys),
-			'endpoint',
-		);
+		const token = await keyBuilderOf(
+			ramp({ authType: 'oauth_2', clientCredentials: true }),
+		)(oauthCtx(keys), 'endpoint');
 
 		expect(token).toBe('ramp_business_tok_minted');
 		const { url, init } = tokenRequest();
@@ -162,10 +178,9 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 			expires_at: String(now() + 86400),
 		});
 
-		const token = await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
-			oauthCtx(keys),
-			'endpoint',
-		);
+		const token = await keyBuilderOf(
+			ramp({ authType: 'oauth_2', clientCredentials: true }),
+		)(oauthCtx(keys), 'endpoint');
 
 		expect(token).toBe('ramp_business_tok_cached');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -184,10 +199,9 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 			expires_at: String(now() + 60),
 		});
 
-		const token = await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
-			oauthCtx(keys),
-			'endpoint',
-		);
+		const token = await keyBuilderOf(
+			ramp({ authType: 'oauth_2', clientCredentials: true }),
+		)(oauthCtx(keys), 'endpoint');
 
 		expect(token).toBe('ramp_business_tok_new');
 		expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -204,6 +218,7 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 		await keyBuilderOf(
 			ramp({
 				authType: 'oauth_2',
+				clientCredentials: true,
 				environment: 'sandbox',
 				scopes: ['transactions:read', 'business:read'],
 			}),
@@ -232,7 +247,10 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 		});
 
 		const error = await captureError(
-			keyBuilderOf(ramp({ authType: 'oauth_2' }))(oauthCtx(keys), 'endpoint'),
+			keyBuilderOf(ramp({ authType: 'oauth_2', clientCredentials: true }))(
+				oauthCtx(keys),
+				'endpoint',
+			),
 		);
 
 		expect(error).toBeInstanceOf(RampAPIError);
@@ -252,7 +270,10 @@ describe('oauth_2 without a refresh token: Client Credentials', () => {
 		});
 
 		const error = await captureError(
-			keyBuilderOf(ramp({ authType: 'oauth_2' }))(oauthCtx(keys), 'endpoint'),
+			keyBuilderOf(ramp({ authType: 'oauth_2', clientCredentials: true }))(
+				oauthCtx(keys),
+				'endpoint',
+			),
 		);
 
 		expect(error).toBeInstanceOf(RampAPIError);
@@ -381,7 +402,10 @@ describe('token request limits', () => {
 		});
 
 		const error = await captureError(
-			keyBuilderOf(ramp({ authType: 'oauth_2' }))(oauthCtx(keys), 'endpoint'),
+			keyBuilderOf(ramp({ authType: 'oauth_2', clientCredentials: true }))(
+				oauthCtx(keys),
+				'endpoint',
+			),
 		);
 
 		expect(error).toBeInstanceOf(RampAPIError);
@@ -414,7 +438,7 @@ describe('token request limits', () => {
 			await setExpiry(value);
 		};
 
-		await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
+		await keyBuilderOf(ramp({ authType: 'oauth_2', clientCredentials: true }))(
 			oauthCtx(keys),
 			'endpoint',
 		);
@@ -433,10 +457,9 @@ describe('client credentials refresh hook', () => {
 		});
 		const ctx = oauthCtx(keys);
 
-		const cached = await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
-			ctx,
-			'endpoint',
-		);
+		const cached = await keyBuilderOf(
+			ramp({ authType: 'oauth_2', clientCredentials: true }),
+		)(ctx, 'endpoint');
 		expect(cached).toBe('ramp_tok_revoked');
 		expect(fetchMock).not.toHaveBeenCalled();
 
