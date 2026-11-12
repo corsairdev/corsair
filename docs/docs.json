@@ -3622,6 +3622,14 @@
                 ]
               },
               {
+                "group": "SMS Alert",
+                "pages": [
+                  "plugins/smsalert/overview",
+                  "plugins/smsalert/api",
+                  "plugins/smsalert/database"
+                ]
+              },
+              {
                 "group": "Snapchat",
                 "pages": [
                   "plugins/snapchat/overview",

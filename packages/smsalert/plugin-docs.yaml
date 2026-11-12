@@ -1,0 +1,34 @@
+displayName: SMS Alert
+description: Send SMS messages and manage SMS Alert contacts, templates, delivery reports, and account resources.
+domain: smsalert.co.in
+overviewNote: |
+  SMS Alert's [API reference](https://kb.smsalert.co.in/developers-api/) documents API key authentication via the `apikey` query parameter for most operations. Account registration and password reset do not require an API key. Password changes use a form body. Avoid logging request URLs.
+
+  Use `messages.send` with `schedule` for scheduled messages, or `dlrurl` and `reference` to request delivery callbacks. Corsair does not provide an inbound webhook handler for those callbacks; secure them in your own application. XML contact import and XML push are excluded because their credential or payload contracts are incomplete. Requests are not automatically retried.
+examples:
+  read:
+    path: account.balance
+    args: {}
+apiExamples:
+  account.changePassword: { pwd: old-password, newpwd: new-password, cnfpwd: new-password }
+  account.forgotPassword: { username_email: user@example.com }
+  account.register: { username: user, mobilenumber: "919876543210", emailid: user@example.com, firstname: First, lastname: Last }
+  contacts.create: { grpname: Customers, name: Example, number: "919876543210" }
+  contacts.delete: { id: "123" }
+  contacts.list: { group_id: "123", page: 2, limit: 10 }
+  contacts.update: { id: "123", name: Example, number: "919876543210" }
+  groups.create: { name: Customers }
+  groups.delete: { id: "123" }
+  groups.send: { id: "123", sender: TESTIN, text: Hello }
+  groups.update: { id: "123", name: Customers }
+  messages.send: { sender: TESTIN, mobileno: "919876543210", text: Hello }
+  otp.generate: { mobileno: "919876543210", template: "Your OTP is [otp]" }
+  otp.validate: { mobileno: "919876543210", code: "1234" }
+  reports.delivery: { batchid: "123" }
+  schedules.cancel: { batchid: "123" }
+  schedules.update: { batchid: "123", schedule: "2026-12-01 12:00:00" }
+  shortUrls.create: { url: "https://example.com" }
+  shortUrls.delete: { id: "123" }
+  templates.create: { name: Welcome, text: Hello }
+  templates.delete: { id: "123" }
+  templates.update: { id: "123", name: Welcome, text: Hello }
