@@ -1,0 +1,2418 @@
+{
+  "id": "userflow",
+  "displayName": "Userflow",
+  "description": "In-app onboarding with Userflow - sync users, groups and membership attributes, track events, read flows, checklists and their sessions, and manage webhook subscriptions, accounts, members and invites.",
+  "npmPackageName": "@corsair-dev/userflow",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "userflow.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Read one account, optionally expanding its environments with their region and primary flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "account | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_2fa_enforced",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ id?: string | null, object?: environment | null, name?: string | null, slug?: string | null, created_at?: string | null, is_primary?: boolean | null, is_deactivated?: boolean | null, region?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List the accounts your personal key is a member of; needs a personal key, not an environment key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "name | created_at | string | (name | created_at | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: account | null, name?: string | null, slug?: string | null, created_at?: string | null, is_2fa_enforced?: boolean | null, environments?: { id?: string | null, object?: environment | null, name?: string | null, slug?: string | null, created_at?: string | null, is_primary?: boolean | null, is_deactivated?: boolean | null, region?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.attributes.list",
+      "shortPath": "attributes.list",
+      "description": "List the attribute definitions Userflow has recorded, filtered by scope or by the events that use them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "event | group | group_membership | user",
+            "description": "Only attributes attached to this kind of object."
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only attributes used by any of these events."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | display_name | name | string | (created_at | display_name | name | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: attribute_definition | null, created_at?: string | null, data_type?: string | null, description?: string | null, display_name?: string | null, name?: string | null, scope?: string | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.content.get",
+      "shortPath": "content.get",
+      "description": "Read one flow, checklist, launcher or other content object with its labels and version ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "content | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draft_version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "published_version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draft_version",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "published_version",
+            "optional": true,
+            "type": "any | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.content.getVersion",
+      "shortPath": "content.getVersion",
+      "description": "Read one content version, which holds the flow's questions or the checklist's tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "content_version | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.content.list",
+      "shortPath": "content.list",
+      "description": "List content objects, filtered by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "announcement | assistant | banner | checklist | embed | flow | launcher | resource_center | tracker",
+            "description": "Only content of this type."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | name | string | (created_at | name | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: content | null, created_at?: string | null, draft_version_id?: string | null, published_version_id?: string | null, labels?: string[] | null, name?: string | null, type?: string | null, draft_version?: any | null, published_version?: any | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.content.listVersions",
+      "shortPath": "content.listVersions",
+      "description": "List the versions of one content object; Userflow cannot list versions across content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content_id",
+            "optional": false,
+            "type": "string",
+            "description": "Required: Userflow cannot list versions across content objects."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "A specific version number."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "number | string | (number | string)[]",
+            "description": "Sort by version number, optionally prefixed with \"-\" for descending."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: content_version | null, created_at?: string | null, description?: string | null, edited_at?: string | null, number?: number | null, questions?: any[] | null, tasks?: any[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.contentSessions.delete",
+      "shortPath": "contentSessions.delete",
+      "description": "Permanently delete a content session with its progress and survey answers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "content_session | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.contentSessions.end",
+      "shortPath": "contentSessions.end",
+      "description": "End an active content session for a user; idempotent, and the session keeps its answers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "content_session | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "content_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_preview",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "launcher_activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal string from `0` to `1`, where `1` is complete."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ id?: string | null, object?: content | null, created_at?: string | null, draft_version_id?: string | null, published_version_id?: string | null, labels?: string[] | null, name?: string | null, type?: string | null, draft_version?: any | null, published_version?: any | null } | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string | null, object?: user | null, attributes?: Record<string, any> | null, created_at?: string | null, groups?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null, memberships?: { id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null } | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "any | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.contentSessions.get",
+      "shortPath": "contentSessions.get",
+      "description": "Read one content session with its progress, completion and optionally its survey answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "content_session | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "content_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_preview",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "launcher_activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "string | null",
+            "description": "A decimal string from `0` to `1`, where `1` is complete."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ id?: string | null, object?: content | null, created_at?: string | null, draft_version_id?: string | null, published_version_id?: string | null, labels?: string[] | null, name?: string | null, type?: string | null, draft_version?: any | null, published_version?: any | null } | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string | null, object?: user | null, attributes?: Record<string, any> | null, created_at?: string | null, groups?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null, memberships?: { id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null } | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "any | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.contentSessions.list",
+      "shortPath": "contentSessions.list",
+      "description": "List content sessions, filtered by content or user, to see who has seen or completed what",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "content_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only sessions of this content."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this user sessions."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | last_activity_at | string | (created_at | last_activity_at | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: content_session | null, completed_at?: string | null, completed?: boolean | null, content_id?: string | null, created_at?: string | null, group_id?: string | null, is_preview?: boolean | null, last_activity_at?: string | null, launcher_activated?: boolean | null, progress?: string | null, user_id?: string | null, version_id?: string | null, answers?: any[] | null, content?: { id?: string | null, object?: content | null, created_at?: string | null, draft_version_id?: string | null, published_version_id?: string | null, labels?: string[] | null, name?: string | null, type?: string | null, draft_version?: any | null, published_version?: any | null } | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: { id?: string | null, object?: user | null, attributes?: Record<string, any> | null, created_at?: string | null, groups?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null, memberships?: { id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null } | null, version?: any | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.eventDefinitions.list",
+      "shortPath": "eventDefinitions.list",
+      "description": "List the event definitions Userflow has recorded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | display_name | name | string | (created_at | display_name | name | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: event_definition | null, created_at?: string | null, description?: string | null, display_name?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.events.track",
+      "shortPath": "events.track",
+      "description": "Record an event against a user, a group or both, optionally with attributes and a past timestamp",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The event name, such as `subscription_activated`. Letters, digits, underscores, dashes, dots, parentheses and spaces only."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "The user who did it. At least one of user_id and group_id is required."
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string",
+            "description": "The group it happened in. At least one of user_id and group_id is required."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, any> | string[] | null>",
+            "description": "Attributes of the event itself, such as a plan name or price."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 when it happened, for importing historic events. Defaults to now."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "event | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string | null, object?: user | null, attributes?: Record<string, any> | null, created_at?: string | null, groups?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null, memberships?: { id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Permanently delete a group with its attributes, memberships and events; the users in it stay",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "group | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Read one group with its attributes, optionally expanding its users or memberships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "group | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups, optionally filtered by a condition expression",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "Record<string, any> | string",
+            "description": "A JSON condition, e.g. `{ type: \"attribute\", attribute_name: \"plan\", operator: \"eq\", value: \"Pro\" }`. Prefix group attributes with `group/`; combine with `{ type: \"clause\", operator: \"and\", conditions: [...] }`. Rejected when it matches more than 10,000 records."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only the groups this user belongs to."
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only the groups in this segment."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | attributes.name | string | (created_at | attributes.name | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.groups.upsert",
+      "shortPath": "groups.upsert",
+      "description": "Create or update a group or company by your own id, merging the attributes sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Your own id for the group. An unseen id creates it, a known one merges the attributes in."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, any> | string[] | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "group | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.invites.create",
+      "shortPath": "invites.create",
+      "description": "Send an email invite to join an account with a role and optional permissions; a pending invite or existing member makes it fail",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | editor | viewer",
+            "description": "owner is not invitable; that role is transferred."
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "invite | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sender_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.invites.delete",
+      "shortPath": "invites.delete",
+      "description": "Delete a pending invite, so its link stops working",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "invite | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.invites.get",
+      "shortPath": "invites.get",
+      "description": "Read one invite for an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "invite | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sender_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.invites.list",
+      "shortPath": "invites.list",
+      "description": "List pending and expired invites for an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only the invite for this address."
+          },
+          {
+            "key": "is_expired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only expired invites, or only the ones still open."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "name | created_at | string | (name | created_at | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: invite | null, name?: string | null, email?: string | null, sender_id?: string | null, created_at?: string | null, is_expired?: boolean | null, role?: string | null, permissions?: { action: string, subject: account | environment, subject_id: string }[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.members.get",
+      "shortPath": "members.get",
+      "description": "Read one member of an account with their role and permissions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "member | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_2fa_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_sso",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_password",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.members.list",
+      "shortPath": "members.list",
+      "description": "List the members of an account, filtered by email or role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "(owner | admin | editor | viewer)[]"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | string | (created_at | string)[]",
+            "description": "Sort by `created_at`, or `-created_at` for newest first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: member | null, name?: string | null, email?: string | null, created_at?: string | null, avatar_url?: string | null, is_2fa_enabled?: boolean | null, has_sso?: boolean | null, has_password?: boolean | null, role?: string | null, permissions?: { action: string, subject: account | environment, subject_id: string }[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.members.remove",
+      "shortPath": "members.remove",
+      "description": "Remove a member from an account, revoking their access to it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "member | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.members.update",
+      "shortPath": "members.update",
+      "description": "Change a member's role or replace their permissions within an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | editor | viewer",
+            "description": "The member new role in this account. owner cannot be set here; ownership is transferred in the app."
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[]",
+            "description": "Replaces the member permissions. Omit to leave them alone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "member | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_2fa_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_sso",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_password",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ action: string, subject: account | environment, subject_id: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.memberships.remove",
+      "shortPath": "memberships.remove",
+      "description": "Remove one user from one group, leaving both the user and the group in place",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The user is removed from this group only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "group_membership | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Permanently delete a user with their attributes, memberships, events and flow history; groups they were in stay",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "user | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user with their attributes, optionally expanding their groups or memberships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "user | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users, filtered by email, group, segment or a condition expression, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only the user whose `email` attribute equals this value."
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only members of this group."
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only users in this segment; the id is in the segment menu in the UI."
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "Record<string, any> | string",
+            "description": "A JSON condition, e.g. `{ type: \"attribute\", attribute_name: \"plan\", operator: \"eq\", value: \"Pro\" }`. Prefix group attributes with `group/`; combine with `{ type: \"clause\", operator: \"and\", conditions: [...] }`. Rejected when it matches more than 10,000 records."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | attributes.signed_up_at | attributes.last_seen_at | attributes.name | string | (created_at | attributes.signed_up_at | attributes.last_seen_at | attributes.name | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending. Userflow defaults to `created_at`."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: user | null, attributes?: Record<string, any> | null, created_at?: string | null, groups?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null, memberships?: { id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.users.upsert",
+      "shortPath": "users.upsert",
+      "description": "Create or update a user by your own id, merging the attributes sent and optionally syncing their groups or memberships",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Your own id for the user. This is the key: an unseen id creates the user, a known one merges the attributes in."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, any> | string[] | null>",
+            "description": "Attributes to set. A literal sets the value; `{ add: 1 }`, `{ set_once: ... }` and `{ subtract: 1 }` are operations. Attributes not sent are left alone."
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string, attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null> }[]",
+            "description": "Groups to create or update and ensure membership of. Cannot be combined with `memberships`."
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null>, group: { id: string, attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null> } }[]",
+            "description": "Memberships to create or update, each naming its group. Use this instead of `groups` to set membership attributes."
+          },
+          {
+            "key": "prune_memberships",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remove memberships not listed. Only set it when the list is complete, since anything missing is removed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "user | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null }[] | null"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ id?: string | null, object?: group_membership | null, attributes?: Record<string, any> | null, created_at?: string | null, group_id?: string | null, user_id?: string | null, group?: { id?: string | null, object?: group | null, attributes?: Record<string, any> | null, created_at?: string | null, users?: any[] | null, memberships?: any[] | null } | null, user?: any | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.webhookSubscriptions.create",
+      "shortPath": "webhookSubscriptions.create",
+      "description": "Subscribe a URL to user, group and event topics; the response is the only place the signing secret is shown",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Where Userflow posts the notifications."
+          },
+          {
+            "key": "topics",
+            "optional": false,
+            "type": "string[]",
+            "description": "Namespaced topics: `user`, `event`, `user.created`, `event.tracked.flow_started`, or `*` for everything."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to `2020-01-03`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "webhook_subscription | null"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "Returned only by create; save it then to verify signatures."
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.webhookSubscriptions.delete",
+      "shortPath": "webhookSubscriptions.delete",
+      "description": "Permanently delete a webhook subscription; prefer update with disabled to pause delivery",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "webhook_subscription | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.webhookSubscriptions.get",
+      "shortPath": "webhookSubscriptions.get",
+      "description": "Read one webhook subscription; the secret is not included",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "webhook_subscription | null"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "Returned only by create; save it then to verify signatures."
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.webhookSubscriptions.list",
+      "shortPath": "webhookSubscriptions.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 100. Userflow defaults to 10."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | url | string | (created_at | url | string)[]",
+            "description": "Sort field or fields, each optionally prefixed with \"-\" for descending."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "list | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, object?: webhook_subscription | null, api_version?: string | null, created_at?: string | null, disabled?: boolean | null, secret?: string | null, topics?: string[] | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userflow.api.webhookSubscriptions.update",
+      "shortPath": "webhookSubscriptions.update",
+      "description": "Change a subscription url, topics or api_version, or disable it without deleting it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "true stops delivery without deleting the subscription."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "webhook_subscription | null"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "Returned only by create; save it then to verify signatures."
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
